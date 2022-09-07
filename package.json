@@ -1,8 +1,8 @@
 {
-  "name": "hmpps-template-typescript",
+  "name": "hmpps-activities-management",
   "version": "0.0.1",
-  "description": "HMPPS Typescript Template",
-  "repository": "git@github.com:ministryofjustice/hmpps-template-typescript.git",
+  "description": "Hmpps Activities Management",
+  "repository": "git@github.com:ministryofjustice/hmpps-activities-management.git",
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
