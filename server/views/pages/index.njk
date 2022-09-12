@@ -1,11 +1,46 @@
 {% extends "../partials/layout.njk" %}
+{% from "partials/card.njk" import card %}
 
 {% set pageTitle = applicationName + " - Home" %}
 {% set mainClasses = "app-container govuk-body" %}
+{% set pageId = 'index-page' %}
 
 {% block content %}
 
-  <h1>This site is under construction...</h1>
-  <p>Please check back later when there is content to view.</p>
+<div class="grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-grid-row card-group">
+                {% if shouldShowCreateActivityCard %}
+                    <div class="govuk-grid-column-one-third card-group__item">
+                       {{ card({
+                            "id": "createActivityCard",
+                            "href": "/licence/create/caseload",
+                            "clickable": "true",
+                            "heading": "Create or edit a prison activity",
+                            "description": "Maintain the scheduled activities in the prison.",
+                            "data-qa": "create-licence-link"
+                        }) }}
+                    </div>
+                {% endif %}
 
+                {% if shouldShowPrisonCalendarCard %}
+                    <div class="govuk-grid-column-one-third card-group__item">
+                       {{ card({
+                            "id": "prisonCalendarCard",
+                            "href": "/licence/create/caseload",
+                            "clickable": "true",
+                            "heading": "Show the prison activity calendar",
+                            "description": "This will display the scheduled activities in the prison for this week.",
+                            "data-qa": "create-licence-link"
+                        }) }}
+                    </div>
+                {% endif %}
+              
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pageScripts %}
+    <script src="/assets/js/card.js"></script>
 {% endblock %}
