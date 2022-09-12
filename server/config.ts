@@ -67,6 +67,22 @@ export default {
       agent: new AgentConfig(Number(get('TOKEN_VERIFICATION_API_TIMEOUT_RESPONSE', 5000))),
       enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
     },
+    actvitiesApi: {
+      url: get('ACTIVITIES_API_URL', 'http://localhost:8089', requiredInProduction),
+      timeout: {
+        response: Number(get('ACTIVITIES_API_TIMEOUT_RESPONSE', 30000)),
+        deadline: Number(get('ACTIVITIES_API_TIMEOUT_DEADLINE', 30000)),
+      },
+      agent: new AgentConfig(Number(get('ACTIVITIES_API_TIMEOUT_RESPONSE', 30000))),
+    },
+    prisonerSearchApi: {
+      url: get('PRISONER_SEARCH_API_URL', 'http://localhost:8090', requiredInProduction),
+      timeout: {
+        response: Number(get('PRISONER_SEARCH_API_TIMEOUT_RESPONSE', 30000)),
+        deadline: Number(get('PRISONER_SEARCH_API_TIMEOUT_DEADLINE', 30000)),
+      },
+      agent: new AgentConfig(Number(get('PRISONER_SEARCH_API_TIMEOUT_RESPONSE', 30000))),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
 }

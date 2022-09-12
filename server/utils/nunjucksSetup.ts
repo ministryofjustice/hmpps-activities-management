@@ -10,7 +10,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
-  app.locals.applicationName = 'Hmpps Activities Management'
+  app.locals.applicationName = 'Activities Management'
 
   // Cachebusting version string
   if (production) {
