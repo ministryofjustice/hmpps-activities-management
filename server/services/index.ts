@@ -1,16 +1,14 @@
-import { dataAccess } from '../data'
+import dataAccess from '../data'
 import UserService from './userService'
+import PrisonService from './prisonService'
 
-export const services = () => {
-  const { hmppsAuthClient } = dataAccess()
-
-  const userService = new UserService(hmppsAuthClient)
+export default function services() {
+  const { hmppsAuthClient, prisonRegisterApiClient, prisonApiClient, prisonerSearchApiClient } = dataAccess()
 
   return {
-    userService,
+    userService: new UserService(hmppsAuthClient),
+    prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, prisonRegisterApiClient),
   }
 }
 
 export type Services = ReturnType<typeof services>
-
-export { UserService }

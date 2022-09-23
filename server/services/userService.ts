@@ -1,5 +1,6 @@
 import { convertToTitleCase } from '../utils/utils'
-import type HmppsAuthClient from '../data/hmppsAuthClient'
+import HmppsAuthClient from '../data/hmppsAuthClient'
+import { ServiceUser } from '../@types/express'
 
 interface UserDetails {
   name: string
@@ -9,8 +10,8 @@ interface UserDetails {
 export default class UserService {
   constructor(private readonly hmppsAuthClient: HmppsAuthClient) {}
 
-  async getUser(token: string): Promise<UserDetails> {
-    const user = await this.hmppsAuthClient.getUser(token)
-    return { ...user, displayName: convertToTitleCase(user.name) }
+  async getUser(user: ServiceUser): Promise<UserDetails> {
+    const updatedUser = await this.hmppsAuthClient.getUser(user)
+    return { ...updatedUser, displayName: convertToTitleCase(updatedUser.name) }
   }
 }
