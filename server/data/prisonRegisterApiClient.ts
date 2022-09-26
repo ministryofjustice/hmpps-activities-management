@@ -10,7 +10,7 @@ export default class PrisonRegisterApiClient extends AbstractHmppsRestClient {
   }
 
   async getPrison(prisonId: string, user: ServiceUser): Promise<Prison> {
-    return this.get<Prison>(
+    return this.get(
       {
         path: `/prisons/id/${prisonId}`,
       },
