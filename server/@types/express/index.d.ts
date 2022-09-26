@@ -1,4 +1,5 @@
 import { HmppsAuthUser } from '../hmppsAuth'
+import { PrisonApiUserDetail } from '../prisonApiImport/types'
 
 export default {}
 
@@ -7,6 +8,7 @@ declare module 'express-session' {
   interface SessionData {
     returnTo: string
     nowInMinutes: number
+    user: ServiceUser
   }
 }
 
@@ -26,4 +28,4 @@ export declare global {
   }
 }
 
-export type ServiceUser = Express.User & HmppsAuthUser
+export type ServiceUser = Express.User & HmppsAuthUser & PrisonApiUserDetail & { displayName: string }
