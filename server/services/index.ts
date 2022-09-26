@@ -6,7 +6,7 @@ export default function services() {
   const { hmppsAuthClient, prisonRegisterApiClient, prisonApiClient, prisonerSearchApiClient } = dataAccess()
 
   return {
-    userService: new UserService(hmppsAuthClient),
+    userService: new UserService(hmppsAuthClient, prisonApiClient),
     prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, prisonRegisterApiClient),
   }
 }

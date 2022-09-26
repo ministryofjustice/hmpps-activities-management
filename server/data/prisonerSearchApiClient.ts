@@ -10,7 +10,7 @@ export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
   }
 
   async searchInmates(prisonerSearchCriteria: PrisonerSearchCriteria, user: ServiceUser): Promise<Prisoner[]> {
-    return this.post<Prisoner[]>(
+    return this.post(
       {
         path: '/prisoner-search/match-prisoners',
         data: prisonerSearchCriteria,

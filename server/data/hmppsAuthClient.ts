@@ -10,7 +10,7 @@ export default class HmppsAuthClient extends AbstractHmppsRestClient {
   }
 
   getUser(user: ServiceUser): Promise<HmppsAuthUser> {
-    return this.get<HmppsAuthUser>({ path: '/api/user/me', authToken: user.token }, user)
+    return this.get({ path: '/api/user/me', authToken: user.token }, user)
   }
 
   getUserRoles(user: ServiceUser): Promise<string[]> {

@@ -70,6 +70,7 @@ HMPPS_AUTH_URL=https://sign-in-dev.hmpps.service.justice.gov.uk/auth
 TOKEN_VERIFICATION_API_URL=https://token-verification-api-dev.prison.service.justice.gov.uk
 ACTIVITIES_API_URL=https://activities-api-dev.prison.service.justice.gov.uk
 PRISON_API_URL=https://api-dev.prison.service.justice.gov.uk
+PRISON_REGISTER_API_URL=https://prison-register-dev.hmpps.service.justice.gov.uk
 PRISONER_SEARCH_API_URL=https://prisoner-offender-search-dev.prison.service.justice.gov.uk
 API_CLIENT_ID=<ask the team>
 API_CLIENT_SECRET=<ask the team>
