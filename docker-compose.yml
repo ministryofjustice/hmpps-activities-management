@@ -23,7 +23,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=activities-management
       - POSTGRES_USER=activities-management
-      - POSTGRES_DB=actvities-management-db
+      - POSTGRES_DB=activities-management-db
 
 networks:
   hmpps:
