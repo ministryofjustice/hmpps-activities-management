@@ -1,0 +1,51 @@
+{% extends "partials/layout.njk" %}
+{% from "partials/card.njk" import card %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% set pageTitle = applicationName + " - Spikes" %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-xl">Prison service spike</h1>
+            <h3 class="govuk-heading-l govuk-!-margin-bottom-2">Prison register integration</h3>
+            <p class="govuk-body">
+                <span class="govuk-!-font-weight-bold">Prison Name:</span>
+                {{ prisonDescription.prisonName }}
+            </p>
+
+            <h3 class="govuk-heading-l govuk-!-margin-bottom-2">Prison API integration</h3>
+            <p class="govuk-body">
+                <span class="govuk-!-font-weight-bold">Inmate name:</span>
+                {{ inmateDetail.firstName }} {{ inmateDetail.lastName }}
+            </p>
+
+
+
+            {% set rows = [] %}
+            {% for inmate in inmatesSearchResults %}
+                {% set rows = (rows.push([
+                    {text: inmate.firstName + ' ' + inmate.lastName},
+                    {text: inmate.prisonerNumber}
+                ]), rows) %}
+            {% endfor %}
+
+            {{ govukTable({
+                caption: "Prisoner search API integration",
+                captionClasses: "govuk-table__caption--l govuk-!-padding-top-4",
+                firstCellIsHeader: true,
+                head: [
+                    {
+                        text: "Name"
+                    },
+                    {
+                        text: "Prisoner number"
+                    }
+                ],
+                rows: rows
+            }) }}
+        </div>
+    </div>
+{% endblock %}

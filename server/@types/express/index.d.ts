@@ -1,3 +1,5 @@
+import { HmppsAuthUser } from '../hmppsAuth'
+
 export default {}
 
 declare module 'express-session' {
@@ -23,3 +25,5 @@ export declare global {
     }
   }
 }
+
+export type ServiceUser = Express.User & HmppsAuthUser
