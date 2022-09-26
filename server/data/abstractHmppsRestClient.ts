@@ -102,11 +102,11 @@ export default abstract class AbstractHmppsRestClient {
   }
 
   protected async post<T>(request: SendDataRequest, user?: ServiceUser): Promise<T> {
-    return this.makeRequest(superagent.post(`${this.apiConfig.url}${request.path}`), request, user)
+    return this.makeRequest(superagent.post(`${this.apiConfig.url}${request.path}`).send(request.data), request, user)
   }
 
   protected async put<T>(request: SendDataRequest, user?: ServiceUser): Promise<T> {
-    return this.makeRequest(superagent.put(`${this.apiConfig.url}${request.path}`), request, user)
+    return this.makeRequest(superagent.put(`${this.apiConfig.url}${request.path}`).send(request.data), request, user)
   }
 
   protected async delete<T>(request: Request, user?: ServiceUser): Promise<T> {
