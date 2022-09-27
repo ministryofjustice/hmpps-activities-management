@@ -35,7 +35,19 @@
                         }) }}
                     </div>
                 {% endif %}
-              
+
+                {% if shouldShowAlphaPrisonActivityList %}
+                    <div class="govuk-grid-column-one-third card-group__item">
+                        {{ card({
+                            "id": "alphaActivityListCard",
+                            "href": "/alpha/activity-list/select-activity-location",
+                            "clickable": "true",
+                            "heading": "Show the prison activity list",
+                            "description": "This will display the prison activity list.",
+                            "data-qa": "alpha-activity-list-link"
+                        }) }}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

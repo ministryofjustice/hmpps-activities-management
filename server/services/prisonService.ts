@@ -2,7 +2,7 @@ import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import PrisonRegisterApiClient from '../data/prisonRegisterApiClient'
 import { Prison } from '../@types/prisonRegisterApiImport/types'
-import { InmateDetail } from '../@types/prisonApiImport/types'
+import { InmateDetail, Location } from '../@types/prisonApiImport/types'
 import { Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 
@@ -23,5 +23,9 @@ export default class PrisonService {
 
   async searchInmates(prisonerSearchCriteria: PrisonerSearchCriteria, user: ServiceUser): Promise<Prisoner[]> {
     return this.prisonerSearchApiClient.searchInmates(prisonerSearchCriteria, user)
+  }
+
+  async getActivityLocations(prisonCode: string, date: string, period: string, user: ServiceUser): Promise<Location[]> {
+    return this.prisonApiClient.searchActivityLocations(prisonCode, date, period, user)
   }
 }

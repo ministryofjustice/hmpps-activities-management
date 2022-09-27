@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
 
@@ -21,3 +23,30 @@ export const initialiseName = (fullName?: string): string | null => {
   const array = fullName.split(' ')
   return `${array[0][0]}. ${array.reverse()[0]}`
 }
+
+export const switchDateFormat = (displayDate: string, fromFormat = 'dd/MM/yyyy') => {
+  if (displayDate) {
+    return DateTime.fromFormat(displayDate, fromFormat, { locale: 'en-GB' }).toISODate()
+  }
+  return displayDate
+}
+
+export const getCurrentPeriod = (dt: DateTime): string => {
+  const afternoonSplit = 12
+  const eveningSplit = 17
+  if (dt.hour < afternoonSplit) return 'AM'
+  if (dt.hour < eveningSplit) return 'PM'
+  return 'ED'
+}
+
+export const arrayToQueryString = (array: string[] | number[] | boolean[], key: string): string =>
+  array && array.map(item => `${key}=${encodeURIComponent(item)}`).join('&')
+
+export const mapToQueryString = (params: Record<never, never>): string =>
+  Object.keys(params)
+    .filter(key => params[key])
+    .map(key => {
+      if (Array.isArray(params[key])) return arrayToQueryString(params[key], key)
+      return `${key}=${encodeURIComponent(params[key])}`
+    })
+    .join('&')

@@ -1,7 +1,7 @@
 import config, { ApiConfig } from '../config'
 
 import AbstractHmppsRestClient from './abstractHmppsRestClient'
-import { InmateDetail, PrisonApiUserDetail } from '../@types/prisonApiImport/types'
+import { InmateDetail, PrisonApiUserDetail, Location } from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
 
 export default class PrisonApiClient extends AbstractHmppsRestClient {
@@ -15,5 +15,17 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
 
   async getUser(user: ServiceUser): Promise<PrisonApiUserDetail> {
     return this.get({ path: '/api/users/me', authToken: user.token })
+  }
+
+  async searchActivityLocations(
+    prisonCode: string,
+    date: string,
+    period: string,
+    user: ServiceUser,
+  ): Promise<Location[]> {
+    return this.get({
+      path: `/api/agencies/${prisonCode}/eventLocationsBooked?bookedOnDay=${date}&timeSlot=${period}`,
+      authToken: user.token,
+    })
   }
 }
