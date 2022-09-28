@@ -12,7 +12,7 @@
     "watch-views": "nodemon --watch server/views -e html,njk -x npm run copy-views",
     "watch-node": "DEBUG=gov-starter-server* nodemon --watch dist/ dist/server.js | bunyan -o short",
     "watch-sass": "npm run compile-sass -- --watch",
-    "build": "npm run compile-sass && tsc && npm run copy-views",
+    "build": "rm -rf dist && npm run compile-sass && tsc && npm run copy-views",
     "start": "node $NODE_OPTIONS -r dotenv/config dist/server.js | bunyan -o short",
     "start:dev": "npm run build && concurrently -k -p \"[{name}]\" -n \"Views,TypeScript,Node,Sass\" -c \"yellow.bold,cyan.bold,green.bold,blue.bold\" \"npm run watch-views\" \"npm run watch-ts\" \"npm run watch-node\" \"npm run watch-sass\"",
     "start-feature": "export $(cat feature.env) && node $NODE_DEBUG_OPTION dist/server.js | bunyan -o short",
@@ -99,6 +99,7 @@
     "connect-flash": "^0.1.1",
     "connect-redis": "^6.1.3",
     "csurf": "^1.11.0",
+    "date-fns": "^2.29.3",
     "dotenv": "^16.0.2",
     "eslint-import-resolver-typescript": "^3.5.0",
     "eslint-plugin-no-only-tests": "^3.0.0",
@@ -110,7 +111,6 @@
     "http-errors": "^2.0.0",
     "jquery": "^3.6.1",
     "jwt-decode": "^3.1.2",
-    "luxon": "^3.0.4",
     "nocache": "^3.0.4",
     "nunjucks": "^3.2.3",
     "passport": "^0.6.0",
@@ -123,6 +123,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@jest-mock/express": "^2.0.1",
     "@types/bunyan": "^1.8.8",
     "@types/bunyan-format": "^0.2.5",
     "@types/compression": "^1.7.2",

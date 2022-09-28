@@ -24,7 +24,8 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     user: ServiceUser,
   ): Promise<Location[]> {
     return this.get({
-      path: `/api/agencies/${prisonCode}/eventLocationsBooked?bookedOnDay=${date}&timeSlot=${period}`,
+      path: `/api/agencies/${prisonCode}/eventLocationsBooked`,
+      query: { bookedOnDay: date, timeSlot: period },
       authToken: user.token,
     })
   }

@@ -1,5 +1,4 @@
 import express from 'express'
-import { Settings } from 'luxon'
 
 import path from 'path'
 import createError from 'http-errors'
@@ -22,7 +21,6 @@ import routes from './routes'
 import type { Services } from './services'
 
 export default function createApp(services: Services): express.Application {
-  Settings.defaultLocale = 'en-gb'
   const app = express()
 
   app.set('json spaces', 2)

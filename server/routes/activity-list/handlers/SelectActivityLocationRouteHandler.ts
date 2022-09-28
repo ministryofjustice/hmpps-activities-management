@@ -1,7 +1,10 @@
 import { Request, Response } from 'express'
-import { DateTime } from 'luxon'
-import { switchDateFormat, getCurrentPeriod } from '../../../../utils/utils'
-import PrisonService from '../../../../services/prisonService'
+// eslint-disable-next-line import/no-duplicates
+import { format } from 'date-fns'
+// eslint-disable-next-line import/no-duplicates
+import enGBLocale from 'date-fns/locale/en-GB'
+import { switchDateFormat, getCurrentPeriod } from '../../../utils/utils'
+import PrisonService from '../../../services/prisonService'
 
 export default class SelectActivityLocationRouteHandler {
   constructor(private readonly prisonService: PrisonService) {}
@@ -9,12 +12,12 @@ export default class SelectActivityLocationRouteHandler {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { prisonId } = req.query as Record<string, string>
-    const nowDt = DateTime.now()
-    const bookedOnDay = req.query?.date || nowDt.toLocaleString(DateTime.DATE_SHORT) // moment().format('DD/MM/YYYY')
+    const now = Date.now()
+    const bookedOnDay = req.query?.date || format(now, 'dd/MM/yyyy', { locale: enGBLocale }) // moment().format('DD/MM/YYYY')
     const date = switchDateFormat(bookedOnDay as string)
-    const period = req.query?.period || getCurrentPeriod(nowDt)
+    const period = req.query?.period || getCurrentPeriod(+format(now, 'H', { locale: enGBLocale }))
 
-    const activityLocations = await this.prisonService.getActivityLocations(
+    const activityLocations = await this.prisonService.searchActivityLocations(
       prisonId || 'MDI',
       date,
       period as string,
@@ -30,8 +33,7 @@ export default class SelectActivityLocationRouteHandler {
       period,
       date: bookedOnDay,
       locationDropdownValues,
-      errors: req.flash('errors'),
     }
-    res.render('pages/alpha/activityList/selectActivityLocation', viewContext)
+    res.render('pages/activityList/selectActivityLocation', viewContext)
   }
 }

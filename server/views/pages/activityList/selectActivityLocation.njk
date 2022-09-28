@@ -1,8 +1,8 @@
-{% extends "partials/layout.njk" %}
+{% extends "../../partials/layout.njk" %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "components/datePicker/datePicker.njk" import datePicker %}
+{% from "../../components/datePicker/datePicker.njk" import datePicker %}
 
 {% set title = "View by activity or appointment location" %}
 
@@ -17,7 +17,7 @@
         }) }}
     {% endif %}
 
-    <form action="/manage-prisoner-whereabouts/select-location" method="POST">
+    <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
         <div class="govuk-grid-row">
@@ -86,4 +86,8 @@
             </div>
         </div>
     </form>
+{% endblock %}
+
+{% block pageScripts %}
+    <script src="/assets/js/select-activity-location.js"></script>
 {% endblock %}

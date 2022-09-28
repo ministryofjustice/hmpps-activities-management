@@ -1,4 +1,7 @@
-import { DateTime } from 'luxon'
+// eslint-disable-next-line import/no-duplicates
+import { parse, formatISO } from 'date-fns'
+// eslint-disable-next-line import/no-duplicates
+import enGBLocale from 'date-fns/locale/en-GB'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -26,27 +29,15 @@ export const initialiseName = (fullName?: string): string | null => {
 
 export const switchDateFormat = (displayDate: string, fromFormat = 'dd/MM/yyyy') => {
   if (displayDate) {
-    return DateTime.fromFormat(displayDate, fromFormat, { locale: 'en-GB' }).toISODate()
+    return formatISO(parse(displayDate, fromFormat, new Date(), { locale: enGBLocale }), { representation: 'date' })
   }
   return displayDate
 }
 
-export const getCurrentPeriod = (dt: DateTime): string => {
+export const getCurrentPeriod = (hour: number): string => {
   const afternoonSplit = 12
   const eveningSplit = 17
-  if (dt.hour < afternoonSplit) return 'AM'
-  if (dt.hour < eveningSplit) return 'PM'
+  if (hour < afternoonSplit) return 'AM'
+  if (hour < eveningSplit) return 'PM'
   return 'ED'
 }
-
-export const arrayToQueryString = (array: string[] | number[] | boolean[], key: string): string =>
-  array && array.map(item => `${key}=${encodeURIComponent(item)}`).join('&')
-
-export const mapToQueryString = (params: Record<never, never>): string =>
-  Object.keys(params)
-    .filter(key => params[key])
-    .map(key => {
-      if (Array.isArray(params[key])) return arrayToQueryString(params[key], key)
-      return `${key}=${encodeURIComponent(params[key])}`
-    })
-    .join('&')
