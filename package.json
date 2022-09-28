@@ -136,7 +136,6 @@
     "@types/jest": "^28.1.7",
     "@types/jest-when": "^3.5.2",
     "@types/jsonwebtoken": "^8.5.9",
-    "@types/luxon": "^3.0.1",
     "@types/node": "^16.11.39",
     "@types/nunjucks": "^3.2.1",
     "@types/passport": "^1.0.10",
