@@ -1,3 +1,8 @@
+// eslint-disable-next-line import/no-duplicates
+import { parse, formatISO } from 'date-fns'
+// eslint-disable-next-line import/no-duplicates
+import enGBLocale from 'date-fns/locale/en-GB'
+
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
 
@@ -20,4 +25,19 @@ export const initialiseName = (fullName?: string): string | null => {
 
   const array = fullName.split(' ')
   return `${array[0][0]}. ${array.reverse()[0]}`
+}
+
+export const switchDateFormat = (displayDate: string, fromFormat = 'dd/MM/yyyy') => {
+  if (displayDate) {
+    return formatISO(parse(displayDate, fromFormat, new Date(), { locale: enGBLocale }), { representation: 'date' })
+  }
+  return displayDate
+}
+
+export const getCurrentPeriod = (hour: number): string => {
+  const afternoonSplit = 12
+  const eveningSplit = 17
+  if (hour < afternoonSplit) return 'AM'
+  if (hour < eveningSplit) return 'PM'
+  return 'ED'
 }

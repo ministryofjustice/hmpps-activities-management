@@ -21,6 +21,7 @@ describe('Route Handlers - Home', () => {
         expect(res.render).toHaveBeenCalledWith('pages/index', {
           shouldShowCreateActivityCard: true,
           shouldShowPrisonCalendarCard: true,
+          shouldShowAlphaPrisonActivityList: true,
         })
       })
     })

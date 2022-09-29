@@ -9,6 +9,7 @@ export default class HomeRoutes {
       // shouldShowVaryLicenceCard: hasRole(req.user, AuthRole.RESPONSIBLE_OFFICER),
       shouldShowCreateActivityCard: true,
       shouldShowPrisonCalendarCard: true,
+      shouldShowAlphaPrisonActivityList: true,
     }
     res.render('pages/index', viewContext)
   }
