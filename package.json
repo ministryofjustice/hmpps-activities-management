@@ -113,6 +113,7 @@
     "jwt-decode": "^3.1.2",
     "nocache": "^3.0.4",
     "nunjucks": "^3.2.3",
+    "openapi-typescript": "^5.4.1",
     "passport": "^0.6.0",
     "passport-oauth2": "^1.6.1",
     "prom-client": "^14.1.0",
