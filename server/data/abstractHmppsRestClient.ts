@@ -69,7 +69,7 @@ export default abstract class AbstractHmppsRestClient {
     user: Express.User,
   ): Promise<T> {
     logger.info(
-      `${request.method.toUpperCase()} using admin client credentials: calling ${
+      `${request.method.toUpperCase()} using ${authToken ? 'service' : 'admin'} client credentials: calling ${
         this.name
       }: ${path}?${new URLSearchParams(query).toString()}`,
     )

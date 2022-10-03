@@ -3,7 +3,7 @@ import HmppsAuthClient from '../data/hmppsAuthClient'
 import { ServiceUser } from '../@types/express'
 import { HmppsAuthUser } from '../@types/hmppsAuth'
 import PrisonApiClient from '../data/prisonApiClient'
-import { PrisonApiUserDetail } from '../@types/prisonApiImport/types'
+import { CaseLoad, PrisonApiUserDetail } from '../@types/prisonApiImport/types'
 
 jest.mock('../data/hmppsAuthClient')
 jest.mock('../data/prisonApiClient')
@@ -33,12 +33,17 @@ describe('User service', () => {
 
       expect(hmppsAuthClient.getUser).toHaveBeenCalled()
       expect(prisonApiClient.getUser).not.toHaveBeenCalled()
+      expect(prisonApiClient.getUserCaseLoads).not.toHaveBeenCalled()
       expect(result.displayName).toEqual('John Smith')
     })
 
     it('Retrieves user information from nomis', async () => {
       hmppsAuthClient.getUser.mockResolvedValue({ name: 'john smith' } as HmppsAuthUser)
       prisonApiClient.getUser.mockResolvedValue({ staffId: 1000 } as PrisonApiUserDetail)
+      prisonApiClient.getUserCaseLoads.mockResolvedValue([
+        { caseLoadId: 'MDI', currentlyActive: true },
+        { caseLoadId: 'LEI', currentlyActive: false },
+      ] as CaseLoad[])
 
       user = { ...user, authSource: 'nomis' }
 
@@ -46,8 +51,14 @@ describe('User service', () => {
 
       expect(hmppsAuthClient.getUser).toHaveBeenCalled()
       expect(prisonApiClient.getUser).toHaveBeenCalled()
+      expect(prisonApiClient.getUserCaseLoads).toHaveBeenCalled()
       expect(result.displayName).toEqual('John Smith')
       expect(result.staffId).toEqual(1000)
+      expect(result.allCaseLoads).toEqual([
+        { caseLoadId: 'MDI', currentlyActive: true },
+        { caseLoadId: 'LEI', currentlyActive: false },
+      ])
+      expect(result.activeCaseLoad).toEqual({ caseLoadId: 'MDI', currentlyActive: true })
     })
   })
 })

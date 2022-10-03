@@ -6,7 +6,7 @@ import activityListRoutes from './activity-list/activityListRoutes'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
-  router.use(homeRoutes())
+  router.use(homeRoutes(services))
   router.use(spikeRoutes(services))
   router.use('/activity-list', activityListRoutes(services))
   // Add more routes here
