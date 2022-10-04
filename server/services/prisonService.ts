@@ -39,6 +39,7 @@ export default class PrisonService {
     return this.prisonerSearchApiClient.searchInmates(prisonerSearchCriteria, user)
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   async searchActivityLocations(prisonCode: string, date: string, period: string, user: ServiceUser): Promise<any[]> {
     return this.prisonApiClient.searchActivityLocations(prisonCode, date, period, user)
   }
@@ -49,6 +50,7 @@ export default class PrisonService {
     date: string,
     period: string,
     user: ServiceUser,
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   ): Promise<any[]> {
     // Seems like these 3 calls are only used to get a list of offender numbers which are then used by subsequent calls
     const eventsAtLocationByUsage = await Promise.all([
@@ -119,6 +121,7 @@ export default class PrisonService {
 
       const eventsElsewhereForOffender = eventsElsewhereByOffenderNumber
         .get(event.offenderNo)
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         .sort((left: { startTime: any }, right: { startTime: any }) => sortByDateTime(left.startTime, right.startTime))
       const attendanceInfo = extractAttendanceInfo(attendanceInformation, event)
 

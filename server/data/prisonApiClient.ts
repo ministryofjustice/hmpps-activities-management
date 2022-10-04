@@ -35,6 +35,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     return this.put({ path: '/api/users/me/activeCaseLoad', data, authToken: user.token })
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   async searchActivityLocations(prisonCode: string, date: string, period: string, user: ServiceUser): Promise<any[]> {
     return this.get({
       path: `/api/agencies/${prisonCode}/eventLocationsBooked`,
@@ -49,6 +50,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     period: string,
     includeSuspended: boolean,
     user: ServiceUser,
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   ): Promise<any[]> {
     return this.get({
       path: `/api/schedules/locations/${locationId}/activities`,
@@ -117,6 +119,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   async getSentenceData(offenderNumbers: string[], user: ServiceUser): Promise<any[]> {
     return this.post({
       path: '/api/offender-sentences',
@@ -125,6 +128,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   async getCourtEvents(prisonId: string, date: string, offenderNumbers: string[], user: ServiceUser): Promise<any[]> {
     return this.post({
       path: `/api/schedules/${prisonId}/courtEvents`,
@@ -139,6 +143,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     date: string,
     offenderNumbers: string[],
     user: ServiceUser,
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   ): Promise<any[]> {
     return this.post({
       path: `/api/schedules/${prisonId}/externalTransfers`,

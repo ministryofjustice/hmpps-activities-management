@@ -3,6 +3,7 @@ import { isAfterToday, sortByDateTime } from '../utils/utils'
 import { AttendancesResponse } from '../@types/whereaboutsApiImport/types'
 
 export const offenderNumberMultiMap = (offenderNumbers: string[]) =>
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   offenderNumbers.reduce((map: Map<string, any>, offenderNumber: string) => map.set(offenderNumber, []), new Map())
 
 export const sortActivitiesByEventThenByLastName = (data: PrisonerSchedule[]) => {
@@ -17,6 +18,7 @@ export const sortActivitiesByEventThenByLastName = (data: PrisonerSchedule[]) =>
   })
 }
 
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export const isReleaseScheduled = (releaseScheduledData: any[], offenderNo: string, formattedDate: string) =>
   Boolean(
     releaseScheduledData &&
@@ -50,6 +52,7 @@ const toCourtEvent = (event: CourtEvent) => ({
   ...eventStatusByCode(event.eventStatus),
 })
 
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 const latestCompletedCourtEvent = (events: any[]) => {
   const courtEvents = events
     .filter(event => event.eventStatus === 'COMP')
@@ -81,6 +84,7 @@ export const getOffenderCourtEvents = (courtEvents: CourtEvent[], offenderNo: st
   return scheduledAndExpiredCourtEvents
 }
 
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export const getScheduledTransfers = (transfers: any[], offenderNo: string, isoDate: string) =>
   (transfers &&
     transfers.length &&
@@ -96,6 +100,7 @@ export const getScheduledTransfers = (transfers: any[], offenderNo: string, isoD
 export const isViewableFlag = (code: string): boolean =>
   ['HA', 'XEL', 'PEEP', 'RNO121', 'RCON', 'RCDR', 'URCU', 'UPIU', 'USU', 'URS'].includes(code)
 
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export const selectAlertFlags = (alertData: any[], offenderNumber: string) =>
   (alertData &&
     alertData
@@ -103,6 +108,7 @@ export const selectAlertFlags = (alertData: any[], offenderNumber: string) =>
       .map(alert => alert.alertCode)) ||
   []
 
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export const selectCategory = (assessmentData: any[], offenderNumber: string) => {
   if (!assessmentData) {
     return ''

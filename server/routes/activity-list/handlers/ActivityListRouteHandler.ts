@@ -5,6 +5,7 @@ export default class ActivityListRouteHandler {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { activityList } = res.locals
 
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     const mapToGovukTableRow = (ps: PrisonerSchedule): any => [
       {
         text: `${ps.lastName.charAt(0) + ps.lastName.substring(1).toLowerCase()}, ${
