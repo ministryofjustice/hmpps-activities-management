@@ -1,10 +1,11 @@
-{% extends "../../partials/layout.njk" %}
+{% extends "layout.njk" %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "../../components/datePicker/datePicker.njk" import datePicker %}
+{% from "components/datePicker.njk" import datePicker %}
 
 {% set title = "View by activity or appointment location" %}
+{% set backLinkHref = "/" %}
 
 {% block content %}
     <h1 class="govuk-heading-l">{{ title }}</h1>

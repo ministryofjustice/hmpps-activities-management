@@ -111,6 +111,7 @@ const token = () =>
         access_token: createToken(),
         token_type: 'bearer',
         user_name: 'USER1',
+        auth_source: 'nomis',
         expires_in: 599,
         scope: 'read',
         internalUser: true,
@@ -156,7 +157,17 @@ const stubUserRoles = () =>
 export default {
   getSignInUrl,
   stubAuthPing: ping,
-  stubSignIn: (): Promise<[Response, Response, Response, Response, Response, Response]> =>
-    Promise.all([favicon(), redirect(), signOut(), manageDetails(), token(), tokenVerification.stubVerifyToken()]),
-  stubAuthUser: (name = 'john smith'): Promise<[Response, Response]> => Promise.all([stubUser(name), stubUserRoles()]),
+  stubSignIn: (
+    name = 'john smith',
+  ): Promise<[Response, Response, Response, Response, Response, Response, Response, Response]> =>
+    Promise.all([
+      favicon(),
+      redirect(),
+      signOut(),
+      manageDetails(),
+      token(),
+      tokenVerification.stubVerifyToken(),
+      stubUser(name),
+      stubUserRoles(),
+    ]),
 }

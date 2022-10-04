@@ -1,0 +1,40 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Change location" %}
+{% set pageId = 'change-location-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-xl">Change location</h1>
+            <form method="POST" id="changeCaseload">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukSelect({
+                    id: "changeCaseloadSelect",
+                    name: "caseLoadId",
+                    classes: 'govuk-!-width-two-thirds',
+                    label: {
+                        text: "Select active location"
+                    },
+                    items: options | setSelected(user.activeCaseload.caseLoadId) | sort(false, false, 'text')
+                }) }}
+
+                <div class="govuk-button-group govuk-!-padding-top-4">
+                    {{ govukButton({
+                        attributes: {
+                            id: 'btnSubmit'
+                        },
+                        text: "Submit",
+                        preventDoubleClick: true
+                    }) }}
+
+                    <a class="govuk-link js-backlink" href="/">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
