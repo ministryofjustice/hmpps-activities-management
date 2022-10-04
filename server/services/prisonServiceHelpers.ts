@@ -1,4 +1,4 @@
-import { CourtEvent, PrisonerSchedule } from '../@types/prisonApiImport/types'
+import { Assessment, CourtEvent, PrisonerSchedule } from '../@types/prisonApiImport/types'
 import { isAfterToday, sortByDateTime } from '../utils/utils'
 import { AttendancesResponse } from '../@types/whereaboutsApiImport/types'
 
@@ -108,8 +108,7 @@ export const selectAlertFlags = (alertData: any[], offenderNumber: string) =>
       .map(alert => alert.alertCode)) ||
   []
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export const selectCategory = (assessmentData: any[], offenderNumber: string) => {
+export const selectCategory = (assessmentData: Assessment[], offenderNumber: string) => {
   if (!assessmentData) {
     return ''
   }

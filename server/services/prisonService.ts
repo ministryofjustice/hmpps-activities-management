@@ -121,8 +121,9 @@ export default class PrisonService {
 
       const eventsElsewhereForOffender = eventsElsewhereByOffenderNumber
         .get(event.offenderNo)
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        .sort((left: { startTime: any }, right: { startTime: any }) => sortByDateTime(left.startTime, right.startTime))
+        .sort((left: { startTime: string }, right: { startTime: string }) =>
+          sortByDateTime(left.startTime, right.startTime),
+        )
       const attendanceInfo = extractAttendanceInfo(attendanceInformation, event)
 
       return {

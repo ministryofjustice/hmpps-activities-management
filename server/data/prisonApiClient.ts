@@ -2,10 +2,12 @@ import config, { ApiConfig } from '../config'
 
 import AbstractHmppsRestClient from './abstractHmppsRestClient'
 import {
+  CourtEvent,
   InmateDetail,
   PrisonApiUserDetail,
   PrisonerSchedule,
   ScheduledAppointmentDto,
+  TransferEvent,
   CaseLoad,
 } from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
@@ -128,8 +130,12 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  async getCourtEvents(prisonId: string, date: string, offenderNumbers: string[], user: ServiceUser): Promise<any[]> {
+  async getCourtEvents(
+    prisonId: string,
+    date: string,
+    offenderNumbers: string[],
+    user: ServiceUser,
+  ): Promise<CourtEvent[]> {
     return this.post({
       path: `/api/schedules/${prisonId}/courtEvents`,
       query: { date },
@@ -143,8 +149,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     date: string,
     offenderNumbers: string[],
     user: ServiceUser,
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  ): Promise<any[]> {
+  ): Promise<TransferEvent[]> {
     return this.post({
       path: `/api/schedules/${prisonId}/externalTransfers`,
       query: { date },
@@ -161,7 +166,8 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getAssessments(code: string, offenderNumbers: string[], user: ServiceUser): Promise<ScheduledAppointmentDto[]> {
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  async getAssessments(code: string, offenderNumbers: string[], user: ServiceUser): Promise<any[]> {
     return this.post({
       path: `/api/offender-assessments/${code}`,
       data: offenderNumbers,
