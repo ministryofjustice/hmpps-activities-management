@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-duplicates
-import { parse, formatISO } from 'date-fns'
+import { parse, formatISO, isAfter, parseISO } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
 
@@ -40,4 +40,20 @@ export const getCurrentPeriod = (hour: number): string => {
   if (hour < afternoonSplit) return 'AM'
   if (hour < eveningSplit) return 'PM'
   return 'ED'
+}
+
+// Assumes date is iso format yyyy-MM-dd
+// Note we use UTC date times for comparison here - fine as long as both are
+export const isAfterToday = (date: string): boolean => {
+  const dateMidnight = parse(date, 'yyyy-MM-dd', new Date())
+  const now = new Date()
+  const tonightMidnight = now.setHours(24, 0, 0, 0)
+  return isAfter(dateMidnight, tonightMidnight)
+}
+
+export const sortByDateTime = (t1: string, t2: string): number => {
+  if (t1 && t2) return parseISO(t1).getTime() - parseISO(t2).getTime()
+  if (t1) return -1
+  if (t2) return 1
+  return 0
 }

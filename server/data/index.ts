@@ -12,6 +12,7 @@ import HmppsAuthClient from './hmppsAuthClient'
 import PrisonApiClient from './prisonApiClient'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
 import PrisonRegisterApiClient from './prisonRegisterApiClient'
+import WhereaboutsApiClient from './whereaboutsApiClient'
 
 export default function dataAccess() {
   return {
@@ -19,5 +20,6 @@ export default function dataAccess() {
     prisonApiClient: new PrisonApiClient(),
     prisonerSearchApiClient: new PrisonerSearchApiClient(),
     prisonRegisterApiClient: new PrisonRegisterApiClient(),
+    whereaboutsApiClient: new WhereaboutsApiClient(),
   }
 }

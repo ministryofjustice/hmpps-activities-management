@@ -9,6 +9,7 @@ declare module 'express-session' {
     returnTo: string
     nowInMinutes: number
     user: ServiceUser
+    data: any
   }
 }
 

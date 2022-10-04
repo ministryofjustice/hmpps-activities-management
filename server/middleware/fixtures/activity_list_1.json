@@ -1,0 +1,34 @@
+[
+  {
+    "offenderNo": "G9714UJ",
+    "eventId": 483927203,
+    "bookingId": 1040118,
+    "locationId": 10003,
+    "firstName": "JIM",
+    "lastName": "BEAM",
+    "cellLocation": "MDI-2-2-025",
+    "event": "PA",
+    "eventDescription": "Prison Activities",
+    "comment": "Gym AM",
+    "startTime": "2022-10-04T08:30:00",
+    "endTime": "2022-10-04T11:45:00",
+    "paid": false,
+    "suspended": false
+  },
+  {
+    "offenderNo": "G2680UD",
+    "eventId": 483927205,
+    "bookingId": 1141000,
+    "locationId": 10003,
+    "firstName": "JACK",
+    "lastName": "DANIELS",
+    "cellLocation": "MDI-3-3-030",
+    "event": "PA",
+    "eventDescription": "Prison Activities",
+    "comment": "Gym AM",
+    "startTime": "2022-10-04T08:30:00",
+    "endTime": "2022-10-04T11:45:00",
+    "paid": false,
+    "suspended": false
+  }
+]

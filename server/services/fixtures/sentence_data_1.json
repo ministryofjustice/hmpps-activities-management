@@ -1,0 +1,56 @@
+[
+  {
+    "bookingId": 752093,
+    "offenderNo": "G8785VP",
+    "firstName": "JIM",
+    "lastName": "BEAM",
+    "agencyLocationId": "MDI",
+    "mostRecentActiveBooking": true,
+    "sentenceDetail": {
+      "sentenceExpiryDate": "2021-07-10",
+      "conditionalReleaseDate": "2017-07-05",
+      "licenceExpiryDate": "2021-07-10",
+      "effectiveSentenceEndDate": "2022-11-24",
+      "bookingId": 752093,
+      "sentenceStartDate": "2014-11-07",
+      "nonDtoReleaseDate": "2017-07-05",
+      "sentenceExpiryCalculatedDate": "2021-07-10",
+      "licenceExpiryCalculatedDate": "2021-07-10",
+      "nonDtoReleaseDateType": "CRD",
+      "confirmedReleaseDate": "2017-05-27",
+      "releaseDate": "2017-05-27"
+    },
+    "dateOfBirth": "1961-01-12",
+    "agencyLocationDesc": "Moorland (HMP & YOI)",
+    "internalLocationDesc": "3-3-021",
+    "facialImageId": 3365584
+  },
+  {
+    "bookingId": 1105811,
+    "offenderNo": "G3439UH",
+    "firstName": "JACK",
+    "lastName": "DANIELS",
+    "agencyLocationId": "MDI",
+    "mostRecentActiveBooking": true,
+    "sentenceDetail": {
+      "sentenceExpiryDate": "2018-07-04",
+      "conditionalReleaseDate": "2017-07-25",
+      "licenceExpiryDate": "2018-07-01",
+      "homeDetentionCurfewEligibilityDate": "2017-07-31",
+      "effectiveSentenceEndDate": "2018-07-25",
+      "bookingId": 1105811,
+      "sentenceStartDate": "2016-06-28",
+      "nonDtoReleaseDate": "2017-07-25",
+      "sentenceExpiryCalculatedDate": "2018-07-04",
+      "licenceExpiryCalculatedDate": "2018-07-01",
+      "homeDetentionCurfewEligibilityCalculatedDate": "2017-07-31",
+      "nonDtoReleaseDateType": "CRD",
+      "confirmedReleaseDate": "2017-06-09",
+      "releaseDate": "2017-06-09"
+    },
+    "dateOfBirth": "1985-07-19",
+    "agencyLocationDesc": "Moorland (HMP & YOI)",
+    "internalLocationDesc": "3-3-006",
+    "facialImageId": 3719302
+  }
+]

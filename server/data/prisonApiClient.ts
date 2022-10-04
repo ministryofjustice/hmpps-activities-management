@@ -1,7 +1,13 @@
 import config, { ApiConfig } from '../config'
 
 import AbstractHmppsRestClient from './abstractHmppsRestClient'
-import { InmateDetail, PrisonApiUserDetail, Location, CaseLoad } from '../@types/prisonApiImport/types'
+import {
+  InmateDetail,
+  PrisonApiUserDetail,
+  PrisonerSchedule,
+  ScheduledAppointmentDto,
+  CaseLoad,
+} from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
 
 export default class PrisonApiClient extends AbstractHmppsRestClient {
@@ -29,15 +35,131 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     return this.put({ path: '/api/users/me/activeCaseLoad', data, authToken: user.token })
   }
 
-  async searchActivityLocations(
-    prisonCode: string,
-    date: string,
-    period: string,
-    user: ServiceUser,
-  ): Promise<Location[]> {
+  async searchActivityLocations(prisonCode: string, date: string, period: string, user: ServiceUser): Promise<any[]> {
     return this.get({
       path: `/api/agencies/${prisonCode}/eventLocationsBooked`,
       query: { bookedOnDay: date, timeSlot: period },
+      authToken: user.token,
+    })
+  }
+
+  async getActivitiesAtLocation(
+    locationId: string,
+    date: string,
+    period: string,
+    includeSuspended: boolean,
+    user: ServiceUser,
+  ): Promise<any[]> {
+    return this.get({
+      path: `/api/schedules/locations/${locationId}/activities`,
+      query: { date, timeSlot: period, includeSuspended: includeSuspended ? 'true' : 'false' },
+      authToken: user.token,
+    })
+  }
+
+  async getActivityList(
+    prisonId: string,
+    locationId: string,
+    date: string,
+    period: string,
+    usage: string,
+    user: ServiceUser,
+  ): Promise<PrisonerSchedule[]> {
+    return this.get({
+      path: `/api/schedules/${prisonId}/locations/${locationId}/usage/${usage}`,
+      query: { date, timeSlot: period },
+      authToken: user.token,
+    })
+  }
+
+  async getVisits(
+    prisonId: string,
+    date: string,
+    period: string,
+    offenderNumbers: string[],
+    user: ServiceUser,
+  ): Promise<ScheduledAppointmentDto[]> {
+    return this.post({
+      path: `/api/schedules/${prisonId}/visits`,
+      query: { date, timeSlot: period },
+      data: offenderNumbers,
+      authToken: user.token,
+    })
+  }
+
+  async getAppointments(
+    prisonId: string,
+    date: string,
+    period: string,
+    offenderNumbers: string[],
+    user: ServiceUser,
+  ): Promise<ScheduledAppointmentDto[]> {
+    return this.post({
+      path: `/api/schedules/${prisonId}/appointments`,
+      query: { date, timeSlot: period },
+      data: offenderNumbers,
+      authToken: user.token,
+    })
+  }
+
+  async getActivities(
+    prisonId: string,
+    date: string,
+    period: string,
+    offenderNumbers: string[],
+    user: ServiceUser,
+  ): Promise<ScheduledAppointmentDto[]> {
+    return this.post({
+      path: `/api/schedules/${prisonId}/activities`,
+      query: { date, timeSlot: period },
+      data: offenderNumbers,
+      authToken: user.token,
+    })
+  }
+
+  async getSentenceData(offenderNumbers: string[], user: ServiceUser): Promise<any[]> {
+    return this.post({
+      path: '/api/offender-sentences',
+      data: offenderNumbers,
+      authToken: user.token,
+    })
+  }
+
+  async getCourtEvents(prisonId: string, date: string, offenderNumbers: string[], user: ServiceUser): Promise<any[]> {
+    return this.post({
+      path: `/api/schedules/${prisonId}/courtEvents`,
+      query: { date },
+      data: offenderNumbers,
+      authToken: user.token,
+    })
+  }
+
+  async getExternalTransfers(
+    prisonId: string,
+    date: string,
+    offenderNumbers: string[],
+    user: ServiceUser,
+  ): Promise<any[]> {
+    return this.post({
+      path: `/api/schedules/${prisonId}/externalTransfers`,
+      query: { date },
+      data: offenderNumbers,
+      authToken: user.token,
+    })
+  }
+
+  async getAlerts(prisonId: string, offenderNumbers: string[], user: ServiceUser): Promise<ScheduledAppointmentDto[]> {
+    return this.post({
+      path: `/api/bookings/offenderNo/${prisonId}/alerts`,
+      data: offenderNumbers,
+      authToken: user.token,
+    })
+  }
+
+  async getAssessments(code: string, offenderNumbers: string[], user: ServiceUser): Promise<ScheduledAppointmentDto[]> {
+    return this.post({
+      path: `/api/offender-assessments/${code}`,
+      data: offenderNumbers,
       authToken: user.token,
     })
   }
