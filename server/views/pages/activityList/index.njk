@@ -12,47 +12,41 @@
     <div class="page-content">
         <div class="results-activity">
 
-        <div>
-            <a href="/activity-list/select-activity-location" class="govuk-link">
-                Select another activity or appointment location</a>
-        </div>
+            <div>
+                <a href="/activity-list/select-activity-location" class="govuk-link">
+                    Select another activity or appointment location</a>
+            </div>
 
-
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Name</th>
+                        <th scope="col" class="govuk-table__header">Location</th>
+                        <th scope="col" class="govuk-table__header">Prison number</th>
+                        <th scope="col" class="govuk-table__header">Relevant alerts</th>
+                        <th scope="col" class="govuk-table__header">Activity</th>
+                        <th scope="col" class="govuk-table__header">Other activities</th>
+                        <th scope="col" class="govuk-table__header">Attended</th>
+                        <th scope="col" class="govuk-table__header">Not attended</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                {% for item in rowData %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">{{ item.name }}</td>
+                        <td class="govuk-table__cell">{{ item.location }}</td>
+                        <td class="govuk-table__cell">{{ item.prisonNumber }}</td>
+                        <td class="govuk-table__cell">{{ item.relevantAlerts }}</td>
+                        <td class="govuk-table__cell">{{ item.activity }}</td>
+                        <td class="govuk-table__cell">{{ item.otherActivities }}</td>
+                        <td class="govuk-table__cell"></td>
+                        <td class="govuk-table__cell"></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
         </div>
     </div>
-    {{ govukTable({
-        attributes: {
-            'data-module': 'moj-sortable-table'
-        },
-        head: [
-            {
-                text: "Name"
-            },
-            {
-                text: "Location"
-            },
-            {
-                text: "Prison number"
-            },
-            {
-                text: "Relevant alerts"
-            },
-            {
-                text: "Activity"
-            },
-            {
-                text: "Other activities"
-            },
-            {
-                text: "Attended"
-            },
-            {
-                text: "Not attended"
-            }
-        ],
-        rows: rowData
-    }) }}
-
 {% endblock %}
 

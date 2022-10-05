@@ -1,12 +1,21 @@
-import { Assessment, CourtEvent, PrisonerSchedule } from '../@types/prisonApiImport/types'
+import { CourtEvent, TransferEvent } from '../@types/prisonApiImport/types'
 import { isAfterToday, sortByDateTime } from '../utils/utils'
 import { AttendancesResponse } from '../@types/whereaboutsApiImport/types'
+import { AttendanceInfo, EventLite, EventStatus } from '../types/dps'
+import {
+  AlertLenient,
+  AssessmentLenient,
+  OffenderSentenceDetailLenient,
+  PrisonerScheduleLenient,
+} from '../types/prisonApiImport'
 
 export const offenderNumberMultiMap = (offenderNumbers: string[]) =>
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  offenderNumbers.reduce((map: Map<string, any>, offenderNumber: string) => map.set(offenderNumber, []), new Map())
+  offenderNumbers.reduce(
+    (map: Map<string, PrisonerScheduleLenient[]>, offenderNumber: string) => map.set(offenderNumber, []),
+    new Map(),
+  )
 
-export const sortActivitiesByEventThenByLastName = (data: PrisonerSchedule[]) => {
+export const sortActivitiesByEventThenByLastName = (data: PrisonerScheduleLenient[]) => {
   data.sort((a, b) => {
     if (a.comment < b.comment) return -1
     if (a.comment > b.comment) return 1
@@ -18,8 +27,11 @@ export const sortActivitiesByEventThenByLastName = (data: PrisonerSchedule[]) =>
   })
 }
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export const isReleaseScheduled = (releaseScheduledData: any[], offenderNo: string, formattedDate: string) =>
+export const isReleaseScheduled = (
+  releaseScheduledData: OffenderSentenceDetailLenient[],
+  offenderNo: string,
+  formattedDate: string,
+) =>
   Boolean(
     releaseScheduledData &&
       releaseScheduledData.length &&
@@ -31,7 +43,7 @@ export const isReleaseScheduled = (releaseScheduledData: any[], offenderNo: stri
       )[0],
   )
 
-const eventStatusByCode = (eventStatusCode: string) => {
+const eventStatusByCode = (eventStatusCode: string): EventStatus => {
   switch (eventStatusCode) {
     case 'SCH':
       return { scheduled: true }
@@ -46,21 +58,18 @@ const eventStatusByCode = (eventStatusCode: string) => {
   }
 }
 
-const toCourtEvent = (event: CourtEvent) => ({
+const toEventLite = (event: CourtEvent): EventLite => ({
   eventId: event.eventId,
   eventDescription: 'Court visit scheduled',
   ...eventStatusByCode(event.eventStatus),
 })
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-const latestCompletedCourtEvent = (events: any[]) => {
+const latestCompletedCourtEvent = (events: CourtEvent[]) => {
   const courtEvents = events
     .filter(event => event.eventStatus === 'COMP')
     .sort((left, right) => sortByDateTime(left.startTime, right.startTime))
-
   const event = courtEvents[courtEvents.length - 1]
-
-  return event && toCourtEvent(event)
+  return event && toEventLite(event)
 }
 
 export const getOffenderCourtEvents = (courtEvents: CourtEvent[], offenderNo: string, formattedDate: string) => {
@@ -74,7 +83,7 @@ export const getOffenderCourtEvents = (courtEvents: CourtEvent[], offenderNo: st
 
   const scheduledAndExpiredCourtEvents = events
     .filter(event => event.eventStatus !== 'COMP')
-    .map(event => toCourtEvent(event))
+    .map(event => toEventLite(event))
 
   const completedEvent = latestCompletedCourtEvent(events)
 
@@ -84,8 +93,7 @@ export const getOffenderCourtEvents = (courtEvents: CourtEvent[], offenderNo: st
   return scheduledAndExpiredCourtEvents
 }
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export const getScheduledTransfers = (transfers: any[], offenderNo: string, isoDate: string) =>
+export const getScheduledTransfers = (transfers: TransferEvent[], offenderNo: string, isoDate: string) =>
   (transfers &&
     transfers.length &&
     transfers
@@ -100,15 +108,17 @@ export const getScheduledTransfers = (transfers: any[], offenderNo: string, isoD
 export const isViewableFlag = (code: string): boolean =>
   ['HA', 'XEL', 'PEEP', 'RNO121', 'RCON', 'RCDR', 'URCU', 'UPIU', 'USU', 'URS'].includes(code)
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export const selectAlertFlags = (alertData: any[], offenderNumber: string) =>
-  (alertData &&
-    alertData
-      .filter(alert => !alert.expired && alert.offenderNo === offenderNumber && isViewableFlag(alert.alertCode))
-      .map(alert => alert.alertCode)) ||
-  []
+export const selectAlertFlags = (alertData: AlertLenient[], offenderNumber: string) => {
+  const alertFlags =
+    (alertData &&
+      alertData
+        .filter(alert => !alert.expired && alert.offenderNo === offenderNumber && isViewableFlag(alert.alertCode))
+        .map(alert => alert.alertCode)) ||
+    []
+  return Array.from(new Set(alertFlags))
+}
 
-export const selectCategory = (assessmentData: Assessment[], offenderNumber: string) => {
+export const selectCategory = (assessmentData: AssessmentLenient[], offenderNumber: string) => {
   if (!assessmentData) {
     return ''
   }
@@ -119,7 +129,10 @@ export const selectCategory = (assessmentData: Assessment[], offenderNumber: str
   return cat.classificationCode
 }
 
-export const extractAttendanceInfo = (attendanceInformation: AttendancesResponse, event: PrisonerSchedule) => {
+export const extractAttendanceInfo = (
+  attendanceInformation: AttendancesResponse,
+  event: PrisonerScheduleLenient,
+): AttendanceInfo => {
   if (attendanceInformation && attendanceInformation.attendances && attendanceInformation.attendances.length > 0) {
     const offenderAttendanceInfo = attendanceInformation.attendances.find(
       attendance => attendance.bookingId === event.bookingId && attendance.eventId === event.eventId,

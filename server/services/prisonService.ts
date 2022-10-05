@@ -18,6 +18,8 @@ import {
 } from './prisonServiceHelpers'
 import { sortByDateTime } from '../utils/utils'
 import { AttendancesResponse } from '../@types/whereaboutsApiImport/types'
+import { LocationLenient } from '../types/prisonApiImport'
+import { ActivityByLocation, OffenderData } from '../types/dps'
 
 export default class PrisonService {
   constructor(
@@ -39,8 +41,12 @@ export default class PrisonService {
     return this.prisonerSearchApiClient.searchInmates(prisonerSearchCriteria, user)
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  async searchActivityLocations(prisonCode: string, date: string, period: string, user: ServiceUser): Promise<any[]> {
+  async searchActivityLocations(
+    prisonCode: string,
+    date: string,
+    period: string,
+    user: ServiceUser,
+  ): Promise<LocationLenient[]> {
     return this.prisonApiClient.searchActivityLocations(prisonCode, date, period, user)
   }
 
@@ -50,8 +56,7 @@ export default class PrisonService {
     date: string,
     period: string,
     user: ServiceUser,
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  ): Promise<any[]> {
+  ): Promise<ActivityByLocation[]> {
     // Seems like these 3 calls are only used to get a list of offender numbers which are then used by subsequent calls
     const eventsAtLocationByUsage = await Promise.all([
       this.prisonApiClient.getActivitiesAtLocation(locationId, date, period, true, user),
@@ -84,16 +89,19 @@ export default class PrisonService {
       this.prisonApiClient.getAssessments('CATEGORY', offenderNumbers, user),
     ])
 
-    const externalEventsForOffenderNumbers = offenderNumbers.reduce((map, offenderNumber) => {
-      const offenderData = {
-        releaseScheduled: isReleaseScheduled(releaseScheduleData, offenderNumber, date),
-        courtEvents: getOffenderCourtEvents(courtEventData, offenderNumber, date),
-        scheduledTransfers: getScheduledTransfers(transferData, offenderNumber, date),
-        alertFlags: selectAlertFlags(alertData, offenderNumber),
-        category: selectCategory(assessmentData, offenderNumber),
-      }
-      return map.set(offenderNumber, offenderData)
-    }, new Map())
+    const externalEventsForOffenderNumbers: Map<string, OffenderData> = offenderNumbers.reduce(
+      (map, offenderNumber) => {
+        const offenderData: OffenderData = {
+          releaseScheduled: isReleaseScheduled(releaseScheduleData, offenderNumber, date),
+          courtEvents: getOffenderCourtEvents(courtEventData, offenderNumber, date),
+          scheduledTransfers: getScheduledTransfers(transferData, offenderNumber, date),
+          alertFlags: selectAlertFlags(alertData, offenderNumber),
+          category: selectCategory(assessmentData, offenderNumber),
+        }
+        return map.set(offenderNumber, offenderData)
+      },
+      new Map(),
+    )
 
     const eventsForOffenderNumbersResults: ScheduledAppointmentDto[][] = await Promise.all([
       this.prisonApiClient.getVisits(prisonId, date, period, offenderNumbers, user),

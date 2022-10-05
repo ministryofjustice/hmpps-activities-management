@@ -27,16 +27,30 @@ describe('activityListRouteHandler', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activityList/index', {
         rowData: [
-          [
-            { text: 'Beam, Jim', attributes: { 'data-sort-value': 'BEAM' } },
-            { text: 'MDI-2-2-025' },
-            { text: 'G9714UJ' },
-          ],
-          [
-            { text: 'Daniels, Jack', attributes: { 'data-sort-value': 'DANIELS' } },
-            { text: 'MDI-3-3-030' },
-            { text: 'G2680UD' },
-          ],
+          {
+            name: 'Colt, Barnett',
+            location: 'MDI-2-1-035',
+            prisonNumber: 'G3577UD',
+            relevantAlerts: '',
+            activity: '15:00 -  Res1 Elderly Tues 15.00 Wed /Fri 10.00',
+            otherActivities: '13:15 - 16:15 - PICTA PM',
+          },
+          {
+            name: 'Moragne, Berke',
+            location: 'MDI-2-3-008',
+            prisonNumber: 'G5824GU',
+            relevantAlerts: '',
+            activity: '15:00 -  Res1 Elderly Tues 15.00 Wed /Fri 10.00',
+            otherActivities: '13:15 - 16:15 - ED1-Rm1 L1/Num PM',
+          },
+          {
+            name: 'Raygoza, Bard',
+            location: 'MDI-2-1-031',
+            prisonNumber: 'G9318UI',
+            relevantAlerts: 'PEEP',
+            activity: '15:00 -  Res1 Elderly Tues 15.00 Wed /Fri 10.00',
+            otherActivities: '13:15 - 16:15 - Tailors PM',
+          },
         ],
       })
     })

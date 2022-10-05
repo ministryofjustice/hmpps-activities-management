@@ -57,7 +57,7 @@ describe('fetchActivityList', () => {
     await fetchActivityList(prisonService)(req, res, next)
 
     expect(res.locals.activityName).toEqual('Gym')
-    expect(res.locals.activityList.length).toEqual(2)
+    expect(res.locals.activityList.length).toEqual(3)
     expect(res.locals.user).toEqual({
       token: 'token',
     })

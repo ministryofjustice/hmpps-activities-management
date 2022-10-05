@@ -1,16 +1,15 @@
 import config, { ApiConfig } from '../config'
 
 import AbstractHmppsRestClient from './abstractHmppsRestClient'
-import {
-  CourtEvent,
-  InmateDetail,
-  PrisonApiUserDetail,
-  PrisonerSchedule,
-  ScheduledAppointmentDto,
-  TransferEvent,
-  CaseLoad,
-} from '../@types/prisonApiImport/types'
+import { CourtEvent, InmateDetail, PrisonApiUserDetail, TransferEvent, CaseLoad } from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
+import {
+  AlertLenient,
+  AssessmentLenient,
+  LocationLenient,
+  PrisonerScheduleLenient,
+  OffenderSentenceDetailLenient,
+} from '../types/prisonApiImport'
 
 export default class PrisonApiClient extends AbstractHmppsRestClient {
   constructor() {
@@ -37,8 +36,12 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     return this.put({ path: '/api/users/me/activeCaseLoad', data, authToken: user.token })
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  async searchActivityLocations(prisonCode: string, date: string, period: string, user: ServiceUser): Promise<any[]> {
+  async searchActivityLocations(
+    prisonCode: string,
+    date: string,
+    period: string,
+    user: ServiceUser,
+  ): Promise<LocationLenient[]> {
     return this.get({
       path: `/api/agencies/${prisonCode}/eventLocationsBooked`,
       query: { bookedOnDay: date, timeSlot: period },
@@ -52,8 +55,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     period: string,
     includeSuspended: boolean,
     user: ServiceUser,
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  ): Promise<any[]> {
+  ): Promise<PrisonerScheduleLenient[]> {
     return this.get({
       path: `/api/schedules/locations/${locationId}/activities`,
       query: { date, timeSlot: period, includeSuspended: includeSuspended ? 'true' : 'false' },
@@ -68,7 +70,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     period: string,
     usage: string,
     user: ServiceUser,
-  ): Promise<PrisonerSchedule[]> {
+  ): Promise<PrisonerScheduleLenient[]> {
     return this.get({
       path: `/api/schedules/${prisonId}/locations/${locationId}/usage/${usage}`,
       query: { date, timeSlot: period },
@@ -82,7 +84,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     period: string,
     offenderNumbers: string[],
     user: ServiceUser,
-  ): Promise<ScheduledAppointmentDto[]> {
+  ): Promise<PrisonerScheduleLenient[]> {
     return this.post({
       path: `/api/schedules/${prisonId}/visits`,
       query: { date, timeSlot: period },
@@ -97,7 +99,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     period: string,
     offenderNumbers: string[],
     user: ServiceUser,
-  ): Promise<ScheduledAppointmentDto[]> {
+  ): Promise<PrisonerScheduleLenient[]> {
     return this.post({
       path: `/api/schedules/${prisonId}/appointments`,
       query: { date, timeSlot: period },
@@ -112,7 +114,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     period: string,
     offenderNumbers: string[],
     user: ServiceUser,
-  ): Promise<ScheduledAppointmentDto[]> {
+  ): Promise<PrisonerScheduleLenient[]> {
     return this.post({
       path: `/api/schedules/${prisonId}/activities`,
       query: { date, timeSlot: period },
@@ -121,8 +123,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  async getSentenceData(offenderNumbers: string[], user: ServiceUser): Promise<any[]> {
+  async getSentenceData(offenderNumbers: string[], user: ServiceUser): Promise<OffenderSentenceDetailLenient[]> {
     return this.post({
       path: '/api/offender-sentences',
       data: offenderNumbers,
@@ -158,7 +159,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getAlerts(prisonId: string, offenderNumbers: string[], user: ServiceUser): Promise<ScheduledAppointmentDto[]> {
+  async getAlerts(prisonId: string, offenderNumbers: string[], user: ServiceUser): Promise<AlertLenient[]> {
     return this.post({
       path: `/api/bookings/offenderNo/${prisonId}/alerts`,
       data: offenderNumbers,
@@ -166,8 +167,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  async getAssessments(code: string, offenderNumbers: string[], user: ServiceUser): Promise<any[]> {
+  async getAssessments(code: string, offenderNumbers: string[], user: ServiceUser): Promise<AssessmentLenient[]> {
     return this.post({
       path: `/api/offender-assessments/${code}`,
       data: offenderNumbers,

@@ -57,3 +57,5 @@ export const sortByDateTime = (t1: string, t2: string): number => {
   if (t2) return 1
   return 0
 }
+
+export const removeBlanks = (array: unknown[]) => array.filter((item: unknown) => !!item)
