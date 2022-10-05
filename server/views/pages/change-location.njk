@@ -14,13 +14,13 @@
             <form method="POST" id="changeCaseload">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukSelect({
-                    id: "changeCaseloadSelect",
+                    id: "changeLocationSelect",
                     name: "caseLoadId",
                     classes: 'govuk-!-width-two-thirds',
                     label: {
                         text: "Select active location"
                     },
-                    items: options | setSelected(user.activeCaseload.caseLoadId) | sort(false, false, 'text')
+                    items: options | setSelected(user.activeCaseLoad.caseLoadId) | sort(false, false, 'text')
                 }) }}
 
                 <div class="govuk-button-group govuk-!-padding-top-4">
