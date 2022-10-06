@@ -29,11 +29,25 @@ export default class SelectActivityLocationRouteHandler {
       value: location.locationId,
     }))
 
+    req.session.data = {
+      activityLocations,
+    }
+
     const viewContext = {
       period,
       date: bookedOnDay,
       locationDropdownValues,
     }
     res.render('pages/activityList/selectActivityLocation', viewContext)
+  }
+
+  POST = async (req: Request, res: Response): Promise<void> => {
+    // validate
+    const params = new URLSearchParams({
+      locationId: req.body.currentLocation,
+      date: encodeURIComponent(switchDateFormat(req.body.date)),
+      period: req.body.period,
+    })
+    return res.redirect(`/activity-list?${params.toString()}`)
   }
 }

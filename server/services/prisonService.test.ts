@@ -1,24 +1,37 @@
 import { when } from 'jest-when'
 import atLeast from '../../jest.setup'
-
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
-import PrisonService from './prisonService'
 import PrisonRegisterApiClient from '../data/prisonRegisterApiClient'
+import WhereaboutsApiClient from '../data/whereaboutsApiClient'
+import PrisonService from './prisonService'
 import { Prison } from '../@types/prisonRegisterApiImport/types'
 import { InmateDetail } from '../@types/prisonApiImport/types'
 import { Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
+import activityLocations from './fixtures/activity_locations_1.json'
+import activitiesAtLocation from './fixtures/activities_at_location_1.json'
+import sentenceData from './fixtures/sentence_data_1.json'
+import alerts from './fixtures/alerts_1.json'
+import assessments from './fixtures/assessments_1.json'
+import activities from './fixtures/activities_1.json'
 
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/prisonerSearchApiClient')
 jest.mock('../data/prisonRegisterApiClient')
+jest.mock('../data/whereaboutsApiClient')
 
 describe('Prison Service', () => {
   const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
   const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
   const prisonRegisterApiClient = new PrisonRegisterApiClient() as jest.Mocked<PrisonRegisterApiClient>
-  const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, prisonRegisterApiClient)
+  const whereaboutsApiClient = new WhereaboutsApiClient() as jest.Mocked<WhereaboutsApiClient>
+  const prisonService = new PrisonService(
+    prisonApiClient,
+    prisonerSearchApiClient,
+    prisonRegisterApiClient,
+    whereaboutsApiClient,
+  )
 
   const user = {} as ServiceUser
 
@@ -59,6 +72,83 @@ describe('Prison Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(prisonerSearchApiClient.searchInmates).toHaveBeenCalledWith(searchCriteria, user)
+    })
+  })
+
+  describe('searchActivityLocations', () => {
+    it('should search activity locations using prisoner search API', async () => {
+      when(prisonApiClient.searchActivityLocations).calledWith(atLeast('10001')).mockResolvedValue(activityLocations)
+      const locations = await prisonService.searchActivityLocations('EDI', '10001', '2022-08-01', user)
+      expect(locations.length).toEqual(3)
+      expect(prisonApiClient.searchActivityLocations).toHaveBeenCalledWith('EDI', '10001', '2022-08-01', user)
+    })
+  })
+
+  describe('searchActivities', () => {
+    it('should search activity locations using prisoner search API', async () => {
+      when(prisonApiClient.getActivitiesAtLocation)
+        .calledWith(atLeast('10001'))
+        .mockResolvedValueOnce(activitiesAtLocation)
+      when(prisonApiClient.getActivityList).calledWith(atLeast('10001')).mockResolvedValueOnce([])
+      when(prisonApiClient.getActivityList).calledWith(atLeast('10001')).mockResolvedValueOnce([])
+      when(whereaboutsApiClient.getAttendance).calledWith(atLeast('10001')).mockResolvedValueOnce({})
+      when(prisonApiClient.getSentenceData)
+        .calledWith(atLeast(['G8785VP', 'G3439UH']))
+        .mockResolvedValueOnce(sentenceData)
+      when(prisonApiClient.getCourtEvents)
+        .calledWith(atLeast(['G8785VP', 'G3439UH']))
+        .mockResolvedValueOnce([])
+      when(prisonApiClient.getExternalTransfers)
+        .calledWith(atLeast(['G8785VP', 'G3439UH']))
+        .mockResolvedValueOnce([])
+      when(prisonApiClient.getAlerts)
+        .calledWith(atLeast(['G8785VP', 'G3439UH']))
+        .mockResolvedValueOnce(alerts)
+      when(prisonApiClient.getAssessments)
+        .calledWith(atLeast(['G8785VP', 'G3439UH']))
+        .mockResolvedValueOnce(assessments)
+      when(prisonApiClient.getVisits)
+        .calledWith(atLeast(['G8785VP', 'G3439UH']))
+        .mockResolvedValueOnce([])
+      when(prisonApiClient.getAppointments)
+        .calledWith(atLeast(['G8785VP', 'G3439UH']))
+        .mockResolvedValueOnce([])
+      when(prisonApiClient.getActivities)
+        .calledWith(atLeast(['G8785VP', 'G3439UH']))
+        .mockResolvedValueOnce(activities)
+
+      const results = await prisonService.searchActivities('MDI', '10001', '2022-08-01', 'AM', user)
+
+      expect(results.length).toEqual(2)
+      expect(prisonApiClient.getActivitiesAtLocation).toHaveBeenCalledWith('10001', '2022-08-01', 'AM', true, user)
+      expect(prisonApiClient.getActivityList).toHaveBeenCalledWith('MDI', '10001', '2022-08-01', 'AM', 'VISIT', user)
+      expect(prisonApiClient.getActivityList).toHaveBeenCalledWith('MDI', '10001', '2022-08-01', 'AM', 'APP', user)
+      expect(whereaboutsApiClient.getAttendance).toHaveBeenCalledWith('MDI', '10001', '2022-08-01', 'AM', user)
+      expect(prisonApiClient.getSentenceData).toHaveBeenCalledWith(['G8785VP', 'G3439UH'], user)
+      expect(prisonApiClient.getCourtEvents).toHaveBeenCalledWith('MDI', '2022-08-01', ['G8785VP', 'G3439UH'], user)
+      expect(prisonApiClient.getExternalTransfers).toHaveBeenCalledWith(
+        'MDI',
+        '2022-08-01',
+        ['G8785VP', 'G3439UH'],
+        user,
+      )
+      expect(prisonApiClient.getAlerts).toHaveBeenCalledWith('MDI', ['G8785VP', 'G3439UH'], user)
+      expect(prisonApiClient.getAssessments).toHaveBeenCalledWith('CATEGORY', ['G8785VP', 'G3439UH'], user)
+      expect(prisonApiClient.getVisits).toHaveBeenCalledWith('MDI', '2022-08-01', 'AM', ['G8785VP', 'G3439UH'], user)
+      expect(prisonApiClient.getAppointments).toHaveBeenCalledWith(
+        'MDI',
+        '2022-08-01',
+        'AM',
+        ['G8785VP', 'G3439UH'],
+        user,
+      )
+      expect(prisonApiClient.getActivities).toHaveBeenCalledWith(
+        'MDI',
+        '2022-08-01',
+        'AM',
+        ['G8785VP', 'G3439UH'],
+        user,
+      )
     })
   })
 })

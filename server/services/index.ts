@@ -3,11 +3,17 @@ import UserService from './userService'
 import PrisonService from './prisonService'
 
 export default function services() {
-  const { hmppsAuthClient, prisonRegisterApiClient, prisonApiClient, prisonerSearchApiClient } = dataAccess()
+  const { hmppsAuthClient, prisonRegisterApiClient, prisonApiClient, prisonerSearchApiClient, whereaboutsApiClient } =
+    dataAccess()
 
   return {
     userService: new UserService(hmppsAuthClient, prisonApiClient),
-    prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, prisonRegisterApiClient),
+    prisonService: new PrisonService(
+      prisonApiClient,
+      prisonerSearchApiClient,
+      prisonRegisterApiClient,
+      whereaboutsApiClient,
+    ),
   }
 }
 

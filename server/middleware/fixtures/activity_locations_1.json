@@ -1,0 +1,17 @@
+[
+  {
+    "locationId": 10001,
+    "description": "ACTIVITY HUB LIST",
+    "userDescription": "Activity Hub List"
+  },
+  {
+    "locationId": 10002,
+    "description": "CHAPEL",
+    "userDescription": "Chapel"
+  },
+  {
+    "locationId": 10003,
+    "description": "GYM",
+    "userDescription": "Gym"
+  }
+]

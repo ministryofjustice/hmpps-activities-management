@@ -7,187 +7,46 @@
 
 {% block content %}
 
-    {{ govukTable({
-        attributes: {
-            'data-module': 'moj-sortable-table'
-        },
-        head: [
-            {
-                text: "Name",
-                attributes: {
-                "aria-sort": "ascending"
-            }
-            },
-            {
-                text: "Elevation",
-                attributes: {
-                "aria-sort": "none"
-            }
-            },
-            {
-                text: "Continent",
-                attributes: {
-                "aria-sort": "none"
-            }
-            },
-            {
-                text: "First summit",
-                attributes: {
-                "aria-sort": "none"
-            },
-                format: "numeric"
-            }
-        ],
-        rows: [
-            [
-                {
-                    text: "Aconcagua"
-                },
-                {
-                    text: "6,961 meters",
-                    attributes: {
-                    "data-sort-value": "6961"
-                }
-                },
-                {
-                    text: "South America"
-                },
-                {
-                    text: "1897",
-                    format: "numeric",
-                    attributes: {
-                    "data-sort-value": "1897"
-                }
-                }
-            ],
-            [
-                {
-                    text: "Denali"
-                },
-                {
-                    text: "6,194 meters",
-                    attributes: {
-                    "data-sort-value": "6194"
-                }
-                },
-                {
-                    text: "North America"
-                },
-                {
-                    text: "1913",
-                    format: "numeric",
-                    attributes: {
-                    "data-sort-value": "1913"
-                }
-                }
-            ],
-            [
-                {
-                    text: "Elbrus"
-                },
-                {
-                    text: "5,642 meters",
-                    attributes: {
-                    "data-sort-value": "5642"
-                }
-                },
-                {
-                    text: "Europe"
-                },
-                {
-                    text: "1874",
-                    format: "numeric",
-                    attributes: {
-                    "data-sort-value": "1874"
-                }
-                }
-            ],
-            [
-                {
-                    text: "Everest"
-                },
-                {
-                    text: "8,850 meters",
-                    attributes: {
-                    "data-sort-value": "8850"
-                }
-                },
-                {
-                    text: "Asia"
-                },
-                {
-                    text: "1953",
-                    format: "numeric",
-                    attributes: {
-                    "data-sort-value": "1953"
-                }
-                }
-            ],
-            [
-                {
-                    text: "Kilimanjaro"
-                },
-                {
-                    text: "5,895 meters",
-                    attributes: {
-                    "data-sort-value": "5895"
-                }
-                },
-                {
-                    text: "Africa"
-                },
-                {
-                    text: "1889",
-                    format: "numeric",
-                    attributes: {
-                    "data-sort-value": "1889"
-                }
-                }
-            ],
-            [
-                {
-                    text: "Puncak Jaya"
-                },
-                {
-                    text: "4,884 meters",
-                    attributes: {
-                    "data-sort-value": "4884"
-                }
-                },
-                {
-                    text: "Australia"
-                },
-                {
-                    text: "1962",
-                    format: "numeric",
-                    attributes: {
-                    "data-sort-value": "1962"
-                }
-                }
-            ],
-            [
-                {
-                    text: "Vinson"
-                },
-                {
-                    text: "4,897 meters",
-                    attributes: {
-                    "data-sort-value": "4897"
-                }
-                },
-                {
-                    text: "Antarctica"
-                },
-                {
-                    text: "1966",
-                    format: "numeric",
-                    attributes: {
-                    "data-sort-value": "1966"
-                }
-                }
-            ]
-        ]
-    }) }}
+    <h1 class="govuk-heading-l">{{ activityName }}</h1>
 
+    <div class="page-content">
+        <div class="results-activity">
+
+            <div>
+                <a href="/activity-list/select-activity-location" class="govuk-link">
+                    Select another activity or appointment location</a>
+            </div>
+
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Name</th>
+                        <th scope="col" class="govuk-table__header">Location</th>
+                        <th scope="col" class="govuk-table__header">Prison number</th>
+                        <th scope="col" class="govuk-table__header">Relevant alerts</th>
+                        <th scope="col" class="govuk-table__header">Activity</th>
+                        <th scope="col" class="govuk-table__header">Other activities</th>
+                        <th scope="col" class="govuk-table__header">Attended</th>
+                        <th scope="col" class="govuk-table__header">Not attended</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                {% for item in rowData %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">{{ item.name }}</td>
+                        <td class="govuk-table__cell">{{ item.location }}</td>
+                        <td class="govuk-table__cell">{{ item.prisonNumber }}</td>
+                        <td class="govuk-table__cell">{{ item.relevantAlerts }}</td>
+                        <td class="govuk-table__cell">{{ item.activity }}</td>
+                        <td class="govuk-table__cell">{{ item.otherActivities }}</td>
+                        <td class="govuk-table__cell"></td>
+                        <td class="govuk-table__cell"></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
 {% endblock %}
 

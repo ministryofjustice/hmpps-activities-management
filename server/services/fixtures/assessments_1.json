@@ -1,0 +1,36 @@
+[
+  {
+    "bookingId": 1105811,
+    "offenderNo": "G3439UH",
+    "classificationCode": "C",
+    "classification": "Cat C",
+    "assessmentCode": "CATEGORY",
+    "assessmentDescription": "Categorisation",
+    "cellSharingAlertFlag": false,
+    "assessmentDate": "2016-12-12",
+    "nextReviewDate": "2017-06-10",
+    "approvalDate": "2016-12-12",
+    "assessmentAgencyId": "MDI",
+    "assessmentStatus": "A",
+    "assessmentSeq": 4,
+    "assessorId": 17766,
+    "assessorUser": "MQC55L"
+  },
+  {
+    "bookingId": 752093,
+    "offenderNo": "G8785VP",
+    "classificationCode": "C",
+    "classification": "Cat C",
+    "assessmentCode": "CATEGORY",
+    "assessmentDescription": "Categorisation",
+    "cellSharingAlertFlag": false,
+    "assessmentDate": "2017-02-28",
+    "nextReviewDate": "2017-09-01",
+    "approvalDate": "2017-02-28",
+    "assessmentAgencyId": "MDI",
+    "assessmentStatus": "A",
+    "assessmentSeq": 12,
+    "assessorId": 17763,
+    "assessorUser": "RQQ67S"
+  }
+]

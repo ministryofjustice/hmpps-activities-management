@@ -5,17 +5,25 @@ import SelectActivityLocationRouteHandler from './SelectActivityLocationRouteHan
 import PrisonApiClient from '../../../data/prisonApiClient'
 import PrisonerSearchApiClient from '../../../data/prisonerSearchApiClient'
 import PrisonRegisterApiClient from '../../../data/prisonRegisterApiClient'
+import WhereaboutsApiClient from '../../../data/whereaboutsApiClient'
 
 jest.mock('../../../services/prisonService')
 jest.mock('../../../data/prisonApiClient')
 jest.mock('../../../data/prisonerSearchApiClient')
 jest.mock('../../../data/prisonRegisterApiClient')
+jest.mock('../../../data/whereaboutsApiClient')
 
-describe('Activity list route handler', () => {
+describe('selectActivityLocationRouteHandler', () => {
   const prisonApiClient = new PrisonApiClient()
   const prisonerSearchApiClient = new PrisonerSearchApiClient()
   const prisonRegisterApiClient = new PrisonRegisterApiClient()
-  const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, prisonRegisterApiClient)
+  const whereaboutsApiClient = new WhereaboutsApiClient()
+  const prisonService = new PrisonService(
+    prisonApiClient,
+    prisonerSearchApiClient,
+    prisonRegisterApiClient,
+    whereaboutsApiClient,
+  )
   let controller: SelectActivityLocationRouteHandler
 
   beforeEach(() => {
@@ -23,7 +31,7 @@ describe('Activity list route handler', () => {
     jest.spyOn(Date, 'now').mockImplementation(() => 1595548800000) // Friday, 24 July 2020 00:00:00
   })
 
-  describe('SelectActivityLocationRouteHandler', () => {
+  describe('GET', () => {
     it('should render with current date and period', async () => {
       prisonService.searchActivityLocations = jest.fn().mockResolvedValue([
         {
@@ -31,7 +39,11 @@ describe('Activity list route handler', () => {
           userDescription: 'Location 1',
         },
       ])
-      const req = getMockReq()
+      const req = getMockReq({
+        session: {
+          data: {},
+        },
+      })
       const { res } = getMockRes({
         locals: {
           user: { token: 'token' },
@@ -56,7 +68,13 @@ describe('Activity list route handler', () => {
         },
       ])
 
-      const req = getMockReq({ query: { prisonId: 'HERE', date: '10/12/2020', period: 'ED' } })
+      const req = getMockReq({
+        query: { prisonId: 'HERE', date: '10/12/2020', period: 'ED' },
+        session: {
+          data: {},
+        },
+      })
+
       const { res } = getMockRes({
         locals: {
           user: { token: 'token' },
@@ -71,6 +89,23 @@ describe('Activity list route handler', () => {
         locationDropdownValues: [{ text: 'Location 1', value: 1 }],
         period: 'ED',
       })
+    })
+  })
+
+  describe('POST', () => {
+    it('should redirect', async () => {
+      const req = getMockReq({
+        body: {
+          currentLocation: 'MDI',
+          date: '01/08/2022',
+          period: 'AM',
+        },
+      })
+      const { res } = getMockRes()
+
+      await controller.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/activity-list?locationId=MDI&date=2022-08-01&period=AM')
     })
   })
 })

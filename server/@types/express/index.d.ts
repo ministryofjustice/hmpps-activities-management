@@ -9,6 +9,8 @@ declare module 'express-session' {
     returnTo: string
     nowInMinutes: number
     user: ServiceUser
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    data: any
   }
 }
 
