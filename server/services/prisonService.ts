@@ -15,11 +15,11 @@ import {
   selectCategory,
   sortActivitiesByEventThenByLastName,
   extractAttendanceInfo,
-} from './prisonServiceHelpers'
+} from './prisonServiceHelper'
 import { sortByDateTime } from '../utils/utils'
 import { AttendancesResponse } from '../@types/whereaboutsApiImport/types'
-import { LocationLenient } from '../types/prisonApiImport'
-import { ActivityByLocation, OffenderData } from '../types/dps'
+import { LocationLenient } from '../@types/prisonApiImportCustom'
+import { ActivityByLocation, OffenderData } from '../@types/dps'
 
 export default class PrisonService {
   constructor(

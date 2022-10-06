@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-duplicates
-import { parse, formatISO, isAfter, parseISO } from 'date-fns'
+import { parse, formatISO, isAfter, parseISO, endOfDay } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
 
@@ -43,12 +43,11 @@ export const getCurrentPeriod = (hour: number): string => {
 }
 
 // Assumes date is iso format yyyy-MM-dd
-// Note we use UTC date times for comparison here - fine as long as both are
+// Note we use local date times for comparison here - fine as long as both are
 export const isAfterToday = (date: string): boolean => {
   const dateMidnight = parse(date, 'yyyy-MM-dd', new Date())
-  const now = new Date()
-  const tonightMidnight = now.setHours(24, 0, 0, 0)
-  return isAfter(dateMidnight, tonightMidnight)
+  const endOfToday = endOfDay(new Date())
+  return isAfter(dateMidnight, endOfToday)
 }
 
 export const sortByDateTime = (t1: string, t2: string): number => {

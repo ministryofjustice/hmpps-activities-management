@@ -1,13 +1,13 @@
 import { CourtEvent, TransferEvent } from '../@types/prisonApiImport/types'
 import { isAfterToday, sortByDateTime } from '../utils/utils'
 import { AttendancesResponse } from '../@types/whereaboutsApiImport/types'
-import { AttendanceInfo, EventLite, EventStatus } from '../types/dps'
+import { AttendanceInfo, EventLite, EventStatus } from '../@types/dps'
 import {
   AlertLenient,
   AssessmentLenient,
   OffenderSentenceDetailLenient,
   PrisonerScheduleLenient,
-} from '../types/prisonApiImport'
+} from '../@types/prisonApiImportCustom'
 
 export const offenderNumberMultiMap = (offenderNumbers: string[]) =>
   offenderNumbers.reduce(
@@ -93,7 +93,7 @@ export const getOffenderCourtEvents = (courtEvents: CourtEvent[], offenderNo: st
   return scheduledAndExpiredCourtEvents
 }
 
-export const getScheduledTransfers = (transfers: TransferEvent[], offenderNo: string, isoDate: string) =>
+export const getScheduledTransfers = (transfers: TransferEvent[], offenderNo: string, isoDate: string): EventLite[] =>
   (transfers &&
     transfers.length &&
     transfers

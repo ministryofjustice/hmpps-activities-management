@@ -9,7 +9,7 @@ import {
   LocationLenient,
   PrisonerScheduleLenient,
   OffenderSentenceDetailLenient,
-} from '../types/prisonApiImport'
+} from '../@types/prisonApiImportCustom'
 
 export default class PrisonApiClient extends AbstractHmppsRestClient {
   constructor() {

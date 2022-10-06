@@ -1,4 +1,4 @@
-import { PrisonerScheduleLenient } from './prisonApiImport'
+import { PrisonerScheduleLenient } from './prisonApiImportCustom'
 
 export type NameValueStringPair = {
   name: string

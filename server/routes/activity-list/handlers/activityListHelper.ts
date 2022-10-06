@@ -1,7 +1,7 @@
 import { format, parseISO } from 'date-fns'
 import { removeBlanks } from '../../../utils/utils'
-import { ActivityByLocation, EventLite } from '../../../types/dps'
-import { PrisonerScheduleLenient } from '../../../types/prisonApiImport'
+import { ActivityByLocation, EventLite } from '../../../@types/dps'
+import { PrisonerScheduleLenient } from '../../../@types/prisonApiImportCustom'
 
 export const shouldShowOtherActivities = (offenderMainEvent: ActivityByLocation): boolean =>
   Boolean(

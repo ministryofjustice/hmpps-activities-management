@@ -5,7 +5,7 @@ import {
   getOtherEventsSummary,
   shouldShowOtherActivities,
 } from './activityListHelper'
-import { ActivityByLocation, ActivityListTableRow } from '../../../types/dps'
+import { ActivityByLocation, ActivityListTableRow } from '../../../@types/dps'
 
 export default class ActivityListRouteHandler {
   GET = async (req: Request, res: Response): Promise<void> => {
