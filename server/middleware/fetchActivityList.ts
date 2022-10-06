@@ -22,7 +22,7 @@ export default (prisonService: PrisonService): RequestHandler => {
       const activityName = getActivityName(activityLocations, req.query.locationId as string)
 
       res.locals.activityList = await prisonService.searchActivities(
-        (req.query.prisonId as string) || 'MDI',
+        user.activeCaseLoad.caseLoadId,
         req.query.locationId as string,
         req.query.date as string,
         req.query.period as string,

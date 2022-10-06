@@ -47,7 +47,7 @@ export type ActivityListTableRow = {
   name: string
   location: string
   prisonNumber: string
-  relevantAlerts: string
+  relevantAlerts: string[]
   activity: string
   otherActivities: string
 }

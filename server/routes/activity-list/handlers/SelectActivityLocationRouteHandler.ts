@@ -11,14 +11,13 @@ export default class SelectActivityLocationRouteHandler {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisonId } = req.query as Record<string, string>
     const now = Date.now()
     const bookedOnDay = req.query?.date || format(now, 'dd/MM/yyyy', { locale: enGBLocale }) // moment().format('DD/MM/YYYY')
     const date = switchDateFormat(bookedOnDay as string)
     const period = req.query?.period || getCurrentPeriod(+format(now, 'H', { locale: enGBLocale }))
 
     const activityLocations = await this.prisonService.searchActivityLocations(
-      prisonId || 'MDI',
+      user.activeCaseLoad.caseLoadId,
       date,
       period as string,
       user,

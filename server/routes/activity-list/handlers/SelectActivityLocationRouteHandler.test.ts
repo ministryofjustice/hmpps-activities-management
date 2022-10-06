@@ -46,13 +46,16 @@ describe('selectActivityLocationRouteHandler', () => {
       })
       const { res } = getMockRes({
         locals: {
-          user: { token: 'token' },
+          user: { token: 'token', activeCaseLoad: { caseLoadId: 'MDI' } },
         },
       })
 
       await controller.GET(req, res)
 
-      expect(prisonService.searchActivityLocations).toHaveBeenCalledWith('MDI', '2020-07-24', 'AM', { token: 'token' })
+      expect(prisonService.searchActivityLocations).toHaveBeenCalledWith('MDI', '2020-07-24', 'AM', {
+        token: 'token',
+        activeCaseLoad: { caseLoadId: 'MDI' },
+      })
       expect(res.render).toHaveBeenCalledWith('pages/activityList/selectActivityLocation', {
         date: '24/07/2020',
         locationDropdownValues: [{ text: 'Location 1', value: 1 }],
@@ -69,7 +72,7 @@ describe('selectActivityLocationRouteHandler', () => {
       ])
 
       const req = getMockReq({
-        query: { prisonId: 'HERE', date: '10/12/2020', period: 'ED' },
+        query: { prisonId: 'MDI', date: '10/12/2020', period: 'ED' },
         session: {
           data: {},
         },
@@ -77,13 +80,16 @@ describe('selectActivityLocationRouteHandler', () => {
 
       const { res } = getMockRes({
         locals: {
-          user: { token: 'token' },
+          user: { token: 'token', activeCaseLoad: { caseLoadId: 'MDI' } },
         },
       })
 
       await controller.GET(req, res)
 
-      expect(prisonService.searchActivityLocations).toHaveBeenCalledWith('HERE', '2020-12-10', 'ED', { token: 'token' })
+      expect(prisonService.searchActivityLocations).toHaveBeenCalledWith('MDI', '2020-12-10', 'ED', {
+        token: 'token',
+        activeCaseLoad: { caseLoadId: 'MDI' },
+      })
       expect(res.render).toHaveBeenCalledWith('pages/activityList/selectActivityLocation', {
         date: '10/12/2020',
         locationDropdownValues: [{ text: 'Location 1', value: 1 }],

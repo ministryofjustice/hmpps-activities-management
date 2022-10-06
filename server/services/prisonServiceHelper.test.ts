@@ -2,7 +2,7 @@ import { addDays, formatISO } from 'date-fns'
 import * as prisonServiceHelper from './prisonServiceHelper'
 import transfers from './fixtures/transfers_1.json'
 
-describe('PrisonServiceHelper', () => {
+describe('prisonServiceHelper', () => {
   describe('getScheduledTransfers', () => {
     it('Success match G10001', async () => {
       const events = prisonServiceHelper.getScheduledTransfers(transfers, 'G10001', '2022-08-01')
