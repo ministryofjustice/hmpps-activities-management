@@ -149,6 +149,7 @@
     "@typescript-eslint/parser": "^5.36.1",
     "axe-core": "^4.4.1",
     "better-npm-audit": "^3.7.3",
+    "cheerio": "^1.0.0-rc.12",
     "concurrently": "^7.3.0",
     "cypress": "^10.7.0",
     "cypress-axe": "^1.0.0",

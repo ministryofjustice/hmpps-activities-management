@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line import/no-duplicates
 import { parse, formatISO, isAfter, parseISO, endOfDay } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
@@ -58,3 +59,37 @@ export const sortByDateTime = (t1: string, t2: string): number => {
 }
 
 export const removeBlanks = (array: unknown[]) => array.filter((item: unknown) => !!item)
+
+export const setSelected = (items: any, selected: any) =>
+  items &&
+  items.map((entry: { value: string }) => ({
+    ...entry,
+    selected: entry && entry.value === selected,
+  }))
+
+export const addDefaultSelectedValue = (items: any, text: any, show: any) => {
+  if (!items) return null
+  const attributes: { hidden?: string } = {}
+  if (!show) attributes.hidden = ''
+
+  return [
+    {
+      text,
+      value: '',
+      selected: true,
+      attributes,
+    },
+    ...items,
+  ]
+}
+
+export const findError = (array: any, formFieldId: any) => {
+  if (!array) return null
+  const item = array.find((error: { href: string }) => error.href === `#${formFieldId}`)
+  if (item) {
+    return {
+      text: item.text,
+    }
+  }
+  return null
+}

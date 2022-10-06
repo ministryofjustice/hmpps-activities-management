@@ -7,25 +7,25 @@
 
 {% block content %}
 
-<div class="grid-row">
+    <div class="grid-row">
         <div class="govuk-grid-column-full">
             <div class="govuk-grid-row card-group">
                 {% if shouldShowCreateActivityCard %}
                     <div class="govuk-grid-column-one-third card-group__item">
-                       {{ card({
+                        {{ card({
                             "id": "createActivityCard",
                             "href": "/licence/create/caseload",
                             "clickable": "true",
                             "heading": "Create or edit a prison activity",
                             "description": "Maintain the scheduled activities in the prison.",
-                            "data-qa": "create-licence-link"
+                            "data-qa": "create-activity-link"
                         }) }}
                     </div>
                 {% endif %}
 
                 {% if shouldShowPrisonCalendarCard %}
                     <div class="govuk-grid-column-one-third card-group__item">
-                       {{ card({
+                        {{ card({
                             "id": "prisonCalendarCard",
                             "href": "/licence/create/caseload",
                             "clickable": "true",
