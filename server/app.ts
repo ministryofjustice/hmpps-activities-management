@@ -1,6 +1,7 @@
 import express from 'express'
 import createError from 'http-errors'
 
+import flash from 'connect-flash'
 import nunjucksSetup from './nunjucks/nunjucksSetup'
 import errorHandler from './errorHandler'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
@@ -30,6 +31,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpHealthChecks())
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
+  app.use(flash())
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
   app.use(setUpAuthentication())

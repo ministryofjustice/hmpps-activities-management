@@ -1,26 +1,29 @@
 {% extends "layout.njk" %}
 
-{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% set pageTitle = applicationName + " - Change location" %}
-{% set pageId = 'change-location-page' %}
+{% set pageTitle = applicationName + " - Spikes" %}
 {% set backLinkHref = "/" %}
 
 {% block content %}
+
+    {% from "govuk/components/input/macro.njk" import govukInput %}
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-xl">Change location</h1>
-            <form method="POST" id="changeCaseload">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukSelect({
-                    id: "changeLocationSelect",
-                    name: "caseLoadId",
+            <h1 class="govuk-heading-xl">Validation spike</h1>
+            <form method="POST">
+                <p>{{ flash }}</p>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ govukInput({
+                    id: "mustNotBeBlank",
+                    name: "mustNotBeBlank",
                     classes: 'govuk-!-width-two-thirds',
                     label: {
-                        text: "Select active location"
+                        text: "Validated string"
                     },
-                    items: options | setSelected(user.activeCaseLoad.caseLoadId) | sort(false, false, 'text')
+                    errorMessage: validationErrors | findError('mustNotBeBlank')
                 }) }}
 
                 <div class="govuk-button-group govuk-!-padding-top-4">

@@ -2,7 +2,7 @@
 {% from "components/card.njk" import card %}
 
 {% set pageTitle = applicationName + " - Home" %}
-{% set mainClasses = "app-container govuk-body" %}
+{% set mainClasses = "govuk-body" %}
 {% set pageId = 'index-page' %}
 
 {% block content %}
@@ -48,6 +48,24 @@
                         }) }}
                     </div>
                 {% endif %}
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "href": "/spikes/prison-service-spike",
+                        "clickable": "true",
+                        "heading": "Spike - Prison service",
+                        "description": "Integration with prison API, prisoner offender search, and prison register API"
+                    }) }}
+                </div>
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "href": "/spikes/validation-spike",
+                        "clickable": "true",
+                        "heading": "Spike - Validation",
+                        "description": "Implementation of a form with validation and error messages"
+                    }) }}
+                </div>
             </div>
         </div>
     </div>
