@@ -33,9 +33,9 @@ describe('fetchActivityList', () => {
     const req = getMockReq({
       query: {
         prisonId: 'EDI',
-        locationId: '10003',
-        date: '2022-08-01',
-        period: 'AM',
+        locationId: '27219',
+        date: '2022-10-05',
+        period: 'PM',
       },
       session: {
         data: {
@@ -43,23 +43,25 @@ describe('fetchActivityList', () => {
         },
         user: {
           token: 'token',
+          activeCaseLoad: { caseLoadId: 'EDI' },
         },
       },
     })
     const { res } = getMockRes({
       locals: {
-        user: { token: 'token' },
+        user: { token: 'token', activeCaseLoad: { caseLoadId: 'EDI' } },
       },
     })
     const next = jest.fn()
-    when(prisonService.searchActivities).calledWith(atLeast('10003')).mockResolvedValueOnce(activityList)
+    when(prisonService.searchActivities).calledWith(atLeast('27219')).mockResolvedValueOnce(activityList)
 
     await fetchActivityList(prisonService)(req, res, next)
 
-    expect(res.locals.activityName).toEqual('Gym')
+    expect(res.locals.activityName).toEqual('Cardio')
     expect(res.locals.activityList.length).toEqual(3)
     expect(res.locals.user).toEqual({
       token: 'token',
+      activeCaseLoad: { caseLoadId: 'EDI' },
     })
     expect(next).toBeCalled()
   })
@@ -76,23 +78,19 @@ describe('fetchActivityList', () => {
         data: {
           activityLocations,
         },
-        user: {
-          token: 'token',
-        },
+        user: { token: 'token', activeCaseLoad: { caseLoadId: 'EDI' } },
       },
     })
     const { res } = getMockRes({
       locals: {
-        user: { token: 'token' },
+        user: { token: 'token', activeCaseLoad: { caseLoadId: 'EDI' } },
       },
     })
     const next = jest.fn()
     when(prisonService.searchActivities).calledWith(atLeast('X')).mockResolvedValueOnce(activityList)
     await fetchActivityList(prisonService)(req, res, next)
     expect(res.locals.activityName).toBeNull()
-    expect(res.locals.user).toEqual({
-      token: 'token',
-    })
+    expect(res.locals.user).toEqual({ token: 'token', activeCaseLoad: { caseLoadId: 'EDI' } })
     expect(next).toBeCalled()
   })
 
@@ -108,14 +106,12 @@ describe('fetchActivityList', () => {
         data: {
           activityLocations,
         },
-        user: {
-          token: 'token',
-        },
+        user: { token: 'token', activeCaseLoad: { caseLoadId: 'EDI' } },
       },
     })
     const { res } = getMockRes({
       locals: {
-        user: { token: 'token' },
+        user: { token: 'token', activeCaseLoad: { caseLoadId: 'EDI' } },
       },
     })
     const error = new Error('Error')

@@ -68,7 +68,7 @@ export const getAlertValues = (alertFlags: string[], category: string) => {
     default:
     // no op
   }
-  return alerts.join(', ')
+  return alerts
 }
 
 const getMainEventDescription = (activity: ActivityByLocation) => {

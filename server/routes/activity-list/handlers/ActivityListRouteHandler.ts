@@ -12,7 +12,7 @@ export default class ActivityListRouteHandler {
     const { activityList } = res.locals
 
     const mapToTableRow = (activity: ActivityByLocation): ActivityListTableRow => {
-      const alertDisplay = getAlertValues(activity.alertFlags, activity.category)
+      const alerts = getAlertValues(activity.alertFlags, activity.category)
       const mainEventSummary = getMainEventSummary(activity)
       const otherEventsSummary = shouldShowOtherActivities(activity) ? getOtherEventsSummary(activity) : ''
 
@@ -22,7 +22,7 @@ export default class ActivityListRouteHandler {
         }`,
         location: activity.cellLocation,
         prisonNumber: activity.offenderNo,
-        relevantAlerts: alertDisplay,
+        relevantAlerts: alerts,
         activity: mainEventSummary,
         otherActivities: otherEventsSummary,
       }

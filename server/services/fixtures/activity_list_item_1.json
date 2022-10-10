@@ -1,0 +1,93 @@
+{
+  "offenderNo": "G3577UD",
+  "eventId": 484055183,
+  "bookingId": 1148278,
+  "locationId": 27219,
+  "firstName": "BARNETT",
+  "lastName": "COLT",
+  "cellLocation": "MDI-2-1-035",
+  "event": "PA",
+  "eventDescription": "Prison Activities",
+  "comment": " Res1 Elderly Tues 15.00 Wed /Fri 10.00",
+  "startTime": "2022-10-05T15:00:00",
+  "endTime": "2022-10-05T16:30:00",
+  "paid": false,
+  "suspended": false,
+  "eventsElsewhere": [
+    {
+      "offenderNo": "G3577UD",
+      "eventId": 484018810,
+      "locationId": 27010,
+      "firstName": "BARNETT",
+      "lastName": "COLT",
+      "cellLocation": "MDI-2-1-035",
+      "event": "PA",
+      "eventDescription": "Prison Activities",
+      "eventLocation": "WORKSHOP 4 - PICTA",
+      "comment": "PICTA PM",
+      "startTime": "2022-10-05T13:15:00",
+      "endTime": "2022-10-05T16:15:00",
+      "paid": false,
+      "excluded": false,
+      "timeSlot": "PM"
+    }
+  ],
+  "courtEvents": [
+    {
+      "eventId": 1,
+      "eventDescription": "description1",
+      "scheduled": true
+    },
+    {
+      "eventId": 2,
+      "eventDescription": "description2",
+      "cancelled": true
+    },
+    {
+      "eventId": 3,
+      "eventDescription": "description3",
+      "expired": true
+    },
+    {
+      "eventId": 4,
+      "eventDescription": "description4",
+      "complete": true
+    },
+    {
+      "eventId": 5,
+      "eventDescription": "description5",
+      "unCheckedStatus": "unchecked"
+    }
+  ],
+  "scheduledTransfers": [
+    {
+      "eventId": 1,
+      "eventDescription": "description1",
+      "scheduled": true
+    },
+    {
+      "eventId": 2,
+      "eventDescription": "description2",
+      "cancelled": true
+    },
+    {
+      "eventId": 3,
+      "eventDescription": "description3",
+      "expired": true
+    },
+    {
+      "eventId": 4,
+      "eventDescription": "description4",
+      "complete": true
+    },
+    {
+      "eventId": 5,
+      "eventDescription": "description5",
+      "unCheckedStatus": "unchecked"
+    }
+  ],
+  "releaseScheduled": true,
+  "alertFlags": [],
+  "category": "C",
+  "attendanceInfo": null
+}

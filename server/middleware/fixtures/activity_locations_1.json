@@ -1,17 +1,207 @@
 [
   {
-    "locationId": 10001,
+    "locationId": 721771,
     "description": "ACTIVITY HUB LIST",
     "userDescription": "Activity Hub List"
   },
   {
-    "locationId": 10002,
+    "locationId": 27187,
+    "description": "ADJ",
+    "userDescription": "Adj"
+  },
+  {
+    "locationId": 27219,
+    "description": "CARDIO",
+    "userDescription": "Cardio"
+  },
+  {
+    "locationId": 26152,
     "description": "CHAPEL",
     "userDescription": "Chapel"
   },
   {
-    "locationId": 10003,
+    "locationId": 197682,
+    "description": "CLASSROOM",
+    "userDescription": "Classroom"
+  },
+  {
+    "locationId": 197683,
+    "description": "EXERCISE",
+    "userDescription": "Exercise"
+  },
+  {
+    "locationId": 26999,
+    "description": "FARMS/GARDENS",
+    "userDescription": "Farms/gardens"
+  },
+  {
+    "locationId": 26149,
     "description": "GYM",
     "userDescription": "Gym"
+  },
+  {
+    "locationId": 27233,
+    "description": "GYM ORDERLY",
+    "userDescription": "Gym Orderly"
+  },
+  {
+    "locationId": 26145,
+    "description": "HEALTH CARE",
+    "userDescription": "Health Care"
+  },
+  {
+    "locationId": 721768,
+    "description": "HOUSEBLOCK 1 WORKERS",
+    "userDescription": "Houseblock 1 Workers"
+  },
+  {
+    "locationId": 721767,
+    "description": "HOUSEBLOCK 2 WORKERS",
+    "userDescription": "Houseblock 2 Workers"
+  },
+  {
+    "locationId": 721766,
+    "description": "HOUSEBLOCK 3 WORKERS",
+    "userDescription": "Houseblock 3 Workers"
+  },
+  {
+    "locationId": 721765,
+    "description": "HOUSEBLOCK 4 WORKERS",
+    "userDescription": "Houseblock 4 Workers"
+  },
+  {
+    "locationId": 721764,
+    "description": "HOUSEBLOCK 5 WORKERS",
+    "userDescription": "Houseblock 5 Workers"
+  },
+  {
+    "locationId": 721763,
+    "description": "HOUSEBLOCK 6 WORKERS",
+    "userDescription": "Houseblock 6 Workers"
+  },
+  {
+    "locationId": 721769,
+    "description": "HOUSEBLOCK 7 WORKERS",
+    "userDescription": "Houseblock 7 Workers"
+  },
+  {
+    "locationId": 357595,
+    "description": "INTERVIEW ROOM",
+    "userDescription": "Interview Room"
+  },
+  {
+    "locationId": 27002,
+    "description": "KITCHEN - CLOSED UNTIL 30.7.2019",
+    "userDescription": "Kitchen - Closed Until 30.7.2019"
+  },
+  {
+    "locationId": 26151,
+    "description": "LIBRARY",
+    "userDescription": "Library"
+  },
+  {
+    "locationId": 27001,
+    "description": "MAIN/STORES",
+    "userDescription": "Main/stores"
+  },
+  {
+    "locationId": 721772,
+    "description": "RECEPTION WORKERS",
+    "userDescription": "Reception Workers"
+  },
+  {
+    "locationId": 26141,
+    "description": "RES 1 EDUCATION",
+    "userDescription": "Res 1 Education"
+  },
+  {
+    "locationId": 26142,
+    "description": "RES 2 EDUCATION",
+    "userDescription": "Res 2 Education"
+  },
+  {
+    "locationId": 721773,
+    "description": "SAFER CUSTODY",
+    "userDescription": "Safer Custody"
+  },
+  {
+    "locationId": 27206,
+    "description": "WEIGHTS",
+    "userDescription": "Weights"
+  },
+  {
+    "locationId": 27004,
+    "description": "WORKSHOP 1 - VT CATERING",
+    "userDescription": "Workshop 1 - Vt Catering"
+  },
+  {
+    "locationId": 27020,
+    "description": "WORKSHOP 10 - BRICKS",
+    "userDescription": "Workshop 10 - Bricks"
+  },
+  {
+    "locationId": 27022,
+    "description": "WORKSHOP 12 - FURNITURE REPAIR",
+    "userDescription": "Workshop 12 - Furniture Repair"
+  },
+  {
+    "locationId": 27023,
+    "description": "WORKSHOP 13 - WASTE MANAGEMENT",
+    "userDescription": "Workshop 13 - Waste Management"
+  },
+  {
+    "locationId": 27024,
+    "description": "WORKSHOP 14 - YARD PARTY",
+    "userDescription": "Workshop 14 - Yard Party"
+  },
+  {
+    "locationId": 27025,
+    "description": "WORKSHOP 15 - CLOTHING EXCHANGE STORE",
+    "userDescription": "Workshop 15 - Clothing Exchange Store"
+  },
+  {
+    "locationId": 27026,
+    "description": "WORKSHOP 16 - JOINERY",
+    "userDescription": "Workshop 16 - Joinery"
+  },
+  {
+    "locationId": 27027,
+    "description": "WORKSHOP 17 - DHL",
+    "userDescription": "Workshop 17 - DHL"
+  },
+  {
+    "locationId": 27028,
+    "description": "WORKSHOP 18 - BREAKFAST PACKS",
+    "userDescription": "Workshop 18 - Breakfast Packs"
+  },
+  {
+    "locationId": 27029,
+    "description": "WORKSHOP 19 - BRAILLE",
+    "userDescription": "Workshop 19 - Braille"
+  },
+  {
+    "locationId": 27008,
+    "description": "WORKSHOP 2",
+    "userDescription": "Workshop 2"
+  },
+  {
+    "locationId": 27009,
+    "description": "WORKSHOP 3 - PLASTICS",
+    "userDescription": "Workshop 3 - Plastics"
+  },
+  {
+    "locationId": 27010,
+    "description": "WORKSHOP 4 - PICTA",
+    "userDescription": "Workshop 4 - PICTA"
+  },
+  {
+    "locationId": 27012,
+    "description": "WORKSHOP 6 - PAINTING & DECORATING",
+    "userDescription": "Workshop 6 - Painting & Decorating"
+  },
+  {
+    "locationId": 27018,
+    "description": "WORKSHOP 8 - TV REPAIR",
+    "userDescription": "Workshop 8 - TV Repair"
   }
 ]
