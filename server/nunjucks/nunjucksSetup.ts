@@ -2,7 +2,7 @@
 import nunjucks, { Environment } from 'nunjucks'
 import express from 'express'
 import path from 'path'
-import { addDefaultSelectedValue, findError, initialiseName, setSelected } from '../utils/utils'
+import { addDefaultSelectedValue, buildErrorSummaryList, findError, initialiseName, setSelected } from '../utils/utils'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -47,6 +47,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('setSelected', setSelected)
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
   njkEnv.addFilter('findError', findError)
+  njkEnv.addFilter('buildErrorSummaryList', buildErrorSummaryList)
 
   return njkEnv
 }

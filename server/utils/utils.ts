@@ -3,6 +3,7 @@
 import { parse, formatISO, isAfter, parseISO, endOfDay } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
+import { FieldValidationError } from '../middleware/validationMiddleware'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -83,13 +84,21 @@ export const addDefaultSelectedValue = (items: any, text: any, show: any) => {
   ]
 }
 
-export const findError = (array: any, formFieldId: any) => {
+export const findError = (array: FieldValidationError[], formFieldId: string) => {
   if (!array) return null
-  const item = array.find((error: { href: string }) => error.href === `#${formFieldId}`)
+  const item = array.find(error => error.field === formFieldId)
   if (item) {
     return {
-      text: item.text,
+      text: item.message,
     }
   }
   return null
+}
+
+export const buildErrorSummaryList = (array: FieldValidationError[]) => {
+  if (!array) return null
+  return array.map((error: FieldValidationError) => ({
+    text: error.message,
+    href: `#${error.field}`,
+  }))
 }
