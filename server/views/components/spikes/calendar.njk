@@ -1,0 +1,165 @@
+{% macro calendar(params) %}
+    <div data-module="calendar" id="{{ params.id }}">
+        <div class="calendar__mobile">
+            <nav class="calendar__mobile--nav">
+                <form>
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button"
+                            type="submit" name="referenceDate"
+                            value="{{ params.referenceDate | subWeeks(1) | formatDate('yyyy-MM-dd') }}">
+                        Previous week
+                    </button>
+                </form>
+                <form>
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button"
+                            type="submit" name="referenceDate"
+                            value="{{ params.referenceDate | addWeeks(1) | formatDate('yyyy-MM-dd') }}">
+                        Next week
+                    </button>
+                </form>
+            </nav>
+
+            {% for day in calendarConfig(params.referenceDate, 'weekly') %}
+                {% set dailyActivities = params.activities | filterActivitiesForDay(day) | sortActivitiesByStartTime %}
+
+                <div class="calendar__section">
+                    <div class="calendar__section-header">
+                        <h2 class="calendar__section-heading"
+                            id="{{ params.id }}-mobile-calendar-day-heading-{{ loop.index }}">
+                            <span class="calendar__section-button">
+                                {{ day | formatDate('do MMMM yyyy') }}
+                            </span>
+                        </h2>
+                        <div class="calendar__section-summary govuk-body"
+                             id="{{ params.id }}-mobile-calendar-day-summary-{{ loop.index }}">
+                            {{ dailyActivities.length }} {{ 'activity' if dailyActivities.length === 1 else 'activities' }}
+                        </div>
+                    </div>
+                    <div class="calendar__section-content"
+                         aria-labelledby="{{ params.id }}-mobile-calendar-day-content-{{ loop.index }}">
+                        {% set dayLoop = loop %}
+                        {% for activity in dailyActivities %}
+                            <div class="calendar__scheduled-activity">
+                                <div class="govuk-body govuk-!-font-weight-bold"
+                                     id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
+                                    {{ activity.description }}
+                                </div>
+                                <div class="govuk-body govuk-!-display-block"
+                                     id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
+                                    {{ activity.start | formatDate('h:mm aaa') }}
+                                    to {{ activity.end | formatDate('h:mm aaa') }}
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class='govuk-body'
+                               id="{{ params.id }}-mobile-calendar-day-{{ loop.index }}-no-activity">
+                                No activities scheduled on this day
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="calendar__desktop">
+            <div class="calendar__desktop--main">
+                <nav class="calendar__desktop--nav">
+                    <form>
+                        <button class="govuk-button govuk-button--secondary"
+                                data-module="govuk-button"
+                                type="submit" name="referenceDate"
+                                value="{{ params.referenceDate | subMonths(1) | formatDate('yyyy-MM-dd') }}">
+                            {{ params.referenceDate | subMonths(1) | formatDate('MMMM yyyy') }}
+                        </button>
+                    </form>
+                    <span class="govuk-heading-s">{{ params.referenceDate | formatDate('MMMM yyyy') }}</span>
+                    <form>
+                        <button class="govuk-button govuk-button--secondary"
+                                data-module="govuk-button"
+                                type="submit" name="referenceDate"
+                                value="{{ params.referenceDate | addMonths(1) | formatDate('yyyy-MM-dd') }}">
+                            {{ params.referenceDate | addMonths(1) | formatDate('MMMM yyyy') }}
+                        </button>
+                    </form>
+                </nav>
+                <ul class="calendar__grid">
+                    <li class="calendar__desktop--heading">Sunday</li>
+                    <li class="calendar__desktop--heading">Monday</li>
+                    <li class="calendar__desktop--heading">Tuesday</li>
+                    <li class="calendar__desktop--heading">Wednesday</li>
+                    <li class="calendar__desktop--heading">Thursday</li>
+                    <li class="calendar__desktop--heading">Friday</li>
+                    <li class="calendar__desktop--heading">Saturday</li>
+
+                    {% set days = calendarConfig(params.referenceDate, 'monthly') %}
+                    {% set nextDay = days.shift() %}
+                    {% for tile in range(0, 42) %}
+                        {% if nextDay and nextDay | formatDate('c') == (tile % 7 + 1) %}
+                            <li class="calendar__desktop--item {{ 'calendar__desktop--item--weekend' if tile % 7 == 0 or tile % 7 == 6 }}"
+                                aria-controls="{{ params.id }}-grid-expanded-{{ tile }}">
+                                <span>{{ nextDay | formatDate('do') }}</span>
+                                {% if nextDay | dateInList(ukBankHolidays()) %}
+                                    <span class="calendar__desktop--item--bank-holiday-warning">(Bank holiday)</span>
+                                {% endif %}
+                                <ul class="calendar__desktop--item--day-activities">
+                                    {% set dailyActivities = params.activities | filterActivitiesForDay(nextDay) | sortActivitiesByStartTime %}
+                                    {% for activity in dailyActivities %}
+                                        {% if loop.index < 3 %}
+                                            <li>{{ activity.description }}</li>
+                                        {% endif %}
+                                        {% if loop.index >= 3 and loop.index == dailyActivities.length %}
+                                            {% set others = loop.index - 2 %}
+                                            <span class="calendar__desktop--item--day-activities--more">and {{ others }} {{ 'others' if others > 1 else 'other' }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            {% set nextDay = days.shift() %}
+                        {% else %}
+                            <li class="calendar__desktop--item calendar__desktop--item--no-day"></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% set days = calendarConfig(params.referenceDate, 'monthly') %}
+            {% set nextDay = days.shift() %}
+            {% for tile in range(0, 42) %}
+                {% if nextDay and nextDay | formatDate('c') == (tile % 7 + 1) %}
+                    {% if tile % 7 in range(1, 6) %}
+                        {% set dailyActivities = params.activities | filterActivitiesForDay(nextDay) | sortActivitiesByStartTime %}
+                        <div class="calendar__desktop--date-container"
+                             id="{{ params.id }}-grid-expanded-{{ tile }}">
+                            <div>
+                                <div class="calendar__desktop--date-container--heading">
+                                    {{ nextDay | formatDate('do MMMM yyyy') }}
+                                </div>
+                                <div class="calendar__desktop--date-container--content">
+                                    {% set dayLoop = loop %}
+                                    {% for activity in dailyActivities %}
+                                        <div class="calendar__scheduled-activity">
+                                            <div class="govuk-body govuk-!-font-weight-bold"
+                                                 id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
+                                                {{ activity.description }}
+                                            </div>
+                                            <div class="govuk-body govuk-!-display-block"
+                                                 id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
+                                                {{ activity.start | formatDate('h:mm aaa') }}
+                                                to {{ activity.end | formatDate('h:mm aaa') }}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <p class='govuk-body'
+                                           id="{{ params.id }}-mobile-calendar-day-{{ loop.index }}-no-activity">
+                                            No activities scheduled on this day
+                                        </p>
+                                    {% endfor %}
+
+                                    <button class="govuk-button govuk-!-margin-left-2" data-module="govuk-button">Create activity</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% set nextDay = days.shift() %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}

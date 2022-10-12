@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line import/no-duplicates
-import { parse, formatISO, isAfter, parseISO, endOfDay } from 'date-fns'
+import { parse, formatISO, isAfter, parseISO, endOfDay, format, isSameDay } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
 import { FieldValidationError } from '../middleware/validationMiddleware'
@@ -101,4 +101,12 @@ export const buildErrorSummaryList = (array: FieldValidationError[]) => {
     text: error.message,
     href: `#${error.field}`,
   }))
+}
+
+export const formatDate = (date: Date, fmt: string) => {
+  return format(date, fmt)
+}
+
+export const dateInList = (date: Date, dates: Date[]) => {
+  return dates.some(d => isSameDay(date, d))
 }

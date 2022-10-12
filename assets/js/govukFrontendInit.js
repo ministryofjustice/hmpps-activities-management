@@ -1,4 +1,5 @@
 window.GOVUKFrontend.initAll()
+window.MOJFrontend.initAll()
 
 // Initiate the back links
 $('[class$=js-backlink]').on('click', e => {

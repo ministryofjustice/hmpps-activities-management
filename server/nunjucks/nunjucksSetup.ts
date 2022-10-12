@@ -2,15 +2,33 @@
 import nunjucks, { Environment } from 'nunjucks'
 import express from 'express'
 import path from 'path'
-import { addDefaultSelectedValue, buildErrorSummaryList, findError, initialiseName, setSelected } from '../utils/utils'
+import { addMonths, addWeeks, subMonths, subWeeks } from 'date-fns'
+import {
+  addDefaultSelectedValue,
+  buildErrorSummaryList,
+  dateInList,
+  findError,
+  formatDate,
+  initialiseName,
+  setSelected,
+} from '../utils/utils'
+import config from '../config'
+import { filterActivitiesForDay, getCalendarConfig, sortActivitiesByStartTime } from '../utils/calendarUtilities'
+import { Services } from '../services'
 
 const production = process.env.NODE_ENV === 'production'
 
-export default function nunjucksSetup(app: express.Express): void {
+export default function nunjucksSetup(app: express.Express, { ukBankHolidayService }: Services): void {
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
   app.locals.applicationName = 'Activities Management'
+  app.locals.hmppsAuthUrl = config.apis.hmppsAuth.url
+
+  app.use(async (req, res, next) => {
+    app.locals.ukBankHolidays = await ukBankHolidayService.getUkBankHolidays()
+    return next()
+  })
 
   // Cachebusting version string
   if (production) {
@@ -48,6 +66,17 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
   njkEnv.addFilter('findError', findError)
   njkEnv.addFilter('buildErrorSummaryList', buildErrorSummaryList)
+  njkEnv.addFilter('formatDate', formatDate)
+  njkEnv.addFilter('filterActivitiesForDay', filterActivitiesForDay)
+  njkEnv.addFilter('sortActivitiesByStartTime', sortActivitiesByStartTime)
+  njkEnv.addFilter('dateInList', dateInList)
+  njkEnv.addFilter('subMonths', subMonths)
+  njkEnv.addFilter('addMonths', addMonths)
+  njkEnv.addFilter('subWeeks', subWeeks)
+  njkEnv.addFilter('addWeeks', addWeeks)
+
+  njkEnv.addGlobal('calendarConfig', getCalendarConfig)
+  njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
 
   return njkEnv
 }
