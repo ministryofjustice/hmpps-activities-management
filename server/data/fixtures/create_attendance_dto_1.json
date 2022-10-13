@@ -1,0 +1,13 @@
+{
+  "bookingId": 1,
+  "eventId": 2,
+  "eventLocationId": 3,
+  "period": "AM",
+  "prisonId": "MDI",
+  "attended": false,
+  "paid": false,
+  "absentReason": "RefusedIncentiveLevelWarning",
+  "absentSubReason": "Behaviour",
+  "eventDate": "2022-08-01",
+  "comments": "test comment"
+}

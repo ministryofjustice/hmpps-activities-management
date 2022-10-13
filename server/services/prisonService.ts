@@ -17,9 +17,20 @@ import {
   extractAttendanceInfo,
 } from './prisonServiceHelper'
 import { sortByDateTime } from '../utils/utils'
-import { AttendancesResponse } from '../@types/whereaboutsApiImport/types'
+import {
+  AttendanceDto,
+  AttendancesResponse,
+  CreateAttendanceDto,
+  UpdateAttendanceDto,
+} from '../@types/whereaboutsApiImport/types'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
-import { ActivityByLocation, OffenderData } from '../@types/dps'
+import { ActivityByLocation, OffenderActivityId, OffenderData } from '../@types/dps'
+import logger from '../../logger'
+import {
+  AbsentReasonsDtoLenient,
+  CreateAttendanceDtoLenient,
+  UpdateAttendanceDtoLenient,
+} from '../@types/whereaboutsApiImportCustom'
 
 export default class PrisonService {
   constructor(
@@ -149,5 +160,61 @@ export default class PrisonService {
     sortActivitiesByEventThenByLastName(events)
 
     return events
+  }
+
+  async createUpdateAttendance(
+    id: number,
+    eventDate: string,
+    attendance: CreateAttendanceDtoLenient | UpdateAttendanceDtoLenient,
+    user: ServiceUser,
+  ): Promise<AttendanceDto> {
+    let response
+    // const { eventDate, ...rest } = attendance
+    // const date = eventDate === 'Today' ? moment().format('DD/MM/YYYY') : eventDate
+    // const body = { ...rest, eventDate }
+
+    if (id) {
+      response = await this.whereaboutsApiClient.updateAttendance(
+        id,
+        eventDate,
+        attendance as UpdateAttendanceDto,
+        user,
+      )
+      logger.info({}, 'updateAttendance success')
+    } else {
+      response = await this.whereaboutsApiClient.createAttendance(eventDate, attendance as CreateAttendanceDto, user)
+      logger.info({}, 'createAttendance success')
+    }
+    return response
+  }
+
+  async batchUpdateAttendance(
+    prisonId: string,
+    locationId: string,
+    date: string,
+    period: string,
+    activities: OffenderActivityId[],
+    attended: boolean,
+    paid: boolean,
+    reason: string,
+    comments: string,
+    user: ServiceUser,
+  ): Promise<AttendancesResponse> {
+    return this.whereaboutsApiClient.batchUpdateAttendance(
+      prisonId,
+      locationId,
+      date,
+      period,
+      activities,
+      attended,
+      paid,
+      reason,
+      comments,
+      user,
+    )
+  }
+
+  async getAbsenceReasons(user: ServiceUser): Promise<AbsentReasonsDtoLenient> {
+    return this.whereaboutsApiClient.getAbsenceReasons(user)
   }
 }
