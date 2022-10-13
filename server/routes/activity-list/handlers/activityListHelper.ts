@@ -1,6 +1,6 @@
 import { format, parseISO } from 'date-fns'
 import { removeBlanks } from '../../../utils/utils'
-import { ActivityByLocation, EventLite } from '../../../@types/dps'
+import { ActivityByLocation, ActivityListTableRow, EventLite } from '../../../@types/dps'
 import { PrisonerScheduleLenient } from '../../../@types/prisonApiImportCustom'
 
 export const shouldShowOtherActivities = (offenderMainEvent: ActivityByLocation): boolean =>
@@ -139,4 +139,24 @@ export const getOtherEventsSummary = (activity: ActivityByLocation) => {
     )
   }
   return summary.join(', ')
+}
+
+export const mapToTableRow = (activity: ActivityByLocation): ActivityListTableRow => {
+  const alerts = getAlertValues(activity.alertFlags, activity.category)
+  const mainEventSummary = getMainEventSummary(activity)
+  const otherEventsSummary = shouldShowOtherActivities(activity) ? getOtherEventsSummary(activity) : ''
+
+  return {
+    bookingId: activity.bookingId,
+    eventId: activity.eventId,
+    name: `${activity.lastName.charAt(0) + activity.lastName.substring(1).toLowerCase()}, ${
+      activity.firstName.charAt(0) + activity.firstName.substring(1).toLowerCase()
+    }`,
+    location: activity.cellLocation,
+    prisonNumber: activity.offenderNo,
+    relevantAlerts: alerts,
+    activity: mainEventSummary,
+    otherActivities: otherEventsSummary,
+    attended: activity.attendanceInfo?.attended,
+  }
 }

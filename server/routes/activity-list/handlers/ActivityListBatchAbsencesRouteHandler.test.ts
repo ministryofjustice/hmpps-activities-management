@@ -9,7 +9,7 @@ import PrisonApiClient from '../../../data/prisonApiClient'
 import PrisonerSearchApiClient from '../../../data/prisonerSearchApiClient'
 import PrisonRegisterApiClient from '../../../data/prisonRegisterApiClient'
 import WhereaboutsApiClient from '../../../data/whereaboutsApiClient'
-import ActivityListAbsencesRouteHandler from './ActivityListAbsencesRouteHandler'
+import ActivityListBatchAbsencesRouteHandler from './ActivityListBatchAbsencesRouteHandler'
 import { CodeNameStringPair } from '../../../@types/dps'
 
 jest.mock('../../../services/prisonService')
@@ -29,10 +29,10 @@ describe('activityListAbsencesRouteHandler', () => {
     prisonRegisterApiClient,
     whereaboutsApiClient,
   )
-  let controller: ActivityListAbsencesRouteHandler
+  let controller: ActivityListBatchAbsencesRouteHandler
 
   beforeEach(() => {
-    controller = new ActivityListAbsencesRouteHandler(prisonService)
+    controller = new ActivityListBatchAbsencesRouteHandler(prisonService)
     jest.clearAllMocks()
   })
 

@@ -61,7 +61,7 @@ describe('whereaboutsApiClient', () => {
         const response = { data: 'data' }
 
         fakeWhereaboutsApi
-          .post('/attendance', { eventDate: '2022-08-01', attendance: createAttendanceDto })
+          .post('/attendance', { eventDate: '2022-08-01', ...createAttendanceDto })
           .matchHeader('authorization', `Bearer token`)
           .reply(200, response)
 
@@ -76,7 +76,7 @@ describe('whereaboutsApiClient', () => {
         const response = { data: 'data' }
 
         fakeWhereaboutsApi
-          .put('/attendance/1', { id: 1, eventDate: '2022-08-01', attendance: updateAttendanceDto })
+          .put('/attendance/1', { id: 1, eventDate: '2022-08-01', ...updateAttendanceDto })
           .matchHeader('authorization', `Bearer token`)
           .reply(200, response)
 

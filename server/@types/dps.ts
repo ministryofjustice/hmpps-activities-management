@@ -69,6 +69,7 @@ export type ActivityListTableRow = {
   activity: string
   otherActivities: string
   attended: boolean
+  attendanceId?: number
 }
 
 export type OffenderActivityId = {

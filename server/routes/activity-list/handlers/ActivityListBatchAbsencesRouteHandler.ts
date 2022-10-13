@@ -1,17 +1,6 @@
 import { Request, Response } from 'express'
-import {
-  getAlertValues,
-  getMainEventSummary,
-  getOtherEventsSummary,
-  shouldShowOtherActivities,
-} from './activityListHelper'
-import {
-  ActivityByLocation,
-  ActivityListTableRow,
-  AttendanceForm,
-  CodeNameStringPair,
-  OffenderActivityId,
-} from '../../../@types/dps'
+import { mapToTableRow } from './activityListHelper'
+import { ActivityByLocation, AttendanceForm, CodeNameStringPair, OffenderActivityId } from '../../../@types/dps'
 import PrisonService from '../../../services/prisonService'
 
 function getOrInitAttendanceForm(attendanceForms: Map<string, AttendanceForm>, key: string) {
@@ -23,32 +12,12 @@ function getOrInitAttendanceForm(attendanceForms: Map<string, AttendanceForm>, k
   return attForm
 }
 
-export default class ActivityListAbsencesRouteHandler {
+export default class ActivityListBatchAbsencesRouteHandler {
   constructor(private readonly prisonService: PrisonService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { activityList, absenceReasons } = res.locals
     const { activitiesNotAttended } = req.session.data
-
-    const mapToTableRow = (activity: ActivityByLocation): ActivityListTableRow => {
-      const alerts = getAlertValues(activity.alertFlags, activity.category)
-      const mainEventSummary = getMainEventSummary(activity)
-      const otherEventsSummary = shouldShowOtherActivities(activity) ? getOtherEventsSummary(activity) : ''
-
-      return {
-        bookingId: activity.bookingId,
-        eventId: activity.eventId,
-        name: `${activity.lastName.charAt(0) + activity.lastName.substring(1).toLowerCase()}, ${
-          activity.firstName.charAt(0) + activity.firstName.substring(1).toLowerCase()
-        }`,
-        location: activity.cellLocation,
-        prisonNumber: activity.offenderNo,
-        relevantAlerts: alerts,
-        activity: mainEventSummary,
-        otherActivities: otherEventsSummary,
-        attended: activity.attendanceInfo?.attended,
-      }
-    }
 
     const activityAbsences = activityList.filter((a: ActivityByLocation) => {
       return !!activitiesNotAttended.find(

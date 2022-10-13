@@ -41,7 +41,7 @@ export default class WhereaboutsApiClient extends AbstractHmppsRestClient {
       path: '/attendance',
       data: {
         eventDate: date,
-        attendance,
+        ...attendance,
       },
       authToken: user.token,
     })
@@ -58,7 +58,7 @@ export default class WhereaboutsApiClient extends AbstractHmppsRestClient {
       data: {
         id,
         eventDate: date,
-        attendance,
+        ...attendance,
       },
       authToken: user.token,
     })
