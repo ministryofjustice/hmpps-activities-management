@@ -148,10 +148,11 @@ export const extractAttendanceInfo = (
           absentReason: { value: absentReason, name: absentReasonDescription },
           absentSubReason,
           comments,
+          attended,
           paid,
           locked,
         }
-      : { id, comments, paid, locked }
+      : { id, comments, attended, paid, locked }
 
     // @ts-expect-error ts-migrate(2339) FIXME: Property 'other' does not exist on type '{ id: any... Remove this comment to see the full error message
     if (absentReason) attendanceInfo.other = true

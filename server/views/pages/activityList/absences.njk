@@ -1,0 +1,186 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% from "./macros/alertFlags.njk" import alertFlags %}
+{% set pageTitle = applicationName + " - Activity list" %}
+{% set mainClasses = "app-container govuk-body" %}
+{% set pageId = 'activity-list-page' %}
+
+{% block content %}
+
+    <h1 class="govuk-heading-l">Absence details</h1>
+
+    <div class="page-content">
+        <div class="results-activity">
+
+            <form method="POST" id="markAttendance">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Name</th>
+                            <th scope="col" class="govuk-table__header">Location</th>
+                            <th scope="col" class="govuk-table__header">Prison number</th>
+                            <th scope="col" class="govuk-table__header">Relevant alerts</th>
+                            <th scope="col" class="govuk-table__header">Activity</th>
+                            <th scope="col" class="govuk-table__header">Other activities</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for item in rowData %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell-no-border">{{ item.name }}</td>
+                            <td class="govuk-table__cell-no-border">{{ item.location }}</td>
+                            <td class="govuk-table__cell-no-border">{{ item.prisonNumber }}</td>
+                            <td class="govuk-table__cell-no-border">{{ alertFlags(item.relevantAlerts) }}</td>
+                            <td class="govuk-table__cell-no-border">{{ item.activity }}</td>
+                            <td class="govuk-table__cell-no-border">{{ item.otherActivities }}</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"></td>
+                            <td class="govuk-table__cell" colspan="3">
+                                <div class="govuk-form-group">
+                                    <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+                                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                            <span class="govuk-fieldset__heading--s">Do you want to pay {{ item.name }}?</span>
+                                        </legend>
+                                        <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
+                                            <div class="govuk-radios__item">
+                                                <input class="govuk-radios__input am-pay-yes-no" id="pay-yes-{{item.bookingId}}-{{item.eventId}}" name="pay-{{item.bookingId}}-{{item.eventId}}" type="radio" value="yes">
+                                                <label class="govuk-label govuk-radios__label" for="pay-yes-{{item.bookingId}}-{{item.eventId}}">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                            <div class="govuk-radios__item">
+                                                <input class="govuk-radios__input am-pay-yes-no" id="pay-no-{{item.bookingId}}-{{item.eventId}}" name="pay-{{item.bookingId}}-{{item.eventId}}" type="radio" value="no">
+                                                <label class="govuk-label govuk-radios__label" for="pay-no-{{item.bookingId}}-{{item.eventId}}">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="govuk-form-group">
+                                    <div class="govuk-label-wrapper">
+                                        <label class="govuk-label govuk-label--s" for="more-detail-{{item.bookingId}}-{{item.eventId}}">
+                                            Can you provide more detail?
+                                        </label>
+                                    </div>
+                                    <textarea class="govuk-textarea" id="more-detail-{{item.bookingId}}-{{item.eventId}}" name="more-detail-{{item.bookingId}}-{{item.eventId}}" rows="5" aria-describedby="more-detail-hint"></textarea>
+                                </div>
+                            </td>
+                            <td class="govuk-table__cell" colspan="2">
+                                <div id="paid-options-{{item.bookingId}}-{{item.eventId}}" class="govuk-visually-hidden">
+                                    <div id="reason-to-pay-group-{{item.bookingId}}-{{item.eventId}}" class="govuk-form-group">
+                                        <div class="govuk-label-wrapper">
+                                            <label class="govuk-label govuk-label--s" for="select-paid-reason-{{item.bookingId}}-{{item.eventId}}">
+                                                Select a reason to PAY
+                                            </label>
+                                        </div>
+                                        <select class="govuk-select am-paid-reason" id="select-paid-reason-{{item.bookingId}}-{{item.eventId}}" name="paid-reason-{{item.bookingId}}-{{item.eventId}}">
+                                            <option value="" selected="">--Select--</option>
+                                            {% for par in paidAbsenceReasons %}
+                                                <option value="{{ par.code }}">{{ par.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div id="subreason-to-pay-group-{{item.bookingId}}-{{item.eventId}}" class="govuk-form-group govuk-visually-hidden">
+                                        <div class="govuk-label-wrapper">
+                                            <label class="govuk-label govuk-label--s" for="select-paid-subreason-{{item.bookingId}}-{{item.eventId}}">
+                                                Select a PAID absence sub reason
+                                            </label>
+                                        </div>
+                                        <select class="govuk-select am-paid-subreason" id="select-paid-subreason-{{item.bookingId}}-{{item.eventId}}" name="paid-subreason-{{item.bookingId}}-{{item.eventId}}">
+                                            <option value="" selected="">--Select--</option>
+                                            {% for par in paidAbsenceSubReasons %}
+                                                <option value="{{ par.code }}">{{ par.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="unpaid-options-{{item.bookingId}}-{{item.eventId}}" class="govuk-visually-hidden">
+                                    <div id="reason-to-not-pay-group-{{item.bookingId}}-{{item.eventId}}" class="govuk-form-group">
+                                        <div class="govuk-label-wrapper">
+                                            <label class="govuk-label govuk-label--s" for="select-unpaid-reason-{{item.bookingId}}-{{item.eventId}}">
+                                                Select a reason to NOT PAY
+                                            </label>
+                                        </div>
+                                        <select class="govuk-select am-unpaid-reason" id="select-unpaid-reason-{{item.bookingId}}-{{item.eventId}}" name="unpaid-reason-{{item.bookingId}}-{{item.eventId}}">
+                                            <option value="" selected="">--Select--</option>
+                                            {% for par in unpaidAbsenceReasons %}
+                                                <option value="{{ par.code }}">{{ par.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div id="subreason-to-not-pay-group-{{item.bookingId}}-{{item.eventId}}" class="govuk-form-group govuk-visually-hidden">
+                                        <div class="govuk-label-wrapper">
+                                            <label class="govuk-label govuk-label--s" for="select-unpaid-subreason-{{item.bookingId}}-{{item.eventId}}">
+                                                Select an UNPAID absence sub reason
+                                            </label>
+                                        </div>
+                                        <select class="govuk-select am-unpaid-subreason" id="select-unpaid-subreason-{{item.bookingId}}-{{item.eventId}}" name="unpaid-subreason-{{item.bookingId}}-{{item.eventId}}">
+                                            <option value="" selected="">--Select--</option>
+                                            {% for par in unpaidAbsenceSubReasons %}
+                                                <option value="{{ par.code }}">{{ par.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div id="incentive-warning-group-{{item.bookingId}}-{{item.eventId}}"  class="govuk-form-group govuk-visually-hidden">
+                                        <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
+                                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                                <span class="govuk-fieldset__heading--s">Do you want to add an incentive level warning?</span>
+                                            </legend>
+                                            <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
+                                                <div class="govuk-radios__item">
+                                                    <input class="govuk-radios__input" id="incentive-warning-yes-{{item.bookingId}}-{{item.eventId}}" name="incentive-warning-{{item.bookingId}}-{{item.eventId}}" type="radio" value="yes">
+                                                    <label class="govuk-label govuk-radios__label" for="incentive-warning-yes-{{item.bookingId}}-{{item.eventId}}">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="govuk-radios__item">
+                                                    <input class="govuk-radios__input" id="incentive-warning-no-{{item.bookingId}}-{{item.eventId}}" name="incentive-warning-{{item.bookingId}}-{{item.eventId}}" type="radio" value="no">
+                                                    <label class="govuk-label govuk-radios__label" for="incentive-warning-no-{{item.bookingId}}-{{item.eventId}}">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                        </fieldset>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <input type="hidden" id="locationId" name="locationId" value="{{locationId}}">
+                <input type="hidden" id="date" name="date" value="{{date}}">
+                <input type="hidden" id="period" name="period" value="{{period}}">
+
+                <div class="govuk-button-group govuk-!-padding-top-4">
+                    {{ govukButton({
+                        attributes: {
+                            id: 'btnSubmit'
+                        },
+                        text: "Submit",
+                        preventDoubleClick: true
+                    }) }}
+
+                    <a class="govuk-link js-backlink" href="/">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pageScripts %}
+    <script src="/assets/js/select-absence-pay-decision.js"></script>
+{% endblock %}
+
