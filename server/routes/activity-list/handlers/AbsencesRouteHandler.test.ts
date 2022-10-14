@@ -10,6 +10,7 @@ import PrisonRegisterApiClient from '../../../data/prisonRegisterApiClient'
 import WhereaboutsApiClient from '../../../data/whereaboutsApiClient'
 import AbsencesRouteHandler from './AbsencesRouteHandler'
 import { CodeNameStringPair } from '../../../@types/dps'
+import payDetails from '../fixtures/update_attendences_pay_details_request_1.json'
 
 jest.mock('../../../services/prisonService')
 jest.mock('../../../data/prisonApiClient')
@@ -139,6 +140,61 @@ describe('activityListAbsencesRouteHandler', () => {
         ),
         unpaidAbsenceSubReasons: absenceReasons?.unpaidSubReasons,
       })
+    })
+  })
+  describe('POST with 2 absences pay details', () => {
+    it('should redirect', async () => {
+      const req = getMockReq({
+        body: payDetails,
+      })
+      const { res } = getMockRes({
+        locals: {
+          activityList,
+          absenceReasons,
+          user: { token: 'token', activeCaseLoad: { caseLoadId: 'MDI' } },
+        },
+      })
+      await controller.POST(req, res)
+      expect(prisonService.createUpdateAttendance).toHaveBeenCalledTimes(2)
+      expect(prisonService.createUpdateAttendance).nthCalledWith(
+        1,
+        undefined,
+        '2022-10-13',
+        {
+          absentReason: 'ApprovedCourse',
+          absentSubReason: undefined,
+          attended: false,
+          bookingId: 949173,
+          comments: 'more details for Dieter',
+          eventDate: '2022-10-13',
+          eventId: 484814578,
+          eventLocationId: '27187',
+          paid: true,
+          period: 'AM',
+          prisonId: 'MDI',
+        },
+        { activeCaseLoad: { caseLoadId: 'MDI' }, token: 'token' },
+      )
+      expect(prisonService.createUpdateAttendance).nthCalledWith(
+        2,
+        undefined,
+        '2022-10-13',
+        {
+          absentReason: 'NotRequired',
+          absentSubReason: undefined,
+          attended: false,
+          bookingId: 1089812,
+          comments: 'more details for Emmett',
+          eventDate: '2022-10-13',
+          eventId: 484729770,
+          eventLocationId: '27187',
+          paid: true,
+          period: 'AM',
+          prisonId: 'MDI',
+        },
+        { activeCaseLoad: { caseLoadId: 'MDI' }, token: 'token' },
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/activity-list?locationId=27187&date=2022-10-13&period=AM')
     })
   })
 })
