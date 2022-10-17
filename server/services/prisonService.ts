@@ -169,10 +169,6 @@ export default class PrisonService {
     user: ServiceUser,
   ): Promise<AttendanceDto> {
     let response
-    // const { eventDate, ...rest } = attendance
-    // const date = eventDate === 'Today' ? moment().format('DD/MM/YYYY') : eventDate
-    // const body = { ...rest, eventDate }
-
     if (id) {
       response = await this.whereaboutsApiClient.updateAttendance(
         id,
