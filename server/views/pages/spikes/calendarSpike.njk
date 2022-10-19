@@ -1,0 +1,29 @@
+{% extends "layout.njk" %}
+
+{% from "components/spikes/calendar.njk" import calendar %}
+
+{% set pageTitle = applicationName + " - Spikes" %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-xl">Calendar spike</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {{ calendar({
+                id: 'test-calendar',
+                referenceDate: referenceDate,
+                activities: activities,
+                view: 'weekly'
+            }) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block pageScripts %}
+    <script type="module" src="/assets/js/spikes/calendar.js"></script>
+{% endblock %}

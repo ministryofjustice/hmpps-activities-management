@@ -1,0 +1,537 @@
+$calendar-base-colour: govuk-colour("black");
+$calendar-hover-colour: govuk-colour("light-grey", $legacy: "grey-3");
+$calendar-icon-focus-colour: $govuk-focus-colour;
+$calendar-bottom-border-width: 1px;
+
+.calendar__mobile {
+  @include govuk-responsive-margin(6, "bottom");
+
+  &--nav {
+    button {
+      width: 100%;
+    }
+  }
+
+  .calendar__section {
+    padding-top: govuk-spacing(3);
+  }
+
+  .calendar__section-heading {
+    // Override browser defaults to ensure consistent element height
+    margin-top: 0;
+    margin-bottom: 0;
+
+    padding-top: govuk-spacing(3);
+    padding-bottom: govuk-spacing(3);
+  }
+
+  .calendar__section-button {
+    @include govuk-font($size: 24, $weight: bold);
+    @include govuk-text-colour;
+
+    display: block;
+    margin-bottom: 0;
+    padding-top: govuk-spacing(3);
+  }
+
+  .calendar__section-content {
+    display: flex;
+
+    .calendar__scheduled-activity {
+      margin: 0 10px;
+      height: 100%;
+      padding: 10px;
+      background-color: #70b6f6;
+    }
+  }
+
+  // Remove the bottom margin from the last item inside the content
+  .calendar__section-content > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+.calendar__desktop {
+  display: none;
+
+  &--main {
+    flex-basis: 66.6%;
+    flex-grow: 1;
+  }
+
+  &--date-container {
+    display: none;
+
+    &--expanded {
+      display: block;
+      border-left: 1px solid $govuk-border-colour;
+      flex-basis: 33.3%;
+      margin-left: 10px;
+      padding-left: 10px;
+
+      > div {
+        background-color: govuk-colour('light-grey');
+        height: 100%;
+        overflow: hidden;
+      }
+    }
+
+    &--heading {
+      @include govuk-font($size: 19, $weight: "bold");
+      text-align: center;
+      padding: 25px 0;
+      box-shadow: 0 0 13px 2px govuk-colour('mid-grey');
+    }
+
+    &--content {
+      padding: 10px;
+    }
+  }
+
+  .calendar__scheduled-activity {
+    margin: 0 10px;
+    height: 100%;
+    padding: 10px;
+    background-color: #70b6f6;
+    margin-bottom: 10px;
+  }
+
+  .calendar__grid {
+    display: grid;
+    list-style: none;
+    padding: 0;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    margin: 0;
+  }
+
+  &--nav {
+    display: flex;
+    justify-content: space-between;
+    //border-bottom: 2px solid $govuk-border-colour;
+    padding-bottom: 10px;
+
+    button {
+      width: 200px;
+      text-align: center;
+      margin: 0;
+    }
+
+    span {
+      text-align: center;
+    }
+  }
+
+  &--heading {
+    @include govuk-font($size: 14, $weight: "bold");
+    text-align: center;
+  }
+
+  &--item {
+    @include govuk-font($size: 16, $weight: "bold");
+    border: $govuk-border-colour solid 1px;
+    height: 100px;
+    padding: 5px;
+
+    &:hover {
+      box-shadow: 0 0 0 2px govuk-colour('light-blue') inset;
+    }
+
+    &:active {
+      background-color: govuk-colour("yellow");
+    }
+
+    &--bank-holiday-warning {
+      @include govuk-font($size: 14, $weight: regular);
+      color: govuk-colour("red");
+    }
+
+    &--no-day {
+      &:hover {
+        background-color: govuk-colour("light-grey");
+        box-shadow: revert;
+      }
+
+      background-color: govuk-colour("light-grey");
+    }
+
+    &--weekend {
+      &:hover {
+        background-color: govuk-colour("light-grey");
+        box-shadow: revert;
+      }
+
+      background-color: govuk-colour("light-grey");
+    }
+
+    &--day-activities {
+      list-style: none;
+      padding: 0;
+
+      li {
+        margin: 5px 2px;
+        padding: 2px 5px;
+        background-color: govuk-colour('light-blue');
+        color: white;
+        @include govuk-font($size: 14, $weight: 'bold');
+        border-radius: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      &--more {
+        display: block;
+        @include govuk-font($size: 14, $weight: regular);
+        color: govuk-colour('dark-grey');
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// JavaScript enabled
+.js-enabled {
+  .calendar__mobile {
+    @include govuk-media-query($from: desktop) {
+      display: none;
+    }
+
+    // Border at the bottom of the whole accordion
+    border-bottom: $calendar-bottom-border-width solid $govuk-border-colour;
+
+    .calendar__section {
+      padding-top: 0;
+    }
+
+    // Hide the body of collapsed sections
+    .calendar__section-content {
+      display: none;
+      @include govuk-responsive-padding(8, "bottom");
+      @include govuk-responsive-padding(3, "top");
+    }
+
+    //Show the body of expanded sections
+    .calendar__section--expanded .calendar__section-content {
+      display: flex;
+    }
+
+    .calendar__show-all {
+      @include govuk-font($size: 19);
+      position: relative;
+      z-index: 1;
+
+      margin-bottom: 9px;
+      padding: govuk-spacing(1) 2px govuk-spacing(1) 0;
+
+      border-width: 0;
+
+      color: $govuk-link-colour;
+      background: none;
+
+      cursor: pointer;
+      -webkit-appearance: none;
+
+      @include govuk-media-query($from: desktop) {
+        margin-bottom: 14px;
+      }
+
+      // Remove default button focus outline in Firefox
+      &::-moz-focus-inner {
+        padding: 0;
+        border: 0;
+      }
+
+      &:hover {
+        color: $calendar-base-colour;
+        background: $calendar-hover-colour;
+        // The GOV.UK Design System focus state adds a box-shadow to the top and bottom of the
+        // button. We add a grey box-shadow on hover too, to make the height of the hover state
+        // match the height of the focus state.
+        box-shadow: 0 -2px $calendar-hover-colour, 0 4px $calendar-hover-colour;
+
+        .calendar__section-toggle-text {
+          color: $calendar-base-colour;
+        }
+
+        .calendar-nav__chevron {
+          color: $calendar-base-colour;
+          background: $calendar-base-colour;
+        }
+
+        .calendar-nav__chevron:after {
+          color: $calendar-hover-colour;
+        }
+      }
+
+      &:focus {
+        @include govuk-focused-text;
+
+        .calendar-nav__chevron {
+          background: $calendar-base-colour;
+        }
+
+        .calendar-nav__chevron:after {
+          color: $calendar-icon-focus-colour;
+        }
+      }
+    }
+
+    .calendar__section-heading {
+      padding: 0;
+    }
+
+    // Create Chevron icon aligned with text
+    .calendar-nav__chevron {
+      box-sizing: border-box;
+      display: inline-block;
+
+      position: relative;
+
+      // Set size using rems to make the icon scale with text if user resizes text in their browser
+      width: govuk-px-to-rem(20px);
+      height: govuk-px-to-rem(20px);
+
+      border: govuk-px-to-rem(1px) solid;
+      border-radius: 50%;
+
+      vertical-align: middle;
+
+      // IE8 fallback of icon
+      @include govuk-if-ie8 {
+        display: inline-block;
+        max-height: 20px;
+        line-height: 1;
+      }
+
+      // Create inner chevron arrow
+      &:after {
+        content: "";
+        box-sizing: border-box;
+        display: block;
+
+        position: absolute;
+        bottom: govuk-px-to-rem(5px);
+        left: govuk-px-to-rem(6px);
+
+        width: govuk-px-to-rem(6px);
+        height: govuk-px-to-rem(6px);
+
+        -webkit-transform: rotate(-45deg);
+
+        -ms-transform: rotate(-45deg);
+
+        transform: rotate(-45deg);
+
+        border-top: govuk-px-to-rem(2px) solid;
+        border-right: govuk-px-to-rem(2px) solid;
+
+        // IE8 fallback of icon with HTML symbol
+        @include govuk-if-ie8 {
+          content: "\25B2"; // "▲"
+          position: relative;
+          border: 0;
+        }
+      }
+    }
+
+    // Rotate icon to create "Down" version
+    .calendar-nav__chevron--down {
+      -webkit-transform: rotate(180deg);
+      -ms-transform: rotate(180deg);
+      transform: rotate(180deg);
+
+      // IE8 fallback of arrow icon
+      @include govuk-if-ie8 {
+        &:after {
+          content: "\25BC"; // "▼"
+          -webkit-transform: none;
+          -ms-transform: none;
+          transform: none;
+        }
+      }
+    }
+
+    .calendar__section-button {
+      width: 100%;
+
+      padding: govuk-spacing(2) 0 0 0;
+
+      border: 0;
+
+      border-top: $calendar-bottom-border-width solid $govuk-border-colour;
+
+      // Visually separate the section from the one underneath when user changes colours in their
+      // browser. See https://github.com/alphagov/govuk-frontend/issues/2321#issuecomment-924201488
+      border-bottom: govuk-spacing(2) solid transparent;
+
+      color: $govuk-text-colour;
+      background: none;
+
+      text-align: left;
+      // Section headers have a pointer cursor as an additional affordance
+      cursor: pointer;
+      -webkit-appearance: none;
+
+      @include govuk-media-query($from: tablet) {
+        padding-bottom: govuk-spacing(2);
+      }
+
+      &:active {
+        color: $govuk-link-active-colour;
+        background: none;
+      }
+
+      &:hover {
+        color: $calendar-base-colour;
+        background: $calendar-hover-colour;
+
+        .calendar__section-toggle-text {
+          color: $calendar-base-colour;
+        }
+
+        .calendar-nav__chevron {
+          color: $calendar-base-colour;
+          background: $calendar-base-colour;
+        }
+
+        .calendar-nav__chevron:after {
+          color: $calendar-hover-colour;
+        }
+      }
+
+      &:focus {
+        // Remove default focus border around button as
+        // styling is being applied to inner text elements that receive focus
+        outline: 0;
+
+        .calendar__section-heading-text-focus,
+        .calendar__section-summary-focus,
+        .calendar__section-toggle-focus {
+          @include govuk-focused-text;
+        }
+
+        .calendar-nav__chevron {
+          color: $calendar-base-colour;
+          background: $calendar-base-colour;
+        }
+
+        .calendar-nav__chevron:after {
+          color: $calendar-icon-focus-colour;
+        }
+      }
+
+      // Remove default button focus outline in Firefox
+      &::-moz-focus-inner {
+        padding: 0;
+        border: 0;
+      }
+    }
+
+    // Remove the transparent border when the section is expanded to make it clear that the heading
+    // relates to the content below. Adjust padding to maintain the height of the element.
+    // See https://github.com/alphagov/govuk-frontend/pull/2257#issuecomment-951920798
+    .calendar__section--expanded .calendar__section-button {
+      padding-bottom: govuk-spacing(4);
+      border-bottom: 0;
+    }
+
+    // As Chevron icon is vertically aligned it overlaps with the focus state bottom border
+    // Styling adds some spacing
+    .calendar__section-button:focus .calendar__section-toggle-focus {
+      padding-bottom: 3px;
+
+      @include govuk-media-query($from: desktop) {
+        padding-bottom: 2px;
+      }
+    }
+
+    .calendar__section-toggle,
+    .calendar__section-heading-text,
+    .calendar__section-summary {
+      display: block;
+      margin-bottom: 13px;
+
+      .calendar__section-heading-text-focus,
+      .calendar__section-summary-focus,
+      .calendar__section-toggle-focus {
+        display: inline;
+      }
+    }
+
+    // Add toggle link with Chevron icon on left.
+    .calendar__section-toggle {
+      @include govuk-typography-responsive($size: 19);
+      @include govuk-typography-weight-regular;
+      color: $govuk-link-colour;
+    }
+
+    // Add space between the icon and text.
+    // Avoid applying spacing directly to the icon as the use of `transform` will change the
+    // placement of any margins.
+    .calendar__show-all-text,
+    .calendar__section-toggle-text {
+      margin-left: govuk-spacing(1);
+      vertical-align: middle;
+    }
+
+    // Background colour adjustment when user changes colours in Firefox
+    //
+    // When user changes colours in Firefox, text colour inside <button> is always black
+    // (regardless of the custom colours the user has set). This is fine when the text in the
+    // button is not nested inside another element because when user changes colours in Firefox,
+    // the immediate background colour of buttons is always white (again, regardless of user's
+    // custom colours).
+    //
+    // However, when the text inside <button> is wrapped inside another element AND that element
+    // sets a background colour, the text colour is still black but the background of that nested
+    // element gets the user's custom background colour. When the custom background is a lighter
+    // hue, the contrast might be sufficient. But if the user's custom background colour is a
+    // darker colour, the contrast with the text might not be sufficient.
+    //
+    // To ensure sufficient contrast, override the background colour set by the focus state on the
+    // nested elements to be transparent.
+    //
+    // Also override the background colour of the Show/Hide chevrons which set a background colour
+    // on hover.
+    @media screen and (forced-colors: active) {
+      .calendar__show-all:hover,
+      .calendar__section-button:hover {
+        .calendar-nav__chevron {
+          background-color: transparent;
+        }
+      }
+
+      .calendar__show-all:focus,
+      .calendar__section-button:focus {
+        .calendar__section-heading-text-focus,
+        .calendar__section-summary-focus,
+        .calendar__section-toggle-focus,
+        .calendar-nav__chevron {
+          background: transparent;
+          background-color: transparent;
+        }
+      }
+    }
+
+    // For devices that can't hover such as touch devices,
+    // remove hover state as it can be stuck in that state (iOS).
+    @media (hover: none) {
+      .calendar__section-header:hover {
+        border-top-color: $govuk-border-colour;
+
+        box-shadow: inset 0 3px 0 0 $govuk-link-colour;
+
+        .calendar__section-button {
+          border-top-color: $govuk-border-colour;
+        }
+      }
+    }
+  }
+
+  .calendar__desktop {
+    @include govuk-media-query($from: desktop) {
+      display: flex;
+    }
+  }
+}

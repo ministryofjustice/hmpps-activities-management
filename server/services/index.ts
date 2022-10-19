@@ -1,6 +1,7 @@
 import dataAccess from '../data'
 import UserService from './userService'
 import PrisonService from './prisonService'
+import BankHolidayService from './bankHolidayService'
 
 export default function services() {
   const { hmppsAuthClient, prisonRegisterApiClient, prisonApiClient, prisonerSearchApiClient, whereaboutsApiClient } =
@@ -14,6 +15,7 @@ export default function services() {
       prisonRegisterApiClient,
       whereaboutsApiClient,
     ),
+    ukBankHolidayService: new BankHolidayService(),
   }
 }
 
