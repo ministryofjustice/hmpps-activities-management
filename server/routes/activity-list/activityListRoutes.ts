@@ -4,22 +4,37 @@ import ActivityListRouteHandler from './handlers/ActivityListRouteHandler'
 import SelectActivityLocationRouteHandler from './handlers/SelectActivityLocationRouteHandler'
 import { Services } from '../../services'
 import fetchActivityList from '../../middleware/fetchActivityList'
+import fetchAbsenceReasons from '../../middleware/fetchAbsenceReasons'
+import AbsencesRouteHandler from './handlers/AbsencesRouteHandler'
 
 export default ({ prisonService }: Services): Router => {
   const router = Router()
   const getSelectActivityLocation = (path: string, handler: RequestHandler) =>
     router.get(path, asyncMiddleware(handler))
-  const postSelectActivityLocation = (path: string, handler: RequestHandler) =>
-    router.post(path, asyncMiddleware(handler))
+  const post = (path: string, handler: RequestHandler) => router.post(path, asyncMiddleware(handler))
   const getActivityList = (path: string, handler: RequestHandler) =>
     router.get(path, fetchActivityList(prisonService), asyncMiddleware(handler))
 
-  const activityListRouteHandler = new ActivityListRouteHandler()
   const selectActivityLocationRouteHandler = new SelectActivityLocationRouteHandler(prisonService)
+  const activityListRouteHandler = new ActivityListRouteHandler(prisonService)
+  const absencesRouteHandler = new AbsencesRouteHandler(prisonService)
 
   getSelectActivityLocation('/select-activity-location', selectActivityLocationRouteHandler.GET)
-  postSelectActivityLocation('/select-activity-location', selectActivityLocationRouteHandler.POST)
+  post('/select-activity-location', selectActivityLocationRouteHandler.POST)
   getActivityList('/', activityListRouteHandler.GET)
+  post('/', activityListRouteHandler.POST)
 
+  router.get(
+    '/absences',
+    fetchAbsenceReasons(prisonService),
+    fetchActivityList(prisonService),
+    asyncMiddleware(absencesRouteHandler.GET),
+  )
+  router.post(
+    '/absences',
+    fetchAbsenceReasons(prisonService),
+    fetchActivityList(prisonService),
+    asyncMiddleware(absencesRouteHandler.POST),
+  )
   return router
 }

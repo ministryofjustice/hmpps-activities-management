@@ -1,0 +1,36 @@
+{
+  "attendances": [
+    {
+      "id": 18279,
+      "bookingId": 949173,
+      "eventId": 484814578,
+      "eventLocationId": 27187,
+      "period": "AM",
+      "prisonId": "MDI",
+      "attended": true,
+      "paid": true,
+      "eventDate": "2022-10-13",
+      "createDateTime": "2022-10-13T11:09:11.016410657",
+      "createUserId": "SCH_ACTIVITY",
+      "modifyDateTime": "2022-10-13T11:09:11.016410657",
+      "modifyUserId": "SCH_ACTIVITY",
+      "locked": false
+    },
+    {
+      "id": 18278,
+      "bookingId": 1089812,
+      "eventId": 484729770,
+      "eventLocationId": 27187,
+      "period": "AM",
+      "prisonId": "MDI",
+      "attended": true,
+      "paid": true,
+      "eventDate": "2022-10-13",
+      "createDateTime": "2022-10-13T11:09:11.013924474",
+      "createUserId": "SCH_ACTIVITY",
+      "modifyDateTime": "2022-10-13T11:09:11.013924474",
+      "modifyUserId": "SCH_ACTIVITY",
+      "locked": false
+    }
+  ]
+}

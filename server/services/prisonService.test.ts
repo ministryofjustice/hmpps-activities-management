@@ -15,6 +15,9 @@ import sentenceData from './fixtures/sentence_data_1.json'
 import alerts from './fixtures/alerts_1.json'
 import assessments from './fixtures/assessments_1.json'
 import activities from './fixtures/activities_1.json'
+import absenceReasons from './fixtures/absence-reasons_1.json'
+import batchUpdateAttendanceResponse from './fixtures/batch_update_attendance_response_1.json'
+import { OffenderActivityId } from '../@types/dps'
 
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -149,6 +152,48 @@ describe('Prison Service', () => {
         ['G8785VP', 'G3439UH'],
         user,
       )
+    })
+  })
+
+  describe('getAbsenceReasons', () => {
+    it('should fetch absence reasons using whereabouts API', async () => {
+      when(whereaboutsApiClient.getAbsenceReasons).mockResolvedValue(absenceReasons)
+      const reasons = await prisonService.getAbsenceReasons(user)
+      expect(reasons.paidReasons.length).toEqual(3)
+      expect(whereaboutsApiClient.getAbsenceReasons).toHaveBeenCalledWith(user)
+    })
+  })
+
+  describe('batchUpdateAttendance', () => {
+    it('should batch update attendance using whereabouts API', async () => {
+      const activityIds: OffenderActivityId[] = [
+        {
+          bookingId: 1,
+          activityId: 2,
+        },
+        {
+          bookingId: 2,
+          activityId: 2,
+        },
+      ]
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      when(whereaboutsApiClient.batchUpdateAttendance).mockResolvedValue(batchUpdateAttendanceResponse)
+      const reasons = await prisonService.batchUpdateAttendance(
+        'MDI',
+        '10001G',
+        '2022-08-01',
+        'AM',
+        activityIds,
+        true,
+        true,
+        'reason',
+        'comments',
+        user,
+      )
+      expect(reasons.attendances.length).toEqual(2)
+      expect(whereaboutsApiClient.getAbsenceReasons).toHaveBeenCalledWith(user)
     })
   })
 })
