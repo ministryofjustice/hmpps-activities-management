@@ -13,6 +13,7 @@ import PrisonApiClient from './prisonApiClient'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
 import PrisonRegisterApiClient from './prisonRegisterApiClient'
 import WhereaboutsApiClient from './whereaboutsApiClient'
+import ActivitiesApiClient from './activitiesApiClient'
 
 export default function dataAccess() {
   return {
@@ -21,5 +22,6 @@ export default function dataAccess() {
     prisonerSearchApiClient: new PrisonerSearchApiClient(),
     prisonRegisterApiClient: new PrisonRegisterApiClient(),
     whereaboutsApiClient: new WhereaboutsApiClient(),
+    activitiesApiClient: new ActivitiesApiClient(),
   }
 }

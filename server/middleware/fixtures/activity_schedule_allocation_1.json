@@ -1,0 +1,30 @@
+[
+  {
+    "activityScheduleId": 3,
+    "description": "Wednesday AM Houseblock 3",
+    "startTime": "10:00",
+    "endTime": "11:00",
+    "internalLocation": {
+      "id": 1,
+      "code": "EDU-ROOM-1",
+      "description": "Education - R1"
+    },
+    "prisoner": {
+      "prisonerNumber": "G3439UH",
+      "firstName": "JACK",
+      "lastName": "DANIELS",
+      "cellLocation": "MDI-3-3-006",
+      "category": "C",
+      "alerts": [
+        {
+          "alertType": "H",
+          "alertCode": "HA"
+        },
+        {
+          "alertType": "S",
+          "alertCode": "SO"
+        }
+      ]
+    }
+  }
+]

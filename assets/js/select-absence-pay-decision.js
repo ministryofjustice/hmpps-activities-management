@@ -38,24 +38,18 @@ $(function () {
     const $incentiveWarningRadios = $('#incentive-warning-group-' + split[3] + '-' + split[4])
     switch (evt.currentTarget.value) {
       case 'RestDay':
-        $selectSubReasonToNotPay.addClass('govuk-visually-hidden')
-        $incentiveWarningRadios.addClass('govuk-visually-hidden')
-        break
       case 'RestInCellOrSick':
         $selectSubReasonToNotPay.addClass('govuk-visually-hidden')
         $incentiveWarningRadios.addClass('govuk-visually-hidden')
         break
       case 'Refused':
+      case 'UnacceptableAbsence':
         $selectSubReasonToNotPay.removeClass('govuk-visually-hidden')
         $incentiveWarningRadios.removeClass('govuk-visually-hidden')
         break
       case 'SessionCancelled':
         $selectSubReasonToNotPay.removeClass('govuk-visually-hidden')
         $incentiveWarningRadios.addClass('govuk-visually-hidden')
-        break
-      case 'UnacceptableAbsence':
-        $selectSubReasonToNotPay.removeClass('govuk-visually-hidden')
-        $incentiveWarningRadios.removeClass('govuk-visually-hidden')
         break
       default:
         $selectSubReasonToNotPay.addClass('govuk-visually-hidden')
