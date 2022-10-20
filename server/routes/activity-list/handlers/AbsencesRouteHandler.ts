@@ -47,6 +47,8 @@ export default class AbsencesRouteHandler {
     const { locationId, date, period } = req.body
     const attendanceForms = new Map<string, AttendanceForm>()
 
+    // Here stepping through all the form inputs and collecting them into a map of
+    // separate forms for each activity - keyed by their booking id & event id.
     Object.entries(req.body).forEach(([key, value]) => {
       if (key.startsWith('pay-')) {
         const split = key.split('-')
