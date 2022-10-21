@@ -9,7 +9,8 @@
         "endTime": "11:00",
         "cancelled": false,
         "cancelledTime": null,
-        "cancelledBy": null
+        "cancelledBy": null,
+        "attendances": []
       }
     ],
     "allocations": [

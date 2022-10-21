@@ -17,6 +17,10 @@ export interface paths {
     /** Returns zero or more activity schedules at a given prison. */
     get: operations['getSchedulesByPrisonCode']
   }
+  '/scheduled-instances/{instanceId}/attendances': {
+    /** Returns one or more attendance records for a particular scheduled activity for a given scheduled instance. */
+    get: operations['getAttendancesByScheduledInstance']
+  }
   '/queue-admin/get-dlq-messages/{dlqName}': {
     get: operations['getDlqMessages']
   }
@@ -91,6 +95,15 @@ export interface components {
       /** Format: int32 */
       messagesFoundCount: number
     }
+    ErrorResponse: {
+      /** Format: int32 */
+      status: number
+      /** Format: int32 */
+      errorCode?: number
+      userMessage?: string
+      developerMessage?: string
+      moreInfo?: string
+    }
     /**
      * @description
      *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
@@ -119,7 +132,17 @@ export interface components {
        * @description If not null, it indicates the date until which this schedule is suspended
        */
       suspendUntil?: string
+      /**
+       * Format: partial-time
+       * @description The time that any instances of this schedule will start
+       * @example 9:00
+       */
       startTime: string
+      /**
+       * Format: partial-time
+       * @description The time that any instances of this schedule will finish
+       * @example 11:30
+       */
       endTime: string
       internalLocation?: components['schemas']['InternalLocation']
       /**
@@ -198,6 +221,71 @@ export interface components {
        */
       deallocatedReason?: string
     }
+    /** @description An attendance record for a prisoner, can be marked or unmarked */
+    Attendance: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this attendance
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison number this attendance record is for
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      attendanceReason?: components['schemas']['AttendanceReason']
+      /**
+       * @description Free text to allow comments to be put against the attendance
+       * @example Prisoner was too unwell to attend the activity.
+       */
+      comment?: string
+      posted: boolean
+      /**
+       * Format: date-time
+       * @description The date and time the attendance was updated
+       */
+      recordedTime?: string
+      /**
+       * @description The person whom updated the attendance
+       * @example 10/09/2023
+       */
+      recordedBy?: string
+      status?: string
+      /**
+       * Format: int32
+       * @description The amount in pence to pay the prisoner for the activity
+       * @example 100
+       */
+      payAmount?: number
+      /**
+       * Format: int32
+       * @description The bonus amount in pence to pay the prisoner for the activity
+       * @example 50
+       */
+      bonusAmount?: number
+      /** Format: int32 */
+      pieces?: number
+    }
+    /** @description The reason for attending or not */
+    AttendanceReason: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this absence reason
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The reason codes
+       * @example ABS, ACCAB, ATT, CANC, NREQ, SUS, UNACAB, REST
+       */
+      code: string
+      /**
+       * @description The detailed description for this attendance reason
+       * @example Unacceptable absence
+       */
+      description: string
+    }
     /**
      * @description An internal NOMIS location for an activity to take place
      * @example 98877667
@@ -220,20 +308,6 @@ export interface components {
        */
       description: string
     }
-    /**
-     * @description The time that any instances of this schedule will finish
-     * @example 11:30
-     */
-    LocalTime: {
-      /** Format: int32 */
-      hour?: number
-      /** Format: int32 */
-      minute?: number
-      /** Format: int32 */
-      second?: number
-      /** Format: int32 */
-      nano?: number
-    }
     /** @description Describes one instance of an activity schedule */
     ScheduledInstance: {
       /**
@@ -247,7 +321,17 @@ export interface components {
        * @description The specific date for this scheduled instance
        */
       date: string
+      /**
+       * Format: partial-time
+       * @description The start time for this scheduled instance
+       * @example 9:00
+       */
       startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time for this scheduled instance
+       * @example 10:00
+       */
       endTime: string
       /**
        * @description Flag to indicate if this scheduled instance has been cancelled since being scheduled
@@ -264,15 +348,8 @@ export interface components {
        * @example Adam Smith
        */
       cancelledBy?: string
-    }
-    ErrorResponse: {
-      /** Format: int32 */
-      status: number
-      /** Format: int32 */
-      errorCode?: number
-      userMessage?: string
-      developerMessage?: string
-      moreInfo?: string
+      /** @description The attendance records for this scheduled instance */
+      attendances: components['schemas']['Attendance'][]
     }
     DlqMessage: {
       body: { [key: string]: { [key: string]: unknown } }
@@ -623,6 +700,40 @@ export interface operations {
       }
       /** Forbidden, requires an appropriate role */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** Returns one or more attendance records for a particular scheduled activity for a given scheduled instance. */
+  getAttendancesByScheduledInstance: {
+    parameters: {
+      path: {
+        instanceId: number
+      }
+    }
+    responses: {
+      /** Attendance records found */
+      200: {
+        content: {
+          'application/json': components['schemas']['Attendance'][]
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** The scheduled instance was not found. */
+      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
