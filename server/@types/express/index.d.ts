@@ -1,5 +1,5 @@
 import { HmppsAuthUser } from '../hmppsAuth'
-import { CaseLoad, PrisonApiUserDetail } from '../prisonApiImport/types'
+import { PrisonApiUserDetail } from '../prisonApiImport/types'
 
 export default {}
 
@@ -34,6 +34,6 @@ export type ServiceUser = Express.User &
   HmppsAuthUser &
   PrisonApiUserDetail & {
     displayName: string
-    allCaseLoads: CaseLoad[]
-    activeCaseLoad?: CaseLoad
+    allCaseLoads: CaseLoadExtended[]
+    activeCaseLoad?: CaseLoadExtended
   }

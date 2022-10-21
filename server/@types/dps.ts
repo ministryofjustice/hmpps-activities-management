@@ -1,4 +1,5 @@
 import { PrisonerScheduleLenient } from './prisonApiImportCustom'
+import { CaseLoad } from './prisonApiImport/types'
 
 export type NameValueStringPair = {
   name: string
@@ -75,4 +76,8 @@ export type ActivityListTableRow = {
 export type OffenderActivityId = {
   bookingId: number
   activityId: number
+}
+
+export type CaseLoadExtended = CaseLoad & {
+  isRolledOut?: boolean
 }

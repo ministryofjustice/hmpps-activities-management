@@ -1,0 +1,90 @@
+[
+  {
+    "activityScheduleId": 3,
+    "description": "Wednesday AM Houseblock 3",
+    "startTime": "10:00",
+    "endTime": "11:00",
+    "internalLocation": {
+      "id": 1,
+      "code": "EDU-ROOM-1",
+      "description": "Education - R1"
+    },
+    "prisoner": {
+      "prisonerNumber": "G3439UH",
+      "firstName": "JACK",
+      "lastName": "DANIELS",
+      "cellLocation": "MDI-3-3-006",
+      "category": "C",
+      "alerts": [
+        {
+          "alertType": "H",
+          "alertCode": "HA"
+        },
+        {
+          "alertType": "S",
+          "alertCode": "SO"
+        }
+      ]
+    }
+  },
+  {
+    "activityScheduleId": 3,
+    "description": "Wednesday AM Houseblock 3",
+    "startTime": "10:00",
+    "endTime": "11:00",
+    "internalLocation": {
+      "id": 1,
+      "code": "EDU-ROOM-1",
+      "description": "Education - R1"
+    },
+    "prisoner": {
+      "bookNumber": "38458A",
+      "bookingId": "1200993",
+      "cellLocation": "2-1-007",
+      "croNumber": "45815/99U",
+      "dateOfBirth": "1986-06-27",
+      "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British",
+      "firstName": "TIM",
+      "gender": "Male",
+      "imprisonmentStatus": "FTR_HDC",
+      "imprisonmentStatusDescription": "Fixed Term Recall while on HDC",
+      "inOutStatus": "IN",
+      "indeterminateSentence": false,
+      "lastMovementReasonCode": "C3",
+      "lastMovementTypeCode": "TAP",
+      "lastName": "HARRISON",
+      "legalStatus": "RECALL",
+      "locationDescription": "Moorland (HMP & YOI)",
+      "middleNames": "JETHRONE MASON",
+      "pncNumber": "99/58816L",
+      "pncNumberCanonicalLong": "1999/58816L",
+      "pncNumberCanonicalShort": "99/58816L",
+      "prisonId": "MDI",
+      "prisonName": "Moorland (HMP & YOI)",
+      "prisonerNumber": "G4793VF",
+      "recall": true,
+      "receptionDate": "2020-07-20",
+      "restrictedPatient": false,
+      "status": "ACTIVE IN",
+      "youthOffender": false,
+      "alerts": [],
+      "aliases": [
+        {
+          "dateOfBirth": "1986-07-31",
+          "ethnicity": "White: Gypsy or Irish Traveller",
+          "firstName": "EGVANING",
+          "gender": "Male",
+          "lastName": "VANERY",
+          "middleNames": "ROCHICA"
+        },
+        {
+          "dateOfBirth": "1986-07-26",
+          "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British",
+          "firstName": "EGVANING",
+          "gender": "Male",
+          "lastName": "CIARIYAH"
+        }
+      ]
+    }
+  }
+]

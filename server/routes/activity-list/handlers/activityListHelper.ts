@@ -27,7 +27,7 @@ const getEventSuffix = (event: EventLite): string => {
 }
 
 export const getAlertValues = (alertFlags: string[], category: string) => {
-  const alerts = alertFlags.map(a => {
+  const alerts: string[] = alertFlags.map(a => {
     switch (a) {
       case 'HA':
         return 'ACCT'
@@ -47,8 +47,10 @@ export const getAlertValues = (alertFlags: string[], category: string) => {
         return 'SHIELDING UNIT'
       case 'URS':
         return 'REFUSING TO SHIELD'
+      case 'PEEP':
+        return 'PEEP'
       default:
-        return a
+        return ''
     }
   })
 
@@ -68,7 +70,7 @@ export const getAlertValues = (alertFlags: string[], category: string) => {
     default:
     // no op
   }
-  return alerts
+  return alerts.filter(av => av !== '')
 }
 
 const getMainEventDescription = (activity: ActivityByLocation) => {

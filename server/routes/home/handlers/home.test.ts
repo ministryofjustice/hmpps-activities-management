@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-
 import HomeRoutes from './home'
 
 describe('Route Handlers - Home', () => {
@@ -9,6 +8,9 @@ describe('Route Handlers - Home', () => {
 
   beforeEach(() => {
     res = {
+      locals: {
+        user: { token: 'token', activeCaseLoad: { caseLoadId: 'EDI' } },
+      },
       render: jest.fn(),
     } as unknown as Response
   })
@@ -21,7 +23,7 @@ describe('Route Handlers - Home', () => {
         expect(res.render).toHaveBeenCalledWith('pages/index', {
           shouldShowCreateActivityCard: true,
           shouldShowPrisonCalendarCard: true,
-          shouldShowAlphaPrisonActivityList: true,
+          shouldShowAlphaPrisonActivityListDps: true,
         })
       })
     })

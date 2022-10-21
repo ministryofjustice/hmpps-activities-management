@@ -4,12 +4,14 @@ import { Request, Response } from 'express'
 
 export default class HomeRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
     const viewContext = {
       // shouldShowCreateLicenceCard: hasRole(req.user, AuthRole.RESPONSIBLE_OFFICER),
       // shouldShowVaryLicenceCard: hasRole(req.user, AuthRole.RESPONSIBLE_OFFICER),
       shouldShowCreateActivityCard: true,
       shouldShowPrisonCalendarCard: true,
-      shouldShowAlphaPrisonActivityList: true,
+      shouldShowAlphaPrisonActivityListAm: user.activeCaseLoad.isRolledOut,
+      shouldShowAlphaPrisonActivityListDps: !user.activeCaseLoad.isRolledOut,
     }
     res.render('pages/index', viewContext)
   }

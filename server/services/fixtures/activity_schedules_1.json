@@ -1,0 +1,44 @@
+[
+  {
+    "id": 3,
+    "instances": [
+      {
+        "id": 24,
+        "date": "19/10/2022",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "cancelled": false,
+        "cancelledTime": null,
+        "cancelledBy": null,
+        "attendances": []
+      }
+    ],
+    "allocations": [
+      {
+        "id": 2,
+        "prisonerNumber": "G4793VF",
+        "iepLevel": "BAS",
+        "payBand": "A",
+        "startDate": "10/10/2022",
+        "endDate": null,
+        "active": true,
+        "allocatedTime": "10/10/2022 09:30",
+        "allocatedBy": "MR BLOGS",
+        "deallocatedTime": null,
+        "deallocatedBy": null,
+        "deallocatedReason": null
+      }
+    ],
+    "description": "Wednesday AM Houseblock 3",
+    "suspendUntil": null,
+    "startTime": "10:00",
+    "endTime": "11:00",
+    "internalLocation": {
+      "id": 1,
+      "code": "EDU-ROOM-1",
+      "description": "Education - R1"
+    },
+    "capacity": 10,
+    "daysOfWeek": "0010000"
+  }
+]
