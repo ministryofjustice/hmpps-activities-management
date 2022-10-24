@@ -5,7 +5,7 @@ import healthcheck from '../services/healthCheck'
 export default function setUpHealthChecks(): Router {
   const router = express.Router()
 
-  router.get('/health', (req, res, next) => {
+  router.get('/health', (req, res) => {
     healthcheck(result => {
       if (!result.healthy) {
         res.status(503)

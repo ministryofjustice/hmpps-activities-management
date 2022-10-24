@@ -30,7 +30,7 @@ describe('Error Handler', () => {
       status: 401,
     } as HTTPError
 
-    handler(error, req, res, jest.fn)
+    handler(error, req, res)
 
     expect(res.redirect).toHaveBeenCalledWith('/sign-out')
   })
@@ -42,7 +42,7 @@ describe('Error Handler', () => {
       status: 403,
     } as HTTPError
 
-    handler(error, req, res, jest.fn)
+    handler(error, req, res)
 
     expect(res.redirect).toHaveBeenCalledWith('/sign-out')
   })
@@ -56,7 +56,7 @@ describe('Error Handler', () => {
       stack: 'stacktrace',
     } as HTTPError
 
-    handler(error, req, res, jest.fn)
+    handler(error, req, res)
 
     expect(res.render).toHaveBeenCalledWith('pages/error', {
       message: 'bad request',
@@ -75,7 +75,7 @@ describe('Error Handler', () => {
       stack: 'stacktrace',
     } as HTTPError
 
-    handler(error, req, res, jest.fn)
+    handler(error, req, res)
 
     expect(res.render).toHaveBeenCalledWith('pages/error', {
       message: 'Something went wrong. The error has been logged. Please try again',
@@ -93,7 +93,7 @@ describe('Error Handler', () => {
       stack: 'stacktrace',
     } as HTTPError
 
-    handler(error, req, res, jest.fn)
+    handler(error, req, res)
 
     expect(res.render).toHaveBeenCalledWith('pages/error', {
       message: 'Something went wrong. The error has been logged. Please try again',

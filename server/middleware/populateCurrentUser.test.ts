@@ -10,7 +10,7 @@ let res = {} as Response
 let req = {} as Request
 const next = jest.fn()
 
-const userServiceMock = new UserService(null, null) as jest.Mocked<UserService>
+const userServiceMock = new UserService(null, null, null) as jest.Mocked<UserService>
 const activitiesServiceMock = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 const middleware = populateCurrentUser(userServiceMock, activitiesServiceMock)

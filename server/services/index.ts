@@ -7,6 +7,7 @@ import BankHolidayService from './bankHolidayService'
 export default function services() {
   const {
     hmppsAuthClient,
+    nomisUserApiClient,
     prisonRegisterApiClient,
     prisonApiClient,
     prisonerSearchApiClient,
@@ -15,7 +16,7 @@ export default function services() {
   } = dataAccess()
 
   return {
-    userService: new UserService(hmppsAuthClient, prisonApiClient),
+    userService: new UserService(hmppsAuthClient, nomisUserApiClient, prisonApiClient),
     prisonService: new PrisonService(
       prisonApiClient,
       prisonerSearchApiClient,

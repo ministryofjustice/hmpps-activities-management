@@ -3,16 +3,25 @@ import HmppsAuthClient from '../data/hmppsAuthClient'
 import { ServiceUser } from '../@types/express'
 import PrisonApiClient from '../data/prisonApiClient'
 import AuthSource from '../enum/authSource'
+import NomisUserApiClient from '../data/nomisUserApiClient'
 
 export default class UserService {
-  constructor(private readonly hmppsAuthClient: HmppsAuthClient, private readonly prisonApiClient: PrisonApiClient) {}
+  constructor(
+    private readonly hmppsAuthClient: HmppsAuthClient,
+    private readonly nomisUserRolesApiClient: NomisUserApiClient,
+    private readonly prisonApiClient: PrisonApiClient,
+  ) {}
 
   async getUser(user: ServiceUser): Promise<ServiceUser> {
-    const [hmppsAuthUser, nomisUser, userCaseLoads] = await Promise.all([
+    const [hmppsAuthUser, userRoles, nomisUser, userCaseLoads] = await Promise.all([
       this.hmppsAuthClient.getUser(user),
+      user.authSource === AuthSource.NOMIS ? this.nomisUserRolesApiClient.getUserRoles(user) : null,
       user.authSource === AuthSource.NOMIS ? this.prisonApiClient.getUser(user) : null,
       user.authSource === AuthSource.NOMIS ? this.prisonApiClient.getUserCaseLoads(user) : null,
     ])
+
+    const activeCaseLoad = userCaseLoads?.find(c => c.currentlyActive)
+    const rolesInActiveCaseLoad = userRoles?.nomisRoles.find(r => r.caseload.id === activeCaseLoad?.caseLoadId)?.roles
 
     return {
       ...user,
@@ -20,7 +29,8 @@ export default class UserService {
       ...nomisUser,
       displayName: convertToTitleCase(hmppsAuthUser.name),
       allCaseLoads: userCaseLoads,
-      activeCaseLoad: userCaseLoads?.find(c => c.currentlyActive),
+      activeCaseLoad,
+      roles: [userRoles?.dpsRoles, rolesInActiveCaseLoad].flat(),
     }
   }
 

@@ -23,7 +23,7 @@
 
   "overrides": [
     {
-      "plugins": ["@typescript-eslint"],
+      "plugins": ["@typescript-eslint", "unused-imports"],
       "parser": "@typescript-eslint/parser",
       "files": ["**/*.ts"],
       "excludedFiles": "*.js",
@@ -33,6 +33,7 @@
         "plugin:prettier/recommended"
       ],
       "rules": {
+        "unused-imports/no-unused-imports": "warn",
         "no-shadow": "off",
         "max-classes-per-file": ["error", 2],
         "@typescript-eslint/no-shadow": ["error"],
