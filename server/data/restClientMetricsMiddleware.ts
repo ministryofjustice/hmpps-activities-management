@@ -28,7 +28,7 @@ function restClientMetricsMiddleware(agent: SuperAgentRequest) {
       })
     })
 
-    req.on('response', (res: Response, err: Error) => {
+    req.on('response', (res: Response) => {
       res.on('end', () => {
         const responseTime = Date.now() - startTime
         requestHistogram.labels(hostname, req.method, normalizedPath, String(res.statusCode)).observe(responseTime)
