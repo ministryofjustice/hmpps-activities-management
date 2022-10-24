@@ -1,4 +1,4 @@
-import { InternalLocation } from './activitiesAPI/types'
+import { Attendance, InternalLocation } from './activitiesAPI/types'
 
 export type PrisonerAlert = {
   alertType: string
@@ -22,6 +22,7 @@ export type ActivityScheduleAllocation = {
   endTime: string
   internalLocation?: InternalLocation
   prisoner: Prisoner
+  attendance?: Attendance
 }
 
 export type ActivityListTableRow = {
@@ -31,4 +32,5 @@ export type ActivityListTableRow = {
   prisonNumber: string
   relevantAlerts: string[]
   activity: string
+  attended: boolean
 }

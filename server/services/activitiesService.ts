@@ -1,7 +1,7 @@
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
-import { InternalLocation, RolloutPrison } from '../@types/activitiesAPI/types'
+import { Attendance, InternalLocation, RolloutPrison } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
@@ -71,6 +71,18 @@ export default class ActivitiesService {
       period,
       user,
     )
+
+    const activityScheduleIds: number[] = activitySchedules.map(as => as.id)
+    if (activityScheduleIds.length === 0) {
+      return []
+    }
+
+    const attendanceInfoCalls: Promise<Attendance[]>[] = []
+    activityScheduleIds.forEach(asId => {
+      attendanceInfoCalls.push(this.activitiesApiClient.getAttendances(asId, user))
+    })
+    const attendanceResponses: Attendance[][] = await Promise.all(attendanceInfoCalls)
+
     const prisonerNumbers: string[] = activitySchedules
       .map(as => {
         return as.allocations.map(alloc => alloc.prisonerNumber)
@@ -91,6 +103,10 @@ export default class ActivitiesService {
             endTime: as.endTime,
             internalLocation: as.internalLocation,
             prisoner: prisoners.find(p => p.prisonerNumber === alloc.prisonerNumber),
+            attendance: attendanceResponses
+              .flat()
+              .filter(a => a !== undefined)
+              .find(a => a.prisonerNumber === alloc.prisonerNumber),
           }
         })
       })

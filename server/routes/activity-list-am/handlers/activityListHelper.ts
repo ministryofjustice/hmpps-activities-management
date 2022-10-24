@@ -65,5 +65,8 @@ export const mapToTableRow = (activityScheduleAllocation: ActivityScheduleAlloca
     prisonNumber: activityScheduleAllocation.prisoner.prisonerNumber,
     relevantAlerts: alerts,
     activity: activityScheduleAllocation.description,
+    attended: activityScheduleAllocation.attendance?.attendanceReason
+      ? activityScheduleAllocation.attendance?.attendanceReason.code === 'ATT'
+      : undefined,
   }
 }

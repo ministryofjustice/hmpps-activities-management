@@ -66,4 +66,19 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('getAttendances', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakeActivitiesApi
+        .get('/scheduled-instances/123/attendances')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getAttendances(123, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })
