@@ -13,6 +13,10 @@ export interface paths {
   '/queue-admin/purge-queue/{queueName}': {
     put: operations['purgeQueue']
   }
+  '/attendances': {
+    /** Updates the given attendance records with the supplied update request details. */
+    put: operations['markAttendances']
+  }
   '/schedules/{prisonCode}': {
     /** Returns zero or more activity schedules at a given prison. */
     get: operations['getSchedulesByPrisonCode']
@@ -94,6 +98,20 @@ export interface components {
     PurgeQueueResult: {
       /** Format: int32 */
       messagesFoundCount: number
+    }
+    /** @description Request object for updating an attendance record */
+    AttendanceUpdateRequest: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this attendance
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The reason codes- ABS, ACCAB, ATT, CANC, NREQ, SUS, UNACAB, REST
+       * @example ATT
+       */
+      attendanceReason: string
     }
     ErrorResponse: {
       /** Format: int32 */
@@ -251,6 +269,10 @@ export interface components {
        * @example 10/09/2023
        */
       recordedBy?: string
+      /**
+       * @description A short code of the status the attendance
+       * @example SCH (scheduled or planned), COMP (completed).
+       */
       status?: string
       /**
        * Format: int32
@@ -276,8 +298,8 @@ export interface components {
        */
       id: number
       /**
-       * @description The reason codes
-       * @example ABS, ACCAB, ATT, CANC, NREQ, SUS, UNACAB, REST
+       * @description The reason codes - ABS, ACCAB, ATT, CANC, NREQ, SUS, UNACAB, REST
+       * @example ABS
        */
       code: string
       /**
@@ -667,6 +689,30 @@ export interface operations {
         content: {
           '*/*': components['schemas']['PurgeQueueResult']
         }
+      }
+    }
+  }
+  /** Updates the given attendance records with the supplied update request details. */
+  markAttendances: {
+    responses: {
+      /** The attendance records were updated. */
+      200: unknown
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AttendanceUpdateRequest'][]
       }
     }
   }

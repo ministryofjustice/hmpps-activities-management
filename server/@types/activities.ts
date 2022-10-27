@@ -32,5 +32,22 @@ export type ActivityListTableRow = {
   prisonNumber: string
   relevantAlerts: string[]
   activity: string
-  attended: boolean
+  attended?: boolean
+  attendanceId?: number
+  payDecision?: boolean
+  paidReason?: string
+  unpaidReason?: string
+}
+
+export type AttendanceForm = {
+  pay?: string
+  moreDetail?: string
+  paidReason?: string
+  unpaidReason?: string
+  incentiveWarning?: string
+}
+
+export type ActivityAttendanceId = {
+  id: number
+  attendanceId: number
 }

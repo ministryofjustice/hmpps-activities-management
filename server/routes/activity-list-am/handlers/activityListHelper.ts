@@ -68,5 +68,25 @@ export const mapToTableRow = (activityScheduleAllocation: ActivityScheduleAlloca
     attended: activityScheduleAllocation.attendance?.attendanceReason
       ? activityScheduleAllocation.attendance?.attendanceReason.code === 'ATT'
       : undefined,
+    attendanceId: activityScheduleAllocation.attendance?.id,
+    payDecision: activityScheduleAllocation.attendance?.attendanceReason?.code
+      ? activityScheduleAllocation.attendance?.attendanceReason.code === 'ACCAB' ||
+        activityScheduleAllocation.attendance?.attendanceReason.code === 'CANC' ||
+        activityScheduleAllocation.attendance?.attendanceReason.code === 'NREQ' ||
+        activityScheduleAllocation.attendance?.attendanceReason.code === 'SUS'
+      : undefined,
+    paidReason:
+      activityScheduleAllocation.attendance?.attendanceReason?.code === 'ACCAB' ||
+      activityScheduleAllocation.attendance?.attendanceReason?.code === 'CANC' ||
+      activityScheduleAllocation.attendance?.attendanceReason?.code === 'NREQ' ||
+      activityScheduleAllocation.attendance?.attendanceReason?.code === 'SUS'
+        ? activityScheduleAllocation.attendance?.attendanceReason.code
+        : undefined,
+    unpaidReason:
+      activityScheduleAllocation.attendance?.attendanceReason?.code === 'ABS' ||
+      activityScheduleAllocation.attendance?.attendanceReason?.code === 'UNACAB' ||
+      activityScheduleAllocation.attendance?.attendanceReason?.code === 'REST'
+        ? activityScheduleAllocation.attendance?.attendanceReason?.code
+        : undefined,
   }
 }

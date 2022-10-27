@@ -1,7 +1,13 @@
 import AbstractHmppsRestClient from './abstractHmppsRestClient'
 import config, { ApiConfig } from '../config'
 import { ServiceUser } from '../@types/express'
-import { ActivitySchedule, Attendance, InternalLocation, RolloutPrison } from '../@types/activitiesAPI/types'
+import {
+  ActivitySchedule,
+  Attendance,
+  AttendanceUpdateRequest,
+  InternalLocation,
+  RolloutPrison,
+} from '../@types/activitiesAPI/types'
 
 export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   constructor() {
@@ -45,6 +51,14 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getAttendances(id: number, user: ServiceUser): Promise<Attendance[]> {
     return this.get({
       path: `/scheduled-instances/${id}/attendances`,
+      authToken: user.token,
+    })
+  }
+
+  async updateAttendances(attendanceUpdates: AttendanceUpdateRequest[], user: ServiceUser): Promise<void> {
+    return this.put({
+      path: '/attendances',
+      data: attendanceUpdates,
       authToken: user.token,
     })
   }

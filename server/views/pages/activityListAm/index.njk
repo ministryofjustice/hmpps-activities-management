@@ -45,7 +45,7 @@
                             <td class="govuk-table__cell">
                                 <div class="govuk-radios" data-module="govuk-radios">
                                     <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input" id="attended-id-{{item.bookingId}}-{{item.eventId}}" name="attended-id-{{item.bookingId}}-{{item.eventId}}" type="radio" value="yes" aria-label="Mark as attended" {{"checked" if item.attended === true}}>
+                                        <input class="govuk-radios__input" id="attended-id-{{item.id}}-{{item.attendanceId}}" name="attended-id-{{item.id}}-{{item.attendanceId}}" type="radio" value="yes" aria-label="Mark as attended" {{"disabled" if item.attendanceId === undefined}} {{"checked" if item.attended === true}}>
                                         <label class="govuk-label govuk-radios__label" for="attended"></label>
                                     </div>
                                 </div>
@@ -55,13 +55,12 @@
                                     <div class="govuk-radios__item">
                                         <div class="govuk-radios" data-module="govuk-radios">
                                             <div class="govuk-radios__item">
-                                                <input class="govuk-radios__input" id="not-attended-id-{{item.bookingId}}-{{item.eventId}}" name="attended-id-{{item.bookingId}}-{{item.eventId}}" type="radio" value="no" aria-label="Mark as not attended" {{"checked" if item.attended === false}}>
+                                                <input class="govuk-radios__input" id="not-attended-id-{{item.id}}-{{item.attendanceId}}" name="attended-id-{{item.id}}-{{item.attendanceId}}" type="radio" value="no" aria-label="Mark as not attended" {{"disabled" if item.attendanceId === undefined}} {{"checked" if item.attended === false}}>
                                                 <label class="govuk-label govuk-radios__label" for="attended"></label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                             </td>
                         </tr>
                     {% endfor %}
