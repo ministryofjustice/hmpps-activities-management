@@ -15,7 +15,7 @@ This service requires the following dependent services:
 
 Ensure you have the appropriate tools locally:
 
-`node - v16.x`
+`node - v18.x`
 
 `npm - v8.x`
 
