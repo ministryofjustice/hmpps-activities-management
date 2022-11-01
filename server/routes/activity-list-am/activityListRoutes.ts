@@ -5,6 +5,7 @@ import SelectActivityLocationRouteHandler from './handlers/SelectActivityLocatio
 import ActivityListRouteHandler from './handlers/ActivityListRouteHandler'
 import fetchActivityListAm from '../../middleware/fetchActivityListAm'
 import rolloutGuardActivityList from '../../middleware/rolloutGuardActivityList'
+import AbsencesRouteHandler from './handlers/AbsencesRouteHandler'
 
 export default ({ activitiesService }: Services): Router => {
   const router = Router()
@@ -13,7 +14,8 @@ export default ({ activitiesService }: Services): Router => {
   const post = (path: string, handler: RequestHandler) => router.post(path, asyncMiddleware(handler))
 
   const selectActivityLocationRouteHandler = new SelectActivityLocationRouteHandler(activitiesService)
-  const activityListRouteHandler = new ActivityListRouteHandler()
+  const activityListRouteHandler = new ActivityListRouteHandler(activitiesService)
+  const absencesRouteHandler = new AbsencesRouteHandler(activitiesService)
 
   get('/select-activity-location', selectActivityLocationRouteHandler.GET)
   post('/select-activity-location', selectActivityLocationRouteHandler.POST)
@@ -24,6 +26,14 @@ export default ({ activitiesService }: Services): Router => {
     fetchActivityListAm(activitiesService),
     asyncMiddleware(activityListRouteHandler.GET),
   )
+  post('/', activityListRouteHandler.POST)
 
+  router.get(
+    '/absences',
+    rolloutGuardActivityList(),
+    fetchActivityListAm(activitiesService),
+    asyncMiddleware(absencesRouteHandler.GET),
+  )
+  router.post('/absences', fetchActivityListAm(activitiesService), asyncMiddleware(absencesRouteHandler.POST))
   return router
 }

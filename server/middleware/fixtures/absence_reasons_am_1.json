@@ -1,0 +1,13 @@
+{
+  "paidAbsenceReasons": [
+    { "code": "ACCAB", "name": "Acceptable absence" },
+    { "code": "CANC", "name": "Cancelled" },
+    { "code": "NREQ", "name": "Not required" },
+    { "code": "SUS", "name": "Suspend" }
+  ],
+  "unpaidAbsenceReasons": [
+    { "code": "ABS", "name": "Absent" },
+    { "code": "UNACAB", "name": "Unacceptable absence" },
+    { "code": "REST", "name": "Rest day (no pay)" }
+  ]
+}

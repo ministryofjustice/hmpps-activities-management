@@ -1,7 +1,7 @@
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
-import { Attendance, InternalLocation, RolloutPrison } from '../@types/activitiesAPI/types'
+import { AttendanceUpdateRequest, InternalLocation, RolloutPrison } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
@@ -72,44 +72,41 @@ export default class ActivitiesService {
       user,
     )
 
-    const activityScheduleIds: number[] = activitySchedules.map(as => as.id)
-    if (activityScheduleIds.length === 0) {
-      return []
-    }
-
-    const attendanceInfoCalls: Promise<Attendance[]>[] = []
-    activityScheduleIds.forEach(asId => {
-      attendanceInfoCalls.push(this.activitiesApiClient.getAttendances(asId, user))
-    })
-    const attendanceResponses: Attendance[][] = await Promise.all(attendanceInfoCalls)
-
+    // We'd like to assume there would be only one activity schedule returned - but we cant at this stage
     const prisonerNumbers: string[] = activitySchedules
       .map(as => {
-        return as.allocations.map(alloc => alloc.prisonerNumber)
+        if (as.instances.length === 1) {
+          // We wouldn't be able to cope with multiple instances
+          return as.allocations.map(alloc => alloc.prisonerNumber)
+        }
+        return []
       })
       .flat()
 
-    if (prisonerNumbers.length === 0) {
-      return []
-    }
     const prisoners = await this.prisonerSearchApiClient.searchByPrisonerNumbers({ prisonerNumbers }, user)
+
     return activitySchedules
       .map(as => {
-        return as.allocations.map(alloc => {
-          return {
-            activityScheduleId: as.id,
-            description: as.description,
-            startTime: as.startTime,
-            endTime: as.endTime,
-            internalLocation: as.internalLocation,
-            prisoner: prisoners.find(p => p.prisonerNumber === alloc.prisonerNumber),
-            attendance: attendanceResponses
-              .flat()
-              .filter(a => a !== undefined)
-              .find(a => a.prisonerNumber === alloc.prisonerNumber),
-          }
-        })
+        if (as.instances.length === 1) {
+          // We wouldn't be able to cope with multiple instances
+          return as.allocations.map(alloc => {
+            return {
+              activityScheduleId: as.id,
+              description: as.description,
+              startTime: as.startTime,
+              endTime: as.endTime,
+              internalLocation: as.internalLocation,
+              prisoner: prisoners.find(p => p.prisonerNumber === alloc.prisonerNumber),
+              attendance: as.instances[0].attendances.find(a => a.prisonerNumber === alloc.prisonerNumber),
+            }
+          })
+        }
+        return []
       })
       .flat()
+  }
+
+  async updateAttendances(attendanceUpdates: AttendanceUpdateRequest[], user: ServiceUser): Promise<void> {
+    return this.activitiesApiClient.updateAttendances(attendanceUpdates, user)
   }
 }
