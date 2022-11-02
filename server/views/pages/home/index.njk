@@ -1,0 +1,83 @@
+{% extends "layout.njk" %}
+{% from "components/card.njk" import card %}
+
+{% set pageTitle = applicationName + " - Home" %}
+{% set mainClasses = "govuk-body" %}
+{% set pageId = 'index-page' %}
+
+{% block content %}
+
+    <div class="grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-grid-row card-group">
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "activitiesDashboardCard",
+                        "href": "/activities/dashboard",
+                        "clickable": "true",
+                        "heading": "Activities dashboard",
+                        "description": "View the list of activites and their free spaces.",
+                        "data-qa": "activities-dashboard-card"
+                    }) }}
+                </div>
+
+                {% if shouldShowAlphaPrisonActivityListDps %}
+                    <div class="govuk-grid-column-one-third card-group__item">
+                        {{ card({
+                            "id": "alphaActivityListCard",
+                            "href": "/activity-list/select-activity-location",
+                            "clickable": "true",
+                            "heading": "Whereabouts (prisonAPI): View by activity or appointment location",
+                            "description": "View all activities in an activity or appointment location.",
+                            "data-qa": "alpha-activity-list-dps-link"
+                        }) }}
+                    </div>
+                {% endif %}
+
+                {% if shouldShowAlphaPrisonActivityListAm %}
+                    <div class="govuk-grid-column-one-third card-group__item">
+                        {{ card({
+                            "id": "alphaActivityListCard",
+                            "href": "/activity-list-am/select-activity-location",
+                            "clickable": "true",
+                            "heading": "Whereabouts (activitiesAPI): View by activity or appointment location",
+                            "description": "View all activities in an activity or appointment location.",
+                            "data-qa": "alpha-activity-list-am-link"
+                        }) }}
+                    </div>
+                {% endif %}
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "href": "/spikes/prison-service-spike",
+                        "clickable": "true",
+                        "heading": "Spike - Prison service",
+                        "description": "Integration with prison API, prisoner offender search, and prison register API"
+                    }) }}
+                </div>
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "href": "/spikes/validation-spike",
+                        "clickable": "true",
+                        "heading": "Spike - Validation",
+                        "description": "Implementation of a form with validation and error messages"
+                    }) }}
+                </div>
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "href": "/spikes/calendar-spike",
+                        "clickable": "true",
+                        "heading": "Spike - Calendar",
+                        "description": "Implementation of a calendar with bank holidays overlayed"
+                    }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pageScripts %}
+    <script src="/assets/js/card.js"></script>
+{% endblock %}
