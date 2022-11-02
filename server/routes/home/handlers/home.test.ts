@@ -9,29 +9,19 @@ describe('Route Handlers - Home', () => {
   beforeEach(() => {
     res = {
       locals: {
-        user: { token: 'token', activeCaseLoad: { caseLoadId: 'EDI' } },
+        user: { token: 'token', activeCaseLoad: { caseLoadId: 'EDI', isRolledOut: false } },
       },
       render: jest.fn(),
     } as unknown as Response
   })
 
   describe('GET', () => {
-    describe('For any random role', () => {
-      it('With correct auth source', async () => {
-        req = getReqWithRoles(['ROLE_RANDOM_1'])
-        await handler.GET(req, res)
-        expect(res.render).toHaveBeenCalledWith('pages/index', {
-          shouldShowCreateActivityCard: true,
-          shouldShowPrisonCalendarCard: true,
-          shouldShowAlphaPrisonActivityListDps: true,
-        })
+    it('returns the correct context', async () => {
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/home/index', {
+        shouldShowAlphaPrisonActivityListDps: true,
+        shouldShowAlphaPrisonActivityListAm: false,
       })
     })
   })
 })
-
-const getReqWithRoles = (roles: string[]): Request => {
-  return {
-    user: { userRoles: roles },
-  } as unknown as Request
-}
