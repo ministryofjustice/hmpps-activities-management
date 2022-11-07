@@ -31,7 +31,7 @@ describe('Activities Service', () => {
   })
 
   describe('populateUserPrisonInfo', () => {
-    it('should add the rpisons rollout status to the users caseload info API', async () => {
+    it('should add the prisons rollout status to the users caseload info API', async () => {
       const rolloutPrisonResult = { id: 1, code: 'MDI', description: 'Moorlands', active: true } as RolloutPrison
       when(activitiesApiClient.getRolloutPrison).calledWith(atLeast('MDI')).mockResolvedValue(rolloutPrisonResult)
 
@@ -87,6 +87,7 @@ describe('Activities Service', () => {
       when(activitiesApiClient.getActivitySchedules)
         .calledWith(atLeast('10001'))
         .mockResolvedValueOnce(activitySchedules)
+
       when(activitiesApiClient.getActivitySchedules).calledWith(atLeast('10001')).mockResolvedValueOnce([])
 
       const results = await activitiesService.getActivitySchedules('MDI', '10001', '2022-08-01', 'AM', user)
