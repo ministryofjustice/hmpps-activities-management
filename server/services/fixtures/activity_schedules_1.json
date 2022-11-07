@@ -17,7 +17,7 @@
       {
         "id": 2,
         "prisonerNumber": "G4793VF",
-        "iepLevel": "BAS",
+        "incentiveLevel": "BAS",
         "payBand": "A",
         "startDate": "10/10/2022",
         "endDate": null,
@@ -29,8 +29,8 @@
         "deallocatedReason": null
       }
     ],
+    "suspensions": [],
     "description": "Wednesday AM Houseblock 3",
-    "suspendUntil": null,
     "startTime": "10:00",
     "endTime": "11:00",
     "internalLocation": {
@@ -39,6 +39,6 @@
       "description": "Education - R1"
     },
     "capacity": 10,
-    "daysOfWeek": "0010000"
+    "daysOfWeek": ["Mon", "Tue", "Wed"]
   }
 ]

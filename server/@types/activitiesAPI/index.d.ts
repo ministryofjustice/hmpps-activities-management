@@ -17,6 +17,9 @@ export interface paths {
     /** Updates the given attendance records with the supplied update request details. */
     put: operations['markAttendances']
   }
+  '/job/create-activity-sessions': {
+    post: operations['triggerCreateActivitySessionsJob']
+  }
   '/schedules/{prisonCode}': {
     /** Returns zero or more activity schedules at a given prison. */
     get: operations['getSchedulesByPrisonCode']
@@ -31,6 +34,10 @@ export interface paths {
   '/prisons/{prisonCode}': {
     /** Returns a single prison and its details by its unique code. */
     get: operations['getPrisonByCode']
+  }
+  '/prisons/{prisonCode}/scheduled-instances': {
+    /** Returns zero or more scheduled instances for a prison, prisoner (optional) and date range (max 3 months). */
+    get: operations['getActivityScheduleInstancesByDateRange']
   }
   '/prisons/{prisonCode}/locations': {
     /** Returns a list of zero or more scheduled prison locations for the supplied criteria. */
@@ -145,11 +152,8 @@ export interface components {
        * @example Monday AM Houseblock 3
        */
       description: string
-      /**
-       * Format: date
-       * @description If not null, it indicates the date until which this schedule is suspended
-       */
-      suspendUntil?: string
+      /** @description Indicates the dates between which the schedule has been suspended */
+      suspensions: components['schemas']['Suspension'][]
       /**
        * Format: partial-time
        * @description The time that any instances of this schedule will start
@@ -171,9 +175,9 @@ export interface components {
       capacity: number
       /**
        * @description The days of the week on which the schedule takes place
-       * @example Mon,Tue,Wed
+       * @example [Mon,Tue,Wed]
        */
-      daysOfWeek: string
+      daysOfWeek: string[]
     }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
@@ -192,7 +196,7 @@ export interface components {
        * @description The incentive/earned privilege (level) for this offender allocation
        * @example BAS, STD, ENH
        */
-      iepLevel?: string
+      incentiveLevel?: string
       /**
        * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner
        * @example A
@@ -373,6 +377,19 @@ export interface components {
       /** @description The attendance records for this scheduled instance */
       attendances: components['schemas']['Attendance'][]
     }
+    /** @description Describes the period of time an activity schedule has been suspended */
+    Suspension: {
+      /**
+       * Format: date
+       * @description The date from which the activity schedule was suspended
+       */
+      suspendedFrom: string
+      /**
+       * Format: date
+       * @description The date until which the activity schedule was suspended. If null, the schedule is suspended indefinately
+       */
+      suspendedUntil?: string
+    }
     DlqMessage: {
       body: { [key: string]: { [key: string]: unknown } }
       messageId: string
@@ -409,6 +426,123 @@ export interface components {
       active: boolean
     }
     /** @description Describes a top-level activity */
+    ActivityLite: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary: string
+      /**
+       * @description A detailed description for this activity
+       * @example A basic maths course suitable for introduction to the subject
+       */
+      description: string
+      /**
+       * @description Flag to indicate if this activity is presently active
+       * @example true
+       */
+      active: boolean
+    }
+    /** @description Describes one instance of an activity schedule */
+    ActivityScheduleInstance: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this scheduled instance
+       * @example 123456
+       */
+      id?: number
+      /**
+       * Format: date
+       * @description The specific date for this scheduled instance
+       */
+      date: string
+      /**
+       * Format: partial-time
+       * @description The start time for this scheduled instance
+       * @example 9:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time for this scheduled instance
+       * @example 10:00
+       */
+      endTime: string
+      /**
+       * @description Flag to indicate if this scheduled instance has been cancelled since being scheduled
+       * @example false
+       */
+      cancelled: boolean
+      /**
+       * Format: date-time
+       * @description Date and time this scheduled instance was cancelled (or null if not cancelled)
+       */
+      cancelledTime?: string
+      /**
+       * @description The person who cancelled this scheduled instance (or null if not cancelled)
+       * @example Adam Smith
+       */
+      cancelledBy?: string
+      activitySchedule: components['schemas']['ActivityScheduleLite']
+    }
+    /**
+     * @description
+     *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
+     *   An activity schedule describes when, during the week, an activity will be run and where.
+     *   e.g. Tuesday PM and Thursday AM - suitable for Houseblock 2 to attend.
+     *   e.g. Monday AM and Thursday PM - suitable for Houseblock 3 to attend.
+     *   this 'lite' version of ActivitySchedule does not have allocated or instances.
+     */
+    ActivityScheduleLite: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity schedule
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The description of this activity schedule
+       * @example Monday AM Houseblock 3
+       */
+      description: string
+      /**
+       * Format: partial-time
+       * @description The time that any instances of this schedule will start
+       * @example 9:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The time that any instances of this schedule will finish
+       * @example 11:30
+       */
+      endTime: string
+      internalLocation?: components['schemas']['InternalLocation']
+      /**
+       * Format: int32
+       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
+       * @example 10
+       */
+      capacity: number
+      /**
+       * @description The days of the week on which the schedule takes place
+       * @example [Mon,Tue,Wed]
+       */
+      daysOfWeek: string[]
+      activity: components['schemas']['ActivityLite']
+    }
+    /** @description Describes a top-level activity */
     Activity: {
       /**
        * Format: int64
@@ -442,7 +576,8 @@ export interface components {
       schedules: components['schemas']['ActivitySchedule'][]
       /** @description A list of prisoners who are waiting for allocation to this activity. This list is held against the activity, though allocation is against particular schedules of the activity */
       waitingList: components['schemas']['PrisonerWaiting'][]
-      pay?: components['schemas']['ActivityPay']
+      /** @description The list of pay rates by incentive level and pay band that can apply to this activity */
+      pay: components['schemas']['ActivityPay'][]
       /**
        * Format: date
        * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
@@ -512,56 +647,20 @@ export interface components {
        * @example 123456
        */
       id: number
-      /** @description A list of pay bands and rates which apply to this activity pay. Can be empty if pay bands do not apply. */
-      bands: components['schemas']['ActivityPayBand'][]
       /**
-       * Format: int32
-       * @description The incentive/earned privilege basic rate per session for this activity
-       * @example 100
+       * @description The incentive/earned privilege level (nullable)
+       * @example BAS
        */
-      iepBasicRate?: number
+      incentiveLevel?: string
       /**
-       * Format: int32
-       * @description The incentive/earned privilege standard rate per session for this activity
-       * @example 125
-       */
-      iepStandardRate?: number
-      /**
-       * Format: int32
-       * @description The incentive/earned privilege enhanced rate per session for this activity
-       * @example 150
-       */
-      iepEnhancedRate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to produced amounts of a product, this indicates the payment rate per pieceRateItems produced
-       * @example 150
-       */
-      pieceRate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
-       * @example 10
-       */
-      pieceRateItems?: number
-    }
-    /** @description Activity pay band - used by some prisons to set a payment rate */
-    ActivityPayBand: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity pay band
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The pay band code - usually A-F - to differentiate different pay rates
+       * @description The pay band (nullable)
        * @example A
        */
       payBand?: string
       /**
        * Format: int32
-       * @description The rate to be paid for one session of this activity
-       * @example 220
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
        */
       rate?: number
       /**
@@ -716,6 +815,16 @@ export interface operations {
       }
     }
   }
+  triggerCreateActivitySessionsJob: {
+    responses: {
+      /** Created */
+      201: {
+        content: {
+          'application/json': string
+        }
+      }
+    }
+  }
   /** Returns zero or more activity schedules at a given prison. */
   getSchedulesByPrisonCode: {
     parameters: {
@@ -832,6 +941,42 @@ export interface operations {
       }
       /** The prison for this code was not found. */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** Returns zero or more scheduled instances for a prison, prisoner (optional) and date range (max 3 months). */
+  getActivityScheduleInstancesByDateRange: {
+    parameters: {
+      path: {
+        prisonCode: string
+      }
+      query: {
+        /** Prisoner number (optional) */
+        prisonerNumber?: string
+        /** Start date of query */
+        startDate: string
+        /** End date of query (max 3 months from start date) */
+        endDate: string
+      }
+    }
+    responses: {
+      /** Successful call - zero or more scheduled instance records found */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivityScheduleInstance'][]
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
