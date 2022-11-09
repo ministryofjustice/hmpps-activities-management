@@ -25,12 +25,35 @@ describe('activitiesApiClient', () => {
     nock.cleanAll()
   })
 
+  describe('getActivityCategories', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi.get('/activity-categories').matchHeader('authorization', `Bearer token`).reply(200, response)
+      const output = await activitiesApiClient.getActivityCategories(user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getCategoryCapacity', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/prison/MDI/activity-categories/1/capacity')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+      const output = await activitiesApiClient.getCategoryCapacity('MDI', 1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('searchActivityLocations', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
 
       fakeActivitiesApi
-        .get('/prisons/MDI/locations')
+        .get('/prison/MDI/locations')
         .query({ date: '2022-08-01', timeSlot: 'AM' })
         .matchHeader('authorization', `Bearer token`)
         .reply(200, response)
@@ -60,7 +83,7 @@ describe('activitiesApiClient', () => {
   describe('getRolloutPrison', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/prisons/MDI').matchHeader('authorization', `Bearer token`).reply(200, response)
+      fakeActivitiesApi.get('/rollout/MDI').matchHeader('authorization', `Bearer token`).reply(200, response)
       const output = await activitiesApiClient.getRolloutPrison('MDI', user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

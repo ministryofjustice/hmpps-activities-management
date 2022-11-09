@@ -2,7 +2,7 @@ import { Router } from 'express'
 import type { Services } from '../services'
 import homeRoutes from './home'
 import changeLocationRoutes from './change-location'
-import activitiesRoutes from './activities'
+import activitiesRoutes from './allocate-to-activity'
 import spikeRoutes from './spikes'
 import activityListRoutes from './spikes/activity-list/activityListRoutes'
 import activityListAmRoutes from './spikes/activity-list-am/activityListRoutes'
@@ -14,7 +14,7 @@ export default function routes(services: Services): Router {
 
   router.use(homeRoutes())
   router.use(changeLocationRoutes(services))
-  router.use(activitiesRoutes())
+  router.use(activitiesRoutes(services))
   router.use(spikeRoutes(services))
   router.use('/activity-list', activityListRoutes(services))
   router.use('/activity-list-am', activityListAmRoutes(services))

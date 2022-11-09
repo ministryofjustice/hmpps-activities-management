@@ -3,6 +3,7 @@ import UserService from './userService'
 import PrisonService from './prisonService'
 import ActivitiesService from './activitiesService'
 import BankHolidayService from './bankHolidayService'
+import CapacitiesService from './capacitiesService'
 
 export default function services() {
   const {
@@ -24,6 +25,7 @@ export default function services() {
       whereaboutsApiClient,
     ),
     activitiesService: new ActivitiesService(activitiesApiClient, prisonerSearchApiClient),
+    capacitiesService: new CapacitiesService(activitiesApiClient),
     ukBankHolidayService: new BankHolidayService(),
   }
 }

@@ -4,7 +4,7 @@ import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesService from './activitiesService'
 import { ServiceUser } from '../@types/express'
-import { RolloutPrison } from '../@types/activitiesAPI/types'
+import { ActivityCategory, CapacityAndAllocated, RolloutPrison } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
 import prisoners from './fixtures/prisoners_1.json'
@@ -18,7 +18,33 @@ describe('Activities Service', () => {
   const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
   const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
 
-  const user = {} as ServiceUser
+  const user = { activeCaseLoadId: 'MDI' } as ServiceUser
+
+  describe('getActivityCategories', () => {
+    it('should get the list of activity categories from activities API', async () => {
+      const expectedResult = [{ id: 1, description: 'Induction' }] as ActivityCategory[]
+
+      activitiesApiClient.getActivityCategories.mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getActivityCategories(user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getActivityCategories).toHaveBeenCalledWith(user)
+    })
+  })
+
+  describe('getCategoryCapacity', () => {
+    it('should get the capacity of a category', async () => {
+      const expectedResult = { capacity: 100, allocated: 80 } as CapacityAndAllocated
+
+      activitiesApiClient.getCategoryCapacity.mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getCategoryCapacity(1, user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getCategoryCapacity).toHaveBeenCalledWith('MDI', 1, user)
+    })
+  })
 
   describe('getPrison', () => {
     it('should get rollout prison information from activities API', async () => {

@@ -1,7 +1,13 @@
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
-import { AttendanceUpdateRequest, InternalLocation, RolloutPrison } from '../@types/activitiesAPI/types'
+import {
+  ActivityCategory,
+  AttendanceUpdateRequest,
+  CapacityAndAllocated,
+  InternalLocation,
+  RolloutPrison,
+} from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
@@ -17,6 +23,14 @@ export default class ActivitiesService {
     private readonly activitiesApiClient: ActivitiesApiClient,
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
   ) {}
+
+  async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
+    return this.activitiesApiClient.getActivityCategories(user)
+  }
+
+  async getCategoryCapacity(categoryId: number, user: ServiceUser): Promise<CapacityAndAllocated> {
+    return this.activitiesApiClient.getCategoryCapacity(user.activeCaseLoadId, categoryId, user)
+  }
 
   async populateUserPrisonInfo(user: ServiceUser) {
     const prisonInfoCalls: Promise<RolloutPrison | undefined>[] = []
