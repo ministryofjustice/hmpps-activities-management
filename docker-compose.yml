@@ -11,6 +11,20 @@ services:
     ports:
       - '6379:6379'
 
+  hmpps-activities-management-api:
+    image: quay.io/hmpps/hmpps-activities-management-api:latest
+    networks:
+      - hmpps
+    container_name: hmpps-activities-management-api
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_USER=activities-management
+      - DB_PASS=activities-management
+      - HMPPS_AUTH_URL=https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal/activities-management-db
+
   # For the API to seed & interact with - there is no direct connection from the UI service
   activities-db:
     image: postgres

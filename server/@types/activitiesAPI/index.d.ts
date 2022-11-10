@@ -17,7 +17,12 @@ export interface paths {
     /** Updates the given attendance records with the supplied update request details. */
     put: operations['markAttendances']
   }
+  '/job/create-attendance-records': {
+    /** Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code. */
+    post: operations['triggerCreateAttendanceRecordsJob']
+  }
   '/job/create-activity-sessions': {
+    /** Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code. */
     post: operations['triggerCreateActivitySessionsJob']
   }
   '/schedules/{prisonCode}': {
@@ -28,20 +33,28 @@ export interface paths {
     /** Returns one or more attendance records for a particular scheduled activity for a given scheduled instance. */
     get: operations['getAttendancesByScheduledInstance']
   }
-  '/queue-admin/get-dlq-messages/{dlqName}': {
-    get: operations['getDlqMessages']
-  }
-  '/prisons/{prisonCode}': {
+  '/rollout/{prisonCode}': {
     /** Returns a single prison and its details by its unique code. */
     get: operations['getPrisonByCode']
+  }
+  '/queue-admin/get-dlq-messages/{dlqName}': {
+    get: operations['getDlqMessages']
   }
   '/prisons/{prisonCode}/scheduled-instances': {
     /** Returns zero or more scheduled instances for a prison, prisoner (optional) and date range (max 3 months). */
     get: operations['getActivityScheduleInstancesByDateRange']
   }
-  '/prisons/{prisonCode}/locations': {
+  '/prison/{prisonCode}/locations': {
     /** Returns a list of zero or more scheduled prison locations for the supplied criteria. */
     get: operations['getScheduledPrisonLocations']
+  }
+  '/prison/{prisonCode}/activity-categories/{categoryId}/capacity': {
+    /** Requires one of the following roles - ('SYSTEM_USER', 'ROLE_ACTIVITIES_ADMIN') */
+    get: operations['getActivityCategoryCapacity']
+  }
+  '/activity-categories': {
+    /** Requires one of the following roles - ('SYSTEM_USER', 'ROLE_ACTIVITIES_ADMIN') */
+    get: operations['getCategories']
   }
   '/activities/{activityId}': {
     /** Returns a single activity and its details by its unique identifier. */
@@ -390,17 +403,6 @@ export interface components {
        */
       suspendedUntil?: string
     }
-    DlqMessage: {
-      body: { [key: string]: { [key: string]: unknown } }
-      messageId: string
-    }
-    GetDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      /** Format: int32 */
-      messagesReturnedCount: number
-      messages: components['schemas']['DlqMessage'][]
-    }
     /** @description Describes one instance of a prison which may or may not be active (rolled out) */
     RolloutPrison: {
       /**
@@ -424,6 +426,17 @@ export interface components {
        * @example true
        */
       active: boolean
+    }
+    DlqMessage: {
+      body: { [key: string]: { [key: string]: unknown } }
+      messageId: string
+    }
+    GetDlqResult: {
+      /** Format: int32 */
+      messagesFoundCount: number
+      /** Format: int32 */
+      messagesReturnedCount: number
+      messages: components['schemas']['DlqMessage'][]
     }
     /** @description Describes a top-level activity */
     ActivityLite: {
@@ -542,6 +555,35 @@ export interface components {
       daysOfWeek: string[]
       activity: components['schemas']['ActivityLite']
     }
+    /** @description Describes the capacity and allocated slots of an activity or category */
+    CapacityAndAllocated: {
+      /**
+       * Format: int32
+       * @description The maximum number of people who can attend the category or activity
+       * @example 30
+       */
+      capacity: number
+      /**
+       * Format: int32
+       * @description The number of slots currently filled in the activity or category
+       * @example 27
+       */
+      allocated: number
+    }
+    /** @description Describes a top-level activity category */
+    ActivityCategory: {
+      /**
+       * Format: int64
+       * @description The internally-generated identifier for this activity category
+       * @example 1
+       */
+      id: number
+      /**
+       * @description The name of the activity category
+       * @example Leisure and social
+       */
+      description: string
+    }
     /** @description Describes a top-level activity */
     Activity: {
       /**
@@ -605,28 +647,6 @@ export interface components {
       createdBy: string
     }
     /**
-     * @description Describes a category of activity
-     * @example Education, Work, Intervention, Health
-     */
-    ActivityCategory: {
-      /**
-       * Format: int64
-       * @description The internally generated ID for this activity category
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The category code - one of a defined set.
-       * @example Education, Prison Industry, Maintenance, Intervention
-       */
-      code: string
-      /**
-       * @description The description for this activity category
-       * @example Education classes
-       */
-      description: string
-    }
-    /**
      * @description Describes an eligibility rule as applied to an activity
      * @example [FEMALE_ONLY,AGED_18-25]
      */
@@ -665,7 +685,7 @@ export interface components {
       rate?: number
       /**
        * Format: int32
-       * @description Where payment is related to produced amounts of a product, this indicates the payment rate per pieceRateItems produced
+       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
        * @example 150
        */
       pieceRate?: number
@@ -815,6 +835,18 @@ export interface operations {
       }
     }
   }
+  /** Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code. */
+  triggerCreateAttendanceRecordsJob: {
+    responses: {
+      /** Created */
+      201: {
+        content: {
+          'application/json': string
+        }
+      }
+    }
+  }
+  /** Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code. */
   triggerCreateActivitySessionsJob: {
     responses: {
       /** Created */
@@ -895,24 +927,6 @@ export interface operations {
       }
     }
   }
-  getDlqMessages: {
-    parameters: {
-      path: {
-        dlqName: string
-      }
-      query: {
-        maxMessages?: number
-      }
-    }
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['GetDlqResult']
-        }
-      }
-    }
-  }
   /** Returns a single prison and its details by its unique code. */
   getPrisonByCode: {
     parameters: {
@@ -943,6 +957,24 @@ export interface operations {
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getDlqMessages: {
+    parameters: {
+      path: {
+        dlqName: string
+      }
+      query: {
+        maxMessages?: number
+      }
+    }
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          '*/*': components['schemas']['GetDlqResult']
         }
       }
     }
@@ -1001,6 +1033,64 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['InternalLocation'][]
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** Requires one of the following roles - ('SYSTEM_USER', 'ROLE_ACTIVITIES_ADMIN') */
+  getActivityCategoryCapacity: {
+    parameters: {
+      path: {
+        prisonCode: string
+        categoryId: number
+      }
+    }
+    responses: {
+      /** Activity category capacity */
+      200: {
+        content: {
+          'application/json': components['schemas']['CapacityAndAllocated']
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Category ID not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** Requires one of the following roles - ('SYSTEM_USER', 'ROLE_ACTIVITIES_ADMIN') */
+  getCategories: {
+    responses: {
+      /** Activity categories found */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivityCategory'][]
         }
       }
       /** Unauthorised, requires a valid Oauth2 token */
