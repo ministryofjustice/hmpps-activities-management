@@ -44,6 +44,10 @@ export interface paths {
     /** Returns zero or more scheduled instances for a prison, prisoner (optional) and date range (max 3 months). */
     get: operations['getActivityScheduleInstancesByDateRange']
   }
+  '/prisons/{prisonCode}/scheduled-events': {
+    /** Returns zero or more scheduled events for a prison, prisoner (optional) and date range (max 3 months). */
+    get: operations['getScheduledEventsByDateRange']
+  }
   '/prison/{prisonCode}/locations': {
     /** Returns a list of zero or more scheduled prison locations for the supplied criteria. */
     get: operations['getScheduledPrisonLocations']
@@ -219,17 +223,12 @@ export interface components {
        * Format: date
        * @description The date when the prisoner will start the activity
        */
-      startDate?: string
+      startDate: string
       /**
        * Format: date
        * @description The date when the prisoner will stop attending the activity
        */
       endDate?: string
-      /**
-       * @description Flag to indicate if this allocation is presently active
-       * @example true
-       */
-      active: boolean
       /**
        * Format: date-time
        * @description The date and time the prisoner was allocated to the activity
@@ -287,8 +286,8 @@ export interface components {
        */
       recordedBy?: string
       /**
-       * @description A short code of the status the attendance
-       * @example SCH (scheduled or planned), COMP (completed).
+       * @description A short code of the status the attendance, SCH (scheduled or planned), COMP (completed).
+       * @example SCH
        */
       status?: string
       /**
@@ -461,11 +460,6 @@ export interface components {
        * @example A basic maths course suitable for introduction to the subject
        */
       description: string
-      /**
-       * @description Flag to indicate if this activity is presently active
-       * @example true
-       */
-      active: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -555,6 +549,84 @@ export interface components {
       daysOfWeek: string[]
       activity: components['schemas']['ActivityLite']
     }
+    /** @description Describes a scheduled event */
+    ScheduledEvent: {
+      /**
+       * @description The prison code for this scheduled event
+       * @example MDI
+       */
+      prisonCode?: string
+      /**
+       * Format: int64
+       * @description The event id for this scheduled event
+       * @example 10001
+       */
+      eventId?: number
+      /**
+       * Format: int64
+       * @description The booking id for this scheduled event
+       * @example 10001
+       */
+      bookingId?: number
+      /**
+       * @description The location of this scheduled event
+       * @example INDUCTION CLASSROOM
+       */
+      location?: string
+      /**
+       * Format: int64
+       * @description The location id of this scheduled event
+       * @example 10001
+       */
+      locationId?: number
+      /**
+       * @description Scheduled event class
+       * @example INT_MOV
+       */
+      eventClass?: string
+      /**
+       * @description Scheduled event status
+       * @example SCH
+       */
+      eventStatus?: string
+      /**
+       * @description Scheduled event type
+       * @example APP
+       */
+      eventType?: string
+      /**
+       * @description Scheduled event type description
+       * @example Appointment
+       */
+      eventTypeDesc?: string
+      /**
+       * @description Details of this scheduled event
+       * @example Dont be late
+       */
+      details?: string
+      /**
+       * @description The prisoner number
+       * @example GF10101
+       */
+      prisonerNumber?: string
+      /**
+       * Format: date
+       * @description The specific date for this scheduled instance
+       */
+      date?: string
+      /**
+       * Format: partial-time
+       * @description The start time for this scheduled instance
+       * @example 9:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time for this scheduled instance
+       * @example 10:00
+       */
+      endTime: string
+    }
     /** @description Describes the capacity and allocated slots of an activity or category */
     CapacityAndAllocated: {
       /**
@@ -630,11 +702,6 @@ export interface components {
        * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
        */
       endDate?: string
-      /**
-       * @description Flag to indicate if this activity is presently active
-       * @example true
-       */
-      active: boolean
       /**
        * Format: date-time
        * @description The date and time when this activity was created
@@ -999,6 +1066,42 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['ActivityScheduleInstance'][]
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** Returns zero or more scheduled events for a prison, prisoner (optional) and date range (max 3 months). */
+  getScheduledEventsByDateRange: {
+    parameters: {
+      path: {
+        prisonCode: string
+      }
+      query: {
+        /** Prisoner number (optional) */
+        prisonerNumber: string
+        /** Start date of query */
+        startDate: string
+        /** End date of query (max 3 months from start date) */
+        endDate: string
+      }
+    }
+    responses: {
+      /** Successful call - zero or more scheduled events found */
+      200: {
+        content: {
+          'application/json': components['schemas']['ScheduledEvent'][]
         }
       }
       /** Unauthorised, requires a valid Oauth2 token */
