@@ -3,8 +3,8 @@ import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
+  ActivityLite,
   AttendanceUpdateRequest,
-  CapacityAndAllocated,
   InternalLocation,
   RolloutPrison,
 } from '../@types/activitiesAPI/types'
@@ -28,8 +28,8 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getActivityCategories(user)
   }
 
-  async getCategoryCapacity(categoryId: number, user: ServiceUser): Promise<CapacityAndAllocated> {
-    return this.activitiesApiClient.getCategoryCapacity(user.activeCaseLoadId, categoryId, user)
+  async getActivitiesInCategory(categoryId: number, user: ServiceUser): Promise<ActivityLite[]> {
+    return this.activitiesApiClient.getActivitiesInCategory(user.activeCaseLoadId, categoryId, user)
   }
 
   async populateUserPrisonInfo(user: ServiceUser) {

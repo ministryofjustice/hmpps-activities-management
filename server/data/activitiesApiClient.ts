@@ -3,6 +3,7 @@ import config, { ApiConfig } from '../config'
 import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
+  ActivityLite,
   ActivitySchedule,
   Attendance,
   AttendanceUpdateRequest,
@@ -26,6 +27,20 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getCategoryCapacity(prisonCode: string, categoryId: number, user: ServiceUser): Promise<CapacityAndAllocated> {
     return this.get({
       path: `/prison/${prisonCode}/activity-categories/${categoryId}/capacity`,
+      authToken: user.token,
+    })
+  }
+
+  async getActivitiesInCategory(prisonCode: string, categoryId: number, user: ServiceUser): Promise<ActivityLite[]> {
+    return this.get({
+      path: `/prison/${prisonCode}/activity-categories/${categoryId}/activities`,
+      authToken: user.token,
+    })
+  }
+
+  async getActivityCapacity(activityId: number, user: ServiceUser): Promise<CapacityAndAllocated> {
+    return this.get({
+      path: `/activities/${activityId}/capacity`,
       authToken: user.token,
     })
   }

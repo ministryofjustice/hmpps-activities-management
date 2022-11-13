@@ -2,7 +2,7 @@ import { when } from 'jest-when'
 import { ServiceUser } from '../@types/express'
 import CapacitiesService from './capacitiesService'
 import ActivitiesApiClient from '../data/activitiesApiClient'
-import { ActivityCategory } from '../@types/activitiesAPI/types'
+import { ActivityCategory, ActivityLite } from '../@types/activitiesAPI/types'
 
 jest.mock('../data/activitiesApiClient')
 
@@ -57,6 +57,25 @@ describe('Capacities Service', () => {
         { id: 1 } as ActivityCategory,
         user,
       )
+
+      expect(actualResult).toEqual(expectedResult)
+    })
+  })
+
+  describe('getActivityAllocationsSummary', () => {
+    it('should get the allocations summary for an activity', async () => {
+      when(activitiesApiClient.getActivityCapacity)
+        .calledWith(1, user)
+        .mockResolvedValue({ capacity: 50, allocated: 10 })
+
+      const expectedResult = {
+        capacity: 50,
+        allocated: 10,
+        percentageAllocated: 20,
+        vacancies: 40,
+      }
+
+      const actualResult = await capacitiesService.getActivityAllocationsSummary({ id: 1 } as ActivityLite, user)
 
       expect(actualResult).toEqual(expectedResult)
     })

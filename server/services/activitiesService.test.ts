@@ -4,7 +4,7 @@ import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesService from './activitiesService'
 import { ServiceUser } from '../@types/express'
-import { ActivityCategory, CapacityAndAllocated, RolloutPrison } from '../@types/activitiesAPI/types'
+import { ActivityCategory, ActivityLite, RolloutPrison } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
 import prisoners from './fixtures/prisoners_1.json'
@@ -33,16 +33,16 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('getCategoryCapacity', () => {
-    it('should get the capacity of a category', async () => {
-      const expectedResult = { capacity: 100, allocated: 80 } as CapacityAndAllocated
+  describe('getActivitiesInCategory', () => {
+    it('should get the list of activities from activities API', async () => {
+      const expectedResult = [{ id: 1, summary: 'Maths level 1' }] as ActivityLite[]
 
-      activitiesApiClient.getCategoryCapacity.mockResolvedValue(expectedResult)
+      activitiesApiClient.getActivitiesInCategory.mockResolvedValue(expectedResult)
 
-      const actualResult = await activitiesService.getCategoryCapacity(1, user)
+      const actualResult = await activitiesService.getActivitiesInCategory(1, user)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getCategoryCapacity).toHaveBeenCalledWith('MDI', 1, user)
+      expect(activitiesApiClient.getActivitiesInCategory).toHaveBeenCalledWith('MDI', 1, user)
     })
   })
 
