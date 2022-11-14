@@ -75,7 +75,7 @@ describe('Route Handlers - Activities dashboard', () => {
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/activities-dashboard', {
-        activities: [
+        activities: expect.arrayContaining([
           {
             allocated: 75,
             capacity: 150,
@@ -92,7 +92,7 @@ describe('Route Handlers - Activities dashboard', () => {
             percentageAllocated: 80,
             vacancies: 20,
           },
-        ],
+        ]),
         total: { allocated: 155, capacity: 250, percentageAllocated: 62, vacancies: 95 },
       })
     })
