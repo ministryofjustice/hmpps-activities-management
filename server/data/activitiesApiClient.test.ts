@@ -48,6 +48,29 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getActivitiesInCategory', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/prison/MDI/activity-categories/1/activities')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+      const output = await activitiesApiClient.getActivitiesInCategory('MDI', 1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getActivityCapacity', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi.get('/activities/1/capacity').matchHeader('authorization', `Bearer token`).reply(200, response)
+      const output = await activitiesApiClient.getActivityCapacity(1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('searchActivityLocations', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }

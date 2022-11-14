@@ -53,16 +53,20 @@ export interface paths {
     get: operations['getScheduledPrisonLocations']
   }
   '/prison/{prisonCode}/activity-categories/{categoryId}/capacity': {
-    /** Requires one of the following roles - ('SYSTEM_USER', 'ROLE_ACTIVITIES_ADMIN') */
     get: operations['getActivityCategoryCapacity']
   }
+  '/prison/{prisonCode}/activity-categories/{categoryId}/activities': {
+    get: operations['getActivitiesInCategory']
+  }
   '/activity-categories': {
-    /** Requires one of the following roles - ('SYSTEM_USER', 'ROLE_ACTIVITIES_ADMIN') */
     get: operations['getCategories']
   }
   '/activities/{activityId}': {
     /** Returns a single activity and its details by its unique identifier. */
     get: operations['getActivityById']
+  }
+  '/activities/{activityId}/capacity': {
+    get: operations['getActivityCapacity']
   }
 }
 
@@ -286,10 +290,10 @@ export interface components {
        */
       recordedBy?: string
       /**
-       * @description A short code of the status the attendance, SCH (scheduled or planned), COMP (completed).
+       * @description A short code of the status the attendance, SCH (scheduled or planned), COMP (completed), CANC(cancelled).
        * @example SCH
        */
-      status?: string
+      status: string
       /**
        * Format: int32
        * @description The amount in pence to pay the prisoner for the activity
@@ -612,6 +616,7 @@ export interface components {
       /**
        * Format: date
        * @description The specific date for this scheduled instance
+       * @example 2022-09-30
        */
       date?: string
       /**
@@ -625,7 +630,7 @@ export interface components {
        * @description The end time for this scheduled instance
        * @example 10:00
        */
-      endTime: string
+      endTime?: string
     }
     /** @description Describes the capacity and allocated slots of an activity or category */
     CapacityAndAllocated: {
@@ -1089,7 +1094,7 @@ export interface operations {
         prisonCode: string
       }
       query: {
-        /** Prisoner number (optional) */
+        /** Prisoner number */
         prisonerNumber: string
         /** Start date of query */
         startDate: string
@@ -1104,6 +1109,12 @@ export interface operations {
           'application/json': components['schemas']['ScheduledEvent'][]
         }
       }
+      /** Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
       /** Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
@@ -1112,6 +1123,12 @@ export interface operations {
       }
       /** Forbidden, requires an appropriate role */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Requested resource not found */
+      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
@@ -1152,7 +1169,6 @@ export interface operations {
       }
     }
   }
-  /** Requires one of the following roles - ('SYSTEM_USER', 'ROLE_ACTIVITIES_ADMIN') */
   getActivityCategoryCapacity: {
     parameters: {
       path: {
@@ -1187,7 +1203,40 @@ export interface operations {
       }
     }
   }
-  /** Requires one of the following roles - ('SYSTEM_USER', 'ROLE_ACTIVITIES_ADMIN') */
+  getActivitiesInCategory: {
+    parameters: {
+      path: {
+        prisonCode: string
+        categoryId: number
+      }
+    }
+    responses: {
+      /** Activity category capacity */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivityLite'][]
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Category ID not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   getCategories: {
     responses: {
       /** Activity categories found */
@@ -1237,6 +1286,39 @@ export interface operations {
         }
       }
       /** The activity for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getActivityCapacity: {
+    parameters: {
+      path: {
+        activityId: number
+      }
+    }
+    responses: {
+      /** Activity capacity */
+      200: {
+        content: {
+          'application/json': components['schemas']['CapacityAndAllocated']
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Activity ID not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']

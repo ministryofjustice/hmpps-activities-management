@@ -1,6 +1,6 @@
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
-import { ActivityCategory, CapacityAndAllocated } from '../@types/activitiesAPI/types'
+import { ActivityCategory, ActivityLite, CapacityAndAllocated } from '../@types/activitiesAPI/types'
 
 type AllocationsSummary = {
   capacity: number
@@ -37,6 +37,10 @@ export default class CapacitiesService {
     return this.activitiesApiClient
       .getCategoryCapacity(user.activeCaseLoadId, category.id, user)
       .then(this.addCalculatedFields)
+  }
+
+  async getActivityAllocationsSummary(activity: ActivityLite, user: ServiceUser): Promise<AllocationsSummary> {
+    return this.activitiesApiClient.getActivityCapacity(activity.id, user).then(this.addCalculatedFields)
   }
 
   private addCalculatedFields = (capacityAndAllocated: CapacityAndAllocated) => ({

@@ -14,11 +14,6 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <p class="govuk-body">Use the dashboard to identify activities with vacancies or search for an activity by name.</p>
-            <p class="govuk-body">You can also <a href="#" class="govuk-link">create activities</a> and add activity schedules.</p>
-
-            <h2 class="govuk-heading-m">Activities dashboard</h2>
-
             {% set rows = [
                 [
                     {
@@ -55,17 +50,17 @@
                 ]
             ] %}
 
-            {% for category in categories %}
+            {% for activity in activities %}
                 {% set rows = (rows.push([
                     {
                         attributes: {
-                            id: 'category-' + loop.index,
-                            "data-sort-value": category.description
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.summary
                         },
                         html: '
                                 <h3 class="govuk-heading-m govuk-!-margin-bottom-3">
-                                    <a href="categories/' + category.id + '/activities" class="govuk-link govuk-link--no-visited-state" data-sort-value="'+ category.description + '">' +
-                                        category.description
+                                    <a href="#" class="govuk-link govuk-link--no-visited-state" data-sort-value="'+ activity.description + '">' +
+                                        activity.summary
                                     + '</a>
                                 </h3>
                               '
@@ -73,35 +68,35 @@
                     {
                         attributes: {
                             id: 'capacity-' + loop.index,
-                            "data-sort-value": category.capacity
+                            "data-sort-value": activity.capacity
                         },
                         classes: 'govuk-table__cell--numeric',
-                        text: category.capacity
+                        text: activity.capacity
                     },
                     {
                         attributes: {
                             id: 'allocated-' + loop.index,
-                            "data-sort-value": category.allocated
+                            "data-sort-value": activity.allocated
                         },
                         classes: 'govuk-table__cell--numeric',
-                        text: category.allocated
+                        text: activity.allocated
                     },
                     {
                         attributes: {
                             id: 'percentage-allocated-' + loop.index,
-                            "data-sort-value": category.percentageAllocated
+                            "data-sort-value": activity.percentageAllocated
                         },
                         classes: 'govuk-table__cell--numeric',
-                        text: category.percentageAllocated + '%'
+                        text: activity.percentageAllocated + '%'
                     },
                     {
                         attributes: {
                             id: 'vacancies-' + loop.index,
-                            "data-sort-value": category.vacancies
+                            "data-sort-value": activity.vacancies
                         },
                         classes: 'govuk-table__cell--numeric',
                         html: '
-                                <span class="govuk-tag govuk-tag--' + ('green' if category.vacancies == 0 else 'red') + '">' + category.vacancies + '</span>
+                                <span class="govuk-tag govuk-tag--' + ('green' if activity.vacancies == 0 else 'red') + '">' + activity.vacancies + '</span>
                               '
                     }
                 ]), rows) %}
@@ -111,11 +106,11 @@
                 attributes: {
                     'data-module': 'moj-sortable-table'
                 },
-                caption: "Categories",
+                caption: "Activities",
                 captionClasses: "govuk-visually-hidden",
                 head: [
                     {
-                        text: "Activity category",
+                        text: "Activity name",
                         attributes: {
                             "aria-sort": "ascending"
                         }
