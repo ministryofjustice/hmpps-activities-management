@@ -71,6 +71,26 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getSchedulesOfActivity', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi.get('/activities/1/schedules').matchHeader('authorization', `Bearer token`).reply(200, response)
+      const output = await activitiesApiClient.getSchedulesOfActivity(1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getScheduleCapacity', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi.get('/schedules/1/capacity').matchHeader('authorization', `Bearer token`).reply(200, response)
+      const output = await activitiesApiClient.getScheduleCapacity(1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('searchActivityLocations', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }

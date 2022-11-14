@@ -29,6 +29,9 @@ export interface paths {
     /** Returns zero or more activity schedules at a given prison. */
     get: operations['getSchedulesByPrisonCode']
   }
+  '/schedules/{activityScheduleId}/capacity': {
+    get: operations['getActivityCapacity']
+  }
   '/scheduled-instances/{instanceId}/attendances': {
     /** Returns one or more attendance records for a particular scheduled activity for a given scheduled instance. */
     get: operations['getAttendancesByScheduledInstance']
@@ -65,8 +68,11 @@ export interface paths {
     /** Returns a single activity and its details by its unique identifier. */
     get: operations['getActivityById']
   }
+  '/activities/{activityId}/schedules': {
+    get: operations['getActivitySchedules']
+  }
   '/activities/{activityId}/capacity': {
-    get: operations['getActivityCapacity']
+    get: operations['getActivityCapacity_1']
   }
 }
 
@@ -80,8 +86,8 @@ export interface components {
       messageAttributes?: {
         [key: string]: components['schemas']['MessageAttributeValue']
       }
-      md5OfBody?: string
       md5OfMessageAttributes?: string
+      md5OfBody?: string
     }
     MessageAttributeValue: {
       stringValue?: string
@@ -406,6 +412,21 @@ export interface components {
        */
       suspendedUntil?: string
     }
+    /** @description Describes the capacity and allocated slots of an activity or category */
+    CapacityAndAllocated: {
+      /**
+       * Format: int32
+       * @description The maximum number of people who can attend the category or activity
+       * @example 30
+       */
+      capacity: number
+      /**
+       * Format: int32
+       * @description The number of slots currently filled in the activity or category
+       * @example 27
+       */
+      allocated: number
+    }
     /** @description Describes one instance of a prison which may or may not be active (rolled out) */
     RolloutPrison: {
       /**
@@ -440,30 +461,6 @@ export interface components {
       /** Format: int32 */
       messagesReturnedCount: number
       messages: components['schemas']['DlqMessage'][]
-    }
-    /** @description Describes a top-level activity */
-    ActivityLite: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * @description A brief summary description of this activity for use in forms and lists
-       * @example Maths level 1
-       */
-      summary: string
-      /**
-       * @description A detailed description for this activity
-       * @example A basic maths course suitable for introduction to the subject
-       */
-      description: string
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -541,17 +538,10 @@ export interface components {
       endTime: string
       internalLocation?: components['schemas']['InternalLocation']
       /**
-       * Format: int32
-       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
-       * @example 10
-       */
-      capacity: number
-      /**
        * @description The days of the week on which the schedule takes place
        * @example [Mon,Tue,Wed]
        */
       daysOfWeek: string[]
-      activity: components['schemas']['ActivityLite']
     }
     /** @description Describes a scheduled event */
     ScheduledEvent: {
@@ -632,20 +622,29 @@ export interface components {
        */
       endTime?: string
     }
-    /** @description Describes the capacity and allocated slots of an activity or category */
-    CapacityAndAllocated: {
+    /** @description Describes a top-level activity */
+    ActivityLite: {
       /**
-       * Format: int32
-       * @description The maximum number of people who can attend the category or activity
-       * @example 30
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
        */
-      capacity: number
+      id: number
       /**
-       * Format: int32
-       * @description The number of slots currently filled in the activity or category
-       * @example 27
+       * @description The prison code where this activity takes place
+       * @example PVI
        */
-      allocated: number
+      prisonCode: string
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary: string
+      /**
+       * @description A detailed description for this activity
+       * @example A basic maths course suitable for introduction to the subject
+       */
+      description: string
     }
     /** @description Describes a top-level activity category */
     ActivityCategory: {
@@ -965,6 +964,39 @@ export interface operations {
       }
     }
   }
+  getActivityCapacity: {
+    parameters: {
+      path: {
+        activityScheduleId: number
+      }
+    }
+    responses: {
+      /** Activity schedule capacity */
+      200: {
+        content: {
+          'application/json': components['schemas']['CapacityAndAllocated']
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Schedule ID not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   /** Returns one or more attendance records for a particular scheduled activity for a given scheduled instance. */
   getAttendancesByScheduledInstance: {
     parameters: {
@@ -1211,7 +1243,7 @@ export interface operations {
       }
     }
     responses: {
-      /** Activity category capacity */
+      /** Activities within the category */
       200: {
         content: {
           'application/json': components['schemas']['ActivityLite'][]
@@ -1293,7 +1325,40 @@ export interface operations {
       }
     }
   }
-  getActivityCapacity: {
+  getActivitySchedules: {
+    parameters: {
+      path: {
+        activityId: number
+      }
+    }
+    responses: {
+      /** Activity schedules */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivityScheduleLite']
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Activity ID not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getActivityCapacity_1: {
     parameters: {
       path: {
         activityId: number

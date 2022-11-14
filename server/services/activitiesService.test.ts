@@ -4,7 +4,7 @@ import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesService from './activitiesService'
 import { ServiceUser } from '../@types/express'
-import { ActivityCategory, ActivityLite, RolloutPrison } from '../@types/activitiesAPI/types'
+import { ActivityCategory, ActivityLite, ActivityScheduleLite, RolloutPrison } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
 import prisoners from './fixtures/prisoners_1.json'
@@ -43,6 +43,19 @@ describe('Activities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(activitiesApiClient.getActivitiesInCategory).toHaveBeenCalledWith('MDI', 1, user)
+    })
+  })
+
+  describe('getSchedulesOfActivity', () => {
+    it('should get the list of schedules from activities API', async () => {
+      const expectedResult = [{ id: 1, description: 'Houseblock 1 AM' }] as ActivityScheduleLite[]
+
+      activitiesApiClient.getSchedulesOfActivity.mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getSchedulesOfActivity(1, user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getSchedulesOfActivity).toHaveBeenCalledWith(1, user)
     })
   })
 
