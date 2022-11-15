@@ -1,6 +1,11 @@
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
-import { ActivityCategory, ActivityLite, CapacityAndAllocated } from '../@types/activitiesAPI/types'
+import {
+  ActivityCategory,
+  ActivityLite,
+  ActivityScheduleLite,
+  CapacityAndAllocated,
+} from '../@types/activitiesAPI/types'
 
 type AllocationsSummary = {
   capacity: number
@@ -41,6 +46,10 @@ export default class CapacitiesService {
 
   async getActivityAllocationsSummary(activity: ActivityLite, user: ServiceUser): Promise<AllocationsSummary> {
     return this.activitiesApiClient.getActivityCapacity(activity.id, user).then(this.addCalculatedFields)
+  }
+
+  async getScheduleAllocationsSummary(schedule: ActivityScheduleLite, user: ServiceUser): Promise<AllocationsSummary> {
+    return this.activitiesApiClient.getScheduleCapacity(schedule.id, user).then(this.addCalculatedFields)
   }
 
   private addCalculatedFields = (capacityAndAllocated: CapacityAndAllocated) => ({

@@ -2,8 +2,8 @@
 
 {% from "govuk/components/table/macro.njk" import govukTable %}
 
-{% set pageTitle = applicationName + " - Allocate to an activity - Categories" %}
-{% set pageId = 'allocate-to-activity-categories-page' %}
+{% set pageTitle = applicationName + " - Allocate to an activity - Schedules" %}
+{% set pageId = 'allocate-to-activity-schedules-page' %}
 {% set backLinkHref = "/" %}
 
 {% block content %}
@@ -14,15 +14,13 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <p class="govuk-body">Use the dashboard to identify activities with vacancies or search for an activity by name.</p>
-            <p class="govuk-body">You can also <a href="#" class="govuk-link">create activities</a> and add activity schedules.</p>
-
-            <h2 class="govuk-heading-m">Activities dashboard</h2>
-
             {% set rows = [
                 [
                     {
                         html: '<h3 class="govuk-heading-m govuk-!-margin-bottom-3">Total</h3>'
+                    },
+                    {
+                        text: ""
                     },
                     {
                         attributes: {
@@ -30,13 +28,6 @@
                         },
                         classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
                         text: total.capacity
-                    },
-                    {
-                        attributes: {
-                            id: 'allocated-total'
-                        },
-                        classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
-                        text: total.allocated
                     },
                     {
                         attributes: {
@@ -55,51 +46,50 @@
                 ]
             ] %}
 
-            {% for category in categories %}
+            {% for schedule in schedules %}
                 {% set rows = (rows.push([
                     {
                         attributes: {
-                            id: 'category-' + loop.index,
-                            "data-sort-value": category.description
+                            id: 'schedule-' + loop.index,
+                            "data-sort-value": schedule.description
                         },
                         html: '
                                 <h3 class="govuk-heading-m govuk-!-margin-bottom-3">
-                                    <a href="categories/' + category.id + '/activities" class="govuk-link govuk-link--no-visited-state">' + category.description + '</a>
+                                    <a href="#" class="govuk-link govuk-link--no-visited-state">' + schedule.description + '</a>
                                 </h3>
                               '
                     },
                     {
                         attributes: {
-                            id: 'capacity-' + loop.index,
-                            "data-sort-value": category.capacity
+                            id: 'location-' + loop.index,
+                            "data-sort-value": schedule.internalLocation.description
                         },
-                        classes: 'govuk-table__cell--numeric',
-                        text: category.capacity
+                        text: schedule.internalLocation.description
                     },
                     {
                         attributes: {
-                            id: 'allocated-' + loop.index,
-                            "data-sort-value": category.allocated
+                            id: 'capacity-' + loop.index,
+                            "data-sort-value": schedule.capacity
                         },
                         classes: 'govuk-table__cell--numeric',
-                        text: category.allocated
+                        text: schedule.capacity
                     },
                     {
                         attributes: {
                             id: 'percentage-allocated-' + loop.index,
-                            "data-sort-value": category.percentageAllocated
+                            "data-sort-value": schedule.percentageAllocated
                         },
                         classes: 'govuk-table__cell--numeric',
-                        text: category.percentageAllocated + '%'
+                        text: schedule.percentageAllocated + '%'
                     },
                     {
                         attributes: {
                             id: 'vacancies-' + loop.index,
-                            "data-sort-value": category.vacancies
+                            "data-sort-value": schedule.vacancies
                         },
                         classes: 'govuk-table__cell--numeric',
                         html: '
-                                <span class="govuk-tag govuk-tag--' + ('green' if category.vacancies == 0 else 'red') + '">' + category.vacancies + '</span>
+                                <span class="govuk-tag govuk-tag--' + ('green' if schedule.vacancies == 0 else 'red') + '">' + schedule.vacancies + '</span>
                               '
                     }
                 ]), rows) %}
@@ -109,24 +99,23 @@
                 attributes: {
                     'data-module': 'moj-sortable-table'
                 },
-                caption: "Categories",
+                caption: "Schedules",
                 captionClasses: "govuk-visually-hidden",
                 head: [
                     {
-                        text: "Activity category",
+                        text: "Activity series",
                         attributes: {
                             "aria-sort": "ascending"
                         }
                     },
                     {
-                        text: "Capacity",
+                        text: "Location",
                         attributes: {
                             "aria-sort": "none"
-                        },
-                        classes: 'govuk-table__header--numeric'
+                        }
                     },
                     {
-                        text: "Allocated",
+                        text: "Capacity",
                         attributes: {
                             "aria-sort": "none"
                         },
