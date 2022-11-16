@@ -5,6 +5,7 @@ import {
   ActivityCategory,
   ActivityLite,
   ActivitySchedule,
+  ActivityScheduleLite,
   Attendance,
   AttendanceUpdateRequest,
   CapacityAndAllocated,
@@ -41,6 +42,20 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getActivityCapacity(activityId: number, user: ServiceUser): Promise<CapacityAndAllocated> {
     return this.get({
       path: `/activities/${activityId}/capacity`,
+      authToken: user.token,
+    })
+  }
+
+  async getSchedulesOfActivity(activityId: number, user: ServiceUser): Promise<ActivityScheduleLite[]> {
+    return this.get({
+      path: `/activities/${activityId}/schedules`,
+      authToken: user.token,
+    })
+  }
+
+  async getScheduleCapacity(scheduleId: number, user: ServiceUser): Promise<CapacityAndAllocated> {
+    return this.get({
+      path: `/schedules/${scheduleId}/capacity`,
       authToken: user.token,
     })
   }

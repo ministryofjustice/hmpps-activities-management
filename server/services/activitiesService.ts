@@ -4,6 +4,7 @@ import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
   ActivityLite,
+  ActivityScheduleLite,
   AttendanceUpdateRequest,
   InternalLocation,
   RolloutPrison,
@@ -30,6 +31,10 @@ export default class ActivitiesService {
 
   async getActivitiesInCategory(categoryId: number, user: ServiceUser): Promise<ActivityLite[]> {
     return this.activitiesApiClient.getActivitiesInCategory(user.activeCaseLoadId, categoryId, user)
+  }
+
+  async getSchedulesOfActivity(activityId: number, user: ServiceUser): Promise<ActivityScheduleLite[]> {
+    return this.activitiesApiClient.getSchedulesOfActivity(activityId, user)
   }
 
   async populateUserPrisonInfo(user: ServiceUser) {
