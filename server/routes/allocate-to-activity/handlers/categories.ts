@@ -22,11 +22,8 @@ export default class CategoriesRoutes {
       .then(c => Promise.all(c.map(addAllocationSummary)))
 
     res.render('pages/allocate-to-activity/categories-dashboard', {
-      // TODO: The sort function below can be removed when the following PR has been merged and MoJ-frontend library upgraded
-      //  sorting will then be done by the client side JS
-      //  https://github.com/ministryofjustice/moj-frontend/pull/406
       total: this.capacitiesService.getTotalAllocationSummary(categories),
-      categories: categories.sort((a, b) => (a.description > b.description ? 1 : -1)),
+      categories,
     })
   }
 }

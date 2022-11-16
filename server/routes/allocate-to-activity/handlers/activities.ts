@@ -23,11 +23,8 @@ export default class ActivitiesRoutes {
       .then(c => Promise.all(c.map(addAllocationSummary)))
 
     res.render('pages/allocate-to-activity/activities-dashboard', {
-      // TODO: The sort function below can be removed when the following PR has been merged and MoJ-frontend library upgraded
-      //  sorting will then be done by the client side JS
-      //  https://github.com/ministryofjustice/moj-frontend/pull/406
       total: this.capacitiesService.getTotalAllocationSummary(activities),
-      activities: activities.sort((a, b) => (a.summary > b.summary ? 1 : -1)),
+      activities,
     })
   }
 }

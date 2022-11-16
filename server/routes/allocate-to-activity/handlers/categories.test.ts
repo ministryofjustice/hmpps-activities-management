@@ -72,7 +72,7 @@ describe('Route Handlers - Categories dashboard', () => {
     it('should render categories with their allocation summaries', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/categories-dashboard', {
-        categories: [
+        categories: expect.arrayContaining([
           { allocated: 75, capacity: 150, description: 'Induction', id: 2, percentageAllocated: 50, vacancies: 50 },
           {
             allocated: 80,
@@ -82,7 +82,7 @@ describe('Route Handlers - Categories dashboard', () => {
             percentageAllocated: 80,
             vacancies: 20,
           },
-        ],
+        ]),
         total: { allocated: 155, capacity: 250, percentageAllocated: 62, vacancies: 95 },
       })
     })
