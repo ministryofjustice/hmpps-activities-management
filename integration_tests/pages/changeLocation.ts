@@ -5,7 +5,7 @@ export default class ChangeLocationPage extends Page {
     super('change-location-page')
   }
 
-  locationOptions = (): Cypress.Chainable<string[]> =>
+  locationOptions = (): Cypress.Chainable =>
     cy
       .get('#changeLocationSelect')
       .find('option')
@@ -13,7 +13,7 @@ export default class ChangeLocationPage extends Page {
         return Cypress.$.makeArray($el).map(el => el.innerText)
       })
 
-  selectedLocation = (): Cypress.Chainable<string> =>
+  selectedLocation = (): Cypress.Chainable =>
     cy
       .get('#changeLocationSelect')
       .find('option:selected')
