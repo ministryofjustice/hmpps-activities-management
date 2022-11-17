@@ -1,11 +1,11 @@
-import Page, { PageElement } from './page'
+import Page from './page'
 
 export default class ChangeLocationPage extends Page {
   constructor() {
     super('change-location-page')
   }
 
-  locationOptions = (): Cypress.Chainable<string[]> =>
+  locationOptions = (): Cypress.Chainable =>
     cy
       .get('#changeLocationSelect')
       .find('option')
@@ -13,7 +13,7 @@ export default class ChangeLocationPage extends Page {
         return Cypress.$.makeArray($el).map(el => el.innerText)
       })
 
-  selectedLocation = (): Cypress.Chainable<string> =>
+  selectedLocation = (): Cypress.Chainable =>
     cy
       .get('#changeLocationSelect')
       .find('option:selected')
@@ -23,5 +23,5 @@ export default class ChangeLocationPage extends Page {
           .pop()
       })
 
-  submit = (): PageElement => cy.get('#btnSubmit')
+  submit = (): Cypress.Chainable => cy.get('#btnSubmit')
 }

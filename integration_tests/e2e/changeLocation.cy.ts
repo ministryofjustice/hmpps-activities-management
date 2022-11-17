@@ -1,6 +1,6 @@
 import IndexPage from '../pages/index'
 import Page from '../pages/page'
-import ChangeLocationPage from '../pages/changeLocationPage'
+import ChangeLocationPage from '../pages/changeLocation'
 
 context('Change location', () => {
   beforeEach(() => {
@@ -15,10 +15,12 @@ context('Change location', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.headerActiveCaseload().should('contain.text', 'Leeds (HMP)')
     indexPage.headerChangeLocation().click()
+
     const changeLocationPage = Page.verifyOnPage(ChangeLocationPage)
     changeLocationPage.locationOptions().should('deep.equal', ['Leeds (HMP)', 'Moorland (HMP & YOI)'])
     changeLocationPage.selectedLocation().should('equal', 'Leeds (HMP)')
     changeLocationPage.submit().click()
+
     Page.verifyOnPage(IndexPage)
   })
 })
