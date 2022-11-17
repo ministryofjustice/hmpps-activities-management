@@ -1,9 +1,9 @@
-import Page, { PageElement } from './page'
+import Page from './page'
 
 export default class IndexPage extends Page {
   constructor() {
     super('index-page')
   }
 
-  allocateToActivityCard = (): PageElement => cy.get('[data-qa=allocate-to-activities-card]')
+  allocateToActivityCard = (): Cypress.Chainable => cy.get('[data-qa=allocate-to-activities-card]')
 }

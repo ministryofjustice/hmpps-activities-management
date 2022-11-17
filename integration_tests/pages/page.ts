@@ -1,25 +1,28 @@
-export type PageElement = Cypress.Chainable<JQuery>
-
 export default abstract class Page {
   static verifyOnPage<T>(constructor: new () => T): T {
     return new constructor()
   }
 
-  protected constructor(private readonly pageId: string) {
+  protected constructor(private readonly pageId: string, private readonly pauseAxeOnThisPage = false) {
     this.checkOnPage()
+
+    if (!pauseAxeOnThisPage) {
+      cy.injectAxe()
+      cy.checkA11y()
+    }
   }
 
   checkOnPage = (): void => {
     cy.get(`#${this.pageId}`).should('exist')
   }
 
-  signOut = (): PageElement => cy.get('[data-qa=signOut]')
+  signOut = (): Cypress.Chainable => cy.get('[data-qa=signOut]')
 
-  manageDetails = (): PageElement => cy.get('[data-qa=manageDetails]')
+  manageDetails = (): Cypress.Chainable => cy.get('[data-qa=manageDetails]')
 
-  headerUserName = (): PageElement => cy.get('[data-qa=header-user-name]')
+  headerUserName = (): Cypress.Chainable => cy.get('[data-qa=header-user-name]')
 
-  headerActiveCaseload = (): PageElement => cy.get('[data-qa=header-active-caseload]')
+  headerActiveCaseload = (): Cypress.Chainable => cy.get('[data-qa=header-active-caseload]')
 
-  headerChangeLocation = (): PageElement => cy.get('[data-qa=header-change-location]')
+  headerChangeLocation = (): Cypress.Chainable => cy.get('[data-qa=header-change-location]')
 }

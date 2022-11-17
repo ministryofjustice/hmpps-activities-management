@@ -17,7 +17,7 @@
             {% set rows = [
                 [
                     {
-                        html: '<h3 class="govuk-heading-m govuk-!-margin-bottom-3">Total</h3>'
+                        html: '<h2 class="govuk-heading-m govuk-!-margin-bottom-3">Total</h2>'
                     },
                     {
                         attributes: {
@@ -58,9 +58,9 @@
                             "data-sort-value": activity.summary
                         },
                         html: '
-                                <h3 class="govuk-heading-m govuk-!-margin-bottom-3">
+                                <h2 class="govuk-heading-m govuk-!-margin-bottom-3">
                                     <a href="/activities/allocate/activities/' + activity.id + '/schedules" class="govuk-link govuk-link--no-visited-state">' + activity.summary + '</a>
-                                </h3>
+                                </h2>
                               '
                     },
                     {

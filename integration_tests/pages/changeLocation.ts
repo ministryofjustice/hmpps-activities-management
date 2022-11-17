@@ -1,4 +1,4 @@
-import Page, { PageElement } from './page'
+import Page from './page'
 
 export default class ChangeLocationPage extends Page {
   constructor() {
@@ -23,5 +23,5 @@ export default class ChangeLocationPage extends Page {
           .pop()
       })
 
-  submit = (): PageElement => cy.get('#btnSubmit')
+  submit = (): Cypress.Chainable => cy.get('#btnSubmit')
 }
