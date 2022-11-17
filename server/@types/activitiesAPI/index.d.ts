@@ -30,7 +30,7 @@ export interface paths {
     get: operations['getSchedulesByPrisonCode']
   }
   '/schedules/{activityScheduleId}/capacity': {
-    get: operations['getActivityCapacity']
+    get: operations['getActivityScheduleCapacity']
   }
   '/scheduled-instances/{instanceId}/attendances': {
     /** Returns one or more attendance records for a particular scheduled activity for a given scheduled instance. */
@@ -72,7 +72,7 @@ export interface paths {
     get: operations['getActivitySchedules']
   }
   '/activities/{activityId}/capacity': {
-    get: operations['getActivityCapacity_1']
+    get: operations['getActivityCapacity']
   }
 }
 
@@ -86,8 +86,8 @@ export interface components {
       messageAttributes?: {
         [key: string]: components['schemas']['MessageAttributeValue']
       }
-      md5OfMessageAttributes?: string
       md5OfBody?: string
+      md5OfMessageAttributes?: string
     }
     MessageAttributeValue: {
       stringValue?: string
@@ -462,6 +462,35 @@ export interface components {
       messagesReturnedCount: number
       messages: components['schemas']['DlqMessage'][]
     }
+    /** @description Describes a top-level activity */
+    ActivityLite: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
+       * @example false
+       */
+      attendanceRequired: boolean
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary: string
+      /**
+       * @description A detailed description for this activity
+       * @example A basic maths course suitable for introduction to the subject
+       */
+      description: string
+    }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
       /**
@@ -538,10 +567,17 @@ export interface components {
       endTime: string
       internalLocation?: components['schemas']['InternalLocation']
       /**
+       * Format: int32
+       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
+       * @example 10
+       */
+      capacity: number
+      /**
        * @description The days of the week on which the schedule takes place
        * @example [Mon,Tue,Wed]
        */
       daysOfWeek: string[]
+      activity: components['schemas']['ActivityLite']
     }
     /** @description Describes a scheduled event */
     ScheduledEvent: {
@@ -622,30 +658,6 @@ export interface components {
        */
       endTime?: string
     }
-    /** @description Describes a top-level activity */
-    ActivityLite: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * @description A brief summary description of this activity for use in forms and lists
-       * @example Maths level 1
-       */
-      summary: string
-      /**
-       * @description A detailed description for this activity
-       * @example A basic maths course suitable for introduction to the subject
-       */
-      description: string
-    }
     /** @description Describes a top-level activity category */
     ActivityCategory: {
       /**
@@ -673,6 +685,11 @@ export interface components {
        * @example PVI
        */
       prisonCode: string
+      /**
+       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
+       * @example false
+       */
+      attendanceRequired: boolean
       /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
@@ -964,7 +981,7 @@ export interface operations {
       }
     }
   }
-  getActivityCapacity: {
+  getActivityScheduleCapacity: {
     parameters: {
       path: {
         activityScheduleId: number
@@ -1358,7 +1375,7 @@ export interface operations {
       }
     }
   }
-  getActivityCapacity_1: {
+  getActivityCapacity: {
     parameters: {
       path: {
         activityId: number
