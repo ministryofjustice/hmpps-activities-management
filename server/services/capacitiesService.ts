@@ -19,13 +19,12 @@ export default class CapacitiesService {
 
   getTotalAllocationSummary(allocationSummaries: AllocationsSummary[]): AllocationsSummary {
     return allocationSummaries.reduce(
-      (totals, c) => ({
-        capacity: totals.capacity + c.capacity,
-        allocated: totals.allocated + c.allocated,
-        percentageAllocated:
-          Math.floor(((totals.allocated + c.allocated) / (totals.capacity + c.capacity)) * 100) || 100,
-        vacancies: totals.vacancies + c.vacancies,
-      }),
+      (totals, c) => {
+        return this.addCalculatedFields({
+          capacity: totals.capacity + c.capacity,
+          allocated: totals.allocated + c.allocated,
+        })
+      },
       {
         capacity: 0,
         allocated: 0,
@@ -52,9 +51,13 @@ export default class CapacitiesService {
     return this.activitiesApiClient.getScheduleCapacity(schedule.id, user).then(this.addCalculatedFields)
   }
 
-  private addCalculatedFields = (capacityAndAllocated: CapacityAndAllocated) => ({
-    ...capacityAndAllocated,
-    percentageAllocated: Math.floor((capacityAndAllocated.allocated / capacityAndAllocated.capacity) * 100) || 100,
-    vacancies: capacityAndAllocated.capacity - capacityAndAllocated.allocated,
-  })
+  private addCalculatedFields = (capacityAndAllocated: CapacityAndAllocated) => {
+    const percentageAllocated = Math.floor((capacityAndAllocated.allocated / capacityAndAllocated.capacity) * 100)
+
+    return {
+      ...capacityAndAllocated,
+      percentageAllocated: Number.isNaN(percentageAllocated) ? 100 : percentageAllocated,
+      vacancies: capacityAndAllocated.capacity - capacityAndAllocated.allocated,
+    }
+  }
 }

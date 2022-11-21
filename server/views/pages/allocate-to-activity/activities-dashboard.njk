@@ -94,7 +94,7 @@
                         },
                         classes: 'govuk-table__cell--numeric',
                         html: '
-                                <span class="govuk-tag govuk-tag--' + ('green' if activity.vacancies == 0 else 'red') + '">' + activity.vacancies + '</span>
+                                <span class="govuk-tag govuk-tag--' + ('green' if activity.vacancies <= 0 else 'red') + '">' + activity.vacancies + '</span>
                               '
                     }
                 ]), rows) %}

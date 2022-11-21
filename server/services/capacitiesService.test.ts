@@ -13,7 +13,7 @@ describe('Capacities Service', () => {
   const user = { activeCaseLoadId: 'MDI' } as ServiceUser
 
   describe('getTotalAllocationSummary', () => {
-    it('should add up all the capacities, allocation and vacancies & get a total percentage', async () => {
+    it('should add up all the capacities, allocation and vacancies & get a total percentage', () => {
       const expectedResult = {
         capacity: 200,
         allocated: 130,
@@ -21,7 +21,7 @@ describe('Capacities Service', () => {
         vacancies: 70,
       }
 
-      const actualResult = await capacitiesService.getTotalAllocationSummary([
+      const actualResult = capacitiesService.getTotalAllocationSummary([
         {
           capacity: 100,
           allocated: 80,
@@ -32,6 +32,58 @@ describe('Capacities Service', () => {
           capacity: 100,
           allocated: 50,
           percentageAllocated: 50,
+          vacancies: 50,
+        },
+      ])
+
+      expect(actualResult).toEqual(expectedResult)
+    })
+
+    it('should handle division by 0', () => {
+      const expectedResult = {
+        capacity: 0,
+        allocated: 0,
+        percentageAllocated: 100,
+        vacancies: 0,
+      }
+
+      const actualResult = capacitiesService.getTotalAllocationSummary([
+        {
+          capacity: 0,
+          allocated: 0,
+          percentageAllocated: 100,
+          vacancies: 0,
+        },
+        {
+          capacity: 0,
+          allocated: 0,
+          percentageAllocated: 100,
+          vacancies: 0,
+        },
+      ])
+
+      expect(actualResult).toEqual(expectedResult)
+    })
+
+    it('should handle zero allocations', () => {
+      const expectedResult = {
+        capacity: 100,
+        allocated: 0,
+        percentageAllocated: 0,
+        vacancies: 100,
+      }
+
+      const actualResult = capacitiesService.getTotalAllocationSummary([
+        {
+          capacity: 50,
+          allocated: 0,
+          percentageAllocated: 0,
+          vacancies: 50,
+        },
+        {
+          capacity: 50,
+          allocated: 0,
+          percentageAllocated: 0,
           vacancies: 50,
         },
       ])
@@ -60,6 +112,46 @@ describe('Capacities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
     })
+
+    it('should handle division by zero', async () => {
+      when(activitiesApiClient.getCategoryCapacity)
+        .calledWith('MDI', 1, user)
+        .mockResolvedValue({ capacity: 0, allocated: 0 })
+
+      const expectedResult = {
+        capacity: 0,
+        allocated: 0,
+        percentageAllocated: 100,
+        vacancies: 0,
+      }
+
+      const actualResult = await capacitiesService.getActivityCategoryAllocationsSummary(
+        { id: 1 } as ActivityCategory,
+        user,
+      )
+
+      expect(actualResult).toEqual(expectedResult)
+    })
+
+    it('should handle zero allocations', async () => {
+      when(activitiesApiClient.getCategoryCapacity)
+        .calledWith('MDI', 1, user)
+        .mockResolvedValue({ capacity: 100, allocated: 0 })
+
+      const expectedResult = {
+        capacity: 100,
+        allocated: 0,
+        percentageAllocated: 0,
+        vacancies: 100,
+      }
+
+      const actualResult = await capacitiesService.getActivityCategoryAllocationsSummary(
+        { id: 1 } as ActivityCategory,
+        user,
+      )
+
+      expect(actualResult).toEqual(expectedResult)
+    })
   })
 
   describe('getActivityAllocationsSummary', () => {
@@ -79,6 +171,38 @@ describe('Capacities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
     })
+
+    it('should handle division by zero', async () => {
+      when(activitiesApiClient.getActivityCapacity).calledWith(1, user).mockResolvedValue({ capacity: 0, allocated: 0 })
+
+      const expectedResult = {
+        capacity: 0,
+        allocated: 0,
+        percentageAllocated: 100,
+        vacancies: 0,
+      }
+
+      const actualResult = await capacitiesService.getActivityAllocationsSummary({ id: 1 } as ActivityLite, user)
+
+      expect(actualResult).toEqual(expectedResult)
+    })
+
+    it('should handle zero allocations', async () => {
+      when(activitiesApiClient.getActivityCapacity)
+        .calledWith(1, user)
+        .mockResolvedValue({ capacity: 100, allocated: 0 })
+
+      const expectedResult = {
+        capacity: 100,
+        allocated: 0,
+        percentageAllocated: 0,
+        vacancies: 100,
+      }
+
+      const actualResult = await capacitiesService.getActivityAllocationsSummary({ id: 1 } as ActivityLite, user)
+
+      expect(actualResult).toEqual(expectedResult)
+    })
   })
 
   describe('getScheduleAllocationsSummary', () => {
@@ -92,6 +216,44 @@ describe('Capacities Service', () => {
         allocated: 10,
         percentageAllocated: 20,
         vacancies: 40,
+      }
+
+      const actualResult = await capacitiesService.getScheduleAllocationsSummary(
+        { id: 1 } as ActivityScheduleLite,
+        user,
+      )
+
+      expect(actualResult).toEqual(expectedResult)
+    })
+
+    it('should handle division by zero', async () => {
+      when(activitiesApiClient.getScheduleCapacity).calledWith(1, user).mockResolvedValue({ capacity: 0, allocated: 0 })
+
+      const expectedResult = {
+        capacity: 0,
+        allocated: 0,
+        percentageAllocated: 100,
+        vacancies: 0,
+      }
+
+      const actualResult = await capacitiesService.getScheduleAllocationsSummary(
+        { id: 1 } as ActivityScheduleLite,
+        user,
+      )
+
+      expect(actualResult).toEqual(expectedResult)
+    })
+
+    it('should handle zero allocations', async () => {
+      when(activitiesApiClient.getScheduleCapacity)
+        .calledWith(1, user)
+        .mockResolvedValue({ capacity: 100, allocated: 0 })
+
+      const expectedResult = {
+        capacity: 100,
+        allocated: 0,
+        percentageAllocated: 0,
+        vacancies: 100,
       }
 
       const actualResult = await capacitiesService.getScheduleAllocationsSummary(

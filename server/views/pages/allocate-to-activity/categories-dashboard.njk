@@ -99,7 +99,7 @@
                         },
                         classes: 'govuk-table__cell--numeric',
                         html: '
-                                <span class="govuk-tag govuk-tag--' + ('green' if category.vacancies == 0 else 'red') + '">' + category.vacancies + '</span>
+                                <span class="govuk-tag govuk-tag--' + ('green' if category.vacancies <= 0 else 'red') + '">' + category.vacancies + '</span>
                               '
                     }
                 ]), rows) %}
