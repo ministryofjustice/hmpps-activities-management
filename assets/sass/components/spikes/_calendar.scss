@@ -42,6 +42,11 @@ $calendar-bottom-border-width: 1px;
       height: 100%;
       padding: 10px;
       background-color: #70b6f6;
+
+      &--clash {
+        background-color: white;
+        border: #70b6f6 solid 1px;
+      }
     }
   }
 
@@ -94,6 +99,11 @@ $calendar-bottom-border-width: 1px;
     padding: 10px;
     background-color: #70b6f6;
     margin-bottom: 10px;
+
+    &--clash {
+      background-color: white;
+      border: #70b6f6 solid 1px;
+    }
   }
 
   .calendar__grid {
@@ -107,7 +117,6 @@ $calendar-bottom-border-width: 1px;
   &--nav {
     display: flex;
     justify-content: space-between;
-    //border-bottom: 2px solid $govuk-border-colour;
     padding-bottom: 10px;
 
     button {
@@ -177,6 +186,12 @@ $calendar-bottom-border-width: 1px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+
+        &.calendar__desktop--item--clash {
+          background-color: white;
+          border: #70b6f6 solid 1px;
+          color: #70b6f6;
+        }
       }
 
       &--more {
