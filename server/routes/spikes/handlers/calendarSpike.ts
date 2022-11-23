@@ -21,6 +21,7 @@ export default class CalendarSpikeRoutes {
         start: addHours(startOfDay(new Date('2022-12-13')), 9),
         end: addHours(startOfDay(new Date('2022-12-13')), 10),
         description: 'Barbering',
+        isClashing: true,
       },
       {
         start: addHours(startOfDay(new Date('2022-12-15')), 9),
