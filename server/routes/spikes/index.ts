@@ -6,7 +6,7 @@ import validationMiddleware from '../../middleware/validationMiddleware'
 import ValidationSpikeRoutes, { ValidatedType } from './handlers/validationSpike'
 import CalendarSpikeRoutes from './handlers/calendarSpike'
 
-export default function Index({ prisonService }: Services): Router {
+export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -15,7 +15,7 @@ export default function Index({ prisonService }: Services): Router {
 
   const prisonServiceSpikeHandler = new PrisonServiceSpikeRoutes(prisonService)
   const validationSpikeHandler = new ValidationSpikeRoutes()
-  const calendarSpikeHandler = new CalendarSpikeRoutes()
+  const calendarSpikeHandler = new CalendarSpikeRoutes(activitiesService)
 
   get('/spikes/prison-service-spike', prisonServiceSpikeHandler.GET)
   get('/spikes/validation-spike', validationSpikeHandler.GET)

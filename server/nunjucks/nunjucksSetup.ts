@@ -13,7 +13,12 @@ import {
   setSelected,
 } from '../utils/utils'
 import config from '../config'
-import { filterActivitiesForDay, getCalendarConfig, sortActivitiesByStartTime } from '../utils/calendarUtilities'
+import {
+  filterActivitiesForDay,
+  getCalendarConfig,
+  isClashing,
+  sortActivitiesByStartTime,
+} from '../utils/calendarUtilities'
 import { Services } from '../services'
 
 const production = process.env.NODE_ENV === 'production'
@@ -74,6 +79,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('addMonths', addMonths)
   njkEnv.addFilter('subWeeks', subWeeks)
   njkEnv.addFilter('addWeeks', addWeeks)
+  njkEnv.addFilter('isClashing', isClashing)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

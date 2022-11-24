@@ -1,4 +1,13 @@
-import { compareAsc, eachDayOfInterval, endOfMonth, endOfWeek, isSameDay, startOfMonth, startOfWeek } from 'date-fns'
+import {
+  areIntervalsOverlapping,
+  compareAsc,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  isSameDay,
+  startOfMonth,
+  startOfWeek,
+} from 'date-fns'
 import CalendarView from '../enum/calendarView'
 
 function getCalendarConfig(referenceDate: Date, calendarView = CalendarView.WEEKLY) {
@@ -29,4 +38,15 @@ function sortActivitiesByStartTime(activities: any[]) {
   return activities.sort((a, b) => compareAsc(a.start, b.start))
 }
 
-export { getCalendarConfig, filterActivitiesForDay, sortActivitiesByStartTime }
+function isClashing(activity: any, allActivities: any[]) {
+  return (
+    allActivities.find(
+      a =>
+        a !== activity &&
+        areIntervalsOverlapping({ start: a.start, end: a.end }, { start: activity.start, end: activity.end }) &&
+        a.priority <= activity.priority,
+    ) !== undefined
+  )
+}
+
+export { getCalendarConfig, filterActivitiesForDay, sortActivitiesByStartTime, isClashing }

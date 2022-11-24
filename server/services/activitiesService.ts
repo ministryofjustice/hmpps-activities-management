@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
@@ -8,6 +9,7 @@ import {
   AttendanceUpdateRequest,
   InternalLocation,
   RolloutPrison,
+  ScheduledEvent,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -35,6 +37,23 @@ export default class ActivitiesService {
 
   async getSchedulesOfActivity(activityId: number, user: ServiceUser): Promise<ActivityScheduleLite[]> {
     return this.activitiesApiClient.getSchedulesOfActivity(activityId, user)
+  }
+
+  getScheduledEvents(
+    prisonerNumber: string,
+    startDate: Date,
+    endDate: Date,
+    user: ServiceUser,
+  ): Promise<ScheduledEvent[]> {
+    return this.activitiesApiClient
+      .getScheduledEvents(
+        user.activeCaseLoadId,
+        prisonerNumber,
+        format(startDate, 'yyyy-MM-dd'),
+        format(endDate, 'yyyy-MM-dd'),
+        user,
+      )
+      .then(res => [...res.activities, ...res.courtHearings, ...res.appointments, ...res.visits])
   }
 
   async populateUserPrisonInfo(user: ServiceUser) {
