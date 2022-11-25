@@ -10,6 +10,7 @@ import {
   AttendanceUpdateRequest,
   CapacityAndAllocated,
   InternalLocation,
+  PrisonerScheduledEvents,
   RolloutPrison,
 } from '../@types/activitiesAPI/types'
 
@@ -58,6 +59,22 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/schedules/${scheduleId}/capacity`,
       authToken: user.token,
     })
+  }
+
+  getScheduledEvents(
+    prisonCode: string,
+    prisonerNumber: string,
+    startDate: string,
+    endDate: string,
+    user: ServiceUser,
+  ): Promise<PrisonerScheduledEvents> {
+    return this.get(
+      {
+        path: `/prisons/${prisonCode}/scheduled-events`,
+        query: { prisonerNumber, startDate, endDate },
+      },
+      user,
+    )
   }
 
   async getRolloutPrison(prisonCode: string, user: ServiceUser): Promise<RolloutPrison> {

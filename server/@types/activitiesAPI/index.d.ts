@@ -579,6 +579,39 @@ export interface components {
       daysOfWeek: string[]
       activity: components['schemas']['ActivityLite']
     }
+    /** @description Describes a prisoners scheduled events */
+    PrisonerScheduledEvents: {
+      /**
+       * @description The prison code for this scheduled event
+       * @example MDI
+       */
+      prisonCode?: string
+      /**
+       * @description The prisoner number
+       * @example GF10101
+       */
+      prisonerNumber?: string
+      /**
+       * Format: date
+       * @description The start date for this collection of scheduled events
+       * @example 2022-11-01
+       */
+      startDate?: string
+      /**
+       * Format: date
+       * @description The end date (inclusive) for this collection of scheduled events
+       * @example 2022-11-28
+       */
+      endDate?: string
+      /** @description A list of scheduled appointments for this prisoner in this date range */
+      appointments?: components['schemas']['ScheduledEvent'][]
+      /** @description A list of (active) scheduled court hearings for this prisoner in this date range */
+      courtHearings?: components['schemas']['ScheduledEvent'][]
+      /** @description A list of scheduled visits for this prisoner in this date range */
+      visits?: components['schemas']['ScheduledEvent'][]
+      /** @description A list of scheduled activities for this prisoner in this date range */
+      activities?: components['schemas']['ScheduledEvent'][]
+    }
     /** @description Describes a scheduled event */
     ScheduledEvent: {
       /**
@@ -657,6 +690,11 @@ export interface components {
        * @example 10:00
        */
       endTime?: string
+      /**
+       * Format: int32
+       * @description The event priority
+       */
+      priority?: number
     }
     /** @description Describes a top-level activity category */
     ActivityCategory: {
@@ -1155,7 +1193,7 @@ export interface operations {
       /** Successful call - zero or more scheduled events found */
       200: {
         content: {
-          'application/json': components['schemas']['ScheduledEvent'][]
+          'application/json': components['schemas']['PrisonerScheduledEvents']
         }
       }
       /** Invalid request */

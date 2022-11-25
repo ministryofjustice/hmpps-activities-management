@@ -38,7 +38,7 @@
                          aria-labelledby="{{ params.id }}-mobile-calendar-day-content-{{ loop.index }}">
                         {% set dayLoop = loop %}
                         {% for activity in dailyActivities %}
-                            <div class="calendar__scheduled-activity {% if activity.isClashing %}calendar__scheduled-activity--clash{% endif %}">
+                            <div class="calendar__scheduled-activity {% if activity | isClashing(dailyActivities) %}calendar__scheduled-activity--clash{% endif %}">
                                 <div class="govuk-body govuk-!-font-weight-bold"
                                      id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
                                     {{ activity.description }}
@@ -103,7 +103,7 @@
                                     {% set dailyActivities = params.activities | filterActivitiesForDay(nextDay) | sortActivitiesByStartTime %}
                                     {% for activity in dailyActivities %}
                                         {% if loop.index < 3 %}
-                                            <li {% if activity.isClashing %}class="calendar__desktop--item--clash"{% endif %}>{{ activity.description }}</li>
+                                            <li {% if activity | isClashing(dailyActivities) %}class="calendar__desktop--item--clash"{% endif %}>{{ activity.description }}</li>
                                         {% endif %}
                                         {% if loop.index >= 3 and loop.index == dailyActivities.length %}
                                             {% set others = loop.index - 2 %}
@@ -134,7 +134,7 @@
                                 <div class="calendar__desktop--date-container--content">
                                     {% set dayLoop = loop %}
                                     {% for activity in dailyActivities %}
-                                        <div class="calendar__scheduled-activity {% if activity.isClashing %}calendar__scheduled-activity--clash{% endif %}">
+                                        <div class="calendar__scheduled-activity {% if activity | isClashing(dailyActivities) %}calendar__scheduled-activity--clash{% endif %}">
                                             <div class="govuk-body govuk-!-font-weight-bold"
                                                  id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
                                                 {{ activity.description }}
