@@ -12,12 +12,14 @@ export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
   router.use(errorMessageMiddleware())
 
-  router.use(homeRoutes())
-  router.use(changeLocationRoutes(services))
-  router.use(activitiesRoutes(services))
-  router.use(spikeRoutes(services))
+  router.use('/', homeRoutes())
+  router.use('/change-location', changeLocationRoutes(services))
+  router.use('/activities/allocate', activitiesRoutes(services))
+  // Add more beta build routes here
+
+  // Spikes under here spikes
+  router.use('/spikes', spikeRoutes(services))
   router.use('/activity-list', activityListRoutes(services))
   router.use('/activity-list-am', activityListAmRoutes(services))
-  // Add more routes here
   return router
 }

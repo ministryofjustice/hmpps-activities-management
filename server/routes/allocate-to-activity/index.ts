@@ -14,9 +14,9 @@ export default function Index({ activitiesService, capacitiesService }: Services
   const activitiesHandler = new ActivitiesRoutes(activitiesService, capacitiesService)
   const schedulesHandler = new SchedulesRoutes(activitiesService, capacitiesService)
 
-  get('/activities/allocate/categories', categoriesHandler.GET)
-  get('/activities/allocate/categories/:categoryId/activities', activitiesHandler.GET)
-  get('/activities/allocate/activities/:activityId/schedules', schedulesHandler.GET)
+  get('/categories', categoriesHandler.GET)
+  get('/categories/:categoryId/activities', activitiesHandler.GET)
+  get('/activities/:activityId/schedules', schedulesHandler.GET)
 
   return router
 }
