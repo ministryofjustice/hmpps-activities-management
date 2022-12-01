@@ -36,6 +36,6 @@ export default class ChangeLocationRoutes {
 
     // Invalidate user details so new user is fetched for the session
     _.unset(req.session, 'user')
-    return res.redirect(req.session.returnTo)
+    return res.redirect(req.session.returnTo || '/')
   }
 }

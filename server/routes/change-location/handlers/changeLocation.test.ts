@@ -70,4 +70,27 @@ describe('Route Handlers - Change location', () => {
       expect(req.session.returnTo).toBeUndefined()
     })
   })
+
+  describe('POST', () => {
+    it('should set the active caseload and redirect to the return URL defined in session', async () => {
+      req.body = {
+        caseLoadId: 'MDI',
+      }
+      req.session.returnTo = '/return-url'
+
+      await handler.POST(req, res)
+      expect(userService.setActiveCaseLoad).toHaveBeenCalledWith('MDI', res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('/return-url')
+    })
+
+    it('should set the active caseload and redirect to root', async () => {
+      req.body = {
+        caseLoadId: 'MDI',
+      }
+
+      await handler.POST(req, res)
+      expect(userService.setActiveCaseLoad).toHaveBeenCalledWith('MDI', res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('/')
+    })
+  })
 })
