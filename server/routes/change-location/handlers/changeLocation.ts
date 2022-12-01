@@ -20,11 +20,6 @@ export default class ChangeLocationRoutes {
       })),
     }
 
-    // Set the callback to the referer only if the referer was not the page itself
-    if (!req.get('Referer')?.endsWith(req.originalUrl)) {
-      req.session.returnTo = req.get('Referer')
-    }
-
     return res.render('pages/change-location/index', viewContext)
   }
 
@@ -36,6 +31,6 @@ export default class ChangeLocationRoutes {
 
     // Invalidate user details so new user is fetched for the session
     _.unset(req.session, 'user')
-    return res.redirect(req.session.returnTo || '/')
+    return res.redirect('/')
   }
 }
