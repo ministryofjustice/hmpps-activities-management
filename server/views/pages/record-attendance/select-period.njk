@@ -1,0 +1,87 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Record attendance" %}
+{% set pageId = 'select-period-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    name: "activityDate",
+                    fieldset: {
+                        legend: {
+                            text: "Select activity or appointment date",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--xl"
+                        }
+                    },
+                    errorMessage: errors | findError('activityDate'),
+                    items: [
+                        {
+                            value: "today",
+                            text: "Today",
+                            checked: activityDate == 'today'
+                        },
+                        {
+                            value: "yesterday",
+                            text: "Yesterday",
+                            checked: activityDate == 'yesterday'
+                        },
+                        {
+                            value: "other",
+                            text: "A different date",
+                            checked: activityDate == 'other',
+                            conditional: { html:
+                                govukDateInput({
+                                    namePrefix: "activityDate",
+                                    hint: {
+                                        text: "For example, today's date is " + now | formatDate('dd MM yyyy')
+                                    }
+                                })
+                            }
+                        }
+                    ]
+                }) }}
+
+                {{ govukRadios({
+                    name: "activitySlot",
+                    fieldset: {
+                        legend: {
+                            text: "Time period",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: errors | findError('activitySlot'),
+                    items: [
+                        {
+                            value: "am",
+                            text: "Morning (AM)",
+                            checked: activitySlot == 'am'
+                        },
+                        {
+                            value: "pm",
+                            text: "Afternoon (PM)",
+                            checked: activitySlot == 'pm'
+                        },
+                        {
+                            value: "ed",
+                            text: "Evening (ED)",
+                            checked: activitySlot == 'ed'
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Submit"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -3,18 +3,22 @@ import type { Services } from '../services'
 import homeRoutes from './home'
 import changeLocationRoutes from './change-location'
 import activitiesRoutes from './allocate-to-activity'
+import attendanceRoutes from './record-attendance'
 import spikeRoutes from './spikes'
 import activityListRoutes from './spikes/activity-list/activityListRoutes'
 import activityListAmRoutes from './spikes/activity-list-am/activityListRoutes'
 import errorMessageMiddleware from '../middleware/errorMessageMiddleware'
+import timeNowMiddleware from '../middleware/timeNowMiddleware'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
   router.use(errorMessageMiddleware())
+  router.use(timeNowMiddleware())
 
   router.use('/', homeRoutes())
   router.use('/change-location', changeLocationRoutes(services))
   router.use('/activities/allocate', activitiesRoutes(services))
+  router.use('/attendance', attendanceRoutes())
   // Add more beta build routes here
 
   // Spikes under here spikes
