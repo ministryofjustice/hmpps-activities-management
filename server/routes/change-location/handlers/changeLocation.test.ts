@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 
-import { when } from 'jest-when'
 import ChangeLocationRoutes from './changeLocation'
 import UserService from '../../../services/userService'
 
@@ -45,11 +44,9 @@ describe('Route Handlers - Change location', () => {
         { caseLoadId: 'MDI', description: 'Moorland (HMP)' },
         { caseLoadId: 'LEI', description: 'Leeds (HMP)' },
       ]
-      when(req.get).calledWith('Referer').mockReturnValue('/')
 
       await handler.GET(req, res)
 
-      expect(req.session.returnTo).toEqual('/')
       expect(res.render).toHaveBeenCalledWith('pages/change-location/index', {
         options: [
           { value: 'MDI', text: 'Moorland (HMP)' },
@@ -57,17 +54,17 @@ describe('Route Handlers - Change location', () => {
         ],
       })
     })
+  })
 
-    it('should not set returnTo in session if Referer is the page itself', async () => {
-      res.locals.user.allCaseLoads = [
-        { caseLoadId: 'MDI', description: 'Moorland (HMP)' },
-        { caseLoadId: 'LEI', description: 'Leeds (HMP)' },
-      ]
-      when(req.get).calledWith('Referer').mockReturnValue('/change-location')
+  describe('POST', () => {
+    it('should set the active caseload and redirect to root', async () => {
+      req.body = {
+        caseLoadId: 'MDI',
+      }
 
-      await handler.GET(req, res)
-
-      expect(req.session.returnTo).toBeUndefined()
+      await handler.POST(req, res)
+      expect(userService.setActiveCaseLoad).toHaveBeenCalledWith('MDI', res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('/')
     })
   })
 })
