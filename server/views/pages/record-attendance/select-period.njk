@@ -1,8 +1,8 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/datePicker.njk" import datePicker %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'select-period-page' %}
@@ -14,7 +14,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
-                    name: "activityDate",
+                    name: "datePresetOption",
                     fieldset: {
                         legend: {
                             text: "Select activity or appointment date",
@@ -22,28 +22,31 @@
                             classes: "govuk-fieldset__legend--xl"
                         }
                     },
-                    errorMessage: errors | findError('activityDate'),
+                    errorMessage: validationErrors | findError('datePresetOption'),
                     items: [
                         {
                             value: "today",
                             text: "Today",
-                            checked: activityDate == 'today'
+                            checked: formResponses.datePresetOption == 'today'
                         },
                         {
                             value: "yesterday",
                             text: "Yesterday",
-                            checked: activityDate == 'yesterday'
+                            checked: formResponses.datePresetOption == 'yesterday'
                         },
                         {
                             value: "other",
                             text: "A different date",
-                            checked: activityDate == 'other',
+                            checked: formResponses.datePresetOption == 'other',
                             conditional: { html:
-                                govukDateInput({
-                                    namePrefix: "activityDate",
+                                datePicker({
+                                    id: 'date',
                                     hint: {
                                         text: "For example, today's date is " + now | formatDate('dd MM yyyy')
-                                    }
+                                    },
+                                    renderedErrorMessage: validationErrors | findError('date'),
+                                    validationErrors: validationErrors,
+                                    formResponses: formResponses.date or formDate.date
                                 })
                             }
                         }
@@ -58,22 +61,22 @@
                             classes: "govuk-fieldset__legend--m"
                         }
                     },
-                    errorMessage: errors | findError('activitySlot'),
+                    errorMessage: validationErrors | findError('activitySlot'),
                     items: [
                         {
                             value: "am",
                             text: "Morning (AM)",
-                            checked: activitySlot == 'am'
+                            checked: formResponses.activitySlot == 'am'
                         },
                         {
                             value: "pm",
                             text: "Afternoon (PM)",
-                            checked: activitySlot == 'pm'
+                            checked: formResponses.activitySlot == 'pm'
                         },
                         {
                             value: "ed",
                             text: "Evening (ED)",
-                            checked: activitySlot == 'ed'
+                            checked: formResponses.activitySlot == 'ed'
                         }
                     ]
                 }) }}
