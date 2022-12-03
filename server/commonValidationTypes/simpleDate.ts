@@ -28,7 +28,7 @@ export default class SimpleDate {
   @Min(1000, { message: 'Year must be entered in the format YYYY' })
   year: number
 
-  toRichDate = () => parse(`${this.year}-${this.month}-${this.day}`, 'yyyy-MM-dd', new Date())
+  toRichDate = () => parse(this.toString(), 'yyyy-MM-dd', new Date())
 
   toString = () => `${this.year}-${this.month}-${this.day}`
 }
