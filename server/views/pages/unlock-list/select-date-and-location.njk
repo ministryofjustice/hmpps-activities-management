@@ -1,0 +1,92 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/datePicker.njk" import datePicker %}
+
+{% set pageTitle = applicationName + " - Unlock list" %}
+{% set pageId = 'select-date-and-location-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ govukRadios({
+                    name: "datePresetOption",
+                    fieldset: {
+                        legend: {
+                            text: "Select a date",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--xl"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('datePresetOption'),
+                    items: [
+                        {
+                            value: "today",
+                            text: "Today",
+                            checked: formResponses.datePresetOption == 'today'
+                        },
+                        {
+                            value: "yesterday",
+                            text: "Yesterday",
+                            checked: formResponses.datePresetOption == 'yesterday'
+                        },
+                        {
+                            value: "other",
+                            text: "A different date",
+                            checked: formResponses.datePresetOption == 'other',
+                            conditional: { html:
+                            datePicker({
+                                id: 'date',
+                                hint: {
+                                    text: "For example, today's date is " + now | formatDate('dd MM yyyy')
+                                },
+                                renderedErrorMessage: validationErrors | findError('date'),
+                                validationErrors: validationErrors,
+                                formResponses: formResponses.date or formDate.date
+                            })
+                        }
+                        }
+                    ]
+                }) }}
+
+                {{ govukRadios({
+                    name: "activitySlot",
+                    fieldset: {
+                        legend: {
+                            text: "Time period",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('activitySlot'),
+                    items: [
+                        {
+                            value: "am",
+                            text: "Morning (AM)",
+                            checked: formResponses.activitySlot == 'am'
+                        },
+                        {
+                            value: "pm",
+                            text: "Afternoon (PM)",
+                            checked: formResponses.activitySlot == 'pm'
+                        },
+                        {
+                            value: "ed",
+                            text: "Evening (ED)",
+                            checked: formResponses.activitySlot == 'ed'
+                        }
+                    ]
+                }) }}
+
+                {# Add location input checkboxes #}
+
+                {{ govukButton({
+                    text: "Submit"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

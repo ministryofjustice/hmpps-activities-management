@@ -47,4 +47,10 @@ describe('Views - Home', () => {
 
     expect($('[data-qa=alpha-activity-list-am-link]')).toHaveLength(0)
   })
+
+  it('should always show the unlock list tile', () => {
+    viewContext = {}
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    expect($('[data-qa=unlock-list-link]')).toHaveLength(1)
+  })
 })
