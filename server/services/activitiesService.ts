@@ -9,6 +9,7 @@ import {
   AttendanceUpdateRequest,
   InternalLocation,
   RolloutPrison,
+  ScheduledActivity,
   ScheduledEvent,
   LocationGroup,
   Allocation,
@@ -17,6 +18,7 @@ import {
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
+import TimeSlot from '../enum/timeSlot'
 
 const processError = (error: SanitisedError): undefined => {
   if (!error.status) throw error
@@ -27,7 +29,7 @@ const processError = (error: SanitisedError): undefined => {
 export default class ActivitiesService {
   constructor(
     private readonly activitiesApiClient: ActivitiesApiClient,
-    private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
+    private readonly prisonerSearchApiClient: PrisonerSearchApiClient
   ) {}
 
   async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
@@ -42,11 +44,30 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getSchedulesOfActivity(activityId, user)
   }
 
+  getScheduledActivitiesAtPrison(
+    startDate: Date,
+    endDate: Date,
+    slot: TimeSlot,
+    user: ServiceUser
+  ): Promise<ScheduledActivity[]> {
+    return this.activitiesApiClient.getScheduledActivitiesAtPrison(
+      user.activeCaseLoadId,
+      startDate,
+      endDate,
+      slot,
+      user
+    )
+  }
+
+  getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
+    return this.activitiesApiClient.getScheduledActivity(id, user)
+  }
+
   getScheduledEvents(
     prisonerNumber: string,
     startDate: Date,
     endDate: Date,
-    user: ServiceUser,
+    user: ServiceUser
   ): Promise<ScheduledEvent[]> {
     return this.activitiesApiClient
       .getScheduledEvents(
@@ -54,7 +75,7 @@ export default class ActivitiesService {
         prisonerNumber,
         format(startDate, 'yyyy-MM-dd'),
         format(endDate, 'yyyy-MM-dd'),
-        user,
+        user
       )
       .then(res => [...res.activities, ...res.courtHearings, ...res.appointments, ...res.visits])
   }
@@ -93,7 +114,7 @@ export default class ActivitiesService {
     prisonCode: string,
     date: string,
     period: string,
-    user: ServiceUser,
+    user: ServiceUser
   ): Promise<InternalLocation[]> {
     return this.activitiesApiClient.getScheduledPrisonLocations(prisonCode, date, period, user)
   }
@@ -103,14 +124,14 @@ export default class ActivitiesService {
     locationId: string,
     date: string,
     period: string,
-    user: ServiceUser,
+    user: ServiceUser
   ): Promise<ActivityScheduleAllocation[]> {
     const activitySchedules = await this.activitiesApiClient.getActivitySchedules(
       prisonCode,
       locationId,
       date,
       period,
-      user,
+      user
     )
 
     // We'd like to assume there would be only one activity schedule returned - but we cant at this stage

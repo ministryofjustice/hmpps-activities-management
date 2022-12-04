@@ -6,6 +6,7 @@ import enGBLocale from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
+import { Attendance } from '../@types/activitiesAPI/types'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -161,6 +162,19 @@ export const associateErrorsWithProperty = (error: ValidationError) => {
   }))
 }
 
+export const toDateString = (date: Date) => format(date, 'yyyy-MM-dd')
+
+export const toDate = (date: string) => parse(date, 'yyyy-MM-dd', new Date())
+
 export const existsInStringArray = (key: string, arr: string[]): boolean => {
   return arr?.find(item => item === key) !== undefined
+}
+
+export const getAttendanceSummary = (attendance: Attendance[]) => {
+  const allocated = attendance.length
+  const attended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason.code === 'ATT').length
+  const notAttended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason.code !== 'ATT').length
+  const notRecorded = allocated - attended - notAttended
+
+  return { allocated, attended, notAttended, notRecorded }
 }

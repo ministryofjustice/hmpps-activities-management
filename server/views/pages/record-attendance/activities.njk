@@ -1,0 +1,117 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% set pageTitle = applicationName + " - Record attendance" %}
+{% set pageId = 'activities-page' %}
+{% set backLinkHref = "select-period" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-3">{{ activities.length }} {{ 'activity' if activities.length == 1 else 'activities' }} scheduled for {{ date | formatDate('do MMMM yyyy') + ' (' + slot + ')' }}</h1>
+            <ul class="govuk-list">
+                <li><a href="select-period" class="govuk-link govuk-!-font-size-19">View the schedule for a different day</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {% set rows = [] %}
+            {% for activity in activities %}
+                {% set rows = (rows.push([
+                    {
+                        attributes: {
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.name
+                        },
+                        html: '
+                                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                                    <a href="activities/' + activity.id + '/attendance-list" class="govuk-link govuk-link--no-visited-state">' + activity.name + '</a>
+                                </h2>
+                              '
+                    },
+                    {
+                        attributes: {
+                            id: 'location-' + loop.index,
+                            "data-sort-value": activity.location
+                        },
+                        text: activity.location
+                    },
+                    {
+                        attributes: {
+                            id: 'time-' + loop.index,
+                            "data-sort-value": activity.time
+                        },
+                        text: activity.time
+                    },
+                    {
+                        attributes: {
+                            id: 'scheduled-' + loop.index,
+                            "data-sort-value": activity.allocated
+                        },
+                        classes: 'govuk-table__cell--numeric',
+                        text: activity.allocated
+                    },
+                    {
+                        attributes: {
+                            id: 'attended-' + loop.index,
+                            "data-sort-value": activity.attended
+                        },
+                        classes: 'govuk-table__cell--numeric',
+                        text: activity.attended
+                    },
+                    {
+                        attributes: {
+                            id: 'not-attended-' + loop.index,
+                            "data-sort-value": activity.notAttended
+                        },
+                        classes: 'govuk-table__cell--numeric',
+                        text: activity.notAttended
+                    }
+                ]), rows) %}
+            {% endfor %}
+
+            {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table'
+                },
+                caption: "Activities",
+                captionClasses: "govuk-visually-hidden",
+                head: [
+                    {
+                        text: "Activity",
+                        attributes: {
+                            "aria-sort": "ascending"
+                        }
+                    },
+                    {
+                        text: "Location",
+                        attributes: {
+                            "aria-sort": "none"
+                        }
+                    },
+                    {
+                        text: "Time",
+                        attributes: {
+                            "aria-sort": "none"
+                        }
+                    },
+                    {
+                        text: "Scheduled",
+                        classes: 'govuk-table__header--numeric'
+                    },
+                    {
+                        text: "Attended",
+                        classes: 'govuk-table__header--numeric'
+                    },
+                    {
+                        text: "Not attended",
+                        classes: 'govuk-table__header--numeric'
+                    }
+                ],
+                rows: rows
+            }) }}
+        </div>
+    </div>
+{% endblock %}

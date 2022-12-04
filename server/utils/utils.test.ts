@@ -8,10 +8,14 @@ import {
   compareStrings,
   convertToTitleCase,
   existsInStringArray,
+  getAttendanceSummary,
   getCurrentPeriod,
   initialiseName,
+  toDate,
+  toDateString,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
+import { Attendance } from '../@types/activitiesAPI/types'
 
 describe('utils', () => {
   describe('convert to title case', () => {
@@ -126,6 +130,18 @@ describe('utils', () => {
     })
   })
 
+  describe('toDateString', () => {
+    it('converts a date to a string', () => {
+      expect(toDateString(new Date(2022, 10, 20))).toEqual('2022-11-20')
+    })
+  })
+
+  describe('toDate', () => {
+    it('converts a string to a date', () => {
+      expect(toDate('2022-12-02')).toEqual(new Date(2022, 11, 2))
+    })
+  })
+
   describe('existsInStringArray', () => {
     it.each([
       ['Exists', 'a', ['a', 'b', 'c'], true],
@@ -134,6 +150,23 @@ describe('utils', () => {
       ['Empty list', 'a', [], false],
     ])('%s existsInStringArray(%s, %s) == %s', (desc: string, key: string, list: string[], expected: boolean) => {
       expect(existsInStringArray(key, list)).toEqual(expected)
+    })
+  })
+
+  describe('getAttendanceSummary', () => {
+    it('calculates the attendance summary', () => {
+      const attendance = [
+        { status: 'SCHEDULED' },
+        { status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
+        { status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+      ] as Attendance[]
+
+      expect(getAttendanceSummary(attendance)).toEqual({
+        allocated: 3,
+        attended: 1,
+        notAttended: 1,
+        notRecorded: 1,
+      })
     })
   })
 })

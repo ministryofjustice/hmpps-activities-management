@@ -10,11 +10,13 @@ import {
   ActivityScheduleLite,
   LocationGroup,
   RolloutPrison,
+  ScheduledActivity,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
 import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
+import TimeSlot from '../enum/timeSlot'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -70,6 +72,39 @@ describe('Activities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(activitiesApiClient.getSchedulesOfActivity).toHaveBeenCalledWith(1, user)
+    })
+  })
+
+  describe('getScheduledActivitiesAtPrison', () => {
+    it('should get the list activities scheduled at a prison between a date range', async () => {
+      const expectedResult = [{ id: 1 }] as ScheduledActivity[]
+      const date = new Date()
+
+      activitiesApiClient.getScheduledActivitiesAtPrison.mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getScheduledActivitiesAtPrison(date, date, TimeSlot.AM, user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getScheduledActivitiesAtPrison).toHaveBeenCalledWith(
+        'MDI',
+        date,
+        date,
+        TimeSlot.AM,
+        user
+      )
+    })
+  })
+
+  describe('getScheduledActivity', () => {
+    it('should get the scheduled activitu by ID', async () => {
+      const expectedResult = { id: 1 } as ScheduledActivity
+
+      activitiesApiClient.getScheduledActivity.mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getScheduledActivity(1, user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getScheduledActivity).toHaveBeenCalledWith(1, user)
     })
   })
 

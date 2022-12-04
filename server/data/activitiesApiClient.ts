@@ -12,9 +12,12 @@ import {
   InternalLocation,
   PrisonerScheduledEvents,
   RolloutPrison,
+  ScheduledActivity,
   LocationGroup,
   Allocation,
 } from '../@types/activitiesAPI/types'
+import { toDateString } from '../utils/utils'
+import TimeSlot from '../enum/timeSlot'
 
 export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   constructor() {
@@ -63,19 +66,44 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  getScheduledActivitiesAtPrison(
+    prisonCode: string,
+    startDate: Date,
+    endDate: Date,
+    slot: TimeSlot,
+    user: ServiceUser
+  ): Promise<ScheduledActivity[]> {
+    return this.get({
+      path: `/prisons/${prisonCode}/scheduled-instances`,
+      query: {
+        startDate: toDateString(startDate),
+        endDate: toDateString(endDate),
+        slot,
+      },
+      authToken: user.token,
+    })
+  }
+
+  getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
+    return this.get({
+      path: `/scheduled-instances/${id}`,
+      authToken: user.token,
+    })
+  }
+
   getScheduledEvents(
     prisonCode: string,
     prisonerNumber: string,
     startDate: string,
     endDate: string,
-    user: ServiceUser,
+    user: ServiceUser
   ): Promise<PrisonerScheduledEvents> {
     return this.get(
       {
         path: `/prisons/${prisonCode}/scheduled-events`,
         query: { prisonerNumber, startDate, endDate },
       },
-      user,
+      user
     )
   }
 
@@ -90,7 +118,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     prisonCode: string,
     date: string,
     period: string,
-    user: ServiceUser,
+    user: ServiceUser
   ): Promise<InternalLocation[]> {
     return this.get({
       path: `/prison/${prisonCode}/locations`,
@@ -104,7 +132,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     locationId: string,
     date: string,
     period: string,
-    user: ServiceUser,
+    user: ServiceUser
   ): Promise<ActivitySchedule[]> {
     return this.get({
       path: `/prison/${prisonCode}/schedules`,
