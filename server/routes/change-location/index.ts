@@ -11,8 +11,8 @@ export default function Index({ userService }: Services): Router {
 
   const changeLocationHandler = new ChangeLocationRoutes(userService)
 
-  get('/change-location', changeLocationHandler.GET)
-  post('/change-location', changeLocationHandler.POST)
+  get('/', changeLocationHandler.GET)
+  post('/', changeLocationHandler.POST)
 
   return router
 }

@@ -17,11 +17,11 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const validationSpikeHandler = new ValidationSpikeRoutes()
   const calendarSpikeHandler = new CalendarSpikeRoutes(activitiesService)
 
-  get('/spikes/prison-service-spike', prisonServiceSpikeHandler.GET)
-  get('/spikes/validation-spike', validationSpikeHandler.GET)
-  post('/spikes/validation-spike', validationSpikeHandler.POST, ValidatedType)
-  get('/spikes/validation-spike/success', validationSpikeHandler.SUCCESS)
-  get('/spikes/calendar-spike', calendarSpikeHandler.GET)
+  get('/prison-service-spike', prisonServiceSpikeHandler.GET)
+  get('/validation-spike', validationSpikeHandler.GET)
+  post('/validation-spike', validationSpikeHandler.POST, ValidatedType)
+  get('/validation-spike/success', validationSpikeHandler.SUCCESS)
+  get('/calendar-spike', calendarSpikeHandler.GET)
 
   return router
 }

@@ -23,13 +23,24 @@
                     }) }}
                 </div>
 
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "recordAttendanceCard",
+                        "href": "/attendance/select-period",
+                        "clickable": "true",
+                        "heading": "Record attendance",
+                        "description": "Mark attendance at activities and appointments and get printable attendance lists.",
+                        "data-qa": "record-attendance-card"
+                    }) }}
+                </div>
+
                 {% if shouldShowAlphaPrisonActivityListDps %}
                     <div class="govuk-grid-column-one-third card-group__item">
                         {{ card({
                             "id": "alphaActivityListCard",
                             "href": "/activity-list/select-activity-location",
                             "clickable": "true",
-                            "heading": "Whereabouts (prisonAPI): View by activity or appointment location",
+                            "heading": "Spike - Whereabouts (prisonAPI): View by activity or appointment location",
                             "description": "View all activities in an activity or appointment location.",
                             "data-qa": "alpha-activity-list-dps-link"
                         }) }}
@@ -42,7 +53,7 @@
                             "id": "alphaActivityListCard",
                             "href": "/activity-list-am/select-activity-location",
                             "clickable": "true",
-                            "heading": "Whereabouts (activitiesAPI): View by activity or appointment location",
+                            "heading": "Spike - Whereabouts (activitiesAPI): View by activity or appointment location",
                             "description": "View all activities in an activity or appointment location.",
                             "data-qa": "alpha-activity-list-am-link"
                         }) }}

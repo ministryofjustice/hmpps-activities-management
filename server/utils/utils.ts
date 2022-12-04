@@ -3,6 +3,7 @@
 import { parse, formatISO, isAfter, parseISO, endOfDay, format, isSameDay } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
+import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 
 const properCase = (word: string): string =>
@@ -109,4 +110,11 @@ export const formatDate = (date: Date, fmt: string) => {
 
 export const dateInList = (date: Date, dates: Date[]) => {
   return dates.some(d => isSameDay(date, d))
+}
+
+export const associateErrorsWithProperty = (error: ValidationError) => {
+  return Object.values(error.constraints).map(err => ({
+    property: error.property,
+    error: err,
+  }))
 }

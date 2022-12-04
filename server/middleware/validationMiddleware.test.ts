@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 import { Request, Response } from 'express'
 import { IsIn, IsNotEmpty, ValidateNested } from 'class-validator'
 import { Expose, Type } from 'class-transformer'
@@ -70,7 +69,7 @@ describe('validationMiddleware', () => {
       expect(req.flash).toHaveBeenCalledWith('formResponses', JSON.stringify(req.body))
     })
 
-    it('should return the bottom level property on the error messages', async () => {
+    it('should chain parent and child property names to report the bottom level error message', async () => {
       const next = jest.fn()
       req = {
         params: {},
@@ -86,7 +85,7 @@ describe('validationMiddleware', () => {
       expect(next).not.toHaveBeenCalled()
       expect(req.flash).toHaveBeenCalledWith(
         'validationErrors',
-        JSON.stringify([{ field: 'name', message: notEmptyMessage }]),
+        JSON.stringify([{ field: 'child-name', message: notEmptyMessage }]),
       )
     })
   })
