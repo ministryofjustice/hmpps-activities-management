@@ -13,8 +13,8 @@ export default function Index({ activitiesService }: Services): Router {
 
   const dateAndLocationHandler = new SelectDateAndLocationRoutes(activitiesService)
 
-  get('/unlock-list/select-date-and-location', dateAndLocationHandler.GET)
-  post('/unlock-list/select-date-and-location', dateAndLocationHandler.POST, DateAndLocation)
+  get('/select-date-and-location', dateAndLocationHandler.GET)
+  post('/select-date-and-location', dateAndLocationHandler.POST, DateAndLocation)
 
   return router
 }

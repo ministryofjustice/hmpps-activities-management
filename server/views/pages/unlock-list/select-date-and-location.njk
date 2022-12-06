@@ -2,6 +2,7 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "components/datePicker.njk" import datePicker %}
 
 {% set pageTitle = applicationName + " - Unlock list" %}
@@ -10,16 +11,17 @@
 
 {% block content %}
     <div class="govuk-grid-row">
+        <h1 class="govuk-heading-l">Choose unlock list details</h1>
         <div class="govuk-grid-column-three-quarters">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
                 {{ govukRadios({
                     name: "datePresetOption",
                     fieldset: {
                         legend: {
-                            text: "Select a date",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--xl"
+                            text: "Date",
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
                     errorMessage: validationErrors | findError('datePresetOption'),
@@ -27,17 +29,17 @@
                         {
                             value: "today",
                             text: "Today",
-                            checked: formResponses.datePresetOption == 'today'
+                            checked: formResponses.datePresetOption == 'today' or datePresetOption =='today'
                         },
                         {
                             value: "yesterday",
                             text: "Yesterday",
-                            checked: formResponses.datePresetOption == 'yesterday'
+                            checked: formResponses.datePresetOption == 'yesterday' or datePresetOption == 'yesterday'
                         },
                         {
                             value: "other",
                             text: "A different date",
-                            checked: formResponses.datePresetOption == 'other',
+                            checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
                             conditional: { html:
                             datePicker({
                                 id: 'date',
@@ -46,7 +48,7 @@
                                 },
                                 renderedErrorMessage: validationErrors | findError('date'),
                                 validationErrors: validationErrors,
-                                formResponses: formResponses.date or formDate.date
+                                formResponses: formResponses.date or formDate.date or simpleDate
                             })
                         }
                         }
@@ -66,25 +68,49 @@
                         {
                             value: "am",
                             text: "Morning (AM)",
-                            checked: formResponses.activitySlot == 'am'
+                            checked: formResponses.activitySlot == 'am' or slot == 'am'
                         },
                         {
                             value: "pm",
                             text: "Afternoon (PM)",
-                            checked: formResponses.activitySlot == 'pm'
+                            checked: formResponses.activitySlot == 'pm' or slot == 'pm'
                         },
                         {
                             value: "ed",
                             text: "Evening (ED)",
-                            checked: formResponses.activitySlot == 'ed'
+                            checked: formResponses.activitySlot == 'ed' or slot == 'ed'
                         }
                     ]
                 }) }}
 
-                {# Add location input checkboxes #}
+                {% set items = [] %}
+                {% for location in locationGroups %}
+                    {%  set items = (items.push({
+                        id: location.key,
+                        value: location.key,
+                        text: location.name,
+                        checked: (location.key | locationChecked(formResponses.locations)) or (location.key | locationChecked(selectedLocations))
+                    }), items) %}
+                {% endfor %}
+
+                {{ govukCheckboxes({
+                    name: "locations[]",
+                    fieldset: {
+                        legend: {
+                            text: "Locations",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                      text: "You can select more than one location"
+                    },
+                    items: items
+                }) }}
 
                 {{ govukButton({
-                    text: "Submit"
+                    text: "Continue",
+                    type: "submit",
+                    attributes: { 'data-qa': 'continue' }
                 }) }}
             </form>
         </div>

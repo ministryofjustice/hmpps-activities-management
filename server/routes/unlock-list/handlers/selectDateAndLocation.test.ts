@@ -3,9 +3,9 @@ import { format, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import SelectDateAndLocationRoutes, { DateAndLocation } from './selectDateAndLocation'
-import SimpleDate from '../../../commonValidationTypes/simpleDate'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import ActivitiesService from '../../../services/activitiesService'
+import { LocationGroup } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
@@ -14,24 +14,44 @@ describe('Unlock list routes - select date and location', () => {
   const handler = new SelectDateAndLocationRoutes(activitiesService)
   let req: Request
   let res: Response
+  const mockedLocationGroups = [
+    {
+      name: 'Houseblock 1',
+      key: 'Houseblock 1',
+      children: [],
+    },
+  ] as LocationGroup[]
 
   beforeEach(() => {
     res = {
       locals: {
-        // TODO: Add the active caseload and check this in the call to activitiesService
-        user: {},
+        user: {
+          activeCaseLoadId: 'MDI',
+        },
       },
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
 
     req = {} as unknown as Request
+    jest.resetAllMocks()
   })
 
   describe('GET', () => {
     it('should render the expected view', async () => {
+      activitiesService.getLocationGroups.mockResolvedValue(mockedLocationGroups)
+
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/unlock-list/select-date-and-location')
+
+      expect(res.render).toHaveBeenCalledWith('pages/unlock-list/select-date-and-location', {
+        datePresetOption: null,
+        locationGroups: mockedLocationGroups,
+        selectedLocations: [],
+        simpleDate: null,
+        slot: null,
+      })
+      expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)
+      expect(activitiesService.getLocationGroups).toHaveBeenCalledWith('MDI', res.locals.user)
     })
   })
 
@@ -40,54 +60,43 @@ describe('Unlock list routes - select date and location', () => {
       req.body = {
         datePresetOption: 'today',
         activitySlot: 'am',
-        location: 'here',
+        locations: ['here'],
       }
-
       const todaysDate = format(new Date(), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`unlock-list?date=${todaysDate}&slot=am&location=here`)
+
+      expect(res.redirect).toHaveBeenCalledWith(`?datePresetOption=today&date=${todaysDate}&slot=am&locations=here`)
+      expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(0)
     })
 
     it("redirect with the expected query params for when yesterday's date is selected", async () => {
       req.body = {
         datePresetOption: 'yesterday',
         activitySlot: 'am',
-        location: 'here',
+        locations: ['here'],
       }
-
       const yesterdaysDate = format(subDays(new Date(), 1), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`unlock-list?date=${yesterdaysDate}&slot=am&location=here`)
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        `?datePresetOption=yesterday&date=${yesterdaysDate}&slot=am&locations=here`,
+      )
     })
 
-    it('redirect with the expected query params for when a custom date is selected', async () => {
+    it('redirects with the expected query params for when a custom date is selected', async () => {
+      const todaysDate = format(new Date(), 'yyyy-MM-dd')
       req.body = {
         datePresetOption: 'other',
-        date: plainToInstance(SimpleDate, { day: 1, month: 12, year: 2022 }),
+        date: todaysDate,
         activitySlot: 'am',
-        location: 'here',
+        locations: ['here'],
       }
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`unlock-list?date=2022-12-1&slot=am&location=here`)
-    })
 
-    it('calls the activity service for locations with the expected parameters', async () => {
-      req.body = {
-        datePresetOption: 'today',
-        activitySlot: 'am',
-        location: 'here',
-      }
-
-      const todaysDate = format(new Date(), 'yyyy-MM-dd')
-
-      await handler.POST(req, res)
-
-      // TODO: Check the mock for the call with the active user caseload and parameters
-
-      expect(res.redirect).toHaveBeenCalledWith(`unlock-list?date=${todaysDate}&slot=am&location=here`)
+      expect(res.redirect).toHaveBeenCalledWith(`?datePresetOption=other&date=${todaysDate}&slot=am&locations=here`)
     })
   })
 
@@ -101,7 +110,7 @@ describe('Unlock list routes - select date and location', () => {
       expect(errors).toEqual([
         { property: 'datePresetOption', error: 'Select a date for the unlock list' },
         { property: 'activitySlot', error: 'Select a time slot' },
-        { property: 'location', error: 'Select one or more locations' },
+        { property: 'locations', error: 'Select one or more locations' },
       ])
     })
 
@@ -109,7 +118,6 @@ describe('Unlock list routes - select date and location', () => {
       const body = {
         datePresetOption: 'invalid',
         activitySlot: 'invalid',
-        location: 'invalid',
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
@@ -118,6 +126,7 @@ describe('Unlock list routes - select date and location', () => {
       expect(errors).toEqual([
         { property: 'datePresetOption', error: 'Select a date for the unlock list' },
         { property: 'activitySlot', error: 'Select a time slot' },
+        { property: 'locations', error: 'Select one or more locations' },
       ])
     })
 
@@ -126,7 +135,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: {},
         activitySlot: 'am',
-        location: 'some location',
+        locations: ['some location'],
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
@@ -140,7 +149,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: { day: 31, month: 2, year: 2022 },
         activitySlot: 'am',
-        location: 'here',
+        locations: ['here'],
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
@@ -154,7 +163,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: { day: 27, month: 2, year: 2022 },
         activitySlot: 'am',
-        location: 'here',
+        locations: ['here'],
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
