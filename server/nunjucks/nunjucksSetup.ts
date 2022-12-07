@@ -7,6 +7,7 @@ import {
   addDefaultSelectedValue,
   buildErrorSummaryList,
   dateInList,
+  existsInStringArray,
   findError,
   formatDate,
   initialiseName,
@@ -80,13 +81,9 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('subWeeks', subWeeks)
   njkEnv.addFilter('addWeeks', addWeeks)
   njkEnv.addFilter('isClashing', isClashing)
-
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
-
-  njkEnv.addFilter('locationChecked', (key: string, locations: string[]) => {
-    return locations?.find(location => location === key) !== undefined
-  })
+  njkEnv.addFilter('existsInStringArray', existsInStringArray)
 
   return njkEnv
 }

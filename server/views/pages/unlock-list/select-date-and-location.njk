@@ -50,8 +50,8 @@
                                 renderedErrorMessage: validationErrors | findError('date'),
                                 validationErrors: validationErrors,
                                 formResponses: formResponses.date or formDate.date
-                            })
-                        }
+                              })
+                           }
                         }
                     ]
                 }) }}
@@ -86,11 +86,11 @@
 
                 {% set items = [] %}
                 {% for location in locationGroups %}
-                    {%  set items = (items.push({
+                    {% set items = (items.push({
                         id: location.key,
                         value: location.key,
                         text: location.name,
-                        checked: (location.key | locationChecked(formResponses.locations))
+                        checked: (location.key | existsInStringArray(formResponses.locations))
                     }), items) %}
                 {% endfor %}
 
@@ -103,7 +103,7 @@
                         }
                     },
                     hint: {
-                      text: "You can select more than one location if you need to"
+                        text: "You can select more than one location if you need to"
                     },
                     items: items
                 }) }}
@@ -113,18 +113,18 @@
                 }) }}
 
                 <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "View selection",
-                    type: "submit",
-                    attributes: { 'data-qa': 'view-selection' }
-                }) }}
-                {{ govukButton({
-                    text: "Print selection",
-                    type: "submit",
-                    classes: "govuk-button--secondary",
-                    attributes: { 'data-qa': 'print-selection' }
-                }) }}
-               </div>
+                    {{ govukButton({
+                        text: "View selection",
+                        type: "submit",
+                        attributes: { 'data-qa': 'view-selection' }
+                    }) }}
+                    {{ govukButton({
+                        text: "Print selection",
+                        type: "submit",
+                        classes: "govuk-button--secondary",
+                        attributes: { 'data-qa': 'print-selection' }
+                    }) }}
+                </div>
             </form>
         </div>
     </div>
