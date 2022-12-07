@@ -4,7 +4,13 @@ import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesService from './activitiesService'
 import { ServiceUser } from '../@types/express'
-import { ActivityCategory, ActivityLite, ActivityScheduleLite, RolloutPrison } from '../@types/activitiesAPI/types'
+import {
+  ActivityCategory,
+  ActivityLite,
+  ActivityScheduleLite,
+  LocationGroup,
+  RolloutPrison,
+} from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
 import prisoners from './fixtures/prisoners_1.json'
@@ -19,6 +25,14 @@ describe('Activities Service', () => {
   const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
 
   const user = { activeCaseLoadId: 'MDI' } as ServiceUser
+
+  const mockedLocationGroups = [
+    {
+      name: 'Houseblock 1',
+      key: 'Houseblock 1',
+      children: [],
+    },
+  ] as LocationGroup[]
 
   describe('getActivityCategories', () => {
     it('should get the list of activity categories from activities API', async () => {
@@ -134,6 +148,20 @@ describe('Activities Service', () => {
       expect(results.length).toEqual(1)
       expect(activitiesApiClient.getActivitySchedules).toHaveBeenCalledWith('MDI', '10001', '2022-08-01', 'AM', user)
       expect(results[0]).toEqual(activityScheduleAllocation[1])
+    })
+  })
+
+  describe('getLocationGroups', () => {
+    it('should fetch the location groups for a prison using the activities API', async () => {
+      when(activitiesApiClient.getPrisonLocationGroups)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValueOnce(mockedLocationGroups)
+
+      const results = await activitiesService.getLocationGroups('MDI', user)
+
+      expect(results.length).toEqual(1)
+      expect(results[0]).toEqual(mockedLocationGroups[0])
+      expect(activitiesApiClient.getPrisonLocationGroups).toHaveBeenCalledWith('MDI', user)
     })
   })
 })

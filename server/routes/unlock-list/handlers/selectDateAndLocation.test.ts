@@ -44,11 +44,7 @@ describe('Unlock list routes - select date and location', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/unlock-list/select-date-and-location', {
-        datePresetOption: null,
         locationGroups: mockedLocationGroups,
-        selectedLocations: [],
-        simpleDate: null,
-        slot: null,
       })
       expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)
       expect(activitiesService.getLocationGroups).toHaveBeenCalledWith('MDI', res.locals.user)
@@ -66,8 +62,9 @@ describe('Unlock list routes - select date and location', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`?datePresetOption=today&date=${todaysDate}&slot=am&locations=here`)
-      expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(0)
+      expect(res.redirect).toHaveBeenCalledWith(
+        `planned-events?datePresetOption=today&date=${todaysDate}&slot=am&locations=here`,
+      )
     })
 
     it("redirect with the expected query params for when yesterday's date is selected", async () => {
@@ -81,7 +78,7 @@ describe('Unlock list routes - select date and location', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `?datePresetOption=yesterday&date=${yesterdaysDate}&slot=am&locations=here`,
+        `planned-events?datePresetOption=yesterday&date=${yesterdaysDate}&slot=am&locations=here`,
       )
     })
 
@@ -96,7 +93,9 @@ describe('Unlock list routes - select date and location', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`?datePresetOption=other&date=${todaysDate}&slot=am&locations=here`)
+      expect(res.redirect).toHaveBeenCalledWith(
+        `planned-events?datePresetOption=other&date=${todaysDate}&slot=am&locations=here`,
+      )
     })
   })
 

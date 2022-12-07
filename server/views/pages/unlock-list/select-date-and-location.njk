@@ -3,6 +3,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "components/datePicker.njk" import datePicker %}
 
 {% set pageTitle = applicationName + " - Unlock list" %}
@@ -29,17 +30,17 @@
                         {
                             value: "today",
                             text: "Today",
-                            checked: formResponses.datePresetOption == 'today' or datePresetOption =='today'
+                            checked: formResponses.datePresetOption == 'today'
                         },
                         {
                             value: "yesterday",
                             text: "Yesterday",
-                            checked: formResponses.datePresetOption == 'yesterday' or datePresetOption == 'yesterday'
+                            checked: formResponses.datePresetOption == 'yesterday'
                         },
                         {
                             value: "other",
                             text: "A different date",
-                            checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
+                            checked: formResponses.datePresetOption == 'other',
                             conditional: { html:
                             datePicker({
                                 id: 'date',
@@ -48,7 +49,7 @@
                                 },
                                 renderedErrorMessage: validationErrors | findError('date'),
                                 validationErrors: validationErrors,
-                                formResponses: formResponses.date or formDate.date or simpleDate
+                                formResponses: formResponses.date or formDate.date
                             })
                         }
                         }
@@ -68,17 +69,17 @@
                         {
                             value: "am",
                             text: "Morning (AM)",
-                            checked: formResponses.activitySlot == 'am' or slot == 'am'
+                            checked: formResponses.activitySlot == 'am'
                         },
                         {
                             value: "pm",
                             text: "Afternoon (PM)",
-                            checked: formResponses.activitySlot == 'pm' or slot == 'pm'
+                            checked: formResponses.activitySlot == 'pm'
                         },
                         {
                             value: "ed",
                             text: "Evening (ED)",
-                            checked: formResponses.activitySlot == 'ed' or slot == 'ed'
+                            checked: formResponses.activitySlot == 'ed'
                         }
                     ]
                 }) }}
@@ -89,7 +90,7 @@
                         id: location.key,
                         value: location.key,
                         text: location.name,
-                        checked: (location.key | locationChecked(formResponses.locations)) or (location.key | locationChecked(selectedLocations))
+                        checked: (location.key | locationChecked(formResponses.locations))
                     }), items) %}
                 {% endfor %}
 
@@ -102,16 +103,28 @@
                         }
                     },
                     hint: {
-                      text: "You can select more than one location"
+                      text: "You can select more than one location if you need to"
                     },
                     items: items
                 }) }}
 
-                {{ govukButton({
-                    text: "Continue",
-                    type: "submit",
-                    attributes: { 'data-qa': 'continue' }
+                {{ govukInsetText({
+                    text: "Prisoners will be listed by sub-location (prison wing)."
                 }) }}
+
+                <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "View selection",
+                    type: "submit",
+                    attributes: { 'data-qa': 'view-selection' }
+                }) }}
+                {{ govukButton({
+                    text: "Print selection",
+                    type: "submit",
+                    classes: "govuk-button--secondary",
+                    attributes: { 'data-qa': 'print-selection' }
+                }) }}
+               </div>
             </form>
         </div>
     </div>

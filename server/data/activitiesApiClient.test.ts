@@ -4,6 +4,7 @@ import config from '../config'
 import ActivitiesApiClient from './activitiesApiClient'
 import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
+import { LocationGroup } from '../@types/activitiesAPI/types'
 
 const user = { token: 'token' } as ServiceUser
 
@@ -143,6 +144,28 @@ describe('activitiesApiClient', () => {
         .reply(200, response)
 
       const output = await activitiesApiClient.getAttendances(123, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getPrisonLocationGroups', () => {
+    it('should return data from api', async () => {
+      const response = [
+        {
+          name: 'Houseblock 1',
+          key: 'Houseblock 1',
+          children: [],
+        },
+      ] as LocationGroup[]
+
+      fakeActivitiesApi
+        .get('/prisons/MDI/location-groups')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getPrisonLocationGroups('MDI', user)
+
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })

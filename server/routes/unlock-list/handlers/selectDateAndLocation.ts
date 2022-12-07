@@ -1,8 +1,7 @@
 import { Request, Response } from 'express'
-import { Expose, plainToInstance, Type } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 import { IsIn, IsNotEmpty, ValidateIf, ValidateNested } from 'class-validator'
 import { format, subDays } from 'date-fns'
-import logger from '../../../../logger'
 import SimpleDate from '../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../validators/isValidDate'
 import ActivitiesService from '../../../services/activitiesService'
@@ -45,61 +44,31 @@ export default class SelectDateAndLocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const {
-      datePresetOption = null,
-      date = null,
-      slot = null,
-      locations = null,
-    } = req.query ? req.query : { datePresetOption: null }
-
-    const selectedLocations: string[] = typeof locations === 'string' ? locations?.split(',') : []
-    const simpleDate = date !== null ? this.convertToSimpleDate(`${date}`) : null
-
-    logger.info(`Query params ${datePresetOption} ${date} ${slot} ${selectedLocations} ${simpleDate}`)
-
+    // TODO: Set session-based (datePresetOption, date, slot and selectedLocations) for back link in journey?
     const locationGroups = await this.activitiesService.getLocationGroups(user.activeCaseLoadId, user)
-
-    res.render('pages/unlock-list/select-date-and-location', {
-      datePresetOption,
-      simpleDate,
-      slot,
-      selectedLocations,
-      locationGroups,
-    })
+    res.render('pages/unlock-list/select-date-and-location', { locationGroups })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    logger.info(`Posted values are ${JSON.stringify(req.body)}`)
-
-    const selectedDate = this.getDateValue(req)
-
+    const selectedDate = this.getDateValue(req.body)
     return res.redirect(
-      `?datePresetOption=${req.body.datePresetOption}` +
+      `planned-events?datePresetOption=${req.body.datePresetOption}` +
         `&date=${selectedDate}` +
         `&slot=${req.body.activitySlot}` +
         `&locations=${req.body.locations}`,
     )
   }
 
-  private getDateValue = (req: Request): string => {
-    if (req.body.datePresetOption === PresetDateOptions.TODAY) {
+  private getDateValue = (body: DateAndLocation): string => {
+    if (body.datePresetOption === PresetDateOptions.TODAY) {
       return this.formatDate(new Date())
     }
-    if (req.body.datePresetOption === PresetDateOptions.YESTERDAY) {
+    if (body.datePresetOption === PresetDateOptions.YESTERDAY) {
       return this.formatDate(subDays(new Date(), 1)).toString()
     }
-    return req.body.date
+    // Use the POSTed date, which is a SimpleDate. It's toString() method formats the same as formatDate()
+    return body.date.toString()
   }
 
   private formatDate = (date: Date) => format(date, 'yyyy-MM-dd')
-
-  private convertToSimpleDate = (date: string): SimpleDate => {
-    const dateParts = date.split('-')
-    const body = {
-      day: dateParts[2],
-      month: dateParts[1],
-      year: dateParts[0],
-    }
-    return plainToInstance(SimpleDate, body)
-  }
 }
