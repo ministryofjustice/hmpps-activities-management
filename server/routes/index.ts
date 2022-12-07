@@ -4,6 +4,7 @@ import homeRoutes from './home'
 import changeLocationRoutes from './change-location'
 import activitiesRoutes from './allocate-to-activity'
 import attendanceRoutes from './record-attendance'
+import unlockListRoutes from './unlock-list'
 import spikeRoutes from './spikes'
 import activityListRoutes from './spikes/activity-list/activityListRoutes'
 import activityListAmRoutes from './spikes/activity-list-am/activityListRoutes'
@@ -19,6 +20,7 @@ export default function routes(services: Services): Router {
   router.use('/change-location', changeLocationRoutes(services))
   router.use('/activities/allocate', activitiesRoutes(services))
   router.use('/attendance', attendanceRoutes())
+  router.use('/unlock-list', unlockListRoutes(services))
   // Add more beta build routes here
 
   // Spikes under here spikes

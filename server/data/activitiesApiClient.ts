@@ -12,6 +12,7 @@ import {
   InternalLocation,
   PrisonerScheduledEvents,
   RolloutPrison,
+  LocationGroup,
 } from '../@types/activitiesAPI/types'
 
 export default class ActivitiesApiClient extends AbstractHmppsRestClient {
@@ -122,6 +123,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.put({
       path: '/attendances',
       data: attendanceUpdates,
+      authToken: user.token,
+    })
+  }
+
+  async getPrisonLocationGroups(prisonCode: string, user: ServiceUser): Promise<LocationGroup[]> {
+    return this.get({
+      path: `/prisons/${prisonCode}/location-groups`,
       authToken: user.token,
     })
   }

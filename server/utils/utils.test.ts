@@ -2,7 +2,7 @@
 import { format, parseISO } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
-import { convertToTitleCase, getCurrentPeriod, initialiseName } from './utils'
+import { convertToTitleCase, getCurrentPeriod, initialiseName, existsInStringArray } from './utils'
 
 describe('utils', () => {
   describe('convert to title case', () => {
@@ -49,6 +49,17 @@ describe('utils', () => {
 
     it('returns ED if time is post 5pm and before midnight', () => {
       expect(getCurrentPeriod(+format(parseISO('2019-08-11T23:59:59.000'), 'H', { locale: enGBLocale })) === 'ED')
+    })
+  })
+
+  describe('existsInStringArray', () => {
+    it.each([
+      ['Exists', 'a', ['a', 'b', 'c'], true],
+      ['Does not exist', 'd', ['a', 'b', 'c'], false],
+      ['Exists several times', 'a', ['a', 'a', 'a'], true],
+      ['Empty list', 'a', [], false],
+    ])('%s existsInStringArray(%s, %s) == %s', (desc: string, key: string, list: string[], expected: boolean) => {
+      expect(existsInStringArray(key, list)).toEqual(expected)
     })
   })
 })

@@ -1,0 +1,131 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "components/datePicker.njk" import datePicker %}
+
+{% set pageTitle = applicationName + " - Unlock list" %}
+{% set pageId = 'select-date-and-location-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <h1 class="govuk-heading-l">Choose unlock list details</h1>
+        <div class="govuk-grid-column-three-quarters">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+                {{ govukRadios({
+                    name: "datePresetOption",
+                    fieldset: {
+                        legend: {
+                            text: "Date",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('datePresetOption'),
+                    items: [
+                        {
+                            value: "today",
+                            text: "Today",
+                            checked: formResponses.datePresetOption == 'today'
+                        },
+                        {
+                            value: "yesterday",
+                            text: "Yesterday",
+                            checked: formResponses.datePresetOption == 'yesterday'
+                        },
+                        {
+                            value: "other",
+                            text: "A different date",
+                            checked: formResponses.datePresetOption == 'other',
+                            conditional: { html:
+                            datePicker({
+                                id: 'date',
+                                hint: {
+                                    text: "For example, today's date is " + now | formatDate('dd MM yyyy')
+                                },
+                                renderedErrorMessage: validationErrors | findError('date'),
+                                validationErrors: validationErrors,
+                                formResponses: formResponses.date or formDate.date
+                              })
+                           }
+                        }
+                    ]
+                }) }}
+
+                {{ govukRadios({
+                    name: "activitySlot",
+                    fieldset: {
+                        legend: {
+                            text: "Time period",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('activitySlot'),
+                    items: [
+                        {
+                            value: "am",
+                            text: "Morning (AM)",
+                            checked: formResponses.activitySlot == 'am'
+                        },
+                        {
+                            value: "pm",
+                            text: "Afternoon (PM)",
+                            checked: formResponses.activitySlot == 'pm'
+                        },
+                        {
+                            value: "ed",
+                            text: "Evening (ED)",
+                            checked: formResponses.activitySlot == 'ed'
+                        }
+                    ]
+                }) }}
+
+                {% set items = [] %}
+                {% for location in locationGroups %}
+                    {% set items = (items.push({
+                        id: location.key,
+                        value: location.key,
+                        text: location.name,
+                        checked: (location.key | existsInStringArray(formResponses.locations))
+                    }), items) %}
+                {% endfor %}
+
+                {{ govukCheckboxes({
+                    name: "locations[]",
+                    fieldset: {
+                        legend: {
+                            text: "Locations",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                        text: "You can select more than one location if you need to"
+                    },
+                    items: items
+                }) }}
+
+                {{ govukInsetText({
+                    text: "Prisoners will be listed by sub-location (prison wing)."
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "View selection",
+                        type: "submit",
+                        attributes: { 'data-qa': 'view-selection' }
+                    }) }}
+                    {{ govukButton({
+                        text: "Print selection",
+                        type: "submit",
+                        classes: "govuk-button--secondary",
+                        attributes: { 'data-qa': 'print-selection' }
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

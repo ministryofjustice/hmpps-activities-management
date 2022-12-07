@@ -21,10 +21,12 @@ describe('Route Handlers - Categories dashboard', () => {
     const leisure = {
       id: 1,
       description: 'Leisure & social',
+      code: 'X',
     }
     const induction = {
       id: 2,
       description: 'Induction',
+      code: 'Y',
     }
 
     activitiesService.getActivityCategories.mockResolvedValue([leisure, induction])
@@ -73,12 +75,21 @@ describe('Route Handlers - Categories dashboard', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/categories-dashboard', {
         categories: expect.arrayContaining([
-          { allocated: 75, capacity: 150, description: 'Induction', id: 2, percentageAllocated: 50, vacancies: 50 },
+          {
+            allocated: 75,
+            capacity: 150,
+            description: 'Induction',
+            id: 2,
+            code: 'Y',
+            percentageAllocated: 50,
+            vacancies: 50,
+          },
           {
             allocated: 80,
             capacity: 100,
             description: 'Leisure & social',
             id: 1,
+            code: 'X',
             percentageAllocated: 80,
             vacancies: 20,
           },

@@ -118,3 +118,7 @@ export const associateErrorsWithProperty = (error: ValidationError) => {
     error: err,
   }))
 }
+
+export const existsInStringArray = (key: string, arr: string[]): boolean => {
+  return arr?.find(item => item === key) !== undefined
+}

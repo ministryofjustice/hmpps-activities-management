@@ -51,6 +51,14 @@ export interface paths {
     /** Returns zero or more scheduled events for a prison, prisoner (optional) and date range (max 3 months). */
     get: operations['getScheduledEventsByDateRange']
   }
+  '/prisons/{prisonCode}/location-prefix': {
+    /** Get location prefix by group name */
+    get: operations['getLocationPrefix']
+  }
+  '/prisons/{prisonCode}/location-groups': {
+    /** List of all available Location Groups at a prison */
+    get: operations['getLocationGroups']
+  }
   '/prison/{prisonCode}/locations': {
     /** Returns a list of zero or more scheduled prison locations for the supplied criteria. */
     get: operations['getScheduledPrisonLocations']
@@ -462,6 +470,25 @@ export interface components {
       messagesReturnedCount: number
       messages: components['schemas']['DlqMessage'][]
     }
+    /** @description Describes a top-level activity category */
+    ActivityCategory: {
+      /**
+       * Format: int64
+       * @description The internally-generated identifier for this activity category
+       * @example 1
+       */
+      id: number
+      /**
+       * @description The activity category code
+       * @example LEI
+       */
+      code: string
+      /**
+       * @description The name of the activity category
+       * @example Leisure and social
+       */
+      description: string
+    }
     /** @description Describes a top-level activity */
     ActivityLite: {
       /**
@@ -490,6 +517,7 @@ export interface components {
        * @example A basic maths course suitable for introduction to the subject
        */
       description: string
+      category: components['schemas']['ActivityCategory']
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -696,19 +724,30 @@ export interface components {
        */
       priority?: number
     }
-    /** @description Describes a top-level activity category */
-    ActivityCategory: {
+    /** @description Location prefix response */
+    LocationPrefixDto: {
       /**
-       * Format: int64
-       * @description The internally-generated identifier for this activity category
-       * @example 1
+       * @description Location prefix translated from group name
+       * @example MDI-1-
        */
-      id: number
+      locationPrefix: string
+    }
+    LocationGroup: {
       /**
-       * @description The name of the activity category
-       * @example Leisure and social
+       * @description The name of the group
+       * @example null
        */
-      description: string
+      name: string
+      /**
+       * @description A key for the group
+       * @example null
+       */
+      key: string
+      /**
+       * @description The child groups of this group
+       * @example null
+       */
+      children: components['schemas']['LocationGroup'][]
     }
     /** @description Describes a top-level activity */
     Activity: {
@@ -1194,6 +1233,89 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['PrisonerScheduledEvents']
+        }
+      }
+      /** Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** Get location prefix by group name */
+  getLocationPrefix: {
+    parameters: {
+      path: {
+        prisonCode: string
+      }
+      query: {
+        groupName: string
+      }
+    }
+    responses: {
+      /** Successful call - Location prefix found */
+      200: {
+        content: {
+          'application/json': components['schemas']['LocationPrefixDto']
+        }
+      }
+      /** Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** List of all available Location Groups at a prison */
+  getLocationGroups: {
+    parameters: {
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** Successful call - zero or more location groups found */
+      200: {
+        content: {
+          'application/json': components['schemas']['LocationGroup'][]
         }
       }
       /** Invalid request */

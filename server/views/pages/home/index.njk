@@ -34,6 +34,17 @@
                     }) }}
                 </div>
 
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "unlockListCard",
+                        "href": "/unlock-list/select-date-and-location",
+                        "clickable": "true",
+                        "heading": "Unlock list",
+                        "description": "View unlock lists for residential locations",
+                        "data-qa": "unlock-list-link"
+                    }) }}
+                </div>
+
                 {% if shouldShowAlphaPrisonActivityListDps %}
                     <div class="govuk-grid-column-one-third card-group__item">
                         {{ card({
