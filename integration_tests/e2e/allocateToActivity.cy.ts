@@ -1,8 +1,8 @@
 import IndexPage from '../pages/index'
 import Page from '../pages/page'
-import CategoriesDashboardPage from '../pages/categoriesDashboard'
-import ActivitiesDashboardPage from '../pages/activitiesDashboard'
-import SchedulesDashboardPage from '../pages/schedulesDashboard'
+import CategoriesDashboardPage from '../pages/allocateToActivity/categoriesDashboard'
+import ActivitiesDashboardPage from '../pages/allocateToActivity/activitiesDashboard'
+import SchedulesDashboardPage from '../pages/allocateToActivity/schedulesDashboard'
 
 context('Change location', () => {
   beforeEach(() => {

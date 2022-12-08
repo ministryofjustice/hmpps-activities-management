@@ -90,7 +90,7 @@ describe('Activities Service', () => {
         date,
         date,
         TimeSlot.AM,
-        user
+        user,
       )
     })
   })

@@ -21,7 +21,7 @@ export default class AttendanceListRoutes {
         prisonerNumber: i.offenderNo,
         location: i.assignedLivingUnitDesc,
         attendanceLabel: this.getAttendanceLabel(i.offenderNo, instance.attendances),
-      }))
+      })),
     )
 
     return res.render('pages/record-attendance/attendance-list', {

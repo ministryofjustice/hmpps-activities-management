@@ -108,7 +108,7 @@ describe('activitiesApiClient', () => {
         parse('2022-08-01', 'yyyy-MM-dd', new Date()),
         parse('2022-08-01', 'yyyy-MM-dd', new Date()),
         TimeSlot.AM,
-        user
+        user,
       )
 
       expect(output).toEqual(response)

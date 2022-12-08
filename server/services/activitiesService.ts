@@ -29,7 +29,7 @@ const processError = (error: SanitisedError): undefined => {
 export default class ActivitiesService {
   constructor(
     private readonly activitiesApiClient: ActivitiesApiClient,
-    private readonly prisonerSearchApiClient: PrisonerSearchApiClient
+    private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
   ) {}
 
   async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
@@ -48,14 +48,14 @@ export default class ActivitiesService {
     startDate: Date,
     endDate: Date,
     slot: TimeSlot,
-    user: ServiceUser
+    user: ServiceUser,
   ): Promise<ScheduledActivity[]> {
     return this.activitiesApiClient.getScheduledActivitiesAtPrison(
       user.activeCaseLoadId,
       startDate,
       endDate,
       slot,
-      user
+      user,
     )
   }
 
@@ -67,7 +67,7 @@ export default class ActivitiesService {
     prisonerNumber: string,
     startDate: Date,
     endDate: Date,
-    user: ServiceUser
+    user: ServiceUser,
   ): Promise<ScheduledEvent[]> {
     return this.activitiesApiClient
       .getScheduledEvents(
@@ -75,7 +75,7 @@ export default class ActivitiesService {
         prisonerNumber,
         format(startDate, 'yyyy-MM-dd'),
         format(endDate, 'yyyy-MM-dd'),
-        user
+        user,
       )
       .then(res => [...res.activities, ...res.courtHearings, ...res.appointments, ...res.visits])
   }
@@ -114,7 +114,7 @@ export default class ActivitiesService {
     prisonCode: string,
     date: string,
     period: string,
-    user: ServiceUser
+    user: ServiceUser,
   ): Promise<InternalLocation[]> {
     return this.activitiesApiClient.getScheduledPrisonLocations(prisonCode, date, period, user)
   }
@@ -124,14 +124,14 @@ export default class ActivitiesService {
     locationId: string,
     date: string,
     period: string,
-    user: ServiceUser
+    user: ServiceUser,
   ): Promise<ActivityScheduleAllocation[]> {
     const activitySchedules = await this.activitiesApiClient.getActivitySchedules(
       prisonCode,
       locationId,
       date,
       period,
-      user
+      user,
     )
 
     // We'd like to assume there would be only one activity schedule returned - but we cant at this stage

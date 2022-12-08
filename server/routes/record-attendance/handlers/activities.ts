@@ -24,7 +24,7 @@ export default class ActivitiesRoutes {
           location: activity.activitySchedule.internalLocation.description,
           time: `${activity.startTime} - ${activity.endTime}`,
           ...getAttendanceSummary(activity.attendances),
-        }))
+        })),
       )
 
     return res.render('pages/record-attendance/activities', { activities: activitiesModel, date, slot })

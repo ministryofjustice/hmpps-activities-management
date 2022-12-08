@@ -71,7 +71,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     startDate: Date,
     endDate: Date,
     slot: TimeSlot,
-    user: ServiceUser
+    user: ServiceUser,
   ): Promise<ScheduledActivity[]> {
     return this.get({
       path: `/prisons/${prisonCode}/scheduled-instances`,
@@ -96,14 +96,14 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     prisonerNumber: string,
     startDate: string,
     endDate: string,
-    user: ServiceUser
+    user: ServiceUser,
   ): Promise<PrisonerScheduledEvents> {
     return this.get(
       {
         path: `/prisons/${prisonCode}/scheduled-events`,
         query: { prisonerNumber, startDate, endDate },
       },
-      user
+      user,
     )
   }
 
@@ -118,7 +118,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     prisonCode: string,
     date: string,
     period: string,
-    user: ServiceUser
+    user: ServiceUser,
   ): Promise<InternalLocation[]> {
     return this.get({
       path: `/prison/${prisonCode}/locations`,
@@ -132,7 +132,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     locationId: string,
     date: string,
     period: string,
-    user: ServiceUser
+    user: ServiceUser,
   ): Promise<ActivitySchedule[]> {
     return this.get({
       path: `/prison/${prisonCode}/schedules`,
