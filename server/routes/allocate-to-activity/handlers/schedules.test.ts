@@ -30,14 +30,14 @@ describe('Route Handlers - Schedules dashboard', () => {
 
     activitiesService.getSchedulesOfActivity.mockResolvedValue([am, pm])
     when(capacitiesService.getScheduleAllocationsSummary)
-      .calledWith(atLeast(am))
+      .calledWith(atLeast(1))
       .mockResolvedValue({
         capacity: 100,
         allocated: 80,
         percentageAllocated: 80,
         vacancies: 20,
       })
-      .calledWith(atLeast(pm))
+      .calledWith(atLeast(2))
       .mockResolvedValue({
         capacity: 150,
         allocated: 75,

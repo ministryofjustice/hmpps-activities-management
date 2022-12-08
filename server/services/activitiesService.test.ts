@@ -13,6 +13,7 @@ import {
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
+import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
 
@@ -148,6 +149,15 @@ describe('Activities Service', () => {
       expect(results.length).toEqual(1)
       expect(activitiesApiClient.getActivitySchedules).toHaveBeenCalledWith('MDI', '10001', '2022-08-01', 'AM', user)
       expect(results[0]).toEqual(activityScheduleAllocation[1])
+    })
+  })
+
+  describe('getActivitySchedule', () => {
+    it('should fetch activity schedule by id using the activities API', async () => {
+      when(activitiesApiClient.getActivitySchedule).calledWith(atLeast(1)).mockResolvedValueOnce(activitySchedule1)
+      const result = await activitiesService.getActivitySchedule(1, user)
+      expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(1, user)
+      expect(result).toEqual(activitySchedule1)
     })
   })
 

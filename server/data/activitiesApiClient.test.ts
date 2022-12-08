@@ -82,6 +82,16 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getActivitySchedule', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi.get('/schedules/1').matchHeader('authorization', `Bearer token`).reply(200, response)
+      const output = await activitiesApiClient.getActivitySchedule(1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getScheduleCapacity', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }

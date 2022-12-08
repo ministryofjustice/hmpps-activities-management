@@ -11,8 +11,8 @@ import {
   RolloutPrison,
   ScheduledEvent,
   LocationGroup,
-  Allocation,
   ActivitySchedule,
+  Allocation,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -98,6 +98,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getScheduledPrisonLocations(prisonCode, date, period, user)
   }
 
+  async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
+    return this.activitiesApiClient.getActivitySchedule(id, user)
+  }
+
   async getActivitySchedules(
     prisonCode: string,
     locationId: string,
@@ -157,9 +161,5 @@ export default class ActivitiesService {
 
   async getAllocations(id: number, user: ServiceUser): Promise<Allocation[]> {
     return this.activitiesApiClient.getAllocations(id, user)
-  }
-
-  async getSchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
-    return this.activitiesApiClient.getSchedule(id, user)
   }
 }

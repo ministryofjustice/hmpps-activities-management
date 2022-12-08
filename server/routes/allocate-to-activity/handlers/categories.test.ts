@@ -31,14 +31,14 @@ describe('Route Handlers - Categories dashboard', () => {
 
     activitiesService.getActivityCategories.mockResolvedValue([leisure, induction])
     when(capacitiesService.getActivityCategoryAllocationsSummary)
-      .calledWith(atLeast(leisure))
+      .calledWith(atLeast(1))
       .mockResolvedValue({
         capacity: 100,
         allocated: 80,
         percentageAllocated: 80,
         vacancies: 20,
       })
-      .calledWith(atLeast(induction))
+      .calledWith(atLeast(2))
       .mockResolvedValue({
         capacity: 150,
         allocated: 75,
