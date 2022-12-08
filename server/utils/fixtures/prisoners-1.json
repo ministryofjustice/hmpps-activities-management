@@ -1,0 +1,99 @@
+[
+  {
+    "prisonerNumber": "A5072DY",
+    "bookingId": "1201586",
+    "bookNumber": "38714A",
+    "firstName": "FRED",
+    "lastName": "SMITH",
+    "dateOfBirth": "1970-01-01",
+    "gender": "Male",
+    "youthOffender": true,
+    "status": "ACTIVE IN",
+    "lastMovementTypeCode": "ADM",
+    "lastMovementReasonCode": "24",
+    "inOutStatus": "IN",
+    "prisonId": "MDI",
+    "prisonName": "Moorland (HMP & YOI)",
+    "cellLocation": "3-3-025",
+    "aliases": [],
+    "alerts": [
+      {
+        "alertType": "U",
+        "alertCode": "UPIU",
+        "active": true,
+        "expired": false
+      }
+    ],
+    "legalStatus": "RECALL",
+    "imprisonmentStatus": "CUR_ORA",
+    "imprisonmentStatusDescription": "ORA Recalled from Curfew Conditions",
+    "recall": true,
+    "indeterminateSentence": false,
+    "receptionDate": "2021-11-03",
+    "locationDescription": "Moorland (HMP & YOI)",
+    "restrictedPatient": false,
+    "currentIncentive": {
+      "level": {
+        "description": "Standard"
+      },
+      "dateTime": "2022-05-12T11:58:24",
+      "nextReviewDate": "2023-05-12"
+    }
+  },
+  {
+    "prisonerNumber": "A5015DY",
+    "bookingId": "1200650",
+    "bookNumber": "38264A",
+    "firstName": "ALFONSO",
+    "lastName": "CHOLAK",
+    "dateOfBirth": "1970-01-01",
+    "gender": "Male",
+    "youthOffender": false,
+    "status": "ACTIVE IN",
+    "lastMovementTypeCode": "ADM",
+    "lastMovementReasonCode": "I",
+    "inOutStatus": "IN",
+    "prisonId": "MDI",
+    "prisonName": "Moorland (HMP & YOI)",
+    "cellLocation": "1-1-031",
+    "aliases": [],
+    "alerts": [
+      {
+        "alertType": "X",
+        "alertCode": "XER",
+        "active": true,
+        "expired": false
+      },
+      {
+        "alertType": "X",
+        "alertCode": "XEL",
+        "active": true,
+        "expired": false
+      }
+    ],
+    "category": "D",
+    "legalStatus": "SENTENCED",
+    "imprisonmentStatus": "SENT03",
+    "imprisonmentStatusDescription": "Adult Imprisonment Without Option CJA03",
+    "mostSeriousOffence": "Adulterate a medicinal product",
+    "recall": false,
+    "indeterminateSentence": false,
+    "sentenceStartDate": "2018-08-21",
+    "releaseDate": "2018-11-20",
+    "sentenceExpiryDate": "2019-02-20",
+    "homeDetentionCurfewEligibilityDate": "2018-10-06",
+    "nonDtoReleaseDate": "2018-11-20",
+    "nonDtoReleaseDateType": "ARD",
+    "receptionDate": "2018-08-21",
+    "automaticReleaseDate": "2018-11-20",
+    "locationDescription": "Moorland (HMP & YOI)",
+    "restrictedPatient": false,
+    "currentIncentive": {
+      "level": {
+        "description": "Standard"
+      },
+      "dateTime": "2018-08-21T16:31:59",
+      "nextReviewDate": "2019-08-21"
+    }
+  }
+]

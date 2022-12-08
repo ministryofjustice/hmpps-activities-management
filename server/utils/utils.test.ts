@@ -2,7 +2,16 @@
 import { format, parseISO } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
-import { convertToTitleCase, getCurrentPeriod, initialiseName, existsInStringArray } from './utils'
+import {
+  compare,
+  comparePrisoners,
+  compareStrings,
+  convertToTitleCase,
+  existsInStringArray,
+  getCurrentPeriod,
+  initialiseName,
+} from './utils'
+import prisoners from './fixtures/prisoners-1.json'
 
 describe('utils', () => {
   describe('convert to title case', () => {
@@ -36,19 +45,84 @@ describe('utils', () => {
 
   describe('getCurrentPeriod', () => {
     it('returns AM if time is post midnight', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T00:00:01.000'), 'H', { locale: enGBLocale })) === 'AM')
+      expect(getCurrentPeriod(+format(parseISO('2019-08-11T00:00:01.000'), 'H', { locale: enGBLocale }))).toEqual('AM')
     })
 
     it('returns AM if time is pre 12 noon', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T11:59:59.000'), 'H', { locale: enGBLocale })) === 'AM')
+      expect(getCurrentPeriod(+format(parseISO('2019-08-11T11:59:59.000'), 'H', { locale: enGBLocale }))).toEqual('AM')
     })
 
     it('returns PM if time is post 12 noon and before 5PM', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T16:59:59.000'), 'H', { locale: enGBLocale })) === 'PM')
+      expect(getCurrentPeriod(+format(parseISO('2019-08-11T16:59:59.000'), 'H', { locale: enGBLocale }))).toEqual('PM')
     })
 
     it('returns ED if time is post 5pm and before midnight', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T23:59:59.000'), 'H', { locale: enGBLocale })) === 'ED')
+      expect(getCurrentPeriod(+format(parseISO('2019-08-11T23:59:59.000'), 'H', { locale: enGBLocale }))).toEqual('ED')
+    })
+  })
+
+  describe('comparePrisoners by name', () => {
+    it('sort by name asc', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const results = prisoners.sort(comparePrisoners('name', false))
+      expect(results[0].lastName).toEqual('CHOLAK')
+    })
+    it('sort by name desc', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const results = prisoners.sort(comparePrisoners('name', true))
+      expect(results[0].lastName).toEqual('SMITH')
+    })
+  })
+
+  describe('comparePrisoners by prisonerNumber', () => {
+    it('sort by name asc', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const results = prisoners.sort(comparePrisoners('prisonNumber', false))
+      expect(results[0].lastName).toEqual('CHOLAK')
+    })
+    it('sort by name desc', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const results = prisoners.sort(comparePrisoners('prisonNumber', true))
+      expect(results[0].lastName).toEqual('SMITH')
+    })
+  })
+
+  describe('comparePrisoners by location', () => {
+    it('sort by name asc', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const results = prisoners.sort(comparePrisoners('location', false))
+      expect(results[0].lastName).toEqual('CHOLAK')
+    })
+    it('sort by name desc', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const results = prisoners.sort(comparePrisoners('location', true))
+      expect(results[0].lastName).toEqual('SMITH')
+    })
+  })
+
+  describe('compare', () => {
+    it('sort by name asc', () => {
+      const results = prisoners.sort(compare('lastName', false, undefined))
+      expect(results[0].lastName).toEqual('CHOLAK')
+    })
+    it('sort by name desc', () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const results = prisoners.sort(compare('lastName', true, undefined))
+      expect(results[0].lastName).toEqual('SMITH')
+    })
+  })
+
+  describe('compareStrings', () => {
+    it('sort by name asc', () => {
+      const results = ['shaz', 'Baz'].sort(compareStrings)
+      expect(results[0]).toEqual('Baz')
     })
   })
 

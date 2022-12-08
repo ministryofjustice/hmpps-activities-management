@@ -5,6 +5,7 @@ import { parse, formatISO, isAfter, parseISO, endOfDay, format, isSameDay } from
 import enGBLocale from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
+import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -58,6 +59,47 @@ export const sortByDateTime = (t1: string, t2: string): number => {
   if (t1) return -1
   if (t2) return 1
   return 0
+}
+
+export const compare = (field: string, reverse: boolean, primer: (x: any) => any) => {
+  const key = primer ? (x: { [x: string]: any }) => primer(x[field]) : (x: { [x: string]: any }) => x[field]
+  const r = !reverse ? 1 : -1
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return (left, right) => {
+    const a = key(left)
+    const b = key(right)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return r * ((a > b) - (b > a))
+  }
+}
+
+export const compareStrings = (l: string, r: string): number => l.localeCompare(r, 'en', { ignorePunctuation: true })
+
+export const comparePrisoners = (field: string, reverse: boolean) => {
+  let key: (x: Prisoner) => string | number
+  switch (field) {
+    case 'name':
+      key = (x: Prisoner) => [x.lastName.trim(), x.firstName.trim(), x.middleNames].join(' ').toLowerCase()
+      break
+    case 'prisonNumber':
+      key = (x: Prisoner) => x.prisonerNumber
+      break
+    case 'location':
+      key = (x: Prisoner) => x.cellLocation
+      break
+    default:
+      key = (x: Prisoner) => x[field]
+  }
+  const r = !reverse ? 1 : -1
+
+  return (left: Prisoner, right: Prisoner) => {
+    const a: string | number = key(left)
+    const b: string | number = key(right)
+    return r * (a < b ? -1 : 1)
+  }
 }
 
 export const removeBlanks = (array: unknown[]) => array.filter((item: unknown) => !!item)

@@ -1,0 +1,29 @@
+{% extends "layout.njk" %}
+{% block content %}
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+    <div class="page-content">
+
+        <div class="govuk-tabs" data-module="govuk-tabs">
+            <h2 class="govuk-tabs__title">
+                Contents
+            </h2>
+            <ul class="govuk-tabs__list">
+                {% for tab in tabs %}
+                    {% set isSelected = ' govuk-tabs__list-item--selected' if (currentUrlPath.split('?')[0] === tab.path) %}
+                    <li class="{{'govuk-tabs__list-item' + isSelected }}">
+                        <a class="govuk-tabs__tab" href="{{ tab.path }}" data-test="{{'tabs-' + tab.testId }}">
+                            {{ tab.title }}
+                            {%  if tab.titleDecorator != null %}
+                                <strong class="govuk-tag govuk-tag--red">{{ tab.titleDecorator }}</strong>
+                            {%  endif  %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="govuk-tabs__panel" id="past-day">
+                {% block tabPanel %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

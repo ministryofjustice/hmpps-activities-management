@@ -51,3 +51,11 @@ export type ActivityAttendanceId = {
   id: number
   attendanceId: number
 }
+
+export type CandidateListTableRow = {
+  name: string
+  location: string
+  prisonNumber: string
+  incentiveLevel: string
+  alerts: string[]
+}
