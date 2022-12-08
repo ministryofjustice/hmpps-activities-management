@@ -2,7 +2,7 @@ import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import PrisonRegisterApiClient from '../data/prisonRegisterApiClient'
 import { Prison } from '../@types/prisonRegisterApiImport/types'
-import { InmateDetail, ScheduledAppointmentDto } from '../@types/prisonApiImport/types'
+import { InmateDetail, ScheduledAppointmentDto, InmateBasicDetails } from '../@types/prisonApiImport/types'
 import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 import WhereaboutsApiClient from '../data/whereaboutsApiClient'
@@ -216,5 +216,9 @@ export default class PrisonService {
 
   async getAbsenceReasons(user: ServiceUser): Promise<AbsentReasonsDtoLenient> {
     return this.whereaboutsApiClient.getAbsenceReasons(user)
+  }
+
+  async getInmateDetails(offenderNumbers: string[], user: ServiceUser): Promise<InmateBasicDetails[]> {
+    return this.prisonApiClient.getInmateDetails(offenderNumbers, user)
   }
 }

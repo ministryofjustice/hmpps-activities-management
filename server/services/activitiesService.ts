@@ -11,6 +11,8 @@ import {
   RolloutPrison,
   ScheduledEvent,
   LocationGroup,
+  Allocation,
+  ActivitySchedule,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -151,5 +153,13 @@ export default class ActivitiesService {
 
   async getLocationGroups(prisonCode: string, user: ServiceUser): Promise<LocationGroup[]> {
     return this.activitiesApiClient.getPrisonLocationGroups(prisonCode, user)
+  }
+
+  async getAllocations(id: number, user: ServiceUser): Promise<Allocation[]> {
+    return this.activitiesApiClient.getAllocations(id, user)
+  }
+
+  async getSchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
+    return this.activitiesApiClient.getSchedule(id, user)
   }
 }

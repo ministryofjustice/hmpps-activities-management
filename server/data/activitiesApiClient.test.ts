@@ -113,7 +113,7 @@ describe('activitiesApiClient', () => {
       const response = { data: 'data' }
 
       fakeActivitiesApi
-        .get('/schedules/MDI')
+        .get('/prison/MDI/schedules')
         .query({ locationId: 'LOC', date: '2022-08-01', timeSlot: 'AM' })
         .matchHeader('authorization', `Bearer token`)
         .reply(200, response)
