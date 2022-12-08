@@ -41,9 +41,9 @@
         {% endif %}
 
         {% if className == null %}
-            <span style="margin-right: 10px">{{alert}}</span>&nbsp
+            <span class="govuk-!-display-inline-block govuk-!-margin-right-1">{{alert}}</span>
         {% else %}
-            <span class="{{className}}">{{ alert }}</span>&nbsp;
+            <span class="{{"govuk-!-display-inline-block govuk-!-margin-right-1 " + className}}">{{ alert }}</span>
         {% endif %}
 
     {% endfor %}
