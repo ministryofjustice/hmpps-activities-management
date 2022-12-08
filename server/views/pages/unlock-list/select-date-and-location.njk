@@ -87,7 +87,6 @@
                 {% set items = [] %}
                 {% for location in locationGroups %}
                     {% set items = (items.push({
-                        id: location.key,
                         value: location.key,
                         text: location.name,
                         checked: (location.key | existsInStringArray(formResponses.locations))
@@ -95,13 +94,15 @@
                 {% endfor %}
 
                 {{ govukCheckboxes({
-                    name: "locations[]",
+                    idPrefix: "locations",
+                    name: "locations",
                     fieldset: {
                         legend: {
                             text: "Locations",
                             classes: "govuk-fieldset__legend--m"
                         }
                     },
+                    errorMessage: validationErrors | findError('locations'),
                     hint: {
                         text: "You can select more than one location if you need to"
                     },
