@@ -11,31 +11,31 @@ services:
     ports:
       - '6379:6379'
 
-  hmpps-activities-management-api:
-    image: quay.io/hmpps/hmpps-activities-management-api:latest
-    networks:
-      - hmpps
-    container_name: hmpps-activities-management-api
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=local
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal/activities-management-db
+#  hmpps-activities-management-api:
+#    image: quay.io/hmpps/hmpps-activities-management-api:latest
+#    networks:
+#      - hmpps
+#    container_name: hmpps-activities-management-api
+#    restart: always
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=local
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal/activities-management-db
 
   # For the API to seed & interact with - there is no direct connection from the UI service
-  activities-db:
-    image: postgres
-    networks:
-      - hmpps
-    container_name: activities-db
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_PASSWORD=activities-management
-      - POSTGRES_USER=activities-management
-      - POSTGRES_DB=activities-management-db
+#  activities-db:
+#    image: postgres
+#    networks:
+#      - hmpps
+#    container_name: activities-db
+#    restart: always
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      - POSTGRES_PASSWORD=activities-management
+#      - POSTGRES_USER=activities-management
+#      - POSTGRES_DB=activities-management-db
 
 networks:
   hmpps:
