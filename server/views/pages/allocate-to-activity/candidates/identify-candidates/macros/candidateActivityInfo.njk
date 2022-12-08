@@ -1,0 +1,49 @@
+{% from "./alertFlags.njk" import alertFlags %}
+
+{% macro candidateActivityInfo(prisoner) %}
+    <div class="candidate-activity-detail">
+        <dl class="govuk-summary-list govuk-summary-list--no-border">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key"></dt>
+                <dd class="govuk-summary-list__value"><strong>Prisoner details</strong></dd>
+                <dd class="govuk-summary-list__value"><strong>Activity requirements</strong></dd>
+                <dd class="govuk-summary-list__value"><strong>Mismatch</strong></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Incentive level</dt>
+                <dd class="govuk-summary-list__value">{{ prisoner.incentiveLevel }}</dd>
+                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__value"></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Educational qualifications</dt>
+                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__value"></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Technical qualifications</dt>
+                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__value"></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Learning pathways</dt>
+                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__value"></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Alerts</dt>
+                <dd class="govuk-summary-list__value">{{ alertFlags(prisoner.alerts) }}</dd>
+                <dd class="govuk-summary-list__value"></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Learning difficulties, <br>disabilities and health
+                </dt>
+                <dd class="govuk-summary-list__value"></dd>
+                <dd class="govuk-summary-list__value"></dd>
+            </div>
+        </dl>
+
+    </div>
+{% endmacro %}

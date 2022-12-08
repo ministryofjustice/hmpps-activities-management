@@ -1,0 +1,9 @@
+{% macro ariaSortValue(field, sort) -%}
+    {% if sort.field != field -%}
+        none
+    {%- elif sort.direction == 'desc' -%}
+        descending
+    {%- else -%}
+        ascending
+    {%- endif %}
+{%- endmacro %}

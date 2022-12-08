@@ -3,7 +3,7 @@ import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import PrisonRegisterApiClient from '../data/prisonRegisterApiClient'
 import { Prison } from '../@types/prisonRegisterApiImport/types'
 import { InmateDetail, ScheduledAppointmentDto } from '../@types/prisonApiImport/types'
-import { Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
+import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 import WhereaboutsApiClient from '../data/whereaboutsApiClient'
 import {
@@ -46,6 +46,10 @@ export default class PrisonService {
 
   async getInmate(nomisId: string, user: ServiceUser): Promise<InmateDetail> {
     return this.prisonApiClient.getInmateDetail(nomisId, user)
+  }
+
+  async getInmates(prisonCode: string, user: ServiceUser, includeRestricted?: boolean): Promise<PagePrisoner> {
+    return this.prisonerSearchApiClient.getInmates(prisonCode, 0, 1000, user, includeRestricted)
   }
 
   async searchInmates(prisonerSearchCriteria: PrisonerSearchCriteria, user: ServiceUser): Promise<Prisoner[]> {
