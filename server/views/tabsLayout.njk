@@ -14,7 +14,7 @@
                         <a class="govuk-tabs__tab" href="{{ tab.path }}" data-test="{{'tabs-' + tab.testId }}">
                             {{ tab.title }}
                             {%  if tab.titleDecorator != null %}
-                                <strong class="govuk-tag govuk-tag--red">{{ tab.titleDecorator }}</strong>
+                                <span class="govuk-tag govuk-tag--red govuk-!-font-weight-bold">{{ tab.titleDecorator }}</span>
                             {%  endif  %}
                         </a>
                     </li>
