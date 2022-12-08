@@ -13,6 +13,7 @@ import {
   PrisonerScheduledEvents,
   RolloutPrison,
   LocationGroup,
+  Allocation,
 } from '../@types/activitiesAPI/types'
 
 export default class ActivitiesApiClient extends AbstractHmppsRestClient {
@@ -106,7 +107,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     user: ServiceUser,
   ): Promise<ActivitySchedule[]> {
     return this.get({
-      path: `/schedules/${prisonCode}`,
+      path: `/prison/${prisonCode}/schedules`,
       query: { locationId, date, timeSlot: period },
       authToken: user.token,
     })
@@ -130,6 +131,20 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getPrisonLocationGroups(prisonCode: string, user: ServiceUser): Promise<LocationGroup[]> {
     return this.get({
       path: `/prisons/${prisonCode}/location-groups`,
+      authToken: user.token,
+    })
+  }
+
+  async getAllocations(scheduleId: number, user: ServiceUser): Promise<Allocation[]> {
+    return this.get({
+      path: `/schedules/${scheduleId}/allocations`,
+      authToken: user.token,
+    })
+  }
+
+  async getSchedule(scheduleId: number, user: ServiceUser): Promise<ActivitySchedule> {
+    return this.get({
+      path: `/schedules/${scheduleId}`,
       authToken: user.token,
     })
   }

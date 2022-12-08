@@ -1,7 +1,14 @@
 import config, { ApiConfig } from '../config'
 
 import AbstractHmppsRestClient from './abstractHmppsRestClient'
-import { CourtEvent, InmateDetail, PrisonApiUserDetail, TransferEvent, CaseLoad } from '../@types/prisonApiImport/types'
+import {
+  CourtEvent,
+  InmateDetail,
+  PrisonApiUserDetail,
+  TransferEvent,
+  CaseLoad,
+  InmateBasicDetails,
+} from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
 import {
   AlertLenient,
@@ -170,6 +177,14 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
   async getAssessments(code: string, offenderNumbers: string[], user: ServiceUser): Promise<AssessmentLenient[]> {
     return this.post({
       path: `/api/offender-assessments/${code}`,
+      data: offenderNumbers,
+      authToken: user.token,
+    })
+  }
+
+  async getInmateDetails(offenderNumbers: string[], user: ServiceUser): Promise<InmateBasicDetails[]> {
+    return this.post({
+      path: `/api/bookings/offenders`,
       data: offenderNumbers,
       authToken: user.token,
     })
