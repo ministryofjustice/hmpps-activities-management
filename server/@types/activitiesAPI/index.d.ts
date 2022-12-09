@@ -14,75 +14,133 @@ export interface paths {
     put: operations['purgeQueue']
   }
   '/attendances': {
-    /** Updates the given attendance records with the supplied update request details. */
+    /**
+     * Updates attendance records.
+     * @description Updates the given attendance records with the supplied update request details.
+     */
     put: operations['markAttendances']
   }
   '/job/create-attendance-records': {
-    /** Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code. */
+    /**
+     * Trigger the job to create attendance records in advance
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
     post: operations['triggerCreateAttendanceRecordsJob']
   }
   '/job/create-activity-sessions': {
-    /** Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code. */
+    /**
+     * Trigger the job to create activity sessions in advance
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
     post: operations['triggerCreateActivitySessionsJob']
   }
+  '/schedules/{scheduleId}/allocations': {
+    /**
+     * Get a list of activity schedule allocations
+     * @description Returns zero or more activity schedule allocations.
+     */
+    get: operations['getAllocationsBy']
+  }
   '/schedules/{prisonCode}': {
-    /** Returns zero or more activity schedules at a given prison. */
+    /**
+     * Get a list of activity schedules at a given prison
+     * @description Returns zero or more activity schedules at a given prison.
+     */
     get: operations['getSchedulesByPrisonCode']
   }
   '/schedules/{activityScheduleId}/capacity': {
+    /** Get the capacity and number of allocated slots in an activity schedule */
     get: operations['getActivityScheduleCapacity']
   }
   '/scheduled-instances/{instanceId}/attendances': {
-    /** Returns one or more attendance records for a particular scheduled activity for a given scheduled instance. */
+    /**
+     * Get a list of attendances for a scheduled instance
+     * @description Returns one or more attendance records for a particular scheduled activity for a given scheduled instance.
+     */
     get: operations['getAttendancesByScheduledInstance']
   }
   '/rollout/{prisonCode}': {
-    /** Returns a single prison and its details by its unique code. */
+    /**
+     * Get a prison by its code
+     * @description Returns a single prison and its details by its unique code.
+     */
     get: operations['getPrisonByCode']
   }
   '/queue-admin/get-dlq-messages/{dlqName}': {
     get: operations['getDlqMessages']
   }
   '/prisons/{prisonCode}/scheduled-instances': {
-    /** Returns zero or more scheduled instances for a prison, prisoner (optional) and date range (max 3 months). */
+    /**
+     * Get a list of scheduled instances for a prison, prisoner (optional), date range (max 3 months) and time slot (AM, PM or ED - optional)
+     * @description Returns zero or more scheduled instances for a prison, prisoner (optional) and date range (max 3 months).
+     */
     get: operations['getActivityScheduleInstancesByDateRange']
   }
   '/prisons/{prisonCode}/scheduled-events': {
-    /** Returns zero or more scheduled events for a prison, prisoner (optional) and date range (max 3 months). */
+    /**
+     * Get a list of scheduled events for a prison, prisoner (optional) and date range (max 3 months)
+     * @description Returns zero or more scheduled events for a prison, prisoner (optional) and date range (max 3 months).
+     */
     get: operations['getScheduledEventsByDateRange']
   }
+  '/prisons/{prisonCode}/locations': {
+    /**
+     * List of cell locations for a prison group
+     * @description List of cell locations for a prison group
+     */
+    get: operations['getLocationGroups']
+  }
   '/prisons/{prisonCode}/location-prefix': {
-    /** Get location prefix by group name */
+    /**
+     * Get location prefix by group name
+     * @description Get location prefix by group name
+     */
     get: operations['getLocationPrefix']
   }
   '/prisons/{prisonCode}/location-groups': {
-    /** List of all available Location Groups at a prison */
-    get: operations['getLocationGroups']
+    /**
+     * List of all available Location Groups at a prison
+     * @description List of all available Location Groups at a prison
+     */
+    get: operations['getLocationGroups_1']
   }
   '/prison/{prisonCode}/locations': {
-    /** Returns a list of zero or more scheduled prison locations for the supplied criteria. */
+    /**
+     * Get scheduled prison locations
+     * @description Returns a list of zero or more scheduled prison locations for the supplied criteria.
+     */
     get: operations['getScheduledPrisonLocations']
   }
   '/prison/{prisonCode}/activity-categories/{categoryId}/capacity': {
+    /** Get the capacity and number of allocated slots in an activity category within a prison */
     get: operations['getActivityCategoryCapacity']
   }
   '/prison/{prisonCode}/activity-categories/{categoryId}/activities': {
+    /** Get list of activities within a category at a specified prison */
     get: operations['getActivitiesInCategory']
   }
   '/activity-categories': {
+    /** Get the list of top-level activity categories */
     get: operations['getCategories']
   }
   '/activities/{activityId}': {
-    /** Returns a single activity and its details by its unique identifier. */
+    /**
+     * Get an activity by its id
+     * @description Returns a single activity and its details by its unique identifier.
+     */
     get: operations['getActivityById']
   }
   '/activities/{activityId}/schedules': {
+    /** Get the capacity and number of allocated slots in an activity */
     get: operations['getActivitySchedules']
   }
   '/activities/{activityId}/capacity': {
+    /** Get the capacity and number of allocated slots in an activity */
     get: operations['getActivityCapacity']
   }
 }
+
+export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
@@ -90,9 +148,11 @@ export interface components {
       messageId?: string
       receiptHandle?: string
       body?: string
-      attributes?: { [key: string]: string }
+      attributes?: {
+        [key: string]: string | undefined
+      }
       messageAttributes?: {
-        [key: string]: components['schemas']['MessageAttributeValue']
+        [key: string]: components['schemas']['MessageAttributeValue'] | undefined
       }
       md5OfBody?: string
       md5OfMessageAttributes?: string
@@ -164,56 +224,6 @@ export interface components {
       developerMessage?: string
       moreInfo?: string
     }
-    /**
-     * @description
-     *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
-     *   An activity schedule describes when, during the week, an activity will be run and where.
-     *   e.g. Tuesday PM and Thursday AM - suitable for Houseblock 2 to attend.
-     *   e.g. Monday AM and Thursday PM - suitable for Houseblock 3 to attend.
-     */
-    ActivitySchedule: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity schedule
-       * @example 123456
-       */
-      id: number
-      /** @description The planned instances associated with this activity schedule */
-      instances: components['schemas']['ScheduledInstance'][]
-      /** @description The list of allocated prisoners who are allocated to this schedule, at this time and location */
-      allocations: components['schemas']['Allocation'][]
-      /**
-       * @description The description of this activity schedule
-       * @example Monday AM Houseblock 3
-       */
-      description: string
-      /** @description Indicates the dates between which the schedule has been suspended */
-      suspensions: components['schemas']['Suspension'][]
-      /**
-       * Format: partial-time
-       * @description The time that any instances of this schedule will start
-       * @example 9:00
-       */
-      startTime: string
-      /**
-       * Format: partial-time
-       * @description The time that any instances of this schedule will finish
-       * @example 11:30
-       */
-      endTime: string
-      internalLocation?: components['schemas']['InternalLocation']
-      /**
-       * Format: int32
-       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
-       * @example 10
-       */
-      capacity: number
-      /**
-       * @description The days of the week on which the schedule takes place
-       * @example [Mon,Tue,Wed]
-       */
-      daysOfWeek: string[]
-    }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
       /**
@@ -273,6 +283,56 @@ export interface components {
        */
       deallocatedReason?: string
     }
+    /**
+     * @description
+     *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
+     *   An activity schedule describes when, during the week, an activity will be run and where.
+     *   e.g. Tuesday PM and Thursday AM - suitable for Houseblock 2 to attend.
+     *   e.g. Monday AM and Thursday PM - suitable for Houseblock 3 to attend.
+     */
+    ActivitySchedule: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity schedule
+       * @example 123456
+       */
+      id: number
+      /** @description The planned instances associated with this activity schedule */
+      instances: components['schemas']['ScheduledInstance'][]
+      /** @description The list of allocated prisoners who are allocated to this schedule, at this time and location */
+      allocations: components['schemas']['Allocation'][]
+      /**
+       * @description The description of this activity schedule
+       * @example Monday AM Houseblock 3
+       */
+      description: string
+      /** @description Indicates the dates between which the schedule has been suspended */
+      suspensions: components['schemas']['Suspension'][]
+      /**
+       * Format: partial-time
+       * @description The time that any instances of this schedule will start
+       * @example 9:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The time that any instances of this schedule will finish
+       * @example 11:30
+       */
+      endTime: string
+      internalLocation?: components['schemas']['InternalLocation']
+      /**
+       * Format: int32
+       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
+       * @example 10
+       */
+      capacity: number
+      /**
+       * @description The days of the week on which the schedule takes place
+       * @example [Mon,Tue,Wed]
+       */
+      daysOfWeek: string[]
+    }
     /** @description An attendance record for a prisoner, can be marked or unmarked */
     Attendance: {
       /**
@@ -304,8 +364,8 @@ export interface components {
        */
       recordedBy?: string
       /**
-       * @description A short code of the status the attendance, SCH (scheduled or planned), COMP (completed), CANC(cancelled).
-       * @example SCH
+       * @description SCHEDULED, COMPLETED, CANCELLED.
+       * @example SCHEDULED
        */
       status: string
       /**
@@ -460,7 +520,9 @@ export interface components {
       active: boolean
     }
     DlqMessage: {
-      body: { [key: string]: { [key: string]: unknown } }
+      body: {
+        [key: string]: Record<string, never> | undefined
+      }
       messageId: string
     }
     GetDlqResult: {
@@ -559,6 +621,8 @@ export interface components {
        * @example Adam Smith
        */
       cancelledBy?: string
+      /** @description The list of attendees */
+      attendances: components['schemas']['Attendance'][]
       activitySchedule: components['schemas']['ActivityScheduleLite']
     }
     /**
@@ -724,6 +788,64 @@ export interface components {
        */
       priority?: number
     }
+    Location: {
+      /**
+       * Format: int64
+       * @description Location identifier.
+       * @example 721705
+       */
+      locationId: number
+      /**
+       * @description Location type.
+       * @example CELL
+       */
+      locationType: string
+      /**
+       * @description Location description.
+       * @example MDI-RES-HB1-ALE
+       */
+      description: string
+      /**
+       * @description Identifier of Agency this location is associated with.
+       * @example MDI
+       */
+      agencyId: string
+      /**
+       * @description What events this room can be used for.
+       * @example APP
+       */
+      locationUsage?: string
+      /**
+       * Format: int64
+       * @description Identifier of this location's parent location.
+       * @example 26960
+       */
+      parentLocationId?: number
+      /**
+       * Format: int32
+       * @description Current occupancy of location.
+       * @example 10
+       */
+      currentOccupancy?: number
+      /**
+       * @description Location prefix. Defines search prefix that will constrain search to this location and its subordinate locations.
+       * @example RES-HB1-ALE
+       */
+      locationPrefix?: string
+      /**
+       * Format: int32
+       * @description Operational capacity of the location.
+       * @example 20
+       */
+      operationalCapacity?: number
+      /**
+       * @description User-friendly location description.
+       * @example RES-HB1-ALE
+       */
+      userDescription?: string
+      /** @description Internal location code */
+      internalLocationCode?: string
+    }
     /** @description Location prefix response */
     LocationPrefixDto: {
       /**
@@ -735,17 +857,26 @@ export interface components {
     LocationGroup: {
       /**
        * @description The name of the group
-       * @example null
+       * @example Block A
        */
       name: string
       /**
        * @description A key for the group
-       * @example null
+       * @example A
        */
       key: string
       /**
        * @description The child groups of this group
-       * @example null
+       * @example [
+       *   {
+       *     "name": "Landing A/1",
+       *     "key": "1"
+       *   },
+       *   {
+       *     "name": "Landing A/2",
+       *     "key": "2"
+       *   }
+       * ]
        */
       children: components['schemas']['LocationGroup'][]
     }
@@ -933,7 +1064,14 @@ export interface components {
       createdBy: string
     }
   }
+  responses: never
+  parameters: never
+  requestBodies: never
+  headers: never
+  pathItems: never
 }
+
+export type external = Record<string, never>
 
 export interface operations {
   retryDlq: {
@@ -943,7 +1081,7 @@ export interface operations {
       }
     }
     responses: {
-      /** OK */
+      /** @description OK */
       200: {
         content: {
           '*/*': components['schemas']['RetryDlqResult']
@@ -953,7 +1091,7 @@ export interface operations {
   }
   retryAllDlqs: {
     responses: {
-      /** OK */
+      /** @description OK */
       200: {
         content: {
           '*/*': components['schemas']['RetryDlqResult'][]
@@ -968,7 +1106,7 @@ export interface operations {
       }
     }
     responses: {
-      /** OK */
+      /** @description OK */
       200: {
         content: {
           '*/*': components['schemas']['PurgeQueueResult']
@@ -976,34 +1114,40 @@ export interface operations {
       }
     }
   }
-  /** Updates the given attendance records with the supplied update request details. */
   markAttendances: {
+    /**
+     * Updates attendance records.
+     * @description Updates the given attendance records with the supplied update request details.
+     */
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AttendanceUpdateRequest'][]
+      }
+    }
     responses: {
-      /** The attendance records were updated. */
-      200: unknown
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description The attendance records were updated. */
+      200: never
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
     }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['AttendanceUpdateRequest'][]
-      }
-    }
   }
-  /** Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code. */
   triggerCreateAttendanceRecordsJob: {
+    /**
+     * Trigger the job to create attendance records in advance
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
     responses: {
-      /** Created */
+      /** @description Created */
       201: {
         content: {
           'application/json': string
@@ -1011,10 +1155,13 @@ export interface operations {
       }
     }
   }
-  /** Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code. */
   triggerCreateActivitySessionsJob: {
+    /**
+     * Trigger the job to create activity sessions in advance
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
     responses: {
-      /** Created */
+      /** @description Created */
       201: {
         content: {
           'application/json': string
@@ -1022,35 +1169,79 @@ export interface operations {
       }
     }
   }
-  /** Returns zero or more activity schedules at a given prison. */
-  getSchedulesByPrisonCode: {
+  getAllocationsBy: {
+    /**
+     * Get a list of activity schedule allocations
+     * @description Returns zero or more activity schedule allocations.
+     */
     parameters: {
-      path: {
-        prisonCode: string
+      /** @description If true will only return active allocations. Defaults to true. */
+      query?: {
+        activeOnly?: boolean
       }
-      query: {
-        /** Date of activity, default today */
-        date?: string
-        /** AM, PM or ED */
-        timeSlot?: 'AM' | 'PM' | 'ED'
-        /** The internal NOMIS location id of the activity */
-        locationId?: number
+      path: {
+        scheduleId: number
       }
     }
     responses: {
-      /** Activity schedules found */
+      /** @description The allocations for an activity schedule */
       200: {
         content: {
-          'application/json': components['schemas']['ActivitySchedule'][]
+          'application/json': components['schemas']['Allocation'][]
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Schedule ID not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getSchedulesByPrisonCode: {
+    /**
+     * Get a list of activity schedules at a given prison
+     * @description Returns zero or more activity schedules at a given prison.
+     */
+    parameters: {
+      /** @description Date of activity, default today */
+      /** @description AM, PM or ED */
+      /** @description The internal NOMIS location id of the activity */
+      query?: {
+        date?: string
+        timeSlot?: string
+        locationId?: number
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Activity schedules found */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivitySchedule'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1059,31 +1250,32 @@ export interface operations {
     }
   }
   getActivityScheduleCapacity: {
+    /** Get the capacity and number of allocated slots in an activity schedule */
     parameters: {
       path: {
         activityScheduleId: number
       }
     }
     responses: {
-      /** Activity schedule capacity */
+      /** @description Activity schedule capacity */
       200: {
         content: {
           'application/json': components['schemas']['CapacityAndAllocated']
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Schedule ID not found */
+      /** @description Schedule ID not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1091,33 +1283,36 @@ export interface operations {
       }
     }
   }
-  /** Returns one or more attendance records for a particular scheduled activity for a given scheduled instance. */
   getAttendancesByScheduledInstance: {
+    /**
+     * Get a list of attendances for a scheduled instance
+     * @description Returns one or more attendance records for a particular scheduled activity for a given scheduled instance.
+     */
     parameters: {
       path: {
         instanceId: number
       }
     }
     responses: {
-      /** Attendance records found */
+      /** @description Attendance records found */
       200: {
         content: {
           'application/json': components['schemas']['Attendance'][]
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** The scheduled instance was not found. */
+      /** @description The scheduled instance was not found. */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1125,33 +1320,36 @@ export interface operations {
       }
     }
   }
-  /** Returns a single prison and its details by its unique code. */
   getPrisonByCode: {
+    /**
+     * Get a prison by its code
+     * @description Returns a single prison and its details by its unique code.
+     */
     parameters: {
       path: {
         prisonCode: string
       }
     }
     responses: {
-      /** Prison found */
+      /** @description Prison found */
       200: {
         content: {
           'application/json': components['schemas']['RolloutPrison']
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** The prison for this code was not found. */
+      /** @description The prison for this code was not found. */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1161,15 +1359,15 @@ export interface operations {
   }
   getDlqMessages: {
     parameters: {
+      query?: {
+        maxMessages?: number
+      }
       path: {
         dlqName: string
       }
-      query: {
-        maxMessages?: number
-      }
     }
     responses: {
-      /** OK */
+      /** @description OK */
       200: {
         content: {
           '*/*': components['schemas']['GetDlqResult']
@@ -1177,35 +1375,40 @@ export interface operations {
       }
     }
   }
-  /** Returns zero or more scheduled instances for a prison, prisoner (optional) and date range (max 3 months). */
   getActivityScheduleInstancesByDateRange: {
+    /**
+     * Get a list of scheduled instances for a prison, prisoner (optional), date range (max 3 months) and time slot (AM, PM or ED - optional)
+     * @description Returns zero or more scheduled instances for a prison, prisoner (optional) and date range (max 3 months).
+     */
     parameters: {
+      /** @description Prisoner number (optional) */
+      /** @description Start date of query */
+      /** @description End date of query (max 3 months from start date) */
+      /** @description The time slot - AM, PM or ED (optional) */
+      query: {
+        prisonerNumber?: string
+        startDate: string
+        endDate: string
+        slot?: string
+      }
       path: {
         prisonCode: string
       }
-      query: {
-        /** Prisoner number (optional) */
-        prisonerNumber?: string
-        /** Start date of query */
-        startDate: string
-        /** End date of query (max 3 months from start date) */
-        endDate: string
-      }
     }
     responses: {
-      /** Successful call - zero or more scheduled instance records found */
+      /** @description Successful call - zero or more scheduled instance records found */
       200: {
         content: {
           'application/json': components['schemas']['ActivityScheduleInstance'][]
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1213,47 +1416,50 @@ export interface operations {
       }
     }
   }
-  /** Returns zero or more scheduled events for a prison, prisoner (optional) and date range (max 3 months). */
   getScheduledEventsByDateRange: {
+    /**
+     * Get a list of scheduled events for a prison, prisoner (optional) and date range (max 3 months)
+     * @description Returns zero or more scheduled events for a prison, prisoner (optional) and date range (max 3 months).
+     */
     parameters: {
+      /** @description Prisoner number */
+      /** @description Start date of query */
+      /** @description End date of query (max 3 months from start date) */
+      query: {
+        prisonerNumber: string
+        startDate: string
+        endDate: string
+      }
       path: {
         prisonCode: string
       }
-      query: {
-        /** Prisoner number */
-        prisonerNumber: string
-        /** Start date of query */
-        startDate: string
-        /** End date of query (max 3 months from start date) */
-        endDate: string
-      }
     }
     responses: {
-      /** Successful call - zero or more scheduled events found */
+      /** @description Successful call - zero or more scheduled events found */
       200: {
         content: {
           'application/json': components['schemas']['PrisonerScheduledEvents']
         }
       }
-      /** Invalid request */
+      /** @description Invalid request */
       400: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Requested resource not found */
+      /** @description Requested resource not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1261,42 +1467,91 @@ export interface operations {
       }
     }
   }
-  /** Get location prefix by group name */
-  getLocationPrefix: {
+  getLocationGroups: {
+    /**
+     * List of cell locations for a prison group
+     * @description List of cell locations for a prison group
+     */
     parameters: {
-      path: {
-        prisonCode: string
-      }
       query: {
         groupName: string
       }
+      path: {
+        prisonCode: string
+      }
     }
     responses: {
-      /** Successful call - Location prefix found */
+      /** @description Successful call - zero or more cell locations found */
+      200: {
+        content: {
+          'application/json': components['schemas']['Location'][]
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getLocationPrefix: {
+    /**
+     * Get location prefix by group name
+     * @description Get location prefix by group name
+     */
+    parameters: {
+      query: {
+        groupName: string
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Successful call - Location prefix found */
       200: {
         content: {
           'application/json': components['schemas']['LocationPrefixDto']
         }
       }
-      /** Invalid request */
+      /** @description Invalid request */
       400: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Requested resource not found */
+      /** @description Requested resource not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1304,39 +1559,42 @@ export interface operations {
       }
     }
   }
-  /** List of all available Location Groups at a prison */
-  getLocationGroups: {
+  getLocationGroups_1: {
+    /**
+     * List of all available Location Groups at a prison
+     * @description List of all available Location Groups at a prison
+     */
     parameters: {
       path: {
         prisonCode: string
       }
     }
     responses: {
-      /** Successful call - zero or more location groups found */
+      /** @description Successful call - zero or more location groups found */
       200: {
         content: {
           'application/json': components['schemas']['LocationGroup'][]
         }
       }
-      /** Invalid request */
+      /** @description Invalid request */
       400: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Requested resource not found */
+      /** @description Requested resource not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1344,33 +1602,36 @@ export interface operations {
       }
     }
   }
-  /** Returns a list of zero or more scheduled prison locations for the supplied criteria. */
   getScheduledPrisonLocations: {
+    /**
+     * Get scheduled prison locations
+     * @description Returns a list of zero or more scheduled prison locations for the supplied criteria.
+     */
     parameters: {
+      /** @description Date of activity, default today */
+      /** @description AM, PM or ED */
+      query?: {
+        date?: string
+        timeSlot?: string
+      }
       path: {
         prisonCode: string
       }
-      query: {
-        /** Date of activity, default today */
-        date?: string
-        /** AM, PM or ED */
-        timeSlot?: 'AM' | 'PM' | 'ED'
-      }
     }
     responses: {
-      /** Locations found */
+      /** @description Locations found */
       200: {
         content: {
           'application/json': components['schemas']['InternalLocation'][]
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1379,6 +1640,7 @@ export interface operations {
     }
   }
   getActivityCategoryCapacity: {
+    /** Get the capacity and number of allocated slots in an activity category within a prison */
     parameters: {
       path: {
         prisonCode: string
@@ -1386,25 +1648,25 @@ export interface operations {
       }
     }
     responses: {
-      /** Activity category capacity */
+      /** @description Activity category capacity */
       200: {
         content: {
           'application/json': components['schemas']['CapacityAndAllocated']
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Category ID not found */
+      /** @description Category ID not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1413,6 +1675,7 @@ export interface operations {
     }
   }
   getActivitiesInCategory: {
+    /** Get list of activities within a category at a specified prison */
     parameters: {
       path: {
         prisonCode: string
@@ -1420,25 +1683,25 @@ export interface operations {
       }
     }
     responses: {
-      /** Activities within the category */
+      /** @description Activities within the category */
       200: {
         content: {
           'application/json': components['schemas']['ActivityLite'][]
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Category ID not found */
+      /** @description Category ID not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1447,20 +1710,21 @@ export interface operations {
     }
   }
   getCategories: {
+    /** Get the list of top-level activity categories */
     responses: {
-      /** Activity categories found */
+      /** @description Activity categories found */
       200: {
         content: {
           'application/json': components['schemas']['ActivityCategory'][]
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1468,33 +1732,36 @@ export interface operations {
       }
     }
   }
-  /** Returns a single activity and its details by its unique identifier. */
   getActivityById: {
+    /**
+     * Get an activity by its id
+     * @description Returns a single activity and its details by its unique identifier.
+     */
     parameters: {
       path: {
         activityId: number
       }
     }
     responses: {
-      /** Activity found */
+      /** @description Activity found */
       200: {
         content: {
           'application/json': components['schemas']['Activity']
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** The activity for this ID was not found. */
+      /** @description The activity for this ID was not found. */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1503,31 +1770,32 @@ export interface operations {
     }
   }
   getActivitySchedules: {
+    /** Get the capacity and number of allocated slots in an activity */
     parameters: {
       path: {
         activityId: number
       }
     }
     responses: {
-      /** Activity schedules */
+      /** @description Activity schedules */
       200: {
         content: {
           'application/json': components['schemas']['ActivityScheduleLite']
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Activity ID not found */
+      /** @description Activity ID not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1536,31 +1804,32 @@ export interface operations {
     }
   }
   getActivityCapacity: {
+    /** Get the capacity and number of allocated slots in an activity */
     parameters: {
       path: {
         activityId: number
       }
     }
     responses: {
-      /** Activity capacity */
+      /** @description Activity capacity */
       200: {
         content: {
           'application/json': components['schemas']['CapacityAndAllocated']
         }
       }
-      /** Unauthorised, requires a valid Oauth2 token */
+      /** @description Unauthorised, requires a valid Oauth2 token */
       401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Forbidden, requires an appropriate role */
+      /** @description Forbidden, requires an appropriate role */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** Activity ID not found */
+      /** @description Activity ID not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']

@@ -12,9 +12,12 @@ import {
   InternalLocation,
   PrisonerScheduledEvents,
   RolloutPrison,
+  ScheduledActivity,
   LocationGroup,
   Allocation,
 } from '../@types/activitiesAPI/types'
+import { toDateString } from '../utils/utils'
+import TimeSlot from '../enum/timeSlot'
 
 export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   constructor() {
@@ -59,6 +62,31 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getScheduleCapacity(scheduleId: number, user: ServiceUser): Promise<CapacityAndAllocated> {
     return this.get({
       path: `/schedules/${scheduleId}/capacity`,
+      authToken: user.token,
+    })
+  }
+
+  getScheduledActivitiesAtPrison(
+    prisonCode: string,
+    startDate: Date,
+    endDate: Date,
+    slot: TimeSlot,
+    user: ServiceUser,
+  ): Promise<ScheduledActivity[]> {
+    return this.get({
+      path: `/prisons/${prisonCode}/scheduled-instances`,
+      query: {
+        startDate: toDateString(startDate),
+        endDate: toDateString(endDate),
+        slot,
+      },
+      authToken: user.token,
+    })
+  }
+
+  getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
+    return this.get({
+      path: `/scheduled-instances/${id}`,
       authToken: user.token,
     })
   }

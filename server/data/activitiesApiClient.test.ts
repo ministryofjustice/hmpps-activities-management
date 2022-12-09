@@ -1,10 +1,12 @@
 import nock from 'nock'
 
+import { parse } from 'date-fns'
 import config from '../config'
 import ActivitiesApiClient from './activitiesApiClient'
 import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
 import { LocationGroup } from '../@types/activitiesAPI/types'
+import TimeSlot from '../enum/timeSlot'
 
 const user = { token: 'token' } as ServiceUser
 
@@ -97,6 +99,40 @@ describe('activitiesApiClient', () => {
       const response = { data: 'data' }
       fakeActivitiesApi.get('/schedules/1/capacity').matchHeader('authorization', `Bearer token`).reply(200, response)
       const output = await activitiesApiClient.getScheduleCapacity(1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getScheduledActivitiesAtPrison', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/prisons/MDI/scheduled-instances')
+        .query({ startDate: '2022-08-01', endDate: '2022-08-01', slot: 'am' })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getScheduledActivitiesAtPrison(
+        'MDI',
+        parse('2022-08-01', 'yyyy-MM-dd', new Date()),
+        parse('2022-08-01', 'yyyy-MM-dd', new Date()),
+        TimeSlot.AM,
+        user,
+      )
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getScheduledActivity', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi.get('/scheduled-instances/1').matchHeader('authorization', `Bearer token`).reply(200, response)
+
+      const output = await activitiesApiClient.getScheduledActivity(1, user)
+
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })

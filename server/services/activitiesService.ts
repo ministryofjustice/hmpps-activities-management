@@ -9,6 +9,7 @@ import {
   AttendanceUpdateRequest,
   InternalLocation,
   RolloutPrison,
+  ScheduledActivity,
   ScheduledEvent,
   LocationGroup,
   ActivitySchedule,
@@ -17,6 +18,7 @@ import {
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
+import TimeSlot from '../enum/timeSlot'
 
 const processError = (error: SanitisedError): undefined => {
   if (!error.status) throw error
@@ -40,6 +42,25 @@ export default class ActivitiesService {
 
   async getSchedulesOfActivity(activityId: number, user: ServiceUser): Promise<ActivityScheduleLite[]> {
     return this.activitiesApiClient.getSchedulesOfActivity(activityId, user)
+  }
+
+  getScheduledActivitiesAtPrison(
+    startDate: Date,
+    endDate: Date,
+    slot: TimeSlot,
+    user: ServiceUser,
+  ): Promise<ScheduledActivity[]> {
+    return this.activitiesApiClient.getScheduledActivitiesAtPrison(
+      user.activeCaseLoadId,
+      startDate,
+      endDate,
+      slot,
+      user,
+    )
+  }
+
+  getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
+    return this.activitiesApiClient.getScheduledActivity(id, user)
   }
 
   getScheduledEvents(
