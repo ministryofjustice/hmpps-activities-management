@@ -1,28 +1,22 @@
 import { Request, Response } from 'express'
-import PrisonService from '../../../../../services/prisonService'
-import ActivityService from '../../../../../services/activitiesService'
 import CapacitiesService from '../../../../../services/capacitiesService'
-import { InmateBasicDetails } from '../../../../../@types/prisonApiImport/types'
+import ActivitiesService from '../../../../../services/activitiesService'
+import { mapToTableRows } from './scheduleHelper'
 
-export default class PeopleAllocatedNowRouteHandler {
+export default class ScheduleRouteHandler {
   constructor(
-    private readonly prisonService: PrisonService,
     private readonly capacitiesService: CapacitiesService,
-    private readonly activitiesService: ActivityService,
+    private readonly activitiesService: ActivitiesService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
     const { scheduleId } = req.params
+    const { user } = res.locals
 
-    const allocations = await this.activitiesService.getAllocations(scheduleId as unknown as number, user)
-    const prisonerNumbers = allocations.map(allocation => allocation.prisonerNumber)
-    const [inmateDetails, allocationsSummary, schedule] = await Promise.all([
-      this.prisonService.getInmateDetails(prisonerNumbers, user),
+    const [allocationsSummary, schedule] = await Promise.all([
       this.capacitiesService.getScheduleAllocationsSummary(+scheduleId, user),
-      this.activitiesService.getActivitySchedule(scheduleId as unknown as number, user),
+      this.activitiesService.getActivitySchedule(+scheduleId, user),
     ])
-    const rowData = inmateDetails.map(inmate => this.toRowData(inmate, schedule.description))
 
     const viewContext = {
       pageHeading: `Identify candidates for ${schedule.description}`,
@@ -51,17 +45,9 @@ export default class PeopleAllocatedNowRouteHandler {
           testId: 'schedule',
         },
       ],
-      rowData,
+      scheduleDescription: schedule.description,
+      rowData: mapToTableRows(schedule),
     }
-    res.render('pages/allocate-to-activity/candidates/people-allocated-now/index', viewContext)
-  }
-
-  private toRowData(prisoner: InmateBasicDetails, allocation: string) {
-    return {
-      name: `${prisoner.firstName} ${prisoner.lastName}`,
-      prisonNumber: prisoner.offenderNo,
-      location: prisoner.assignedLivingUnitDesc,
-      description: allocation,
-    }
+    res.render('pages/allocate-to-activity/candidates/schedule/index', viewContext)
   }
 }
