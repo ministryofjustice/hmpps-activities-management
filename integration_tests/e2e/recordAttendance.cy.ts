@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import IndexPage from '../pages/index'
 import Page from '../pages/page'
 import SelectPeriodPage from '../pages/recordAttendance/selectPeriod'
@@ -23,7 +24,7 @@ context('Change location', () => {
     indexPage.recordAttendanceCard().click()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
-    selectPeriodPage.enterDate('2022-12-30')
+    selectPeriodPage.enterDate(format(new Date(), 'yyyy-MM-dd'))
     selectPeriodPage.selectTimePeriod('Morning (AM)')
     selectPeriodPage.submit()
 

@@ -129,6 +129,23 @@ describe('Route Handlers - Select period', () => {
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
     })
 
+    it('validation fails if preset option is other and a date after today is provided', async () => {
+      const body = {
+        datePresetOption: 'other',
+        date: {
+          day: 22,
+          month: 2,
+          year: new Date().getFullYear() + 1,
+        },
+        activitySlot: 'am',
+      }
+
+      const requestObject = plainToInstance(TimePeriod, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'date', error: "Enter a date on or before today's date" }])
+    })
+
     it('passes validation', async () => {
       const body = {
         datePresetOption: 'other',

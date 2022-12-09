@@ -4,6 +4,7 @@ import { IsIn, ValidateIf, ValidateNested } from 'class-validator'
 import { format, subDays } from 'date-fns'
 import SimpleDate from '../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../validators/isValidDate'
+import DateIsSameOrBefore from '../../../validators/dateIsSameOrBefore'
 
 enum PresetDateOptions {
   TODAY = 'today',
@@ -27,6 +28,7 @@ export class TimePeriod {
   @Type(() => SimpleDate)
   @ValidateNested()
   @IsValidDate({ message: 'Enter a valid date' })
+  @DateIsSameOrBefore(new Date(), { message: "Enter a date on or before today's date" })
   date: SimpleDate
 
   @Expose()
