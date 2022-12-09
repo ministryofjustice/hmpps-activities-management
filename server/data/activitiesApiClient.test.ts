@@ -5,7 +5,7 @@ import config from '../config'
 import ActivitiesApiClient from './activitiesApiClient'
 import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
-import { LocationGroup } from '../@types/activitiesAPI/types'
+import { Allocation, LocationGroup } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 
 const user = { token: 'token' } as ServiceUser
@@ -211,6 +211,27 @@ describe('activitiesApiClient', () => {
         .reply(200, response)
 
       const output = await activitiesApiClient.getPrisonLocationGroups('MDI', user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getAllocations', () => {
+    it('should return data from api', async () => {
+      const response = [
+        {
+          id: 1,
+          prisonerNumber: '1234567',
+        },
+      ] as Allocation[]
+
+      fakeActivitiesApi
+        .get('/schedules/1/allocations')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getAllocations(1, user)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
