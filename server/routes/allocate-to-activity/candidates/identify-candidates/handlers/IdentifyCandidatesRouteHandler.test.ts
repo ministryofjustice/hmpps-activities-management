@@ -102,11 +102,11 @@ describe('identifyCandidatestRouteHandler', () => {
         ],
         rowData: [
           {
-            alerts: ['UPIU'],
+            alerts: ['XER', 'XEL'],
             incentiveLevel: 'Standard',
-            location: '3-3-025',
-            name: 'Smith, Fred',
-            prisonNumber: 'A5072DY',
+            location: '1-1-031',
+            name: 'Cholak, Alfonso',
+            prisonNumber: 'A5015DY',
           },
           {
             alerts: [],
@@ -116,14 +116,19 @@ describe('identifyCandidatestRouteHandler', () => {
             prisonNumber: 'A5089DY',
           },
           {
-            alerts: ['XER', 'XEL'],
+            alerts: ['UPIU'],
             incentiveLevel: 'Standard',
-            location: '1-1-031',
-            name: 'Cholak, Alfonso',
-            prisonNumber: 'A5015DY',
+            location: '3-3-025',
+            name: 'Smith, Fred',
+            prisonNumber: 'A5072DY',
           },
         ],
-        criteria: {},
+        criteria: {
+          sort: {
+            direction: 'asc',
+            field: 'name',
+          },
+        },
       })
     })
   })

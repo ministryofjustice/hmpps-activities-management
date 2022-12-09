@@ -3,6 +3,7 @@ import { mapToTableRow } from './identifyCandidatesHelper'
 import PrisonService from '../../../../../services/prisonService'
 import CapacitiesService from '../../../../../services/capacitiesService'
 import ActivitiesService from '../../../../../services/activitiesService'
+import { comparePrisoners } from '../../../../../utils/utils'
 
 export default class IdentifyCandidatesRouteHandler {
   constructor(
@@ -15,13 +16,23 @@ export default class IdentifyCandidatesRouteHandler {
     const { scheduleId } = req.params
     const { user } = res.locals
     const { data = {} } = req.session
-    const { activityCandidateListCriteria = {} } = data
+    const { activityCandidateListCriteria = { sort: { field: 'name', direction: 'asc' } } } = data
 
     const [offenderListPage, allocationsSummary, schedule] = await Promise.all([
       this.prisonService.getInmates(user.activeCaseLoad.caseLoadId, user),
       this.capacitiesService.getScheduleAllocationsSummary(+scheduleId, user),
       this.activitiesService.getActivitySchedule(+scheduleId, user),
     ])
+
+    const offenderListPageSorted = {
+      ...offenderListPage,
+      content: offenderListPage.content.sort(
+        comparePrisoners(
+          activityCandidateListCriteria.sort.field,
+          activityCandidateListCriteria.sort.direction === 'desc',
+        ),
+      ),
+    }
 
     const viewContext = {
       pageHeading: `Identify candidates for ${schedule.description}`,
@@ -50,7 +61,7 @@ export default class IdentifyCandidatesRouteHandler {
           testId: 'schedule',
         },
       ],
-      rowData: offenderListPage.content.map(mapToTableRow),
+      rowData: offenderListPageSorted.content.map(mapToTableRow),
       criteria: activityCandidateListCriteria,
     }
     res.render('pages/allocate-to-activity/candidates/identify-candidates/index', viewContext)
