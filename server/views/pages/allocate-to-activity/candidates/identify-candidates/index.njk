@@ -1,4 +1,4 @@
-{% extends "../../../../tabsLayout.njk" %}
+{% extends "tabsLayout.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "./macros/candidateActivityInfo.njk" import candidateActivityInfo %}
@@ -7,6 +7,7 @@
 {% set pageTitle = applicationName + " - Manage activities and schedules" %}
 {% set mainClasses = "app-container govuk-body" %}
 {% set pageId = 'identify-candidates-page' %}
+{% set backLinkHref = "/" %}
 
 {% block tabPanel %}
 
