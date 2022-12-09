@@ -15,7 +15,7 @@ export default class ActivitiesRoutes {
 
     const addAllocationSummary = async (a: ActivityLite) => ({
       ...a,
-      ...(await this.capacitiesService.getActivityAllocationsSummary(a, user)),
+      ...(await this.capacitiesService.getActivityAllocationsSummary(a.id, user)),
     })
 
     const activities = await this.activitiesService

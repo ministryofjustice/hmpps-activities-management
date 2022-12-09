@@ -1,18 +1,7 @@
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
-import {
-  ActivityCategory,
-  ActivityLite,
-  ActivityScheduleLite,
-  CapacityAndAllocated,
-} from '../@types/activitiesAPI/types'
-
-type AllocationsSummary = {
-  capacity: number
-  allocated: number
-  percentageAllocated: number
-  vacancies: number
-}
+import { CapacityAndAllocated } from '../@types/activitiesAPI/types'
+import { AllocationsSummary } from '../@types/activities'
 
 export default class CapacitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
@@ -34,21 +23,18 @@ export default class CapacitiesService {
     )
   }
 
-  async getActivityCategoryAllocationsSummary(
-    category: ActivityCategory,
-    user: ServiceUser,
-  ): Promise<AllocationsSummary> {
+  async getActivityCategoryAllocationsSummary(categoryId: number, user: ServiceUser): Promise<AllocationsSummary> {
     return this.activitiesApiClient
-      .getCategoryCapacity(user.activeCaseLoadId, category.id, user)
+      .getCategoryCapacity(user.activeCaseLoadId, categoryId, user)
       .then(this.addCalculatedFields)
   }
 
-  async getActivityAllocationsSummary(activity: ActivityLite, user: ServiceUser): Promise<AllocationsSummary> {
-    return this.activitiesApiClient.getActivityCapacity(activity.id, user).then(this.addCalculatedFields)
+  async getActivityAllocationsSummary(activityId: number, user: ServiceUser): Promise<AllocationsSummary> {
+    return this.activitiesApiClient.getActivityCapacity(activityId, user).then(this.addCalculatedFields)
   }
 
-  async getScheduleAllocationsSummary(schedule: ActivityScheduleLite, user: ServiceUser): Promise<AllocationsSummary> {
-    return this.activitiesApiClient.getScheduleCapacity(schedule.id, user).then(this.addCalculatedFields)
+  async getScheduleAllocationsSummary(scheduleId: number, user: ServiceUser): Promise<AllocationsSummary> {
+    return this.activitiesApiClient.getScheduleCapacity(scheduleId, user).then(this.addCalculatedFields)
   }
 
   private addCalculatedFields = (capacityAndAllocated: CapacityAndAllocated) => {

@@ -2,7 +2,6 @@ import { when } from 'jest-when'
 import { ServiceUser } from '../@types/express'
 import CapacitiesService from './capacitiesService'
 import ActivitiesApiClient from '../data/activitiesApiClient'
-import { ActivityCategory, ActivityLite, ActivityScheduleLite } from '../@types/activitiesAPI/types'
 
 jest.mock('../data/activitiesApiClient')
 
@@ -105,10 +104,7 @@ describe('Capacities Service', () => {
         vacancies: 40,
       }
 
-      const actualResult = await capacitiesService.getActivityCategoryAllocationsSummary(
-        { id: 1 } as ActivityCategory,
-        user,
-      )
+      const actualResult = await capacitiesService.getActivityCategoryAllocationsSummary(1, user)
 
       expect(actualResult).toEqual(expectedResult)
     })
@@ -125,10 +121,7 @@ describe('Capacities Service', () => {
         vacancies: 0,
       }
 
-      const actualResult = await capacitiesService.getActivityCategoryAllocationsSummary(
-        { id: 1 } as ActivityCategory,
-        user,
-      )
+      const actualResult = await capacitiesService.getActivityCategoryAllocationsSummary(1, user)
 
       expect(actualResult).toEqual(expectedResult)
     })
@@ -145,10 +138,7 @@ describe('Capacities Service', () => {
         vacancies: 100,
       }
 
-      const actualResult = await capacitiesService.getActivityCategoryAllocationsSummary(
-        { id: 1 } as ActivityCategory,
-        user,
-      )
+      const actualResult = await capacitiesService.getActivityCategoryAllocationsSummary(1, user)
 
       expect(actualResult).toEqual(expectedResult)
     })
@@ -167,7 +157,7 @@ describe('Capacities Service', () => {
         vacancies: 40,
       }
 
-      const actualResult = await capacitiesService.getActivityAllocationsSummary({ id: 1 } as ActivityLite, user)
+      const actualResult = await capacitiesService.getActivityAllocationsSummary(1, user)
 
       expect(actualResult).toEqual(expectedResult)
     })
@@ -182,7 +172,7 @@ describe('Capacities Service', () => {
         vacancies: 0,
       }
 
-      const actualResult = await capacitiesService.getActivityAllocationsSummary({ id: 1 } as ActivityLite, user)
+      const actualResult = await capacitiesService.getActivityAllocationsSummary(1, user)
 
       expect(actualResult).toEqual(expectedResult)
     })
@@ -199,7 +189,7 @@ describe('Capacities Service', () => {
         vacancies: 100,
       }
 
-      const actualResult = await capacitiesService.getActivityAllocationsSummary({ id: 1 } as ActivityLite, user)
+      const actualResult = await capacitiesService.getActivityAllocationsSummary(1, user)
 
       expect(actualResult).toEqual(expectedResult)
     })
@@ -218,10 +208,7 @@ describe('Capacities Service', () => {
         vacancies: 40,
       }
 
-      const actualResult = await capacitiesService.getScheduleAllocationsSummary(
-        { id: 1 } as ActivityScheduleLite,
-        user,
-      )
+      const actualResult = await capacitiesService.getScheduleAllocationsSummary(1, user)
 
       expect(actualResult).toEqual(expectedResult)
     })
@@ -236,10 +223,7 @@ describe('Capacities Service', () => {
         vacancies: 0,
       }
 
-      const actualResult = await capacitiesService.getScheduleAllocationsSummary(
-        { id: 1 } as ActivityScheduleLite,
-        user,
-      )
+      const actualResult = await capacitiesService.getScheduleAllocationsSummary(1, user)
 
       expect(actualResult).toEqual(expectedResult)
     })
@@ -256,10 +240,7 @@ describe('Capacities Service', () => {
         vacancies: 100,
       }
 
-      const actualResult = await capacitiesService.getScheduleAllocationsSummary(
-        { id: 1 } as ActivityScheduleLite,
-        user,
-      )
+      const actualResult = await capacitiesService.getScheduleAllocationsSummary(1, user)
 
       expect(actualResult).toEqual(expectedResult)
     })

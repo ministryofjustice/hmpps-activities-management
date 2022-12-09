@@ -14,7 +14,7 @@ export default class CategoriesRoutes {
 
     const addAllocationSummary = async (c: ActivityCategory) => ({
       ...c,
-      ...(await this.capacitiesService.getActivityCategoryAllocationsSummary(c, user)),
+      ...(await this.capacitiesService.getActivityCategoryAllocationsSummary(c.id, user)),
     })
 
     const categories = await this.activitiesService

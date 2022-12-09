@@ -4,15 +4,19 @@ import PrisonService from '../../../../../services/prisonService'
 import PeopleAllocatedNowRouteHandler from './PeopleAllocatedNowRouteHandler'
 import { ActivitySchedule, Allocation } from '../../../../../@types/activitiesAPI/types'
 import { InmateBasicDetails } from '../../../../../@types/prisonApiImport/types'
+import CapacitiesService from '../../../../../services/capacitiesService'
+import { AllocationsSummary } from '../../../../../@types/activities'
 
-jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/prisonService')
+jest.mock('../../../../../services/capacitiesService')
+jest.mock('../../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null, null) as jest.Mocked<PrisonService>
+const capacitiesService = new CapacitiesService(null) as jest.Mocked<CapacitiesService>
 
 describe('Route Handlers - Schedules dashboard', () => {
-  const handler = new PeopleAllocatedNowRouteHandler(activitiesService, prisonService)
+  const handler = new PeopleAllocatedNowRouteHandler(prisonService, capacitiesService, activitiesService)
 
   const mockAllocationData = () => {
     const bob = {
@@ -33,7 +37,18 @@ describe('Route Handlers - Schedules dashboard', () => {
       description: 'Wing cleaning 99',
     } as ActivitySchedule
 
-    activitiesService.getSchedule.mockResolvedValue(wingCleaning1)
+    activitiesService.getActivitySchedule.mockResolvedValue(wingCleaning1)
+  }
+
+  const mockAllocationSummaryData = () => {
+    const summary = {
+      capacity: 10,
+      allocated: 5,
+      percentageAllocated: 50,
+      vacancies: 5,
+    } as AllocationsSummary
+
+    capacitiesService.getScheduleAllocationsSummary.mockResolvedValue(summary)
   }
 
   const mockInmateDetailsData = () => {
@@ -57,6 +72,7 @@ describe('Route Handlers - Schedules dashboard', () => {
     mockAllocationData()
     mockScheduleData()
     mockInmateDetailsData()
+    mockAllocationSummaryData()
   })
 
   afterEach(() => {
@@ -94,7 +110,7 @@ describe('Route Handlers - Schedules dashboard', () => {
             title: 'Identify candidates',
             path: '/activities/allocate/1/candidates/identify-candidates/',
             testId: 'identify-candidates',
-            titleDecorator: '1 vacancy',
+            titleDecorator: '5 vacancies',
             titleDecoratorClass: 'govuk-tag govuk-tag--red',
           },
           {

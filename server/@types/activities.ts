@@ -59,3 +59,10 @@ export type CandidateListTableRow = {
   incentiveLevel: string
   alerts: string[]
 }
+
+export type AllocationsSummary = {
+  capacity: number
+  allocated: number
+  percentageAllocated: number
+  vacancies: number
+}

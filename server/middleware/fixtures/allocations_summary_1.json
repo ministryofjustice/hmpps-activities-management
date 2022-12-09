@@ -1,0 +1,6 @@
+{
+  "capacity": 10,
+  "allocated": 5,
+  "percentageAllocated": 50,
+  "vacancies": 5
+}
