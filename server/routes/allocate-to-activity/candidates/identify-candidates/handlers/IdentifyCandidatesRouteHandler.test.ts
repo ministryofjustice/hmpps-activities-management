@@ -1,23 +1,34 @@
 import { getMockReq, getMockRes } from '@jest-mock/express'
+import { when } from 'jest-when'
 import PrisonApiClient from '../../../../../data/prisonApiClient'
 import PrisonerSearchApiClient from '../../../../../data/prisonerSearchApiClient'
 import PrisonRegisterApiClient from '../../../../../data/prisonRegisterApiClient'
 import WhereaboutsApiClient from '../../../../../data/whereaboutsApiClient'
+import ActivitiesApiClient from '../../../../../data/activitiesApiClient'
 import PrisonService from '../../../../../services/prisonService'
+import CapacitiesService from '../../../../../services/capacitiesService'
+import ActivitiesService from '../../../../../services/activitiesService'
 import IdentifyCandidatesRouteHandler from './IdentifyCandidatesRouteHandler'
 import inmateDetails1 from '../../../../../middleware/fixtures/inmate_details_1.json'
+import activitySchedule1 from '../../../../../services/fixtures/activity_schedule_1.json'
+import allocationsSummary1 from '../../../../../middleware/fixtures/allocations_summary_1.json'
+import atLeast from '../../../../../../jest.setup'
 
 jest.mock('../../../../../services/prisonService')
+jest.mock('../../../../../services/capacitiesService')
+jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../data/prisonApiClient')
 jest.mock('../../../../../data/prisonerSearchApiClient')
 jest.mock('../../../../../data/prisonRegisterApiClient')
 jest.mock('../../../../../data/whereaboutsApiClient')
+jest.mock('../../../../../data/activitiesApiClient')
 
-describe('activityListRouteHandler', () => {
+describe('identifyCandidatestRouteHandler', () => {
   const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
   const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
   const prisonRegisterApiClient = new PrisonRegisterApiClient() as jest.Mocked<PrisonRegisterApiClient>
   const whereaboutsApiClient = new WhereaboutsApiClient() as jest.Mocked<WhereaboutsApiClient>
+  const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
 
   const prisonService = new PrisonService(
     prisonApiClient,
@@ -25,11 +36,13 @@ describe('activityListRouteHandler', () => {
     prisonRegisterApiClient,
     whereaboutsApiClient,
   )
+  const capacitiesService = new CapacitiesService(activitiesApiClient)
+  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
 
   let controller: IdentifyCandidatesRouteHandler
 
   beforeEach(() => {
-    controller = new IdentifyCandidatesRouteHandler(prisonService)
+    controller = new IdentifyCandidatesRouteHandler(prisonService, capacitiesService, activitiesService)
     jest.clearAllMocks()
   })
 
@@ -50,10 +63,18 @@ describe('activityListRouteHandler', () => {
         },
       })
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      when(prisonService.getInmates).calledWith(atLeast('MDI')).mockResolvedValueOnce(inmateDetails1)
+      when(capacitiesService.getScheduleAllocationsSummary)
+        .calledWith(atLeast(12))
+        .mockResolvedValueOnce(allocationsSummary1)
+      when(activitiesService.getActivitySchedule).calledWith(atLeast(12)).mockResolvedValueOnce(activitySchedule1)
+
       await controller.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/candidates/identify-candidates/index', {
-        pageHeading: 'Identify candidates for Wing cleaning 1',
+        pageHeading: 'Identify candidates for Entry level Maths 1',
         currentUrlPath: '',
         tabs: [
           {
@@ -65,7 +86,7 @@ describe('activityListRouteHandler', () => {
             title: 'Identify candidates',
             path: '/activities/allocate/12/candidates/identify-candidates/',
             testId: 'identify-candidates',
-            titleDecorator: '1 vacancy',
+            titleDecorator: '5 vacancies',
             titleDecoratorClass: 'govuk-tag govuk-tag--red',
           },
           {
@@ -81,11 +102,11 @@ describe('activityListRouteHandler', () => {
         ],
         rowData: [
           {
-            alerts: ['UPIU'],
+            alerts: ['XER', 'XEL'],
             incentiveLevel: 'Standard',
-            location: '3-3-025',
-            name: 'Smith, Fred',
-            prisonNumber: 'A5072DY',
+            location: '1-1-031',
+            name: 'Cholak, Alfonso',
+            prisonNumber: 'A5015DY',
           },
           {
             alerts: [],
@@ -95,14 +116,19 @@ describe('activityListRouteHandler', () => {
             prisonNumber: 'A5089DY',
           },
           {
-            alerts: ['XER', 'XEL'],
+            alerts: ['UPIU'],
             incentiveLevel: 'Standard',
-            location: '1-1-031',
-            name: 'Cholak, Alfonso',
-            prisonNumber: 'A5015DY',
+            location: '3-3-025',
+            name: 'Smith, Fred',
+            prisonNumber: 'A5072DY',
           },
         ],
-        criteria: {},
+        criteria: {
+          sort: {
+            direction: 'asc',
+            field: 'name',
+          },
+        },
       })
     })
   })

@@ -141,6 +141,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
+    return this.get({
+      path: `/schedules/${id}`,
+      authToken: user.token,
+    })
+  }
+
   async getAttendances(id: number, user: ServiceUser): Promise<Attendance[]> {
     return this.get({
       path: `/scheduled-instances/${id}/attendances`,
@@ -166,13 +173,6 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getAllocations(scheduleId: number, user: ServiceUser): Promise<Allocation[]> {
     return this.get({
       path: `/schedules/${scheduleId}/allocations`,
-      authToken: user.token,
-    })
-  }
-
-  async getSchedule(scheduleId: number, user: ServiceUser): Promise<ActivitySchedule> {
-    return this.get({
-      path: `/schedules/${scheduleId}`,
       authToken: user.token,
     })
   }

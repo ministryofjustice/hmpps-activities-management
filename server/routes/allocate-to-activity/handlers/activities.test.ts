@@ -30,14 +30,14 @@ describe('Route Handlers - Activities dashboard', () => {
 
     activitiesService.getActivitiesInCategory.mockResolvedValue([maths, english])
     when(capacitiesService.getActivityAllocationsSummary)
-      .calledWith(atLeast(maths))
+      .calledWith(atLeast(1))
       .mockResolvedValue({
         capacity: 100,
         allocated: 80,
         percentageAllocated: 80,
         vacancies: 20,
       })
-      .calledWith(atLeast(english))
+      .calledWith(atLeast(2))
       .mockResolvedValue({
         capacity: 150,
         allocated: 75,

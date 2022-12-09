@@ -15,7 +15,7 @@ export default class SchedulesRoutes {
 
     const addAllocationSummary = async (a: ActivityScheduleLite) => ({
       ...a,
-      ...(await this.capacitiesService.getScheduleAllocationsSummary(a, user)),
+      ...(await this.capacitiesService.getScheduleAllocationsSummary(a.id, user)),
     })
 
     const schedules = await this.activitiesService
