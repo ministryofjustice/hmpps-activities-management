@@ -126,15 +126,13 @@ describe('Route Handlers - Schedules dashboard', () => {
         ],
         rowData: [
           {
-            alerts: [],
-            incentiveLevel: '',
+            description: 'Wing cleaning 99',
             location: 'Room 1',
             name: 'Bob Flemming',
             prisonNumber: '111111',
           },
           {
-            alerts: [],
-            incentiveLevel: '',
+            description: 'Wing cleaning 99',
             location: 'Room 2',
             name: 'Fred Bloggs',
             prisonNumber: '222222',

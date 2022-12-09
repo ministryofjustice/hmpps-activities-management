@@ -3,7 +3,6 @@ import PrisonService from '../../../../../services/prisonService'
 import ActivityService from '../../../../../services/activitiesService'
 import CapacitiesService from '../../../../../services/capacitiesService'
 import { InmateBasicDetails } from '../../../../../@types/prisonApiImport/types'
-import { CandidateListTableRow } from '../../../../../@types/activities'
 
 export default class PeopleAllocatedNowRouteHandler {
   constructor(
@@ -23,7 +22,7 @@ export default class PeopleAllocatedNowRouteHandler {
       this.capacitiesService.getScheduleAllocationsSummary(+scheduleId, user),
       this.activitiesService.getActivitySchedule(scheduleId as unknown as number, user),
     ])
-    const rowData = inmateDetails.map(this.toRowData)
+    const rowData = inmateDetails.map(inmate => this.toRowData(inmate, schedule.description))
 
     const viewContext = {
       pageHeading: `Identify candidates for ${schedule.description}`,
@@ -57,13 +56,12 @@ export default class PeopleAllocatedNowRouteHandler {
     res.render('pages/allocate-to-activity/candidates/people-allocated-now/index', viewContext)
   }
 
-  private toRowData(prisoner: InmateBasicDetails): CandidateListTableRow {
+  private toRowData(prisoner: InmateBasicDetails, allocation: string) {
     return {
       name: `${prisoner.firstName} ${prisoner.lastName}`,
       prisonNumber: prisoner.offenderNo,
       location: prisoner.assignedLivingUnitDesc,
-      incentiveLevel: '',
-      alerts: [],
+      description: allocation,
     }
   }
 }

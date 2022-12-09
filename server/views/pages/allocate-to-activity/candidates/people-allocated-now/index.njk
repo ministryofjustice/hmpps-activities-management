@@ -8,6 +8,10 @@
 {% set backLinkHref = "/" %}
 
 {% block tabPanel %}
+    <div>
+        <h2 class="govuk-heading-m">People allocated now</h2>
+        <p>Review the list of people currently allocated to identify any non-associations or other risks. You can also remove someone from the activity by selecting their name.</p>
+    </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             {% set rows = [] %}
@@ -36,14 +40,12 @@
                         attributes: {
                         id: 'allocation-' + loop.index
                     },
-                        text: 'allocation goes here'
+                        text: allocation.description
                     }
                 ]), rows) %}
             {% endfor %}
 
             {{ govukTable({
-                caption: "People allocated now",
-                captionClasses: "govuk-heading-m",
                 head: [
                     {
                         text: "Name"
