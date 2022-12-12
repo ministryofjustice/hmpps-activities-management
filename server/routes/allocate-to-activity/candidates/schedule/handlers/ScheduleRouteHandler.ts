@@ -46,7 +46,7 @@ export default class ScheduleRouteHandler {
         },
       ],
       scheduleDescription: schedule.description,
-      rowData: mapToTableRows(schedule),
+      rows: mapToTableRows(schedule),
     }
     res.render('pages/allocate-to-activity/candidates/schedule/index', viewContext)
   }

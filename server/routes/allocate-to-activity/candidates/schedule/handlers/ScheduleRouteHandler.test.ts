@@ -78,7 +78,7 @@ describe('scheduleRouteHandler', () => {
             testId: 'schedule',
           },
         ],
-        rowData: [
+        rows: [
           [
             { text: 'Monday' },
             { html: '<strong class="govuk-tag">YES</strong>' },
