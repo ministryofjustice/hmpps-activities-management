@@ -78,50 +78,7 @@ describe('scheduleRouteHandler', () => {
             testId: 'schedule',
           },
         ],
-        rows: [
-          [
-            { text: 'Monday' },
-            { html: '<strong class="govuk-tag">YES</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-          ],
-          [
-            { text: 'Tuesday' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-          ],
-          [
-            { text: 'Wednesday' },
-            { html: '<strong class="govuk-tag">YES</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-          ],
-          [
-            { text: 'Thursday' },
-            { html: '<strong class="govuk-tag">YES</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-          ],
-          [
-            { text: 'Friday' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-          ],
-          [
-            { text: 'Saturday' },
-            { html: '<strong class="govuk-tag">YES</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-          ],
-          [
-            { text: 'Sunday' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-            { html: '<strong class="govuk-tag govuk-tag--grey">NO</strong>' },
-          ],
-        ],
+        schedule: activitySchedule1,
         scheduleDescription: 'Entry level Maths 1',
       })
     })
