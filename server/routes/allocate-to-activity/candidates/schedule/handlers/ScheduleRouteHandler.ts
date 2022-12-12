@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import CapacitiesService from '../../../../../services/capacitiesService'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { mapToTableRows } from './scheduleHelper'
 
 export default class ScheduleRouteHandler {
   constructor(
@@ -46,7 +45,7 @@ export default class ScheduleRouteHandler {
         },
       ],
       scheduleDescription: schedule.description,
-      rows: mapToTableRows(schedule),
+      schedule,
     }
     res.render('pages/allocate-to-activity/candidates/schedule/index', viewContext)
   }
