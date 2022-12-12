@@ -1,5 +1,6 @@
 {% extends "tabsLayout.njk" %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% set pageTitle = applicationName + " - Manage activities and schedules" %}
 {% set mainClasses = "app-container govuk-body" %}
 {% set pageId = 'schedule-page' %}
@@ -15,9 +16,5 @@
             head: [ { text: "Days" }, { text: "AM" }, { text: "PM" }, { text: "ED" } ],
             rows: rows
         }) }}
-
-        <button class="govuk-button" data-module="govuk-button">
-            Edit schedule times
-        </button>
     </div>
 {% endblock %}
