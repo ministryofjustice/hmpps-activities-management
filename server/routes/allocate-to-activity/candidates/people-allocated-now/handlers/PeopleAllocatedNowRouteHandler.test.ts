@@ -103,12 +103,12 @@ describe('Route Handlers - Schedules dashboard', () => {
         tabs: [
           {
             title: 'People allocated now',
-            path: '/activities/allocate/1/candidates/people-allocated-now/',
+            path: '/activities/allocate/1/candidates/people-allocated-now',
             testId: 'people-allocated-now',
           },
           {
             title: 'Identify candidates',
-            path: '/activities/allocate/1/candidates/identify-candidates/',
+            path: '/activities/allocate/1/candidates/identify-candidates',
             testId: 'identify-candidates',
             titleDecorator: '5 vacancies',
             titleDecoratorClass: 'govuk-tag govuk-tag--red',

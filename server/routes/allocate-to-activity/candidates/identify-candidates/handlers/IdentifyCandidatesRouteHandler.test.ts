@@ -23,7 +23,7 @@ jest.mock('../../../../../data/prisonRegisterApiClient')
 jest.mock('../../../../../data/whereaboutsApiClient')
 jest.mock('../../../../../data/activitiesApiClient')
 
-describe('identifyCandidatestRouteHandler', () => {
+describe('identifyCandidatesRouteHandler', () => {
   const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
   const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
   const prisonRegisterApiClient = new PrisonRegisterApiClient() as jest.Mocked<PrisonRegisterApiClient>
@@ -58,7 +58,6 @@ describe('identifyCandidatestRouteHandler', () => {
       })
       const { res } = getMockRes({
         locals: {
-          offenderListPage: inmateDetails1,
           user: { token: 'token', activeCaseLoad: { caseLoadId: 'MDI' } },
         },
       })
@@ -79,12 +78,12 @@ describe('identifyCandidatestRouteHandler', () => {
         tabs: [
           {
             title: 'People allocated now',
-            path: '/activities/allocate/12/candidates/people-allocated-now/',
+            path: '/activities/allocate/12/candidates/people-allocated-now',
             testId: 'people-allocated-now',
           },
           {
             title: 'Identify candidates',
-            path: '/activities/allocate/12/candidates/identify-candidates/',
+            path: '/activities/allocate/12/candidates/identify-candidates',
             testId: 'identify-candidates',
             titleDecorator: '5 vacancies',
             titleDecoratorClass: 'govuk-tag govuk-tag--red',
@@ -95,7 +94,7 @@ describe('identifyCandidatestRouteHandler', () => {
             testId: 'activity-risk-requirements',
           },
           {
-            title: 'Wing cleaning 1 schedule',
+            title: 'Entry level Maths 1 schedule',
             path: '/activities/allocate/12/candidates/schedule',
             testId: 'schedule',
           },

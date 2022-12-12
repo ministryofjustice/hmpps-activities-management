@@ -10,8 +10,10 @@ import {
   existsInStringArray,
   findError,
   formatDate,
+  getTimeSlotFromTime,
   initialiseName,
   setSelected,
+  startsWithAny,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -81,9 +83,12 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('subWeeks', subWeeks)
   njkEnv.addFilter('addWeeks', addWeeks)
   njkEnv.addFilter('isClashing', isClashing)
+  njkEnv.addFilter('existsInStringArray', existsInStringArray)
+  njkEnv.addFilter('getTimeSlotFromTime', getTimeSlotFromTime)
+  njkEnv.addFilter('startsWithAny', startsWithAny)
+
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
-  njkEnv.addFilter('existsInStringArray', existsInStringArray)
 
   return njkEnv
 }

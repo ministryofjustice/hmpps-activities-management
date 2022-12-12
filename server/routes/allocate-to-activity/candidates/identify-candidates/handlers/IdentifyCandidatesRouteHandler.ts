@@ -40,12 +40,12 @@ export default class IdentifyCandidatesRouteHandler {
       tabs: [
         {
           title: 'People allocated now',
-          path: `/activities/allocate/${scheduleId}/candidates/people-allocated-now/`,
+          path: `/activities/allocate/${scheduleId}/candidates/people-allocated-now`,
           testId: 'people-allocated-now',
         },
         {
           title: 'Identify candidates',
-          path: `/activities/allocate/${scheduleId}/candidates/identify-candidates/`,
+          path: `/activities/allocate/${scheduleId}/candidates/identify-candidates`,
           testId: 'identify-candidates',
           titleDecorator: `${allocationsSummary.vacancies} vacancies`,
           titleDecoratorClass: 'govuk-tag govuk-tag--red',
@@ -56,7 +56,7 @@ export default class IdentifyCandidatesRouteHandler {
           testId: 'activity-risk-requirements',
         },
         {
-          title: 'Wing cleaning 1 schedule',
+          title: `${schedule.description} schedule`,
           path: `/activities/allocate/${scheduleId}/candidates/schedule`,
           testId: 'schedule',
         },
