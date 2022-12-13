@@ -2,7 +2,7 @@ import { getMockReq, getMockRes } from '@jest-mock/express'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import PeopleAllocatedNowRouteHandler from './PeopleAllocatedNowRouteHandler'
-import { ActivitySchedule, Allocation } from '../../../../../@types/activitiesAPI/types'
+import { ActivitySchedule, Allocation, PrisonerAllocations } from '../../../../../@types/activitiesAPI/types'
 import { InmateBasicDetails } from '../../../../../@types/prisonApiImport/types'
 import CapacitiesService from '../../../../../services/capacitiesService'
 import { AllocationsSummary } from '../../../../../@types/activities'
@@ -68,11 +68,25 @@ describe('Route Handlers - Schedules dashboard', () => {
     prisonService.getInmateDetails.mockResolvedValue([bobsData, fredsData])
   }
 
+  const mockPrisonerAllocationsDate = () => {
+    const bobsData = {
+      prisonerNumber: '111111',
+      allocations: [{ scheduleDescription: 'Wing cleaning 99' }, { scheduleDescription: 'Kitchens' }],
+    } as PrisonerAllocations
+    const fredsData = {
+      prisonerNumber: '222222',
+      allocations: [{ scheduleDescription: 'Wing cleaning 99' }, { scheduleDescription: 'Gym' }],
+    } as PrisonerAllocations
+
+    activitiesService.getPrisonerAllocations.mockResolvedValue([bobsData, fredsData])
+  }
+
   beforeEach(() => {
     mockAllocationData()
     mockScheduleData()
     mockInmateDetailsData()
     mockAllocationSummaryData()
+    mockPrisonerAllocationsDate()
   })
 
   afterEach(() => {
@@ -126,13 +140,13 @@ describe('Route Handlers - Schedules dashboard', () => {
         ],
         rowData: [
           {
-            description: 'Wing cleaning 99',
+            allocations: ['Kitchens', 'Wing cleaning 99'],
             location: 'Room 1',
             name: 'Bob Flemming',
             prisonNumber: '111111',
           },
           {
-            description: 'Wing cleaning 99',
+            allocations: ['Gym', 'Wing cleaning 99'],
             location: 'Room 2',
             name: 'Fred Bloggs',
             prisonNumber: '222222',

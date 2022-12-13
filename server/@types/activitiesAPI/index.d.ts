@@ -20,6 +20,13 @@ export interface paths {
      */
     put: operations['markAttendances']
   }
+  '/prisons/{prisonCode}/prisoner-allocations': {
+    /**
+     * Get all allocations for prisoners
+     * @description Returns zero or more allocations for the supplied list of prisoners.
+     */
+    post: operations['prisonerAllocations']
+  }
   '/job/create-attendance-records': {
     /**
      * Trigger the job to create attendance records in advance
@@ -34,6 +41,13 @@ export interface paths {
      */
     post: operations['triggerCreateActivitySessionsJob']
   }
+  '/schedules/{scheduleId}': {
+    /**
+     * Get an activity schedule by its id
+     * @description Returns a single activity schedule by its unique identifier.
+     */
+    get: operations['getScheduleId']
+  }
   '/schedules/{scheduleId}/allocations': {
     /**
      * Get a list of activity schedule allocations
@@ -41,16 +55,16 @@ export interface paths {
      */
     get: operations['getAllocationsBy']
   }
-  '/schedules/{prisonCode}': {
-    /**
-     * Get a list of activity schedules at a given prison
-     * @description Returns zero or more activity schedules at a given prison.
-     */
-    get: operations['getSchedulesByPrisonCode']
-  }
   '/schedules/{activityScheduleId}/capacity': {
     /** Get the capacity and number of allocated slots in an activity schedule */
     get: operations['getActivityScheduleCapacity']
+  }
+  '/scheduled-instances/{instanceId}': {
+    /**
+     * Get a scheduled instance by ID
+     * @description Returns a scheduled instance.
+     */
+    get: operations['getScheduledInstanceById']
   }
   '/scheduled-instances/{instanceId}/attendances': {
     /**
@@ -103,6 +117,13 @@ export interface paths {
      * @description List of all available Location Groups at a prison
      */
     get: operations['getLocationGroups_1']
+  }
+  '/prison/{prisonCode}/schedules': {
+    /**
+     * Get a list of activity schedules at a given prison
+     * @description Returns zero or more activity schedules at a given prison.
+     */
+    get: operations['getSchedulesByPrisonCode']
   }
   '/prison/{prisonCode}/locations': {
     /**
@@ -237,6 +258,8 @@ export interface components {
        * @example A1234AA
        */
       prisonerNumber: string
+      activitySummary: string
+      scheduleDescription: string
       /**
        * @description The incentive/earned privilege (level) for this offender allocation
        * @example BAS, STD, ENH
@@ -282,6 +305,16 @@ export interface components {
        * @example Not attending regularly
        */
       deallocatedReason?: string
+    }
+    /** @description Describes a prisoners allocations */
+    PrisonerAllocations: {
+      /**
+       * @description The prisoner number
+       * @example GF10101
+       */
+      prisonerNumber: string
+      /** @description The list of allocations for the prisoner */
+      allocations: components['schemas']['Allocation'][]
     }
     /**
      * @description
@@ -495,43 +528,6 @@ export interface components {
        */
       allocated: number
     }
-    /** @description Describes one instance of a prison which may or may not be active (rolled out) */
-    RolloutPrison: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this prison
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The code for this prison
-       * @example PVI
-       */
-      code: string
-      /**
-       * @description The description for this prison
-       * @example HMP Pentonville
-       */
-      description: string
-      /**
-       * @description Flag to indicate if this prison is presently active
-       * @example true
-       */
-      active: boolean
-    }
-    DlqMessage: {
-      body: {
-        [key: string]: Record<string, never> | undefined
-      }
-      messageId: string
-    }
-    GetDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      /** Format: int32 */
-      messagesReturnedCount: number
-      messages: components['schemas']['DlqMessage'][]
-    }
     /** @description Describes a top-level activity category */
     ActivityCategory: {
       /**
@@ -588,7 +584,7 @@ export interface components {
        * @description The internally-generated ID for this scheduled instance
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * Format: date
        * @description The specific date for this scheduled instance
@@ -670,6 +666,43 @@ export interface components {
        */
       daysOfWeek: string[]
       activity: components['schemas']['ActivityLite']
+    }
+    /** @description Describes one instance of a prison which may or may not be active (rolled out) */
+    RolloutPrison: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this prison
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The code for this prison
+       * @example PVI
+       */
+      code: string
+      /**
+       * @description The description for this prison
+       * @example HMP Pentonville
+       */
+      description: string
+      /**
+       * @description Flag to indicate if this prison is presently active
+       * @example true
+       */
+      active: boolean
+    }
+    DlqMessage: {
+      body: {
+        [key: string]: Record<string, never> | undefined
+      }
+      messageId: string
+    }
+    GetDlqResult: {
+      /** Format: int32 */
+      messagesFoundCount: number
+      /** Format: int32 */
+      messagesReturnedCount: number
+      messages: components['schemas']['DlqMessage'][]
     }
     /** @description Describes a prisoners scheduled events */
     PrisonerScheduledEvents: {
@@ -1141,6 +1174,46 @@ export interface operations {
       }
     }
   }
+  prisonerAllocations: {
+    /**
+     * Get all allocations for prisoners
+     * @description Returns zero or more allocations for the supplied list of prisoners.
+     */
+    parameters: {
+      /** @description If true will only return active allocations. Defaults to true. */
+      query?: {
+        activeOnly?: boolean
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': string[]
+      }
+    }
+    responses: {
+      /** @description The allocations for the prisoners */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonerAllocations'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   triggerCreateAttendanceRecordsJob: {
     /**
      * Trigger the job to create attendance records in advance
@@ -1165,6 +1238,43 @@ export interface operations {
       201: {
         content: {
           'application/json': string
+        }
+      }
+    }
+  }
+  getScheduleId: {
+    /**
+     * Get an activity schedule by its id
+     * @description Returns a single activity schedule by its unique identifier.
+     */
+    parameters: {
+      path: {
+        scheduleId: number
+      }
+    }
+    responses: {
+      /** @description Activity found */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivitySchedule']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The activity for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
         }
       }
     }
@@ -1210,45 +1320,6 @@ export interface operations {
       }
     }
   }
-  getSchedulesByPrisonCode: {
-    /**
-     * Get a list of activity schedules at a given prison
-     * @description Returns zero or more activity schedules at a given prison.
-     */
-    parameters: {
-      /** @description Date of activity, default today */
-      /** @description AM, PM or ED */
-      /** @description The internal NOMIS location id of the activity */
-      query?: {
-        date?: string
-        timeSlot?: string
-        locationId?: number
-      }
-      path: {
-        prisonCode: string
-      }
-    }
-    responses: {
-      /** @description Activity schedules found */
-      200: {
-        content: {
-          'application/json': components['schemas']['ActivitySchedule'][]
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   getActivityScheduleCapacity: {
     /** Get the capacity and number of allocated slots in an activity schedule */
     parameters: {
@@ -1276,6 +1347,43 @@ export interface operations {
         }
       }
       /** @description Schedule ID not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getScheduledInstanceById: {
+    /**
+     * Get a scheduled instance by ID
+     * @description Returns a scheduled instance.
+     */
+    parameters: {
+      path: {
+        instanceId: number
+      }
+    }
+    responses: {
+      /** @description Scheduled instance found */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivityScheduleInstance']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The scheduled instance was not found. */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1596,6 +1704,45 @@ export interface operations {
       }
       /** @description Requested resource not found */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getSchedulesByPrisonCode: {
+    /**
+     * Get a list of activity schedules at a given prison
+     * @description Returns zero or more activity schedules at a given prison.
+     */
+    parameters: {
+      /** @description Date of activity, default today */
+      /** @description AM, PM or ED */
+      /** @description The internal NOMIS location id of the activity */
+      query?: {
+        date?: string
+        timeSlot?: string
+        locationId?: number
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Activity schedules found */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivitySchedule'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
