@@ -13,6 +13,10 @@ import {
   ScheduledActivity,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
+import activitySchedules from './fixtures/activity_schedules_1.json'
+import activitySchedule1 from './fixtures/activity_schedule_1.json'
+import prisoners from './fixtures/prisoners_1.json'
+import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
 import TimeSlot from '../enum/timeSlot'
 
 jest.mock('../data/activitiesApiClient')
@@ -162,35 +166,35 @@ describe('Activities Service', () => {
     })
   })
 
-  // describe('getActivitySchedules', () => {
-  //   it('should fetch activity schedules using the activities API', async () => {
-  //     const criteria = { prisonerNumbers: ['G4793VF'] }
-  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     // @ts-ignore
-  //     when(prisonerSearchApiClient.searchByPrisonerNumbers).calledWith(criteria, user).mockResolvedValue(prisoners)
-  //
-  //     when(activitiesApiClient.getActivitySchedules)
-  //       .calledWith(atLeast('10001'))
-  //       .mockResolvedValueOnce(activitySchedules)
-  //
-  //     when(activitiesApiClient.getActivitySchedules).calledWith(atLeast('10001')).mockResolvedValueOnce([])
-  //
-  //     const results = await activitiesService.getActivitySchedules('MDI', '10001', '2022-08-01', 'AM', user)
-  //
-  //     expect(results.length).toEqual(1)
-  //     expect(activitiesApiClient.getActivitySchedules).toHaveBeenCalledWith('MDI', '10001', '2022-08-01', 'AM', user)
-  //     expect(results[0]).toEqual(activityScheduleAllocation[1])
-  //   })
-  // })
-  //
-  // describe('getActivitySchedule', () => {
-  //   it('should fetch activity schedule by id using the activities API', async () => {
-  //     when(activitiesApiClient.getActivitySchedule).calledWith(atLeast(1)).mockResolvedValueOnce(activitySchedule1)
-  //     const result = await activitiesService.getActivitySchedule(1, user)
-  //     expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(1, user)
-  //     expect(result).toEqual(activitySchedule1)
-  //   })
-  // })
+  describe('getActivitySchedules', () => {
+    it('should fetch activity schedules using the activities API', async () => {
+      const criteria = { prisonerNumbers: ['G4793VF'] }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      when(prisonerSearchApiClient.searchByPrisonerNumbers).calledWith(criteria, user).mockResolvedValue(prisoners)
+
+      when(activitiesApiClient.getActivitySchedules)
+        .calledWith(atLeast('10001'))
+        .mockResolvedValueOnce(activitySchedules)
+
+      when(activitiesApiClient.getActivitySchedules).calledWith(atLeast('10001')).mockResolvedValueOnce([])
+
+      const results = await activitiesService.getActivitySchedules('MDI', '10001', '2022-08-01', 'AM', user)
+
+      expect(results.length).toEqual(1)
+      expect(activitiesApiClient.getActivitySchedules).toHaveBeenCalledWith('MDI', '10001', '2022-08-01', 'AM', user)
+      expect(results[0]).toEqual(activityScheduleAllocation[1])
+    })
+  })
+
+  describe('getActivitySchedule', () => {
+    it('should fetch activity schedule by id using the activities API', async () => {
+      when(activitiesApiClient.getActivitySchedule).calledWith(atLeast(1)).mockResolvedValueOnce(activitySchedule1)
+      const result = await activitiesService.getActivitySchedule(1, user)
+      expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(1, user)
+      expect(result).toEqual(activitySchedule1)
+    })
+  })
 
   describe('getLocationGroups', () => {
     it('should fetch the location groups for a prison using the activities API', async () => {
