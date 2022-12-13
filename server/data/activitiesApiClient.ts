@@ -15,6 +15,7 @@ import {
   ScheduledActivity,
   LocationGroup,
   Allocation,
+  PrisonerAllocations,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -173,6 +174,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getAllocations(scheduleId: number, user: ServiceUser): Promise<Allocation[]> {
     return this.get({
       path: `/schedules/${scheduleId}/allocations`,
+      authToken: user.token,
+    })
+  }
+
+  async getPrisonerAllocations(
+    prisonCode: string,
+    prisonerNumbers: string[],
+    user: ServiceUser,
+  ): Promise<PrisonerAllocations[]> {
+    return this.post({
+      path: `/prisons/${prisonCode}/prisoner-allocations`,
+      data: prisonerNumbers,
       authToken: user.token,
     })
   }

@@ -14,6 +14,7 @@ import {
   LocationGroup,
   ActivitySchedule,
   Allocation,
+  PrisonerAllocations,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -182,5 +183,13 @@ export default class ActivitiesService {
 
   async getAllocations(id: number, user: ServiceUser): Promise<Allocation[]> {
     return this.activitiesApiClient.getAllocations(id, user)
+  }
+
+  async getPrisonerAllocations(
+    prisonCode: string,
+    prisonerNumbers: string[],
+    user: ServiceUser,
+  ): Promise<PrisonerAllocations[]> {
+    return this.activitiesApiClient.getPrisonerAllocations(prisonCode, prisonerNumbers, user)
   }
 }
