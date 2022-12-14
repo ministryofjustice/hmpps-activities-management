@@ -5,6 +5,7 @@ import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesService from './activitiesService'
 import { ServiceUser } from '../@types/express'
 import {
+  Activity,
   ActivityCategory,
   ActivityLite,
   ActivityScheduleLite,
@@ -36,6 +37,19 @@ describe('Activities Service', () => {
       children: [],
     },
   ] as LocationGroup[]
+
+  describe('getActivity', () => {
+    it('should get the activity from activities API', async () => {
+      const expectedResult = { id: 1, description: 'Induction' } as Activity
+
+      activitiesApiClient.getActivity.mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getActivity(1, user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getActivity).toHaveBeenCalledWith(1, user)
+    })
+  })
 
   describe('getActivityCategories', () => {
     it('should get the list of activity categories from activities API', async () => {
@@ -73,6 +87,13 @@ describe('Activities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(activitiesApiClient.getSchedulesOfActivity).toHaveBeenCalledWith(1, user)
+    })
+  })
+
+  describe('allocateToSchedule', () => {
+    it('should call activities API client to post an allocation', async () => {
+      await activitiesService.allocateToSchedule(1, 'ABC123', 'A', user)
+      expect(activitiesApiClient.postAllocation).toHaveBeenCalledWith(1, 'ABC123', 'A', user)
     })
   })
 

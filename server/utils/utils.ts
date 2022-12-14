@@ -191,3 +191,5 @@ export const getAttendanceSummary = (attendance: Attendance[]) => {
 
   return { allocated, attended, notAttended, notRecorded }
 }
+
+export const toMoney = (x: number): string => `£${(x / 100).toFixed(2)}`

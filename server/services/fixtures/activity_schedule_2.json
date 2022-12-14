@@ -116,6 +116,8 @@
     {
       "id": 1,
       "prisonerNumber": "G4793VF",
+      "activitySummary": "Maths level 1",
+      "scheduleDescription": "Entry level Maths 1",
       "incentiveLevel": "BAS",
       "payBand": "A",
       "startDate": "10/10/2022",
@@ -124,13 +126,13 @@
       "allocatedBy": "MR BLOGS",
       "deallocatedTime": null,
       "deallocatedBy": null,
-      "deallocatedReason": null,
-      "activitySummary": "",
-      "scheduleDescription": ""
+      "deallocatedReason": null
     },
     {
       "id": 10,
       "prisonerNumber": "A9477DY",
+      "activitySummary": "Maths level 1",
+      "scheduleDescription": "Entry level Maths 1",
       "incentiveLevel": "BAS",
       "payBand": "A",
       "startDate": "10/10/2022",
@@ -139,13 +141,13 @@
       "allocatedBy": "MR BLOGS",
       "deallocatedTime": null,
       "deallocatedBy": null,
-      "deallocatedReason": null,
-      "activitySummary": "",
-      "scheduleDescription": ""
+      "deallocatedReason": null
     },
     {
       "id": 19,
       "prisonerNumber": "A5193DY",
+      "activitySummary": "Maths level 1",
+      "scheduleDescription": "Entry level Maths 1",
       "incentiveLevel": "BAS",
       "payBand": "A",
       "startDate": "10/10/2022",
@@ -154,9 +156,7 @@
       "allocatedBy": "MR BLOGS",
       "deallocatedTime": null,
       "deallocatedBy": null,
-      "deallocatedReason": null,
-      "activitySummary": "",
-      "scheduleDescription": ""
+      "deallocatedReason": null
     }
   ],
   "description": "Entry level Maths 1",
@@ -169,5 +169,19 @@
     "description": "Education - R1"
   },
   "capacity": 10,
-  "daysOfWeek": ["Mon", "Wed", "Thurs", "Sat"]
+  "daysOfWeek": [
+    "Mon"
+  ],
+  "activity": {
+    "id": 1,
+    "prisonCode": "MDI",
+    "attendanceRequired": true,
+    "summary": "Maths level 1",
+    "description": "A basic maths course suitable for introduction to the subject",
+    "category": {
+      "id": 1,
+      "code": "EDU",
+      "description": "Education"
+    }
+  }
 }

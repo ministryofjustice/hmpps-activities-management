@@ -1,0 +1,44 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - Cancel allocation" %}
+{% set pageId = 'cancel-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    classes: "govuk-radios--inline",
+                    name: "choice",
+                    fieldset: {
+                        legend: {
+                            text: "Are you sure you want to cancel the allocation?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('choice'),
+                    items: [
+                        {
+                            value: "yes",
+                            text: "Yes"
+                        },
+                        {
+                            value: "no",
+                            text: "No"
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Confirm"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

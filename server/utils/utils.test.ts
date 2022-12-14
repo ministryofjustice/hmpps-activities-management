@@ -13,6 +13,7 @@ import {
   initialiseName,
   toDate,
   toDateString,
+  toMoney,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
@@ -167,6 +168,14 @@ describe('utils', () => {
         notAttended: 1,
         notRecorded: 1,
       })
+    })
+  })
+
+  describe('toMoney', () => {
+    it('should convert pence to pounds at 2 decimal places', () => {
+      expect(toMoney(150)).toEqual('£1.50')
+      expect(toMoney(15000)).toEqual('£150.00')
+      expect(toMoney(15.53)).toEqual('£0.16')
     })
   })
 })

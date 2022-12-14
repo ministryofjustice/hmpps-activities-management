@@ -10,7 +10,7 @@
             </h2>
             <ul class="govuk-tabs__list">
                 {% for tab in tabs %}
-                    {% set isSelected = ' govuk-tabs__list-item--selected' if (currentUrlPath.split('?')[0] === tab.path + "/") %}
+                    {% set isSelected = ' govuk-tabs__list-item--selected' if (currentUrlPath.split('?')[0] === tab.path) %}
                     <li class="{{'govuk-tabs__list-item' + isSelected }}">
                         <a class="govuk-tabs__tab" href="{{ tab.path }}" data-test="{{'tabs-' + tab.testId }}">
                             {{ tab.title }}
@@ -30,4 +30,3 @@
         </div>
     </div>
 {% endblock %}
-

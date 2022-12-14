@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import nunjucks, { Environment } from 'nunjucks'
-import express from 'express'
+import express, { Router } from 'express'
 import path from 'path'
 import { addMonths, addWeeks, subMonths, subWeeks } from 'date-fns'
 import {
@@ -14,6 +14,7 @@ import {
   initialiseName,
   setSelected,
   startsWithAny,
+  toMoney,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -26,16 +27,23 @@ import { Services } from '../services'
 
 const production = process.env.NODE_ENV === 'production'
 
-export default function nunjucksSetup(app: express.Express, { ukBankHolidayService }: Services): void {
+export default function nunjucksSetup(app: express.Express, { ukBankHolidayService }: Services): Router {
+  const router = express.Router()
+
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
   app.locals.applicationName = 'Activities Management'
   app.locals.hmppsAuthUrl = config.apis.hmppsAuth.url
 
-  app.use(async (req, res, next) => {
-    app.locals.ukBankHolidays = await ukBankHolidayService.getUkBankHolidays()
-    return next()
+  router.use(async (req, res, next) => {
+    res.locals.ukBankHolidays = await ukBankHolidayService.getUkBankHolidays()
+    next()
+  })
+
+  router.use((req, res, next) => {
+    res.locals.session = req.session
+    next()
   })
 
   // Cachebusting version string
@@ -44,13 +52,15 @@ export default function nunjucksSetup(app: express.Express, { ukBankHolidayServi
     app.locals.version = Date.now().toString()
   } else {
     // Version changes every request
-    app.use((req, res, next) => {
+    router.use((req, res, next) => {
       res.locals.version = Date.now().toString()
       return next()
     })
   }
 
   registerNunjucks(app)
+
+  return router
 }
 
 export function registerNunjucks(app?: express.Express): Environment {
@@ -86,6 +96,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('existsInStringArray', existsInStringArray)
   njkEnv.addFilter('getTimeSlotFromTime', getTimeSlotFromTime)
   njkEnv.addFilter('startsWithAny', startsWithAny)
+  njkEnv.addFilter('toMoney', toMoney)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

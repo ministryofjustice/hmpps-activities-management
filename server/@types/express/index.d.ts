@@ -2,6 +2,7 @@ import { HmppsAuthUser } from '../hmppsAuth'
 import { PrisonApiUserDetail } from '../prisonApiImport/types'
 import { CaseLoadExtended } from '../dps'
 import { RoleDetail } from '../nomisUserApiImport/types'
+import { AllocateToActivityJourney } from '../../routes/allocate-to-activity/journey'
 
 export default {}
 
@@ -13,6 +14,7 @@ declare module 'express-session' {
     user: ServiceUser
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     data: any
+    allocateJourney: AllocateToActivityJourney
   }
 }
 

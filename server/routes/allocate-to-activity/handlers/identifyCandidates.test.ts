@@ -1,29 +1,29 @@
 import { getMockReq, getMockRes } from '@jest-mock/express'
 import { when } from 'jest-when'
-import PrisonApiClient from '../../../../../data/prisonApiClient'
-import PrisonerSearchApiClient from '../../../../../data/prisonerSearchApiClient'
-import PrisonRegisterApiClient from '../../../../../data/prisonRegisterApiClient'
-import WhereaboutsApiClient from '../../../../../data/whereaboutsApiClient'
-import ActivitiesApiClient from '../../../../../data/activitiesApiClient'
-import PrisonService from '../../../../../services/prisonService'
-import CapacitiesService from '../../../../../services/capacitiesService'
-import ActivitiesService from '../../../../../services/activitiesService'
-import IdentifyCandidatesRouteHandler from './IdentifyCandidatesRouteHandler'
-import inmateDetails1 from '../../../../../middleware/fixtures/inmate_details_1.json'
-import activitySchedule1 from '../../../../../services/fixtures/activity_schedule_1.json'
-import allocationsSummary1 from '../../../../../middleware/fixtures/allocations_summary_1.json'
-import atLeast from '../../../../../../jest.setup'
+import PrisonApiClient from '../../../data/prisonApiClient'
+import PrisonerSearchApiClient from '../../../data/prisonerSearchApiClient'
+import PrisonRegisterApiClient from '../../../data/prisonRegisterApiClient'
+import WhereaboutsApiClient from '../../../data/whereaboutsApiClient'
+import ActivitiesApiClient from '../../../data/activitiesApiClient'
+import PrisonService from '../../../services/prisonService'
+import CapacitiesService from '../../../services/capacitiesService'
+import ActivitiesService from '../../../services/activitiesService'
+import inmateDetails1 from '../../../middleware/fixtures/inmate_details_1.json'
+import activitySchedule1 from '../../../services/fixtures/activity_schedule_1.json'
+import allocationsSummary1 from '../../../middleware/fixtures/allocations_summary_1.json'
+import atLeast from '../../../../jest.setup'
+import IdentifyCandidatesRoutes from './identifyCandidates'
 
-jest.mock('../../../../../services/prisonService')
-jest.mock('../../../../../services/capacitiesService')
-jest.mock('../../../../../services/activitiesService')
-jest.mock('../../../../../data/prisonApiClient')
-jest.mock('../../../../../data/prisonerSearchApiClient')
-jest.mock('../../../../../data/prisonRegisterApiClient')
-jest.mock('../../../../../data/whereaboutsApiClient')
-jest.mock('../../../../../data/activitiesApiClient')
+jest.mock('../../../services/prisonService')
+jest.mock('../../../services/capacitiesService')
+jest.mock('../../../services/activitiesService')
+jest.mock('../../../data/prisonApiClient')
+jest.mock('../../../data/prisonerSearchApiClient')
+jest.mock('../../../data/prisonRegisterApiClient')
+jest.mock('../../../data/whereaboutsApiClient')
+jest.mock('../../../data/activitiesApiClient')
 
-describe('identifyCandidatesRouteHandler', () => {
+describe('Route Handlers - Identify Candidates', () => {
   const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
   const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
   const prisonRegisterApiClient = new PrisonRegisterApiClient() as jest.Mocked<PrisonRegisterApiClient>
@@ -39,10 +39,10 @@ describe('identifyCandidatesRouteHandler', () => {
   const capacitiesService = new CapacitiesService(activitiesApiClient)
   const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
 
-  let controller: IdentifyCandidatesRouteHandler
+  let controller: IdentifyCandidatesRoutes
 
   beforeEach(() => {
-    controller = new IdentifyCandidatesRouteHandler(prisonService, capacitiesService, activitiesService)
+    controller = new IdentifyCandidatesRoutes(prisonService, capacitiesService, activitiesService)
     jest.clearAllMocks()
   })
 
@@ -72,30 +72,30 @@ describe('identifyCandidatesRouteHandler', () => {
 
       await controller.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/candidates/identify-candidates/index', {
+      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/identify-candidates', {
         pageHeading: 'Identify candidates for Entry level Maths 1',
         currentUrlPath: '',
         tabs: [
           {
             title: 'People allocated now',
-            path: '/activities/allocate/12/candidates/people-allocated-now',
+            path: '/allocate/12/people-allocated-now',
             testId: 'people-allocated-now',
           },
           {
             title: 'Identify candidates',
-            path: '/activities/allocate/12/candidates/identify-candidates',
+            path: '/allocate/12/identify-candidates',
             testId: 'identify-candidates',
             titleDecorator: '5 vacancies',
             titleDecoratorClass: 'govuk-tag govuk-tag--red',
           },
           {
             title: 'Activity risk requirements',
-            path: '/activities/allocate/12/candidates/activity-risk-requirements',
+            path: '/allocate/12/activity-risk-requirements',
             testId: 'activity-risk-requirements',
           },
           {
             title: 'Entry level Maths 1 schedule',
-            path: '/activities/allocate/12/candidates/schedule',
+            path: '/allocate/12/schedule',
             testId: 'schedule',
           },
         ],
@@ -151,7 +151,7 @@ describe('identifyCandidatesRouteHandler', () => {
         },
       })
       await controller.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('/activities/allocate/12/candidates/identify-candidates')
+      expect(res.redirect).toHaveBeenCalledWith('/allocate/12/identify-candidates')
       expect(req.session.data.activityCandidateListCriteria.sort.field).toEqual('prisonNumber')
       expect(req.session.data.activityCandidateListCriteria.sort.direction).toEqual('desc')
     })
@@ -174,7 +174,7 @@ describe('identifyCandidatesRouteHandler', () => {
         },
       })
       await controller.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('/activities/allocate/12/candidates/identify-candidates')
+      expect(res.redirect).toHaveBeenCalledWith('/allocate/12/identify-candidates')
       expect(req.session.data.activityCandidateListCriteria.sort.field).toEqual('name')
       expect(req.session.data.activityCandidateListCriteria.sort.direction).toEqual('asc')
     })

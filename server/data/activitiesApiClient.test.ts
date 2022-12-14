@@ -28,6 +28,16 @@ describe('activitiesApiClient', () => {
     nock.cleanAll()
   })
 
+  describe('getActivity', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi.get('/activities/1').matchHeader('authorization', `Bearer token`).reply(200, response)
+      const output = await activitiesApiClient.getActivity(1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getActivityCategories', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
@@ -134,6 +144,22 @@ describe('activitiesApiClient', () => {
       const output = await activitiesApiClient.getScheduledActivity(1, user)
 
       expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('postAllocation', () => {
+    it('should post data to api', async () => {
+      fakeActivitiesApi
+        .post('/schedules/1/allocations', {
+          prisonerNumber: 'ABC123',
+          payBand: 'B',
+        })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(204)
+
+      await activitiesApiClient.postAllocation(1, 'ABC123', 'B', user)
+
       expect(nock.isDone()).toBe(true)
     })
   })

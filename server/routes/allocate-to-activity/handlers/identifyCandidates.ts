@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
-import { mapToTableRow } from './identifyCandidatesHelper'
-import PrisonService from '../../../../../services/prisonService'
-import CapacitiesService from '../../../../../services/capacitiesService'
-import ActivitiesService from '../../../../../services/activitiesService'
-import { comparePrisoners } from '../../../../../utils/utils'
+import PrisonService from '../../../services/prisonService'
+import CapacitiesService from '../../../services/capacitiesService'
+import ActivitiesService from '../../../services/activitiesService'
+import { comparePrisoners } from '../../../utils/utils'
+import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 
-export default class IdentifyCandidatesRouteHandler {
+export default class IdentifyCandidatesRoutes {
   constructor(
     private readonly prisonService: PrisonService,
     private readonly capacitiesService: CapacitiesService,
@@ -40,31 +40,31 @@ export default class IdentifyCandidatesRouteHandler {
       tabs: [
         {
           title: 'People allocated now',
-          path: `/activities/allocate/${scheduleId}/candidates/people-allocated-now`,
+          path: `/allocate/${scheduleId}/people-allocated-now`,
           testId: 'people-allocated-now',
         },
         {
           title: 'Identify candidates',
-          path: `/activities/allocate/${scheduleId}/candidates/identify-candidates`,
+          path: `/allocate/${scheduleId}/identify-candidates`,
           testId: 'identify-candidates',
           titleDecorator: `${allocationsSummary.vacancies} vacancies`,
           titleDecoratorClass: 'govuk-tag govuk-tag--red',
         },
         {
           title: 'Activity risk requirements',
-          path: `/activities/allocate/${scheduleId}/candidates/activity-risk-requirements`,
+          path: `/allocate/${scheduleId}/activity-risk-requirements`,
           testId: 'activity-risk-requirements',
         },
         {
           title: `${schedule.description} schedule`,
-          path: `/activities/allocate/${scheduleId}/candidates/schedule`,
+          path: `/allocate/${scheduleId}/schedule`,
           testId: 'schedule',
         },
       ],
-      rowData: offenderListPageSorted.content.map(mapToTableRow),
+      rowData: offenderListPageSorted.content.map(this.mapToTableRow),
       criteria: activityCandidateListCriteria,
     }
-    res.render('pages/allocate-to-activity/candidates/identify-candidates/index', viewContext)
+    res.render('pages/allocate-to-activity/identify-candidates', viewContext)
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -86,6 +86,16 @@ export default class IdentifyCandidatesRouteHandler {
         },
       },
     }
-    return res.redirect(`/activities/allocate/${scheduleId}/candidates/identify-candidates`)
+    return res.redirect(`/allocate/${scheduleId}/identify-candidates`)
   }
+
+  private mapToTableRow = (prisoner: Prisoner) => ({
+    name: `${prisoner.lastName.charAt(0) + prisoner.lastName.substring(1).toLowerCase()}, ${
+      prisoner.firstName.charAt(0) + prisoner.firstName.substring(1).toLowerCase()
+    }`,
+    prisonNumber: prisoner.prisonerNumber,
+    location: prisoner.cellLocation,
+    incentiveLevel: prisoner.currentIncentive.level.description,
+    alerts: prisoner.alerts.filter(a => a.active && !a.expired).map(a => a.alertCode),
+  })
 }
