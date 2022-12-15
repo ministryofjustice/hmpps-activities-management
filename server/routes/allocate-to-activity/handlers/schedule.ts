@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import CapacitiesService from '../../../../../services/capacitiesService'
-import ActivitiesService from '../../../../../services/activitiesService'
+import CapacitiesService from '../../../services/capacitiesService'
+import ActivitiesService from '../../../services/activitiesService'
 
-export default class ScheduleRouteHandler {
+export default class ScheduleRoutes {
   constructor(
     private readonly capacitiesService: CapacitiesService,
     private readonly activitiesService: ActivitiesService,
@@ -23,30 +23,30 @@ export default class ScheduleRouteHandler {
       tabs: [
         {
           title: 'People allocated now',
-          path: `/activities/allocate/${scheduleId}/candidates/people-allocated-now`,
+          path: `/allocate/${scheduleId}/people-allocated-now`,
           testId: 'people-allocated-now',
         },
         {
           title: 'Identify candidates',
-          path: `/activities/allocate/${scheduleId}/candidates/identify-candidates`,
+          path: `/allocate/${scheduleId}/identify-candidates`,
           testId: 'identify-candidates',
           titleDecorator: `${allocationsSummary.vacancies} vacancies`,
           titleDecoratorClass: 'govuk-tag govuk-tag--red',
         },
         {
           title: 'Activity risk requirements',
-          path: `/activities/allocate/${scheduleId}/candidates/activity-risk-requirements`,
+          path: `/allocate/${scheduleId}/activity-risk-requirements`,
           testId: 'activity-risk-requirements',
         },
         {
           title: `${schedule.description} schedule`,
-          path: `/activities/allocate/${scheduleId}/candidates/schedule`,
+          path: `/allocate/${scheduleId}/schedule`,
           testId: 'schedule',
         },
       ],
       scheduleDescription: schedule.description,
       schedule,
     }
-    res.render('pages/allocate-to-activity/candidates/schedule/index', viewContext)
+    res.render('pages/allocate-to-activity/schedule', viewContext)
   }
 }

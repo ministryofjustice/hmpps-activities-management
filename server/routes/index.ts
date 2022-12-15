@@ -18,7 +18,7 @@ export default function routes(services: Services): Router {
 
   router.use('/', homeRoutes())
   router.use('/change-location', changeLocationRoutes(services))
-  router.use('/activities/allocate', activitiesRoutes(services))
+  router.use('/allocate', activitiesRoutes(services))
   router.use('/attendance', attendanceRoutes(services))
   router.use('/unlock-list', unlockListRoutes(services))
   // Add more beta build routes here

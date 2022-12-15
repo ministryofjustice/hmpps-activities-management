@@ -15,6 +15,7 @@ import {
   ActivitySchedule,
   Allocation,
   PrisonerAllocations,
+  Activity,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -32,6 +33,10 @@ export default class ActivitiesService {
     private readonly activitiesApiClient: ActivitiesApiClient,
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
   ) {}
+
+  getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
+    return this.activitiesApiClient.getActivity(activityId, user)
+  }
 
   async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
     return this.activitiesApiClient.getActivityCategories(user)
@@ -62,6 +67,10 @@ export default class ActivitiesService {
 
   getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
     return this.activitiesApiClient.getScheduledActivity(id, user)
+  }
+
+  allocateToSchedule(scheduleId: number, prisonerNumber: string, payBand: string, user: ServiceUser): Promise<void> {
+    return this.activitiesApiClient.postAllocation(scheduleId, prisonerNumber, payBand, user)
   }
 
   getScheduledEvents(

@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
-import PrisonService from '../../../../../services/prisonService'
-import ActivityService from '../../../../../services/activitiesService'
-import CapacitiesService from '../../../../../services/capacitiesService'
-import { InmateBasicDetails } from '../../../../../@types/prisonApiImport/types'
-import { PrisonerAllocations } from '../../../../../@types/activitiesAPI/types'
+import PrisonService from '../../../services/prisonService'
+import ActivityService from '../../../services/activitiesService'
+import CapacitiesService from '../../../services/capacitiesService'
+import { InmateBasicDetails } from '../../../@types/prisonApiImport/types'
+import { PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 
-export default class PeopleAllocatedNowRouteHandler {
+export default class PeopleAllocatedNowRoutes {
   constructor(
     private readonly prisonService: PrisonService,
     private readonly capacitiesService: CapacitiesService,
@@ -33,30 +33,30 @@ export default class PeopleAllocatedNowRouteHandler {
       tabs: [
         {
           title: 'People allocated now',
-          path: `/activities/allocate/${scheduleId}/candidates/people-allocated-now`,
+          path: `/allocate/${scheduleId}/people-allocated-now`,
           testId: 'people-allocated-now',
         },
         {
           title: 'Identify candidates',
-          path: `/activities/allocate/${scheduleId}/candidates/identify-candidates`,
+          path: `/allocate/${scheduleId}/identify-candidates`,
           testId: 'identify-candidates',
           titleDecorator: `${allocationsSummary.vacancies} vacancies`,
           titleDecoratorClass: 'govuk-tag govuk-tag--red',
         },
         {
           title: 'Activity risk requirements',
-          path: `/activities/allocate/${scheduleId}/candidates/activity-risk-requirements`,
+          path: `/allocate/${scheduleId}/activity-risk-requirements`,
           testId: 'activity-risk-requirements',
         },
         {
           title: `${schedule.description} schedule`,
-          path: `/activities/allocate/${scheduleId}/candidates/schedule`,
+          path: `/allocate/${scheduleId}/schedule`,
           testId: 'schedule',
         },
       ],
       rowData,
     }
-    res.render('pages/allocate-to-activity/candidates/people-allocated-now/index', viewContext)
+    res.render('pages/allocate-to-activity/people-allocated-now', viewContext)
   }
 
   private toRowData(prisoner: InmateBasicDetails, allocations: PrisonerAllocations[]) {
