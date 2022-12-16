@@ -16,6 +16,8 @@ import {
   LocationGroup,
   LocationPrefix,
   Allocation,
+  PrisonerAllocations,
+  Activity,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -23,6 +25,13 @@ import TimeSlot from '../enum/timeSlot'
 export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   constructor() {
     super('Activities Management API', config.apis.activitiesApi as ApiConfig)
+  }
+
+  getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
+    return this.get({
+      path: `/activities/${activityId}`,
+      authToken: user.token,
+    })
   }
 
   async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
@@ -89,6 +98,14 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/scheduled-instances/${id}`,
       authToken: user.token,
+    })
+  }
+
+  postAllocation(scheduleId: number, prisonerNumber: string, payBand: string, user: ServiceUser): Promise<void> {
+    return this.post({
+      path: `/schedules/${scheduleId}/allocations`,
+      authToken: user.token,
+      data: { prisonerNumber, payBand },
     })
   }
 
@@ -204,6 +221,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getAllocations(scheduleId: number, user: ServiceUser): Promise<Allocation[]> {
     return this.get({
       path: `/schedules/${scheduleId}/allocations`,
+      authToken: user.token,
+    })
+  }
+
+  async getPrisonerAllocations(
+    prisonCode: string,
+    prisonerNumbers: string[],
+    user: ServiceUser,
+  ): Promise<PrisonerAllocations[]> {
+    return this.post({
+      path: `/prisons/${prisonCode}/prisoner-allocations`,
+      data: prisonerNumbers,
       authToken: user.token,
     })
   }

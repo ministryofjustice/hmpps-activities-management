@@ -1,0 +1,48 @@
+{% extends "tabsLayout.njk" %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% set pageTitle = applicationName + " - Manage activities and schedules" %}
+{% set mainClasses = "app-container govuk-body" %}
+{% set pageId = 'schedule-page' %}
+{% set backLinkHref = "/" %}
+
+{% block tabPanel %}
+
+    {% set rows = [] %}
+
+    {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+        {% set dayMatchesSchedule = day | startsWithAny(schedule.daysOfWeek) %}
+        {% set columns = [
+            {
+                text: day
+            }
+        ] %}
+
+        {% for slot in ['AM', 'PM', 'ED'] %}
+            {% set slotMatches = dayMatchesSchedule and schedule.startTime | getTimeSlotFromTime == slot %}
+            {% set columns = (columns.push(
+                {
+                    html: govukTag({
+                        text: "Yes" if slotMatches else "No",
+                        classes: "govuk-tag--grey" if not slotMatches
+                    })
+                }
+            ), columns) %}
+        {% endfor %}
+
+        {% set rows = (rows.push(columns), rows) %}
+    {% endfor %}
+
+    <h1 class="govuk-heading-l">{{ scheduleDescription }} schedule</h1>
+
+    <div class="page-content">
+        <p>Check the schedule is compatible with the candidate's current allocations if they have any.</p>
+        {{ govukTable({
+            caption: "Schedule",
+            captionClasses: "govuk-visually-hidden",
+            head: [ { text: "Days" }, { text: "AM" }, { text: "PM" }, { text: "ED" } ],
+            rows: rows
+        }) }}
+    </div>
+{% endblock %}

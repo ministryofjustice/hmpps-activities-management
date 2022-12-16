@@ -5,7 +5,7 @@ import config from '../config'
 import ActivitiesApiClient from './activitiesApiClient'
 import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
-import { Allocation, LocationGroup } from '../@types/activitiesAPI/types'
+import { Allocation, LocationGroup, PrisonerAllocations } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 
 const user = { token: 'token' } as ServiceUser
@@ -26,6 +26,16 @@ describe('activitiesApiClient', () => {
   afterEach(() => {
     jest.resetAllMocks()
     nock.cleanAll()
+  })
+
+  describe('getActivity', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi.get('/activities/1').matchHeader('authorization', `Bearer token`).reply(200, response)
+      const output = await activitiesApiClient.getActivity(1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
   })
 
   describe('getActivityCategories', () => {
@@ -138,6 +148,22 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('postAllocation', () => {
+    it('should post data to api', async () => {
+      fakeActivitiesApi
+        .post('/schedules/1/allocations', {
+          prisonerNumber: 'ABC123',
+          payBand: 'B',
+        })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(204)
+
+      await activitiesApiClient.postAllocation(1, 'ABC123', 'B', user)
+
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('searchActivityLocations', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
@@ -232,6 +258,32 @@ describe('activitiesApiClient', () => {
         .reply(200, response)
 
       const output = await activitiesApiClient.getAllocations(1, user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getPrisonerAllocations', () => {
+    it('should return data from api', async () => {
+      const response = [
+        {
+          prisonerNumber: '1234567',
+          allocations: [
+            {
+              id: 1,
+              prisonerNumber: '1234567',
+            },
+          ],
+        },
+      ] as PrisonerAllocations[]
+
+      fakeActivitiesApi
+        .post('/prisons/MDI/prisoner-allocations')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getPrisonerAllocations('MDI', ['1234567'], user)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

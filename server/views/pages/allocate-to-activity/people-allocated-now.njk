@@ -16,31 +16,37 @@
         <div class="govuk-grid-column-full">
             {% set rows = [] %}
 
-            {% for allocation in rowData %}
+            {% for row in rowData %}
+
+                {% set allocationsHtml = '' %}
+                {% for allocation in row.allocations %}
+                    {% set allocationsHtml = allocationsHtml + '<span class="govuk-!-display-block">' + allocation + '</span>' %}
+                {% endfor %}
+
                 {% set rows = (rows.push([
                     {
                         attributes: {
                         id: 'name-' + loop.index
                     },
-                        text: allocation.name
+                        text: row.name
                     },
                     {
                         attributes: {
                         id: 'prison-number' + loop.index
                     },
-                        text: allocation.prisonNumber
+                        text: row.prisonNumber
                     },
                     {
                         attributes: {
                         id: 'location-' + loop.index
                     },
-                        text: allocation.location
+                        html: row.location
                     },
                     {
                         attributes: {
                         id: 'allocation-' + loop.index
                     },
-                        text: allocation.description
+                        html: allocationsHtml
                     }
                 ]), rows) %}
             {% endfor %}

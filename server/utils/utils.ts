@@ -47,6 +47,19 @@ export const getCurrentPeriod = (hour: number): string => {
   return 'ED'
 }
 
+export const getTimeSlotFromTime = (time: string): string => {
+  const hour = +time.split(':')[0]
+  const afternoonSplit = 12
+  const eveningSplit = 17
+  if (hour < afternoonSplit) return 'AM'
+  if (hour < eveningSplit) return 'PM'
+  return 'ED'
+}
+
+export const startsWithAny = (string: string, list: string[]): boolean => {
+  return list.find(s => string.startsWith(s)) !== undefined
+}
+
 // Assumes date is iso format yyyy-MM-dd
 // Note we use local date times for comparison here - fine as long as both are
 export const isAfterToday = (date: string): boolean => {
@@ -178,3 +191,5 @@ export const getAttendanceSummary = (attendance: Attendance[]) => {
 
   return { allocated, attended, notAttended, notRecorded }
 }
+
+export const toMoney = (x: number): string => `£${(x / 100).toFixed(2)}`

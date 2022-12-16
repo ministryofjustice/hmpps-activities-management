@@ -26,7 +26,9 @@
         "allocatedBy": "MR BLOGS",
         "deallocatedTime": null,
         "deallocatedBy": null,
-        "deallocatedReason": null
+        "deallocatedReason": null,
+        "activitySummary": "",
+        "scheduleDescription": ""
       }
     ],
     "suspensions": [],
@@ -39,6 +41,18 @@
       "description": "Education - R1"
     },
     "capacity": 10,
-    "daysOfWeek": ["Mon", "Tue", "Wed"]
+    "daysOfWeek": ["Mon", "Tue", "Wed"],
+    "activity": {
+      "id": 1,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "summary": "Maths level 1",
+      "description": "A basic maths course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDU",
+        "description": "Education"
+      }
+    }
   }
 ]

@@ -26,12 +26,12 @@ export default function createApp(services: Services): express.Application {
   app.set('json spaces', 2)
   app.set('trust proxy', true)
   app.set('port', process.env.PORT || 3000)
-  nunjucksSetup(app, services)
 
   app.use(metricsMiddleware)
   app.use(setUpHealthChecks())
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
+  app.use(nunjucksSetup(app, services))
   app.use(flash())
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
