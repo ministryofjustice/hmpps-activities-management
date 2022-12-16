@@ -14,6 +14,7 @@ import {
   RolloutPrison,
   ScheduledActivity,
   LocationGroup,
+  LocationPrefix,
   Allocation,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
@@ -98,10 +99,28 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     endDate: string,
     user: ServiceUser,
   ): Promise<PrisonerScheduledEvents> {
+    const query = prisonerNumber ? { prisonerNumber, startDate, endDate } : { startDate, endDate }
     return this.get(
       {
         path: `/prisons/${prisonCode}/scheduled-events`,
-        query: { prisonerNumber, startDate, endDate },
+        query,
+      },
+      user,
+    )
+  }
+
+  getScheduledEventsByPrisonerNumbers(
+    prisonCode: string,
+    date: string,
+    timeSlot: string,
+    prisonerNumbers: string[],
+    user: ServiceUser,
+  ): Promise<PrisonerScheduledEvents> {
+    return this.post(
+      {
+        path: `/prisons/${prisonCode}/scheduled-events`,
+        query: { date, timeSlot },
+        data: prisonerNumbers,
       },
       user,
     )
@@ -166,6 +185,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getPrisonLocationGroups(prisonCode: string, user: ServiceUser): Promise<LocationGroup[]> {
     return this.get({
       path: `/prisons/${prisonCode}/location-groups`,
+      authToken: user.token,
+    })
+  }
+
+  async getPrisonLocationPrefixByGroup(
+    prisonCode: string,
+    locationGroup: string,
+    user: ServiceUser,
+  ): Promise<LocationPrefix> {
+    return this.get({
+      path: `/prisons/${prisonCode}/location-prefix`,
+      query: { groupName: locationGroup },
       authToken: user.token,
     })
   }

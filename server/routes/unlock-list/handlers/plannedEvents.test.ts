@@ -1,12 +1,16 @@
 import { Request, Response } from 'express'
 import PlannedEventRoutes from './plannedEvents'
 import ActivitiesService from '../../../services/activitiesService'
+import UnlockListService from '../../../services/unlockListService'
 
 jest.mock('../../../services/activitiesService')
+jest.mock('../../../services/unlockListService')
+
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const unlockService = new UnlockListService(null, null, null) as jest.Mocked<UnlockListService>
 
 describe('Unlock list routes - planned events', () => {
-  const handler = new PlannedEventRoutes(activitiesService)
+  const handler = new PlannedEventRoutes(activitiesService, unlockService)
   let req: Request
   let res: Response
 

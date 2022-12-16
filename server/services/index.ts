@@ -4,6 +4,7 @@ import PrisonService from './prisonService'
 import ActivitiesService from './activitiesService'
 import BankHolidayService from './bankHolidayService'
 import CapacitiesService from './capacitiesService'
+import UnlockListService from './unlockListService'
 
 export default function services() {
   const {
@@ -27,6 +28,7 @@ export default function services() {
     activitiesService: new ActivitiesService(activitiesApiClient, prisonerSearchApiClient),
     capacitiesService: new CapacitiesService(activitiesApiClient),
     ukBankHolidayService: new BankHolidayService(),
+    unlockListService: new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient),
   }
 }
 

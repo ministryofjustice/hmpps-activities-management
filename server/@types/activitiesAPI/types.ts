@@ -13,4 +13,5 @@ export type PrisonerScheduledEvents = components['schemas']['PrisonerScheduledEv
 export type ScheduledEvent = components['schemas']['ScheduledEvent']
 export type ScheduledActivity = components['schemas']['ActivityScheduleInstance']
 export type LocationGroup = components['schemas']['LocationGroup']
+export type LocationPrefix = components['schemas']['LocationPrefixDto']
 export type Allocation = components['schemas']['Allocation']

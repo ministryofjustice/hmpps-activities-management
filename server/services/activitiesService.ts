@@ -5,15 +5,15 @@ import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
   ActivityLite,
+  ActivitySchedule,
   ActivityScheduleLite,
+  Allocation,
   AttendanceUpdateRequest,
   InternalLocation,
+  LocationGroup,
   RolloutPrison,
   ScheduledActivity,
   ScheduledEvent,
-  LocationGroup,
-  ActivitySchedule,
-  Allocation,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
