@@ -14,8 +14,8 @@ export default class CalendarSpikeRoutes {
       .then(events =>
         events.map(e => ({
           start: new Date(`${e.date} ${e.startTime}`),
-          end: new Date(`${e.date} ${e.endTime}`),
-          description: `${e.eventTypeDesc} ${e.details ? `- ${e.details}` : ''}`,
+          end: new Date(`${e.date} ${e.endTime ? e.endTime : e.startTime}`),
+          description: `${e.eventTypeDesc ? e.eventTypeDesc : 'Court hearing'} ${e.details ? `- ${e.details}` : ''}`,
           priority: e.priority,
         })),
       )
