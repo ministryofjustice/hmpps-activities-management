@@ -1,0 +1,154 @@
+{
+  "id": 5,
+  "instances": [
+    {
+      "id": 45,
+      "date": "11/10/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 46,
+      "date": "18/10/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 47,
+      "date": "25/10/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 48,
+      "date": "01/11/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 49,
+      "date": "08/11/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 50,
+      "date": "15/11/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 51,
+      "date": "22/11/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 52,
+      "date": "29/11/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 53,
+      "date": "06/12/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 54,
+      "date": "13/12/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 55,
+      "date": "20/12/2022",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    }
+  ],
+  "allocations": [
+    {
+      "id": 2,
+      "prisonerNumber": "G4793VF",
+      "activitySummary": "English level 1",
+      "scheduleDescription": "Entry level English 1",
+      "payBand": "A",
+      "startDate": "10/10/2022",
+      "endDate": null,
+      "allocatedTime": "10/10/2022 09:30",
+      "allocatedBy": "MR BLOGS",
+      "deallocatedTime": null,
+      "deallocatedBy": null,
+      "deallocatedReason": null
+    }
+  ],
+  "description": "Entry level English 1",
+  "suspensions": [],
+  "startTime": "10:00",
+  "endTime": "11:00",
+  "internalLocation": {
+    "id": 1,
+    "code": "EDU-ROOM-1",
+    "description": "Education - R1"
+  },
+  "capacity": 10,
+  "daysOfWeek": ["Tue"],
+  "activity": {
+    "id": 2,
+    "prisonCode": "MDI",
+    "attendanceRequired": true,
+    "summary": "English level 1",
+    "description": "A basic english course suitable for introduction to the subject",
+    "category": {
+      "id": 1,
+      "code": "EDU",
+      "description": "Education"
+    }
+  }
+}

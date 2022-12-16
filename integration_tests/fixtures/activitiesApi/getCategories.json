@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "code": "EDU",
+    "description": "Education"
+  },
+  {
+    "id": 2,
+    "code": "SERV",
+    "description": "Services"
+  },
+  {
+    "id": 3,
+    "code": "LEI",
+    "description": "Leisure and social"
+  },
+  {
+    "id": 4,
+    "code": "INDUC",
+    "description": "Induction"
+  }
+]

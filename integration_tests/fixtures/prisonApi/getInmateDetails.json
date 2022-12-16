@@ -1,0 +1,195 @@
+{
+  "offenderNo": "A7742DY",
+  "bookingId": 1201033,
+  "bookingNo": "38479A",
+  "offenderId": 2581933,
+  "rootOffenderId": 2581933,
+  "firstName": "JUSTIN",
+  "lastName": "BIEBER",
+  "dateOfBirth": "1994-03-01",
+  "age": 28,
+  "activeFlag": true,
+  "agencyId": "MDI",
+  "assignedLivingUnitId": 4012,
+  "alertsCodes": [
+    "X"
+  ],
+  "activeAlertCount": 4,
+  "inactiveAlertCount": 0,
+  "alerts": [
+    {
+      "alertId": 1,
+      "alertType": "X",
+      "alertTypeDescription": "Security",
+      "alertCode": "XILLENT",
+      "alertCodeDescription": "Illegal Entrant",
+      "comment": "Test alert \r\nsdf\r\nsdf\r\nsdf\r\nsdfsdfsdgsdfghsd fgh\r\nsfdgh\r\n sdfg \r\ndsfg\r\nsdfg\r\nsdfgsdfgdsfgsdfgljdnfghljfdnsghlkf g;lsfgjh ;fsgjhsgh\r\n sfghfgh",
+      "dateCreated": "2020-12-15",
+      "expired": false,
+      "active": true,
+      "addedByFirstName": "DNYANESH",
+      "addedByLastName": "SONWANE",
+      "expiredByFirstName": "DOMINIC",
+      "expiredByLastName": "BILLINGTON"
+    },
+    {
+      "alertId": 4,
+      "alertType": "X",
+      "alertTypeDescription": "Security",
+      "alertCode": "XGANG",
+      "alertCodeDescription": "Gang Member",
+      "comment": "test",
+      "dateCreated": "2020-12-15",
+      "expired": false,
+      "active": true,
+      "addedByFirstName": "DNYANESH",
+      "addedByLastName": "SONWANE"
+    },
+    {
+      "alertId": 3,
+      "alertType": "X",
+      "alertTypeDescription": "Security",
+      "alertCode": "XCO",
+      "alertCodeDescription": "Corruptor",
+      "comment": "test alert",
+      "dateCreated": "2020-12-15",
+      "expired": false,
+      "active": true,
+      "addedByFirstName": "DNYANESH",
+      "addedByLastName": "SONWANE"
+    },
+    {
+      "alertId": 2,
+      "alertType": "X",
+      "alertTypeDescription": "Security",
+      "alertCode": "XFO",
+      "alertCodeDescription": "Financial Order",
+      "comment": "Test alert",
+      "dateCreated": "2020-12-15",
+      "expired": false,
+      "active": true,
+      "addedByFirstName": "DNYANESH",
+      "addedByLastName": "SONWANE"
+    }
+  ],
+  "assignedLivingUnit": {
+    "agencyId": "MDI",
+    "locationId": 4012,
+    "description": "02-03-001",
+    "agencyName": "Moorland (HMP & YOI)"
+  },
+  "physicalAttributes": {
+    "sexCode": "M",
+    "gender": "Male"
+  },
+  "physicalCharacteristics": [],
+  "profileInformation": [
+    {
+      "type": "YOUTH",
+      "question": "Youth Offender?",
+      "resultValue": "No"
+    }
+  ],
+  "physicalMarks": [],
+  "assessments": [
+    {
+      "bookingId": 1201033,
+      "classificationCode": "C",
+      "classification": "Cat C",
+      "assessmentCode": "CATEGORY",
+      "assessmentDescription": "Categorisation",
+      "cellSharingAlertFlag": false,
+      "assessmentDate": "2022-12-01",
+      "nextReviewDate": "2023-06-01",
+      "assessmentStatus": "A",
+      "assessmentSeq": 2,
+      "assessmentComment": "But in long-ago days, like when I was in high school, the pen had a different role in my life."
+    }
+  ],
+  "category": "Cat C",
+  "categoryCode": "C",
+  "inOutStatus": "IN",
+  "identifiers": [],
+  "personalCareNeeds": [],
+  "sentenceDetail": {
+    "sentenceExpiryDate": "2020-10-28",
+    "postRecallReleaseDate": "2020-10-28",
+    "licenceExpiryDate": "2020-10-29",
+    "topupSupervisionExpiryDate": "2021-10-21",
+    "effectiveSentenceEndDate": "2020-10-28",
+    "bookingId": 1201033,
+    "sentenceStartDate": "2020-10-15",
+    "nonDtoReleaseDate": "2020-10-28",
+    "sentenceExpiryCalculatedDate": "2020-10-28",
+    "licenceExpiryCalculatedDate": "2020-10-28",
+    "licenceExpiryOverrideDate": "2020-10-29",
+    "topupSupervisionExpiryCalculatedDate": "2021-10-21",
+    "nonDtoReleaseDateType": "PRRD",
+    "releaseDate": "2020-10-28",
+    "topupSupervisionStartDate": "2020-10-30"
+  },
+  "offenceHistory": [
+    {
+      "bookingId": 1201033,
+      "offenceDescription": "Drive vehicle for more than 13 hours or more in a working day - domestic",
+      "offenceCode": "TR68132",
+      "statuteCode": "TR68",
+      "mostSerious": false,
+      "primaryResultCode": "1002",
+      "primaryResultDescription": "Imprisonment",
+      "primaryResultConviction": true,
+      "secondaryResultConviction": false,
+      "courtDate": "2020-09-14",
+      "caseId": 1563226
+    },
+    {
+      "bookingId": 1201033,
+      "offenceDescription": "Drive vehicle for more than 13 hours or more in a working day - domestic",
+      "offenceCode": "TR68132",
+      "statuteCode": "TR68",
+      "mostSerious": true,
+      "primaryResultCode": "1002",
+      "primaryResultDescription": "Imprisonment",
+      "primaryResultConviction": true,
+      "secondaryResultConviction": false,
+      "courtDate": "2020-10-15",
+      "caseId": 1563238
+    }
+  ],
+  "sentenceTerms": [
+    {
+      "bookingId": 1201033,
+      "sentenceSequence": 2,
+      "termSequence": 1,
+      "sentenceType": "14FTR_ORA",
+      "sentenceTypeDescription": "ORA 14 Day Fixed Term Recall",
+      "startDate": "2020-10-15",
+      "weeks": 2,
+      "lifeSentence": false,
+      "caseId": "1563238",
+      "sentenceTermCode": "IMP",
+      "lineSeq": 2,
+      "sentenceStartDate": "2020-10-15"
+    }
+  ],
+  "aliases": [],
+  "status": "ACTIVE IN",
+  "statusReason": "ADM-Z",
+  "lastMovementTypeCode": "ADM",
+  "lastMovementReasonCode": "Z",
+  "legalStatus": "RECALL",
+  "recall": true,
+  "imprisonmentStatus": "14FTR_ORA",
+  "imprisonmentStatusDescription": "ORA 14 Day Fixed Term Recall",
+  "privilegeSummary": {
+    "bookingId": 1201033,
+    "iepLevel": "Enhanced 3",
+    "iepDate": "2022-11-10",
+    "iepTime": "2022-11-10T11:46:31",
+    "daysSinceReview": 36,
+    "iepDetails": []
+  },
+  "receptionDate": "2020-09-14",
+  "locationDescription": "Moorland (HMP & YOI)",
+  "latestLocationId": "MDI"
+}

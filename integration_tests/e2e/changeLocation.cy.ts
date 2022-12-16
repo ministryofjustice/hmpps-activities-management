@@ -13,12 +13,12 @@ context('Change location', () => {
 
   it('should click through location change journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.headerActiveCaseload().should('contain.text', 'Leeds (HMP)')
+    indexPage.headerActiveCaseload().should('contain.text', 'Moorland (HMP & YOI)')
     indexPage.headerChangeLocation().click()
 
     const changeLocationPage = Page.verifyOnPage(ChangeLocationPage)
     changeLocationPage.locationOptions().should('deep.equal', ['Leeds (HMP)', 'Moorland (HMP & YOI)'])
-    changeLocationPage.selectedLocation().should('equal', 'Leeds (HMP)')
+    changeLocationPage.selectedLocation().should('equal', 'Moorland (HMP & YOI)')
     changeLocationPage.submit().click()
 
     Page.verifyOnPage(IndexPage)

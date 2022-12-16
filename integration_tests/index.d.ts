@@ -5,5 +5,16 @@ declare namespace Cypress {
      * @example cy.signIn({ failOnStatusCode: boolean })
      */
     signIn(options?: { failOnStatusCode: boolean }): Chainable<AUTWindow>
+
+    /**
+     * Custom command to stub an endpoint with wiremock.
+     * @example cy.stubEndpoint('GET', '/', { "response": "Hello, World!" }, 200)
+     */
+    stubEndpoint(
+      method: string,
+      urlPattern: string,
+      responseFixture?: JSON,
+      responseStatus?: number,
+    ): Chainable<AUTWindow>
   }
 }
