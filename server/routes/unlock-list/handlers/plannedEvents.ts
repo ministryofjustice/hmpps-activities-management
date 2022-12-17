@@ -14,18 +14,17 @@ export default class PlannedEventsRoutes {
     const { datePresetOption, date, slot, locations } = req.query
     const locationGroups: string[] = typeof locations === 'string' ? locations?.split(',') : []
 
-    const unlockList = await this.unlockListService.getUnlockListForLocationGroups(
+    const unlockListItems = await this.unlockListService.getUnlockListForLocationGroups(
       locationGroups,
       date.toString(),
       slot.toString(),
       user,
     )
 
-    logger.info(`datePresetOption ${datePresetOption} date ${date} slot ${slot}`)
-    logger.info(`${JSON.stringify(unlockList)}`)
+    logger.info(`${JSON.stringify(unlockListItems)}`)
 
     res.render('pages/unlock-list/planned-events', {
-      unlockList,
+      unlockListItems,
       plannedDatePresetOption: datePresetOption,
       plannedDate: date,
       plannedSlot: slot,

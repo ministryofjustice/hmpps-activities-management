@@ -1,5 +1,4 @@
 import nock from 'nock'
-
 import config from '../config'
 import TokenStore from './tokenStore'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
@@ -37,6 +36,38 @@ describe('prisonerSearchApiClient', () => {
         .reply(200, response)
 
       const output = await prisonerSearchApiClient.searchInmates(searchCriteria, user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('searchPrisonersByLocationPrefix', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      const prisonCode = 'MDI'
+      const locationPrefix = 'MDI-1-'
+
+      const expectedSearchParams = new URLSearchParams({
+        page: '0',
+        size: '1000',
+        cellLocationPrefix: locationPrefix,
+        sort: 'cellLocation',
+      })
+
+      fakePrisonerSearchApi
+        .get(`/prison/${prisonCode}/prisoners`)
+        .matchHeader('authorization', `Bearer accessToken`)
+        .query(expectedSearchParams)
+        .reply(200, response)
+
+      const output = await prisonerSearchApiClient.searchPrisonersByLocationPrefix(
+        prisonCode,
+        locationPrefix,
+        0,
+        1000,
+        user,
+      )
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

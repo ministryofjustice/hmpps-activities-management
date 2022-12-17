@@ -4,7 +4,6 @@ import AbstractHmppsRestClient from './abstractHmppsRestClient'
 import {
   CourtEvent,
   InmateDetail,
-  OffenderBooking,
   PrisonApiUserDetail,
   TransferEvent,
   CaseLoad,
@@ -187,18 +186,6 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     return this.post({
       path: `/api/bookings/offenders`,
       data: offenderNumbers,
-      authToken: user.token,
-    })
-  }
-
-  async getBookingsByCellLocationPrefix(locationPrefix: string, user: ServiceUser): Promise<OffenderBooking[]> {
-    return this.get({
-      path: `/api/locations/description/${locationPrefix}/inmates`,
-      headers: {
-        'Page-Limit': '250',
-        'Sort-Fields': 'assignedLivingUnitId',
-      },
-      query: { returnAlerts: 'true' },
       authToken: user.token,
     })
   }
