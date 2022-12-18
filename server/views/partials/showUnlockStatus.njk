@@ -1,0 +1,9 @@
+
+{% macro showUnlockStatus(status) %}
+    {#
+    <span class="govuk-tag govuk-tag--{{ 'green' if status == 'UNKNOWN' else 'red' }}>">
+       {{ status }}
+    </span>
+    #}
+{% endmacro %}
+

@@ -73,6 +73,7 @@ export type UnlockListItem = {
   bookingId: number
   firstName: string
   lastName: string
+  displayName: string
   locationGroup: string
   locationPrefix: string
   cellLocation: string

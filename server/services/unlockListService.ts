@@ -3,6 +3,8 @@ import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { UnlockListItem } from '../@types/activities'
 import { ServiceUser } from '../@types/express'
+import { ScheduledEvent } from '../@types/activitiesAPI/types'
+import { convertToTitleCase } from '../utils/utils'
 import logger from '../../logger'
 
 export default class UnlockListService {
@@ -30,7 +32,7 @@ export default class UnlockListService {
     // Check that the length of the locationGroups is the same as the locationPrefixes - missed any?
     logger.info(`Location groups ${locationGroups} Location prefixes ${locationPrefixes.toString()}`)
 
-    // Get the prisoner details whose cell locations match any of these location prefixes
+    // Get the prisoners whose cell locations match any of the location prefixes
     const prisonersByCellLocation = await Promise.all(
       locationPrefixes.map(locPrefix => {
         return this.prisonerSearchApiClient.searchPrisonersByLocationPrefix(
@@ -43,9 +45,9 @@ export default class UnlockListService {
       }),
     )
 
-    logger.info(`Prisoners : Length - number of return sets ${prisonersByCellLocation.length}`)
+    // TODO: Match the location groups and prefixes to the prisoner pages here (for filtering on the page)
 
-    // Build a list of prisoner details from the search results
+    // Build one list of all prisoners from the multiple lists of search results
     const prisoners = prisonersByCellLocation
       .map(page => {
         return page.content.map(prisoner => {
@@ -58,50 +60,53 @@ export default class UnlockListService {
             category: prisoner.category,
             incentiveLevel: prisoner.currentIncentive,
             alerts: prisoner.alerts,
+            events: null,
             status: 'UNKNOWN',
             prisonCode: prisoner.prisonId,
-          }
+          } as unknown as UnlockListItem
         })
       })
       .flat()
 
-    logger.info(`Prisoners in total = ${prisoners.length}`)
-
-    prisoners.map(p => logger.info(`ID : ${p.prisonerNumber} cell: ${p.cellLocation}`))
-
-    const prisonerNumbers = prisoners.map(p => p.prisonerNumber)
-
-    // Get the planned events for these prisoners (court, visits, appointments, adjudications)
+    // TODO: Get activities - similar shape within scheduled events
+    // Get the scheduled events from their master source for these prisoners (court, visits, appointments)
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       user.activeCaseLoadId,
       unlockDate,
       slot,
-      prisonerNumbers,
+      prisoners.map(p => p.prisonerNumber),
       user,
     )
 
-    // Get Transfers? ROTLs? Releases?
-    // Prison API: /api/movements/agency/{prisonCode}/temporary-absences - filtered to today
+    // TODO: Get transfers - similar shape as scheduled events
+    // TODO: Adjudication hearings (currently in appointments, check with Adjudications team for rolled-out prisons)
+    // TODO: Get ROTLs - Prison API: /api/movements/agency/{prisonCode}/temporary-absences - filtered to today?
 
-    logger.info(`Scheduled events ${JSON.stringify(scheduledEvents)}`)
+    // Match the prisoners with their events by prisonerNumber
+    const unlockListItems = prisoners.map(prisoner => {
+      const appointments = scheduledEvents?.appointments.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
+      const courtHearings = scheduledEvents?.courtHearings.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
+      const visits = scheduledEvents?.visits.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
+      const activities = scheduledEvents?.activities.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
+      const allEventsForPrisoner = [...appointments, ...courtHearings, ...visits, ...activities]
+      return {
+        ...prisoner,
+        displayName: convertToTitleCase(`${prisoner.lastName}, ${prisoner.firstName}`),
+        events: this.sortByPriority(allEventsForPrisoner),
+      } as UnlockListItem
+    })
 
-    // Match the lists on bookingId or prisonerNumber or cell-location
-    // Filter by time-slot
-    // Sort activities per prisoner by priority
-    // Build the UnlockList[] to return
-    //  UnlockListItem = {
-    //   prisonerNumber: string
-    //   bookingId: number
-    //   firstName: string
-    //   lastName: string
-    //   locationGroup: string
-    //   locationPrefix: string
-    //   cellLocation: string
-    //   alerts: Alert[]
-    //   events: ScheduledActivity[]
-    //   status: string
-    // }
+    logger.info(`Number of unlock list items ${unlockListItems?.length}`)
 
-    return []
+    return unlockListItems
+  }
+
+  // Sorts all events into their priority order for display
+  private sortByPriority = (data: ScheduledEvent[]) => {
+    return data.sort((p1, p2) => {
+      if (p1.priority > p2.priority) return 1
+      if (p1.priority < p2.priority) return -1
+      return 0
+    })
   }
 }

@@ -27,6 +27,7 @@ describe('Unlock list routes - planned events', () => {
     } as unknown as Response
 
     req = {} as unknown as Request
+
     jest.resetAllMocks()
   })
 
@@ -55,10 +56,8 @@ describe('Unlock list routes - planned events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/unlock-list/planned-events', {
         unlockListItems: expectedUnlockList,
-        plannedDatePresetOption: 'today',
         plannedDate: '2022-01-01',
         plannedSlot: 'am',
-        plannedLocations: ['Houseblock 1', 'Houseblock 2'],
       })
     })
   })

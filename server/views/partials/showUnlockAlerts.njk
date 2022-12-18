@@ -1,0 +1,15 @@
+{% macro showUnlockAlerts(alerts) %}
+    <div class="govuk-body">
+        {% set counter = 0 %}
+        {% for a in alerts %}
+            {# TODO: Only showing the first 4 alerts - temporary - until design issue sorted #}
+            {% if a.active and counter < 4 %}
+                <span class="govuk-tag govuk-tag--grey">
+                    {{ a.alertCode | upper }}<br/>
+                </span>
+              {% set counter = counter + 1 %}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endmacro %}
+
