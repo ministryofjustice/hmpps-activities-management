@@ -56,7 +56,7 @@ describe('Unlock list routes - planned events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/unlock-list/planned-events', {
         unlockListItems: expectedUnlockList,
-        plannedDate: '2022-01-01',
+        plannedDate: 'Saturday 1st January 2022',
         plannedSlot: 'am',
       })
     })

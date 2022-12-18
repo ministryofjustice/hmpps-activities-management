@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../services/activitiesService'
 import UnlockListService from '../../../services/unlockListService'
+import { toDate, formatDate } from '../../../utils/utils'
 
 export default class PlannedEventsRoutes {
   constructor(
@@ -12,6 +13,7 @@ export default class PlannedEventsRoutes {
     const { user } = res.locals
     const { date, slot, locations } = req.query
     const locationGroups: string[] = typeof locations === 'string' ? locations?.split(',') : []
+    const formattedDate = formatDate(toDate(date.toString()), 'cccc do LLLL y')
 
     const unlockListItems = await this.unlockListService.getUnlockListForLocationGroups(
       locationGroups,
@@ -22,7 +24,7 @@ export default class PlannedEventsRoutes {
 
     res.render('pages/unlock-list/planned-events', {
       unlockListItems,
-      plannedDate: date,
+      plannedDate: formattedDate,
       plannedSlot: slot,
     })
   }

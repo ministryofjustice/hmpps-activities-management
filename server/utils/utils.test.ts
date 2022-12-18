@@ -13,6 +13,7 @@ import {
   initialiseName,
   toDate,
   toDateString,
+  formatDate,
   toMoney,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
@@ -134,6 +135,12 @@ describe('utils', () => {
   describe('toDateString', () => {
     it('converts a date to a string', () => {
       expect(toDateString(new Date(2022, 10, 20))).toEqual('2022-11-20')
+    })
+  })
+
+  describe('formatDate', () => {
+    it('formats a date to a long date with day', () => {
+      expect(formatDate(new Date(2022, 0, 1), 'cccc do LLLL y')).toEqual('Saturday 1st January 2022')
     })
   })
 

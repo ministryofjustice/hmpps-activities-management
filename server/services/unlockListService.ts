@@ -29,8 +29,7 @@ export default class UnlockListService {
       )
     ).map(lp => lp.locationPrefix)
 
-    // Check that the length of the locationGroups is the same as the locationPrefixes - missed any?
-    logger.info(`Location groups ${locationGroups} Location prefixes ${locationPrefixes.toString()}`)
+    // TODO: Check that the length of the locationGroups is the same as the locationPrefixes - missed any?
 
     // Get the prisoners whose cell locations match any of the location prefixes
     const prisonersByCellLocation = await Promise.all(
