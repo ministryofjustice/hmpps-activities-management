@@ -10,7 +10,7 @@ context('Change location', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
-    cy.task('stubGetPrisonScheduledActivities', 'LEI')
+    cy.task('stubGetPrisonScheduledActivities', 'MDI')
     cy.task('stubGetScheduledActivityById')
     cy.task('stubGetInmateDetails')
     cy.signIn()
