@@ -49,25 +49,23 @@ export default class UnlockListService {
     // Build one list of all prisoners from the multiple lists of search results
     const prisoners = prisonersByCellLocation
       .map(page => {
-        return page.content.map(prisoner => {
+        return page?.content?.map(prisoner => {
           return {
             prisonerNumber: prisoner.prisonerNumber,
-            bookingId: prisoner.bookingId,
+            bookingId: prisoner?.bookingId,
             firstName: prisoner.firstName,
             lastName: prisoner.lastName,
-            cellLocation: prisoner.cellLocation,
-            category: prisoner.category,
-            incentiveLevel: prisoner.currentIncentive,
-            alerts: prisoner.alerts,
-            events: null,
-            status: 'UNKNOWN',
-            prisonCode: prisoner.prisonId,
+            cellLocation: prisoner?.cellLocation,
+            category: prisoner?.category,
+            incentiveLevel: prisoner?.currentIncentive,
+            alerts: prisoner?.alerts,
+            status: prisoner?.inOutStatus,
+            prisonCode: prisoner?.prisonId,
           } as unknown as UnlockListItem
         })
       })
       .flat()
 
-    // TODO: Get activities - similar shape within scheduled events
     // Get the scheduled events from their master source for these prisoners (court, visits, appointments)
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       user.activeCaseLoadId,
@@ -77,6 +75,7 @@ export default class UnlockListService {
       user,
     )
 
+    // TODO: Get activities - similar shape within scheduled events - in the API call for scheduled events
     // TODO: Get transfers - similar shape as scheduled events
     // TODO: Adjudication hearings (currently in appointments, check with Adjudications team for rolled-out prisons)
     // TODO: Get ROTLs - Prison API: /api/movements/agency/{prisonCode}/temporary-absences - filtered to today?
@@ -86,8 +85,7 @@ export default class UnlockListService {
       const appointments = scheduledEvents?.appointments.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
       const courtHearings = scheduledEvents?.courtHearings.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
       const visits = scheduledEvents?.visits.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
-      const activities = scheduledEvents?.activities.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
-      const allEventsForPrisoner = [...appointments, ...courtHearings, ...visits, ...activities]
+      const allEventsForPrisoner = [...appointments, ...courtHearings, ...visits]
       return {
         ...prisoner,
         displayName: convertToTitleCase(`${prisoner.lastName}, ${prisoner.firstName}`),
@@ -100,7 +98,6 @@ export default class UnlockListService {
     return unlockListItems
   }
 
-  // Sorts all events into their priority order for display
   private sortByPriority = (data: ScheduledEvent[]) => {
     return data.sort((p1, p2) => {
       if (p1.priority > p2.priority) return 1
