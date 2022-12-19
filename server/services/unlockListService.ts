@@ -23,9 +23,9 @@ export default class UnlockListService {
     // Convert the selected location groups to the location prefixes at this prison e.g. ["MDI-1-","MDI-2-"]
     const locationPrefixes = (
       await Promise.all(
-        locationGroups.map(lg => {
-          return this.activitiesApiClient.getPrisonLocationPrefixByGroup(user.activeCaseLoadId, lg, user)
-        }),
+        locationGroups.map(lg =>
+          this.activitiesApiClient.getPrisonLocationPrefixByGroup(user.activeCaseLoadId, lg, user),
+        ),
       )
     ).map(lp => lp.locationPrefix)
 
@@ -47,24 +47,22 @@ export default class UnlockListService {
     // TODO: Match the location groups and prefixes to the prisoner pages here (for filtering on the page)
 
     // Build one list of all prisoners from the multiple lists of search results
-    const prisoners = prisonersByCellLocation
-      .map(page => {
-        return page?.content?.map(prisoner => {
-          return {
-            prisonerNumber: prisoner.prisonerNumber,
-            bookingId: prisoner?.bookingId,
-            firstName: prisoner.firstName,
-            lastName: prisoner.lastName,
-            cellLocation: prisoner?.cellLocation,
-            category: prisoner?.category,
-            incentiveLevel: prisoner?.currentIncentive,
-            alerts: prisoner?.alerts,
-            status: prisoner?.inOutStatus,
-            prisonCode: prisoner?.prisonId,
-          } as unknown as UnlockListItem
-        })
+    const prisoners = prisonersByCellLocation.flatMap(page => {
+      return page?.content?.map(prisoner => {
+        return {
+          prisonerNumber: prisoner.prisonerNumber,
+          bookingId: prisoner?.bookingId,
+          firstName: prisoner.firstName,
+          lastName: prisoner.lastName,
+          cellLocation: prisoner?.cellLocation,
+          category: prisoner?.category,
+          incentiveLevel: prisoner?.currentIncentive,
+          alerts: prisoner?.alerts,
+          status: prisoner?.inOutStatus,
+          prisonCode: prisoner?.prisonId,
+        } as unknown as UnlockListItem
       })
-      .flat()
+    })
 
     // Get the scheduled events from their master source for these prisoners (court, visits, appointments)
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
