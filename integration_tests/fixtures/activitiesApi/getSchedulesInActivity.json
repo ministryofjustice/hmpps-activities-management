@@ -1,0 +1,102 @@
+[
+  {
+    "id": 5,
+    "description": "Entry level English 1",
+    "startTime": "10:00",
+    "endTime": "11:00",
+    "internalLocation": {
+      "id": 1,
+      "code": "EDU-ROOM-1",
+      "description": "Education - R1"
+    },
+    "capacity": 10,
+    "daysOfWeek": ["Tue"],
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "summary": "English level 1",
+      "description": "A basic english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDU",
+        "description": "Education"
+      }
+    }
+  },
+  {
+    "id": 6,
+    "description": "Entry level English 2",
+    "startTime": "14:00",
+    "endTime": "15:00",
+    "internalLocation": {
+      "id": 2,
+      "code": "EDU-ROOM-2",
+      "description": "Education - R2"
+    },
+    "capacity": 10,
+    "daysOfWeek": ["Tue"],
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "summary": "English level 1",
+      "description": "A basic english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDU",
+        "description": "Education"
+      }
+    }
+  },
+  {
+    "id": 7,
+    "description": "Entry level English 3",
+    "startTime": "10:00",
+    "endTime": "11:00",
+    "internalLocation": {
+      "id": 1,
+      "code": "EDU-ROOM-1",
+      "description": "Education - R1"
+    },
+    "capacity": 10,
+    "daysOfWeek": ["Thu"],
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "summary": "English level 1",
+      "description": "A basic english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDU",
+        "description": "Education"
+      }
+    }
+  },
+  {
+    "id": 8,
+    "description": "Entry level English 4",
+    "startTime": "14:00",
+    "endTime": "15:00",
+    "internalLocation": {
+      "id": 2,
+      "code": "EDU-ROOM-2",
+      "description": "Education - R2"
+    },
+    "capacity": 10,
+    "daysOfWeek": ["Thu"],
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "summary": "English level 1",
+      "description": "A basic english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDU",
+        "description": "Education"
+      }
+    }
+  }
+]

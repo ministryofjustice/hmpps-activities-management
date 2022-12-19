@@ -14,7 +14,7 @@ const stubUser = (firstName: string, lastName: string) =>
       jsonBody: {
         accountStatus: 'ACTIVE',
         active: true,
-        activeCaseLoadId: 'LEI',
+        activeCaseLoadId: 'MDI',
         expiredFlag: false,
         firstName,
         lastName,
@@ -35,8 +35,8 @@ const stubCaseload = () =>
       status: 200,
       headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       jsonBody: [
-        { caseLoadId: 'MDI', description: 'Moorland (HMP & YOI)', currentlyActive: false },
-        { caseLoadId: 'LEI', description: 'Leeds (HMP)', currentlyActive: true },
+        { caseLoadId: 'MDI', description: 'Moorland (HMP & YOI)', currentlyActive: true },
+        { caseLoadId: 'LEI', description: 'Leeds (HMP)', currentlyActive: false },
       ],
     },
   })

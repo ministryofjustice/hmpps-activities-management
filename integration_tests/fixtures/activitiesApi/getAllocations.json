@@ -1,0 +1,16 @@
+[
+  {
+    "id": 2,
+    "prisonerNumber": "G4793VF",
+    "activitySummary": "English level 1",
+    "scheduleDescription": "Entry level English 1",
+    "payBand": "A",
+    "startDate": "10/10/2022",
+    "endDate": null,
+    "allocatedTime": "10/10/2022 09:30",
+    "allocatedBy": "MR BLOGS",
+    "deallocatedTime": null,
+    "deallocatedBy": null,
+    "deallocatedReason": null
+  }
+]

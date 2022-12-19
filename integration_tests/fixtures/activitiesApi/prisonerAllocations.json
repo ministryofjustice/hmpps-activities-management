@@ -1,0 +1,35 @@
+[
+  {
+    "prisonerNumber": "G4793VF",
+    "allocations": [
+      {
+        "id": 1,
+        "prisonerNumber": "G4793VF",
+        "activitySummary": "Maths level 1",
+        "scheduleDescription": "Entry level Maths 1",
+        "payBand": "A",
+        "startDate": "10/10/2022",
+        "endDate": null,
+        "allocatedTime": "10/10/2022 09:30",
+        "allocatedBy": "MR BLOGS",
+        "deallocatedTime": null,
+        "deallocatedBy": null,
+        "deallocatedReason": null
+      },
+      {
+        "id": 2,
+        "prisonerNumber": "G4793VF",
+        "activitySummary": "English level 1",
+        "scheduleDescription": "Entry level English 1",
+        "payBand": "A",
+        "startDate": "10/10/2022",
+        "endDate": null,
+        "allocatedTime": "10/10/2022 09:30",
+        "allocatedBy": "MR BLOGS",
+        "deallocatedTime": null,
+        "deallocatedBy": null,
+        "deallocatedReason": null
+      }
+    ]
+  }
+]
