@@ -1,0 +1,7 @@
+{% macro showUnlockEvents(events) %}
+    <div class="govuk-body govuk-!-font-size-14">
+        {% for e in events %}
+           <span class="govuk-!-display-block">{{ e.eventType | title }} {{ e.location | title }} {{ e.startTime }} - {{ e.endTime }}</span>
+        {% endfor %}
+    </div>
+{% endmacro %}
