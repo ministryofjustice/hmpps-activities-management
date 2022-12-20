@@ -4,26 +4,18 @@ import PrisonService from '../../../../services/prisonService'
 import SelectActivityLocationRouteHandler from './SelectActivityLocationRouteHandler'
 import PrisonApiClient from '../../../../data/prisonApiClient'
 import PrisonerSearchApiClient from '../../../../data/prisonerSearchApiClient'
-import PrisonRegisterApiClient from '../../../../data/prisonRegisterApiClient'
 import WhereaboutsApiClient from '../../../../data/whereaboutsApiClient'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../data/prisonApiClient')
 jest.mock('../../../../data/prisonerSearchApiClient')
-jest.mock('../../../../data/prisonRegisterApiClient')
 jest.mock('../../../../data/whereaboutsApiClient')
 
 describe('selectActivityLocationRouteHandler', () => {
   const prisonApiClient = new PrisonApiClient()
   const prisonerSearchApiClient = new PrisonerSearchApiClient()
-  const prisonRegisterApiClient = new PrisonRegisterApiClient()
   const whereaboutsApiClient = new WhereaboutsApiClient()
-  const prisonService = new PrisonService(
-    prisonApiClient,
-    prisonerSearchApiClient,
-    prisonRegisterApiClient,
-    whereaboutsApiClient,
-  )
+  const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, whereaboutsApiClient)
   let controller: SelectActivityLocationRouteHandler
 
   beforeEach(() => {
