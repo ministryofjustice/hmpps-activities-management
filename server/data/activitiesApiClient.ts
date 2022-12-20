@@ -201,7 +201,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
 
   async getPrisonLocationGroups(prisonCode: string, user: ServiceUser): Promise<LocationGroup[]> {
     return this.get({
-      path: `/prisons/${prisonCode}/location-groups`,
+      path: `/locations/prison/${prisonCode}/location-groups`,
       authToken: user.token,
     })
   }
@@ -212,7 +212,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     user: ServiceUser,
   ): Promise<LocationPrefix> {
     return this.get({
-      path: `/prisons/${prisonCode}/location-prefix`,
+      path: `/locations/prison/${prisonCode}/location-prefix`,
       query: { groupName: locationGroup },
       authToken: user.token,
     })
