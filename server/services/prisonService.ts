@@ -29,12 +29,15 @@ import {
   CreateAttendanceDtoLenient,
   UpdateAttendanceDtoLenient,
 } from '../@types/whereaboutsApiImportCustom'
+import IncentivesApiClient from '../data/incentivesApiClient'
+import { IepLevel } from '../@types/incentivesApi/types'
 
 export default class PrisonService {
   constructor(
     private readonly prisonApiClient: PrisonApiClient,
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
     private readonly whereaboutsApiClient: WhereaboutsApiClient,
+    private readonly incentivesApiClient: IncentivesApiClient,
   ) {}
 
   async getInmate(nomisId: string, user: ServiceUser): Promise<InmateDetail> {
@@ -43,6 +46,10 @@ export default class PrisonService {
 
   async getInmates(prisonCode: string, user: ServiceUser, includeRestricted?: boolean): Promise<PagePrisoner> {
     return this.prisonerSearchApiClient.getInmates(prisonCode, 0, 1000, user, includeRestricted)
+  }
+
+  getIncentiveLevels(prisonId: string, user: ServiceUser): Promise<IepLevel[]> {
+    return this.incentivesApiClient.getIncentiveLevels(prisonId, user)
   }
 
   async searchInmates(prisonerSearchCriteria: PrisonerSearchCriteria, user: ServiceUser): Promise<Prisoner[]> {

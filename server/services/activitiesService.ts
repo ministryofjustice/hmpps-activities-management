@@ -16,6 +16,7 @@ import {
   ScheduledEvent,
   PrisonerAllocations,
   Activity,
+  ActivityCreateRequest,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -67,6 +68,10 @@ export default class ActivitiesService {
 
   getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
     return this.activitiesApiClient.getScheduledActivity(id, user)
+  }
+
+  createActivity(createBody: ActivityCreateRequest, user: ServiceUser): Promise<void> {
+    return this.activitiesApiClient.postActivityCreation(createBody, user)
   }
 
   allocateToSchedule(scheduleId: number, prisonerNumber: string, payBand: string, user: ServiceUser): Promise<void> {

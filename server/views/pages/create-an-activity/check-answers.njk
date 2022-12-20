@@ -1,0 +1,102 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Create an activity - Check answers" %}
+{% set pageId = 'check-answers-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-l">Check details for {{ session.createJourney.name }}</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <h2 class="govuk-heading-m">Activity details</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Category"
+                        },
+                        value: {
+                            text: session.createJourney.category.name
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "category?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change category"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Name"
+                        },
+                        value: {
+                            text: session.createJourney.name
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "name?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change name"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Risk level"
+                        },
+                        value: {
+                            text: session.createJourney.riskLevel | toTitleCase
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "risk-level?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change risk level"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Minimum incentive level"
+                        },
+                        value: {
+                            text: session.createJourney.minimumIncentive
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "minimum-incentive?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change minimum incentive level"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }) }}
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Create activity"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Create an activity - Minimum incentive level" %}
+{% set pageId = 'minimum-incentive-page' %}
+{% set backLinkHref = "risk-level" %}
+
+{% set incentiveLevelOptions = [] %}
+{% for incentiveLevel in incentiveLevels %}
+    {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+        {
+            value: incentiveLevel.iepDescription,
+            text: incentiveLevel.iepDescription,
+            checked: formResponses.minimumIncentive == incentiveLevel.iepDescription or session.createJourney.minimumIncentive == incentiveLevel.iepDescription
+        }
+    ), incentiveLevelOptions) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "What is the minimum incentive level?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--xl"
+                        }
+                    },
+                    name: "minimumIncentive",
+                    errorMessage: validationErrors | findError('minimumIncentive'),
+                    items: incentiveLevelOptions
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

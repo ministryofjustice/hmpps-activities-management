@@ -1,22 +1,13 @@
 import { getMockReq, getMockRes } from '@jest-mock/express'
 import { when } from 'jest-when'
-import PrisonApiClient from '../data/prisonApiClient'
 import PrisonService from '../services/prisonService'
-import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
-import WhereaboutsApiClient from '../data/whereaboutsApiClient'
 import fetchAbsenceReasons from './fetchAbsenceReasons'
 import absenceReasons from './fixtures/absence_reasons_1.json'
 
 jest.mock('../services/prisonService')
-jest.mock('../data/prisonApiClient')
-jest.mock('../data/prisonerSearchApiClient')
-jest.mock('../data/whereaboutsApiClient')
 
 describe('fetchAbsenceReasonsList', () => {
-  const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
-  const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
-  const whereaboutsApiClient = new WhereaboutsApiClient() as jest.Mocked<WhereaboutsApiClient>
-  const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, whereaboutsApiClient)
+  const prisonService = new PrisonService(null, null, null, null)
 
   beforeEach(() => {
     jest.clearAllMocks()

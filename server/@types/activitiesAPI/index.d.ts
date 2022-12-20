@@ -178,6 +178,8 @@ export interface paths {
   }
 }
 
+export type webhooks = Record<string, never>
+
 export interface components {
   schemas: {
     Message: {
@@ -487,7 +489,7 @@ export interface components {
        * @description A detailed description for this activity
        * @example A basic maths course suitable for introduction to the subject
        */
-      description: string
+      description?: string
       /**
        * Format: int64
        * @description The category id for this activity, one of the high-level categories
@@ -498,7 +500,7 @@ export interface components {
        * @description The tier id for this activity, as defined by the Future Prison Regime team
        * @example 1
        */
-      tierId: number
+      tierId?: number
       /**
        * @description A list of eligibility rules ids which apply to this activity.
        * @example [
@@ -510,6 +512,16 @@ export interface components {
       eligibilityRuleIds: number[]
       /** @description The list of pay rates that can apply to this activity */
       pay: components['schemas']['ActivityPayCreateRequest'][]
+      /**
+       * @description The most recent risk assessment level for this activity
+       * @example High
+       */
+      riskLevel?: string
+      /**
+       * @description The minimum incentive/earned privilege level for this activity
+       * @example Basic
+       */
+      minimumIncentiveLevel?: string
       /**
        * Format: date
        * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
@@ -527,7 +539,7 @@ export interface components {
     ActivityPayCreateRequest: {
       /**
        * @description The incentive/earned privilege level (nullable)
-       * @example BAS
+       * @example Basic
        */
       incentiveLevel?: string
       /**
@@ -581,9 +593,9 @@ export interface components {
        * @description A detailed description for this activity
        * @example A basic maths course suitable for introduction to the subject
        */
-      description: string
+      description?: string
       category: components['schemas']['ActivityCategory']
-      tier: components['schemas']['ActivityTier']
+      tier?: components['schemas']['ActivityTier']
       /**
        * @description A list of eligibility rules which apply to this activity. These can be positive (include) and negative (exclude)
        * @example [FEMALE_ONLY,AGED_18-25]
@@ -605,6 +617,16 @@ export interface components {
        * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
        */
       endDate?: string
+      /**
+       * @description The most recent risk assessment level for this activity
+       * @example High
+       */
+      riskLevel?: string
+      /**
+       * @description The minimum incentive/earned privilege level for this activity
+       * @example Basic
+       */
+      minimumIncentiveLevel?: string
       /**
        * Format: date-time
        * @description The date and time when this activity was created
@@ -680,8 +702,18 @@ export interface components {
        * @description A detailed description for this activity
        * @example A basic maths course suitable for introduction to the subject
        */
-      description: string
+      description?: string
       category: components['schemas']['ActivityCategory']
+      /**
+       * @description The most recent risk assessment level for this activity
+       * @example High
+       */
+      riskLevel?: string
+      /**
+       * @description The minimum incentive/earned privilege level for this activity
+       * @example Basic
+       */
+      minimumIncentiveLevel?: string
     }
     /** @description Describes the pay rates and bands which apply to an activity */
     ActivityPay: {
@@ -693,7 +725,7 @@ export interface components {
       id: number
       /**
        * @description The incentive/earned privilege level (nullable)
-       * @example BAS
+       * @example Basic
        */
       incentiveLevel?: string
       /**
@@ -1212,12 +1244,12 @@ export interface components {
        * @description The child groups of this group
        * @example [
        *   {
-       *     'name': 'Landing A/1',
-       *     'key': '1'
+       *     "name": "Landing A/1",
+       *     "key": "1"
        *   },
        *   {
-       *     'name': 'Landing A/2',
-       *     'key': '2'
+       *     "name": "Landing A/2",
+       *     "key": "2"
        *   }
        * ]
        */

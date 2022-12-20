@@ -1,9 +1,5 @@
 import { getMockReq, getMockRes } from '@jest-mock/express'
 import { when } from 'jest-when'
-import PrisonApiClient from '../../../data/prisonApiClient'
-import PrisonerSearchApiClient from '../../../data/prisonerSearchApiClient'
-import WhereaboutsApiClient from '../../../data/whereaboutsApiClient'
-import ActivitiesApiClient from '../../../data/activitiesApiClient'
 import PrisonService from '../../../services/prisonService'
 import CapacitiesService from '../../../services/capacitiesService'
 import ActivitiesService from '../../../services/activitiesService'
@@ -16,20 +12,11 @@ import IdentifyCandidatesRoutes from './identifyCandidates'
 jest.mock('../../../services/prisonService')
 jest.mock('../../../services/capacitiesService')
 jest.mock('../../../services/activitiesService')
-jest.mock('../../../data/prisonApiClient')
-jest.mock('../../../data/prisonerSearchApiClient')
-jest.mock('../../../data/whereaboutsApiClient')
-jest.mock('../../../data/activitiesApiClient')
 
 describe('Route Handlers - Identify Candidates', () => {
-  const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
-  const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
-  const whereaboutsApiClient = new WhereaboutsApiClient() as jest.Mocked<WhereaboutsApiClient>
-  const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
-
-  const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, whereaboutsApiClient)
-  const capacitiesService = new CapacitiesService(activitiesApiClient)
-  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
+  const prisonService = new PrisonService(null, null, null, null)
+  const capacitiesService = new CapacitiesService(null)
+  const activitiesService = new ActivitiesService(null, null)
 
   let controller: IdentifyCandidatesRoutes
 

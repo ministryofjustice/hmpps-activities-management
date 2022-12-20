@@ -13,12 +13,18 @@ export default function services() {
     prisonApiClient,
     prisonerSearchApiClient,
     whereaboutsApiClient,
+    incentivesApiClient,
     activitiesApiClient,
   } = dataAccess()
 
   return {
     userService: new UserService(hmppsAuthClient, nomisUserApiClient, prisonApiClient),
-    prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, whereaboutsApiClient),
+    prisonService: new PrisonService(
+      prisonApiClient,
+      prisonerSearchApiClient,
+      whereaboutsApiClient,
+      incentivesApiClient,
+    ),
     activitiesService: new ActivitiesService(activitiesApiClient, prisonerSearchApiClient),
     capacitiesService: new CapacitiesService(activitiesApiClient),
     ukBankHolidayService: new BankHolidayService(),

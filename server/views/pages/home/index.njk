@@ -14,6 +14,17 @@
             <div class="card-group">
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
+                        "id": "createAnActivityCard",
+                        "href": "/create/start",
+                        "clickable": "true",
+                        "heading": "Create an activity",
+                        "description": "Create a schedulable activity in your prison.",
+                        "data-qa": "create-an-activity-card"
+                    }) }}
+                </div>
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
                         "id": "allocateToActivitiesCard",
                         "href": "/allocate/categories",
                         "clickable": "true",
@@ -70,7 +81,6 @@
                         }) }}
                     </div>
                 {% endif %}
-                
 
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
