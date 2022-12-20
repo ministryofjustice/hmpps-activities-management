@@ -59,11 +59,11 @@
                     {
                         attributes: {
                             id: 'category-' + loop.index,
-                            "data-sort-value": category.description
+                            "data-sort-value": category.name
                         },
                         html: '
                                 <h3 class="govuk-heading-m govuk-!-margin-bottom-3">
-                                    <a href="categories/' + category.id + '/activities" class="govuk-link govuk-link--no-visited-state">' + category.description + '</a>
+                                    <a href="categories/' + category.id + '/activities" class="govuk-link govuk-link--no-visited-state">' + category.name + '</a>
                                 </h3>
                               '
                     },

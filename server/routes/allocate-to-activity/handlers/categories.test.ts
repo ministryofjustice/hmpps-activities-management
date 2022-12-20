@@ -20,12 +20,14 @@ describe('Route Handlers - Categories dashboard', () => {
   const mockCategoriesData = () => {
     const leisure = {
       id: 1,
-      description: 'Leisure & social',
+      name: 'Leisure & social',
+      description: 'Such as association, library time and social clubs, like music or art',
       code: 'X',
     }
     const induction = {
       id: 2,
-      description: 'Induction',
+      name: 'Induction',
+      description: 'Such as gym induction, education assessments, health and safety workshops',
       code: 'Y',
     }
 
@@ -78,7 +80,8 @@ describe('Route Handlers - Categories dashboard', () => {
           {
             allocated: 75,
             capacity: 150,
-            description: 'Induction',
+            name: 'Induction',
+            description: 'Such as gym induction, education assessments, health and safety workshops',
             id: 2,
             code: 'Y',
             percentageAllocated: 50,
@@ -87,7 +90,8 @@ describe('Route Handlers - Categories dashboard', () => {
           {
             allocated: 80,
             capacity: 100,
-            description: 'Leisure & social',
+            name: 'Leisure & social',
+            description: 'Such as association, library time and social clubs, like music or art',
             id: 1,
             code: 'X',
             percentageAllocated: 80,
