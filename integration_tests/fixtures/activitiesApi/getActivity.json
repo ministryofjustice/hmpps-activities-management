@@ -6,8 +6,9 @@
   "description": "A basic english course suitable for introduction to the subject",
   "category": {
     "id": 1,
-    "code": "EDU",
-    "description": "Education"
+    "code": "EDUCATION",
+    "name": "Education",
+    "description": "Such as classes in English, maths, construction and computer skills"
   },
   "tier": {
     "id": 1,
@@ -184,9 +185,7 @@
         "description": "Education - R1"
       },
       "capacity": 10,
-      "daysOfWeek": [
-        "Tue"
-      ],
+      "daysOfWeek": ["Tue"],
       "activity": {
         "id": 2,
         "prisonCode": "MDI",
@@ -195,8 +194,9 @@
         "description": "A basic english course suitable for introduction to the subject",
         "category": {
           "id": 1,
-          "code": "EDU",
-          "description": "Education"
+          "code": "EDUCATION",
+          "name": "Education",
+          "description": "Such as classes in English, maths, construction and computer skills"
         }
       }
     },
@@ -354,9 +354,7 @@
         "description": "Education - R2"
       },
       "capacity": 10,
-      "daysOfWeek": [
-        "Tue"
-      ],
+      "daysOfWeek": ["Tue"],
       "activity": {
         "id": 2,
         "prisonCode": "MDI",
@@ -365,8 +363,9 @@
         "description": "A basic english course suitable for introduction to the subject",
         "category": {
           "id": 1,
-          "code": "EDU",
-          "description": "Education"
+          "code": "EDUCATION",
+          "name": "Education",
+          "description": "Such as classes in English, maths, construction and computer skills"
         }
       }
     },
@@ -495,9 +494,7 @@
         "description": "Education - R1"
       },
       "capacity": 10,
-      "daysOfWeek": [
-        "Thu"
-      ],
+      "daysOfWeek": ["Thu"],
       "activity": {
         "id": 2,
         "prisonCode": "MDI",
@@ -506,8 +503,9 @@
         "description": "A basic english course suitable for introduction to the subject",
         "category": {
           "id": 1,
-          "code": "EDU",
-          "description": "Education"
+          "code": "EDUCATION",
+          "name": "Education",
+          "description": "Such as classes in English, maths, construction and computer skills"
         }
       }
     },
@@ -636,9 +634,7 @@
         "description": "Education - R2"
       },
       "capacity": 10,
-      "daysOfWeek": [
-        "Thu"
-      ],
+      "daysOfWeek": ["Thu"],
       "activity": {
         "id": 2,
         "prisonCode": "MDI",
@@ -647,8 +643,9 @@
         "description": "A basic english course suitable for introduction to the subject",
         "category": {
           "id": 1,
-          "code": "EDU",
-          "description": "Education"
+          "code": "EDUCATION",
+          "name": "Education",
+          "description": "Such as classes in English, maths, construction and computer skills"
         }
       }
     }

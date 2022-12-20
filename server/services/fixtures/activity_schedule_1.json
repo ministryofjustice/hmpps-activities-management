@@ -179,7 +179,8 @@
     "category": {
       "id": 1,
       "code": "EDU",
-      "description": "Education"
+      "name": "Education",
+      "description": "Such as classes in English, maths, construction and computer skills"
     }
   }
 }

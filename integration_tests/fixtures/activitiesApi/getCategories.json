@@ -1,22 +1,26 @@
 [
   {
     "id": 1,
-    "code": "EDU",
-    "description": "Education"
+    "code": "EDUCATION",
+    "name": "Education",
+    "description": "Such as classes in English, maths, construction and computer skills"
   },
   {
     "id": 2,
-    "code": "SERV",
-    "description": "Services"
+    "code": "SERVICES",
+    "name": "Services",
+    "description": "Such as work in the kitchens and laundry, cleaning, gardening, and mentoring"
   },
   {
     "id": 3,
-    "code": "LEI",
-    "description": "Leisure and social"
+    "code": "LEISURE_SOCIAL",
+    "name": "Leisure and social",
+    "description": "Such as association, library time and social clubs, like music or art"
   },
   {
     "id": 4,
-    "code": "INDUC",
-    "description": "Induction"
+    "code": "INDUCTION",
+    "name": "Induction",
+    "description": "Such as gym induction, education assessments, health and safety workshops"
   }
 ]

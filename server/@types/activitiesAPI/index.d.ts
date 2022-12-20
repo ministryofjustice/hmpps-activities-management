@@ -626,14 +626,19 @@ export interface components {
       id: number
       /**
        * @description The activity category code
-       * @example LEI
+       * @example LEISURE_SOCIAL
        */
       code: string
       /**
        * @description The name of the activity category
        * @example Leisure and social
        */
-      description: string
+      name: string
+      /**
+       * @description The description of the activity category
+       * @example Such as association, library time and social clubs, like music or art
+       */
+      description?: string
     }
     /**
      * @description Describes an eligibility rule as applied to an activity
