@@ -10,7 +10,6 @@ export default function services() {
   const {
     hmppsAuthClient,
     nomisUserApiClient,
-    prisonRegisterApiClient,
     prisonApiClient,
     prisonerSearchApiClient,
     whereaboutsApiClient,
@@ -19,12 +18,7 @@ export default function services() {
 
   return {
     userService: new UserService(hmppsAuthClient, nomisUserApiClient, prisonApiClient),
-    prisonService: new PrisonService(
-      prisonApiClient,
-      prisonerSearchApiClient,
-      prisonRegisterApiClient,
-      whereaboutsApiClient,
-    ),
+    prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, whereaboutsApiClient),
     activitiesService: new ActivitiesService(activitiesApiClient, prisonerSearchApiClient),
     capacitiesService: new CapacitiesService(activitiesApiClient),
     ukBankHolidayService: new BankHolidayService(),
