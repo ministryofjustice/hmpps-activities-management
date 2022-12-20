@@ -32,6 +32,18 @@ export interface paths {
      */
     post: operations['allocate']
   }
+  '/prisons/{prisonCode}/scheduled-events': {
+    /**
+     * Get a list of scheduled events for a prison, prisoner and date range (max 3 months)
+     * @description Returns zero or more scheduled events for a prison, prisoner and date range (max 3 months).
+     */
+    get: operations['getScheduledEventsByDateRange']
+    /**
+     * Get a list of scheduled events for a prison, offender list
+     * @description Returns zero or more scheduled events for a prison, offender list.
+     */
+    post: operations['getScheduledEventsForOffenderList']
+  }
   '/prisons/{prisonCode}/prisoner-allocations': {
     /**
      * Get all allocations for prisoners
@@ -52,6 +64,13 @@ export interface paths {
      * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
     post: operations['triggerCreateActivitySessionsJob']
+  }
+  '/activities': {
+    /**
+     * Create an activity
+     * @description Create an activity.
+     */
+    post: operations['create']
   }
   '/schedules/{scheduleId}': {
     /**
@@ -95,34 +114,6 @@ export interface paths {
      */
     get: operations['getActivityScheduleInstancesByDateRange']
   }
-  '/prisons/{prisonCode}/scheduled-events': {
-    /**
-     * Get a list of scheduled events for a prison, prisoner (optional) and date range (max 3 months)
-     * @description Returns zero or more scheduled events for a prison, prisoner (optional) and date range (max 3 months).
-     */
-    get: operations['getScheduledEventsByDateRange']
-  }
-  '/prisons/{prisonCode}/locations': {
-    /**
-     * List of cell locations for a prison group
-     * @description List of cell locations for a prison group
-     */
-    get: operations['getLocationGroups']
-  }
-  '/prisons/{prisonCode}/location-prefix': {
-    /**
-     * Get location prefix by group name
-     * @description Get location prefix by group name
-     */
-    get: operations['getLocationPrefix']
-  }
-  '/prisons/{prisonCode}/location-groups': {
-    /**
-     * List of all available Location Groups at a prison
-     * @description List of all available Location Groups at a prison
-     */
-    get: operations['getLocationGroups_1']
-  }
   '/prison/{prisonCode}/schedules': {
     /**
      * Get a list of activity schedules at a given prison
@@ -145,6 +136,27 @@ export interface paths {
     /** Get list of activities within a category at a specified prison */
     get: operations['getActivitiesInCategory']
   }
+  '/locations/prison/{prisonCode}': {
+    /**
+     * List of cell locations for a prison group supplied as a query parameter
+     * @description List of cell locations for a prison group supplied as a query parameter
+     */
+    get: operations['getCellLocationsForGroup']
+  }
+  '/locations/prison/{prisonCode}/location-prefix': {
+    /**
+     * Get the location prefix for a location group supplied as a query parameter
+     * @description Get location prefix for a location group name supplied as a query parameter
+     */
+    get: operations['getLocationPrefixForGroup']
+  }
+  '/locations/prison/{prisonCode}/location-groups': {
+    /**
+     * List of all available location groups defined at a prison
+     * @description List of all available location groups defined at a prison
+     */
+    get: operations['getLocationGroups']
+  }
   '/activity-categories': {
     /** Get the list of top-level activity categories */
     get: operations['getCategories']
@@ -165,8 +177,6 @@ export interface paths {
     get: operations['getActivityCapacity']
   }
 }
-
-export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
@@ -263,6 +273,133 @@ export interface components {
        */
       payBand: string
     }
+    /** @description Describes a prisoners scheduled events */
+    PrisonerScheduledEvents: {
+      /**
+       * @description The prison code for these scheduled events
+       * @example MDI
+       */
+      prisonCode?: string
+      /**
+       * @description The set of prisoner numbers for theses scheduled events
+       * @example ['GF10101', 'GR123YI']
+       */
+      prisonerNumbers?: string[]
+      /**
+       * Format: date
+       * @description The start date for this collection of scheduled events
+       * @example 2022-11-01
+       */
+      startDate?: string
+      /**
+       * Format: date
+       * @description The end date (inclusive) for this collection of scheduled events
+       * @example 2022-11-28
+       */
+      endDate?: string
+      /** @description A list of scheduled appointments for this prisoner in this date range */
+      appointments?: components['schemas']['ScheduledEvent'][]
+      /** @description A list of (active) scheduled court hearings for this prisoner in this date range */
+      courtHearings?: components['schemas']['ScheduledEvent'][]
+      /** @description A list of scheduled visits for this prisoner in this date range */
+      visits?: components['schemas']['ScheduledEvent'][]
+      /** @description A list of scheduled activities for this prisoner in this date range */
+      activities?: components['schemas']['ScheduledEvent'][]
+    }
+    /** @description Describes a scheduled event */
+    ScheduledEvent: {
+      /**
+       * @description The prison code for this scheduled event
+       * @example MDI
+       */
+      prisonCode?: string
+      /**
+       * Format: int64
+       * @description The event id for this scheduled event
+       * @example 10001
+       */
+      eventId?: number
+      /**
+       * Format: int64
+       * @description The booking id for this scheduled event
+       * @example 10001
+       */
+      bookingId?: number
+      /**
+       * @description The location of this scheduled event
+       * @example INDUCTION CLASSROOM
+       */
+      location?: string
+      /**
+       * Format: int64
+       * @description The location id of this scheduled event
+       * @example 10001
+       */
+      locationId?: number
+      /**
+       * @description Scheduled event class
+       * @example INT_MOV
+       */
+      eventClass?: string
+      /**
+       * @description Scheduled event status
+       * @example SCH
+       */
+      eventStatus?: string
+      /**
+       * @description Scheduled event type
+       * @example APP
+       */
+      eventType?: string
+      /**
+       * @description Scheduled event type description
+       * @example Appointment
+       */
+      eventTypeDesc?: string
+      /**
+       * @description Scheduled event
+       * @example GOVE
+       */
+      event?: string
+      /**
+       * @description Scheduled event description
+       * @example Governor
+       */
+      eventDesc?: string
+      /**
+       * @description Details of this scheduled event
+       * @example Dont be late
+       */
+      details?: string
+      /**
+       * @description The prisoner number
+       * @example GF10101
+       */
+      prisonerNumber?: string
+      /**
+       * Format: date
+       * @description The specific date for this scheduled instance
+       * @example 2022-09-30
+       */
+      date?: string
+      /**
+       * Format: partial-time
+       * @description The start time for this scheduled instance
+       * @example 9:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time for this scheduled instance
+       * @example 10:00
+       */
+      endTime?: string
+      /**
+       * Format: int32
+       * @description The event priority
+       */
+      priority?: number
+    }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
       /**
@@ -278,11 +415,6 @@ export interface components {
       prisonerNumber: string
       activitySummary: string
       scheduleDescription: string
-      /**
-       * @description The incentive/earned privilege (level) for this offender allocation
-       * @example BAS, STD, ENH
-       */
-      incentiveLevel?: string
       /**
        * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner
        * @example A
@@ -334,6 +466,156 @@ export interface components {
       /** @description The list of allocations for the prisoner */
       allocations: components['schemas']['Allocation'][]
     }
+    /** @description The create request with the new activity details */
+    ActivityCreateRequest: {
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
+       * @example false
+       */
+      attendanceRequired: boolean
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary: string
+      /**
+       * @description A detailed description for this activity
+       * @example A basic maths course suitable for introduction to the subject
+       */
+      description: string
+      /**
+       * Format: int64
+       * @description The category id for this activity, one of the high-level categories
+       */
+      categoryId: number
+      /**
+       * Format: int64
+       * @description The tier id for this activity, as defined by the Future Prison Regime team
+       * @example 1
+       */
+      tierId: number
+      /**
+       * @description A list of eligibility rules ids which apply to this activity.
+       * @example [
+       *   1,
+       *   2,
+       *   3
+       * ]
+       */
+      eligibilityRuleIds: number[]
+      /** @description The list of pay rates that can apply to this activity */
+      pay: components['schemas']['ActivityPayCreateRequest'][]
+      /**
+       * Format: date
+       * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
+       * @example 2022-12-23
+       */
+      startDate?: string
+      /**
+       * Format: date
+       * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
+       * @example 2022-12-23
+       */
+      endDate?: string
+    }
+    /** @description Describes the pay rates and bands to be created for an activity */
+    ActivityPayCreateRequest: {
+      /**
+       * @description The incentive/earned privilege level (nullable)
+       * @example BAS
+       */
+      incentiveLevel?: string
+      /**
+       * @description The pay band (nullable)
+       * @example A
+       */
+      payBand?: string
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
+       * @example 150
+       */
+      pieceRate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
+       * @example 10
+       */
+      pieceRateItems?: number
+    }
+    /** @description Describes a top-level activity */
+    Activity: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
+       * @example false
+       */
+      attendanceRequired: boolean
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary: string
+      /**
+       * @description A detailed description for this activity
+       * @example A basic maths course suitable for introduction to the subject
+       */
+      description: string
+      category: components['schemas']['ActivityCategory']
+      tier: components['schemas']['ActivityTier']
+      /**
+       * @description A list of eligibility rules which apply to this activity. These can be positive (include) and negative (exclude)
+       * @example [FEMALE_ONLY,AGED_18-25]
+       */
+      eligibilityRules: components['schemas']['ActivityEligibility'][]
+      /** @description A list of schedules for this activity. These contain the time slots / recurrence settings for instances of this activity. */
+      schedules: components['schemas']['ActivitySchedule'][]
+      /** @description A list of prisoners who are waiting for allocation to this activity. This list is held against the activity, though allocation is against particular schedules of the activity */
+      waitingList: components['schemas']['PrisonerWaiting'][]
+      /** @description The list of pay rates by incentive level and pay band that can apply to this activity */
+      pay: components['schemas']['ActivityPay'][]
+      /**
+       * Format: date
+       * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
+       */
+      endDate?: string
+      /**
+       * Format: date-time
+       * @description The date and time when this activity was created
+       */
+      createdTime: string
+      /**
+       * @description The person who created this activity
+       * @example Adam Smith
+       */
+      createdBy: string
+    }
     /** @description Describes a top-level activity category */
     ActivityCategory: {
       /**
@@ -352,6 +634,19 @@ export interface components {
        * @example Leisure and social
        */
       description: string
+    }
+    /**
+     * @description Describes an eligibility rule as applied to an activity
+     * @example [FEMALE_ONLY,AGED_18-25]
+     */
+    ActivityEligibility: {
+      /**
+       * Format: int64
+       * @description The internal ID of the activity that these rules apply to
+       * @example 123456
+       */
+      id: number
+      eligibility: components['schemas']['EligibilityRule']
     }
     /** @description Describes a top-level activity */
     ActivityLite: {
@@ -382,6 +677,43 @@ export interface components {
        */
       description: string
       category: components['schemas']['ActivityCategory']
+    }
+    /** @description Describes the pay rates and bands which apply to an activity */
+    ActivityPay: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity pay
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The incentive/earned privilege level (nullable)
+       * @example BAS
+       */
+      incentiveLevel?: string
+      /**
+       * @description The pay band (nullable)
+       * @example A
+       */
+      payBand?: string
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
+       * @example 150
+       */
+      pieceRate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
+       * @example 10
+       */
+      pieceRateItems?: number
     }
     /**
      * @description
@@ -433,6 +765,28 @@ export interface components {
        */
       daysOfWeek: string[]
       activity: components['schemas']['ActivityLite']
+    }
+    /**
+     * @description An activity tier
+     * @example Tier 1, Tier 2, Foundation
+     */
+    ActivityTier: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity tier
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The code for this activity tier
+       * @example Tier1
+       */
+      code: string
+      /**
+       * @description The detailed description for this activity tier
+       * @example Work, education and maintenance
+       */
+      description: string
     }
     /** @description An attendance record for a prisoner, can be marked or unmarked */
     Attendance: {
@@ -503,6 +857,25 @@ export interface components {
        */
       description: string
     }
+    /** @description Defines one eligibility rule */
+    EligibilityRule: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this eligibility rule
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The code for this eligibility rule
+       * @example OVER_21
+       */
+      code: string
+      /**
+       * @description The description for this eligibility rule
+       * @example The prisoner must be over 21 to attend
+       */
+      description: string
+    }
     /**
      * @description An internal NOMIS location for an activity to take place
      * @example 98877667
@@ -524,6 +897,36 @@ export interface components {
        * @example Education - R1
        */
       description: string
+    }
+    /** @description Describes a person who is on a waiting list for an activity */
+    PrisonerWaiting: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this prisoner waiting
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prisoner number (NomisId) of the person on the waiting list
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * Format: int32
+       * @description The priority of this person in the waiting list. The lower the number, the higher the priority
+       * @example 1
+       */
+      priority: number
+      /**
+       * Format: date-time
+       * @description The date and time when this person was added to the waiting list
+       */
+      createdTime: string
+      /**
+       * @description The staff members name who added this person to the waiting list
+       * @example Adam Smith
+       */
+      createdBy: string
     }
     /** @description Describes one instance of an activity schedule */
     ScheduledInstance: {
@@ -723,123 +1126,6 @@ export interface components {
       messagesReturnedCount: number
       messages: components['schemas']['DlqMessage'][]
     }
-    /** @description Describes a prisoners scheduled events */
-    PrisonerScheduledEvents: {
-      /**
-       * @description The prison code for this scheduled event
-       * @example MDI
-       */
-      prisonCode?: string
-      /**
-       * @description The prisoner number
-       * @example GF10101
-       */
-      prisonerNumber?: string
-      /**
-       * Format: date
-       * @description The start date for this collection of scheduled events
-       * @example 2022-11-01
-       */
-      startDate?: string
-      /**
-       * Format: date
-       * @description The end date (inclusive) for this collection of scheduled events
-       * @example 2022-11-28
-       */
-      endDate?: string
-      /** @description A list of scheduled appointments for this prisoner in this date range */
-      appointments?: components['schemas']['ScheduledEvent'][]
-      /** @description A list of (active) scheduled court hearings for this prisoner in this date range */
-      courtHearings?: components['schemas']['ScheduledEvent'][]
-      /** @description A list of scheduled visits for this prisoner in this date range */
-      visits?: components['schemas']['ScheduledEvent'][]
-      /** @description A list of scheduled activities for this prisoner in this date range */
-      activities?: components['schemas']['ScheduledEvent'][]
-    }
-    /** @description Describes a scheduled event */
-    ScheduledEvent: {
-      /**
-       * @description The prison code for this scheduled event
-       * @example MDI
-       */
-      prisonCode?: string
-      /**
-       * Format: int64
-       * @description The event id for this scheduled event
-       * @example 10001
-       */
-      eventId?: number
-      /**
-       * Format: int64
-       * @description The booking id for this scheduled event
-       * @example 10001
-       */
-      bookingId?: number
-      /**
-       * @description The location of this scheduled event
-       * @example INDUCTION CLASSROOM
-       */
-      location?: string
-      /**
-       * Format: int64
-       * @description The location id of this scheduled event
-       * @example 10001
-       */
-      locationId?: number
-      /**
-       * @description Scheduled event class
-       * @example INT_MOV
-       */
-      eventClass?: string
-      /**
-       * @description Scheduled event status
-       * @example SCH
-       */
-      eventStatus?: string
-      /**
-       * @description Scheduled event type
-       * @example APP
-       */
-      eventType?: string
-      /**
-       * @description Scheduled event type description
-       * @example Appointment
-       */
-      eventTypeDesc?: string
-      /**
-       * @description Details of this scheduled event
-       * @example Dont be late
-       */
-      details?: string
-      /**
-       * @description The prisoner number
-       * @example GF10101
-       */
-      prisonerNumber?: string
-      /**
-       * Format: date
-       * @description The specific date for this scheduled instance
-       * @example 2022-09-30
-       */
-      date?: string
-      /**
-       * Format: partial-time
-       * @description The start time for this scheduled instance
-       * @example 9:00
-       */
-      startTime: string
-      /**
-       * Format: partial-time
-       * @description The end time for this scheduled instance
-       * @example 10:00
-       */
-      endTime?: string
-      /**
-       * Format: int32
-       * @description The event priority
-       */
-      priority?: number
-    }
     Location: {
       /**
        * Format: int64
@@ -921,199 +1207,16 @@ export interface components {
        * @description The child groups of this group
        * @example [
        *   {
-       *     "name": "Landing A/1",
-       *     "key": "1"
+       *     'name': 'Landing A/1',
+       *     'key': '1'
        *   },
        *   {
-       *     "name": "Landing A/2",
-       *     "key": "2"
+       *     'name': 'Landing A/2',
+       *     'key': '2'
        *   }
        * ]
        */
       children: components['schemas']['LocationGroup'][]
-    }
-    /** @description Describes a top-level activity */
-    Activity: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
-       * @example false
-       */
-      attendanceRequired: boolean
-      /**
-       * @description A brief summary description of this activity for use in forms and lists
-       * @example Maths level 1
-       */
-      summary: string
-      /**
-       * @description A detailed description for this activity
-       * @example A basic maths course suitable for introduction to the subject
-       */
-      description: string
-      category: components['schemas']['ActivityCategory']
-      tier: components['schemas']['ActivityTier']
-      /**
-       * @description A list of eligibility rules which apply to this activity. These can be positive (include) and negative (exclude)
-       * @example [FEMALE_ONLY,AGED_18-25]
-       */
-      eligibilityRules: components['schemas']['ActivityEligibility'][]
-      /** @description A list of schedules for this activity. These contain the time slots / recurrence settings for instances of this activity. */
-      schedules: components['schemas']['ActivitySchedule'][]
-      /** @description A list of prisoners who are waiting for allocation to this activity. This list is held against the activity, though allocation is against particular schedules of the activity */
-      waitingList: components['schemas']['PrisonerWaiting'][]
-      /** @description The list of pay rates by incentive level and pay band that can apply to this activity */
-      pay: components['schemas']['ActivityPay'][]
-      /**
-       * Format: date
-       * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
-       */
-      startDate: string
-      /**
-       * Format: date
-       * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
-       */
-      endDate?: string
-      /**
-       * Format: date-time
-       * @description The date and time when this activity was created
-       */
-      createdTime: string
-      /**
-       * @description The person who created this activity
-       * @example Adam Smith
-       */
-      createdBy: string
-    }
-    /**
-     * @description Describes an eligibility rule as applied to an activity
-     * @example [FEMALE_ONLY,AGED_18-25]
-     */
-    ActivityEligibility: {
-      /**
-       * Format: int64
-       * @description The internal ID of the activity that these rules apply to
-       * @example 123456
-       */
-      id: number
-      eligibility: components['schemas']['EligibilityRule']
-    }
-    /** @description Describes the pay rates and bands which apply to an activity */
-    ActivityPay: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity pay
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The incentive/earned privilege level (nullable)
-       * @example BAS
-       */
-      incentiveLevel?: string
-      /**
-       * @description The pay band (nullable)
-       * @example A
-       */
-      payBand?: string
-      /**
-       * Format: int32
-       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
-       * @example 150
-       */
-      rate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
-       * @example 150
-       */
-      pieceRate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
-       * @example 10
-       */
-      pieceRateItems?: number
-    }
-    /**
-     * @description An activity tier
-     * @example Tier 1, Tier 2, Foundation
-     */
-    ActivityTier: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity tier
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The code for this activity tier
-       * @example Tier1
-       */
-      code: string
-      /**
-       * @description The detailed description for this activity tier
-       * @example Work, education and maintenance
-       */
-      description: string
-    }
-    /** @description Defines one eligibility rule */
-    EligibilityRule: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this eligibility rule
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The code for this eligibility rule
-       * @example OVER_21
-       */
-      code: string
-      /**
-       * @description The description for this eligibility rule
-       * @example The prisoner must be over 21 to attend
-       */
-      description: string
-    }
-    /** @description Describes a person who is on a waiting list for an activity */
-    PrisonerWaiting: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this prisoner waiting
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The prisoner number (NomisId) of the person on the waiting list
-       * @example A1234AA
-       */
-      prisonerNumber: string
-      /**
-       * Format: int32
-       * @description The priority of this person in the waiting list. The lower the number, the higher the priority
-       * @example 1
-       */
-      priority: number
-      /**
-       * Format: date-time
-       * @description The date and time when this person was added to the waiting list
-       */
-      createdTime: string
-      /**
-       * @description The staff members name who added this person to the waiting list
-       * @example Adam Smith
-       */
-      createdBy: string
     }
   }
   responses: never
@@ -1286,6 +1389,111 @@ export interface operations {
       }
     }
   }
+  getScheduledEventsByDateRange: {
+    /**
+     * Get a list of scheduled events for a prison, prisoner and date range (max 3 months)
+     * @description Returns zero or more scheduled events for a prison, prisoner and date range (max 3 months).
+     */
+    parameters: {
+      /** @description Prisoner number */
+      /** @description Start date of query */
+      /** @description End date of query (max 3 months from start date) */
+      query: {
+        prisonerNumber: string
+        startDate: string
+        endDate: string
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more scheduled events found */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonerScheduledEvents']
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getScheduledEventsForOffenderList: {
+    /**
+     * Get a list of scheduled events for a prison, offender list
+     * @description Returns zero or more scheduled events for a prison, offender list.
+     */
+    parameters: {
+      /** @description Date of the events */
+      /** @description Time slot of the events */
+      query?: {
+        date?: string
+        timeSlot?: string
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': string[]
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more scheduled events found */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonerScheduledEvents']
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   prisonerAllocations: {
     /**
      * Get all allocations for prisoners
@@ -1350,6 +1558,43 @@ export interface operations {
       201: {
         content: {
           'application/json': string
+        }
+      }
+    }
+  }
+  create: {
+    /**
+     * Create an activity
+     * @description Create an activity.
+     */
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ActivityCreateRequest']
+      }
+    }
+    responses: {
+      /** @description The activity was created. */
+      201: {
+        content: {
+          'application/json': components['schemas']['Activity']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
         }
       }
     }
@@ -1595,192 +1840,6 @@ export interface operations {
       }
     }
   }
-  getScheduledEventsByDateRange: {
-    /**
-     * Get a list of scheduled events for a prison, prisoner (optional) and date range (max 3 months)
-     * @description Returns zero or more scheduled events for a prison, prisoner (optional) and date range (max 3 months).
-     */
-    parameters: {
-      /** @description Prisoner number */
-      /** @description Start date of query */
-      /** @description End date of query (max 3 months from start date) */
-      query: {
-        prisonerNumber: string
-        startDate: string
-        endDate: string
-      }
-      path: {
-        prisonCode: string
-      }
-    }
-    responses: {
-      /** @description Successful call - zero or more scheduled events found */
-      200: {
-        content: {
-          'application/json': components['schemas']['PrisonerScheduledEvents']
-        }
-      }
-      /** @description Invalid request */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Requested resource not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getLocationGroups: {
-    /**
-     * List of cell locations for a prison group
-     * @description List of cell locations for a prison group
-     */
-    parameters: {
-      query: {
-        groupName: string
-      }
-      path: {
-        prisonCode: string
-      }
-    }
-    responses: {
-      /** @description Successful call - zero or more cell locations found */
-      200: {
-        content: {
-          'application/json': components['schemas']['Location'][]
-        }
-      }
-      /** @description Invalid request */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Requested resource not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getLocationPrefix: {
-    /**
-     * Get location prefix by group name
-     * @description Get location prefix by group name
-     */
-    parameters: {
-      query: {
-        groupName: string
-      }
-      path: {
-        prisonCode: string
-      }
-    }
-    responses: {
-      /** @description Successful call - Location prefix found */
-      200: {
-        content: {
-          'application/json': components['schemas']['LocationPrefixDto']
-        }
-      }
-      /** @description Invalid request */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Requested resource not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getLocationGroups_1: {
-    /**
-     * List of all available Location Groups at a prison
-     * @description List of all available Location Groups at a prison
-     */
-    parameters: {
-      path: {
-        prisonCode: string
-      }
-    }
-    responses: {
-      /** @description Successful call - zero or more location groups found */
-      200: {
-        content: {
-          'application/json': components['schemas']['LocationGroup'][]
-        }
-      }
-      /** @description Invalid request */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Requested resource not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   getSchedulesByPrisonCode: {
     /**
      * Get a list of activity schedules at a given prison
@@ -1920,6 +1979,141 @@ export interface operations {
         }
       }
       /** @description Category ID not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getCellLocationsForGroup: {
+    /**
+     * List of cell locations for a prison group supplied as a query parameter
+     * @description List of cell locations for a prison group supplied as a query parameter
+     */
+    parameters: {
+      query: {
+        groupName: string
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more cell locations found */
+      200: {
+        content: {
+          'application/json': components['schemas']['Location'][]
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getLocationPrefixForGroup: {
+    /**
+     * Get the location prefix for a location group supplied as a query parameter
+     * @description Get location prefix for a location group name supplied as a query parameter
+     */
+    parameters: {
+      query: {
+        groupName: string
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Successful call - Location prefix found */
+      200: {
+        content: {
+          'application/json': components['schemas']['LocationPrefixDto']
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getLocationGroups: {
+    /**
+     * List of all available location groups defined at a prison
+     * @description List of all available location groups defined at a prison
+     */
+    parameters: {
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more location groups found */
+      200: {
+        content: {
+          'application/json': components['schemas']['LocationGroup'][]
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']

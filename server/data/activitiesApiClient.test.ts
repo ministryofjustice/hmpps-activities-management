@@ -232,7 +232,7 @@ describe('activitiesApiClient', () => {
       ] as LocationGroup[]
 
       fakeActivitiesApi
-        .get('/prisons/MDI/location-groups')
+        .get('/locations/prison/MDI/location-groups')
         .matchHeader('authorization', `Bearer token`)
         .reply(200, response)
 
@@ -248,7 +248,7 @@ describe('activitiesApiClient', () => {
       const response = { locationPrefix: 'MDI-1-' } as LocationPrefix
 
       fakeActivitiesApi
-        .get('/prisons/MDI/location-prefix')
+        .get('/locations/prison/MDI/location-prefix')
         .query({ groupName: 'Houseblock 1' })
         .matchHeader('authorization', `Bearer token`)
         .reply(200, response)
