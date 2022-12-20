@@ -147,8 +147,9 @@
     "description": "A basic english course suitable for introduction to the subject",
     "category": {
       "id": 1,
-      "code": "EDU",
-      "description": "Education"
+      "code": "EDUCATION",
+      "name": "Education",
+      "description": "Such as classes in English, maths, construction and computer skills"
     }
   }
 }
