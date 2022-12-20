@@ -8,7 +8,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../data/prisonApiClient')
 jest.mock('../../../../data/prisonerSearchApiClient')
-jest.mock('../../../../data/prisonRegisterApiClient')
 jest.mock('../../../../data/whereaboutsApiClient')
 
 describe('selectActivityLocationRouteHandler', () => {

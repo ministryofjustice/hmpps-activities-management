@@ -1,7 +1,5 @@
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
-import PrisonRegisterApiClient from '../data/prisonRegisterApiClient'
-import { Prison } from '../@types/prisonRegisterApiImport/types'
 import { InmateDetail, ScheduledAppointmentDto, InmateBasicDetails } from '../@types/prisonApiImport/types'
 import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
@@ -36,13 +34,8 @@ export default class PrisonService {
   constructor(
     private readonly prisonApiClient: PrisonApiClient,
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
-    private readonly prisonRegisterApiClient: PrisonRegisterApiClient,
     private readonly whereaboutsApiClient: WhereaboutsApiClient,
   ) {}
-
-  async getPrison(prisonCode: string, user: ServiceUser): Promise<Prison> {
-    return this.prisonRegisterApiClient.getPrison(prisonCode, user)
-  }
 
   async getInmate(nomisId: string, user: ServiceUser): Promise<InmateDetail> {
     return this.prisonApiClient.getInmateDetail(nomisId, user)
