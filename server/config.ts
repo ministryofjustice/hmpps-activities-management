@@ -115,6 +115,14 @@ export default {
       },
       agent: new AgentConfig(Number(get('NOMIS_USER_API_TIMEOUT_RESPONSE', 30000))),
     },
+    incentivesApi: {
+      url: get('INCENTIVES_API_URL', 'http://localhost:8080', requiredInProduction),
+      timeout: {
+        response: Number(get('INCENTIVES_API_TIMEOUT_RESPONSE', 30000)),
+        deadline: Number(get('INCENTIVES_API_TIMEOUT_DEADLINE', 30000)),
+      },
+      agent: new AgentConfig(Number(get('INCENTIVES_API_TIMEOUT_RESPONSE', 30000))),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
 }

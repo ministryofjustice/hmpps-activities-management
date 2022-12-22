@@ -1,0 +1,37 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Create an activity - Name" %}
+{% set pageId = 'name-page' %}
+{% set backLinkHref = "category" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukInput({
+                    label: {
+                        text: "What is the activity called?",
+                        classes: "govuk-label--xl",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "Say what the activity is in plain English. You'll be able to add more details like location and schedules later."
+                    },
+                    id: "name",
+                    name: "name",
+                    classes: "govuk-!-width-one-half",
+                    errorMessage: validationErrors | findError('name'),
+                    value: formResponses.name or session.createJourney.name
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

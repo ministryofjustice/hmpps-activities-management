@@ -1,0 +1,59 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Create an activity - Risk level" %}
+{% set pageId = 'risk-level-page' %}
+{% set backLinkHref = "name" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "What is the risk level?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--xl"
+                        }
+                    },
+                    name: "riskLevel",
+                    errorMessage: validationErrors | findError('riskLevel'),
+                    hint: {
+                        text: "Select the most recent risk assessment level for this activity."
+                    },
+                    items: [
+                        {
+                            value: "high",
+                            text: "High",
+                            checked: formResponses.riskLevel == 'high' or session.createJourney.riskLevel == 'high'
+                        },
+                        {
+                            value: "medium",
+                            text: "Medium",
+                            checked: formResponses.riskLevel == 'medium' or session.createJourney.riskLevel == 'medium'
+                        },
+                        {
+                            value: "low",
+                            text: "Low",
+                            checked: formResponses.riskLevel == 'low' or session.createJourney.riskLevel == 'low'
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

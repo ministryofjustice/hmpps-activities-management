@@ -11,8 +11,8 @@ import { toDate } from '../../../utils/utils'
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+const activitiesService = new ActivitiesService(null, null)
+const prisonService = new PrisonService(null, null, null, null)
 
 describe('Route Handlers - Attendance List', () => {
   const handler = new AttendanceListRoutes(activitiesService, prisonService)

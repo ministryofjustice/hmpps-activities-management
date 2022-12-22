@@ -4,20 +4,11 @@ import activityList from '../../../../middleware/fixtures/activity_list_1.json'
 
 import PrisonService from '../../../../services/prisonService'
 import ActivityListRouteHandler from './ActivityListRouteHandler'
-import PrisonApiClient from '../../../../data/prisonApiClient'
-import PrisonerSearchApiClient from '../../../../data/prisonerSearchApiClient'
-import WhereaboutsApiClient from '../../../../data/whereaboutsApiClient'
 
 jest.mock('../../../../services/prisonService')
-jest.mock('../../../../data/prisonApiClient')
-jest.mock('../../../../data/prisonerSearchApiClient')
-jest.mock('../../../../data/whereaboutsApiClient')
 
 describe('activityListRouteHandler', () => {
-  const prisonApiClient = new PrisonApiClient()
-  const prisonerSearchApiClient = new PrisonerSearchApiClient()
-  const whereaboutsApiClient = new WhereaboutsApiClient()
-  const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, whereaboutsApiClient)
+  const prisonService = new PrisonService(null, null, null, null)
   let controller: ActivityListRouteHandler
 
   beforeEach(() => {

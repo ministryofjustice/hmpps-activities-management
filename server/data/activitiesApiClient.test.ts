@@ -5,7 +5,13 @@ import config from '../config'
 import ActivitiesApiClient from './activitiesApiClient'
 import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
-import { Allocation, LocationGroup, LocationPrefix, PrisonerAllocations } from '../@types/activitiesAPI/types'
+import {
+  ActivityCreateRequest,
+  Allocation,
+  LocationGroup,
+  LocationPrefix,
+  PrisonerAllocations,
+} from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 
 const user = { token: 'token' } as ServiceUser
@@ -144,6 +150,25 @@ describe('activitiesApiClient', () => {
       const output = await activitiesApiClient.getScheduledActivity(1, user)
 
       expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('postActivityCreation', () => {
+    it('should post data to api', async () => {
+      fakeActivitiesApi
+        .post('/activities', {
+          prisonCode: 'MDI',
+          summary: 'Maths level 1',
+        })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200)
+
+      await activitiesApiClient.postActivityCreation(
+        { prisonCode: 'MDI', summary: 'Maths level 1' } as ActivityCreateRequest,
+        user,
+      )
+
       expect(nock.isDone()).toBe(true)
     })
   })

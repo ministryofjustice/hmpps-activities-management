@@ -7,6 +7,7 @@ import { ServiceUser } from '../@types/express'
 import {
   Activity,
   ActivityCategory,
+  ActivityCreateRequest,
   ActivityLite,
   ActivityScheduleLite,
   LocationGroup,
@@ -87,6 +88,13 @@ describe('Activities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(activitiesApiClient.getSchedulesOfActivity).toHaveBeenCalledWith(1, user)
+    })
+  })
+
+  describe('createActivity', () => {
+    it('should call activities API client to create an activity', async () => {
+      await activitiesService.createActivity({ prisonCode: 'MDI' } as ActivityCreateRequest, user)
+      expect(activitiesApiClient.postActivityCreation).toHaveBeenCalledWith({ prisonCode: 'MDI' }, user)
     })
   })
 

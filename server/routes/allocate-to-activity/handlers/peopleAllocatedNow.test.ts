@@ -1,4 +1,5 @@
 import { getMockReq, getMockRes } from '@jest-mock/express'
+import { when } from 'jest-when'
 import ActivitiesService from '../../../services/activitiesService'
 import PrisonService from '../../../services/prisonService'
 import { ActivitySchedule, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
@@ -11,9 +12,9 @@ jest.mock('../../../services/prisonService')
 jest.mock('../../../services/capacitiesService')
 jest.mock('../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-const capacitiesService = new CapacitiesService(null) as jest.Mocked<CapacitiesService>
+const activitiesService = new ActivitiesService(null, null)
+const prisonService = new PrisonService(null, null, null, null)
+const capacitiesService = new CapacitiesService(null)
 
 describe('Route Handlers - People allocated now', () => {
   const handler = new PeopleAllocatedNowRoutes(prisonService, capacitiesService, activitiesService)
@@ -28,7 +29,7 @@ describe('Route Handlers - People allocated now', () => {
       prisonerNumber: '222222',
     } as Allocation
 
-    activitiesService.getAllocations.mockResolvedValue([bob, fred])
+    when(activitiesService.getAllocations).mockResolvedValue([bob, fred])
   }
 
   const mockScheduleData = () => {
@@ -37,7 +38,7 @@ describe('Route Handlers - People allocated now', () => {
       description: 'Wing cleaning 99',
     } as ActivitySchedule
 
-    activitiesService.getActivitySchedule.mockResolvedValue(wingCleaning1)
+    when(activitiesService.getActivitySchedule).mockResolvedValue(wingCleaning1)
   }
 
   const mockAllocationSummaryData = () => {
@@ -48,7 +49,7 @@ describe('Route Handlers - People allocated now', () => {
       vacancies: 5,
     } as AllocationsSummary
 
-    capacitiesService.getScheduleAllocationsSummary.mockResolvedValue(summary)
+    when(capacitiesService.getScheduleAllocationsSummary).mockResolvedValue(summary)
   }
 
   const mockInmateDetailsData = () => {
@@ -65,7 +66,7 @@ describe('Route Handlers - People allocated now', () => {
       assignedLivingUnitDesc: 'Room 2',
     } as InmateBasicDetails
 
-    prisonService.getInmateDetails.mockResolvedValue([bobsData, fredsData])
+    when(prisonService.getInmateDetails).mockResolvedValue([bobsData, fredsData])
   }
 
   const mockPrisonerAllocationsDate = () => {
@@ -78,7 +79,7 @@ describe('Route Handlers - People allocated now', () => {
       allocations: [{ scheduleDescription: 'Wing cleaning 99' }, { scheduleDescription: 'Gym' }],
     } as PrisonerAllocations
 
-    activitiesService.getPrisonerAllocations.mockResolvedValue([bobsData, fredsData])
+    when(activitiesService.getPrisonerAllocations).mockResolvedValue([bobsData, fredsData])
   }
 
   beforeEach(() => {

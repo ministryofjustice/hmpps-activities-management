@@ -38,6 +38,6 @@ export default class PayBandRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { payBand } = req.body
     req.session.allocateJourney.inmate.payBand = payBand
-    return res.redirect('check-answers')
+    return res.redirectOrReturn('check-answers')
   }
 }

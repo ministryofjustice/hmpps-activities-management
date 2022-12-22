@@ -25,7 +25,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
         },
       },
       render: jest.fn(),
-      redirect: jest.fn(),
+      redirectOrReturn: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -91,7 +91,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
       await handler.POST(req, res)
 
       expect(req.session.allocateJourney.inmate.payBand).toEqual('A')
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
   })
 

@@ -2,7 +2,8 @@ import { Router } from 'express'
 import type { Services } from '../services'
 import homeRoutes from './home'
 import changeLocationRoutes from './change-location'
-import activitiesRoutes from './allocate-to-activity'
+import createRoutes from './create-an-activity'
+import allocateRoutes from './allocate-to-activity'
 import attendanceRoutes from './record-attendance'
 import unlockListRoutes from './unlock-list'
 import spikeRoutes from './spikes'
@@ -18,7 +19,8 @@ export default function routes(services: Services): Router {
 
   router.use('/', homeRoutes())
   router.use('/change-location', changeLocationRoutes(services))
-  router.use('/allocate', activitiesRoutes(services))
+  router.use('/create', createRoutes(services))
+  router.use('/allocate', allocateRoutes(services))
   router.use('/attendance', attendanceRoutes(services))
   router.use('/unlock-list', unlockListRoutes(services))
   // Add more beta build routes here

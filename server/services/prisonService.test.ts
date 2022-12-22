@@ -16,16 +16,25 @@ import activities from './fixtures/activities_1.json'
 import absenceReasons from './fixtures/absence-reasons_1.json'
 import batchUpdateAttendanceResponse from './fixtures/batch_update_attendance_response_1.json'
 import { OffenderActivityId } from '../@types/dps'
+import IncentivesApiClient from '../data/incentivesApiClient'
+import { IepLevel } from '../@types/incentivesApi/types'
 
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/prisonerSearchApiClient')
 jest.mock('../data/whereaboutsApiClient')
+jest.mock('../data/incentivesApiClient')
 
 describe('Prison Service', () => {
-  const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
-  const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
-  const whereaboutsApiClient = new WhereaboutsApiClient() as jest.Mocked<WhereaboutsApiClient>
-  const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, whereaboutsApiClient)
+  const prisonApiClient = new PrisonApiClient()
+  const prisonerSearchApiClient = new PrisonerSearchApiClient()
+  const whereaboutsApiClient = new WhereaboutsApiClient()
+  const incentivesApiClient = new IncentivesApiClient()
+  const prisonService = new PrisonService(
+    prisonApiClient,
+    prisonerSearchApiClient,
+    whereaboutsApiClient,
+    incentivesApiClient,
+  )
 
   const user = {} as ServiceUser
 
@@ -39,6 +48,19 @@ describe('Prison Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(prisonApiClient.getInmateDetail).toHaveBeenCalledWith('ABC123', user)
+    })
+  })
+
+  describe('getIncentiveLevels', () => {
+    it('should get the prisons incentive levels from incentives API', async () => {
+      const expectedResult = [{ data: 'response' }] as unknown as IepLevel[]
+
+      when(incentivesApiClient.getIncentiveLevels).calledWith(atLeast('MDI')).mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.getIncentiveLevels('MDI', user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(incentivesApiClient.getIncentiveLevels).toHaveBeenCalledWith('MDI', user)
     })
   })
 

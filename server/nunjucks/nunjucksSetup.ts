@@ -6,6 +6,7 @@ import { addMonths, addWeeks, subMonths, subWeeks } from 'date-fns'
 import {
   addDefaultSelectedValue,
   buildErrorSummaryList,
+  convertToTitleCase,
   dateInList,
   existsInStringArray,
   findError,
@@ -97,6 +98,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('getTimeSlotFromTime', getTimeSlotFromTime)
   njkEnv.addFilter('startsWithAny', startsWithAny)
   njkEnv.addFilter('toMoney', toMoney)
+  njkEnv.addFilter('toTitleCase', convertToTitleCase)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

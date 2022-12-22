@@ -5,22 +5,13 @@ import absenceReasons from '../../../../middleware/fixtures/absence_reasons_1.js
 import payDetails from '../fixtures/update_attendences_pay_details_request_1.json'
 
 import PrisonService from '../../../../services/prisonService'
-import PrisonApiClient from '../../../../data/prisonApiClient'
-import PrisonerSearchApiClient from '../../../../data/prisonerSearchApiClient'
-import WhereaboutsApiClient from '../../../../data/whereaboutsApiClient'
 import ActivityListBatchAbsencesRouteHandler from './ActivityListBatchAbsencesRouteHandler'
 import { CodeNameStringPair } from '../../../../@types/dps'
 
 jest.mock('../../../../services/prisonService')
-jest.mock('../../../../data/prisonApiClient')
-jest.mock('../../../../data/prisonerSearchApiClient')
-jest.mock('../../../../data/whereaboutsApiClient')
 
 describe('activityListAbsencesRouteHandler', () => {
-  const prisonApiClient = new PrisonApiClient()
-  const prisonerSearchApiClient = new PrisonerSearchApiClient()
-  const whereaboutsApiClient = new WhereaboutsApiClient()
-  const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, whereaboutsApiClient)
+  const prisonService = new PrisonService(null, null, null, null)
   let controller: ActivityListBatchAbsencesRouteHandler
 
   beforeEach(() => {

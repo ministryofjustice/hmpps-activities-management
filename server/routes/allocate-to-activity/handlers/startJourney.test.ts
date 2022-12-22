@@ -10,8 +10,8 @@ import { ActivitySchedule } from '../../../@types/activitiesAPI/types'
 jest.mock('../../../services/prisonService')
 jest.mock('../../../services/activitiesService')
 
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const prisonService = new PrisonService(null, null, null, null)
+const activitiesService = new ActivitiesService(null, null)
 
 describe('Route Handlers - Allocate - Start', () => {
   const handler = new StartJourneyRoutes(prisonService, activitiesService)
