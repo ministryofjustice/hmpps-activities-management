@@ -2,6 +2,10 @@ import type { NextFunction, Request, Response } from 'express'
 import type { HTTPError } from 'superagent'
 import logger from '../logger'
 
+interface BadRequest extends HTTPError {
+  developerMessage: string
+}
+
 export default function createErrorHandler(production: boolean) {
   // next() is not used here but is required for the middleware to be discovered
   return (error: HTTPError, req: Request, res: Response, next: NextFunction): void => {
@@ -10,6 +14,14 @@ export default function createErrorHandler(production: boolean) {
     if (error.status === 401 || error.status === 403) {
       logger.info('Logging user out')
       return res.redirect('/sign-out')
+    }
+
+    if (error.status === 400) {
+      const badRequest = JSON.parse(error.text) as BadRequest
+
+      // TODO: Get the offending field name from the API message
+      req.flash('validationErrors', JSON.stringify([{ field: '', message: badRequest.developerMessage }]))
+      return res.redirect('back')
     }
 
     res.status(error.status || 500)
