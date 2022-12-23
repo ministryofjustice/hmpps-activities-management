@@ -19,8 +19,6 @@ export type Prisoner = {
 export type ActivityScheduleAllocation = {
   activityScheduleId: number
   description: string
-  startTime: string
-  endTime: string
   internalLocation?: InternalLocation
   prisoner: Prisoner
   attendance?: Attendance

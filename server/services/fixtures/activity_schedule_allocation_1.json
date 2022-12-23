@@ -2,8 +2,6 @@
   {
     "activityScheduleId": 3,
     "description": "Wednesday AM Houseblock 3",
-    "startTime": "10:00",
-    "endTime": "11:00",
     "internalLocation": {
       "id": 1,
       "code": "EDU-ROOM-1",
@@ -30,8 +28,6 @@
   {
     "activityScheduleId": 3,
     "description": "Wednesday AM Houseblock 3",
-    "startTime": "10:00",
-    "endTime": "11:00",
     "internalLocation": {
       "id": 1,
       "code": "EDU-ROOM-1",

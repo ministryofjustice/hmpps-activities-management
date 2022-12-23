@@ -178,8 +178,6 @@ export interface paths {
   }
 }
 
-export type webhooks = Record<string, never>
-
 export interface components {
   schemas: {
     Message: {
@@ -481,6 +479,21 @@ export interface components {
        */
       attendanceRequired: boolean
       /**
+       * @description Flag to indicate if the location of the activity is in cell
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * @description Flag to indicate if the activity is piece work
+       * @example false
+       */
+      pieceWork: boolean
+      /**
+       * @description Flag to indicate if the activity carried out outside of the prison
+       * @example false
+       */
+      outsideWork: boolean
+      /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
        */
@@ -584,6 +597,21 @@ export interface components {
        * @example false
        */
       attendanceRequired: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is in cell
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * @description Flag to indicate if the activity is piece work
+       * @example false
+       */
+      pieceWork: boolean
+      /**
+       * @description Flag to indicate if the activity carried out outside of the prison
+       * @example false
+       */
+      outsideWork: boolean
       /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
@@ -694,6 +722,21 @@ export interface components {
        */
       attendanceRequired: boolean
       /**
+       * @description Flag to indicate if the location of the activity is in cell
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * @description Flag to indicate if the activity is piece work
+       * @example false
+       */
+      pieceWork: boolean
+      /**
+       * @description Flag to indicate if the activity carried out outside of the prison
+       * @example false
+       */
+      outsideWork: boolean
+      /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
        */
@@ -777,18 +820,6 @@ export interface components {
       description: string
       /** @description Indicates the dates between which the schedule has been suspended */
       suspensions: components['schemas']['Suspension'][]
-      /**
-       * Format: partial-time
-       * @description The time that any instances of this schedule will start
-       * @example 9:00
-       */
-      startTime: string
-      /**
-       * Format: partial-time
-       * @description The time that any instances of this schedule will finish
-       * @example 11:30
-       */
-      endTime: string
       internalLocation?: components['schemas']['InternalLocation']
       /**
        * Format: int32
@@ -796,12 +827,40 @@ export interface components {
        * @example 10
        */
       capacity: number
+      activity: components['schemas']['ActivityLite']
+      /** @description The slots associated with this activity schedule */
+      slots: components['schemas']['ActivityScheduleSlot'][]
+    }
+    /**
+     * @description
+     *   Describes a slot for an activity schedule. There can be several of these defined for one activity schedule.
+     *   An activity schedule slot describes when, during the week, an activity will be run.
+     *   e.g. Tuesday PM on a Monday and Thursday.
+     */
+    ActivityScheduleSlot: {
       /**
-       * @description The days of the week on which the schedule takes place
+       * Format: int64
+       * @description The internally-generated ID for this activity schedule slot
+       * @example 123456
+       */
+      id: number
+      /**
+       * Format: partial-time
+       * @description The time that any instances of this schedule slot will start
+       * @example 9:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The time that any instances of this schedule slot will finish
+       * @example 11:30
+       */
+      endTime: string
+      /**
+       * @description The days of the week on which the schedule slot takes place
        * @example [Mon,Tue,Wed]
        */
       daysOfWeek: string[]
-      activity: components['schemas']['ActivityLite']
     }
     /**
      * @description An activity tier
@@ -1100,18 +1159,6 @@ export interface components {
        * @example Monday AM Houseblock 3
        */
       description: string
-      /**
-       * Format: partial-time
-       * @description The time that any instances of this schedule will start
-       * @example 9:00
-       */
-      startTime: string
-      /**
-       * Format: partial-time
-       * @description The time that any instances of this schedule will finish
-       * @example 11:30
-       */
-      endTime: string
       internalLocation?: components['schemas']['InternalLocation']
       /**
        * Format: int32
@@ -1119,12 +1166,9 @@ export interface components {
        * @example 10
        */
       capacity: number
-      /**
-       * @description The days of the week on which the schedule takes place
-       * @example [Mon,Tue,Wed]
-       */
-      daysOfWeek: string[]
       activity: components['schemas']['ActivityLite']
+      /** @description The slots associated with this activity schedule */
+      slots: components['schemas']['ActivityScheduleSlot'][]
     }
     /** @description Describes one instance of a prison which may or may not be active (rolled out) */
     RolloutPrison: {
@@ -1149,6 +1193,11 @@ export interface components {
        * @example true
        */
       active: boolean
+      /**
+       * Format: date
+       * @description The date rolled out
+       */
+      rolloutDate: string
     }
     DlqMessage: {
       body: {
