@@ -174,8 +174,6 @@ export default class ActivitiesService {
             return {
               activityScheduleId: as.id,
               description: as.description,
-              startTime: as.startTime,
-              endTime: as.endTime,
               internalLocation: as.internalLocation,
               prisoner: prisoners.find(p => p.prisonerNumber === alloc.prisonerNumber),
               attendance: as.instances[0].attendances.find(a => a.prisonerNumber === alloc.prisonerNumber),

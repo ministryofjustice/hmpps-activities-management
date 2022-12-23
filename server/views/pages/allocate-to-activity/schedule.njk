@@ -12,15 +12,19 @@
     {% set rows = [] %}
 
     {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
-        {% set dayMatchesSchedule = day | startsWithAny(schedule.daysOfWeek) %}
         {% set columns = [
             {
                 text: day
             }
         ] %}
 
-        {% for slot in ['AM', 'PM', 'ED'] %}
-            {% set slotMatches = dayMatchesSchedule and schedule.startTime | getTimeSlotFromTime == slot %}
+        {% for timeSlot in ['AM', 'PM', 'ED'] %}
+            {% set slotMatches = false %}
+            {% for slot in schedule.slots %}
+                {% set dayMatchesSlot = day | startsWithAny(slot.daysOfWeek) %}
+                {% set slotMatches = dayMatchesSlot and (slotMatches or slot.startTime | getTimeSlotFromTime == timeSlot) %}
+            {% endfor %}
+
             {% set columns = (columns.push(
                 {
                     html: govukTag({

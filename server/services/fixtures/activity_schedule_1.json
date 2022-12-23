@@ -161,19 +161,19 @@
   ],
   "description": "Entry level Maths 1",
   "suspensions": [],
-  "startTime": "10:00",
-  "endTime": "11:00",
   "internalLocation": {
     "id": 1,
     "code": "EDU-ROOM-1",
     "description": "Education - R1"
   },
   "capacity": 10,
-  "daysOfWeek": ["Mon"],
   "activity": {
     "id": 1,
     "prisonCode": "MDI",
     "attendanceRequired": true,
+    "inCell": false,
+    "pieceWork": false,
+    "outsideWork": false,
     "summary": "Maths level 1",
     "description": "A basic maths course suitable for introduction to the subject",
     "category": {
@@ -182,5 +182,13 @@
       "name": "Education",
       "description": "Such as classes in English, maths, construction and computer skills"
     }
-  }
+  },
+  "slots": [
+    {
+      "id": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "daysOfWeek": ["Mon"]
+    }
+  ]
 }
