@@ -73,7 +73,11 @@ export default class UnlockListService {
       user,
     )
 
-    // TODO: Get activities - similar shape within scheduled events - in the API call for scheduled events
+    logger.info(`Total activities: ${scheduledEvents?.activities.length}`)
+    logger.info(`Total visits: ${scheduledEvents?.visits.length}`)
+    logger.info(`Total appointments: ${scheduledEvents?.appointments.length}`)
+    logger.info(`Total court hearings: ${scheduledEvents?.courtHearings.length}`)
+
     // TODO: Get transfers - similar shape as scheduled events
     // TODO: Adjudication hearings (currently in appointments, check with Adjudications team for rolled-out prisons)
     // TODO: Get ROTLs - Prison API: /api/movements/agency/{prisonCode}/temporary-absences - filtered to today?
@@ -81,9 +85,11 @@ export default class UnlockListService {
     // Match the prisoners with their events by prisonerNumber
     const unlockListItems = prisoners.map(prisoner => {
       const appointments = scheduledEvents?.appointments.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
-      const courtHearings = scheduledEvents?.courtHearings.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
-      const visits = scheduledEvents?.visits.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
-      const allEventsForPrisoner = [...appointments, ...courtHearings, ...visits]
+      const courtHearings = scheduledEvents?.courtHearings.filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
+      const visits = scheduledEvents?.visits.filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
+      const activities = scheduledEvents?.activities.filter(act => act.prisonerNumber === prisoner.prisonerNumber)
+      const allEventsForPrisoner = [...appointments, ...courtHearings, ...visits, ...activities]
+
       return {
         ...prisoner,
         displayName: convertToTitleCase(`${prisoner.lastName}, ${prisoner.firstName}`),
@@ -96,7 +102,7 @@ export default class UnlockListService {
     return unlockListItems
   }
 
-  private sortByPriority = (data: ScheduledEvent[]) => {
+  private sortByPriority = (data: ScheduledEvent[]): ScheduledEvent[] => {
     return data.sort((p1, p2) => {
       if (p1.priority > p2.priority) return 1
       if (p1.priority < p2.priority) return -1

@@ -121,14 +121,11 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     endDate: string,
     user: ServiceUser,
   ): Promise<PrisonerScheduledEvents> {
-    const query = prisonerNumber ? { prisonerNumber, startDate, endDate } : { startDate, endDate }
-    return this.get(
-      {
-        path: `/prisons/${prisonCode}/scheduled-events`,
-        query,
-      },
-      user,
-    )
+    return this.get({
+      path: `/scheduled-events/prison/${prisonCode}`,
+      query: { prisonerNumber, startDate, endDate },
+      authToken: user.token,
+    })
   }
 
   getScheduledEventsByPrisonerNumbers(
@@ -138,14 +135,12 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     prisonerNumbers: string[],
     user: ServiceUser,
   ): Promise<PrisonerScheduledEvents> {
-    return this.post(
-      {
-        path: `/prisons/${prisonCode}/scheduled-events`,
-        query: { date, timeSlot },
-        data: prisonerNumbers,
-      },
-      user,
-    )
+    return this.post({
+      path: `/scheduled-events/prison/${prisonCode}`,
+      query: { date, timeSlot },
+      data: prisonerNumbers,
+      authToken: user.token,
+    })
   }
 
   async getRolloutPrison(prisonCode: string, user: ServiceUser): Promise<RolloutPrison> {

@@ -1,4 +1,4 @@
-import { Attendance, InternalLocation, ScheduledActivity } from './activitiesAPI/types'
+import { Attendance, InternalLocation, ScheduledEvent } from './activitiesAPI/types'
 import { Alert } from './prisonApiImport/types'
 
 export type PrisonerAlert = {
@@ -76,6 +76,6 @@ export type UnlockListItem = {
   locationPrefix?: string
   cellLocation: string
   alerts?: Alert[]
-  events?: ScheduledActivity[]
+  events?: ScheduledEvent[]
   status: string
 }
