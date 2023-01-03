@@ -11,6 +11,7 @@ import {
   LocationGroup,
   LocationPrefix,
   PrisonerAllocations,
+  PrisonerScheduledEvents,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 
@@ -328,6 +329,74 @@ describe('activitiesApiClient', () => {
       const output = await activitiesApiClient.getPrisonerAllocations('MDI', ['1234567'], user)
 
       expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('GET getScheduledEvents', () => {
+    const prisonCode = 'MDI'
+    const prisonerNumber = 'A1234AA'
+    const startDate = '2022-10-01'
+    const endDate = '2022-10-02'
+
+    it('should return scheduled events for a single prisoner and a date range', async () => {
+      const response = {
+        prisonCode,
+        prisonerNumbers: [prisonerNumber],
+        startDate,
+        endDate,
+        appointments: [],
+        activities: [],
+        visits: [],
+        courtHearings: [],
+      } as PrisonerScheduledEvents
+
+      fakeActivitiesApi
+        .get(`/scheduled-events/prison/${prisonCode}`)
+        .query({ prisonerNumber, startDate, endDate })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const result = await activitiesApiClient.getScheduledEvents(prisonCode, prisonerNumber, startDate, endDate, user)
+
+      expect(result).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('POST getScheduledEventsByPrisonerNumbers', () => {
+    const prisonCode = 'MDI'
+    const prisonerNumbers = ['A1234AA', 'B1234BB']
+    const date = '2022-10-01'
+    const timeSlot = 'AM'
+
+    it('should return scheduled events for a list of prisoners and single date / time slot', async () => {
+      const response = {
+        prisonCode,
+        prisonerNumbers,
+        startDate: date,
+        endDate: date,
+        appointments: [],
+        activities: [],
+        visits: [],
+        courtHearings: [],
+      } as PrisonerScheduledEvents
+
+      fakeActivitiesApi
+        .post(`/scheduled-events/prison/${prisonCode}`, prisonerNumbers)
+        .query({ date, timeSlot })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const result = await activitiesApiClient.getScheduledEventsByPrisonerNumbers(
+        prisonCode,
+        date,
+        timeSlot,
+        prisonerNumbers,
+        user,
+      )
+
+      expect(result).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
   })

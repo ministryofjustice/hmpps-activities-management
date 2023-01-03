@@ -32,17 +32,27 @@ export interface paths {
      */
     post: operations['allocate']
   }
-  '/prisons/{prisonCode}/scheduled-events': {
+  '/scheduled-events/prison/{prisonCode}': {
     /**
-     * Get a list of scheduled events for a prison, prisoner and date range (max 3 months)
-     * @description Returns zero or more scheduled events for a prison, prisoner and date range (max 3 months).
+     * Get a list of scheduled events for a prison, prisoner, date range (max 3 months) and optional time slot.
+     * @description
+     *       Returns scheduled events for the prison, prisoner, date range (max 3 months) and optional time slot.
+     *       Court hearings, appointments and visits always come from NOMIS (via prison API).
+     *       Activities come from either NOMIS or the new Activities database, depending on whether the prison is
+     *       marked as rolled-out in the activities database.
+     *       (Intended usage: Prisoner calendar)
      */
-    get: operations['getScheduledEventsByDateRange']
+    get: operations['getScheduledEventsByPrisonAndPrisonerAndDateRange']
     /**
-     * Get a list of scheduled events for a prison, offender list
-     * @description Returns zero or more scheduled events for a prison, offender list.
+     * Get a list of scheduled events for a prison and list of prisoner numbers for a date and time slot
+     * @description
+     *       Returns scheduled events for the prison, prisoner numbers, single date and an optional time slot.
+     *       Court hearings, appointments and visits always come from NOMIS (via prison API).
+     *       Activities come from either NOMIS or the new activities database, depending on whether the prison is
+     *       marked as rolled-out in the activities database.
+     *       (Intended usage: Unlock list)
      */
-    post: operations['getScheduledEventsForOffenderList']
+    post: operations['getScheduledEventsByPrisonAndPrisonersAndDateRange']
   }
   '/prisons/{prisonCode}/prisoner-allocations': {
     /**
@@ -109,8 +119,8 @@ export interface paths {
   }
   '/prisons/{prisonCode}/scheduled-instances': {
     /**
-     * Get a list of scheduled instances for a prison, prisoner (optional), date range (max 3 months) and time slot (AM, PM or ED - optional)
-     * @description Returns zero or more scheduled instances for a prison, prisoner (optional) and date range (max 3 months).
+     * Get a list of scheduled instances for a prison, date range (max 3 months) and time slot (AM, PM or ED - optional)
+     * @description Returns zero or more scheduled instances for a prison and date range (max 3 months).
      */
     get: operations['getActivityScheduleInstancesByDateRange']
   }
@@ -1293,12 +1303,12 @@ export interface components {
        * @description The child groups of this group
        * @example [
        *   {
-       *     "name": "Landing A/1",
-       *     "key": "1"
+       *     'name': 'Landing A/1',
+       *     'key': '1'
        *   },
        *   {
-       *     "name": "Landing A/2",
-       *     "key": "2"
+       *     'name': 'Landing A/2',
+       *     'key': '2'
        *   }
        * ]
        */
@@ -1475,20 +1485,28 @@ export interface operations {
       }
     }
   }
-  getScheduledEventsByDateRange: {
+  getScheduledEventsByPrisonAndPrisonerAndDateRange: {
     /**
-     * Get a list of scheduled events for a prison, prisoner and date range (max 3 months)
-     * @description Returns zero or more scheduled events for a prison, prisoner and date range (max 3 months).
+     * Get a list of scheduled events for a prison, prisoner, date range (max 3 months) and optional time slot.
+     * @description
+     *       Returns scheduled events for the prison, prisoner, date range (max 3 months) and optional time slot.
+     *       Court hearings, appointments and visits always come from NOMIS (via prison API).
+     *       Activities come from either NOMIS or the new Activities database, depending on whether the prison is
+     *       marked as rolled-out in the activities database.
+     *       (Intended usage: Prisoner calendar)
      */
     parameters: {
-      /** @description Prisoner number */
-      /** @description Start date of query */
-      /** @description End date of query (max 3 months from start date) */
+      /** @description Prisoner number (required). Format A9999AA. */
+      /** @description Start date of query (required). Format YYYY-MM-DD. */
+      /** @description End date of query (required). Format YYYY-MM-DD. The end date must be withing 3 months of the start date) */
+      /** @description Time slot for the events (optional). If supplied, one of AM, PM or ED. */
       query: {
         prisonerNumber: string
         startDate: string
         endDate: string
+        timeSlot?: string
       }
+      /** @description The 3-digit prison code. */
       path: {
         prisonCode: string
       }
@@ -1526,18 +1544,24 @@ export interface operations {
       }
     }
   }
-  getScheduledEventsForOffenderList: {
+  getScheduledEventsByPrisonAndPrisonersAndDateRange: {
     /**
-     * Get a list of scheduled events for a prison, offender list
-     * @description Returns zero or more scheduled events for a prison, offender list.
+     * Get a list of scheduled events for a prison and list of prisoner numbers for a date and time slot
+     * @description
+     *       Returns scheduled events for the prison, prisoner numbers, single date and an optional time slot.
+     *       Court hearings, appointments and visits always come from NOMIS (via prison API).
+     *       Activities come from either NOMIS or the new activities database, depending on whether the prison is
+     *       marked as rolled-out in the activities database.
+     *       (Intended usage: Unlock list)
      */
     parameters: {
-      /** @description Date of the events */
-      /** @description Time slot of the events */
-      query?: {
-        date?: string
+      /** @description The exact date to return events for (required) in format YYYY-MM-DD */
+      /** @description Time slot of the events (optional). If supplied, one of AM, PM or ED. */
+      query: {
+        date: string
         timeSlot?: string
       }
+      /** @description The 3-character prison code. */
       path: {
         prisonCode: string
       }
@@ -1887,20 +1911,19 @@ export interface operations {
   }
   getActivityScheduleInstancesByDateRange: {
     /**
-     * Get a list of scheduled instances for a prison, prisoner (optional), date range (max 3 months) and time slot (AM, PM or ED - optional)
-     * @description Returns zero or more scheduled instances for a prison, prisoner (optional) and date range (max 3 months).
+     * Get a list of scheduled instances for a prison, date range (max 3 months) and time slot (AM, PM or ED - optional)
+     * @description Returns zero or more scheduled instances for a prison and date range (max 3 months).
      */
     parameters: {
-      /** @description Prisoner number (optional) */
-      /** @description Start date of query */
-      /** @description End date of query (max 3 months from start date) */
-      /** @description The time slot - AM, PM or ED (optional) */
+      /** @description Start date of query (required). Format YYYY-MM-DD. */
+      /** @description End date of query (reuired). The end date must be within 3 months of the start date. */
+      /** @description The time slot (optional). If supplied, one of AM, PM or ED. */
       query: {
-        prisonerNumber?: string
         startDate: string
         endDate: string
         slot?: string
       }
+      /** @description The 3-character prison code. */
       path: {
         prisonCode: string
       }

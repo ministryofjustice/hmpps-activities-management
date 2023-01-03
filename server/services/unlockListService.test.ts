@@ -63,6 +63,8 @@ describe('Unlock list service', () => {
     content: [],
   } as unknown as PagePrisoner
 
+  // TODO: Add some data here - populate with realistic response values
+
   const scheduledEvents = {
     prisonCode: 'MDI',
     startDate: '',
@@ -78,6 +80,7 @@ describe('Unlock list service', () => {
   describe('getUnlockListForLocationGroups', () => {
     it('should get the unlock list items for one location group', async () => {
       const prisonerNumbers = ['A1234AA']
+
       activitiesApiClient.getPrisonLocationPrefixByGroup.mockResolvedValue({ locationPrefix: 'MDI-1-' })
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
