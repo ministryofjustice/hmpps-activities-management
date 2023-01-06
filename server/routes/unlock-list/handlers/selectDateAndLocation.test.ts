@@ -6,6 +6,7 @@ import SelectDateAndLocationRoutes, { DateAndLocation } from './selectDateAndLoc
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import ActivitiesService from '../../../services/activitiesService'
 import { LocationGroup } from '../../../@types/activitiesAPI/types'
+import SimpleDate from '../../../commonValidationTypes/simpleDate'
 
 jest.mock('../../../services/activitiesService')
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
@@ -83,10 +84,15 @@ describe('Unlock list routes - select date and location', () => {
     })
 
     it('redirects with the expected query params for when a custom date is selected', async () => {
-      const todaysDate = format(new Date(), 'yyyy-MM-dd')
+      const testDate = plainToInstance(SimpleDate, {
+        day: 1,
+        month: 12,
+        year: 2022,
+      })
+
       req.body = {
         datePresetOption: 'other',
-        date: todaysDate,
+        date: testDate,
         activitySlot: 'am',
         locations: ['here'],
       }
@@ -94,7 +100,7 @@ describe('Unlock list routes - select date and location', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?datePresetOption=other&date=${todaysDate}&slot=am&locations=here`,
+        `planned-events?datePresetOption=other&date=2022-12-01&slot=am&locations=here`,
       )
     })
   })
