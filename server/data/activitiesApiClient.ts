@@ -192,11 +192,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   }
 
   async updateAttendances(attendanceUpdates: AttendanceUpdateRequest[], user: ServiceUser): Promise<void> {
-    return this.put({
-      path: '/attendances',
-      data: attendanceUpdates,
-      authToken: user.token,
-    })
+    return this.put(
+      {
+        path: '/attendances',
+        data: attendanceUpdates,
+      },
+      user,
+    )
   }
 
   async getPrisonLocationGroups(prisonCode: string, user: ServiceUser): Promise<LocationGroup[]> {
