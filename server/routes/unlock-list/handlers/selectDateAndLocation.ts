@@ -66,8 +66,8 @@ export default class SelectDateAndLocationRoutes {
     if (body.datePresetOption === PresetDateOptions.YESTERDAY) {
       return this.formatDate(subDays(new Date(), 1)).toString()
     }
-    // Use the POSTed date, which is a SimpleDate. It's toString() method formats the same as formatDate()
-    return body.date.toString()
+    // Use the POSTed date, which is a SimpleDate.
+    return this.formatDate(body.date.toRichDate())
   }
 
   private formatDate = (date: Date) => format(date, 'yyyy-MM-dd')
