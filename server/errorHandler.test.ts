@@ -37,16 +37,22 @@ describe('Error Handler', () => {
     expect(res.redirect).toHaveBeenCalledWith('/sign-out')
   })
 
-  it('should log user out if error is 403', () => {
+  it('should display error if 403', () => {
     const handler = createErrorHandler(false)
 
     error = {
       status: 403,
+      message: 'forbidden',
+      stack: 'stacktrace',
     } as HTTPError
 
     handler(error, req, res, jest.fn)
 
-    expect(res.redirect).toHaveBeenCalledWith('/sign-out')
+    expect(res.render).toHaveBeenCalledWith('pages/error', {
+      message: 'forbidden',
+      status: 403,
+      stack: 'stacktrace',
+    })
   })
 
   it('should add 400 messages to flash validation messages and redirect back', () => {
