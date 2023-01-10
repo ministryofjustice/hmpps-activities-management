@@ -36,6 +36,17 @@
 
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
+                        "id": "manageSchedulesCard",
+                        "href": "/schedule/activities",
+                        "clickable": "true",
+                        "heading": "Create or change activity details and schedules",
+                        "description": "Set up new activities, add schedules, and change, suspend or archive existing ones.",
+                        "data-qa": "manage-schedules-card"
+                    }) }}
+                </div>
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
                         "id": "recordAttendanceCard",
                         "href": "/attendance/select-period",
                         "clickable": "true",

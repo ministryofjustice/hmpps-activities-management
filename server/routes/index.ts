@@ -3,6 +3,7 @@ import type { Services } from '../services'
 import homeRoutes from './home'
 import changeLocationRoutes from './change-location'
 import createRoutes from './create-an-activity'
+import scheduleRoutes from './manage-schedules'
 import allocateRoutes from './allocate-to-activity'
 import attendanceRoutes from './record-attendance'
 import unlockListRoutes from './unlock-list'
@@ -21,6 +22,7 @@ export default function routes(services: Services): Router {
   router.use('/change-location', changeLocationRoutes(services))
   router.use('/create', createRoutes(services))
   router.use('/allocate', allocateRoutes(services))
+  router.use('/schedule', scheduleRoutes(services))
   router.use('/attendance', attendanceRoutes(services))
   router.use('/unlock-list', unlockListRoutes(services))
   // Add more beta build routes here
