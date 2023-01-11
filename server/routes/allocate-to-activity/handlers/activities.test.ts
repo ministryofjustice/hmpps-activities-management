@@ -13,7 +13,7 @@ jest.mock('../../../services/capacitiesService')
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 const capacitiesService = new CapacitiesService(null) as jest.Mocked<CapacitiesService>
 
-describe('Route Handlers - Activities dashboard', () => {
+describe('Route Handlers - Allocation dashboard', () => {
   const handler = new ActivitiesRoutes(activitiesService, capacitiesService)
   let req: Request
   let res: Response
