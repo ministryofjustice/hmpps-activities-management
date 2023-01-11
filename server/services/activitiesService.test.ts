@@ -78,6 +78,19 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('getActivities', () => {
+    it('should get the list of activities from activities API', async () => {
+      const expectedResult = [{ id: 1, summary: 'Maths level 1' }] as ActivityLite[]
+
+      activitiesApiClient.getActivities.mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getActivities(user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getActivities).toHaveBeenCalledWith('MDI', user)
+    })
+  })
+
   describe('getSchedulesOfActivity', () => {
     it('should get the list of schedules from activities API', async () => {
       const expectedResult = [{ id: 1, description: 'Houseblock 1 AM' }] as ActivityScheduleLite[]
