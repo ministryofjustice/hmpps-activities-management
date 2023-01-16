@@ -10,6 +10,7 @@ import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
 import inmateDetailList from '../fixtures/prisonApi/inmateDetailList.json'
 import getAllInmatesPerPrison from '../fixtures/prisonerSearchApi/getAllInmatesPerPrison.json'
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetails.json'
+import getPrisonerIepSummary from '../fixtures/incentivesApi/getPrisonerIepSummary.json'
 import getActivity from '../fixtures/activitiesApi/getActivity.json'
 
 import IndexPage from '../pages/index'
@@ -47,6 +48,7 @@ context('Change location', () => {
       getAllInmatesPerPrison,
     )
     cy.stubEndpoint('GET', '/api/offenders/A7742DY', getInmateDetails)
+    cy.stubEndpoint('GET', '/iep/reviews/prisoner/A7742DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/activities/2', getActivity)
     cy.stubEndpoint('POST', '/schedules/5/allocations')
     cy.signIn()

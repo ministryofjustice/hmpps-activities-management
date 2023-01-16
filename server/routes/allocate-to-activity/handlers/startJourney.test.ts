@@ -6,6 +6,7 @@ import StartJourneyRoutes from './startJourney'
 import PrisonService from '../../../services/prisonService'
 import { InmateDetail } from '../../../@types/prisonApiImport/types'
 import { ActivitySchedule } from '../../../@types/activitiesAPI/types'
+import { IepSummary } from '../../../@types/incentivesApi/types'
 
 jest.mock('../../../services/prisonService')
 jest.mock('../../../services/activitiesService')
@@ -44,8 +45,13 @@ describe('Route Handlers - Allocate - Start', () => {
           firstName: 'Joe',
           lastName: 'Bloggs',
           assignedLivingUnit: { description: '1-2-001' },
-          privilegeSummary: { iepLevel: 'Standard' },
         } as InmateDetail)
+
+      when(prisonService.getPrisonerIepSummary)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue({
+          iepLevel: 'Standard',
+        } as IepSummary)
 
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
