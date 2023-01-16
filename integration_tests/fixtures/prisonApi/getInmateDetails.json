@@ -11,9 +11,7 @@
   "activeFlag": true,
   "agencyId": "MDI",
   "assignedLivingUnitId": 4012,
-  "alertsCodes": [
-    "X"
-  ],
+  "alertsCodes": ["X"],
   "activeAlertCount": 4,
   "inactiveAlertCount": 0,
   "alerts": [
@@ -181,14 +179,6 @@
   "recall": true,
   "imprisonmentStatus": "14FTR_ORA",
   "imprisonmentStatusDescription": "ORA 14 Day Fixed Term Recall",
-  "privilegeSummary": {
-    "bookingId": 1201033,
-    "iepLevel": "Enhanced 3",
-    "iepDate": "2022-11-10",
-    "iepTime": "2022-11-10T11:46:31",
-    "daysSinceReview": 36,
-    "iepDetails": []
-  },
   "receptionDate": "2020-09-14",
   "locationDescription": "Moorland (HMP & YOI)",
   "latestLocationId": "MDI"

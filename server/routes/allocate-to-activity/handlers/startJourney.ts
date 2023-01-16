@@ -10,8 +10,9 @@ export default class StartJourneyRoutes {
     const { scheduleId, prisonerNumber } = req.params
     const { user } = res.locals
 
-    const [inmate, schedule] = await Promise.all([
+    const [inmate, iepSummary, schedule] = await Promise.all([
       this.prisonService.getInmate(prisonerNumber, user),
+      this.prisonService.getPrisonerIepSummary(prisonerNumber, user),
       this.activitiesService.getActivitySchedule(+scheduleId, user),
     ])
 
@@ -20,7 +21,7 @@ export default class StartJourneyRoutes {
         prisonerNumber: inmate.offenderNo,
         prisonerName: convertToTitleCase(`${inmate.firstName} ${inmate.lastName}`),
         cellLocation: inmate.assignedLivingUnit?.description,
-        incentiveLevel: inmate.privilegeSummary?.iepLevel,
+        incentiveLevel: iepSummary?.iepLevel,
       },
       activity: {
         activityId: schedule.activity.id,

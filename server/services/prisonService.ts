@@ -30,7 +30,7 @@ import {
   UpdateAttendanceDtoLenient,
 } from '../@types/whereaboutsApiImportCustom'
 import IncentivesApiClient from '../data/incentivesApiClient'
-import { IepLevel } from '../@types/incentivesApi/types'
+import { IepLevel, IepSummary } from '../@types/incentivesApi/types'
 
 export default class PrisonService {
   constructor(
@@ -50,6 +50,10 @@ export default class PrisonService {
 
   getIncentiveLevels(prisonId: string, user: ServiceUser): Promise<IepLevel[]> {
     return this.incentivesApiClient.getIncentiveLevels(prisonId, user)
+  }
+
+  getPrisonerIepSummary(prisonerNumber: string, user: ServiceUser): Promise<IepSummary> {
+    return this.incentivesApiClient.getPrisonerIepSummary(prisonerNumber, user)
   }
 
   async searchInmates(prisonerSearchCriteria: PrisonerSearchCriteria, user: ServiceUser): Promise<Prisoner[]> {
