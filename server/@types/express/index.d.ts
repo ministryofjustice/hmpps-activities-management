@@ -4,6 +4,7 @@ import { CaseLoadExtended } from '../dps'
 import { RoleDetail } from '../nomisUserApiImport/types'
 import { AllocateToActivityJourney } from '../../routes/allocate-to-activity/journey'
 import { CreateAnActivityJourney } from '../../routes/create-an-activity/journey'
+import { CreateScheduleJourney } from '../../routes/manage-schedules/create-schedule/journey'
 
 export default {}
 
@@ -17,6 +18,7 @@ declare module 'express-session' {
     data: any
     createJourney: CreateAnActivityJourney
     allocateJourney: AllocateToActivityJourney
+    createScheduleJourney: CreateScheduleJourney
   }
 }
 

@@ -1,0 +1,22 @@
+{
+  "name": "Beginners climbing2",
+  "startDate": {
+    "day": 17,
+    "month": 1,
+    "year": 2023
+  },
+  "endDateOption": "yes",
+  "endDate": {
+    "day": 18,
+    "month": 1,
+    "year": 2023
+  },
+  "days": ["tuesday", "friday"],
+  "timeSlotsTuesday": ["AM"],
+  "timeSlotsFriday": ["PM", "ED"],
+  "location": {
+    "id": 26149,
+    "name": "Gym"
+  },
+  "capacity": 12
+}

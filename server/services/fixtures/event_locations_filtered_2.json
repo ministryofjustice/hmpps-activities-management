@@ -1,0 +1,52 @@
+[
+  {
+    "locationId": 27187,
+    "locationType": "ADJU",
+    "description": "RES-MCASU-MCASU",
+    "agencyId": "MDI",
+    "parentLocationId": 27186,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-MCASU-MCASU",
+    "userDescription": "Adj"
+  },
+  {
+    "locationId": 26962,
+    "locationType": "RESI",
+    "description": "RES-HB1-HB1CL1",
+    "agencyId": "MDI",
+    "parentLocationId": 26960,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB1-HB1CL1",
+    "userDescription": "HB1 Classroom 1"
+  },
+  {
+    "locationId": 27206,
+    "locationType": "SPOR",
+    "description": "GYM-WEIGHTS",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-WEIGHTS",
+    "userDescription": "Weights"
+  },
+  {
+    "locationId": 27019,
+    "locationType": "TRAI",
+    "description": "WORK_IND-WS9",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS9",
+    "userDescription": "Workshop 9"
+  },
+  {
+    "locationId": 27214,
+    "locationType": "SPOR",
+    "description": "GYM-YOGA",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-YOGA",
+    "userDescription": "Yoga"
+  }
+]

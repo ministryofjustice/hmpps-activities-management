@@ -1,0 +1,51 @@
+{
+  "id": 15,
+  "description": "Beginners climbing2",
+  "internalLocation": {
+    "id": 26149,
+    "code": "GYM",
+    "description": "GYM"
+  },
+  "capacity": 12,
+  "activity": {
+    "id": 5,
+    "prisonCode": "MDI",
+    "attendanceRequired": true,
+    "inCell": false,
+    "pieceWork": false,
+    "outsideWork": false,
+    "payPerSession": "H",
+    "summary": "Climbing",
+    "description": null,
+    "category": {
+      "id": 4,
+      "code": "GYM_SPORTS_FITNESS",
+      "name": "Gym, sport and fitness",
+      "description": "Such as sport clubs, like football, fitness classes and gym sessions"
+    },
+    "riskLevel": "high",
+    "minimumIncentiveLevel": "Basic"
+  },
+  "slots": [
+    {
+      "id": 17,
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "daysOfWeek": ["Tue"]
+    },
+    {
+      "id": 18,
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "daysOfWeek": ["Fri"]
+    },
+    {
+      "id": 19,
+      "startTime": "18:00",
+      "endTime": "20:00",
+      "daysOfWeek": ["Fri"]
+    }
+  ],
+  "startDate": "17/01/2023",
+  "endDate": "18/01/2023"
+}

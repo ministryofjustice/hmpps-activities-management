@@ -267,4 +267,19 @@ describe('prisonApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('getEventLocations', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakePrisonApi
+        .get('/api/agencies/MDI/eventLocations')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await prisonApiClient.getEventLocations('MDI', user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

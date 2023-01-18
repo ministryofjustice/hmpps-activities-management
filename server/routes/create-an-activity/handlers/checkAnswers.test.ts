@@ -1,7 +1,10 @@
 import { Request, Response } from 'express'
 
+import { when } from 'jest-when'
 import ActivitiesService from '../../../services/activitiesService'
 import CheckAnswersRoutes from './checkAnswers'
+import activity from '../../../services/fixtures/activity_1.json'
+import atLeast from '../../../../jest.setup'
 
 jest.mock('../../../services/activitiesService')
 
@@ -90,9 +93,11 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         ],
       }
 
+      when(activitiesService.createActivity).calledWith(atLeast(expectedActivity)).mockResolvedValueOnce(activity)
+
       await handler.POST(req, res)
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
-      expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
     })
   })
 })

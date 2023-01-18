@@ -16,7 +16,7 @@ export interface paths {
   '/attendances': {
     /**
      * Updates attendance records.
-     * @description Updates the given attendance records with the supplied update request details.
+     * @description Updates the given attendance records with the supplied update request details. Requires the 'ACTIVITY_ADMIN' role.
      */
     put: operations['markAttendances']
   }
@@ -28,7 +28,7 @@ export interface paths {
     get: operations['getAllocationsBy']
     /**
      * Allocate offender to schedule
-     * @description Allocates the supplied offender allocation request to the activity schedule.
+     * @description Allocates the supplied offender allocation request to the activity schedule. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
      */
     post: operations['allocate']
   }
@@ -78,9 +78,18 @@ export interface paths {
   '/activities': {
     /**
      * Create an activity
-     * @description Create an activity.
+     * @description Create an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
      */
     post: operations['create']
+  }
+  '/activities/{activityId}/schedules': {
+    /** Get the capacity and number of allocated slots in an activity */
+    get: operations['getActivitySchedules']
+    /**
+     * Adds a new schedule to an existing activity
+     * @description Adds a new schedule to an existing activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     */
+    post: operations['addSchedule']
   }
   '/schedules/{scheduleId}': {
     /**
@@ -146,6 +155,10 @@ export interface paths {
     /** Get list of activities within a category at a specified prison */
     get: operations['getActivitiesInCategory']
   }
+  '/prison/{prisonCode}/activities': {
+    /** Get list of activities at a specified prison */
+    get: operations['getActivities']
+  }
   '/locations/prison/{prisonCode}': {
     /**
      * List of cell locations for a prison group supplied as a query parameter
@@ -178,15 +191,13 @@ export interface paths {
      */
     get: operations['getActivityById']
   }
-  '/activities/{activityId}/schedules': {
-    /** Get the capacity and number of allocated slots in an activity */
-    get: operations['getActivitySchedules']
-  }
   '/activities/{activityId}/capacity': {
     /** Get the capacity and number of allocated slots in an activity */
     get: operations['getActivityCapacity']
   }
 }
+
+export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
@@ -423,6 +434,12 @@ export interface components {
        * @example A1234AA
        */
       prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The offender booking id
+       * @example 10001
+       */
+      bookingId?: number
       activitySummary: string
       scheduleDescription: string
       /**
@@ -503,6 +520,11 @@ export interface components {
        * @example false
        */
       outsideWork: boolean
+      /**
+       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
+       * @example H
+       */
+      payPerSession?: string
       /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
@@ -622,6 +644,11 @@ export interface components {
        * @example false
        */
       outsideWork: boolean
+      /**
+       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
+       * @example 'H'
+       */
+      payPerSession: string
       /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
@@ -747,6 +774,11 @@ export interface components {
        */
       outsideWork: boolean
       /**
+       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
+       * @example H
+       */
+      payPerSession: string
+      /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
        */
@@ -825,7 +857,7 @@ export interface components {
       allocations: components['schemas']['Allocation'][]
       /**
        * @description The description of this activity schedule
-       * @example Monday AM Houseblock 3
+       * @example Entry level Maths 1
        */
       description: string
       /** @description Indicates the dates between which the schedule has been suspended */
@@ -840,6 +872,16 @@ export interface components {
       activity: components['schemas']['ActivityLite']
       /** @description The slots associated with this activity schedule */
       slots: components['schemas']['ActivityScheduleSlot'][]
+      /**
+       * Format: date
+       * @description The date on which this schedule will start. From this date, any schedules will be created as real, planned instances
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description The date on which this schedule will end. From this date, any schedules will be created as real, planned instances
+       */
+      endDate?: string
     }
     /**
      * @description
@@ -1090,6 +1132,101 @@ export interface components {
        */
       suspendedUntil?: string
     }
+    /** @description The create request with the new activity schedule details */
+    ActivityScheduleCreateRequest: {
+      /**
+       * @description The unique description of this activity schedule
+       * @example Entry level Maths 1
+       */
+      description: string
+      /**
+       * Format: date
+       * @description The date on which this activity scheduled will start. This cannot be before to the activity start date.
+       * @example 2022-12-23
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description The (optional) date on which this activity scheduled will end. If supplied this must be after to the start date.
+       * @example 2023-12-23
+       */
+      endDate?: string
+      /**
+       * Format: int64
+       * @description The optional NOMIS internal location id for this schedule
+       * @example 98877667
+       */
+      locationId?: number
+      /**
+       * Format: int32
+       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
+       * @example 10
+       */
+      capacity?: number
+      /** @description The days and times an activity schedule can take place */
+      slots: components['schemas']['Slot'][]
+    }
+    /**
+     * @description
+     *     Describes time slot and day (or days) the scheduled activity would run. At least one day must be specified.
+     *
+     *     e.g. 'AM, Monday, Wednesday and Friday' or 'PM Tuesday, Thursday, Sunday'
+     */
+    Slot: {
+      /**
+       * @description The time slot of the activity schedule, morning afternoon or evening e.g. AM, PM or ED
+       * @example AM
+       */
+      timeSlot: string
+      monday: boolean
+      tuesday: boolean
+      wednesday: boolean
+      thursday: boolean
+      friday: boolean
+      saturday: boolean
+      sunday: boolean
+    }
+    /**
+     * @description
+     *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
+     *   An activity schedule describes when, during the week, an activity will be run and where.
+     *   e.g. Tuesday PM and Thursday AM - suitable for Houseblock 2 to attend.
+     *   e.g. Monday AM and Thursday PM - suitable for Houseblock 3 to attend.
+     *   this 'lite' version of ActivitySchedule does not have allocated or instances.
+     */
+    ActivityScheduleLite: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity schedule
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The description of this activity schedule
+       * @example Monday AM Houseblock 3
+       */
+      description: string
+      internalLocation?: components['schemas']['InternalLocation']
+      /**
+       * Format: int32
+       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
+       * @example 10
+       */
+      capacity: number
+      activity: components['schemas']['ActivityLite']
+      /** @description The slots associated with this activity schedule */
+      slots: components['schemas']['ActivityScheduleSlot'][]
+      /**
+       * Format: date
+       * @description The date on which this schedule will start. From this date, any schedules will be created as real, planned instances
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description The date on which this schedule will end. From this date, any schedules will be created as real, planned instances
+       */
+      endDate?: string
+    }
     /** @description Describes the capacity and allocated slots of an activity or category */
     CapacityAndAllocated: {
       /**
@@ -1149,37 +1286,6 @@ export interface components {
       attendances: components['schemas']['Attendance'][]
       activitySchedule: components['schemas']['ActivityScheduleLite']
     }
-    /**
-     * @description
-     *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
-     *   An activity schedule describes when, during the week, an activity will be run and where.
-     *   e.g. Tuesday PM and Thursday AM - suitable for Houseblock 2 to attend.
-     *   e.g. Monday AM and Thursday PM - suitable for Houseblock 3 to attend.
-     *   this 'lite' version of ActivitySchedule does not have allocated or instances.
-     */
-    ActivityScheduleLite: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity schedule
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The description of this activity schedule
-       * @example Monday AM Houseblock 3
-       */
-      description: string
-      internalLocation?: components['schemas']['InternalLocation']
-      /**
-       * Format: int32
-       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
-       * @example 10
-       */
-      capacity: number
-      activity: components['schemas']['ActivityLite']
-      /** @description The slots associated with this activity schedule */
-      slots: components['schemas']['ActivityScheduleSlot'][]
-    }
     /** @description Describes one instance of a prison which may or may not be active (rolled out) */
     RolloutPrison: {
       /**
@@ -1207,7 +1313,7 @@ export interface components {
        * Format: date
        * @description The date rolled out
        */
-      rolloutDate: string
+      rolloutDate?: string
     }
     DlqMessage: {
       body: {
@@ -1303,12 +1409,12 @@ export interface components {
        * @description The child groups of this group
        * @example [
        *   {
-       *     'name': 'Landing A/1',
-       *     'key': '1'
+       *     "name": "Landing A/1",
+       *     "key": "1"
        *   },
        *   {
-       *     'name': 'Landing A/2',
-       *     'key': '2'
+       *     "name": "Landing A/2",
+       *     "key": "2"
        *   }
        * ]
        */
@@ -1368,7 +1474,7 @@ export interface operations {
   markAttendances: {
     /**
      * Updates attendance records.
-     * @description Updates the given attendance records with the supplied update request details.
+     * @description Updates the given attendance records with the supplied update request details. Requires the 'ACTIVITY_ADMIN' role.
      */
     requestBody: {
       content: {
@@ -1440,7 +1546,7 @@ export interface operations {
   allocate: {
     /**
      * Allocate offender to schedule
-     * @description Allocates the supplied offender allocation request to the activity schedule.
+     * @description Allocates the supplied offender allocation request to the activity schedule. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
      */
     parameters: {
       path: {
@@ -1498,13 +1604,13 @@ export interface operations {
     parameters: {
       /** @description Prisoner number (required). Format A9999AA. */
       /** @description Start date of query (required). Format YYYY-MM-DD. */
-      /** @description End date of query (required). Format YYYY-MM-DD. The end date must be withing 3 months of the start date) */
+      /** @description End date of query (required). Format YYYY-MM-DD. The end date must be within 3 months of the start date) */
       /** @description Time slot for the events (optional). If supplied, one of AM, PM or ED. */
       query: {
         prisonerNumber: string
         startDate: string
         endDate: string
-        timeSlot?: string
+        timeSlot?: 'AM' | 'PM' | 'ED'
       }
       /** @description The 3-digit prison code. */
       path: {
@@ -1559,7 +1665,7 @@ export interface operations {
       /** @description Time slot of the events (optional). If supplied, one of AM, PM or ED. */
       query: {
         date: string
-        timeSlot?: string
+        timeSlot?: 'AM' | 'PM' | 'ED'
       }
       /** @description The 3-character prison code. */
       path: {
@@ -1675,7 +1781,7 @@ export interface operations {
   create: {
     /**
      * Create an activity
-     * @description Create an activity.
+     * @description Create an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
      */
     requestBody: {
       content: {
@@ -1703,6 +1809,88 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getActivitySchedules: {
+    /** Get the capacity and number of allocated slots in an activity */
+    parameters: {
+      path: {
+        activityId: number
+      }
+    }
+    responses: {
+      /** @description Activity schedules */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivityScheduleLite']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Activity ID not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  addSchedule: {
+    /**
+     * Adds a new schedule to an existing activity
+     * @description Adds a new schedule to an existing activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     */
+    parameters: {
+      path: {
+        activityId: number
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ActivityScheduleCreateRequest']
+      }
+    }
+    responses: {
+      /** @description The schedule was created and added to the activity. */
+      201: {
+        content: {
+          'application/json': components['schemas']['ActivityScheduleLite']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Activity ID was not found. */
+      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
@@ -1916,12 +2104,12 @@ export interface operations {
      */
     parameters: {
       /** @description Start date of query (required). Format YYYY-MM-DD. */
-      /** @description End date of query (reuired). The end date must be within 3 months of the start date. */
+      /** @description End date of query (required). The end date must be within 3 months of the start date. */
       /** @description The time slot (optional). If supplied, one of AM, PM or ED. */
       query: {
         startDate: string
         endDate: string
-        slot?: string
+        slot?: 'AM' | 'PM' | 'ED'
       }
       /** @description The 3-character prison code. */
       path: {
@@ -1960,7 +2148,7 @@ export interface operations {
       /** @description The internal NOMIS location id of the activity */
       query?: {
         date?: string
-        timeSlot?: string
+        timeSlot?: 'AM' | 'PM' | 'ED'
         locationId?: number
       }
       path: {
@@ -1998,7 +2186,7 @@ export interface operations {
       /** @description AM, PM or ED */
       query?: {
         date?: string
-        timeSlot?: string
+        timeSlot?: 'AM' | 'PM' | 'ED'
       }
       path: {
         prisonCode: string
@@ -2089,6 +2277,34 @@ export interface operations {
       }
       /** @description Category ID not found */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getActivities: {
+    /** Get list of activities at a specified prison */
+    parameters: {
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Activities */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivityLite'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
@@ -2283,40 +2499,6 @@ export interface operations {
         }
       }
       /** @description The activity for this ID was not found. */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getActivitySchedules: {
-    /** Get the capacity and number of allocated slots in an activity */
-    parameters: {
-      path: {
-        activityId: number
-      }
-    }
-    responses: {
-      /** @description Activity schedules */
-      200: {
-        content: {
-          'application/json': components['schemas']['ActivityScheduleLite']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Activity ID not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']

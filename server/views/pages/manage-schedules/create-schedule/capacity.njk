@@ -1,0 +1,48 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "components/activitySummary.njk" import activitySummary %}
+
+{% set pageTitle = applicationName + " - Create a schedule - Capacity" %}
+{% set pageId = 'create-schedule-capacity-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {{ activitySummary(activity) }}
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukInput({
+                    label: {
+                        text: "How many people can be allocated to this schedule?",
+                        classes: "govuk-label--xl",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        html: "
+                            <p>Enter the maximum number (known as capacity) of people who can be allocated.</p>
+                            <p>You'll be able to allocate more people than the schedule's capacity to ensure the activity is not short-handed</p>
+                        "
+                    },
+                    id: "capacity",
+                    name: "capacity",
+                    inputmode: "numeric",
+                    spellcheck: false,
+                    classes: "govuk-input--width-5",
+                    errorMessage: validationErrors | findError('capacity'),
+                    value: formResponses.capacity or session.createScheduleJourney.capacity
+                }) }}
+                {{ govukButton({
+                    text: "Confirm capacity"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

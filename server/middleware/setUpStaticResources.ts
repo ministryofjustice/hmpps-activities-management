@@ -22,6 +22,7 @@ export default function setUpStaticResources(): Router {
     '/node_modules/@ministryofjustice/frontend/moj/assets',
     '/node_modules/@ministryofjustice/frontend',
     '/node_modules/jquery/dist',
+    '/node_modules/accessible-autocomplete/dist',
   ).forEach(dir => {
     router.use('/assets', express.static(path.join(process.cwd(), dir), cacheControl))
   })
@@ -40,6 +41,13 @@ export default function setUpStaticResources(): Router {
 
   Array.of('/node_modules/jquery-ui-dist/jquery-ui.min.css').forEach(dir => {
     router.use('/assets/stylesheets/jquery-ui.min.css', express.static(path.join(process.cwd(), dir), cacheControl))
+  })
+
+  Array.of('/node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css').forEach(dir => {
+    router.use(
+      '/assets/stylesheets/accessible-autocomplete.min.css',
+      express.static(path.join(process.cwd(), dir), cacheControl),
+    )
   })
 
   // Don't cache dynamic resources

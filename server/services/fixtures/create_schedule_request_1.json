@@ -1,0 +1,21 @@
+{
+  "description": "Beginners climbing2",
+  "startDate": "2023-01-17",
+  "endDate": "2023-01-18",
+  "locationId": 26149,
+  "capacity": 12,
+  "slots": [
+    {
+      "timeSlot": "AM",
+      "tuesday": true
+    },
+    {
+      "timeSlot": "PM",
+      "friday": true
+    },
+    {
+      "timeSlot": "ED",
+      "friday": true
+    }
+  ]
+}

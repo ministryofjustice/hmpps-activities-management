@@ -1,0 +1,109 @@
+{
+  "id": 1,
+  "prisonCode": "MDI",
+  "attendanceRequired": true,
+  "inCell": false,
+  "pieceWork": false,
+  "outsideWork": false,
+  "payPerSession": "H",
+  "summary": "Maths level 1",
+  "description": null,
+  "category": {
+    "id": 4,
+    "code": "GYM_SPORTS_FITNESS",
+    "name": "Gym, sport and fitness",
+    "description": "Such as sport clubs, like football, fitness classes and gym sessions"
+  },
+  "tier": null,
+  "eligibilityRules": [],
+  "schedules": [],
+  "waitingList": [],
+  "pay": [
+    {
+      "id": 81,
+      "incentiveLevel": "Basic",
+      "payBand": "A",
+      "rate": 125,
+      "pieceRate": 125,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 82,
+      "incentiveLevel": "Basic",
+      "payBand": "B",
+      "rate": 150,
+      "pieceRate": 150,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 83,
+      "incentiveLevel": "Standard",
+      "payBand": "A",
+      "rate": 125,
+      "pieceRate": 125,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 84,
+      "incentiveLevel": "Standard",
+      "payBand": "B",
+      "rate": 150,
+      "pieceRate": 150,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 85,
+      "incentiveLevel": "Enhanced",
+      "payBand": "A",
+      "rate": 125,
+      "pieceRate": 125,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 86,
+      "incentiveLevel": "Enhanced",
+      "payBand": "B",
+      "rate": 150,
+      "pieceRate": 150,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 87,
+      "incentiveLevel": "Enhanced 2",
+      "payBand": "A",
+      "rate": 125,
+      "pieceRate": 125,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 88,
+      "incentiveLevel": "Enhanced 2",
+      "payBand": "B",
+      "rate": 150,
+      "pieceRate": 150,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 89,
+      "incentiveLevel": "Enhanced 3",
+      "payBand": "A",
+      "rate": 125,
+      "pieceRate": 125,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 90,
+      "incentiveLevel": "Enhanced 3",
+      "payBand": "B",
+      "rate": 150,
+      "pieceRate": 150,
+      "pieceRateItems": 10
+    }
+  ],
+  "startDate": "14/01/2023",
+  "endDate": null,
+  "riskLevel": "high",
+  "minimumIncentiveLevel": "Basic",
+  "createdTime": "14/01/2023 10:55",
+  "createdBy": "SCH_ACTIVITY"
+}

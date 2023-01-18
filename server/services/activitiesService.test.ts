@@ -8,6 +8,7 @@ import {
   Activity,
   ActivityCategory,
   ActivityCreateRequest,
+  ActivityScheduleCreateRequest,
   ActivityLite,
   ActivityScheduleLite,
   LocationGroup,
@@ -108,6 +109,21 @@ describe('Activities Service', () => {
     it('should call activities API client to create an activity', async () => {
       await activitiesService.createActivity({ prisonCode: 'MDI' } as ActivityCreateRequest, user)
       expect(activitiesApiClient.postActivityCreation).toHaveBeenCalledWith({ prisonCode: 'MDI' }, user)
+    })
+  })
+
+  describe('createScheduleActivity', () => {
+    it('should call activities API client to create an activity schedule', async () => {
+      await activitiesService.createScheduleActivity(
+        1,
+        { description: 'Activity schedule', startDate: '2022-08-01' } as ActivityScheduleCreateRequest,
+        user,
+      )
+      expect(activitiesApiClient.postActivityScheduleCreation).toHaveBeenCalledWith(
+        1,
+        { description: 'Activity schedule', startDate: '2022-08-01' },
+        user,
+      )
     })
   })
 
@@ -214,7 +230,6 @@ describe('Activities Service', () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       when(prisonerSearchApiClient.searchByPrisonerNumbers).calledWith(criteria, user).mockResolvedValue(prisoners)
-
       when(activitiesApiClient.getActivitySchedules)
         .calledWith(atLeast('10001'))
         .mockResolvedValueOnce(activitySchedules)
