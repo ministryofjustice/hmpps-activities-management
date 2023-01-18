@@ -18,6 +18,7 @@ import batchUpdateAttendanceResponse from './fixtures/batch_update_attendance_re
 import { OffenderActivityId } from '../@types/dps'
 import IncentivesApiClient from '../data/incentivesApiClient'
 import { IepLevel } from '../@types/incentivesApi/types'
+import { LocationLenient } from '../@types/prisonApiImportCustom'
 
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -75,6 +76,19 @@ describe('Prison Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(prisonerSearchApiClient.searchInmates).toHaveBeenCalledWith(searchCriteria, user)
+    })
+  })
+
+  describe('getEventLocations', () => {
+    it('should get the prisons event locations from the prisons API', async () => {
+      const expectedResult = [{ data: 'response' }] as unknown as LocationLenient[]
+
+      when(prisonApiClient.getEventLocations).calledWith(atLeast('MDI')).mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.getEventLocations('MDI', user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(prisonApiClient.getEventLocations).toHaveBeenCalledWith('MDI', user)
     })
   })
 

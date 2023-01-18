@@ -19,6 +19,7 @@ import {
   PrisonerAllocations,
   Activity,
   ActivityCreateRequest,
+  ActivityScheduleCreateRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -109,8 +110,16 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  postActivityCreation(createBody: ActivityCreateRequest, user: ServiceUser): Promise<void> {
+  postActivityCreation(createBody: ActivityCreateRequest, user: ServiceUser): Promise<ActivityLite> {
     return this.post({ path: `/activities`, authToken: user.token, data: createBody })
+  }
+
+  postActivityScheduleCreation(
+    activityId: number,
+    createBody: ActivityScheduleCreateRequest,
+    user: ServiceUser,
+  ): Promise<ActivityScheduleLite> {
+    return this.post({ path: `/activities/${activityId}/schedules`, authToken: user.token, data: createBody })
   }
 
   postAllocation(scheduleId: number, prisonerNumber: string, payBand: string, user: ServiceUser): Promise<void> {

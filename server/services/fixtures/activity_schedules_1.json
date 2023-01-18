@@ -46,6 +46,7 @@
       "inCell": false,
       "pieceWork": false,
       "outsideWork": false,
+      "payPerSession": "H",
       "summary": "Maths level 1",
       "description": "A basic maths course suitable for introduction to the subject",
       "category": {
@@ -55,6 +56,7 @@
         "description": "Such as classes in English, maths, construction and computer skills"
       }
     },
+    "startDate": "2022-08-01",
     "slots": [
       {
         "id": 1,

@@ -1,0 +1,52 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% from "components/activitySummary.njk" import activitySummary %}
+
+{% set pageTitle = applicationName + " - Create a schedule - End date option" %}
+{% set pageId = 'create-schedule-end-date-option-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {{ activitySummary(activity) }}
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    classes: "govuk-radios--inline",
+                    name: "endDateOption",
+                    fieldset: {
+                        legend: {
+                            text: "Do you want to enter an end date for this schedule?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "yes",
+                            text: "Yes"
+                        },
+                        {
+                            value: "no",
+                            text: "No"
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('endDateOption')
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

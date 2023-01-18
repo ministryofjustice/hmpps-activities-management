@@ -1,0 +1,49 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "components/activitySummary.njk" import activitySummary %}
+
+{% set pageTitle = applicationName + " - Create a schedule - Name" %}
+{% set pageId = 'create-schedule-name-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {{ activitySummary(activity) }}
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukInput({
+                    label: {
+                        text: "What do you want to call the new schedule?",
+                        classes: "govuk-label--xl",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "Give the schedule a name to help you identify it easily, for example when you have several schedules for the same activity."
+                    },
+                    id: "name",
+                    name: "name",
+                    classes: "govuk-!-width-one-half",
+                    formGroup: {
+                        classes: "form-group-with-bottom-hint"
+                    },
+                    errorMessage: validationErrors | findError('name'),
+                    value: formResponses.name or session.createScheduleJourney.name
+                }) }}
+                <div id="with-hint-info" class="govuk-hint govuk-character-count__message bottom-hint">
+                    Maximum number of characters: 50
+                </div>
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

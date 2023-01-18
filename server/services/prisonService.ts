@@ -60,6 +60,10 @@ export default class PrisonService {
     return this.prisonerSearchApiClient.searchInmates(prisonerSearchCriteria, user)
   }
 
+  async getEventLocations(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
+    return this.prisonApiClient.getEventLocations(prisonCode, user)
+  }
+
   async searchActivityLocations(
     prisonCode: string,
     date: string,

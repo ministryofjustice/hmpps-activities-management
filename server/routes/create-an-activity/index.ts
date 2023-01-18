@@ -37,7 +37,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/minimum-incentive', minimumIncentiveHandler.POST, MinIncentiveLevel)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
-  get('/confirmation', confirmationHandler.GET, true)
+  get('/confirmation/:id', confirmationHandler.GET, true)
 
   return router
 }

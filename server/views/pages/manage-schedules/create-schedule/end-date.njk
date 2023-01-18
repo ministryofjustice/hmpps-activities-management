@@ -1,0 +1,43 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "components/datePicker.njk" import datePicker %}
+{% from "components/activitySummary.njk" import activitySummary %}
+
+{% set pageTitle = applicationName + " - Create a schedule - End date" %}
+{% set pageId = 'create-schedule-end-date-page' %}
+{% set backLinkHref = "name" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {{ activitySummary(activity) }}
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ datePicker({
+                    id: 'endDate',
+                    label: {
+                        text: "Enter the end date for this schedule",
+                        classes: "govuk-fieldset__legend--l"
+                    },
+                    hint: {
+                        text: "For example, 31 01 2023"
+                    },
+                    renderedErrorMessage: validationErrors | findError('endDate'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.endDate or session.createScheduleJourney.endDate
+                }) }}
+                <input type="hidden" id="startDate" name="startDate" value="{{ startDate }}">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -39,8 +39,7 @@ export default class CheckAnswersRoutes {
       ]),
     } as ActivityCreateRequest
 
-    await this.activitiesService.createActivity(activity, user)
-
-    res.redirect('confirmation')
+    const response = await this.activitiesService.createActivity(activity, user)
+    res.redirect(`confirmation/${response.id}`)
   }
 }

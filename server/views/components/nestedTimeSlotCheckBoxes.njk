@@ -1,0 +1,22 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% macro nestedTimeSlotCheckBoxes(index, validationErrors, formResponses, sessionValues) %}
+    {{ govukCheckboxes({
+        name: "timeSlots" + index,
+        errorMessage: validationErrors | findError('timeSlots' + index),
+        values: formResponses['timeSlots' + index] or sessionValues['timeSlots' + index],
+        items: [
+            {
+                value: "AM",
+                text: "AM session"
+            },
+            {
+                value: "PM",
+                text: "PM session"
+            },
+            {
+                value: "ED",
+                text: "ED session"
+            }
+        ]
+    }) }}
+{% endmacro %}

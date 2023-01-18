@@ -2,7 +2,7 @@ import nock from 'nock'
 import config from '../config'
 import TokenStore from './tokenStore'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
-import { PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
+import { PrisonerNumbers, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 
 const user = {} as ServiceUser
@@ -23,6 +23,40 @@ describe('prisonerSearchApiClient', () => {
   afterEach(() => {
     jest.resetAllMocks()
     nock.cleanAll()
+  })
+
+  describe('getInmates', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakePrisonerSearchApi
+        .get('/prisoner-search/prison/MDI')
+        .query({ page: '1', size: '10', 'include-restricted-patients': true })
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
+
+      const output = await prisonerSearchApiClient.getInmates('MDI', 1, 10, user, true)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('searchByPrisonerNumbers', () => {
+    it('should return data from api', async () => {
+      const prisonerNumbers = { prisonerNumbers: ['G10', 'G11'] } as PrisonerNumbers
+      const response = { data: 'data' }
+
+      fakePrisonerSearchApi
+        .post('/prisoner-search/prisoner-numbers', prisonerNumbers)
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
+
+      const output = await prisonerSearchApiClient.searchByPrisonerNumbers(prisonerNumbers, user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
   })
 
   describe('searchPrisoners', () => {

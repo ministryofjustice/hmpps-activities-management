@@ -1,0 +1,43 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "components/datePicker.njk" import datePicker %}
+{% from "components/activitySummary.njk" import activitySummary %}
+
+{% set pageTitle = applicationName + " - Create a schedule - Start date" %}
+{% set pageId = 'create-schedule-start-date-page' %}
+{% set backLinkHref = "name" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {{ activitySummary(activity) }}
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ datePicker({
+                    id: 'startDate',
+                    label: {
+                        text: "Enter the start date for this schedule",
+                        classes: "govuk-fieldset__legend--l"
+                    },
+                    hint: {
+                        text: "For example, 29 12 2022"
+                    },
+                    renderedErrorMessage: validationErrors | findError('startDate'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.startDate or session.createScheduleJourney.startDate
+                }) }}
+                <input type="hidden" id="endDate" name="endDate" value="{{ endDate }}">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
