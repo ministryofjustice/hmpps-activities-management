@@ -68,6 +68,7 @@ generic-service:
     ark-internet-3: "194.33.196.0/25"
     ark-internet-4: "194.33.197.0/25"
     ark-internet-5: "195.59.75.0/24"
+    gerry-ip: "109.151.21.203/32"
 
 generic-prometheus-alerts:
   targetApplication: hmpps-activities-management
