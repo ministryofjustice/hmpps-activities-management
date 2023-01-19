@@ -1,12 +1,12 @@
 
 {% macro showUnlockProfileLink(prisonerNumber, displayName) %}
-  <div class="govuk-!-margin-bottom-2">
+  <div>
     <div>
       <a href="/prisoners/{{ prisonerNumber }}/profile"
          class="govuk-link govuk-link--no-visited-state">
         {{ displayName }}
       </a>
     </div>
-    <div class="govuk-!-font-size-14">{{ prisonerNumber }}</div>
+    <div class="govuk-!-font-size-14 govuk-!-display-none-print">{{ prisonerNumber }}</div>
   </div>
 {% endmacro %}

@@ -11,6 +11,10 @@
 {% set pageId = "planned-events-page" %}
 {% set backLinkHref = "/" %}
 
+{% block pageStyles %}
+    <link href="/assets/stylesheets/printViews/unlock-list.css?{{ version }}" rel="stylesheet"/>
+{% endblock %}
+
 {% block content %}
     <div class="govuk-grid-row govuk-!-margin-bottom-2">
         {# Title and date / slot #}
@@ -20,8 +24,8 @@
         </div>
 
         {# Download and print button group #}
-         <div class="govuk-grid-column-one-quarter">
-            <div class="govuk-button-group">
+         <div class="govuk-grid-column-one-quarter govuk-!-display-none-print">
+            <div class="govuk-button-group float-right">
                 {{ govukButton({
                     attributes: { id: 'download-unlock' },
                     text: "Download list",
@@ -31,7 +35,7 @@
                 {{ govukButton({
                     attributes: { id: 'print-unlock' },
                     text: "Print list",
-                    classes: "govuk-button--secondary",
+                    classes: "govuk-button--secondary js-print no-js-hidden",
                     preventDoubleClick: true
                 }) }}
              </div>
@@ -39,7 +43,7 @@
     </div>
 
     {# Filter display #}
-    <div class="govuk-grid-row govuk-!-margin-top-2">
+    <div class="govuk-grid-row govuk-!-margin-top-2 govuk-!-display-none-print">
         <div class="govuk-grid-column-one-quarter govuk-body">
             {{ govukButton({
                 attributes: { id: 'show-filters' },
@@ -50,9 +54,11 @@
         </div>
     </div>
 
+    <hr class="print-only"/>
+
     {# Prison count / list size #}
-    <div class="govuk-grid-row  govuk-!-margin-bottom-2 govuk-!-margin-top-2">
-        <div class="govuk-grid-column-one-quarter govuk-body govuk-!-font-weight-bold">
+    <div class="govuk-grid-row  govuk-!-margin-bottom-2 govuk-!-margin-top-2 print-align-right">
+        <div class="govuk-grid-column-full govuk-body govuk-!-font-weight-bold">
           {{ unlockListItems.length }} prisoners
         </div>
     </div>
@@ -72,6 +78,11 @@
                     attributes: { id: 'cell-location-' + loop.index, "data-sort-value": item.cellLocation },
                     text: item.cellLocation,
                     classes: 'govuk-table_cell'
+                },
+                {
+                    attributes: { id: 'prisoner-number-' + loop.index, "data-sort-value": item.prisonerNumber },
+                    text: item.prisonerNumber,
+                    classes: 'govuk-table_cell print-only'
                 },
                 {
                     attributes: { id: 'alerts-' + loop.index },
@@ -104,6 +115,11 @@
                     text: "Cell location",
                     attributes: { "aria-sort": "ascending" },
                     classes: 'govuk-table__header'
+                },
+                {
+                    text: "Prisoner number",
+                    attributes: { "aria-sort": "ascending" },
+                    classes: 'govuk-table__header print-only'
                 },
                 {
                     text: "Relevant alerts",
