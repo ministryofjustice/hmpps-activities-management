@@ -1,10 +1,19 @@
+body
+  //enable background colours on print by default
+  -webkit-print-color-adjust: exact
+  color-adjust: exact
+
+//Hide elements when JS is turned off
+.no-js-hidden
+  display: none
+.js-enabled .no-js-hidden
+  display: revert
+
 .govuk-main-wrapper
   min-height: 600px
 
 table th, table td, table .form-control
   font-size: 16px
-  @media print
-    font-size: 8px
 
 .govuk-table__cell-no-border
   padding: 10px 20px 10px 0
@@ -28,6 +37,8 @@ table th, table td, table .form-control
 .alternating-row-shading
   tr:nth-child(even)
     background-color: #F5F5F5
+    @media print
+      background: #DEE0E2
 
 .form-group-with-bottom-hint
   margin-bottom: 0

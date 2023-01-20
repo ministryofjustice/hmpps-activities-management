@@ -32,11 +32,12 @@
     tag: {
       text: "beta"
     },
+    classes: 'govuk-!-display-none-print',
     html: 'This is a new service – your feedback will help us to improve it.'
   }) }}
 
   {% if backLinkHref %}
-    <nav>
+    <nav class="govuk-!-display-none-print">
       {{ govukBackLink({
         text: "Back",
         href: backLinkHref,
@@ -46,6 +47,12 @@
   {% endif %}
   {% include 'partials/formErrorSummary.njk' %}
   <span class="govuk-visually-hidden" id="{{ pageId }}"></span>
+{% endblock %}
+
+{% block footer %}
+  {{ govukFooter({
+    classes: 'govuk-!-display-none-print'
+  }) }}
 {% endblock %}
 
 {% block bodyEnd %}
