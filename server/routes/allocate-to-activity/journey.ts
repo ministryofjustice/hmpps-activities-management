@@ -4,7 +4,10 @@ export type AllocateToActivityJourney = {
     prisonerNumber: string
     cellLocation: string
     incentiveLevel: string
-    payBand?: string
+    payBand?: {
+      id: number
+      alias: string
+    }
   }
   activity: {
     activityId: number

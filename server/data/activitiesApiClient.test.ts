@@ -210,12 +210,22 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .post('/schedules/1/allocations', {
           prisonerNumber: 'ABC123',
-          payBand: 'B',
+          payBandId: 1,
         })
         .matchHeader('authorization', `Bearer token`)
         .reply(204)
 
-      await activitiesApiClient.postAllocation(1, 'ABC123', 'B', user)
+      await activitiesApiClient.postAllocation(1, 'ABC123', 1, user)
+
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getPayBandsForPrison', () => {
+    it('should return data from api', async () => {
+      fakeActivitiesApi.get('/prison/MDI/prison-pay-bands').matchHeader('authorization', `Bearer token`).reply(204)
+
+      await activitiesApiClient.getPayBandsForPrison('MDI', user)
 
       expect(nock.isDone()).toBe(true)
     })

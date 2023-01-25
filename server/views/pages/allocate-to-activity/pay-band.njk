@@ -11,9 +11,9 @@
 {% for pay in payBands %}
     {% set bandOptions = (bandOptions.push(
         {
-            value: pay.band,
-            text: pay.band + ' (' + pay.rate | toMoney + ')',
-            checked: formResponses.payBand == pay.band or session.allocateJourney.inmate.payBand == pay.band
+            value: pay.bandId,
+            text: pay.bandAlias + ' (' + pay.rate | toMoney + ')',
+            checked: formResponses.payBand == pay.bandId or session.allocateJourney.inmate.payBand.id == pay.bandId
         }
     ), bandOptions) %}
 {% endfor %}

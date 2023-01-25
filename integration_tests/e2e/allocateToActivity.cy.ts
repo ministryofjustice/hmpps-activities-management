@@ -12,6 +12,7 @@ import getAllInmatesPerPrison from '../fixtures/prisonerSearchApi/getAllInmatesP
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetails.json'
 import getPrisonerIepSummary from '../fixtures/incentivesApi/getPrisonerIepSummary.json'
 import getActivity from '../fixtures/activitiesApi/getActivity.json'
+import getMdiPrisonPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 
 import IndexPage from '../pages/index'
 import Page from '../pages/page'
@@ -47,9 +48,10 @@ context('Change location', () => {
       '/prisoner-search/prison/MDI\\?page=0&size=1000&include-restricted-patients=false',
       getAllInmatesPerPrison,
     )
-    cy.stubEndpoint('GET', '/api/offenders/A7742DY', getInmateDetails)
-    cy.stubEndpoint('GET', '/iep/reviews/prisoner/A7742DY', getPrisonerIepSummary)
+    cy.stubEndpoint('GET', '/api/offenders/A5015DY', getInmateDetails)
+    cy.stubEndpoint('GET', '/iep/reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/activities/2', getActivity)
+    cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
     cy.stubEndpoint('POST', '/schedules/5/allocations')
     cy.signIn()
   })
@@ -80,10 +82,10 @@ context('Change location', () => {
 
     const identifyCandidatesTab = Page.verifyOnPage(IdentifyCandidatesTabPage)
     identifyCandidatesTab.candidateRows().should('have.length', 10)
-    identifyCandidatesTab.selectCandidateWithName('Bieber, Justin')
+    identifyCandidatesTab.selectCandidateWithName('Cholak, Alfonso')
 
     const payBandPage = Page.verifyOnPage(PayBandPage)
-    payBandPage.selectPayBand('B (£2.50)')
+    payBandPage.selectPayBand('Medium (£1.75)')
     payBandPage.confirmPayAndContinue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)

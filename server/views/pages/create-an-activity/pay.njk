@@ -1,0 +1,109 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Create an activity - Pay" %}
+{% set pageId = 'pay-page' %}
+{% set backLinkHref = "risk-level" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-xl">Enter pay for {{ session.createJourney.name }}</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <p class="govuk-body">Add all the pay rates available for this activity.</p>
+                <p class="govuk-body">You can add up to 10 rates for each incentive level. Each time you add one you'll have the option to add another.</p>
+                <p class="govuk-body">When you come to allocate someone to this activity, all the rates that can be paid will be displayed.</p>
+
+                {{ govukInput({
+                    id: "rate",
+                    name: "rate",
+                    label: {
+                        text: "1. How much will someone be paid for a session",
+                        classes: "govuk-label--s"
+                    },
+                    hint: {
+                        text: 'For example, 1.50'
+                    },
+                    prefix: {
+                        text: "£"
+                    },
+                    classes: "govuk-input--width-5",
+                    errorMessage: validationErrors | findError('rate'),
+                    value: formResponses.rate
+                }) }}
+
+                {% set payBandOptions = [
+                    {
+                        value: 0,
+                        text: "-"
+                    }
+                ] %}
+                {% for payBand in payBands %}
+                    {% set payBandOptions = (payBandOptions.push(
+                        {
+                            value: payBand.id,
+                            text: payBand.alias,
+                            selected: formResponses.bandId == payBand.id
+                        }
+                    ), payBandOptions) %}
+                {% endfor %}
+                {{ govukSelect({
+                    name: "bandId",
+                    label: {
+                        text: "2. Select the pay band",
+                        classes: "govuk-label--s"
+                    },
+                    classes: "govuk-input--width-10",
+                    errorMessage: validationErrors | findError('bandId'),
+                    items: payBandOptions
+                }) }}
+
+
+                {% set incentiveLevelOptions = [] %}
+                {% for incentiveLevel in incentiveLevels %}
+                    {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                        {
+                            value: incentiveLevel.iepDescription,
+                            text: incentiveLevel.iepDescription,
+                            checked: incentiveLevel.iepDescription in formResponses.incentiveLevels if formResponses.incentiveLevels
+                        }
+                    ), incentiveLevelOptions) %}
+                {% endfor %}
+                {{ govukCheckboxes({
+                    name: "incentiveLevels",
+                    fieldset: {
+                        legend: {
+                            text: "3. Select the incentive level or levels for this rate",
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    hint: {
+                      text: 'If pay for this activity is the same for everyone, select all relevant levels.'
+                    },
+                    items: incentiveLevelOptions,
+                    errorMessage: validationErrors | findError('incentiveLevels')
+                }) }}
+
+                {{ govukButton({
+                    text: "Review and add more rates"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

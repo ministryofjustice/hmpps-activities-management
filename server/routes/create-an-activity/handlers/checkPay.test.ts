@@ -1,13 +1,11 @@
 import { Request, Response } from 'express'
 
 import { when } from 'jest-when'
-import ActivitiesService from '../../../services/activitiesService'
-import CheckAnswersRoutes from './checkAnswers'
-import activity from '../../../services/fixtures/activity_1.json'
-import atLeast from '../../../../jest.setup'
 import PrisonService from '../../../services/prisonService'
+import CheckPayRoutes from './checkPay'
+import atLeast from '../../../../jest.setup'
+import { IepLevel } from '../../../@types/incentivesApi/types'
 
-jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
 jest.mock('./helpers/incentiveLevelPayMappingUtil', () => {
   return function factory() {
@@ -22,11 +20,10 @@ jest.mock('./helpers/incentiveLevelPayMappingUtil', () => {
   }
 })
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null, null) as jest.Mocked<PrisonService>
 
-describe('Route Handlers - Create an activity - Check answers', () => {
-  const handler = new CheckAnswersRoutes(activitiesService, prisonService)
+describe('Route Handlers - Create an activity - Check pay', () => {
+  const handler = new CheckPayRoutes(prisonService)
   let req: Request
   let res: Response
 
@@ -51,7 +48,6 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           },
           riskLevel: 'High',
           pay: [{ incentiveLevel: 'Standard', bandId: 1, rate: 100 }],
-          minimumIncentiveLevel: 'Standard',
           incentiveLevels: ['Standard', 'Enhanced'],
         },
       },
@@ -63,9 +59,9 @@ describe('Route Handlers - Create an activity - Check answers', () => {
   })
 
   describe('GET', () => {
-    it('should render page with data from session', async () => {
+    it('should render page correctly', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/check-answers', {
+      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/check-pay', {
         incentiveLevelPays: [
           {
             incentiveLevel: 'Standard',
@@ -77,21 +73,18 @@ describe('Route Handlers - Create an activity - Check answers', () => {
   })
 
   describe('POST', () => {
-    it('should create the allocation and redirect to confirmation page', async () => {
-      const expectedActivity = {
-        prisonCode: 'MDI',
-        summary: 'Maths level 1',
-        categoryId: 1,
-        riskLevel: 'High',
-        minimumIncentiveLevel: 'Standard',
-        pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
-      }
-
-      when(activitiesService.createActivity).calledWith(atLeast(expectedActivity)).mockResolvedValueOnce(activity)
+    it('should add the minimum incentive level to the session and redirect', async () => {
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValueOnce([
+          { iepDescription: 'Enhanced', sequence: 3 },
+          { iepDescription: 'Basic', sequence: 1 },
+          { iepDescription: 'Standard', sequence: 2 },
+        ] as IepLevel[])
 
       await handler.POST(req, res)
-      expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
-      expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
+      expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Standard')
+      expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })
 })

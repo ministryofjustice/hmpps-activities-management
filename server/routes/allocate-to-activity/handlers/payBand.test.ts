@@ -5,7 +5,7 @@ import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import PayBandRoutes, { PayBand } from './payBand'
 import atLeast from '../../../../jest.setup'
-import { Activity } from '../../../@types/activitiesAPI/types'
+import { Activity, PrisonPayBand } from '../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../services/activitiesService'
 
 jest.mock('../../../services/activitiesService')
@@ -56,12 +56,12 @@ describe('Route Handlers - Allocate - Pay band', () => {
           pay: [
             {
               incentiveLevel: 'Standard',
-              payBand: 'A',
+              prisonPayBand: { id: 1, alias: 'Standard rate' },
               rate: 125,
             },
             {
               incentiveLevel: 'Enhanced',
-              payBand: 'A',
+              prisonPayBand: { id: 1, alias: 'Enhanced rate' },
               rate: 150,
             },
           ],
@@ -74,8 +74,9 @@ describe('Route Handlers - Allocate - Pay band', () => {
         incentiveLevel: 'Enhanced',
         payBands: [
           {
+            bandId: 1,
+            bandAlias: 'Enhanced rate',
             rate: 150,
-            band: 'A',
           },
         ],
       })
@@ -85,12 +86,21 @@ describe('Route Handlers - Allocate - Pay band', () => {
   describe('POST', () => {
     it('should save the selected pay band in session and redirect to check answers page', async () => {
       req.body = {
-        payBand: 'A',
+        payBand: 2,
       }
+
+      when(activitiesService.getPayBandsForPrison).mockResolvedValue([
+        { id: 1, alias: 'Low' },
+        { id: 2, alias: 'Medium' },
+        { id: 3, alias: 'High' },
+      ] as PrisonPayBand[])
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.inmate.payBand).toEqual('A')
+      expect(req.session.allocateJourney.inmate.payBand).toEqual({
+        id: 2,
+        alias: 'Medium',
+      })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
   })
@@ -107,7 +117,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
 
     it('passes validation', async () => {
       const body = {
-        payBand: 'A',
+        payBand: 1,
       }
 
       const requestObject = plainToInstance(PayBand, body)

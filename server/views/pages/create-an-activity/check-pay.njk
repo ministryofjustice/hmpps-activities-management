@@ -1,0 +1,68 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Create an activity - Check pay" %}
+{% set pageId = 'check-pay-page' %}
+{% set backLinkHref = "pay" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-l">Review pay rates for {{ session.createJourney.name }}</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            {% for incentiveLevelPay in incentiveLevelPays %}
+                <h2 class="govuk-heading-m">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</h2>
+                {% set rows = [] %}
+                {% for pay in incentiveLevelPay.pays %}
+                    {% set rows = (rows.push(
+                        {
+                            key: {
+                                text: pay.bandAlias
+                            },
+                            value: {
+                                text: pay.rate | toMoney
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId,
+                                        text: "Remove",
+                                        visuallyHiddenText: "remove pay rate"
+                                    }
+                                ]
+                            }
+                        }
+                    ), rows) %}
+                {% endfor %}
+                {{ govukSummaryList({
+                    rows: rows
+                }) }}
+            {% endfor %}
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Confirm pay rates"
+                    }) }}
+                    {{ govukButton({
+                        text: "Add another pay rate",
+                        href: 'pay',
+                        classes: "govuk-button--secondary"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

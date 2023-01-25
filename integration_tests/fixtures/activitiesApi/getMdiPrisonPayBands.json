@@ -1,0 +1,26 @@
+[
+  {
+    "id": 11,
+    "displaySequence": 1,
+    "alias": "Low",
+    "description": "Pay band 1 (Lowest)",
+    "nomisPayBand": 1,
+    "prisonCode": "MDI"
+  },
+  {
+    "id": 12,
+    "displaySequence": 2,
+    "alias": "Medium",
+    "description": "Pay band 2",
+    "nomisPayBand": 2,
+    "prisonCode": "MDI"
+  },
+  {
+    "id": 13,
+    "displaySequence": 3,
+    "alias": "High",
+    "description": "Pay band 3 (highest)",
+    "nomisPayBand": 3,
+    "prisonCode": "MDI"
+  }
+]

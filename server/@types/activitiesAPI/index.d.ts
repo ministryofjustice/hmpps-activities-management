@@ -140,6 +140,13 @@ export interface paths {
      */
     get: operations['getSchedulesByPrisonCode']
   }
+  '/prison/{prisonCode}/prison-pay-bands': {
+    /**
+     * Get a list of pay bands at a given prison
+     * @description Returns the pay bands at a given prison or a default list of values if none present.
+     */
+    get: operations['getPrisonPayBands']
+  }
   '/prison/{prisonCode}/locations': {
     /**
      * Get scheduled prison locations
@@ -211,8 +218,8 @@ export interface components {
       messageAttributes?: {
         [key: string]: components['schemas']['MessageAttributeValue'] | undefined
       }
-      md5OfBody?: string
       md5OfMessageAttributes?: string
+      md5OfBody?: string
     }
     MessageAttributeValue: {
       stringValue?: string
@@ -289,10 +296,11 @@ export interface components {
        */
       prisonerNumber: string
       /**
+       * Format: int64
        * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner
-       * @example A
+       * @example 1
        */
-      payBand: string
+      payBandId: number
     }
     /** @description Describes a prisoners scheduled events */
     PrisonerScheduledEvents: {
@@ -443,10 +451,11 @@ export interface components {
       activitySummary: string
       scheduleDescription: string
       /**
-       * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner
-       * @example A
+       * Format: int64
+       * @description Where a prison uses pay bands to differentiate earnings, this is the pay band identifier given to this prisoner
+       * @example 1
        */
-      payBand?: string
+      payBandId: number
       /**
        * Format: date
        * @description The date when the prisoner will start the activity
@@ -523,6 +532,7 @@ export interface components {
       /**
        * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
        * @example H
+       * @enum {string}
        */
       payPerSession?: string
       /**
@@ -588,10 +598,11 @@ export interface components {
        */
       incentiveLevel?: string
       /**
-       * @description The pay band (nullable)
-       * @example A
+       * Format: int64
+       * @description The id of the prison pay band used
+       * @example 1
        */
-      payBand?: string
+      payBandId: number
       /**
        * Format: int32
        * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
@@ -646,7 +657,8 @@ export interface components {
       outsideWork: boolean
       /**
        * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
-       * @example 'H'
+       * @example H
+       * @enum {string}
        */
       payPerSession: string
       /**
@@ -776,6 +788,7 @@ export interface components {
       /**
        * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
        * @example H
+       * @enum {string}
        */
       payPerSession: string
       /**
@@ -813,11 +826,7 @@ export interface components {
        * @example Basic
        */
       incentiveLevel?: string
-      /**
-       * @description The pay band (nullable)
-       * @example A
-       */
-      payBand?: string
+      prisonPayBand: components['schemas']['PrisonPayBand']
       /**
        * Format: int32
        * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
@@ -1045,6 +1054,42 @@ export interface components {
        * @example Education - R1
        */
       description: string
+    }
+    /** @description Describes one instance of a prison pay band */
+    PrisonPayBand: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this prison pay band
+       * @example 123456
+       */
+      id: number
+      /**
+       * Format: int32
+       * @description The order in which the pay band should be presented within a list e.g. dropdown
+       * @example 1
+       */
+      displaySequence: number
+      /**
+       * @description The alternative text to use in place of the description e.g. Low, Medium, High
+       * @example Low
+       */
+      alias: string
+      /**
+       * @description The description of pay band in this prison
+       * @example Pay band 1
+       */
+      description: string
+      /**
+       * Format: int32
+       * @description The pay band number this is associated with in NOMIS (1-10)
+       * @example 1
+       */
+      nomisPayBand: number
+      /**
+       * @description The prison code for the pay band. Can also be 'DEFAULT' if none set up for prison
+       * @example MDI
+       */
+      prisonCode: string
     }
     /** @description Describes a person who is on a waiting list for an activity */
     PrisonerWaiting: {
@@ -2160,6 +2205,37 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['ActivitySchedule'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getPrisonPayBands: {
+    /**
+     * Get a list of pay bands at a given prison
+     * @description Returns the pay bands at a given prison or a default list of values if none present.
+     */
+    parameters: {
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Prison pay bands found */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonPayBand'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */

@@ -14,6 +14,7 @@ import {
   LocationGroup,
   RolloutPrison,
   ScheduledActivity,
+  PrisonPayBand,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -129,8 +130,21 @@ describe('Activities Service', () => {
 
   describe('allocateToSchedule', () => {
     it('should call activities API client to post an allocation', async () => {
-      await activitiesService.allocateToSchedule(1, 'ABC123', 'A', user)
-      expect(activitiesApiClient.postAllocation).toHaveBeenCalledWith(1, 'ABC123', 'A', user)
+      await activitiesService.allocateToSchedule(1, 'ABC123', 1, user)
+      expect(activitiesApiClient.postAllocation).toHaveBeenCalledWith(1, 'ABC123', 1, user)
+    })
+  })
+
+  describe('getPayBandsForPrison', () => {
+    it('should get the list of prison pay bands', async () => {
+      const expectedResult = [{ id: 1, alias: 'High' }] as PrisonPayBand[]
+
+      activitiesApiClient.getPayBandsForPrison.mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getPayBandsForPrison(user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getPayBandsForPrison).toHaveBeenCalledWith('MDI', user)
     })
   })
 

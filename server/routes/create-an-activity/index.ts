@@ -7,9 +7,11 @@ import NameRoutes, { Name } from './handlers/name'
 import StartJourneyRoutes from './handlers/startJourney'
 import { Services } from '../../services'
 import RiskLevelRoutes, { RiskLevel } from './handlers/riskLevel'
-import MinimumIncentiveRoutes, { MinIncentiveLevel } from './handlers/minimumIncentive'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
+import PayRoutes, { Pay } from './handlers/pay'
+import CheckPayRoutes from './handlers/checkPay'
+import RemovePayRoutes from './handlers/removePay'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -22,8 +24,10 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const categoryHandler = new CategoryRoutes(activitiesService)
   const nameHandler = new NameRoutes()
   const riskLevelHandler = new RiskLevelRoutes()
-  const minimumIncentiveHandler = new MinimumIncentiveRoutes(prisonService)
-  const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
+  const payHandler = new PayRoutes(prisonService, activitiesService)
+  const removePayHandler = new RemovePayRoutes()
+  const checkPayHandler = new CheckPayRoutes(prisonService)
+  const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, prisonService)
   const confirmationHandler = new ConfirmationRoutes()
 
   get('/start', startHandler.GET)
@@ -33,8 +37,11 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/name', nameHandler.POST, Name)
   get('/risk-level', riskLevelHandler.GET, true)
   post('/risk-level', riskLevelHandler.POST, RiskLevel)
-  get('/minimum-incentive', minimumIncentiveHandler.GET, true)
-  post('/minimum-incentive', minimumIncentiveHandler.POST, MinIncentiveLevel)
+  get('/pay', payHandler.GET, true)
+  post('/pay', payHandler.POST, Pay)
+  get('/remove-pay', removePayHandler.GET, true)
+  get('/check-pay', checkPayHandler.GET, true)
+  post('/check-pay', checkPayHandler.POST)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
   get('/confirmation/:id', confirmationHandler.GET, true)

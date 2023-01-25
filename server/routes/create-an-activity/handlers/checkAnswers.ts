@@ -1,12 +1,20 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../services/activitiesService'
 import { ActivityCreateRequest } from '../../../@types/activitiesAPI/types'
+import PrisonService from '../../../services/prisonService'
+import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 
 export default class CheckAnswersRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  private readonly helper: IncentiveLevelPayMappingUtil
+
+  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {
+    this.helper = new IncentiveLevelPayMappingUtil(prisonService)
+  }
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render(`pages/create-an-activity/check-answers`)
+    const { user } = res.locals
+    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(req, user)
+    res.render(`pages/create-an-activity/check-answers`, { incentiveLevelPays })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -18,25 +26,12 @@ export default class CheckAnswersRoutes {
       summary: createJourney.name,
       categoryId: createJourney.category.id,
       riskLevel: createJourney.riskLevel,
-      minimumIncentiveLevel: createJourney.minimumIncentive,
-
-      // TODO: The logic in this pay section will be replaced by a pay screen
-      pay: createJourney.incentiveLevels.flatMap(l => [
-        {
-          incentiveLevel: l,
-          payBand: 'A',
-          rate: 125,
-          pieceRate: 125,
-          pieceRateItems: 10,
-        },
-        {
-          incentiveLevel: l,
-          payBand: 'B',
-          rate: 150,
-          pieceRate: 150,
-          pieceRateItems: 10,
-        },
-      ]),
+      minimumIncentiveLevel: createJourney.minimumIncentiveLevel,
+      pay: createJourney.pay.map(pay => ({
+        incentiveLevel: pay.incentiveLevel,
+        payBandId: pay.bandId,
+        rate: pay.rate,
+      })),
     } as ActivityCreateRequest
 
     const response = await this.activitiesService.createActivity(activity, user)

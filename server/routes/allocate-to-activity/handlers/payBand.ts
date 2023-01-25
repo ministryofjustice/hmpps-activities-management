@@ -1,12 +1,13 @@
 import { Request, Response } from 'express'
-import { Expose } from 'class-transformer'
-import { IsNotEmpty } from 'class-validator'
+import { Expose, Type } from 'class-transformer'
+import { Min } from 'class-validator'
 import ActivitiesService from '../../../services/activitiesService'
 
 export class PayBand {
   @Expose()
-  @IsNotEmpty({ message: 'Select a pay band' })
-  payBand: string
+  @Type(() => Number)
+  @Min(1, { message: 'Select a pay band' })
+  payBand: number
 }
 
 export default class PayBandRoutes {
@@ -22,8 +23,9 @@ export default class PayBandRoutes {
       .then(bands => bands.filter(band => !band.incentiveLevel || band.incentiveLevel === inmate.incentiveLevel))
       .then(bands =>
         bands.map(band => ({
+          bandId: band.prisonPayBand.id,
+          bandAlias: band.prisonPayBand.alias,
           rate: band.rate,
-          band: band.payBand,
         })),
       )
 
@@ -36,8 +38,17 @@ export default class PayBandRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
     const { payBand } = req.body
-    req.session.allocateJourney.inmate.payBand = payBand
+
+    const band = await this.activitiesService
+      .getPayBandsForPrison(user)
+      .then(bands => bands.find(b => b.id === payBand))
+
+    req.session.allocateJourney.inmate.payBand = {
+      id: band.id,
+      alias: band.alias,
+    }
     return res.redirectOrReturn('check-answers')
   }
 }
