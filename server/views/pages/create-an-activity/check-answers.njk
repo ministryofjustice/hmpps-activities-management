@@ -70,19 +70,27 @@
                     },
                     {
                         key: {
-                            text: "Minimum incentive level"
+                            text: "Pay rates"
                         },
                         value: {
-                            text: session.createJourney.minimumIncentive
+                            html: paySummary(incentiveLevelPays)
                         },
                         actions: {
                             items: [
                                 {
-                                    href: "minimum-incentive?fromReview=true",
+                                    href: "check-pay?fromReview=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change minimum incentive level"
+                                    visuallyHiddenText: "change pay rates"
                                 }
                             ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Minimum incentive level"
+                        },
+                        value: {
+                            text: session.createJourney.minimumIncentiveLevel
                         }
                     }
                 ]
@@ -100,3 +108,14 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro paySummary(incentiveLevelPays) %}
+    {% for incentiveLevelPay in incentiveLevelPays %}
+        <div class="govuk-!-margin-bottom-2">
+            <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
+            {% for pay in incentiveLevelPay.pays %}
+                <div>{{ pay.bandAlias }}: {{ pay.rate | toMoney }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endmacro %}

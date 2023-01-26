@@ -22,7 +22,14 @@
     {
       "id": 81,
       "incentiveLevel": "Basic",
-      "payBand": "A",
+      "prisonPayBand": {
+        "id": 1,
+        "alias": "A",
+        "displaySequence": 1,
+        "description": "A",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 125,
       "pieceRate": 125,
       "pieceRateItems": 10
@@ -30,7 +37,14 @@
     {
       "id": 82,
       "incentiveLevel": "Basic",
-      "payBand": "B",
+      "prisonPayBand": {
+        "id": 1,
+        "alias": "A",
+        "displaySequence": 1,
+        "description": "A",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 150,
       "pieceRate": 150,
       "pieceRateItems": 10
@@ -38,7 +52,14 @@
     {
       "id": 83,
       "incentiveLevel": "Standard",
-      "payBand": "A",
+      "prisonPayBand": {
+        "id": 1,
+        "alias": "A",
+        "displaySequence": 1,
+        "description": "A",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 125,
       "pieceRate": 125,
       "pieceRateItems": 10
@@ -46,7 +67,14 @@
     {
       "id": 84,
       "incentiveLevel": "Standard",
-      "payBand": "B",
+      "prisonPayBand": {
+        "id": 2,
+        "alias": "B",
+        "displaySequence": 1,
+        "description": "A",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 150,
       "pieceRate": 150,
       "pieceRateItems": 10
@@ -54,7 +82,14 @@
     {
       "id": 85,
       "incentiveLevel": "Enhanced",
-      "payBand": "A",
+      "prisonPayBand": {
+        "id": 1,
+        "alias": "A",
+        "displaySequence": 1,
+        "description": "A",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 125,
       "pieceRate": 125,
       "pieceRateItems": 10
@@ -62,7 +97,14 @@
     {
       "id": 86,
       "incentiveLevel": "Enhanced",
-      "payBand": "B",
+      "prisonPayBand": {
+        "id": 2,
+        "alias": "B",
+        "displaySequence": 1,
+        "description": "A",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 150,
       "pieceRate": 150,
       "pieceRateItems": 10
@@ -70,7 +112,14 @@
     {
       "id": 87,
       "incentiveLevel": "Enhanced 2",
-      "payBand": "A",
+      "prisonPayBand": {
+        "id": 1,
+        "alias": "A",
+        "displaySequence": 1,
+        "description": "A",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 125,
       "pieceRate": 125,
       "pieceRateItems": 10
@@ -78,7 +127,14 @@
     {
       "id": 88,
       "incentiveLevel": "Enhanced 2",
-      "payBand": "B",
+      "prisonPayBand": {
+        "id": 2,
+        "alias": "B",
+        "displaySequence": 1,
+        "description": "A",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 150,
       "pieceRate": 150,
       "pieceRateItems": 10
@@ -86,7 +142,14 @@
     {
       "id": 89,
       "incentiveLevel": "Enhanced 3",
-      "payBand": "A",
+      "prisonPayBand": {
+        "id": 1,
+        "alias": "A",
+        "displaySequence": 1,
+        "description": "A",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 125,
       "pieceRate": 125,
       "pieceRateItems": 10
@@ -94,7 +157,14 @@
     {
       "id": 90,
       "incentiveLevel": "Enhanced 3",
-      "payBand": "B",
+      "prisonPayBand": {
+        "id": 2,
+        "alias": "B",
+        "displaySequence": 1,
+        "description": "A",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 150,
       "pieceRate": 150,
       "pieceRateItems": 10

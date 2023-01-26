@@ -2,6 +2,10 @@
   "id": 2,
   "prisonCode": "MDI",
   "attendanceRequired": true,
+  "inCell": false,
+  "pieceWork": false,
+  "outsideWork": false,
+  "payPerSession": "H",
   "summary": "English level 1",
   "description": "A basic english course suitable for introduction to the subject",
   "category": {
@@ -135,9 +139,10 @@
         {
           "id": 2,
           "prisonerNumber": "G4793VF",
+          "bookingId": 1200993,
           "activitySummary": "English level 1",
           "scheduleDescription": "Entry level English 1",
-          "payBand": "A",
+          "payBandId": 1,
           "startDate": "10/10/2022",
           "endDate": null,
           "allocatedTime": "10/10/2022 09:30",
@@ -145,51 +150,24 @@
           "deallocatedTime": null,
           "deallocatedBy": null,
           "deallocatedReason": null
-        },
-        {
-          "id": 9,
-          "prisonerNumber": "A5193DY",
-          "activitySummary": "English level 1",
-          "scheduleDescription": "Entry level English 1",
-          "payBand": "B",
-          "startDate": "16/12/2022",
-          "endDate": null,
-          "allocatedTime": "16/12/2022 10:12",
-          "allocatedBy": "SYSTEM",
-          "deallocatedTime": null,
-          "deallocatedBy": null,
-          "deallocatedReason": null
-        },
-        {
-          "id": 10,
-          "prisonerNumber": "A7789DY",
-          "activitySummary": "English level 1",
-          "scheduleDescription": "Entry level English 1",
-          "payBand": "C",
-          "startDate": "16/12/2022",
-          "endDate": null,
-          "allocatedTime": "16/12/2022 10:14",
-          "allocatedBy": "SYSTEM",
-          "deallocatedTime": null,
-          "deallocatedBy": null,
-          "deallocatedReason": null
         }
       ],
       "description": "Entry level English 1",
       "suspensions": [],
-      "startTime": "10:00",
-      "endTime": "11:00",
       "internalLocation": {
         "id": 1,
         "code": "EDU-ROOM-1",
         "description": "Education - R1"
       },
       "capacity": 10,
-      "daysOfWeek": ["Tue"],
       "activity": {
         "id": 2,
         "prisonCode": "MDI",
         "attendanceRequired": true,
+        "inCell": false,
+        "pieceWork": false,
+        "outsideWork": false,
+        "payPerSession": "H",
         "summary": "English level 1",
         "description": "A basic english course suitable for introduction to the subject",
         "category": {
@@ -197,8 +175,22 @@
           "code": "EDUCATION",
           "name": "Education",
           "description": "Such as classes in English, maths, construction and computer skills"
+        },
+        "riskLevel": null,
+        "minimumIncentiveLevel": null
+      },
+      "slots": [
+        {
+          "id": 5,
+          "startTime": "10:00",
+          "endTime": "11:00",
+          "daysOfWeek": [
+            "Tue"
+          ]
         }
-      }
+      ],
+      "startDate": "10/10/2022",
+      "endDate": null
     },
     {
       "id": 6,
@@ -318,9 +310,10 @@
         {
           "id": 4,
           "prisonerNumber": "A9477DY",
+          "bookingId": 1203218,
           "activitySummary": "English level 1",
           "scheduleDescription": "Entry level English 2",
-          "payBand": "A",
+          "payBandId": 1,
           "startDate": "10/10/2022",
           "endDate": null,
           "allocatedTime": "10/10/2022 09:30",
@@ -328,37 +321,24 @@
           "deallocatedTime": null,
           "deallocatedBy": null,
           "deallocatedReason": null
-        },
-        {
-          "id": 7,
-          "prisonerNumber": "G8240UH",
-          "activitySummary": "English level 1",
-          "scheduleDescription": "Entry level English 2",
-          "payBand": "C",
-          "startDate": "16/12/2022",
-          "endDate": null,
-          "allocatedTime": "16/12/2022 09:00",
-          "allocatedBy": "SYSTEM",
-          "deallocatedTime": null,
-          "deallocatedBy": null,
-          "deallocatedReason": null
         }
       ],
       "description": "Entry level English 2",
       "suspensions": [],
-      "startTime": "14:00",
-      "endTime": "15:00",
       "internalLocation": {
         "id": 2,
         "code": "EDU-ROOM-2",
         "description": "Education - R2"
       },
       "capacity": 10,
-      "daysOfWeek": ["Tue"],
       "activity": {
         "id": 2,
         "prisonCode": "MDI",
         "attendanceRequired": true,
+        "inCell": false,
+        "pieceWork": false,
+        "outsideWork": false,
+        "payPerSession": "H",
         "summary": "English level 1",
         "description": "A basic english course suitable for introduction to the subject",
         "category": {
@@ -366,8 +346,22 @@
           "code": "EDUCATION",
           "name": "Education",
           "description": "Such as classes in English, maths, construction and computer skills"
+        },
+        "riskLevel": null,
+        "minimumIncentiveLevel": null
+      },
+      "slots": [
+        {
+          "id": 6,
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "daysOfWeek": [
+            "Tue"
+          ]
         }
-      }
+      ],
+      "startDate": "10/10/2022",
+      "endDate": null
     },
     {
       "id": 7,
@@ -486,19 +480,20 @@
       "allocations": [],
       "description": "Entry level English 3",
       "suspensions": [],
-      "startTime": "10:00",
-      "endTime": "11:00",
       "internalLocation": {
         "id": 1,
         "code": "EDU-ROOM-1",
         "description": "Education - R1"
       },
       "capacity": 10,
-      "daysOfWeek": ["Thu"],
       "activity": {
         "id": 2,
         "prisonCode": "MDI",
         "attendanceRequired": true,
+        "inCell": false,
+        "pieceWork": false,
+        "outsideWork": false,
+        "payPerSession": "H",
         "summary": "English level 1",
         "description": "A basic english course suitable for introduction to the subject",
         "category": {
@@ -506,8 +501,22 @@
           "code": "EDUCATION",
           "name": "Education",
           "description": "Such as classes in English, maths, construction and computer skills"
+        },
+        "riskLevel": null,
+        "minimumIncentiveLevel": null
+      },
+      "slots": [
+        {
+          "id": 7,
+          "startTime": "10:00",
+          "endTime": "11:00",
+          "daysOfWeek": [
+            "Thu"
+          ]
         }
-      }
+      ],
+      "startDate": "10/10/2022",
+      "endDate": null
     },
     {
       "id": 8,
@@ -626,19 +635,20 @@
       "allocations": [],
       "description": "Entry level English 4",
       "suspensions": [],
-      "startTime": "14:00",
-      "endTime": "15:00",
       "internalLocation": {
         "id": 2,
         "code": "EDU-ROOM-2",
         "description": "Education - R2"
       },
       "capacity": 10,
-      "daysOfWeek": ["Thu"],
       "activity": {
         "id": 2,
         "prisonCode": "MDI",
         "attendanceRequired": true,
+        "inCell": false,
+        "pieceWork": false,
+        "outsideWork": false,
+        "payPerSession": "H",
         "summary": "English level 1",
         "description": "A basic english course suitable for introduction to the subject",
         "category": {
@@ -646,135 +656,166 @@
           "code": "EDUCATION",
           "name": "Education",
           "description": "Such as classes in English, maths, construction and computer skills"
+        },
+        "riskLevel": null,
+        "minimumIncentiveLevel": null
+      },
+      "slots": [
+        {
+          "id": 8,
+          "startTime": "14:00",
+          "endTime": "15:00",
+          "daysOfWeek": [
+            "Thu"
+          ]
         }
-      }
+      ],
+      "startDate": "10/10/2022",
+      "endDate": null
     }
   ],
   "waitingList": [],
   "pay": [
     {
       "id": 16,
+      "incentiveLevel": "Enhanced",
+      "prisonPayBand": {
+        "id": 11,
+        "displaySequence": 1,
+        "alias": "Low",
+        "description": "Pay band 1 (Lowest)",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
+      "rate": 175,
+      "pieceRate": 175,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 13,
+      "incentiveLevel": "Standard",
+      "prisonPayBand": {
+        "id": 11,
+        "displaySequence": 1,
+        "alias": "Low",
+        "description": "Pay band 1 (Lowest)",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
+      "rate": 150,
+      "pieceRate": 150,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 10,
       "incentiveLevel": "Basic",
-      "payBand": "A",
+      "prisonPayBand": {
+        "id": 11,
+        "displaySequence": 1,
+        "alias": "Low",
+        "description": "Pay band 1 (Lowest)",
+        "nomisPayBand": 1,
+        "prisonCode": "MDI"
+      },
       "rate": 125,
       "pieceRate": 150,
       "pieceRateItems": 10
     },
     {
       "id": 17,
+      "incentiveLevel": "Enhanced",
+      "prisonPayBand": {
+        "id": 12,
+        "displaySequence": 2,
+        "alias": "Medium",
+        "description": "Pay band 2",
+        "nomisPayBand": 2,
+        "prisonCode": "MDI"
+      },
+      "rate": 200,
+      "pieceRate": 200,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 14,
+      "incentiveLevel": "Standard",
+      "prisonPayBand": {
+        "id": 12,
+        "displaySequence": 2,
+        "alias": "Medium",
+        "description": "Pay band 2",
+        "nomisPayBand": 2,
+        "prisonCode": "MDI"
+      },
+      "rate": 175,
+      "pieceRate": 175,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 11,
       "incentiveLevel": "Basic",
-      "payBand": "B",
+      "prisonPayBand": {
+        "id": 12,
+        "displaySequence": 2,
+        "alias": "Medium",
+        "description": "Pay band 2",
+        "nomisPayBand": 2,
+        "prisonCode": "MDI"
+      },
       "rate": 150,
       "pieceRate": 150,
       "pieceRateItems": 10
     },
     {
       "id": 18,
+      "incentiveLevel": "Enhanced",
+      "prisonPayBand": {
+        "id": 13,
+        "displaySequence": 3,
+        "alias": "High",
+        "description": "Pay band 3 (highest)",
+        "nomisPayBand": 3,
+        "prisonCode": "MDI"
+      },
+      "rate": 225,
+      "pieceRate": 225,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 15,
+      "incentiveLevel": "Standard",
+      "prisonPayBand": {
+        "id": 13,
+        "displaySequence": 3,
+        "alias": "High",
+        "description": "Pay band 3 (highest)",
+        "nomisPayBand": 3,
+        "prisonCode": "MDI"
+      },
+      "rate": 200,
+      "pieceRate": 200,
+      "pieceRateItems": 10
+    },
+    {
+      "id": 12,
       "incentiveLevel": "Basic",
-      "payBand": "C",
+      "prisonPayBand": {
+        "id": 13,
+        "displaySequence": 3,
+        "alias": "High",
+        "description": "Pay band 3 (highest)",
+        "nomisPayBand": 3,
+        "prisonCode": "MDI"
+      },
       "rate": 175,
       "pieceRate": 175,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 19,
-      "incentiveLevel": "Standard",
-      "payBand": "A",
-      "rate": 150,
-      "pieceRate": 150,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 20,
-      "incentiveLevel": "Standard",
-      "payBand": "B",
-      "rate": 175,
-      "pieceRate": 175,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 21,
-      "incentiveLevel": "Standard",
-      "payBand": "C",
-      "rate": 200,
-      "pieceRate": 200,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 22,
-      "incentiveLevel": "Enhanced",
-      "payBand": "A",
-      "rate": 175,
-      "pieceRate": 175,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 23,
-      "incentiveLevel": "Enhanced",
-      "payBand": "B",
-      "rate": 200,
-      "pieceRate": 200,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 24,
-      "incentiveLevel": "Enhanced",
-      "payBand": "C",
-      "rate": 225,
-      "pieceRate": 225,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 25,
-      "incentiveLevel": "Enhanced 2",
-      "payBand": "A",
-      "rate": 200,
-      "pieceRate": 200,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 26,
-      "incentiveLevel": "Enhanced 2",
-      "payBand": "B",
-      "rate": 225,
-      "pieceRate": 225,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 27,
-      "incentiveLevel": "Enhanced 2",
-      "payBand": "C",
-      "rate": 250,
-      "pieceRate": 250,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 28,
-      "incentiveLevel": "Enhanced 3",
-      "payBand": "A",
-      "rate": 225,
-      "pieceRate": 225,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 29,
-      "incentiveLevel": "Enhanced 3",
-      "payBand": "B",
-      "rate": 250,
-      "pieceRate": 250,
-      "pieceRateItems": 10
-    },
-    {
-      "id": 30,
-      "incentiveLevel": "Enhanced 3",
-      "payBand": "C",
-      "rate": 275,
-      "pieceRate": 275,
       "pieceRateItems": 10
     }
   ],
   "startDate": "10/10/2022",
   "endDate": null,
+  "riskLevel": null,
+  "minimumIncentiveLevel": null,
   "createdTime": "10/10/2022 09:00",
   "createdBy": "SEED USER"
 }

@@ -41,6 +41,7 @@ describe('validationMiddleware', () => {
           id: 'abc',
           child: { name: 'valid' },
         },
+        session: {},
       } as Request
 
       await validationMiddleware(DummyForm)(req, res, next)
@@ -57,6 +58,7 @@ describe('validationMiddleware', () => {
           id: '',
           child: { name: 'valid' },
         },
+        session: {},
       } as unknown as Request
 
       await validationMiddleware(DummyForm)(req, res, next)
@@ -78,6 +80,7 @@ describe('validationMiddleware', () => {
           id: 'abc',
           child: { name: '' },
         },
+        session: {},
       } as unknown as Request
 
       await validationMiddleware(DummyForm)(req, res, next)

@@ -11,7 +11,7 @@ export default class CheckAnswersRoutes {
       prisonerName: inmate.prisonerName,
       prisonerNumber: inmate.prisonerNumber,
       cellLocation: inmate.cellLocation,
-      payBand: inmate.payBand,
+      payBand: inmate.payBand.alias,
       activityName: activity.name,
       activityLocation: activity.location,
     })
@@ -21,7 +21,7 @@ export default class CheckAnswersRoutes {
     const { inmate, activity } = req.session.allocateJourney
     const { user } = res.locals
 
-    await this.activitiesService.allocateToSchedule(activity.scheduleId, inmate.prisonerNumber, inmate.payBand, user)
+    await this.activitiesService.allocateToSchedule(activity.scheduleId, inmate.prisonerNumber, inmate.payBand.id, user)
 
     res.redirect('confirmation')
   }

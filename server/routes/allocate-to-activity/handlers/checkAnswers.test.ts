@@ -30,7 +30,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
             prisonerName: 'Joe Bloggs',
             prisonerNumber: 'ABC123',
             cellLocation: '1-2-001',
-            payBand: 'A',
+            payBand: { id: 1, alias: 'A' },
           },
           activity: {
             scheduleId: 1,
@@ -63,7 +63,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
   describe('POST', () => {
     it('should create the allocation and redirect to confirmation page', async () => {
       await handler.POST(req, res)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(1, 'ABC123', 'A', { username: 'joebloggs' })
+      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(1, 'ABC123', 1, { username: 'joebloggs' })
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
   })
