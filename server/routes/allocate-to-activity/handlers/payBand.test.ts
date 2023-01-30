@@ -49,7 +49,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
   })
 
   describe('GET', () => {
-    it('should render the expected view', async () => {
+    it('should render the expected view with pay bands sorted', async () => {
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
         .mockResolvedValue({
@@ -61,8 +61,18 @@ describe('Route Handlers - Allocate - Pay band', () => {
             },
             {
               incentiveLevel: 'Enhanced',
-              prisonPayBand: { id: 1, alias: 'Enhanced rate' },
+              prisonPayBand: { id: 2, alias: 'Enhanced rate 2', displaySequence: 2 },
               rate: 150,
+            },
+            {
+              incentiveLevel: 'Enhanced',
+              prisonPayBand: { id: 3, alias: 'Enhanced rate 3', displaySequence: 3 },
+              rate: 200,
+            },
+            {
+              incentiveLevel: 'Enhanced',
+              prisonPayBand: { id: 1, alias: 'Enhanced rate 1', displaySequence: 1 },
+              rate: 100,
             },
           ],
         } as Activity)
@@ -75,8 +85,18 @@ describe('Route Handlers - Allocate - Pay band', () => {
         payBands: [
           {
             bandId: 1,
-            bandAlias: 'Enhanced rate',
+            bandAlias: 'Enhanced rate 1',
+            rate: 100,
+          },
+          {
+            bandId: 2,
+            bandAlias: 'Enhanced rate 2',
             rate: 150,
+          },
+          {
+            bandId: 3,
+            bandAlias: 'Enhanced rate 3',
+            rate: 200,
           },
         ],
       })
