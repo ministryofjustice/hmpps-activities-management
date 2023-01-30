@@ -7,20 +7,38 @@
   },
   {
     "id": 2,
+    "code": "INDUSTRIES",
+    "name": "Industries",
+    "description": "Such as work in the prison and with employers and charities"
+  },
+  {
+    "id": 3,
     "code": "SERVICES",
     "name": "Services",
     "description": "Such as work in the kitchens and laundry, cleaning, gardening, and mentoring"
   },
   {
-    "id": 3,
-    "code": "LEISURE_SOCIAL",
-    "name": "Leisure and social",
-    "description": "Such as association, library time and social clubs, like music or art"
+    "id": 4,
+    "code": "GYM_SPORTS_FITNESS",
+    "name": "Gym, sport and fitness",
+    "description": "Such as sport clubs, like football, fitness classes and gym sessions"
   },
   {
-    "id": 4,
+    "id": 5,
     "code": "INDUCTION",
     "name": "Induction",
     "description": "Such as gym induction, education assessments, health and safety workshops"
+  },
+  {
+    "id": 6,
+    "code": "INTERVENTIONS",
+    "name": "Intervention programmes",
+    "description": "Such as programmes for behaviour management, drug and alcohol misuse and community rehabilitation"
+  },
+  {
+    "id": 7,
+    "code": "LEISURE_SOCIAL",
+    "name": "Leisure and social",
+    "description": "Such as association, library time and social clubs, like music or art"
   }
 ]

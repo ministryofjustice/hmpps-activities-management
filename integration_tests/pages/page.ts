@@ -41,4 +41,8 @@ export default abstract class Page {
       .then(id => {
         cy.get(`#${id}`)
       })
+
+  getInputByName = (name: string): Cypress.Chainable => cy.get(`[name="${name}"]`)
+
+  continue = () => cy.get('button').contains('Continue').click()
 }

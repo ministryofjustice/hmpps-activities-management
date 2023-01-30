@@ -5,14 +5,17 @@ import SelectPeriodPage from '../pages/recordAttendance/selectPeriod'
 import ActivitiesPage from '../pages/recordAttendance/activitiesPage'
 import AttendanceListPage from '../pages/recordAttendance/attendanceList'
 
-context('Change location', () => {
+context('Record attendance', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
+
+    // TODO: The following stubs should be refactored to use cy.stubEndpoint()
     cy.task('stubGetPrisonScheduledActivities', 'MDI')
     cy.task('stubGetScheduledActivityById')
     cy.task('stubGetInmateDetails')
+
     cy.signIn()
   })
 

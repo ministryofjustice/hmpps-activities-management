@@ -7,11 +7,11 @@
 
 {% set pageTitle = applicationName + " - Create an activity - Pay" %}
 {% set pageId = 'pay-page' %}
-{% set backLinkHref = "risk-level" %}
+{% set backLinkHref = "pay-page" %}
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-quarter">
+        <div class="govuk-grid-column-one-half">
             <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }}</span>
             <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
         </div>
@@ -64,6 +64,7 @@
                     ), payBandOptions) %}
                 {% endfor %}
                 {{ govukSelect({
+                    id: "bandId",
                     name: "bandId",
                     label: {
                         text: "2. Select the pay band",
