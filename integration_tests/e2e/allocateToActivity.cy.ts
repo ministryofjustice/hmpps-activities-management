@@ -27,7 +27,7 @@ import CheckAnswersPage from '../pages/allocateToActivity/checkAnswers'
 import CancelPage from '../pages/allocateToActivity/cancel'
 import ConfirmationPage from '../pages/allocateToActivity/confirmation'
 
-context('Change location', () => {
+context('Allocate to activity', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -62,7 +62,7 @@ context('Change location', () => {
     indexPage.allocateToActivityCard().click()
 
     const categoriesPage = Page.verifyOnPage(CategoriesDashboardPage)
-    categoriesPage.categoryRows().should('have.length', 4)
+    categoriesPage.categoryRows().should('have.length', 7)
     categoriesPage.selectCategoryWithName('Education')
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)

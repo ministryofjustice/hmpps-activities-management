@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { Min } from 'class-validator'
+import _ from 'lodash'
 import ActivitiesService from '../../../services/activitiesService'
 
 export class PayBand {
@@ -21,6 +22,7 @@ export default class PayBandRoutes {
       .getActivity(activity.activityId, user)
       .then(response => response.pay)
       .then(bands => bands.filter(band => !band.incentiveLevel || band.incentiveLevel === inmate.incentiveLevel))
+      .then(bands => _.sortBy(bands, 'prisonPayBand.displaySequence'))
       .then(bands =>
         bands.map(band => ({
           bandId: band.prisonPayBand.id,
