@@ -52,13 +52,10 @@
                 ]
             }) }}
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <div class="govuk-button-group">
+                <a href="/schedule/activities" class="govuk-link">Return to dashboard</a>
+            </div>
 
-                <div class="govuk-button-group">
-                    <a href="cancel" class="govuk-link">Return to dashboard</a>
-                </div>
-            </form>
         </div>
     </div>
 {% endblock %}
