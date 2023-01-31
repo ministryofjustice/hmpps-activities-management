@@ -43,6 +43,14 @@
                     },
                     {
                         key: {
+                            text: "Pay rates"
+                        },
+                        value: {
+                            html: paySummary(activity.pay)
+                        }
+                    },
+                    {
+                        key: {
                             text: "Minimum incentive level"
                         },
                         value: {
@@ -59,3 +67,22 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro paySummary(incentiveLevelPays) %}
+    {% set saveIncentiveLevel = "" %}
+    {% for incentiveLevelPay in incentiveLevelPays %}
+        {% if incentiveLevelPay.incentiveLevel === saveIncentiveLevel %}
+            <div>{{ incentiveLevelPay.prisonPayBand.alias }}: {{ incentiveLevelPay.rate | toMoney }}</div>
+        {% else %}
+            {% if saveIncentiveLevel === "" %}
+            {% else %}
+                </div>
+            {% endif %}
+            <div class="govuk-!-margin-bottom-2">
+                <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
+                <div>{{ incentiveLevelPay.prisonPayBand.alias }}: {{ incentiveLevelPay.rate | toMoney }}</div>
+            {% set saveIncentiveLevel = incentiveLevelPay.incentiveLevel %}
+        {% endif %}
+    {% endfor %}
+    </div>
+{% endmacro %}
