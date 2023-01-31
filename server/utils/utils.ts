@@ -1,12 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// eslint-disable-next-line import/no-duplicates
-import { parse, formatISO, isAfter, parseISO, endOfDay, format, isSameDay } from 'date-fns'
+/* eslint-disable import/no-duplicates */
+import {
+  parse,
+  formatISO,
+  isAfter,
+  parseISO,
+  endOfDay,
+  format,
+  isSameDay,
+  isToday,
+  isTomorrow,
+  isYesterday,
+} from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { Attendance } from '../@types/activitiesAPI/types'
+import TimeSlot from '../enum/timeSlot'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -47,13 +59,13 @@ export const getCurrentPeriod = (hour: number): string => {
   return 'ED'
 }
 
-export const getTimeSlotFromTime = (time: string): string => {
+export const getTimeSlotFromTime = (time: string): TimeSlot => {
   const hour = +time.split(':')[0]
   const afternoonSplit = 12
   const eveningSplit = 17
-  if (hour < afternoonSplit) return 'AM'
-  if (hour < eveningSplit) return 'PM'
-  return 'ED'
+  if (hour < afternoonSplit) return TimeSlot.AM
+  if (hour < eveningSplit) return TimeSlot.PM
+  return TimeSlot.ED
 }
 
 export const startsWithAny = (string: string, list: string[]): boolean => {
@@ -160,7 +172,18 @@ export const buildErrorSummaryList = (array: FieldValidationError[]) => {
   }))
 }
 
-export const formatDate = (date: Date, fmt: string) => {
+export const formatDate = (date: Date, fmt: string, inContextName?: boolean) => {
+  if (inContextName) {
+    if (isToday(date)) {
+      return 'today'
+    }
+    if (isTomorrow(date)) {
+      return 'tomorrow'
+    }
+    if (isYesterday(date)) {
+      return 'yesterday'
+    }
+  }
   return format(date, fmt)
 }
 

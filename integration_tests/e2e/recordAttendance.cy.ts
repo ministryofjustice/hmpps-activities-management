@@ -28,7 +28,6 @@ context('Record attendance', () => {
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(format(new Date(), 'yyyy-MM-dd'))
-    selectPeriodPage.selectTimePeriod('Morning (AM)')
     selectPeriodPage.submit()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)

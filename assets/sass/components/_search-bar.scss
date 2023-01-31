@@ -1,0 +1,11 @@
+@include govuk-media-query($from: tablet) {
+  .search-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+
+    .govuk-form-group {
+      flex: 1;
+    }
+  }
+}

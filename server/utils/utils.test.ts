@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-duplicates
-import { format, parseISO } from 'date-fns'
+import { addDays, format, parseISO, subDays } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
 import {
@@ -141,6 +141,22 @@ describe('utils', () => {
   describe('formatDate', () => {
     it('formats a date to a long date with day', () => {
       expect(formatDate(new Date(2022, 0, 1), 'cccc do LLLL y')).toEqual('Saturday 1st January 2022')
+    })
+
+    it('formats a date to a long date with day when inContext not available', () => {
+      expect(formatDate(new Date(2022, 0, 1), 'cccc do LLLL y', true)).toEqual('Saturday 1st January 2022')
+    })
+
+    it('formats todays date as "today"', () => {
+      expect(formatDate(new Date(), '', true)).toEqual('today')
+    })
+
+    it('formats yesterdays date as "yesterday"', () => {
+      expect(formatDate(subDays(new Date(), 1), '', true)).toEqual('yesterday')
+    })
+
+    it('formats tomorrows date as "tomorrow"', () => {
+      expect(formatDate(addDays(new Date(), 1), '', true)).toEqual('tomorrow')
     })
   })
 

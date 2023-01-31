@@ -21,7 +21,6 @@ import activitySchedules from './fixtures/activity_schedules_1.json'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
-import TimeSlot from '../enum/timeSlot'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -45,7 +44,7 @@ describe('Activities Service', () => {
     it('should get the activity from activities API', async () => {
       const expectedResult = { id: 1, description: 'Induction' } as Activity
 
-      activitiesApiClient.getActivity.mockResolvedValue(expectedResult)
+      when(activitiesApiClient.getActivity).mockResolvedValue(expectedResult)
 
       const actualResult = await activitiesService.getActivity(1, user)
 
@@ -58,7 +57,7 @@ describe('Activities Service', () => {
     it('should get the list of activity categories from activities API', async () => {
       const expectedResult = [{ id: 1, description: 'Induction' }] as ActivityCategory[]
 
-      activitiesApiClient.getActivityCategories.mockResolvedValue(expectedResult)
+      when(activitiesApiClient.getActivityCategories).mockResolvedValue(expectedResult)
 
       const actualResult = await activitiesService.getActivityCategories(user)
 
@@ -71,7 +70,7 @@ describe('Activities Service', () => {
     it('should get the list of activities from activities API', async () => {
       const expectedResult = [{ id: 1, summary: 'Maths level 1' }] as ActivityLite[]
 
-      activitiesApiClient.getActivitiesInCategory.mockResolvedValue(expectedResult)
+      when(activitiesApiClient.getActivitiesInCategory).mockResolvedValue(expectedResult)
 
       const actualResult = await activitiesService.getActivitiesInCategory(1, user)
 
@@ -84,7 +83,7 @@ describe('Activities Service', () => {
     it('should get the list of activities from activities API', async () => {
       const expectedResult = [{ id: 1, summary: 'Maths level 1' }] as ActivityLite[]
 
-      activitiesApiClient.getActivities.mockResolvedValue(expectedResult)
+      when(activitiesApiClient.getActivities).mockResolvedValue(expectedResult)
 
       const actualResult = await activitiesService.getActivities(user)
 
@@ -97,7 +96,7 @@ describe('Activities Service', () => {
     it('should get the list of schedules from activities API', async () => {
       const expectedResult = [{ id: 1, description: 'Houseblock 1 AM' }] as ActivityScheduleLite[]
 
-      activitiesApiClient.getSchedulesOfActivity.mockResolvedValue(expectedResult)
+      when(activitiesApiClient.getSchedulesOfActivity).mockResolvedValue(expectedResult)
 
       const actualResult = await activitiesService.getSchedulesOfActivity(1, user)
 
@@ -139,7 +138,7 @@ describe('Activities Service', () => {
     it('should get the list of prison pay bands', async () => {
       const expectedResult = [{ id: 1, alias: 'High' }] as PrisonPayBand[]
 
-      activitiesApiClient.getPayBandsForPrison.mockResolvedValue(expectedResult)
+      when(activitiesApiClient.getPayBandsForPrison).mockResolvedValue(expectedResult)
 
       const actualResult = await activitiesService.getPayBandsForPrison(user)
 
@@ -153,18 +152,12 @@ describe('Activities Service', () => {
       const expectedResult = [{ id: 1 }] as ScheduledActivity[]
       const date = new Date()
 
-      activitiesApiClient.getScheduledActivitiesAtPrison.mockResolvedValue(expectedResult)
+      when(activitiesApiClient.getScheduledActivitiesAtPrison).mockResolvedValue(expectedResult)
 
-      const actualResult = await activitiesService.getScheduledActivitiesAtPrison(date, date, TimeSlot.AM, user)
+      const actualResult = await activitiesService.getScheduledActivitiesAtPrison(date, user)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getScheduledActivitiesAtPrison).toHaveBeenCalledWith(
-        'MDI',
-        date,
-        date,
-        TimeSlot.AM,
-        user,
-      )
+      expect(activitiesApiClient.getScheduledActivitiesAtPrison).toHaveBeenCalledWith('MDI', date, date, user)
     })
   })
 
@@ -172,7 +165,7 @@ describe('Activities Service', () => {
     it('should get the scheduled activitu by ID', async () => {
       const expectedResult = { id: 1 } as ScheduledActivity
 
-      activitiesApiClient.getScheduledActivity.mockResolvedValue(expectedResult)
+      when(activitiesApiClient.getScheduledActivity).mockResolvedValue(expectedResult)
 
       const actualResult = await activitiesService.getScheduledActivity(1, user)
 

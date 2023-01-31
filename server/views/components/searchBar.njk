@@ -1,0 +1,9 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% macro searchBar(params) %}
+    <div class="search-bar">
+        {{ govukInput(params.inputParams) }}
+        {{ govukButton(params.buttonParams) }}
+    </div>
+{% endmacro %}

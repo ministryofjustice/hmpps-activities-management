@@ -90,8 +90,8 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     prisonCode: string,
     startDate: Date,
     endDate: Date,
-    slot: TimeSlot,
     user: ServiceUser,
+    slot?: TimeSlot,
   ): Promise<ScheduledActivity[]> {
     return this.get({
       path: `/prisons/${prisonCode}/scheduled-instances`,

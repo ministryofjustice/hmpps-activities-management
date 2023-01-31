@@ -3,7 +3,6 @@ import { when } from 'jest-when'
 import { parse } from 'date-fns'
 import ActivitiesRoutes from './activities'
 import ActivitiesService from '../../../services/activitiesService'
-import TimeSlot from '../../../enum/timeSlot'
 import { ScheduledActivity } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
@@ -31,6 +30,39 @@ describe('Route Handlers - Activities', () => {
   })
 
   describe('GET', () => {
+    const mockApiResponse = [
+      {
+        id: 1,
+        startTime: '10:00',
+        endTime: '11:00',
+        activitySchedule: {
+          activity: { summary: 'Maths level 1' },
+          description: 'Houseblock 1',
+          internalLocation: { description: 'Classroom' },
+        },
+        attendances: [
+          { status: 'SCHEDULED' },
+          { status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
+          { status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+        ],
+      },
+      {
+        id: 2,
+        startTime: '13:00',
+        endTime: '14:00',
+        activitySchedule: {
+          activity: { summary: 'English level 1' },
+          description: 'Houseblock 2',
+          internalLocation: { description: 'Classroom 2' },
+        },
+        attendances: [
+          { status: 'SCHEDULED' },
+          { status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
+          { status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+        ],
+      },
+    ] as ScheduledActivity[]
+
     it('should redirect to the select period page if date and slot are not provided', async () => {
       await handler.GET(req, res)
 
@@ -44,57 +76,92 @@ describe('Route Handlers - Activities', () => {
       expect(res.redirect).toHaveBeenCalledWith('select-period')
     })
 
-    it('should redirect to the select period page if time slot is not provided', async () => {
-      req.query.date = '2022-12-02'
-      await handler.GET(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('select-period')
-    })
-
     it('should render with the expected view', async () => {
       const dateString = '2022-12-08'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
 
       when(activitiesService.getScheduledActivitiesAtPrison)
-        .calledWith(date, date, TimeSlot.AM, res.locals.user)
-        .mockResolvedValue([
-          {
-            id: 1,
-            startTime: '10:00',
-            endTime: '11:00',
-            activitySchedule: {
-              activity: { summary: 'Maths level 1' },
-              internalLocation: { description: 'Houseblock 1' },
-            },
-            attendances: [
-              { status: 'SCHEDULED' },
-              { status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
-              { status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
-            ],
-          } as ScheduledActivity,
-        ])
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockApiResponse)
 
       req.query = {
         date: dateString,
-        slot: 'am',
       }
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
-        activities: [
-          {
-            allocated: 3,
-            attended: 1,
-            id: 1,
-            location: 'Houseblock 1',
-            name: 'Maths level 1',
-            notAttended: 1,
-            notRecorded: 1,
-            time: '10:00 - 11:00',
-          },
-        ],
+        activities: {
+          am: [
+            {
+              allocated: 3,
+              attended: 1,
+              id: 1,
+              location: 'Classroom',
+              name: 'Maths level 1',
+              scheduleName: 'Houseblock 1',
+              notAttended: 1,
+              notRecorded: 1,
+              time: '10:00 - 11:00',
+              timeSlot: 'am',
+            },
+          ],
+          pm: [
+            {
+              allocated: 3,
+              attended: 1,
+              id: 2,
+              location: 'Classroom 2',
+              name: 'English level 1',
+              scheduleName: 'Houseblock 2',
+              notAttended: 1,
+              notRecorded: 1,
+              time: '13:00 - 14:00',
+              timeSlot: 'pm',
+            },
+          ],
+          length: 2,
+        },
         date,
-        slot: 'am',
+        searchString: undefined,
+      })
+    })
+
+    it('should filter the activites based on the search term', async () => {
+      const dateString = '2022-12-08'
+      const searchTerm = 'math'
+
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      when(activitiesService.getScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockApiResponse)
+
+      req.query = {
+        date: dateString,
+        searchTerm,
+      }
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
+        activities: {
+          am: [
+            {
+              allocated: 3,
+              attended: 1,
+              id: 1,
+              location: 'Classroom',
+              name: 'Maths level 1',
+              scheduleName: 'Houseblock 1',
+              notAttended: 1,
+              notRecorded: 1,
+              time: '10:00 - 11:00',
+              timeSlot: 'am',
+            },
+          ],
+          length: 1,
+        },
+        date,
+        searchTerm: 'math',
       })
     })
   })
