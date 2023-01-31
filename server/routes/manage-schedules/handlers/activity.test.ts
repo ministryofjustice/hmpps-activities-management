@@ -2,13 +2,16 @@ import { Request, Response } from 'express'
 
 import ActivitiesService from '../../../services/activitiesService'
 import ActivityRoutes from './activity'
+import PrisonService from '../../../services/prisonService'
 
 jest.mock('../../../services/activitiesService')
+jest.mock('../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const prisonService = new PrisonService(null, null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - View Activity', () => {
-  const handler = new ActivityRoutes(activitiesService)
+  const handler = new ActivityRoutes(activitiesService, prisonService)
   let req: Request
   let res: Response
 
@@ -85,6 +88,7 @@ describe('Route Handlers - View Activity', () => {
           waitingList: [],
           id: 1,
         },
+        incentiveLevelPays: [],
       })
     })
   })

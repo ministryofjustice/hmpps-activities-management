@@ -46,7 +46,7 @@
                             text: "Pay rates"
                         },
                         value: {
-                            html: paySummary(activity.pay)
+                            html: paySummary(incentiveLevelPays)
                         }
                     },
                     {
@@ -69,20 +69,12 @@
 {% endblock %}
 
 {% macro paySummary(incentiveLevelPays) %}
-    {% set saveIncentiveLevel = "" %}
     {% for incentiveLevelPay in incentiveLevelPays %}
-        {% if incentiveLevelPay.incentiveLevel === saveIncentiveLevel %}
-            <div>{{ incentiveLevelPay.prisonPayBand.alias }}: {{ incentiveLevelPay.rate | toMoney }}</div>
-        {% else %}
-            {% if saveIncentiveLevel === "" %}
-            {% else %}
-                </div>
-            {% endif %}
-            <div class="govuk-!-margin-bottom-2">
-                <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
-                <div>{{ incentiveLevelPay.prisonPayBand.alias }}: {{ incentiveLevelPay.rate | toMoney }}</div>
-            {% set saveIncentiveLevel = incentiveLevelPay.incentiveLevel %}
-        {% endif %}
+        <div class="govuk-!-margin-bottom-2">
+            <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
+            {% for pay in incentiveLevelPay.pays %}
+                <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
+            {% endfor %}
+        </div>
     {% endfor %}
-    </div>
 {% endmacro %}

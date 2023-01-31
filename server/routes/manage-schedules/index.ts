@@ -15,7 +15,7 @@ export default function Index(services: Services): Router {
   )
   const activitiesListRouteHandler = new ActivitiesRoutes(services.activitiesService)
   router.get('/activities', asyncMiddleware(activitiesListRouteHandler.GET))
-  const activityRouteHandler = new ActivityRoutes(services.activitiesService)
+  const activityRouteHandler = new ActivityRoutes(services.activitiesService, services.prisonService)
   router.get('/activities/:activityId', asyncMiddleware(activityRouteHandler.GET))
   return router
 }
