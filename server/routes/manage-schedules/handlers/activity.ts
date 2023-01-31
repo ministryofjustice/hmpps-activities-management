@@ -10,7 +10,7 @@ export default class ActivityRoutes {
 
     const activity = await this.activitiesService.getActivity(activityId as unknown as number, user)
 
-    res.render('pages/manage-schedules/check-answers', {
+    res.render('pages/manage-schedules/view-activity', {
       activity,
     })
   }
