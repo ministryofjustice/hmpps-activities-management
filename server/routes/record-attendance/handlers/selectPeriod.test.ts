@@ -34,25 +34,23 @@ describe('Route Handlers - Select period', () => {
     it("redirect with the expected query params for when today's date is selected", async () => {
       req.body = {
         datePresetOption: 'today',
-        activitySlot: 'am',
       }
 
       const todaysDate = format(new Date(), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${todaysDate}&slot=am`)
+      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${todaysDate}`)
     })
 
     it("redirect with the expected query params for when yesterday's date is selected", async () => {
       req.body = {
         datePresetOption: 'yesterday',
-        activitySlot: 'am',
       }
 
       const yesterdaysDate = format(subDays(new Date(), 1), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${yesterdaysDate}&slot=am`)
+      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${yesterdaysDate}`)
     })
 
     it('redirect with the expected query params for when a custom date is selected', async () => {
@@ -63,11 +61,10 @@ describe('Route Handlers - Select period', () => {
           month: 12,
           year: 2022,
         }),
-        activitySlot: 'am',
       }
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`activities?date=2022-12-1&slot=am`)
+      expect(res.redirect).toHaveBeenCalledWith(`activities?date=2022-12-1`)
     })
   })
 
@@ -78,32 +75,24 @@ describe('Route Handlers - Select period', () => {
       const requestObject = plainToInstance(TimePeriod, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([
-        { property: 'datePresetOption', error: 'Select an activity or appointment date' },
-        { property: 'activitySlot', error: 'Select a time period' },
-      ])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select an activity or appointment date' }])
     })
 
     it('validation fails if invalid values are entered', async () => {
       const body = {
         datePresetOption: 'invalid',
-        activitySlot: 'invalid',
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([
-        { property: 'datePresetOption', error: 'Select an activity or appointment date' },
-        { property: 'activitySlot', error: 'Select a time period' },
-      ])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select an activity or appointment date' }])
     })
 
     it('validation fails if preset option is other and a date is not provided', async () => {
       const body = {
         datePresetOption: 'other',
         date: {},
-        activitySlot: 'am',
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -120,7 +109,6 @@ describe('Route Handlers - Select period', () => {
           month: 2,
           year: 2022,
         },
-        activitySlot: 'am',
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -137,7 +125,6 @@ describe('Route Handlers - Select period', () => {
           month: 2,
           year: new Date().getFullYear() + 1,
         },
-        activitySlot: 'am',
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -154,7 +141,6 @@ describe('Route Handlers - Select period', () => {
           month: 2,
           year: 2022,
         },
-        activitySlot: 'am',
       }
 
       const requestObject = plainToInstance(TimePeriod, body)

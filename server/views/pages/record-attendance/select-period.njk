@@ -53,34 +53,6 @@
                     ]
                 }) }}
 
-                {{ govukRadios({
-                    name: "activitySlot",
-                    fieldset: {
-                        legend: {
-                            text: "Time period",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('activitySlot'),
-                    items: [
-                        {
-                            value: "am",
-                            text: "Morning (AM)",
-                            checked: formResponses.activitySlot == 'am'
-                        },
-                        {
-                            value: "pm",
-                            text: "Afternoon (PM)",
-                            checked: formResponses.activitySlot == 'pm'
-                        },
-                        {
-                            value: "ed",
-                            text: "Evening (ED)",
-                            checked: formResponses.activitySlot == 'ed'
-                        }
-                    ]
-                }) }}
-
                 {{ govukButton({
                     text: "Submit"
                 }) }}

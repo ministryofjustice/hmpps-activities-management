@@ -12,12 +12,6 @@ enum PresetDateOptions {
   OTHER = 'other',
 }
 
-enum ActivitySlotOptions {
-  AM = 'am',
-  PM = 'pm',
-  ED = 'ed',
-}
-
 export class TimePeriod {
   @Expose()
   @IsIn(Object.values(PresetDateOptions), { message: 'Select an activity or appointment date' })
@@ -30,10 +24,6 @@ export class TimePeriod {
   @IsValidDate({ message: 'Enter a valid date' })
   @DateIsSameOrBefore(new Date(), { message: "Enter a date on or before today's date" })
   date: SimpleDate
-
-  @Expose()
-  @IsIn(Object.values(ActivitySlotOptions), { message: 'Select a time period' })
-  activitySlot: string
 }
 
 export default class SelectPeriodRoutes {
@@ -41,14 +31,14 @@ export default class SelectPeriodRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     if (req.body.datePresetOption === PresetDateOptions.TODAY) {
-      return res.redirect(`activities?date=${this.formatDate(new Date())}&slot=${req.body.activitySlot}`)
+      return res.redirect(`activities?date=${this.formatDate(new Date())}`)
     }
 
     if (req.body.datePresetOption === PresetDateOptions.YESTERDAY) {
-      return res.redirect(`activities?date=${this.formatDate(subDays(new Date(), 1))}&slot=${req.body.activitySlot}`)
+      return res.redirect(`activities?date=${this.formatDate(subDays(new Date(), 1))}`)
     }
 
-    return res.redirect(`activities?date=${req.body.date.toString()}&slot=${req.body.activitySlot}`)
+    return res.redirect(`activities?date=${req.body.date.toString()}`)
   }
 
   private formatDate = (date: Date) => format(date, 'yyyy-MM-dd')

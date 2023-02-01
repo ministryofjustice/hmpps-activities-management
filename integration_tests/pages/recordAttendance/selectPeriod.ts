@@ -12,7 +12,5 @@ export default class SelectPeriodPage extends Page {
     cy.get('#date-year').type(date.split('-')[0])
   }
 
-  selectTimePeriod = (text: string) => this.getInputByLabel(text).click()
-
   submit = () => cy.get('button').contains('Submit').click()
 }
