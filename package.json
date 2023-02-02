@@ -178,6 +178,7 @@
     "nodemon": "^2.0.19",
     "openapi-typescript": "^6.1.0",
     "prettier": "^2.8.3",
+    "prettier-plugin-jinja-template": "^0.0.5",
     "sass": "^1.58.0",
     "supertest": "^6.3.3",
     "ts-jest": "^29.0.5",
