@@ -78,6 +78,7 @@ context('Allocate to activity', () => {
     peopleAllocatedNowTab.tabWithTitle('Entry level English 1 schedule').click()
 
     const scheduleTab = Page.verifyOnPage(ScheduleTabPage)
+    scheduleTab.activeTimeSlots().should('have.length', 1)
     scheduleTab.tabWithTitle('Identify candidates').click()
 
     const identifyCandidatesTab = Page.verifyOnPage(IdentifyCandidatesTabPage)
