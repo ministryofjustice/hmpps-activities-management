@@ -57,14 +57,14 @@ describe('Unlock list routes - select date and location', () => {
       req.body = {
         datePresetOption: 'today',
         activitySlot: 'am',
-        locations: ['here'],
+        location: 'here',
       }
       const todaysDate = format(new Date(), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?datePresetOption=today&date=${todaysDate}&slot=am&locations=here`,
+        `planned-events?datePresetOption=today&date=${todaysDate}&slot=am&location=here`,
       )
     })
 
@@ -72,14 +72,14 @@ describe('Unlock list routes - select date and location', () => {
       req.body = {
         datePresetOption: 'yesterday',
         activitySlot: 'am',
-        locations: ['here'],
+        location: 'here',
       }
       const yesterdaysDate = format(subDays(new Date(), 1), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?datePresetOption=yesterday&date=${yesterdaysDate}&slot=am&locations=here`,
+        `planned-events?datePresetOption=yesterday&date=${yesterdaysDate}&slot=am&location=here`,
       )
     })
 
@@ -94,13 +94,13 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: testDate,
         activitySlot: 'am',
-        locations: ['here'],
+        location: 'here',
       }
 
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?datePresetOption=other&date=2022-12-01&slot=am&locations=here`,
+        `planned-events?datePresetOption=other&date=2022-12-01&slot=am&location=here`,
       )
     })
   })
@@ -115,7 +115,7 @@ describe('Unlock list routes - select date and location', () => {
       expect(errors).toEqual([
         { property: 'datePresetOption', error: 'Select a date for the unlock list' },
         { property: 'activitySlot', error: 'Select a time slot' },
-        { property: 'locations', error: 'Select one or more locations' },
+        { property: 'location', error: 'Select a location' },
       ])
     })
 
@@ -131,7 +131,7 @@ describe('Unlock list routes - select date and location', () => {
       expect(errors).toEqual([
         { property: 'datePresetOption', error: 'Select a date for the unlock list' },
         { property: 'activitySlot', error: 'Select a time slot' },
-        { property: 'locations', error: 'Select one or more locations' },
+        { property: 'location', error: 'Select a location' },
       ])
     })
 
@@ -140,7 +140,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: {},
         activitySlot: 'am',
-        locations: ['some location'],
+        location: 'some location',
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
@@ -154,7 +154,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: { day: 31, month: 2, year: 2022 },
         activitySlot: 'am',
-        locations: ['here'],
+        location: 'here',
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
@@ -168,7 +168,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: { day: 27, month: 2, year: 2022 },
         activitySlot: 'am',
-        locations: ['here'],
+        location: 'here',
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)

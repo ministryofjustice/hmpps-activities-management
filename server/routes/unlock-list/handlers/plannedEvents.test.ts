@@ -38,7 +38,7 @@ describe('Unlock list routes - planned events', () => {
           datePresetOption: 'today',
           date: '2022-01-01',
           slot: 'am',
-          locations: 'Houseblock 1,Houseblock 2',
+          location: 'Houseblock 1',
         },
       } as unknown as Request
 
@@ -48,7 +48,7 @@ describe('Unlock list routes - planned events', () => {
       await handler.GET(req, res)
 
       expect(unlockListService.getUnlockListForLocationGroups).toHaveBeenCalledWith(
-        ['Houseblock 1', 'Houseblock 2'],
+        ['Houseblock 1'],
         req.query.date,
         req.query.slot,
         res.locals.user,
