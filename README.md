@@ -15,6 +15,8 @@ This service requires the following dependent services:
 
 Ensure you have the appropriate tools locally:
 
+Note: Using `nvm` (or [fnm](https://github.com/Schniz/fnm)), run `nvm install --latest-npm` within the repository folder to use the correct version of node, and the latest version of npm. This matches the `engines` config in `package.json` and the CircleCI build config.
+
 `node - v18.x`
 
 `npm - v8.x`

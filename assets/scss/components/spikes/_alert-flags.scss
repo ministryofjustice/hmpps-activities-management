@@ -85,7 +85,7 @@
     color: #800000;
     border-color: #800000;
   }
-  
+
   .no-one-to-one-status {
     @extend %status-style;
     color: #903;
@@ -105,21 +105,21 @@
     border-color: mix(white, #00703C, 20%);
     background-color: mix(white, #00703C, 20%);
   }
-  
+
   .protective-isolation-unit-status {
     @extend %status-style;
     color: #FFF;
     border-color: #006637;
     background-color: #006637;
   }
-  
+
   .shielding-unit-status {
     @extend %status-style;
     color: #FFF;
     border-color: #004424;
     background-color: #004424;
   }
-  
+
   .refusing-to-shield-status {
     @extend %status-style;
     color: #FFF;

@@ -8,8 +8,8 @@
      --load-path=. \
      --load-path=node_modules/govuk-frontend \
      --load-path=node_modules/@ministryofjustice/frontend \
-     ./assets/sass/application.sass:./assets/stylesheets/application.css \
-     ./assets/sass/application-ie8.sass:./assets/stylesheets/application-ie8.css \
+     ./assets/scss/application.scss:./assets/stylesheets/application.css \
+     ./assets/scss/application-ie8.scss:./assets/stylesheets/application-ie8.css \
      --style compressed
 
 # End
