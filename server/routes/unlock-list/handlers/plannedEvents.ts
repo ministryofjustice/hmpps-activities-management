@@ -11,8 +11,9 @@ export default class PlannedEventsRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { date, slot, locations } = req.query
-    const locationGroups: string[] = typeof locations === 'string' ? locations?.split(',') : []
+    const { date, slot, location } = req.query
+    // Leave the possibility that multiple locations will be allowed in future - currently just one
+    const locationGroups: string[] = typeof location === 'string' ? [location] : []
     const formattedDate = formatDate(toDate(date.toString()), 'cccc do LLLL y')
 
     const unlockListItems = await this.unlockListService.getUnlockListForLocationGroups(

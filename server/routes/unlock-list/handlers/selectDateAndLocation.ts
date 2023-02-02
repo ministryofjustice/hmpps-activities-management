@@ -35,8 +35,8 @@ export class DateAndLocation {
   activitySlot: string
 
   @Expose()
-  @IsNotEmpty({ message: 'Select one or more locations' })
-  locations: string[]
+  @IsNotEmpty({ message: 'Select a location' })
+  location: string
 }
 
 export default class SelectDateAndLocationRoutes {
@@ -44,7 +44,7 @@ export default class SelectDateAndLocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    // TODO: Set session-based (datePresetOption, date, slot and selectedLocations) for back link in journey?
+    // TODO: Set session-based (datePresetOption, date, slot and location) for back link in journey?
     const locationGroups = await this.activitiesService.getLocationGroups(user.activeCaseLoadId, user)
     res.render('pages/unlock-list/select-date-and-location', { locationGroups })
   }
@@ -55,7 +55,7 @@ export default class SelectDateAndLocationRoutes {
       `planned-events?datePresetOption=${req.body.datePresetOption}` +
         `&date=${selectedDate}` +
         `&slot=${req.body.activitySlot}` +
-        `&locations=${req.body.locations}`,
+        `&location=${req.body.location}`,
     )
   }
 

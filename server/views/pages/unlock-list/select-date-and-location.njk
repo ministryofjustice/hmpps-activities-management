@@ -2,8 +2,6 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
-{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "components/datePicker.njk" import datePicker %}
 
 {% set pageTitle = applicationName + " - Unlock list" %}
@@ -45,7 +43,8 @@
                             datePicker({
                                 id: 'date',
                                 hint: {
-                                    text: "For example, today's date is " + now | formatDate('dd MM yyyy')
+                                    text: "Enter a date, for example, " + now | formatDate('dd MM yyyy') +
+                                          ". You can get unlock lists up to 2 weeks from today."
                                 },
                                 renderedErrorMessage: validationErrors | findError('date'),
                                 validationErrors: validationErrors,
@@ -89,41 +88,28 @@
                     {% set items = (items.push({
                         value: location.key,
                         text: location.name,
-                        checked: (location.key | existsInStringArray(formResponses.locations))
+                        checked: formResponses.location == location.key
                     }), items) %}
                 {% endfor %}
 
-                {{ govukCheckboxes({
-                    idPrefix: "locations",
-                    name: "locations",
+                {{ govukRadios({
+                    idPrefix: "location",
+                    name: "location",
                     fieldset: {
                         legend: {
                             text: "Locations",
                             classes: "govuk-fieldset__legend--m"
                         }
                     },
-                    errorMessage: validationErrors | findError('locations'),
-                    hint: {
-                        text: "You can select more than one location if you need to"
-                    },
+                    errorMessage: validationErrors | findError('location'),
                     items: items
-                }) }}
-
-                {{ govukInsetText({
-                    text: "Prisoners will be listed by sub-location (prison wing)."
                 }) }}
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "View selection",
+                        text: "Continue",
                         type: "submit",
                         attributes: { 'data-qa': 'view-selection' }
-                    }) }}
-                    {{ govukButton({
-                        text: "Print selection",
-                        type: "submit",
-                        classes: "govuk-button--secondary",
-                        attributes: { 'data-qa': 'print-selection' }
                     }) }}
                 </div>
             </form>

@@ -21,6 +21,7 @@ export default class UnlockListService {
     user: ServiceUser,
   ): Promise<UnlockListItem[]> {
     // Convert the selected location groups to the location prefixes at this prison e.g. ["MDI-1-","MDI-2-"]
+    // Currently only a single value - but leave open for multiple - likely in the future.
     const locationPrefixes = (
       await Promise.all(
         locationGroups.map(lg =>
@@ -28,8 +29,6 @@ export default class UnlockListService {
         ),
       )
     ).map(lp => lp.locationPrefix)
-
-    // TODO: Check that the length of the locationGroups is the same as the locationPrefixes - missed any?
 
     // Get the prisoners whose cell locations match any of the location prefixes
     const prisonersByCellLocation = await Promise.all(
@@ -64,7 +63,7 @@ export default class UnlockListService {
       })
     })
 
-    // Get the scheduled events from their master source for these prisoners (court, visits, appointments)
+    // Get the scheduled events from their master source for these prisoners (activities, court, visits, appointments)
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       user.activeCaseLoadId,
       unlockDate,
@@ -79,7 +78,7 @@ export default class UnlockListService {
     logger.info(`Total court hearings: ${scheduledEvents?.courtHearings.length}`)
 
     // TODO: Get transfers - similar shape as scheduled events
-    // TODO: Adjudication hearings (currently in appointments, check with Adjudications team for rolled-out prisons)
+    // TODO: Adjudication hearings (Check with Adjudications team for rolled-out prisons and API options)
     // TODO: Get ROTLs - Prison API: /api/movements/agency/{prisonCode}/temporary-absences - filtered to today?
 
     // Match the prisoners with their events by prisonerNumber
