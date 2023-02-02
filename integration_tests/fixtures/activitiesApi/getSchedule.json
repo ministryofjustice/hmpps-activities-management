@@ -110,15 +110,36 @@
       "cancelledTime": null,
       "cancelledBy": null,
       "attendances": []
+    },
+    {
+      "id": 104,
+      "date": "07/02/2023",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 123,
+      "date": "14/02/2023",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
     }
   ],
   "allocations": [
     {
       "id": 2,
       "prisonerNumber": "G4793VF",
+      "bookingId": 1200993,
       "activitySummary": "English level 1",
       "scheduleDescription": "Entry level English 1",
-      "payBand": "A",
+      "payBandId": 1,
       "startDate": "10/10/2022",
       "endDate": null,
       "allocatedTime": "10/10/2022 09:30",
@@ -130,19 +151,20 @@
   ],
   "description": "Entry level English 1",
   "suspensions": [],
-  "startTime": "10:00",
-  "endTime": "11:00",
   "internalLocation": {
     "id": 1,
     "code": "EDU-ROOM-1",
     "description": "Education - R1"
   },
   "capacity": 10,
-  "daysOfWeek": ["Tue"],
   "activity": {
     "id": 2,
     "prisonCode": "MDI",
     "attendanceRequired": true,
+    "inCell": false,
+    "pieceWork": false,
+    "outsideWork": false,
+    "payPerSession": "H",
     "summary": "English level 1",
     "description": "A basic english course suitable for introduction to the subject",
     "category": {
@@ -150,6 +172,18 @@
       "code": "EDUCATION",
       "name": "Education",
       "description": "Such as classes in English, maths, construction and computer skills"
+    },
+    "riskLevel": null,
+    "minimumIncentiveLevel": null
+  },
+  "slots": [
+    {
+      "id": 5,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "daysOfWeek": ["Tue"]
     }
-  }
+  ],
+  "startDate": "10/10/2022",
+  "endDate": null
 }

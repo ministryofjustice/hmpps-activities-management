@@ -18,7 +18,7 @@
             }
         ] %}
 
-        {% for timeSlot in ['AM', 'PM', 'ED'] %}
+        {% for timeSlot in ['am', 'pm', 'ed'] %}
             {% set slotMatches = false %}
             {% for slot in schedule.slots %}
                 {% set dayMatchesSlot = day | startsWithAny(slot.daysOfWeek) %}
