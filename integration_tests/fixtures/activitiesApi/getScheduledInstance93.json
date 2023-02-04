@@ -1,0 +1,104 @@
+{
+  "id": 93,
+  "date": "02/02/2023",
+  "startTime": "14:00",
+  "endTime": "15:00",
+  "cancelled": false,
+  "cancelledTime": null,
+  "cancelledBy": null,
+  "attendances": [
+    {
+      "id": 4,
+      "prisonerNumber": "A7789DY",
+      "attendanceReason": null,
+      "comment": null,
+      "posted": false,
+      "recordedTime": null,
+      "recordedBy": null,
+      "status": "SCHEDULED",
+      "payAmount": null,
+      "bonusAmount": null,
+      "pieces": null
+    },
+    {
+      "id": 3,
+      "prisonerNumber": "G4572UO",
+      "attendanceReason": null,
+      "comment": null,
+      "posted": false,
+      "recordedTime": null,
+      "recordedBy": null,
+      "status": "SCHEDULED",
+      "payAmount": null,
+      "bonusAmount": null,
+      "pieces": null
+    },
+    {
+      "id": 2,
+      "prisonerNumber": "G5897GP",
+      "attendanceReason": null,
+      "comment": null,
+      "posted": false,
+      "recordedTime": null,
+      "recordedBy": null,
+      "status": "SCHEDULED",
+      "payAmount": null,
+      "bonusAmount": null,
+      "pieces": null
+    },
+    {
+      "id": 5,
+      "prisonerNumber": "G7218GI",
+      "attendanceReason": null,
+      "comment": null,
+      "posted": false,
+      "recordedTime": null,
+      "recordedBy": null,
+      "status": "SCHEDULED",
+      "payAmount": null,
+      "bonusAmount": null,
+      "pieces": null
+    }
+  ],
+  "activitySchedule": {
+    "id": 8,
+    "description": "Entry level English 4",
+    "internalLocation": {
+      "id": 2,
+      "code": "EDU-ROOM-2",
+      "description": "Education - R2"
+    },
+    "capacity": 10,
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "inCell": false,
+      "pieceWork": false,
+      "outsideWork": false,
+      "payPerSession": "H",
+      "summary": "English level 1",
+      "description": "A basic english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDUCATION",
+        "name": "Education",
+        "description": "Such as classes in English, maths, construction and computer skills"
+      },
+      "riskLevel": null,
+      "minimumIncentiveLevel": null
+    },
+    "slots": [
+      {
+        "id": 8,
+        "startTime": "14:00",
+        "endTime": "15:00",
+        "daysOfWeek": [
+          "Thu"
+        ]
+      }
+    ],
+    "startDate": "10/10/2022",
+    "endDate": null
+  }
+}

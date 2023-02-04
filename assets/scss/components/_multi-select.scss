@@ -1,0 +1,74 @@
+.multi-select {
+  .govuk-table__head {
+    position: sticky;
+    z-index: 999;
+    top: -1px;
+  }
+
+  .govuk-table__header {
+    @include govuk-font(19, 'bold');
+    background: govuk-colour("white");
+    box-shadow: inset 0 -2px 0 govuk-colour("mid-grey");
+    vertical-align: middle;
+  }
+
+  .govuk-table__cell {
+    @include govuk-font(19);
+    vertical-align: middle;
+  }
+
+  .govuk-checkboxes__item {
+    margin-left: 10px;
+  }
+
+  .govuk-table__row {
+    &:nth-of-type(even) {
+      background: govuk-colour(light-grey);
+    }
+  }
+
+  .multi-select-sticky {
+    position: sticky;
+    z-index: 1000;
+    bottom: -1px;
+    background-color: $govuk-brand-colour;
+    margin: 0 calc(50% - 50vw);
+    padding: 20px 0;
+
+    &--active {
+      display: block !important;
+    }
+
+    &__count {
+      display: none;
+      @include govuk-font($size: 19, $weight: bold);
+      color: white;
+    }
+
+    .govuk-width-container {
+      display: flex;
+      align-items: center;
+      justify-content: right;
+    }
+
+    .govuk-button-group {
+      gap: 10px;
+    }
+
+    .govuk-button-group, .govuk-button {
+      margin: 0;
+    }
+  }
+}
+
+.js-enabled .multi-select-sticky {
+  display: none;
+
+  &__count {
+    display: revert;
+  }
+
+  .govuk-width-container {
+    justify-content: space-between;
+  }
+}

@@ -15,6 +15,7 @@ import {
   RolloutPrison,
   ScheduledActivity,
   PrisonPayBand,
+  PrisonerScheduledEvents,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -220,7 +221,7 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('getScheduledPrisonLocations', () => {
+  describe('getScheduledEventsForPrisoners', () => {
     it('should fetch internal prison locations that have activities scheduled using the activities API', async () => {
       when(activitiesApiClient.getScheduledPrisonLocations)
         .calledWith(atLeast('10001'))
@@ -228,6 +229,23 @@ describe('Activities Service', () => {
       const locations = await activitiesService.getScheduledPrisonLocations('EDI', '10001', '2022-08-01', user)
       expect(locations.length).toEqual(41)
       expect(activitiesApiClient.getScheduledPrisonLocations).toHaveBeenCalledWith('EDI', '10001', '2022-08-01', user)
+    })
+  })
+
+  describe('getScheduledEventsForPrisoners', () => {
+    it('should fetch scheduled activities for a list of prisoners using the activities API', async () => {
+      const expectedResult = { activities: [{ id: 1 }] } as unknown as PrisonerScheduledEvents
+
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers)
+        .calledWith('MDI', expect.any(String), expect.arrayContaining(['ABC123', 'ABC321']), user)
+        .mockResolvedValue(expectedResult)
+
+      const scheduledEvents = await activitiesService.getScheduledEventsForPrisoners(
+        new Date(),
+        ['ABC123', 'ABC321'],
+        user,
+      )
+      expect(scheduledEvents).toEqual(expectedResult)
     })
   })
 

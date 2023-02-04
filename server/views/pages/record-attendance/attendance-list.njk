@@ -1,6 +1,6 @@
 {% extends "layout.njk" %}
 
-{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "components/multi-select.njk" import multiSelect %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
@@ -10,9 +10,9 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
-                <span class="govuk-caption-l">{{ activity.time }} on {{ activity.date | formatDate('do MMMM yyyy') }}</span>
-                {{ activity.name }}: record attendance
-                <span class="govuk-caption-l">{{ activity.location }}</span>
+                <span class="govuk-caption-l">Record attendance</span>
+                {{ activity.name }}: {{ activity.location }}
+                <span class="govuk-caption-l">{{ activity.time }} on {{ activity.date | formatDate('EEEE, do MMMM yyyy') }}</span>
             </h1>
             <ul class="govuk-list">
                 <li><a href="/attendance/select-period" class="govuk-link govuk-!-font-size-19 js-backlink">Choose a different activity</a></li>
@@ -20,6 +20,7 @@
             </ul>
         </div>
     </div>
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h2 class="govuk-heading-m">{{ activity.allocated }} prisoners allocated</h2>
@@ -37,54 +38,89 @@
                     <span class="govuk-!-font-weight-bold">{{ activity.notRecorded }}</span>
                 </li>
             </ul>
-
-            {% set rows = [] %}
-            {% for attendee in attendees %}
-                {% set rows = (rows.push([
-                    {
-                        attributes: {
-                            id: 'name-' + loop.index,
-                            "data-sort-value": attendee.name
-                        },
-                        text: attendee.name
-                    },
-                    {
-                        attributes: {
-                            id: 'location-' + loop.index
-                        },
-                        text: attendee.location
-                    },
-                    {
-                        attributes: {
-                            id: 'attendance-' + loop.index
-                        },
-                        text: attendee.attendanceLabel
-                    }
-                ]), rows) %}
-            {% endfor %}
-
-            {{ govukTable({
-                attributes: {
-                    'data-module': 'moj-sortable-table'
-                },
-                caption: "Attendance list",
-                captionClasses: "govuk-visually-hidden",
-                head: [
-                    {
-                        text: "Name",
-                        attributes: {
-                            "aria-sort": "ascending"
-                        }
-                    },
-                    {
-                        text: "Location"
-                    },
-                    {
-                        text: "Attendance"
-                    }
-                ],
-                rows: rows
-            }) }}
         </div>
     </div>
+
+    {% set rows = [] %}
+    {% for attendee in attendees %}
+        {% set rows = (rows.push({
+            visuallyHiddenText: 'Select ' + attendee.name,
+            value: attendee.prisonerNumber,
+            items: [
+                {
+                    html: '
+                            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                                <a href="' + dpsUrl + '/prisoner/' + attendee.prisonerNumber + '"
+                                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + attendee.name + '
+                                </a>
+                            </h2>
+                            <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-16">' + attendee.prisonerNumber + '</div>
+                          '
+                },
+                {
+                    text: attendee.location
+                },
+                {
+                    html: renderOtherEvents(attendee.otherEvents)
+                },
+                {
+                    text: attendee.attendanceLabel
+                }
+            ]
+        }), rows) %}
+    {% endfor %}
+
+    <form method='POST'>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        {{ multiSelect({
+            caption: "Attendance list",
+            captionClasses: "govuk-visually-hidden",
+            name: 'selectedPrisoners',
+            head: [
+                {
+                    text: "Name"
+                },
+                {
+                    text: "Cell location"
+                },
+                {
+                    text: "Other scheduled events"
+                },
+                {
+                    text: "Attendance"
+                }
+            ],
+            rows: rows,
+            actions: [
+                {
+                    text: 'Mark as attended',
+                    formAction: 'attended'
+                },
+                {
+                    text: 'Mark as not attended',
+                    formAction: 'not-attended'
+                }
+            ]
+        }) }}
+    </form>
 {% endblock %}
+
+{% block pageScripts %}
+    <script type="module" src="/assets/js/multi-select.js"></script>
+{% endblock %}
+
+{% macro renderOtherEvents(otherEvents) %}
+    {% for event in otherEvents %}
+        <div>
+            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                {% if event.eventType == 'PRISON_ACT' %}
+                    <a href="/attendance/activities/{{ event.eventId }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ event.event }}</a>
+                {% else %}
+                    <span>{{ event.event }}</span>
+                {% endif %}
+            </h2>
+            <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }} - {{ event.endTime }}</div>
+            <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.location }}</div>
+        </div>
+    {% endfor %}
+{% endmacro %}

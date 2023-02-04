@@ -105,9 +105,9 @@ describe('Unlock list service', () => {
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledWith(
         'MDI',
         '2022-10-01',
-        'AM',
         prisonerNumbers,
         user,
+        'AM',
       )
     })
 
@@ -157,9 +157,9 @@ describe('Unlock list service', () => {
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledWith(
         'MDI',
         '2022-10-01',
-        'AM',
         prisonerNumbers,
         user,
+        'AM',
       )
     })
 
@@ -189,9 +189,9 @@ describe('Unlock list service', () => {
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledWith(
         'MDI',
         '2022-10-02',
-        'PM',
         prisonerNumbers,
         user,
+        'PM',
       )
     })
   })

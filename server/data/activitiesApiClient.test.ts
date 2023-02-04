@@ -432,9 +432,9 @@ describe('activitiesApiClient', () => {
       const result = await activitiesApiClient.getScheduledEventsByPrisonerNumbers(
         prisonCode,
         date,
-        timeSlot,
         prisonerNumbers,
         user,
+        timeSlot,
       )
 
       expect(result).toEqual(response)

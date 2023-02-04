@@ -10,6 +10,7 @@ generic-service:
 
   env:
     INGRESS_URL: "https://activities-dev.prison.service.justice.gov.uk"
+    DPS_URL: "https://digital-dev.prison.service.justice.gov.uk"
     HMPPS_AUTH_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
     ACTIVITIES_API_URL: "https://activities-api-dev.prison.service.justice.gov.uk"
