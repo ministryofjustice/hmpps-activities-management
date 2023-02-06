@@ -10,6 +10,8 @@ import unlockListRoutes from './unlock-list'
 import spikeRoutes from './spikes'
 import activityListRoutes from './spikes/activity-list/activityListRoutes'
 import activityListAmRoutes from './spikes/activity-list-am/activityListRoutes'
+import appointmentsHomeRoutes from './appointments/home'
+import appointmentsCreateSingleRoutes from './appointments/create-single'
 import errorMessageMiddleware from '../middleware/errorMessageMiddleware'
 import timeNowMiddleware from '../middleware/timeNowMiddleware'
 
@@ -31,5 +33,10 @@ export default function routes(services: Services): Router {
   router.use('/spikes', spikeRoutes(services))
   router.use('/activity-list', activityListRoutes(services))
   router.use('/activity-list-am', activityListAmRoutes(services))
+
+  // Appointments
+  router.use('/appointments', appointmentsHomeRoutes())
+  router.use('/appointments/create-single', appointmentsCreateSingleRoutes())
+
   return router
 }

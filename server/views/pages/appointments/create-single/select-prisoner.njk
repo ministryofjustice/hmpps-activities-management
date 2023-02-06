@@ -1,0 +1,37 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Appointments Management - Create Single Appointment - Select Prisoner" %}
+{% set pageId = 'appointments-create-single-select-prisoner-page' %}
+{% set backLinkHref = "/appointments" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukInput({
+                    label: {
+                        text: "What is the prisoner's number?",
+                        classes: "govuk-label--l",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "Search by prison number"
+                    },
+                    id: "number",
+                    name: "number",
+                    classes: "govuk-input--width-20",
+                    errorMessage: validationErrors | findError('number'),
+                    value: formResponses.prisoner.number or session.createSingleAppointmentJourney.prisoner.number
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
