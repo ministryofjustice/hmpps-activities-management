@@ -4,4 +4,8 @@ export type CreateSingleAppointmentJourney = {
     bookingId: number
     displayName: string
   }
+  category?: {
+    id: number
+    description: string
+  }
 }

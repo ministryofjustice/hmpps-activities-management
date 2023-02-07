@@ -21,3 +21,5 @@ export type ActivityCreateRequest = components['schemas']['ActivityCreateRequest
 export type ActivityScheduleCreateRequest = components['schemas']['ActivityScheduleCreateRequest']
 export type Slot = components['schemas']['Slot']
 export type PrisonPayBand = components['schemas']['PrisonPayBand']
+export type Appointment = components['schemas']['Appointment']
+export type AppointmentCategory = components['schemas']['AppointmentCategory']

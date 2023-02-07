@@ -10,7 +10,7 @@ export class PrisonerSearch {
   number: string
 }
 
-export default class NameRoutes {
+export default class SelectPrisonerRoutes {
   constructor(private readonly prisonService: PrisonService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
