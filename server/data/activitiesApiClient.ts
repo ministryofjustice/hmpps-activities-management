@@ -155,9 +155,9 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   getScheduledEventsByPrisonerNumbers(
     prisonCode: string,
     date: string,
-    timeSlot: string,
     prisonerNumbers: string[],
     user: ServiceUser,
+    timeSlot?: string,
   ): Promise<PrisonerScheduledEvents> {
     return this.post({
       path: `/scheduled-events/prison/${prisonCode}`,

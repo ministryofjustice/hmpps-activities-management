@@ -7,8 +7,9 @@ context('Change location', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
-    cy.task('stubSetActiveCaseload')
     cy.signIn()
+
+    cy.stubEndpoint('PUT', '/api/users/me/activeCaseLoad')
   })
 
   it('should click through location change journey', () => {

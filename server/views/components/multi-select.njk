@@ -1,0 +1,70 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% macro multiSelect(params) %}
+    {% set selectAllId = params.selectAllId or 'select-all' %}
+
+    {% set head = [
+        {
+            attributes: {
+                id: selectAllId
+            }
+        }
+    ] %}
+    {% for column in params.head %}
+        {% set head = (head.push(column), head) %}
+    {% endfor %}
+
+    {% set rows = [] %}
+    {% for row in params.rows %}
+        {% set r = [
+            {
+                html: '
+                        <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
+                            <input type="checkbox" name="' + params.name + '" value="' + row.value + '" class="govuk-checkboxes__input" id="row-' + loop.index + '">
+                            <label class="govuk-label govuk-checkboxes__label" for="row-' + loop.index + '">
+                                <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
+                            </label>
+                        </div>
+                      '
+            }
+        ] %}
+        {% for item in row.items %}
+            {% set r = (r.push(item), r) %}
+        {% endfor %}
+
+        {% set rows = (rows.push(r), rows) %}
+    {% endfor %}
+
+    <div class='multi-select' data-module='activities-multi-select'>
+        {{ govukTable({
+            attributes: {
+                'data-module': 'moj-multi-select',
+                'data-multi-select-checkbox': '#' + selectAllId
+            },
+            caption: params.caption,
+            captionClasses: params.captionClasses,
+            head: head,
+            rows: rows
+        }) }}
+
+        <div class='multi-select-sticky'>
+            <div class='govuk-width-container'>
+                <span class='multi-select-sticky__count'></span>
+                <div class='govuk-button-group'>
+                    {% for action in params.actions %}
+                        {{ govukButton({
+                            text: action.text,
+                            classes: 'govuk-button--white',
+                            preventDoubleClick: true,
+                            attributes: {
+                                formaction: action.formAction
+                            }
+                        }) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endmacro %}

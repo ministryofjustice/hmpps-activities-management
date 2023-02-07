@@ -39,12 +39,12 @@
         </div>
     </div>
 
-    {{ scheduledActivitiesTable('Morning sessions', activities.am) }}
-    {{ scheduledActivitiesTable('Afternoon sessions', activities.pm) }}
-    {{ scheduledActivitiesTable('Evening sessions', activities.ed) }}
+    {{ scheduledActivitiesTable('Morning sessions', activities.am, 1) }}
+    {{ scheduledActivitiesTable('Afternoon sessions', activities.pm, 2) }}
+    {{ scheduledActivitiesTable('Evening sessions', activities.ed, 3) }}
 {% endblock %}
 
-{% macro scheduledActivitiesTable(caption, activities) %}
+{% macro scheduledActivitiesTable(caption, activities, tableNumber) %}
     {% if activities %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -53,7 +53,7 @@
                     {% set rows = (rows.push([
                         {
                             attributes: {
-                                id: 'activity-' + loop.index,
+                                id: 'activity-' + tableNumber + '-' + loop.index,
                                 "data-sort-value": activity.name
                             },
                             html: '
@@ -65,21 +65,21 @@
                         },
                         {
                             attributes: {
-                                id: 'location-' + loop.index,
+                                id: 'location-' + tableNumber + '-' + loop.index,
                                 "data-sort-value": activity.location
                             },
                             text: activity.location
                         },
                         {
                             attributes: {
-                                id: 'time-' + loop.index,
+                                id: 'time-' + tableNumber + '-' + loop.index,
                                 "data-sort-value": activity.time
                             },
                             text: activity.time
                         },
                         {
                             attributes: {
-                                id: 'scheduled-' + loop.index,
+                                id: 'scheduled-' + tableNumber + '-'  + loop.index,
                                 "data-sort-value": activity.allocated
                             },
                             classes: 'govuk-table__cell--numeric',
@@ -87,7 +87,7 @@
                         },
                         {
                             attributes: {
-                                id: 'attended-' + loop.index,
+                                id: 'attended-' + tableNumber + '-' + loop.index,
                                 "data-sort-value": activity.attended
                             },
                             classes: 'govuk-table__cell--numeric',

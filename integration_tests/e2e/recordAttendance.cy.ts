@@ -4,19 +4,26 @@ import Page from '../pages/page'
 import SelectPeriodPage from '../pages/recordAttendance/selectPeriod'
 import ActivitiesPage from '../pages/recordAttendance/activitiesPage'
 import AttendanceListPage from '../pages/recordAttendance/attendanceList'
+import getScheduledInstances from '../fixtures/activitiesApi/getScheduledInstancesMdi20230202.json'
+import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance93.json'
+import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
+import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForAttendance.json'
 
 context('Record attendance', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
-
-    // TODO: The following stubs should be refactored to use cy.stubEndpoint()
-    cy.task('stubGetPrisonScheduledActivities', 'MDI')
-    cy.task('stubGetScheduledActivityById')
-    cy.task('stubGetInmateDetails')
-
     cy.signIn()
+
+    cy.stubEndpoint(
+      'GET',
+      '/prisons/MDI/scheduled-instances\\?startDate=2023-02-02&endDate=2023-02-02',
+      getScheduledInstances,
+    )
+    cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
+    cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2023-02-02', getScheduledEvents)
+    cy.stubEndpoint('POST', '/api/bookings/offenders', getInmateDetails)
   })
 
   it('should click through record attendance journey', () => {
@@ -27,11 +34,11 @@ context('Record attendance', () => {
     indexPage.recordAttendanceCard().click()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
-    selectPeriodPage.enterDate(format(new Date(), 'yyyy-MM-dd'))
+    selectPeriodPage.enterDate(format(new Date(2023, 1, 2), 'yyyy-MM-dd'))
     selectPeriodPage.submit()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.activityRows().should('have.length', 1)
+    activitiesPage.activityRows().should('have.length', 4)
     activitiesPage.selectActivityWithName('English level 1')
 
     Page.verifyOnPage(AttendanceListPage)

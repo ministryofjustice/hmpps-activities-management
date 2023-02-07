@@ -3,7 +3,6 @@ import { resetStubs } from './integration_tests/mockApis/wiremock'
 import auth from './integration_tests/mockApis/auth'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
 import prisonApi from './integration_tests/mockApis/prisonApi'
-import activitiesApi from './integration_tests/mockApis/activitiesApi'
 import generic from './integration_tests/mockApis/generic'
 
 export default defineConfig({
@@ -26,7 +25,6 @@ export default defineConfig({
         ...auth,
         ...tokenVerification,
         ...prisonApi,
-        ...activitiesApi,
         ...generic,
       })
     },

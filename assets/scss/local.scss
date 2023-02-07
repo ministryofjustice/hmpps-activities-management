@@ -1,3 +1,7 @@
+html {
+  overflow-x: hidden;
+}
+
 body {
   //enable background colours on print by default
   -webkit-print-color-adjust: exact;
@@ -14,6 +18,7 @@ body {
 
 .govuk-main-wrapper {
   min-height: 600px;
+  padding-bottom: 0;
 }
 
 table th,
