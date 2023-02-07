@@ -36,7 +36,7 @@ export default function routes(services: Services): Router {
 
   // Appointments
   router.use('/appointments', appointmentsHomeRoutes())
-  router.use('/appointments/create-single', appointmentsCreateSingleRoutes())
+  router.use('/appointments/create-single', appointmentsCreateSingleRoutes(services))
 
   return router
 }

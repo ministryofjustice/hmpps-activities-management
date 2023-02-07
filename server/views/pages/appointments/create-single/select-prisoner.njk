@@ -25,7 +25,7 @@
                     name: "number",
                     classes: "govuk-input--width-20",
                     errorMessage: validationErrors | findError('number'),
-                    value: formResponses.prisoner.number or session.createSingleAppointmentJourney.prisoner.number
+                    value: formResponses.number or session.createSingleAppointmentJourney.prisoner.number
                 }) }}
 
                 {{ govukButton({

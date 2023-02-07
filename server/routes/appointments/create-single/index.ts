@@ -4,19 +4,24 @@ import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import StartJourneyRoutes from './handlers/startJourney'
 import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/select-prisoner'
+import { Services } from '../../../services'
 
-export default function Index(): Router {
+export default function Index({ prisonService }: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(
+      path,
+      emptyJourneyHandler('createSingleAppointmentJourney', stepRequiresSession),
+      asyncMiddleware(handler),
+    )
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const startHandler = new StartJourneyRoutes()
-  const selectPrisonerHandler = new SelectPrisonerRoutes()
+  const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
 
-  get('/', startHandler.GET)
+  get('/start', startHandler.GET)
   get('/select-prisoner', selectPrisonerHandler.GET, true)
   post('/select-prisoner', selectPrisonerHandler.POST, PrisonerSearch)
 
