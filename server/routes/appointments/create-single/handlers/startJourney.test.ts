@@ -1,19 +1,13 @@
 import { Request, Response } from 'express'
 import StartJourneyRoutes from './startJourney'
 
-describe('Route Handlers - Create an activity - Start', () => {
+describe('Route Handlers - Create Single Appointment - Start', () => {
   const handler = new StartJourneyRoutes()
   let req: Request
   let res: Response
 
   beforeEach(() => {
     res = {
-      locals: {
-        user: {
-          username: 'joebloggs',
-        },
-      },
-      render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
 
@@ -23,11 +17,11 @@ describe('Route Handlers - Create an activity - Start', () => {
   })
 
   describe('GET', () => {
-    it('should populate the session with journey data and redirect to the pay band page', async () => {
+    it('should populate the session with journey data and redirect to select prisoner page', async () => {
       await handler.GET(req, res)
 
-      expect(req.session.createJourney).toEqual({})
-      expect(res.redirect).toHaveBeenCalledWith('category')
+      expect(req.session.createSingleAppointmentJourney).toEqual({})
+      expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
   })
 })
