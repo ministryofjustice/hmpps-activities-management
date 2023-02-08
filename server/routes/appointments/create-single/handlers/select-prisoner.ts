@@ -35,7 +35,7 @@ export default class SelectPrisonerRoutes {
         JSON.stringify([{ field: 'number', message: `Prisoner with number ${number} was not found` }]),
       )
       req.flash('formResponses', JSON.stringify(req.body))
-      return res.redirect(req.originalUrl)
+      return res.redirect('back')
     }
 
     if (prisoners.length > 1) {
@@ -44,7 +44,7 @@ export default class SelectPrisonerRoutes {
         JSON.stringify([{ field: 'number', message: `More than one prisoner was found with number ${number}` }]),
       )
       req.flash('formResponses', JSON.stringify(req.body))
-      return res.redirect(req.originalUrl)
+      return res.redirect('back')
     }
 
     const prisoner = prisoners[0]

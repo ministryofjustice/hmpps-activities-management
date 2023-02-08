@@ -30,11 +30,16 @@ export default class CategoryRoutes {
       .getAppointmentCategories(user)
       .then(categories => categories.find(c => c.id === categoryId))
 
+    if (!category) {
+      req.flash('validationErrors', JSON.stringify([{ field: 'categoryId', message: `Select a category` }]))
+      return res.redirect('back')
+    }
+
     req.session.createSingleAppointmentJourney.category = {
       id: category.id,
       description: category.description,
     }
 
-    res.redirect('check-answers')
+    return res.redirect('check-answers')
   }
 }
