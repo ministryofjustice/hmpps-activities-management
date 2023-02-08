@@ -26,9 +26,6 @@ export default class SelectPrisonerRoutes {
       user,
     )
 
-    const errors = []
-    errors.push({ text: 'Select yes if you want to delete this appointment', href: '#confirmation' })
-
     if (prisoners.length === 0) {
       req.flash(
         'validationErrors',
@@ -38,15 +35,9 @@ export default class SelectPrisonerRoutes {
       return res.redirect('back')
     }
 
-    if (prisoners.length > 1) {
-      req.flash(
-        'validationErrors',
-        JSON.stringify([{ field: 'number', message: `More than one prisoner was found with number ${number}` }]),
-      )
-      req.flash('formResponses', JSON.stringify(req.body))
-      return res.redirect('back')
-    }
-
+    // There is no check that more than one prisoner returned from the prisoner search call as there cannot be
+    // more than one match based on prisoner number. In the future if we add searching by name, there will need to
+    // be a screen to select the correct prisoner from the returned list.
     const prisoner = prisoners[0]
 
     req.session.createSingleAppointmentJourney.prisoner = {
