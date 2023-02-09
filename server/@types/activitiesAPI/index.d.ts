@@ -198,6 +198,15 @@ export interface paths {
     /** Get the list of top-level appointment categories */
     get: operations['getAppointmentCategories']
   }
+  '/appointments': {
+    /**
+     * Create an appointment or series of appointment occurrences
+     * @description
+     *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
+     *     Does not require any specific roles
+     */
+    post: operations['createAppointment']
+  }
   '/activity-categories': {
     /** Get the list of top-level activity categories */
     get: operations['getCategories']
@@ -1476,6 +1485,69 @@ export interface components {
        */
       children: components['schemas']['LocationGroup'][]
     }
+    /** @description The create request with the new appointment or series of appointment occurrences details */
+    AppointmentCreateRequest: {
+      /**
+       * Format: int64
+       * @description The category id for this appointment. Must exist and be active
+       * @example 21
+       */
+      categoryId: number
+      /**
+       * @description The NOMIS prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: int64
+       * @description
+       *     The NOMIS internal location id within the specified prison. This must be supplied if inCell is false.
+       *     The internal location id must exist, must be within the prison specified by the prisonCode property and be active.
+       *
+       * @example 123
+       */
+      internalLocationId?: number
+      /**
+       * @description
+       *     Flag to indicate if the location of the appointment is in cell rather than an internal prison location.
+       *     Internal location id will be ignored if inCell is true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * Format: date
+       * @description The date of the appointment or first appointment occurrence in the series
+       */
+      startDate: string
+      /**
+       * Format: partial-time
+       * @description The starting time of the appointment or first appointment occurrence in the series
+       * @example 09:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of the appointment or first appointment occurrence in the series
+       * @example 10:30
+       */
+      endTime: string
+      /**
+       * @description
+       *     Notes relating to the appointment.
+       *     The default value if no notes are specified at the occurrence or instance levels
+       *
+       * @example This appointment will help adjusting to life outside of prison
+       */
+      comment: string
+      /**
+       * @description The prisoner or prisoners to allocate to the created appointment or series of appointment occurrences
+       * @example [
+       *   "A1234BC"
+       * ]
+       */
+      prisonerNumbers: string[]
+    }
     /**
      * @description
      *   The top level appointment containing the initial values for all appointment properties.
@@ -1502,7 +1574,7 @@ export interface components {
        */
       prisonCode: string
       /**
-       * Format: int32
+       * Format: int64
        * @description
        *     The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
        *     Should be null if in cell = true
@@ -1611,7 +1683,7 @@ export interface components {
       code: string
       /**
        * @description The description of the appointment category
-       * @example Chaplaincy, Medical - Doctor, Gym - Weights
+       * @example Chaplaincy
        */
       description: string
       /**
@@ -1644,7 +1716,7 @@ export interface components {
        */
       id: number
       /**
-       * Format: int32
+       * Format: int64
        * @description
        *     The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
        *     Should be null if in cell = true
@@ -2895,6 +2967,39 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['AppointmentCategory'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  createAppointment: {
+    /**
+     * Create an appointment or series of appointment occurrences
+     * @description
+     *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
+     *     Does not require any specific roles
+     */
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppointmentCreateRequest']
+      }
+    }
+    responses: {
+      /** @description The appointment or series of appointment occurrences was created. */
+      201: {
+        content: {
+          'application/json': components['schemas']['Appointment']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
