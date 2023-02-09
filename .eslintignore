@@ -1,6 +1,8 @@
 node_modules
 public
 assets
+frontend
 cypress.json
 reporter-config.json
+gulpfile.js
 dist/

@@ -14,9 +14,8 @@
     {% set options = (options.push( { value: location.locationId, text: location.userDescription }), options) %}
 {% endfor %}
 
-{% block header %}
-    {{ super() }}
-    <link href="/assets/stylesheets/accessible-autocomplete.min.css" rel="stylesheet" />
+{% block meta %}
+    <meta name="autocompleteElements" content="location"/>
 {% endblock %}
 
 {% block content %}
@@ -56,7 +55,4 @@
 {% endblock %}
 
 {% block pageScripts %}
-    <meta name="autocompleteElements" content="location"/>
-    <script src="/assets/accessible-autocomplete.min.js"></script>
-    <script src="/assets/js/autocomplete.js"></script>
 {% endblock %}
