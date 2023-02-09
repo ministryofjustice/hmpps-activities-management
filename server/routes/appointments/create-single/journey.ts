@@ -8,4 +8,11 @@ export type CreateSingleAppointmentJourney = {
     id: number
     description: string
   }
+  location?: {
+    id: number
+    description: string
+  }
+  startDate?: string
+  startTime?: string
+  endTime?: string
 }

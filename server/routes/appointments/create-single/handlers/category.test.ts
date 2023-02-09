@@ -82,7 +82,7 @@ describe('Route Handlers - Create Single Appointment - Category', () => {
         id: 11,
         description: 'Medical - Doctor',
       })
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
 
     it('validation fails when selected category is not found', async () => {

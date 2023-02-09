@@ -40,6 +40,6 @@ export default class CategoryRoutes {
       description: category.description,
     }
 
-    return res.redirect('check-answers')
+    return res.redirectOrReturn('location')
   }
 }
