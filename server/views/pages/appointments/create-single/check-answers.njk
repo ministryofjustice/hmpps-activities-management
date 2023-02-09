@@ -1,0 +1,68 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Appointments Management - Create Single Appointment - Check Answers" %}
+{% set pageId = 'appointments-create-single-check-answers-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-l">Check your appointment details before you accept and save</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <h2 class="govuk-heading-m">Appointment details</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Name of prisoner"
+                        },
+                            value: {
+                            text: session.createSingleAppointmentJourney.prisoner.displayName
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "select-prisoner?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change prisoner"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Category"
+                        },
+                        value: {
+                            text: session.createSingleAppointmentJourney.category.description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "category?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change category"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }) }}
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Accept and save"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

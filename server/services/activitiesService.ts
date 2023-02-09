@@ -20,6 +20,8 @@ import {
   ActivityScheduleCreateRequest,
   PrisonPayBand,
   PrisonerScheduledEvents,
+  Appointment,
+  AppointmentCategory,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -223,5 +225,13 @@ export default class ActivitiesService {
     user: ServiceUser,
   ): Promise<PrisonerAllocations[]> {
     return this.activitiesApiClient.getPrisonerAllocations(prisonCode, prisonerNumbers, user)
+  }
+
+  async getAppointment(appointmentId: number, user: ServiceUser): Promise<Appointment> {
+    return this.activitiesApiClient.getAppointment(appointmentId, user)
+  }
+
+  async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategory[]> {
+    return this.activitiesApiClient.getAppointmentCategories(user)
   }
 }
