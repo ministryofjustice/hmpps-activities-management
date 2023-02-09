@@ -50,6 +50,74 @@
                                 }
                             ]
                         }
+                    },
+                    {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: session.createSingleAppointmentJourney.location.description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "location?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change location"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Date"
+                        },
+                        value: {
+                            text: startDate
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "date-and-time?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change date"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Start time"
+                        },
+                        value: {
+                            text: session.createSingleAppointmentJourney.startTime
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "date-and-time?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change start time"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "End time"
+                        },
+                        value: {
+                            text: session.createSingleAppointmentJourney.startTime
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "date-and-time?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change end time"
+                                }
+                            ]
+                        }
                     }
                 ]
             }) }}

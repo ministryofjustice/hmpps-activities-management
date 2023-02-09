@@ -3,7 +3,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% from "components/datePicker.njk" import datePicker %}
-{% from "components/activitySummary.njk" import activitySummary %}
+{% from "components/timePicker.njk" import timePicker %}
 
 {% set pageTitle = "Appointments Management - Create Single Appointment - Date and Time" %}
 {% set pageId = 'appointments-create-single-date-and-time-page' %}
@@ -12,22 +12,48 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">When is the appointment?</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
                 {{ datePicker({
+                    id: 'startDate',
+                    name: 'startDate',
                     label: {
-                        text: "Enter the end date for this schedule",
+                        text: "Appointment date",
                         classes: "govuk-fieldset__legend--l"
                     },
                     hint: {
                         text: "For example, 31 01 2023"
                     },
-                    id: 'startDate',
-                    name: 'startDate',
                     renderedErrorMessage: validationErrors | findError('startDate'),
                     validationErrors: validationErrors,
-                    formResponses: formResponses.startDate or session.createSingleAppointmentJourney.startDate
+                    formResponses: formResponses.startDate
+                }) }}
+                {{ timePicker({
+                    id: 'startTime',
+                    name: 'startTime',
+                    label: {
+                        text: 'Start time',
+                        classes: "govuk-!-font-weight-bold"
+                    },
+                    hint: {
+                        text: "For example, 9:30am or 2:55pm"
+                    },
+                    errorMessage: validationError,
+                    formResponses: formResponses.startTime
+                }) }}
+                {{ timePicker({
+                    id: 'endTime',
+                    name: 'endTime',
+                    label: {
+                        text: 'End time',
+                        classes: "govuk-!-font-weight-bold"
+                    },
+                    hint: {
+                        text: "For example, 9:30am or 2:55pm"
+                    },
+                    errorMessage: validationError,
+                    formResponses: formResponses.endTime
                 }) }}
                 {{ govukButton({
                     text: "Continue"

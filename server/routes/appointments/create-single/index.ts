@@ -6,7 +6,7 @@ import StartJourneyRoutes from './handlers/startJourney'
 import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/selectPrisoner'
 import CategoryRoutes, { Category } from './handlers/category'
 import LocationRoutes, { Location } from './handlers/location'
-import DateAndTimeRoutes from './handlers/dateAndTime'
+import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import { Services } from '../../../services'
 
@@ -37,7 +37,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
   get('/location', locationHandler.GET, true)
   post('/location', locationHandler.POST, Location)
   get('/date-and-time', dateAndTimeRoutesHandler.GET, true)
-  post('/date-and-time', dateAndTimeRoutesHandler.POST, Location)
+  post('/date-and-time', dateAndTimeRoutesHandler.POST, DateAndTime)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
 

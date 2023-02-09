@@ -20,7 +20,7 @@ export default class LocationRoutes {
     const locations = await this.prisonService.getEventLocations(user.activeCaseLoad.caseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'locationId')
 
-    res.render('pages/manage-schedules/create-schedule/location', {
+    res.render('pages/appointments/create-single/location', {
       locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
     })
   }
