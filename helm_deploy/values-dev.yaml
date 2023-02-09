@@ -21,5 +21,7 @@ generic-service:
     NOMIS_USER_API_URL: "https://nomis-user-dev.aks-dev-1.studio-hosting.service.justice.gov.uk"
     INCENTIVES_API_URL: "https://incentives-api-dev.hmpps.service.justice.gov.uk"
 
+  allowlist: null
+
 generic-prometheus-alerts:
   alertSeverity: digital-prison-service-dev
