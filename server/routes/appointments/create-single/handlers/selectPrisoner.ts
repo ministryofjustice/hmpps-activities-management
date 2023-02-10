@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
+import { convertToTitleCase } from '../../../../utils/utils'
 
 export class PrisonerSearch {
   @Expose()
@@ -42,8 +43,8 @@ export default class SelectPrisonerRoutes {
 
     req.session.createSingleAppointmentJourney.prisoner = {
       number: prisoner.prisonerNumber,
-      bookingId: parseInt(prisoner.bookingId, 10),
-      displayName: `${prisoner.lastName}, ${prisoner.firstName}`,
+      displayName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
+      cellLocation: prisoner.cellLocation,
     }
 
     return res.redirectOrReturn('category')

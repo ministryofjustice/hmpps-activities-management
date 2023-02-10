@@ -10,18 +10,21 @@ export default class CheckAnswersRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { createSingleAppointmentJourney } = req.session
+    const { prisoner } = createSingleAppointmentJourney
 
-    const startDate = formatDate(
-      plainToInstance(SimpleDate, createSingleAppointmentJourney.startDate).toRichDate(),
-      'do MMMM yyyy',
-    )
-    const startTime = '09:00'
-    const endTime = '10:30'
+    const startDate = plainToInstance(SimpleDate, createSingleAppointmentJourney.startDate).toRichDate()
+    // const formattedStartDate = formatDate(startDate, "EEEE 'the' do 'of' MMMM yyyy")
+    const startTime = new Date(startDate)
+    startTime.setHours(9, 0, 0, 0)
+    const endTime = new Date(startDate)
+    endTime.setHours(10, 30, 0, 0)
 
     res.render(`pages/appointments/create-single/check-answers`, {
-      startDate,
-      startTime,
-      endTime,
+      prisonerDescription: `${prisoner.displayName}, ${prisoner.number}, ${prisoner.cellLocation}`,
+      // startDate: formatDate(startDate, "EEEE 'the' do 'of' MMMM yyyy"),
+      startDate: formatDate(startDate, 'EEEE d MMMM yyyy'),
+      startTime: formatDate(startTime, 'HH:mm'),
+      endTime: formatDate(endTime, 'HH:mm'),
     })
   }
 
