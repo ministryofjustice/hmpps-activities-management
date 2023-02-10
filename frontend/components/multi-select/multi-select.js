@@ -1,5 +1,5 @@
-ActivitiesFrontend.MultiSelect = function (options) {
-  this.container = options.container
+ActivitiesFrontend.MultiSelect = function (container) {
+  this.container = container
 
   this.toggleAllButton = $(this.container.querySelector('#checkboxes-all'))
   this.checkboxes = $(this.container.querySelectorAll('tbody .govuk-checkboxes__input'))

@@ -1,9 +1,12 @@
-var autocompleteElements = document.getElementsByName('autocompleteElements')[0].content.split(',')
+ActivitiesFrontend.AutoComplete = function (meta) {
+  this.meta = meta
 
-for (var i = 0; i < autocompleteElements.length; i++) {
-  accessibleAutocomplete.enhanceSelectElement({
-    selectElement: document.querySelector('#' + autocompleteElements[i]),
-    showAllValues: true,
-    preserveNullOptions: true,
+  var autocompleteElements = this.meta.content.split(',')
+  autocompleteElements.forEach(el => {
+    accessibleAutocomplete.enhanceSelectElement({
+      selectElement: document.querySelector('#' + el),
+      showAllValues: true,
+      preserveNullOptions: true,
+    })
   })
 }

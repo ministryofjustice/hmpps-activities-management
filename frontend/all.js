@@ -25,9 +25,12 @@ ActivitiesFrontend.initAll = function () {
 
   var $multiSelects = document.querySelectorAll('[data-module="activities-multi-select"]')
   ActivitiesFrontend.nodeListForEach($multiSelects, function ($multiSelect) {
-    new ActivitiesFrontend.MultiSelect({
-      container: $multiSelect,
-    })
+    new ActivitiesFrontend.MultiSelect($multiSelect)
+  })
+
+  var $autoCompleteElements = document.getElementsByName('autocompleteElements')
+  ActivitiesFrontend.nodeListForEach($autoCompleteElements, function ($autoCompleteElements) {
+    new ActivitiesFrontend.AutoComplete($autoCompleteElements)
   })
 
   var $calendars = document.querySelectorAll('[data-module="calendar"]')
