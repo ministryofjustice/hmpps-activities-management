@@ -22,7 +22,7 @@
                             text: "Prisoner"
                         },
                             value: {
-                            text: prisonerDescription
+                            text: session.createSingleAppointmentJourney.prisoner.description
                         },
                         actions: {
                             items: [
@@ -73,7 +73,7 @@
                             text: "Date"
                         },
                         value: {
-                            text: startDate
+                            text: session.createSingleAppointmentJourney.startDate.display
                         },
                         actions: {
                             items: [
@@ -90,7 +90,7 @@
                             text: "Start time"
                         },
                         value: {
-                            text: startTime
+                            text: session.createSingleAppointmentJourney.startTime.display
                         },
                         actions: {
                             items: [
@@ -107,7 +107,7 @@
                             text: "End time"
                         },
                         value: {
-                            text: endTime
+                            text: session.createSingleAppointmentJourney.endTime.display
                         },
                         actions: {
                             items: [

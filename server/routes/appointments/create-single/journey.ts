@@ -3,6 +3,7 @@ export type CreateSingleAppointmentJourney = {
     number: string
     displayName: string
     cellLocation: string
+    description: string
   }
   category?: {
     id: number
@@ -16,13 +17,16 @@ export type CreateSingleAppointmentJourney = {
     day: number
     month: number
     year: number
+    display: string
   }
   startTime?: {
     hour: number
     minute: number
+    display: string
   }
   endTime?: {
     hour: number
     minute: number
+    display: string
   }
 }

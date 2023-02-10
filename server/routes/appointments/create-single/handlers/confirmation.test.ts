@@ -1,13 +1,8 @@
 import { Request, Response } from 'express'
-import CheckAnswersRoutes from './checkAnswers'
-import ActivitiesService from '../../../../services/activitiesService'
+import ConfirmationRoutes from './confirmation'
 
-jest.mock('../../../../services/activitiesService')
-
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
-
-describe('Route Handlers - Create Single Appointment - Check answers', () => {
-  const handler = new CheckAnswersRoutes(activitiesService)
+describe('Route Handlers - Create Single Appointment - Confirmation', () => {
+  const handler = new ConfirmationRoutes()
   let req: Request
   let res: Response
 
@@ -52,6 +47,9 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
           },
         },
       },
+      params: {
+        id: '1',
+      },
     } as unknown as Request
   })
 
@@ -60,9 +58,13 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
   })
 
   describe('GET', () => {
-    it('should render the check answers page with data from session', async () => {
+    it('should render the confirmation page with data from session', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-single/check-answers')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-single/confirmation', {
+        id: '1',
+        confirmationMessage:
+          'You have successfully created a Medical - Doctor appointment for Test Prisoner | A1234BC | 1-1-1 at 09:30 to 13:00 on Sunday 23 April 2023 in the Interview Room.',
+      })
     })
   })
 })

@@ -13,7 +13,7 @@
             }) }}
             <h2 class="govuk-heading-m">What happens next</h2>
             <p class="govuk-body">
-                You have successfully created a {{ session.createSingleAppointmentJourney.category.description }} appointment for {{ session.createSingleAppointmentJourney.prisoner.displayName }} at {{ startTime }} to {{ endTime }} on {{ startDate  }}.
+                {{ confirmationMessage }}
             </p>
             <p class="govuk-body">
                 <a href="/appointments/create-single/start" class="govuk-link">Create another appointment</a>

@@ -1,6 +1,7 @@
 import { Expose, Type } from 'class-transformer'
 import { IsInt, Max, Min } from 'class-validator'
 import { parse } from 'date-fns'
+import { formatDate } from '../utils/utils'
 
 const DAY_MESSAGE = 'Enter a valid day'
 const MONTH_MESSAGE = 'Enter a valid month'
@@ -31,4 +32,8 @@ export default class SimpleDate {
   toRichDate = () => parse(this.toString(), 'yyyy-MM-dd', new Date())
 
   toString = () => `${this.year}-${this.month}-${this.day}`
+
+  toIsoString = () => formatDate(this.toRichDate(), 'yyyy-MM-dd')
+
+  toDisplayString = () => formatDate(this.toRichDate(), 'EEEE d MMMM yyyy')
 }

@@ -66,6 +66,7 @@ describe('Route Handlers - Create Single Appointment - Select Prisoner', () => {
         number: 'A1234BC',
         displayName: 'Test Prisoner',
         cellLocation: '1-1-1',
+        description: 'Test Prisoner | A1234BC | 1-1-1',
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('category')
     })
