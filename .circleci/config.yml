@@ -53,6 +53,7 @@ jobs:
             - node_modules
             - build-info.json
             - build
+            - assets
             - dist
             - .cache/Cypress
 
