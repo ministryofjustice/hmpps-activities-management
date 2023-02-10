@@ -34,15 +34,17 @@ export default class CheckAnswersRoutes {
       prisonCode: user.activeCaseLoadId,
       internalLocationId: createSingleAppointmentJourney.location.id,
       inCell: false,
-      startDate: createSingleAppointmentJourney.startDate,
+      startDate: formatDate(
+        plainToInstance(SimpleDate, createSingleAppointmentJourney.startDate).toRichDate(),
+        'yyyy-MM-dd',
+      ),
       startTime: '09:00',
       endTime: '10:30',
       prisonerNumbers: [createSingleAppointmentJourney.prisoner.number],
     } as AppointmentCreateRequest
 
     const response = await this.activitiesService.createAppointment(appointment, user)
-    res.redirect(`confirmation/${response.id}`)
 
-    // res.redirect(`check-answers`)
+    res.redirect(`confirmation/${response.id}`)
   }
 }

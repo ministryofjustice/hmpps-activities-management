@@ -8,6 +8,7 @@ import CategoryRoutes, { Category } from './handlers/category'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import CheckAnswersRoutes from './handlers/checkAnswers'
+import ConfirmationRoutes from './handlers/confirmation'
 import { Services } from '../../../services'
 
 export default function Index({ prisonService, activitiesService }: Services): Router {
@@ -28,6 +29,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
   const locationHandler = new LocationRoutes(prisonService)
   const dateAndTimeRoutesHandler = new DateAndTimeRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
+  const confirmationHandler = new ConfirmationRoutes()
 
   get('/start', startHandler.GET)
   get('/select-prisoner', selectPrisonerHandler.GET, true)
@@ -40,6 +42,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
   post('/date-and-time', dateAndTimeRoutesHandler.POST, DateAndTime)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
+  get('/confirmation/:id', confirmationHandler.GET)
 
   return router
 }
