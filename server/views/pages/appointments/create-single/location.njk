@@ -7,7 +7,7 @@
 {% set pageId = 'appointments-create-single-location-page' %}
 {% set backLinkHref = "/category" %}
 
-{% set options = [{ value: '', text: '' }] %}
+{% set options = [{ text: '' }] %}
 {% for location in locations %}
     {% set options = (options.push( { value: location.locationId, text: location.userDescription }), options) %}
 {% endfor %}

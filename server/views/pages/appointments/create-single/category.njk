@@ -7,7 +7,7 @@
 {% set pageId = 'appointments-create-single-category-page' %}
 {% set backLinkHref = "/select-prisoner" %}
 
-{% set categoryOptions = [] %}
+{% set categoryOptions = [{ text: "Select" }] %}
 {% for category in categories %}
     {% set categoryOptions = (categoryOptions.push(
         {

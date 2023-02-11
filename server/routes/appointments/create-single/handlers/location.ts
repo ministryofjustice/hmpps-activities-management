@@ -27,15 +27,21 @@ export default class LocationRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+
     const location = await this.prisonService
       .getEventLocations(user.activeCaseLoad.caseLoadId, user)
       .then(locations => locations.find(l => l.locationId === req.body.locationId))
+
+    if (!location) {
+      req.flash('validationErrors', JSON.stringify([{ field: 'locationId', message: `Select a location` }]))
+      return res.redirect('back')
+    }
 
     req.session.createSingleAppointmentJourney.location = {
       id: location.locationId,
       description: location.userDescription,
     }
 
-    res.redirectOrReturn(`date-and-time`)
+    return res.redirectOrReturn(`date-and-time`)
   }
 }
