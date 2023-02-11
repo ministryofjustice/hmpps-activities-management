@@ -16,6 +16,7 @@ import {
   setSelected,
   startsWithAny,
   toMoney,
+  toItems,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -84,6 +85,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('setSelected', setSelected)
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
+  njkEnv.addFilter('toItems', toItems)
   njkEnv.addFilter('findError', findError)
   njkEnv.addFilter('buildErrorSummaryList', buildErrorSummaryList)
   njkEnv.addFilter('formatDate', formatDate)

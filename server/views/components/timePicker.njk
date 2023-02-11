@@ -1,4 +1,18 @@
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
 {% macro timePicker(params) %}
+    {%  set hours = [
+        '00','01','02','03','04','05','06','07',
+        '08','09','10','11','12','13','14','15',
+        '16','17','18','19','20','21','22','23'
+    ] %}
+
+    {% set minutes = [
+        '00','05','10','15','20',
+        '25','30','35','40','45',
+        '50', '55'
+    ] %}
+
     <div class="govuk-form-group {% if params.errorMessage %}govuk-form-group--error{% endif %}">
         <fieldset class="govuk-fieldset" role="group" aria-describedby="{{ params.hint.id }}">
             {% if params.label %}
@@ -19,48 +33,36 @@
             {% endif %}
             <div class="govuk-date-input" id="{{ params.id }}">
                 <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-date-input__label" for="{{ params.id }}-hour">
-                            Hour
-                        </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if params.errorMessage %}govuk-input--error{% endif %}"
-                            maxlength="2"
-                            id="{{ params.id }}-hour"
-                            name="{{ params.id }}[hour]" type="text" pattern="[0-9]*" inputmode="numeric"
-                            value="{{ params.formResponses['hour'] }}">
-                    </div>
+                    {{ govukSelect({
+                        id: params.id +'-hour',
+                        name: params.name + 'Hour',
+                        label: {
+                            text: "Hour",
+                            classes: "govuk-date-input__label"
+                        },
+                        errorMessage: params.errorMessage,
+                        classes: "govuk-input--width-20",
+                        items: hours | toItems | addDefaultSelectedValue('--', true) | setSelected(params.formResponses['hour']),
+                        attributes: {
+                            'aria-label': 'Hour'
+                        }
+                    }) }}
                 </div>
                 <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-date-input__label" for="{{ params.id }}-minute">
-                            Minute
-                        </label>
-                        <input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if params.errorMessage %}govuk-input--error{% endif %}"
-                            maxlength="2"
-                            id="{{ params.id }}-minute"
-                            name="{{ params.id }}[minute]" type="text" pattern="[0-9]*" inputmode="numeric"
-                            value="{{ params.formResponses['minute'] }}">
-                    </div>
-                </div>
-                <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-date-input__label" for="{{ params.id }}-ampm">
-                            am or pm
-                        </label>
-                        <select class="govuk-select govuk-date-input__input govuk-input--width-2 {% if params.errorMessage %}govuk-select--error{% endif %}"
-                                id="{{ params.id }}-ampm"
-                                name="{{ params.id }}[ampm]">
-                            <option value="">
-                                -
-                            </option>
-                            <option value="am" {% if params.formResponses['ampm'] == 'am' %} selected {% endif %}>
-                                am
-                            </option>
-                            <option value="pm" {% if params.formResponses['ampm'] == 'pm' %} selected {% endif %}>
-                                pm
-                            </option>
-                        </select>
-                    </div>
+                    {{ govukSelect({
+                        id: params.id +'-minute',
+                        name: params.name + 'Minute',
+                        label: {
+                            text: "Minute",
+                            classes: "govuk-date-input__label"
+                        },
+                        errorMessage: params.errorMessage,
+                        classes: "govuk-input--width-20",
+                        items: minutes | toItems | addDefaultSelectedValue('--', true) | setSelected(params.formResponses['minute']),
+                        attributes: {
+                            'aria-label': 'Minute'
+                        }
+                    }) }}
                 </div>
             </div>
         </fieldset>

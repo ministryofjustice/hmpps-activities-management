@@ -153,6 +153,15 @@ export const addDefaultSelectedValue = (items: any, text: any, show: any) => {
   ]
 }
 
+export const toItems = (array: string[]) => {
+  if (!array) return null
+
+  return array.map(entry => ({
+    value: entry,
+    text: entry,
+  }))
+}
+
 export const findError = (array: FieldValidationError[], formFieldId: string) => {
   if (!array) return null
   const item = array.find(error => error.field === formFieldId)

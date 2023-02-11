@@ -20,40 +20,40 @@
                     name: 'startDate',
                     label: {
                         text: "Appointment date",
-                        classes: "govuk-fieldset__legend--l"
+                        classes: "govuk-fieldset__legend--m"
                     },
                     hint: {
                         text: "For example, 31 01 2023"
                     },
                     renderedErrorMessage: validationErrors | findError('startDate'),
                     validationErrors: validationErrors,
-                    formResponses: formResponses.startDate
+                    formResponses: formResponses.startDate or session.createSingleAppointmentJourney.startDate
                 }) }}
                 {{ timePicker({
                     id: 'startTime',
                     name: 'startTime',
                     label: {
                         text: 'Start time',
-                        classes: "govuk-!-font-weight-bold"
+                        classes: "govuk-fieldset__legend--m"
                     },
                     hint: {
-                        text: "For example, 9:30am or 2:55pm"
+                        text: "For example, 09:30 or 14:55"
                     },
                     errorMessage: validationError,
-                    formResponses: formResponses.startTime
+                    formResponses: formResponses.startTime or session.createSingleAppointmentJourney.startTime
                 }) }}
                 {{ timePicker({
                     id: 'endTime',
                     name: 'endTime',
                     label: {
                         text: 'End time',
-                        classes: "govuk-!-font-weight-bold"
+                        classes: "govuk-fieldset__legend--m"
                     },
                     hint: {
-                        text: "For example, 9:30am or 2:55pm"
+                        text: "For example, 09:30 or 14:55"
                     },
                     errorMessage: validationError,
-                    formResponses: formResponses.endTime
+                    formResponses: formResponses.endTime or session.createSingleAppointmentJourney.endTime
                 }) }}
                 {{ govukButton({
                     text: "Continue"
