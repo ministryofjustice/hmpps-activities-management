@@ -39,7 +39,8 @@
                     hint: {
                         text: "For example, 09:30 or 14:55"
                     },
-                    errorMessage: validationError,
+                    renderedErrorMessage: validationErrors | findError('startTime'),
+                    validationErrors: validationErrors,
                     formResponses: formResponses.startTime or session.createSingleAppointmentJourney.startTime
                 }) }}
                 {{ timePicker({
@@ -52,7 +53,8 @@
                     hint: {
                         text: "For example, 09:30 or 14:55"
                     },
-                    errorMessage: validationError,
+                    renderedErrorMessage: validationErrors | findError('endTime'),
+                    validationErrors: validationErrors,
                     formResponses: formResponses.endTime or session.createSingleAppointmentJourney.endTime
                 }) }}
                 {{ govukButton({

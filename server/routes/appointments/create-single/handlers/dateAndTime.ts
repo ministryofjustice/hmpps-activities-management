@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
+import { Expose, plainToInstance, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
@@ -26,9 +26,23 @@ export default class DateAndTimeRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createSingleAppointmentJourney.startDate = req.body.startDate
-    req.session.createSingleAppointmentJourney.startTime = req.body.startTime
-    req.session.createSingleAppointmentJourney.endTime = req.body.endTime
+    const { startDate, startTime, endTime } = req.body
+
+    req.session.createSingleAppointmentJourney.startDate = startDate
+    req.session.createSingleAppointmentJourney.startDate.display = plainToInstance(
+      SimpleDate,
+      startDate,
+    ).toDisplayString()
+
+    req.session.createSingleAppointmentJourney.startTime.display = startTime
+    req.session.createSingleAppointmentJourney.startTime.display = plainToInstance(
+      SimpleTime,
+      startTime,
+    ).toDisplayString()
+
+    req.session.createSingleAppointmentJourney.endTime = endTime
+    req.session.createSingleAppointmentJourney.endTime.display = plainToInstance(SimpleTime, endTime).toDisplayString()
+
     res.redirect(`check-answers`)
   }
 }

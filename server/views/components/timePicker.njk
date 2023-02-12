@@ -13,7 +13,7 @@
         '50', '55'
     ] %}
 
-    <div class="govuk-form-group {% if params.errorMessage %}govuk-form-group--error{% endif %}">
+    <div class="govuk-form-group {% if params.validationErrors %}govuk-form-group--error{% endif %}">
         <fieldset class="govuk-fieldset" role="group" aria-describedby="{{ params.hint.id }}">
             {% if params.label %}
                 <legend class="govuk-fieldset__legend {{ params.label.classes }}">
@@ -25,22 +25,23 @@
                     {{ params.hint.text }}
                 </div>
             {% endif %}
-            {% if params.errorMessage %}
+            {% if params.validationErrors %}
                 <span id="{{ params.id }}-error" class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span>
-                    <span>{{ params.errorMessage.text }}</span>
+                    Here {{ params.validationErrors['startTime'] }}
+                    <span>{{ params.validationErrors | findError(params.id) or params.renderedErrorMessage or params.validationErrors | findError(params.id + '-hour') or params.validationErrors | findError(params.id + '-minute') }}</span>
                 </span>
             {% endif %}
             <div class="govuk-date-input" id="{{ params.id }}">
                 <div class="govuk-date-input__item">
                     {{ govukSelect({
                         id: params.id +'-hour',
-                        name: params.name + 'Hour',
+                        name: params.name + '[hour]',
                         label: {
                             text: "Hour",
                             classes: "govuk-date-input__label"
                         },
-                        errorMessage: params.errorMessage,
+                        errorMessage: params.validationErrors | findError(params.id + '-hour'),
                         classes: "govuk-input--width-20",
                         items: hours | toItems | addDefaultSelectedValue('--', true) | setSelected(params.formResponses['hour']),
                         attributes: {
@@ -51,12 +52,12 @@
                 <div class="govuk-date-input__item">
                     {{ govukSelect({
                         id: params.id +'-minute',
-                        name: params.name + 'Minute',
+                        name: params.name + '[minute]',
                         label: {
                             text: "Minute",
                             classes: "govuk-date-input__label"
                         },
-                        errorMessage: params.errorMessage,
+                        errorMessage: params.validationErrors | findError(params.id + '-minute'),
                         classes: "govuk-input--width-20",
                         items: minutes | toItems | addDefaultSelectedValue('--', true) | setSelected(params.formResponses['minute']),
                         attributes: {
