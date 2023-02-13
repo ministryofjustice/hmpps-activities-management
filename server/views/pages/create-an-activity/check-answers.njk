@@ -53,10 +53,12 @@
                     },
                     {
                         key: {
-                            text: "Risk level"
+                            text: "Suitable workplace risk assessment levels"
                         },
                         value: {
-                            text: session.createJourney.riskLevel | toTitleCase
+                            text: ("Low" if session.createJourney.riskLevel == 'low') +
+                                  ("Low and Medium" if session.createJourney.riskLevel == 'medium') +
+                                  ("Low, Medium and High" if session.createJourney.riskLevel == 'high')
                         },
                         actions: {
                             items: [
