@@ -23,7 +23,7 @@
                         classes: "govuk-fieldset__legend--m"
                     },
                     hint: {
-                        text: "For example, 31 01 2023"
+                        text: "For example, " | exampleDateOneWeekAhead
                     },
                     renderedErrorMessage: validationErrors | findError('startDate'),
                     validationErrors: validationErrors,
@@ -51,7 +51,7 @@
                         classes: "govuk-fieldset__legend--m"
                     },
                     hint: {
-                        text: "For example, 09:30 or 14:55"
+                        text: "For example, 10:15 or 15:30"
                     },
                     renderedErrorMessage: validationErrors | findError('endTime'),
                     validationErrors: validationErrors,

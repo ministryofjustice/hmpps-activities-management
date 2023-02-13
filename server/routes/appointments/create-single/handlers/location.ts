@@ -33,7 +33,7 @@ export default class LocationRoutes {
       .then(locations => locations.find(l => l.locationId === req.body.locationId))
 
     if (!location) {
-      req.flash('validationErrors', JSON.stringify([{ field: 'locationId', message: `Select a location` }]))
+      req.flash('validationErrors', JSON.stringify([{ field: 'locationId', message: `Selected location not found` }]))
       return res.redirect('back')
     }
 

@@ -96,7 +96,7 @@ describe('Route Handlers - Create Single Appointment - Category', () => {
 
       expect(req.flash).toHaveBeenCalledWith(
         'validationErrors',
-        JSON.stringify([{ field: 'categoryId', message: `Select a category` }]),
+        JSON.stringify([{ field: 'categoryId', message: `Selected category not found` }]),
       )
       expect(res.redirect).toHaveBeenCalledWith('back')
     })

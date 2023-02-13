@@ -4,19 +4,32 @@ import { IsNotEmpty, ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import IsValidDate from '../../../../validators/isValidDate'
+import IsValidTime from '../../../../validators/isValidTime'
+import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
+import TimeIsAfter from '../../../../validators/timeIsAfter'
 
 export class DateAndTime {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
   @IsNotEmpty({ message: 'Enter a date for the appointment' })
-  @IsValidDate({ message: 'Enter a date for the appointment' })
+  @IsValidDate({ message: 'Enter a valid date for the appointment' })
+  @DateIsSameOrAfter(new Date(), { message: "Enter a date on or after today's date" })
   startDate: SimpleDate
 
-  @IsNotEmpty({ message: 'Enter a start time for the appointment' })
+  @Expose()
+  @Type(() => SimpleTime)
+  @ValidateNested()
+  @IsNotEmpty({ message: 'Select a start time for the appointment' })
+  @IsValidTime({ message: 'Select a valid start time for the appointment' })
   startTime: SimpleTime
 
-  @IsNotEmpty({ message: 'Enter an end time for the appointment' })
+  @Expose()
+  @Type(() => SimpleTime)
+  @ValidateNested()
+  @IsNotEmpty({ message: 'Select an end time for the appointment' })
+  @IsValidTime({ message: 'Select a valid end time for the appointment' })
+  @TimeIsAfter('startTime', { message: 'Select an end time after the start time' })
   endTime: SimpleTime
 }
 

@@ -17,6 +17,7 @@ import {
   startsWithAny,
   toMoney,
   toItems,
+  exampleDateOneWeekAhead,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -102,6 +103,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('startsWithAny', startsWithAny)
   njkEnv.addFilter('toMoney', toMoney)
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
+  njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
