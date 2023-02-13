@@ -23,6 +23,8 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukSelect({
+                    id: "locationId",
+                    name: "locationId",
                     label: {
                         text: "Where is the appointment?",
                         classes: "govuk-label--l",
@@ -34,8 +36,6 @@
                     formGroup: {
                         classes: "location-autocomplete-formgroup"
                     },
-                    id: "locationId",
-                    name: "locationId",
                     errorMessage: validationErrors | findError('locationId'),
                     value: formResponses.locationId or session.createSingleAppointmentJourney.location.id,
                     items: options

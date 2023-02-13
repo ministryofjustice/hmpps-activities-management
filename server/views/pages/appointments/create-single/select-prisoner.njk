@@ -13,6 +13,8 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukInput({
+                    id: "number",
+                    name: "number",
                     label: {
                         text: "What is the prisoner's number?",
                         classes: "govuk-label--l",
@@ -21,8 +23,6 @@
                     hint: {
                         text: "Search by prison number"
                     },
-                    id: "number",
-                    name: "number",
                     classes: "govuk-input--width-20",
                     errorMessage: validationErrors | findError('number'),
                     value: formResponses.number or session.createSingleAppointmentJourney.prisoner.number

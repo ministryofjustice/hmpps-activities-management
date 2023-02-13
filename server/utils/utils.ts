@@ -170,7 +170,7 @@ export const toTimeItems = (array: string[], selected: number) => {
     items.push({
       value,
       text: item,
-      selected: value === selected.toString(),
+      selected: selected && value === selected.toString(),
     })
   })
 

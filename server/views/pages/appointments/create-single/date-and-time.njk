@@ -36,9 +36,6 @@
                         text: 'Start time',
                         classes: "govuk-fieldset__legend--m"
                     },
-                    hint: {
-                        text: "For example, 09:30 or 14:55"
-                    },
                     renderedErrorMessage: validationErrors | findError('startTime'),
                     validationErrors: validationErrors,
                     formResponses: formResponses.startTime or session.createSingleAppointmentJourney.startTime
@@ -49,9 +46,6 @@
                     label: {
                         text: 'End time',
                         classes: "govuk-fieldset__legend--m"
-                    },
-                    hint: {
-                        text: "For example, 10:15 or 15:30"
                     },
                     renderedErrorMessage: validationErrors | findError('endTime'),
                     validationErrors: validationErrors,

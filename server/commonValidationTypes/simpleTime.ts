@@ -2,8 +2,8 @@ import { Expose, Type } from 'class-transformer'
 import { IsInt, Max, Min } from 'class-validator'
 import { formatDate } from '../utils/utils'
 
-const HOUR_MESSAGE = 'Select a valid hour'
-const MINUTE_MESSAGE = 'Select a valid minute'
+const HOUR_MESSAGE = 'Select an hour'
+const MINUTE_MESSAGE = 'Select a minute'
 
 export default class SimpleTime {
   @Expose()

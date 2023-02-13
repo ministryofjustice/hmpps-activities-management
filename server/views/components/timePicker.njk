@@ -11,11 +11,11 @@
         '00','05','10','15','20','25','30','35','40','45','50', '55'
     ] %}
 
-    <div class="govuk-form-group {%
+    <div class="govuk-form-group{%
         if params.renderedErrorMessage or
         params.validationErrors | findError(params.id + '-hour') or
         params.validationErrors | findError(params.id + '-minute')
-    %}govuk-form-group--error{% endif %}">
+    %} govuk-form-group--error{% endif %} time-picker">
         <fieldset class="govuk-fieldset" role="group" aria-describedby="{{ params.hint.id }}">
             {% if params.label %}
                 <legend class="govuk-fieldset__legend {{ params.label.classes }}">
@@ -43,7 +43,6 @@
                             classes: "govuk-date-input__label"
                         },
                         errorMessage: params.validationErrors | findError(params.id + '-hour'),
-                        classes: "govuk-input--width-20",
                         items: hours | toTimeItems(params.formResponses['hour']),
                         attributes: {
                             'aria-label': 'Hour'
