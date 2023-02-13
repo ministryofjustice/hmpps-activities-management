@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import _ from 'lodash'
 import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
@@ -17,20 +16,20 @@ export default class LocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const locations = await this.prisonService.getEventLocations(user.activeCaseLoad.caseLoadId, user)
-    const uniqueLocations = _.uniqBy(locations, 'locationId')
+    const locations = await this.prisonService.getLocationsForAppointments(user.activeCaseLoad.caseLoadId, user)
 
     res.render('pages/appointments/create-single/location', {
-      locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
+      locations,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { locationId } = req.body
     const { user } = res.locals
 
     const location = await this.prisonService
-      .getEventLocations(user.activeCaseLoad.caseLoadId, user)
-      .then(locations => locations.find(l => l.locationId === req.body.locationId))
+      .getLocationsForAppointments(user.activeCaseLoad.caseLoadId, user)
+      .then(locations => locations.find(l => l.locationId === locationId))
 
     if (!location) {
       req.flash('validationErrors', JSON.stringify([{ field: 'locationId', message: `Selected location not found` }]))

@@ -64,6 +64,14 @@ export default class PrisonService {
     return this.prisonApiClient.getEventLocations(prisonCode, user)
   }
 
+  async getLocationsForEventType(prisonCode: string, eventType: string, user: ServiceUser): Promise<LocationLenient[]> {
+    return this.prisonApiClient.getLocationsForEventType(prisonCode, eventType, user)
+  }
+
+  async getLocationsForAppointments(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
+    return this.prisonApiClient.getLocationsForEventType(prisonCode, 'APP', user)
+  }
+
   async searchActivityLocations(
     prisonCode: string,
     date: string,
