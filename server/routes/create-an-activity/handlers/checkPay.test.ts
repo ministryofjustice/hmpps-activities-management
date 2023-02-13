@@ -47,7 +47,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
             id: 1,
           },
           riskLevel: 'High',
-          pay: [{ incentiveLevel: 'Standard', bandId: 1, rate: 100 }],
+          pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', bandId: 1, rate: 100 }],
           incentiveLevels: ['Standard', 'Enhanced'],
         },
       },
@@ -77,9 +77,9 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValueOnce([
-          { iepDescription: 'Enhanced', sequence: 3 },
-          { iepDescription: 'Basic', sequence: 1 },
-          { iepDescription: 'Standard', sequence: 2 },
+          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
+          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
+          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
         ] as IepLevel[])
 
       await handler.POST(req, res)

@@ -24,6 +24,8 @@ describe('Route Handlers - Create an activity - Helper', () => {
       eligibilityRules: [],
       id: 0,
       inCell: false,
+      minimumIncentiveNomisCode: 'BAS',
+      minimumIncentiveLevel: 'Basic',
       outsideWork: false,
       payPerSession: '',
       pieceWork: false,
@@ -35,6 +37,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
       pay: [
         {
           id: 1,
+          incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
           prisonPayBand: {
             id: 2,
@@ -48,6 +51,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
         },
         {
           id: 2,
+          incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
           prisonPayBand: {
             id: 1,
@@ -61,6 +65,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
         },
         {
           id: 3,
+          incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
           prisonPayBand: {
             id: 2,
@@ -74,6 +79,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
         },
         {
           id: 4,
+          incentiveNomisCode: 'ENH',
           incentiveLevel: 'Enhanced',
           prisonPayBand: {
             id: 4,
@@ -114,6 +120,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
           incentiveLevel: 'Basic',
           pays: [
             {
+              incentiveNomisCode: 'BAS',
               incentiveLevel: 'Basic',
               id: 3,
               prisonPayBand: {
@@ -132,6 +139,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
           incentiveLevel: 'Standard',
           pays: [
             {
+              incentiveNomisCode: 'STD',
               incentiveLevel: 'Standard',
               id: 1,
               prisonPayBand: {
@@ -145,6 +153,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
               rate: 200,
             },
             {
+              incentiveNomisCode: 'STD',
               incentiveLevel: 'Standard',
               id: 2,
               prisonPayBand: {
@@ -163,6 +172,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
           incentiveLevel: 'Enhanced',
           pays: [
             {
+              incentiveNomisCode: 'ENH',
               incentiveLevel: 'Enhanced',
               id: 4,
               prisonPayBand: {

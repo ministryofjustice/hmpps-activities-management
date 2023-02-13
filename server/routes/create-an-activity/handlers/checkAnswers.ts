@@ -26,8 +26,10 @@ export default class CheckAnswersRoutes {
       summary: createJourney.name,
       categoryId: createJourney.category.id,
       riskLevel: createJourney.riskLevel,
+      minimumIncentiveNomisCode: createJourney.minimumIncentiveNomisCode,
       minimumIncentiveLevel: createJourney.minimumIncentiveLevel,
       pay: createJourney.pay.map(pay => ({
+        incentiveNomisCode: pay.incentiveNomisCode,
         incentiveLevel: pay.incentiveLevel,
         payBandId: pay.bandId,
         rate: pay.rate,
