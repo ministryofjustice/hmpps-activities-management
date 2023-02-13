@@ -18,6 +18,7 @@ export default function Index({ unlockListService, activitiesService }: Services
   get('/select-date-and-location', dateAndLocationHandler.GET)
   post('/select-date-and-location', dateAndLocationHandler.POST, DateAndLocation)
   get('/planned-events', plannedEventsHandler.GET)
+  post('/planned-events', plannedEventsHandler.POST)
 
   return router
 }

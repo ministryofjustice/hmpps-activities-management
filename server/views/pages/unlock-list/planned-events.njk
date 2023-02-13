@@ -2,9 +2,12 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
 
 {% from "partials/showUnlockAlerts.njk" import showUnlockAlerts %}
-{% from "partials/showUnlockEvents.njk" import showUnlockEvents%}
+{% from "partials/showUnlockEvents.njk" import showUnlockEvents %}
 {% from "partials/showUnlockProfileLink.njk" import showUnlockProfileLink %}
 
 {% set pageTitle = applicationName + " - Planned events" %}
@@ -15,125 +18,237 @@
     <link href="/assets/stylesheets/printViews/unlock-list.css?{{ version }}" rel="stylesheet"/>
 {% endblock %}
 
+{% block pageScripts %}
+    <script>
+      new MOJFrontend.FilterToggleButton({
+        bigModeMediaQuery: "(min-width: 48.063em)",
+        startHidden: true,
+        toggleButton: {
+          container: $(".moj-action-bar__filter"),
+          showText: "Show filter",
+          hideText: "Hide filter",
+          classes: "govuk-button--secondary",
+        },
+        closeButton: {
+          container: $(".moj-filter__header-action"),
+          text: "Close",
+        },
+        filter: {
+          container: $(".moj-filter"),
+        },
+      })
+    </script>
+{% endblock %}
+
 {% block content %}
     <div class="govuk-grid-row govuk-!-margin-bottom-2">
-        {# Title and date / slot #}
+
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-1">Unlock list</h1>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-1">{{ locationGroup }}</h1>
             <span class="govuk-body ">{{ plannedDate }} - {{ plannedSlot | upper }}</span>
         </div>
 
-        {# Download and print button group #}
-         <div class="govuk-grid-column-one-quarter govuk-!-display-none-print">
+        <div class="govuk-grid-column-one-quarter govuk-!-display-none-print">
             <div class="govuk-button-group float-right">
-                {{ govukButton({
-                    attributes: { id: 'download-unlock' },
-                    text: "Download list",
-                    classes: "govuk-button--secondary",
-                    preventDoubleClick: true
-                }) }}
                 {{ govukButton({
                     attributes: { id: 'print-unlock' },
                     text: "Print list",
                     classes: "govuk-button--secondary js-print no-js-hidden",
                     preventDoubleClick: true
                 }) }}
-             </div>
-         </div>
-    </div>
-
-    {# Filter display #}
-    <div class="govuk-grid-row govuk-!-margin-top-2 govuk-!-display-none-print">
-        <div class="govuk-grid-column-one-quarter govuk-body">
-            {{ govukButton({
-                attributes: { id: 'show-filters' },
-                text: "Show filters",
-                classes: "govuk-button--secondary",
-                preventDoubleClick: true
-            }) }}
+            </div>
         </div>
     </div>
 
-    <hr class="print-only"/>
-
-    {# Prison count / list size #}
     <div class="govuk-grid-row  govuk-!-margin-bottom-2 govuk-!-margin-top-2 print-align-right">
         <div class="govuk-grid-column-full govuk-body govuk-!-font-weight-bold">
-          {{ unlockListItems.length }} prisoners
+            {{ unlockListItems.length }} prisoners
         </div>
     </div>
 
-    {# Main unlock list body #}
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full">
-        {% set rows = [] %}
-        {% for item in unlockListItems %}
-            {% set rows = (rows.push([
-                {
-                    attributes: { id: 'activity-' + loop.index, "data-sort-value": item.displayName },
-                    html: showUnlockProfileLink(item.prisonerNumber, item.displayName),
-                    classes: 'govuk-table_cell'
-                },
-                {
-                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": item.cellLocation },
-                    text: item.cellLocation,
-                    classes: 'govuk-table_cell'
-                },
-                {
-                    attributes: { id: 'prisoner-number-' + loop.index, "data-sort-value": item.prisonerNumber },
-                    text: item.prisonerNumber,
-                    classes: 'govuk-table_cell print-only'
-                },
-                {
-                    attributes: { id: 'alerts-' + loop.index },
-                    html: showUnlockAlerts(item.alerts),
-                    classes: 'govuk-table__cell'
-                },
-                {
-                    attributes: { id: 'activity-' + loop.index },
-                    html: showUnlockEvents(item.events),
-                    classes: 'govuk-table__cell'
-                }
-            ]), rows) %}
-        {% endfor %}
+    {% set filterOptionsHtml %}
 
-        {{ govukTable({
-            attributes: {
-                'data-module': 'moj-sortable-table',
-                id: 'unlock-list-table'
-            },
-            caption: "Prisoners",
-            classes: "alternating-row-shading",
-            captionClasses: "govuk-visually-hidden",
-            head: [
-                {
-                    text: "Name",
-                    attributes: { "aria-sort": "ascending" },
-                    classes: 'govuk-table__header'
-                },
-                {
-                    text: "Cell location",
-                    attributes: { "aria-sort": "ascending" },
-                    classes: 'govuk-table__header'
-                },
-                {
-                    text: "Prisoner number",
-                    attributes: { "aria-sort": "ascending" },
-                    classes: 'govuk-table__header print-only'
-                },
-                {
-                    text: "Relevant alerts",
-                    attributes: { "aria-sort": "none" },
-                    classes: 'govuk-table__header'
-                },
-                {
-                    text: "Activity",
-                    attributes: { "aria-sort": "none" },
-                    classes: 'govuk-table__header'
+        {{ govukCheckboxes({
+            idPrefix: 'sublocations',
+            name: 'sublocations',
+            classes: "govuk-checkboxes--small",
+            fieldset: {
+                legend: {
+                    text: 'Sub-locations',
+                    classes: 'govuk-fieldset__legend--m'
                 }
-            ],
-            rows: rows
+            },
+            items: unlockFilters.subLocations
         }) }}
-      </div>
+
+        {{ govukCheckboxes({
+            idPrefix: 'activityNames',
+            name: 'activityNames',
+            classes: "govuk-checkboxes--small",
+            fieldset: {
+                legend: {
+                    text: 'Activities',
+                    classes: 'govuk-fieldset__legend--m'
+                }
+            },
+            items: unlockFilters.activityNames
+        }) }}
+
+        {{ govukCheckboxes({
+            idPrefix: 'stayingOrLeaving',
+            name: 'stayingOrLeaving',
+            classes: "govuk-checkboxes--small",
+            fieldset: {
+                legend: {
+                    text: 'Staying or leaving',
+                    classes: 'govuk-fieldset__legend--m'
+                }
+            },
+            items: unlockFilters.stayingOrLeaving
+        }) }}
+
+    {% endset %}
+
+    <div class="moj-filter-layout">
+
+        <form id="filter-form" method="POST" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+            <div class="moj-filter-layout__filter govuk-!-display-none-print">
+
+                {{ mojFilter({
+                    heading: {
+                        text: 'Filter'
+                    },
+                    selectedFilters: {
+                        heading: {
+                            text: 'Selected filters'
+                        },
+                        clearLink: {
+                            text: 'Clear filters'
+                        },
+                        categories: [
+                            {
+                                heading: {
+                                text: 'Sub-locations'
+                            },
+                                items: []
+                            },
+                            {
+                                heading: {
+                                text: 'Activities'
+                            },
+                                items: []
+                            },
+                            {
+                                heading: {
+                                text: 'Activities'
+                            },
+                                items: []
+                            }
+                        ]
+                    },
+                    optionsHtml: filterOptionsHtml
+                }) }}
+            </div>
+
+            <hr class="print-only"/>
+
+            <div class="moj-filter-layout__content">
+
+                <div class="moj-action-bar">
+                    <div class="moj-action-bar__filter"></div>
+
+                    {{ mojButtonMenu({
+                        items: [{
+                            text: 'Show filters',
+                            classes: 'govuk-button--secondary'
+                        }]
+                    }) }}
+                </div>
+
+                <div class="govuk-grid-column-full">
+                    {% set rows = [] %}
+                    {% for item in unlockListItems %}
+                        {% set rows = (rows.push([
+                            {
+                                attributes: { id: 'activity-' + loop.index, "data-sort-value": item.displayName },
+                                html: showUnlockProfileLink(item.prisonerNumber, item.displayName),
+                                classes: 'govuk-table_cell'
+                            },
+                            {
+                                attributes: { id: 'cell-location-' + loop.index, "data-sort-value": item.cellLocation },
+                                text: item.cellLocation,
+                                classes: 'govuk-table_cell'
+                            },
+                            {
+                                attributes: { id: 'prisoner-number-' + loop.index, "data-sort-value": item.prisonerNumber },
+                                text: item.prisonerNumber,
+                                classes: 'govuk-table_cell print-only'
+                            },
+                            {
+                                attributes: { id: 'alerts-' + loop.index },
+                                html: showUnlockAlerts(item.alerts),
+                                classes: 'govuk-table__cell'
+                            },
+                            {
+                                attributes: { id: 'activity-' + loop.index },
+                                html: showUnlockEvents(item.events),
+                                classes: 'govuk-table__cell'
+                            },
+                            {
+                                attributes: { id: 'sub-' + loop.index },
+                                text: item.locationSubGroup,
+                                classes: 'govuk-table__cell'
+                            }
+                        ]), rows) %}
+                    {% endfor %}
+
+                    {{ govukTable({
+                        attributes: {
+                            'data-module': 'moj-sortable-table',
+                            id: 'unlock-list-table'
+                        },
+                        caption: "Prisoners",
+                        classes: "alternating-row-shading",
+                        captionClasses: "govuk-visually-hidden",
+                        head: [
+                            {
+                                text: "Name",
+                                attributes: { "aria-sort": "ascending" },
+                                classes: 'govuk-table__header'
+                            },
+                            {
+                                text: "Cell location",
+                                attributes: { "aria-sort": "ascending" },
+                                classes: 'govuk-table__header'
+                            },
+                            {
+                                text: "Prisoner number",
+                                attributes: { "aria-sort": "ascending" },
+                                classes: 'govuk-table__header print-only'
+                            },
+                            {
+                                text: "Relevant alerts",
+                                attributes: { "aria-sort": "none" },
+                                classes: 'govuk-table__header'
+                            },
+                            {
+                                text: "Activity",
+                                attributes: { "aria-sort": "none" },
+                                classes: 'govuk-table__header'
+                            },
+                            {
+                                text: "Sub location",
+                                attributes: { "aria-sort": "none" },
+                                classes: 'govuk-table__header'
+                            }
+                        ],
+                        rows: rows
+                    }) }}
+                </div>
+            </div>
+        </form>
     </div>
+
 {% endblock %}

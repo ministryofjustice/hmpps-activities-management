@@ -44,7 +44,7 @@ export default class SelectDateAndLocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    // TODO: Set session-based (datePresetOption, date, slot and location) for back link in journey?
+    if (req.session?.unlockFilters) delete req.session.unlockFilters
     const locationGroups = await this.activitiesService.getLocationGroups(user.activeCaseLoadId, user)
     res.render('pages/unlock-list/select-date-and-location', { locationGroups })
   }

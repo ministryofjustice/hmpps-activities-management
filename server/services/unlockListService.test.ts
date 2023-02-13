@@ -5,6 +5,7 @@ import { ServiceUser } from '../@types/express'
 import UnlockListService from './unlockListService'
 import { PagePrisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { PrisonerScheduledEvents } from '../@types/activitiesAPI/types'
+import { UnlockFilterItem, UnlockFilters } from '../@types/activities'
 
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/activitiesApiClient')
@@ -63,8 +64,6 @@ describe('Unlock list service', () => {
     content: [],
   } as unknown as PagePrisoner
 
-  // TODO: Add some data here - populate with realistic response values
-
   const scheduledEvents = {
     prisonCode: 'MDI',
     startDate: '',
@@ -75,27 +74,49 @@ describe('Unlock list service', () => {
     activities: [],
   } as PrisonerScheduledEvents
 
+  const testUnlockFilters = (): UnlockFilters => {
+    const subLocations = [
+      { value: 'All', text: 'All', checked: false } as UnlockFilterItem,
+      { value: 'A-Wing', text: 'A-Wing', checked: true } as UnlockFilterItem,
+      { value: 'B-Wing', text: 'B-Wing', checked: false } as UnlockFilterItem,
+    ]
+    const activityNames = [{ value: 'All', text: 'All', checked: true }] as UnlockFilterItem[]
+    const stayingOrLeaving = [{ value: 'All', text: 'All', checked: true }] as UnlockFilterItem[]
+    return { subLocations, activityNames, stayingOrLeaving }
+  }
+
   const unlockListService = new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient)
 
   describe('getUnlockListForLocationGroups', () => {
-    it('should get the unlock list items for one location group', async () => {
+    it('should get the unlock list items for one sub-location', async () => {
       const prisonerNumbers = ['A1234AA']
 
-      activitiesApiClient.getPrisonLocationPrefixByGroup.mockResolvedValue({ locationPrefix: 'MDI-1-' })
+      activitiesApiClient.getPrisonLocationPrefixByGroup
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-2-0(0[1-9]|1[0-2])' })
+
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
-      const unlockListItems = await unlockListService.getUnlockListForLocationGroups(['HB1'], '2022-10-01', 'AM', user)
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        'HB1',
+        ['A-Wing'],
+        testUnlockFilters(),
+        '2022-10-01',
+        'AM',
+        user,
+      )
 
       expect(unlockListItems.length).toBe(1)
 
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(1)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(2)
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1', user)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_A-Wing', user)
 
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledTimes(1)
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledWith(
         'MDI',
-        'MDI-1-',
+        'MDI-1-1',
         0,
         1024,
         user,
@@ -111,43 +132,35 @@ describe('Unlock list service', () => {
       )
     })
 
-    it('should get the unlock list items for two location groups', async () => {
-      const prisonerNumbers = ['A1234AA', 'A1234AA']
-
+    it('should get the unlock list items for two sub-location groups', async () => {
       activitiesApiClient.getPrisonLocationPrefixByGroup
-        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-' })
-        .mockResolvedValueOnce({ locationPrefix: 'MDI-2-' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2])' })
 
-      prisonerSearchApiClient.searchPrisonersByLocationPrefix
-        .mockResolvedValueOnce(prisoners)
-        .mockResolvedValueOnce(prisoners)
-
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValueOnce(prisoners)
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
-      const unlockListItems = await unlockListService.getUnlockListForLocationGroups(
-        ['HB1', 'HB2'],
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        'HB1',
+        ['A-Wing', 'B-Wing'],
+        testUnlockFilters(),
         '2022-10-01',
         'AM',
         user,
       )
 
-      expect(unlockListItems.length).toBe(2)
+      expect(unlockListItems.length).toBe(1)
 
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(2)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(3)
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1', user)
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB2', user)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_A-Wing', user)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_B-Wing', user)
 
-      expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledTimes(2)
+      expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledTimes(1)
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledWith(
         'MDI',
-        'MDI-1-',
-        0,
-        1024,
-        user,
-      )
-      expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledWith(
-        'MDI',
-        'MDI-2-',
+        'MDI-1-1',
         0,
         1024,
         user,
@@ -158,28 +171,40 @@ describe('Unlock list service', () => {
         'MDI',
         '2022-10-01',
         'AM',
-        prisonerNumbers,
+        ['A1234AA'],
         user,
       )
     })
 
     it('should return an empty list when no prisoners are located in the location groups', async () => {
       const prisonerNumbers: string[] = []
-      activitiesApiClient.getPrisonLocationPrefixByGroup.mockResolvedValue({ locationPrefix: 'MDI-3-' })
+
+      activitiesApiClient.getPrisonLocationPrefixByGroup
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-3-1' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-3-1-0(0[1-9]|1[0-2])' })
+
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(emptyPrisoners)
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
-      const unlockListItems = await unlockListService.getUnlockListForLocationGroups(['HB3'], '2022-10-02', 'PM', user)
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        'HB3',
+        ['C-Wing'],
+        testUnlockFilters(),
+        '2022-10-02',
+        'PM',
+        user,
+      )
 
       expect(unlockListItems.length).toBe(0)
 
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(1)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(2)
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB3', user)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB3_C-Wing', user)
 
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledTimes(1)
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledWith(
         'MDI',
-        'MDI-3-',
+        'MDI-3-1',
         0,
         1024,
         user,

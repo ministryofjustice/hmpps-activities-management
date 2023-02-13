@@ -73,9 +73,26 @@ export type UnlockListItem = {
   lastName: string
   displayName?: string
   locationGroup?: string
-  locationPrefix?: string
+  locationSubGroup: string
   cellLocation: string
   alerts?: Alert[]
   events?: ScheduledEvent[]
   status: string
+}
+
+export type UnlockFilterItem = {
+  value: string
+  text: string
+  checked: boolean
+}
+
+export type UnlockFilters = {
+  subLocations: UnlockFilterItem[]
+  activityNames: UnlockFilterItem[]
+  stayingOrLeaving: UnlockFilterItem[]
+}
+
+export type SubLocationCellPattern = {
+  subLocation: string
+  locationPrefix: string
 }
