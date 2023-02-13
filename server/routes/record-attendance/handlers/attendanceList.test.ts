@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { format } from 'date-fns'
 import ActivitiesService from '../../../services/activitiesService'
-import { ScheduledActivity } from '../../../@types/activitiesAPI/types'
+import { PrisonerScheduledEvents, ScheduledActivity } from '../../../@types/activitiesAPI/types'
 import PrisonService from '../../../services/prisonService'
 import AttendanceListRoutes from './attendanceList'
 import { InmateBasicDetails } from '../../../@types/prisonApiImport/types'
@@ -53,6 +53,28 @@ describe('Route Handlers - Attendance List', () => {
           ],
         } as ScheduledActivity)
 
+      when(activitiesService.getScheduledEventsForPrisoners)
+        .calledWith(new Date(2022, 11, 8), ['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
+        .mockResolvedValue({
+          activities: [
+            { eventId: 1, eventDesc: 'Maths', startTime: '10:00', endTime: '11:00', prisonerNumber: 'ABC123' },
+          ],
+          appointments: [
+            {
+              eventId: 2,
+              eventDesc: 'Appointment with the guv',
+              startTime: '15:00',
+              endTime: '16:00',
+              prisonerNumber: 'ABC123',
+            },
+          ],
+          courtHearings: [
+            { eventId: 3, eventDesc: 'Video link', startTime: '09:00', endTime: '10:00', prisonerNumber: 'ABC123' },
+            { eventId: 4, eventDesc: 'Video link', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC321' },
+          ],
+          visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC123' }],
+        } as PrisonerScheduledEvents)
+
       when(prisonService.getInmateDetails)
         .calledWith(['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
         .mockResolvedValue([
@@ -72,26 +94,44 @@ describe('Route Handlers - Attendance List', () => {
           name: 'Maths level 1',
           notAttended: 1,
           notRecorded: 1,
-          prisonerNumbers: ['ABC123', 'ABC321', 'ZXY123'],
           time: '10:00 - 11:00',
         },
         attendees: expect.arrayContaining([
           {
-            attendanceLabel: 'Not attended yet',
+            attendanceLabel: 'Not recorded yet',
             location: 'MDI-1-001',
             name: 'Joe Bloggs',
+            otherEvents: [
+              {
+                endTime: '11:00',
+                eventDesc: 'Visit',
+                eventId: 5,
+                prisonerNumber: 'ABC123',
+                startTime: '10:30',
+              },
+            ],
             prisonerNumber: 'ABC123',
           },
           {
             attendanceLabel: 'Attended',
             location: 'MDI-1-002',
             name: 'Alan Key',
+            otherEvents: [
+              {
+                startTime: '10:30',
+                endTime: '11:00',
+                eventDesc: 'Video link',
+                eventId: 4,
+                prisonerNumber: 'ABC321',
+              },
+            ],
             prisonerNumber: 'ABC321',
           },
           {
             attendanceLabel: 'Absent',
             location: 'MDI-1-003',
             name: 'Mr Blobby',
+            otherEvents: [],
             prisonerNumber: 'ZXY123',
           },
         ]),

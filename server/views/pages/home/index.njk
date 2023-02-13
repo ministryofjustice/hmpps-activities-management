@@ -101,11 +101,16 @@
                         "description": "Implementation of a calendar with bank holidays overlayed"
                     }) }}
                 </div>
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "href": "/appointments",
+                        "clickable": "true",
+                        "heading": "Appointments management",
+                        "description": "Create and manage appointments for individuals and groups"
+                    }) }}
+                </div>
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block pageScripts %}
-    <script src="/assets/js/card.js"></script>
 {% endblock %}

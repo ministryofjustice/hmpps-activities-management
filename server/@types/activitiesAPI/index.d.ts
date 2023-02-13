@@ -187,6 +187,17 @@ export interface paths {
      */
     get: operations['getLocationGroups']
   }
+  '/appointments/{appointmentId}': {
+    /**
+     * Get an appointment by its id
+     * @description Returns an appointment and its details by its unique identifier.
+     */
+    get: operations['getAppointmentById']
+  }
+  '/appointment-categories': {
+    /** Get the list of top-level appointment categories */
+    get: operations['getAppointmentCategories']
+  }
   '/activity-categories': {
     /** Get the list of top-level activity categories */
     get: operations['getCategories']
@@ -1465,6 +1476,330 @@ export interface components {
        */
       children: components['schemas']['LocationGroup'][]
     }
+    /**
+     * @description
+     *   The top level appointment containing the initial values for all appointment properties.
+     *   Joins together one or more appointment occurrences and optionally a schedule if the appointment is recurring.
+     *   The child appointment occurrences will by default have the same property values.
+     *   The occurrence property values can be changed independently to support rescheduling, cancelling and altered
+     *   attendee lists at an individual occurrence level.
+     *   Editing a property at the appointment level will cascade the edit to all *future* child occurrences
+     */
+    Appointment: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this appointment
+       * @example 12345
+       */
+      id: number
+      category: components['schemas']['AppointmentCategory']
+      /**
+       * @description
+       *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
+       *     Note, this property does not exist on the appointment occurrences and is therefore consistent across all occurrences
+       *
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * Format: int32
+       * @description
+       *     The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
+       *     Should be null if in cell = true
+       *
+       * @example 123
+       */
+      internalLocationId?: number
+      /**
+       * @description
+       *     Flag to indicate if the location of the appointment is in cell rather than an internal prison location.
+       *     Internal location id should be null if in cell = true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * Format: date
+       * @description The date of the appointment or first appointment occurrence in the series
+       */
+      startDate: string
+      /**
+       * Format: partial-time
+       * @description The starting time of the appointment or first appointment occurrence in the series
+       * @example 09:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of the appointment or first appointment occurrence in the series
+       * @example 10:30
+       */
+      endTime?: string
+      /**
+       * @description
+       *     Notes relating to the appointment.
+       *     The default value if no notes are specified at the occurrence or instance levels
+       *
+       * @example This appointment will help adjusting to life outside of prison
+       */
+      comment: string
+      /**
+       * Format: date-time
+       * @description The date and time this appointment was created. Will not change
+       */
+      created: string
+      /**
+       * @description
+       *     The username of the user authenticated via HMPPS auth that created the appointment.
+       *     Usually a NOMIS username
+       *
+       * @example AAA01U
+       */
+      createdBy: string
+      /**
+       * Format: date-time
+       * @description
+       *     The date and time this appointment was last changed.
+       *     Will be null if the appointment has not been altered since it was created
+       */
+      updated?: string
+      /**
+       * @description
+       *     The username of the user authenticated via HMPPS auth that edited the appointment.
+       *     Usually a NOMIS username. Will be null if the appointment has not been altered since it was created
+       *
+       * @example AAA01U
+       */
+      updatedBy?: string
+      schedule?: components['schemas']['AppointmentSchedule']
+      /**
+       * @description
+       *     The individual occurrence or occurrences of this appointment. Non recurring appointments will have a single
+       *     appointment occurrence containing the same property values as the parent appointment. The same start date, time
+       *     and end time. Recurring appointments will have a series of occurrences. The first in the series will also
+       *     contain the same property values as the parent appointment and subsequent occurrences will have start dates
+       *     following on from the original start date incremented as specified by the appointment's schedule. Each occurrence
+       *     can be edited independently of the parent. All properties of an occurrence override those of the parent appointment
+       *     with a null coalesce back to the parent for nullable properties. The full series of occurrences specified by the
+       *     schedule will be created in advance.
+       */
+      occurrences: components['schemas']['AppointmentOccurrence'][]
+    }
+    /**
+     * @description
+     *   Describes an activity category. Categories can have a two level hierarchy, category and subcategory.
+     *   Subcategory level categories will have a parent.
+     *   Tables referencing appointment category should use the id primary key.
+     *   Mapping to NOMIS is via the code property.
+     *   The active property is a soft delete allowing categories that only exist in NOMIS to be maintained in the database
+     *   but not supported when creating or editing appointments.
+     *   Display order supports explicit ordering of categories and subcategories. Ordering will default to alphabetically
+     *   by description of display order is not specified.
+     */
+    AppointmentCategory: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this appointment category
+       * @example 51
+       */
+      id: number
+      parent?: components['schemas']['AppointmentCategory']
+      /**
+       * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
+       * @example CHAP
+       */
+      code: string
+      /**
+       * @description The description of the appointment category
+       * @example Chaplaincy, Medical - Doctor, Gym - Weights
+       */
+      description: string
+      /**
+       * @description Flag to indicate if this (sub)category) is active. Only active (sub)categories are valid for create and update requests
+       * @example true
+       */
+      active: boolean
+      /**
+       * Format: int32
+       * @description Override to the default of ordering alphabetically by description supporting explicit ordering
+       * @example 1
+       */
+      displayOrder?: number
+    }
+    /**
+     * @description
+     *   Represents a specific appointment occurrence. Non recurring appointments will have a single appointment occurrence
+     *   containing the same property values as the parent appointment. The same start date, time and end time. Recurring
+     *   appointments will have a series of occurrences. The first in the series will also contain the same property values
+     *   as the parent appointment and subsequent occurrences will have start dates following on from the original start date
+     *   incremented as specified by the appointment's schedule. Each occurrence can be edited independently of the parent.
+     *   All properties of an occurrence override those of the parent appointment with a null coalesce back to the parent for
+     *   nullable properties. The full series of occurrences specified by the schedule will be created in advance.
+     */
+    AppointmentOccurrence: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this appointment occurrence
+       * @example 123456
+       */
+      id: number
+      /**
+       * Format: int32
+       * @description
+       *     The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
+       *     Should be null if in cell = true
+       *
+       * @example 123
+       */
+      internalLocationId?: number
+      /**
+       * @description
+       *     Flag to indicate if the location of the appointment is in cell rather than an internal prison location.
+       *     Internal location id should be null if in cell = true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * Format: date
+       * @description The date this appointment occurrence is taking place on
+       */
+      startDate: string
+      /**
+       * Format: partial-time
+       * @description The starting time of this appointment occurrence
+       * @example 13:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of this appointment occurrence
+       * @example 13:30
+       */
+      endTime?: string
+      /**
+       * @description
+       *     Notes relating to this appointment occurrence.
+       *     The comment value from the parent appointment will be used if this is null
+       *
+       * @example This appointment occurrence has been rescheduled due to staff availability
+       */
+      comment?: string
+      /**
+       * @description
+       *     Supports cancelling of this appointment occurrence. This is different from (soft) deleting the parent appointment
+       *     and can be used to highlight where an appointment has been cancelled on unlock lists and similar
+       *
+       * @example false
+       */
+      cancelled: boolean
+      /**
+       * Format: date-time
+       * @description
+       *     The date and time this appointment occurrence was last changed.
+       *     Will be null if the appointment occurrence has not been altered independently from the parent appointment
+       *     since it was created
+       */
+      updated?: string
+      /**
+       * @description
+       *     The username of the user authenticated via HMPPS auth that edited this appointment instance.
+       *     Usually a NOMIS username. Will be null if the appointment occurrence has not been altered independently from the
+       *     parent appointment since it was created
+       *
+       * @example AAA01U
+       */
+      updatedBy?: string
+      /**
+       * @description
+       *     The prisoner or prisoners attending this appointment occurrence. Single appointments such as medical will have one
+       *     allocation record. A group appointment e.g. gym or chaplaincy sessions will have more than one allocation record.
+       *     Allocations are at the occurrence level supporting alteration of attendees in any future occurrence.
+       *     When viewing or editing a recurring appointment, the allocations from the next appointment occurrence in the series
+       *     will be used.
+       */
+      allocations: components['schemas']['AppointmentOccurrenceAllocation'][]
+    }
+    /**
+     * @description
+     *   The allocation of a prisoner to an appointment occurrence. Standard single appointments will have one prisoner
+     *   allocated to its single appointment occurrence. More than one prisoner allocation record signifies the associated
+     *   appointment is a group appointment. Group appointments support additional checks such as non-associations.
+     */
+    AppointmentOccurrenceAllocation: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this appointment allocation
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The NOMIS OFFENDERS.OFFENDER_ID_DISPLAY value for mapping to a prisoner record in NOMIS
+       * @example A1234BC
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
+       * @example 456
+       */
+      bookingId: number
+    }
+    /**
+     * @description
+     *   Describes the recurrence of an appointment. The days of the week an occurrence of the appointment will be scheduled
+     *   and the end date of the series.
+     */
+    AppointmentSchedule: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this appointment schedule
+       * @example 12345
+       */
+      id: number
+      /**
+       * Format: date
+       * @description
+       *     The date the series of appointment occurrences should end. The UI will provide options to specify an end date or
+       *     a number of occurrences. The later case should be used to calculate the end date internally
+       */
+      endDate: string
+      /**
+       * @description Indicates the appointment reoccurs every Monday
+       * @example false
+       */
+      mondayFlag: boolean
+      /**
+       * @description Indicates the appointment reoccurs every Tuesday
+       * @example true
+       */
+      tuesdayFlag: boolean
+      /**
+       * @description Indicates the appointment reoccurs every Wednesday
+       * @example false
+       */
+      wednesdayFlag: boolean
+      /**
+       * @description Indicates the appointment reoccurs every Thursday
+       * @example false
+       */
+      thursdayFlag: boolean
+      /**
+       * @description Indicates the appointment reoccurs every Friday
+       * @example false
+       */
+      fridayFlag: boolean
+      /**
+       * @description Indicates the appointment reoccurs every Saturday
+       * @example false
+       */
+      saturdayFlag: boolean
+      /**
+       * @description Indicates the appointment reoccurs every Sunday
+       * @example false
+       */
+      sundayFlag: boolean
+    }
   }
   responses: never
   parameters: never
@@ -2516,6 +2851,54 @@ export interface operations {
       }
       /** @description Requested resource not found */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getAppointmentById: {
+    /**
+     * Get an appointment by its id
+     * @description Returns an appointment and its details by its unique identifier.
+     */
+    parameters: {
+      path: {
+        appointmentId: number
+      }
+    }
+    responses: {
+      /** @description Appointment found */
+      200: {
+        content: {
+          'application/json': components['schemas']['Appointment']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The appointment for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getAppointmentCategories: {
+    /** Get the list of top-level appointment categories */
+    responses: {
+      /** @description Appointment categories found */
+      200: {
+        content: {
+          'application/json': components['schemas']['AppointmentCategory'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }

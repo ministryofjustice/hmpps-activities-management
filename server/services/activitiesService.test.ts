@@ -15,6 +15,9 @@ import {
   RolloutPrison,
   ScheduledActivity,
   PrisonPayBand,
+  PrisonerScheduledEvents,
+  Appointment,
+  AppointmentCategory,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -220,7 +223,7 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('getScheduledPrisonLocations', () => {
+  describe('getScheduledEventsForPrisoners', () => {
     it('should fetch internal prison locations that have activities scheduled using the activities API', async () => {
       when(activitiesApiClient.getScheduledPrisonLocations)
         .calledWith(atLeast('10001'))
@@ -228,6 +231,23 @@ describe('Activities Service', () => {
       const locations = await activitiesService.getScheduledPrisonLocations('EDI', '10001', '2022-08-01', user)
       expect(locations.length).toEqual(41)
       expect(activitiesApiClient.getScheduledPrisonLocations).toHaveBeenCalledWith('EDI', '10001', '2022-08-01', user)
+    })
+  })
+
+  describe('getScheduledEventsForPrisoners', () => {
+    it('should fetch scheduled activities for a list of prisoners using the activities API', async () => {
+      const expectedResult = { activities: [{ id: 1 }] } as unknown as PrisonerScheduledEvents
+
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers)
+        .calledWith('MDI', expect.any(String), expect.arrayContaining(['ABC123', 'ABC321']), user)
+        .mockResolvedValue(expectedResult)
+
+      const scheduledEvents = await activitiesService.getScheduledEventsForPrisoners(
+        new Date(),
+        ['ABC123', 'ABC321'],
+        user,
+      )
+      expect(scheduledEvents).toEqual(expectedResult)
     })
   })
 
@@ -271,6 +291,81 @@ describe('Activities Service', () => {
       expect(results.length).toEqual(1)
       expect(results[0]).toEqual(mockedLocationGroups[0])
       expect(activitiesApiClient.getPrisonLocationGroups).toHaveBeenCalledWith('MDI', user)
+    })
+  })
+
+  describe('getAppointment', () => {
+    it('should return appointment from api when valid appointment id is used', async () => {
+      const expectedResult = {
+        id: 12345,
+        category: {
+          id: 51,
+          code: 'CHAP',
+          description: 'Chaplaincy',
+        },
+        prisonCode: 'SKI',
+        internalLocationId: 123,
+        startDate: '2023-02-07',
+        startTime: '09:00',
+        endTime: '10:30',
+        comment: 'This appointment will help adjusting to life outside of prison',
+        created: '2023-02-07T15:37:59.266Z',
+        createdBy: 'AAA01U',
+        occurrences: [
+          {
+            id: 123456,
+            internalLocationId: 123,
+            startDate: '2023-02-07',
+            startTime: '13:00',
+            endTime: '13:30',
+            comment: 'This appointment occurrence has been rescheduled due to staff availability',
+            cancelled: false,
+            updated: '2023-02-07T15:37:59.266Z',
+            updatedBy: 'AAA01U',
+            allocations: [
+              {
+                id: 123456,
+                prisonerNumber: 'A1234BC',
+                bookingId: 456,
+              },
+            ],
+          },
+        ],
+      } as Appointment
+
+      when(activitiesApiClient.getAppointment).calledWith(12345, user).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getAppointment(12345, user)
+
+      expect(actualResult).toEqual(expectedResult)
+    })
+  })
+
+  describe('getAppointmentCategories', () => {
+    it('should return all categories from api', async () => {
+      const expectedResult = [
+        {
+          id: 51,
+          code: 'CHAP',
+          description: 'Chaplaincy',
+        },
+        {
+          id: 11,
+          code: 'MEDO',
+          description: 'Medical - Doctor',
+        },
+        {
+          id: 20,
+          code: 'GYMW',
+          description: 'Gym - Weights',
+        },
+      ] as AppointmentCategory[]
+
+      when(activitiesApiClient.getAppointmentCategories).calledWith(user).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getAppointmentCategories(user)
+
+      expect(actualResult).toEqual(expectedResult)
     })
   })
 })

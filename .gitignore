@@ -117,7 +117,7 @@ dist
 
 
 
-assets/stylesheets/*.css
+assets
 .idea
 .vscode
 build-info.json

@@ -4,7 +4,7 @@ import SelectPeriodRoutes, { TimePeriod } from './handlers/selectPeriod'
 import validationMiddleware from '../../middleware/validationMiddleware'
 import ActivitiesRoutes from './handlers/activities'
 import { Services } from '../../services'
-import AttendanceListRoutes from './handlers/attendanceList'
+import AttendanceListRoutes, { AttendanceList } from './handlers/attendanceList'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -21,6 +21,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/select-period', selectPeriodHandler.POST, TimePeriod)
   get('/activities', activitiesHandler.GET)
   get('/activities/:id/attendance-list', attendanceListHandler.GET)
+  post('/activities/:id/attended', attendanceListHandler.ATTENDED, AttendanceList)
+  post('/activities/:id/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
 
   return router
 }

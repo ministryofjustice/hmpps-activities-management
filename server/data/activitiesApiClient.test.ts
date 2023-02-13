@@ -13,6 +13,8 @@ import {
   LocationPrefix,
   PrisonerAllocations,
   PrisonerScheduledEvents,
+  Appointment,
+  AppointmentCategory,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 
@@ -432,12 +434,87 @@ describe('activitiesApiClient', () => {
       const result = await activitiesApiClient.getScheduledEventsByPrisonerNumbers(
         prisonCode,
         date,
-        timeSlot,
         prisonerNumbers,
         user,
+        timeSlot,
       )
 
       expect(result).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getAppointment', () => {
+    it('should return appointment from api when valid appointment id is used', async () => {
+      const response = {
+        id: 12345,
+        category: {
+          id: 51,
+          code: 'CHAP',
+          description: 'Chaplaincy',
+        },
+        prisonCode: 'SKI',
+        internalLocationId: 123,
+        startDate: '2023-02-07',
+        startTime: '09:00',
+        endTime: '10:30',
+        comment: 'This appointment will help adjusting to life outside of prison',
+        created: '2023-02-07T15:37:59.266Z',
+        createdBy: 'AAA01U',
+        occurrences: [
+          {
+            id: 123456,
+            internalLocationId: 123,
+            startDate: '2023-02-07',
+            startTime: '13:00',
+            endTime: '13:30',
+            comment: 'This appointment occurrence has been rescheduled due to staff availability',
+            cancelled: false,
+            updated: '2023-02-07T15:37:59.266Z',
+            updatedBy: 'AAA01U',
+            allocations: [
+              {
+                id: 123456,
+                prisonerNumber: 'A1234BC',
+                bookingId: 456,
+              },
+            ],
+          },
+        ],
+      } as Appointment
+
+      fakeActivitiesApi.get('/appointments/12345').matchHeader('authorization', `Bearer token`).reply(200, response)
+
+      const output = await activitiesApiClient.getAppointment(12345, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getAppointmentCategories', () => {
+    it('should return all categories from api', async () => {
+      const response = [
+        {
+          id: 51,
+          code: 'CHAP',
+          description: 'Chaplaincy',
+        },
+        {
+          id: 11,
+          code: 'MEDO',
+          description: 'Medical - Doctor',
+        },
+        {
+          id: 20,
+          code: 'GYMW',
+          description: 'Gym - Weights',
+        },
+      ] as AppointmentCategory[]
+
+      fakeActivitiesApi.get('/appointment-categories').matchHeader('authorization', `Bearer token`).reply(200, response)
+
+      const output = await activitiesApiClient.getAppointmentCategories(user)
+      expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
   })

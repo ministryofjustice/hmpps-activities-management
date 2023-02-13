@@ -1,0 +1,47 @@
+[
+  {
+    "bookingId": 1201110,
+    "bookingNo": "38526A",
+    "offenderNo": "A7789DY",
+    "firstName": "Booking",
+    "lastName": "Andy",
+    "agencyId": "MDI",
+    "assignedLivingUnitId": 25866,
+    "assignedLivingUnitDesc": "MDI-3-3-017",
+    "dateOfBirth": "1999-07-19"
+  },
+  {
+    "bookingId": 1116666,
+    "bookingNo": "W35506",
+    "offenderNo": "G4572UO",
+    "firstName": "Egurztof",
+    "lastName": "Aisho",
+    "agencyId": "MDI",
+    "assignedLivingUnitId": 25741,
+    "assignedLivingUnitDesc": "MDI-2-3-009",
+    "dateOfBirth": "1976-01-27"
+  },
+  {
+    "bookingId": 1177785,
+    "bookingNo": "28600A",
+    "offenderNo": "G5897GP",
+    "firstName": "Cudmastarie",
+    "middleName": "Hallone",
+    "lastName": "Aborah",
+    "agencyId": "MDI",
+    "assignedLivingUnitId": 25982,
+    "assignedLivingUnitDesc": "MDI-4-3-016",
+    "dateOfBirth": "1989-04-22"
+  },
+  {
+    "bookingId": 1151729,
+    "bookingNo": "02558A",
+    "offenderNo": "G7218GI",
+    "firstName": "Eeteljan",
+    "lastName": "Arianniver",
+    "agencyId": "MDI",
+    "assignedLivingUnitId": 25640,
+    "assignedLivingUnitDesc": "MDI-1-3-024",
+    "dateOfBirth": "1993-02-08"
+  }
+]

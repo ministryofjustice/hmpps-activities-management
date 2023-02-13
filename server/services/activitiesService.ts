@@ -19,6 +19,9 @@ import {
   ActivityCreateRequest,
   ActivityScheduleCreateRequest,
   PrisonPayBand,
+  PrisonerScheduledEvents,
+  Appointment,
+  AppointmentCategory,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -140,6 +143,19 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getScheduledPrisonLocations(prisonCode, date, period, user)
   }
 
+  getScheduledEventsForPrisoners(
+    date: Date,
+    prisonerNumbers: string[],
+    user: ServiceUser,
+  ): Promise<PrisonerScheduledEvents> {
+    return this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
+      user.activeCaseLoadId,
+      format(date, 'yyyy-MM-dd'),
+      prisonerNumbers,
+      user,
+    )
+  }
+
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
     return this.activitiesApiClient.getActivitySchedule(id, user)
   }
@@ -209,5 +225,13 @@ export default class ActivitiesService {
     user: ServiceUser,
   ): Promise<PrisonerAllocations[]> {
     return this.activitiesApiClient.getPrisonerAllocations(prisonCode, prisonerNumbers, user)
+  }
+
+  async getAppointment(appointmentId: number, user: ServiceUser): Promise<Appointment> {
+    return this.activitiesApiClient.getAppointment(appointmentId, user)
+  }
+
+  async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategory[]> {
+    return this.activitiesApiClient.getAppointmentCategories(user)
   }
 }

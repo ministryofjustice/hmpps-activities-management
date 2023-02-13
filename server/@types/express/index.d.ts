@@ -5,6 +5,7 @@ import { RoleDetail } from '../nomisUserApiImport/types'
 import { AllocateToActivityJourney } from '../../routes/allocate-to-activity/journey'
 import { CreateAnActivityJourney } from '../../routes/create-an-activity/journey'
 import { CreateScheduleJourney } from '../../routes/manage-schedules/create-schedule/journey'
+import { CreateSingleAppointmentJourney } from '../../routes/appointments/create-single/journey'
 // eslint-disable-next-line import/no-cycle
 import { UnlockFilters } from '../activities'
 
@@ -21,6 +22,7 @@ declare module 'express-session' {
     createJourney: CreateAnActivityJourney
     allocateJourney: AllocateToActivityJourney
     createScheduleJourney: CreateScheduleJourney
+    createSingleAppointmentJourney: CreateSingleAppointmentJourney
     unlockFilters: UnlockFilters
   }
 }

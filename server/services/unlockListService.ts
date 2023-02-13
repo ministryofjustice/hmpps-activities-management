@@ -91,9 +91,9 @@ export default class UnlockListService {
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       prison,
       unlockDate,
-      slot,
       filteredPrisoners.map(p => p.prisonerNumber),
       user,
+      slot,
     )
 
     logger.info(`Total activities: ${scheduledEvents?.activities.length}`)
