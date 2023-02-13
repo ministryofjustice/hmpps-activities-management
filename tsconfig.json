@@ -18,6 +18,15 @@
     "experimentalDecorators": true,
     "typeRoots": ["./server/@types", "./node_modules/@types"]
   },
-  "exclude": ["node_modules", "assets/**/*.js", "integration_tests", "dist", "cypress.config.ts", "coverage"],
+  "exclude": [
+    "node_modules",
+    "assets/**/*.js",
+    "frontend",
+    "integration_tests",
+    "dist",
+    "cypress.config.ts",
+    "coverage",
+    "gruntfile.js"
+  ],
   "include": ["**/*.js", "**/*.ts"]
 }
