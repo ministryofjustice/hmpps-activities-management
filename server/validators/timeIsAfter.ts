@@ -1,4 +1,5 @@
 import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator'
+import { isValid } from 'date-fns'
 import SimpleTime from '../commonValidationTypes/simpleTime'
 
 export default function TimeIsAfter(property: string, validationOptions?: ValidationOptions) {
@@ -11,9 +12,10 @@ export default function TimeIsAfter(property: string, validationOptions?: Valida
       options: validationOptions,
       validator: {
         validate(value: SimpleTime, args: ValidationArguments) {
+          const date = value.toDate()
           const [relatedPropertyName] = args.constraints
-          const relatedValue = args.object[relatedPropertyName]
-          return relatedValue ? value.toDate() > relatedValue.toDate() : true
+          const relatedDate = args.object[relatedPropertyName].toDate()
+          return isValid(date) && isValid(relatedDate) ? date > relatedDate : true
         },
       },
     })

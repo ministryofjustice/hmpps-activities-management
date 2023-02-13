@@ -153,13 +153,28 @@ export const addDefaultSelectedValue = (items: any, text: any, show: any) => {
   ]
 }
 
-export const toItems = (array: string[]) => {
+export const toTimeItems = (array: string[], selected: number) => {
   if (!array) return null
 
-  return array.map(entry => ({
-    value: entry,
-    text: entry,
-  }))
+  const items = [
+    {
+      value: '-',
+      text: '--',
+      selected: false,
+    },
+  ]
+
+  array.forEach(item => {
+    const timeValue = parseInt(item, 10)
+    const value = Number.isNaN(timeValue) ? item : timeValue.toString()
+    items.push({
+      value,
+      text: item,
+      selected: value === selected.toString(),
+    })
+  })
+
+  return items
 }
 
 export const findError = (array: FieldValidationError[], formFieldId: string) => {

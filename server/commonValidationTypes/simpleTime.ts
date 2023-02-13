@@ -10,7 +10,7 @@ export default class SimpleTime {
   @Type(() => Number)
   @IsInt({ message: HOUR_MESSAGE })
   @Min(0, { message: HOUR_MESSAGE })
-  @Max(12, { message: HOUR_MESSAGE })
+  @Max(23, { message: HOUR_MESSAGE })
   hour: number
 
   @Expose()

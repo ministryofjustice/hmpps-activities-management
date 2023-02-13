@@ -16,7 +16,7 @@ import {
   setSelected,
   startsWithAny,
   toMoney,
-  toItems,
+  toTimeItems,
   exampleDateOneWeekAhead,
 } from '../utils/utils'
 import config from '../config'
@@ -86,7 +86,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('setSelected', setSelected)
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
-  njkEnv.addFilter('toItems', toItems)
+  njkEnv.addFilter('toTimeItems', toTimeItems)
   njkEnv.addFilter('findError', findError)
   njkEnv.addFilter('buildErrorSummaryList', buildErrorSummaryList)
   njkEnv.addFilter('formatDate', formatDate)
