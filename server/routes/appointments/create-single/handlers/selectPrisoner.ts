@@ -23,7 +23,7 @@ export default class SelectPrisonerRoutes {
     const { user } = res.locals
 
     const prisoners = await this.prisonService.searchInmates(
-      { prisonerIdentifier: number, includeAliases: false },
+      { prisonIds: [user.activeCaseLoadId], prisonerIdentifier: number, includeAliases: false },
       user,
     )
 
