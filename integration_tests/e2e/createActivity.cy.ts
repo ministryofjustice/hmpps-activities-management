@@ -37,7 +37,7 @@ context('Change location', () => {
     activityNamePage.continue()
 
     const riskLevelPage = Page.verifyOnPage(RiskLevelPage)
-    riskLevelPage.selectRiskLevel('Low')
+    riskLevelPage.selectRiskLevel('Only low workplace risk assessment level is suitable')
     riskLevelPage.continue()
 
     const payPage = Page.verifyOnPage(PayPage)
