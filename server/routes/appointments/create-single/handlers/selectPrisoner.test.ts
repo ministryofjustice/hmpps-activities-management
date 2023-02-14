@@ -21,6 +21,7 @@ describe('Route Handlers - Create Single Appointment - Select Prisoner', () => {
       locals: {
         user: {
           username: 'test.user',
+          activeCaseLoadId: 'TPR',
         },
       },
       render: jest.fn(),
@@ -55,7 +56,7 @@ describe('Route Handlers - Create Single Appointment - Select Prisoner', () => {
       }
 
       when(prisonService.searchInmates)
-        .calledWith({ prisonerIdentifier: 'A1234BC', includeAliases: false }, res.locals.user)
+        .calledWith({ prisonIds: ['TPR'], prisonerIdentifier: 'A1234BC', includeAliases: false }, res.locals.user)
         .mockResolvedValue([
           { prisonerNumber: 'A1234BC', firstName: 'Test', lastName: 'Prisoner', cellLocation: '1-1-1' } as Prisoner,
         ])
@@ -77,7 +78,7 @@ describe('Route Handlers - Create Single Appointment - Select Prisoner', () => {
       }
 
       when(prisonService.searchInmates)
-        .calledWith({ prisonerIdentifier: 'A1234BC', includeAliases: false }, res.locals.user)
+        .calledWith({ prisonIds: ['TPR'], prisonerIdentifier: 'A1234BC', includeAliases: false }, res.locals.user)
         .mockResolvedValue([])
 
       await handler.POST(req, res)
