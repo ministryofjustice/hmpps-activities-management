@@ -17,22 +17,20 @@ module.exports = grunt => {
     },
     concat: {
       css: {
-        webkit: {
-          src: [
-            'assets/stylesheets/application.css',
-            'node_modules/jquery-ui-dist/jquery-ui.min.css',
-            'node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css',
-          ],
-          dest: 'assets/stylesheets/application.css',
-        },
-        ie8: {
-          src: [
-            'assets/stylesheets/application-ie8.css',
-            'node_modules/jquery-ui-dist/jquery-ui.min.css',
-            'node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css',
-          ],
-          dest: 'assets/stylesheets/application-ie8.css',
-        },
+        src: [
+          'node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css',
+          'assets/stylesheets/application.css',
+          'node_modules/jquery-ui-dist/jquery-ui.min.css',
+        ],
+        dest: 'assets/stylesheets/application.css',
+      },
+      cssIe8: {
+        src: [
+          'assets/stylesheets/application-ie8.css',
+          'node_modules/jquery-ui-dist/jquery-ui.min.css',
+          'node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css',
+        ],
+        dest: 'assets/stylesheets/application-ie8.css',
       },
       js: {
         src: ['frontend/namespace.js', 'frontend/**/*.js', '!frontend/vendor/**/*.js', '!frontend/init.js'],
@@ -99,6 +97,15 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-contrib-copy')
   grunt.loadNpmTasks('grunt-contrib-watch')
 
-  grunt.registerTask('default', ['sass', 'concat:css', 'concat:js', 'umd', 'concat:jsDist', 'uglify', 'copy'])
+  grunt.registerTask('default', [
+    'sass',
+    'concat:css',
+    'concat:cssIe8',
+    'concat:js',
+    'umd',
+    'concat:jsDist',
+    'uglify',
+    'copy',
+  ])
   grunt.registerTask('watch', ['watch'])
 }
