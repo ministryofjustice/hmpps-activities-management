@@ -15,13 +15,13 @@
         </div>
     </div>
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-three-quarters">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
                     fieldset: {
                         legend: {
-                            text: "What is the risk level?",
+                            text: "Workplace risk assessment levels: which ones are suitable for this activity?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--xl"
                         }
@@ -29,23 +29,27 @@
                     name: "riskLevel",
                     errorMessage: validationErrors | findError('riskLevel'),
                     hint: {
-                        text: "Select the most recent risk assessment level for this activity."
+                        text: "Select the relevant workplace risk assessment levels for this activity.
+                        The levels you select will be used to filter candidates before allocation."
                     },
                     items: [
                         {
-                            value: "high",
-                            text: "High",
-                            checked: formResponses.riskLevel == 'high' or session.createJourney.riskLevel == 'high'
+                            value: "low",
+                            html: "Only <span class='govuk-!-font-weight-bold'>low workplace
+                                risk assessment</span> is suitable",
+                            checked: formResponses.riskLevel == 'low' or session.createJourney.riskLevel == 'low'
                         },
                         {
                             value: "medium",
-                            text: "Medium",
+                            html: "<span class='govuk-!-font-weight-bold'>Either low or medium workplace
+                                risk assessment</span> is suitable",
                             checked: formResponses.riskLevel == 'medium' or session.createJourney.riskLevel == 'medium'
                         },
                         {
-                            value: "low",
-                            text: "Low",
-                            checked: formResponses.riskLevel == 'low' or session.createJourney.riskLevel == 'low'
+                            value: "high",
+                            html: "<span class='govuk-!-font-weight-bold'>Any of low, medium or high workplace
+                                risk assessment</span> is suitable",
+                            checked: formResponses.riskLevel == 'high' or session.createJourney.riskLevel == 'high'
                         }
                     ]
                 }) }}

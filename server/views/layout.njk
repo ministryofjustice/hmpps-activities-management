@@ -9,19 +9,14 @@
 
   <!--[if lt IE 9]>
   <link href="/assets/stylesheets/application-ie8.css?{{ version }}" rel="stylesheet"/>
-  <script src="/assets/js/html5shiv-3.7.3.min.js"></script>
   <![endif]-->
-
-  <script src="/assets/js/jquery.min.js"></script>
-  <script src="/assets/js/jquery-ui.min.js"></script>
-  <link href="/assets/stylesheets/jquery-ui.min.css" rel="stylesheet">
-
 {% endblock %}
 
 {% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
 
 {% block header %}
   {% include "partials/header.njk" %}
+  {% block meta %}{% endblock %}
 {% endblock %}
 
 {% block beforeContent %}
@@ -58,11 +53,5 @@
 {% block bodyEnd %}
   {# Run JavaScript at end of the
   <body>, to avoid blocking the initial render. #}
-  <script src="/assets/govuk/all.js"></script>
-  <script src="/assets/moj/all.js"></script>
-  <script src="/assets/govukFrontendInit.js"></script>
-  <script src="/assets/js/main.js"></script>
-
-  {# Javascript block for individual pages #}
-  {% block pageScripts %}{%  endblock %}
+  <script src="/assets/javascript/activities.min.js"></script>
 {% endblock %}
