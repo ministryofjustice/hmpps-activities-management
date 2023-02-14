@@ -44,6 +44,10 @@ export const initialiseName = (fullName?: string): string | null => {
   return `${array[0][0]}. ${array.reverse()[0]}`
 }
 
+export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {
+  return parse(date, fromFormat, new Date())
+}
+
 export const switchDateFormat = (displayDate: string, fromFormat = 'dd/MM/yyyy') => {
   if (displayDate) {
     return formatISO(parse(displayDate, fromFormat, new Date(), { locale: enGBLocale }), { representation: 'date' })

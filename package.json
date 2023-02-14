@@ -11,7 +11,7 @@
     "watch-ts": "tsc -w",
     "watch-views": "nodemon --watch server/views -e html,njk -x npm run copy-views",
     "watch-node": "DEBUG=gov-starter-server* nodemon --watch dist/ dist/server.js | bunyan -o short",
-    "watch-assets": "npm run compile-assets && grunt watch",
+    "watch-assets": "grunt watch",
     "build": "rm -rf dist && npm run compile-assets && tsc && npm run copy-views",
     "start": "node $NODE_OPTIONS -r dotenv/config dist/server.js | bunyan -o short",
     "start:dev": "npm run build && concurrently -k -p \"[{name}]\" -n \"Views,TypeScript,Node,Sass\" -c \"yellow.bold,cyan.bold,green.bold,blue.bold\" \"npm run watch-views\" \"npm run watch-ts\" \"npm run watch-node\" \"npm run watch-assets\"",

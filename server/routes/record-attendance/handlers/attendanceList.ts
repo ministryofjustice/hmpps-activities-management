@@ -25,7 +25,7 @@ export default class AttendanceListRoutes {
     const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
     const prisonerNumbers = instance.attendances.map(a => a.prisonerNumber)
     const otherScheduledEvents = await this.activitiesService
-      .getScheduledEventsForPrisoners(parse(instance.date, 'dd/MM/yyyy', new Date()), prisonerNumbers, user)
+      .getScheduledEventsForPrisoners(parse(instance.date, 'yyyy-MM-dd', new Date()), prisonerNumbers, user)
       .then(response => [
         ...response.activities,
         ...response.appointments,
@@ -50,7 +50,7 @@ export default class AttendanceListRoutes {
         name: instance.activitySchedule.activity.summary,
         location: instance.activitySchedule.internalLocation.description,
         time: `${instance.startTime} - ${instance.endTime}`,
-        date: parse(instance.date, 'dd/MM/yyyy', new Date()),
+        date: parse(instance.date, 'yyyy-MM-dd', new Date()),
         ...getAttendanceSummary(instance.attendances),
       },
       attendees,
