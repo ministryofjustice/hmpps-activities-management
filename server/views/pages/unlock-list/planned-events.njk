@@ -18,28 +18,6 @@
     <link href="/assets/stylesheets/printViews/unlock-list.css?{{ version }}" rel="stylesheet"/>
 {% endblock %}
 
-{% block pageScripts %}
-    <script>
-      new MOJFrontend.FilterToggleButton({
-        bigModeMediaQuery: "(min-width: 48.063em)",
-        startHidden: true,
-        toggleButton: {
-          container: $(".moj-action-bar__filter"),
-          showText: "Show filter",
-          hideText: "Hide filter",
-          classes: "govuk-button--secondary",
-        },
-        closeButton: {
-          container: $(".moj-filter__header-action"),
-          text: "Close",
-        },
-        filter: {
-          container: $(".moj-filter"),
-        },
-      })
-    </script>
-{% endblock %}
-
 {% block content %}
     <div class="govuk-grid-row govuk-!-margin-bottom-2">
 
@@ -109,12 +87,34 @@
 
     {% endset %}
 
-    <div class="moj-filter-layout">
+    <div class="moj-filter-layout" data-module="activities-list-filter">
 
         <form id="filter-form" method="POST" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
             <div class="moj-filter-layout__filter govuk-!-display-none-print">
+
+                {# Set the selected filter items and links to remove them #}
+                {% set selectedLocations = [] %}
+                {% for location in unlockFilters.subLocations %}
+                    {% if (location.checked === true) %}
+                       {%  set selectedLocations = (selectedLocations.push({ href: '#', text: location.value }), selectedLocations) %}
+                    {% endif %}
+                {% endfor %}
+
+                {% set selectedActivities = [] %}
+                {% for activity in unlockFilters.activityNames %}
+                    {% if (activity.checked === true) %}
+                       {%  set selectedActivities = (selectedActivities.push({ href: '#', text: activity.value }), selectedActivities) %}
+                    {% endif %}
+                {%  endfor %}
+
+                {% set selectedStayingOrLeaving = [] %}
+                {% for stayingOrLeaving in unlockFilters.stayingOrLeaving %}
+                    {% if stayingOrLeaving.checked === true %}
+                        {%  set selectedStayingOrLeaving = (selectedStayingOrLeaving.push({ href: '#', text: stayingOrLeaving.value }), selectedStayingOrLeaving) %}
+                    {% endif %}
+                {%  endfor %}
 
                 {{ mojFilter({
                     heading: {
@@ -130,21 +130,21 @@
                         categories: [
                             {
                                 heading: {
-                                text: 'Sub-locations'
-                            },
-                                items: []
-                            },
-                            {
-                                heading: {
-                                text: 'Activities'
-                            },
-                                items: []
+                                    text: 'Sub-locations'
+                                },
+                                items: selectedLocations
                             },
                             {
                                 heading: {
-                                text: 'Activities'
+                                    text: 'Activities'
+                                },
+                                items: selectedActivities
                             },
-                                items: []
+                            {
+                                heading: {
+                                    text: 'Staying or leaving'
+                                },
+                                items: selectedStayingOrLeaving
                             }
                         ]
                     },
@@ -156,15 +156,8 @@
 
             <div class="moj-filter-layout__content">
 
-                <div class="moj-action-bar">
+                <div class="moj-action-bar govuk-!-display-none-print">
                     <div class="moj-action-bar__filter"></div>
-
-                    {{ mojButtonMenu({
-                        items: [{
-                            text: 'Show filters',
-                            classes: 'govuk-button--secondary'
-                        }]
-                    }) }}
                 </div>
 
                 <div class="govuk-grid-column-full">

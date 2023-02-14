@@ -37,4 +37,9 @@ ActivitiesFrontend.initAll = function () {
   ActivitiesFrontend.nodeListForEach($calendars, function ($calendar) {
     new ActivitiesFrontend.Calendar($calendar).init()
   })
+
+  var $filters = document.querySelectorAll('[data-module="activities-list-filter"]')
+  ActivitiesFrontend.nodeListForEach($filters, function ($filter) {
+    new ActivitiesFrontend.ListFilter($filter)
+  })
 }
