@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 // eslint-disable-next-line import/no-cycle
 import ActivitiesService from '../../../services/activitiesService'
 import UnlockListService from '../../../services/unlockListService'
-import { toDate, formatDate } from '../../../utils/utils'
+import { toDate, formatDate, convertToArray } from '../../../utils/utils'
 import logger from '../../../../logger'
 import { UnlockFilterItem, UnlockFilters } from '../../../@types/activities'
 
@@ -23,6 +23,7 @@ export default class PlannedEventsRoutes {
     const locationsAtPrison = await this.activitiesService.getLocationGroups(user.activeCaseLoadId, user)
     const subLocations = locationsAtPrison.filter(loc => loc.name === locationGroup)[0].children.map(loc => loc.name)
 
+    // Set the default unlock filters if not already present in the user's session
     if (!unlockFilters) {
       unlockFilters = defaultUnlockFilters(subLocations)
       req.session.unlockFilters = unlockFilters
@@ -30,6 +31,7 @@ export default class PlannedEventsRoutes {
 
     logger.info(`UnlockFilters: ${JSON.stringify(unlockFilters)}`)
 
+    // Get the filtered unlock list
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(
       locationGroup,
       subLocations,
@@ -39,6 +41,7 @@ export default class PlannedEventsRoutes {
       user,
     )
 
+    // Render unlock list with current filters set
     res.render('pages/unlock-list/planned-events', {
       locationGroup,
       unlockFilters,
@@ -49,22 +52,24 @@ export default class PlannedEventsRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    // The only values posted here are changes to the filtering options
     const { user } = res.locals
     const { unlockFilters } = req.session
 
     logger.info(`POST body = ${JSON.stringify(req.body)} user ${user.name}`)
 
-    const newFilters = applyFiltersFromPost(
+    // Get the changed filter options from the POST body to create new filters
+    const newFilters = parseFiltersFromPost(
       unlockFilters,
-      req.body?.subLocations,
+      req.body?.sublocations,
       req.body?.activityNames,
       req.body?.stayingOrLeaving,
     )
 
+    // Save the new filters on the user's session
     req.session.unlockFilters = newFilters
 
-    logger.info(`Filters = ${JSON.stringify(unlockFilters)}`)
-
+    // Redirect to display unlock list with new filters
     return res.redirect(
       `planned-events?datePresetOption=${req.query.datePresetOption}` +
         `&date=${req.query.date}` +
@@ -74,15 +79,30 @@ export default class PlannedEventsRoutes {
   }
 }
 
-const applyFiltersFromPost = (
+const parseFiltersFromPost = (
   oldFilters: UnlockFilters,
   locations: string | string[],
   activities: string | string[],
-  stayingOrLeaving: string | string[],
+  staying: string | string[],
 ): UnlockFilters => {
-  logger.info(`TODO - apply post values to filters ${locations} - ${activities} - ${stayingOrLeaving}`)
-  // TODO: Translate body values into UnlockFilters object
-  return oldFilters
+  // Convert the posted body values into filter options
+  const subLocations = oldFilters.subLocations.map(loc => {
+    const checked = convertToArray(locations).includes(loc.value)
+    return { value: loc.value, text: loc.text, checked } as UnlockFilterItem
+  })
+
+  const activityNames = oldFilters.activityNames.map(act => {
+    const checked = convertToArray(activities).includes(act.value)
+    return { value: act.value, text: act.text, checked } as UnlockFilterItem
+  })
+
+  const stayingOrLeaving = oldFilters.stayingOrLeaving.map(stay => {
+    const checked = convertToArray(staying).includes(stay.value)
+    return { value: stay.value, text: stay.text, checked } as UnlockFilterItem
+  })
+
+  // Return the new filter object
+  return { subLocations, activityNames, stayingOrLeaving } as UnlockFilters
 }
 
 const defaultUnlockFilters = (childLocations: string[]): UnlockFilters => {
@@ -92,7 +112,7 @@ const defaultUnlockFilters = (childLocations: string[]): UnlockFilters => {
   const subLocations = [{ value: 'All', text: 'All', checked: true } as UnlockFilterItem, ...realSubLocations]
   const activityNames = [{ value: 'All', text: 'All', checked: true }] as UnlockFilterItem[]
   const stayingOrLeaving = [
-    { value: 'All', text: 'All', checked: true },
+    { value: 'Both', text: 'Staying and leaving', checked: true },
     { value: 'Staying', text: 'Staying', checked: false },
     { value: 'Leaving', text: 'Leaving', checked: false },
   ] as UnlockFilterItem[]
