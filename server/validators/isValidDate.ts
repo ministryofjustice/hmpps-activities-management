@@ -3,7 +3,7 @@ import { isValid } from 'date-fns'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 
 export default function IsValidDate(validationOptions?: ValidationOptions) {
-  const isValidDate = (date: SimpleDate) => isValid(date.toRichDate())
+  const isValidDate = (date: SimpleDate) => date !== undefined && isValid(date.toRichDate())
 
   return (object: unknown, propertyName: string) => {
     registerDecorator({

@@ -41,14 +41,24 @@ export default class DateAndTimeRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { startDate, startTime, endTime } = req.body
 
-    req.session.createSingleAppointmentJourney.startDate = startDate
-    req.session.createSingleAppointmentJourney.startDate.display = startDate.toDisplayString()
+    req.session.createSingleAppointmentJourney.startDate = {
+      day: startDate.day,
+      month: startDate.month,
+      year: startDate.year,
+      display: startDate.toDisplayString(),
+    }
 
-    req.session.createSingleAppointmentJourney.startTime = startTime
-    req.session.createSingleAppointmentJourney.startTime.display = startTime.toDisplayString()
+    req.session.createSingleAppointmentJourney.startTime = {
+      hour: startTime.hour,
+      minute: startTime.minute,
+      display: startTime.toDisplayString(),
+    }
 
-    req.session.createSingleAppointmentJourney.endTime = endTime
-    req.session.createSingleAppointmentJourney.endTime.display = endTime.toDisplayString()
+    req.session.createSingleAppointmentJourney.endTime = {
+      hour: endTime.hour,
+      minute: endTime.minute,
+      display: endTime.toDisplayString(),
+    }
 
     res.redirect(`check-answers`)
   }

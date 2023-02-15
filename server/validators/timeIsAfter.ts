@@ -12,6 +12,7 @@ export default function TimeIsAfter(property: string, validationOptions?: Valida
       options: validationOptions,
       validator: {
         validate(value: SimpleTime, args: ValidationArguments) {
+          if (value === undefined) return true
           const date = value.toDate()
           const [relatedPropertyName] = args.constraints
           const relatedDate = args.object[relatedPropertyName].toDate()

@@ -3,7 +3,7 @@ import { isValid } from 'date-fns'
 import SimpleTime from '../commonValidationTypes/simpleTime'
 
 export default function IsValidTime(validationOptions?: ValidationOptions) {
-  const isValidTime = (time: SimpleTime) => isValid(time.toDate())
+  const isValidTime = (time: SimpleTime) => isValid(time !== undefined && time.toDate())
 
   return (object: unknown, propertyName: string) => {
     registerDecorator({

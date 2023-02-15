@@ -1,0 +1,152 @@
+import { Request, Response } from 'express'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import { getDate, getMonth, getYear } from 'date-fns'
+import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
+import SimpleDate from '../../../../commonValidationTypes/simpleDate'
+import SimpleTime from '../../../../commonValidationTypes/simpleTime'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
+
+describe('Route Handlers - Create Single Appointment - Date and Time', () => {
+  const handler = new DateAndTimeRoutes()
+  let req: Request
+  let res: Response
+
+  beforeEach(() => {
+    res = {
+      render: jest.fn(),
+      redirect: jest.fn(),
+    } as unknown as Response
+
+    req = {
+      session: {
+        createSingleAppointmentJourney: {},
+      },
+    } as unknown as Request
+  })
+
+  describe('GET', () => {
+    it('should render the date and time view', async () => {
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-single/date-and-time')
+    })
+  })
+
+  describe('POST', () => {
+    it('should save start date, start time and end time in session and redirect to check answers page', async () => {
+      const today = new Date()
+      req.body = {
+        startDate: plainToInstance(SimpleDate, {
+          day: getDate(today) + 1,
+          month: getMonth(today),
+          year: getYear(today),
+        }),
+        startTime: plainToInstance(SimpleTime, {
+          hour: 11,
+          minute: 30,
+        }),
+        endTime: plainToInstance(SimpleTime, {
+          hour: 13,
+          minute: 0,
+        }),
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.createSingleAppointmentJourney.startDate).toEqual({
+        day: getDate(today) + 1,
+        month: getMonth(today),
+        year: getYear(today),
+        display: req.body.startDate.toDisplayString(),
+      })
+      expect(req.session.createSingleAppointmentJourney.startTime).toEqual({
+        hour: 11,
+        minute: 30,
+        display: '11:30',
+      })
+      expect(req.session.createSingleAppointmentJourney.endTime).toEqual({
+        hour: 13,
+        minute: 0,
+        display: '13:00',
+      })
+      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+    })
+  })
+
+  describe('Validation', () => {
+    it('validation fails when no date or times are specified', async () => {
+      const body = {}
+
+      const requestObject = plainToInstance(DateAndTime, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          { error: 'Enter a valid date for the appointment', property: 'startDate' },
+          { error: 'Enter a date for the appointment', property: 'startDate' },
+          { error: 'Select a valid start time for the appointment', property: 'startTime' },
+          { error: 'Select a start time for the appointment', property: 'startTime' },
+          { error: 'Select a valid end time for the appointment', property: 'endTime' },
+          { error: 'Select an end time for the appointment', property: 'endTime' },
+        ]),
+      )
+    })
+  })
+
+  describe('Validation', () => {
+    it('validation fails when start date is in the past', async () => {
+      const today = new Date()
+      const body = {
+        startDate: plainToInstance(SimpleDate, {
+          day: getDate(today) - 1,
+          month: getMonth(today),
+          year: getYear(today),
+        }),
+        startTime: plainToInstance(SimpleTime, {
+          hour: 11,
+          minute: 30,
+        }),
+        endTime: plainToInstance(SimpleTime, {
+          hour: 13,
+          minute: 0,
+        }),
+      }
+
+      const requestObject = plainToInstance(DateAndTime, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([{ error: "Enter a date on or after today's date", property: 'startDate' }]),
+      )
+    })
+  })
+
+  describe('Validation', () => {
+    it('validation fails when end time after the start time', async () => {
+      const today = new Date()
+      const body = {
+        startDate: plainToInstance(SimpleDate, {
+          day: getDate(today) + 1,
+          month: getMonth(today),
+          year: getYear(today),
+        }),
+        startTime: plainToInstance(SimpleTime, {
+          hour: 11,
+          minute: 30,
+        }),
+        endTime: plainToInstance(SimpleTime, {
+          hour: 11,
+          minute: 30,
+        }),
+      }
+
+      const requestObject = plainToInstance(DateAndTime, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([{ error: 'Select an end time after the start time', property: 'endTime' }]),
+      )
+    })
+  })
+})
