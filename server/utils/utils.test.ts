@@ -15,9 +15,14 @@ import {
   toDateString,
   formatDate,
   toMoney,
+  toTimeItems,
+  toPrisonerDescription,
+  toPrisonerSummary,
+  exampleDateOneWeekAhead,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
+import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 
 describe('utils', () => {
   describe('convert to title case', () => {
@@ -199,6 +204,105 @@ describe('utils', () => {
       expect(toMoney(150)).toEqual('£1.50')
       expect(toMoney(15000)).toEqual('£150.00')
       expect(toMoney(15.53)).toEqual('£0.16')
+    })
+  })
+
+  describe('toTimeItems', () => {
+    it('should add default -- option', () => {
+      expect(toTimeItems(['00'], undefined)).toEqual([
+        {
+          value: '-',
+          text: '--',
+          selected: false,
+        },
+        {
+          value: '0',
+          text: '00',
+          selected: false,
+        },
+      ])
+    })
+
+    it('should select selected', () => {
+      expect(toTimeItems(['00', '05', '10'], 10)).toEqual([
+        {
+          value: '-',
+          text: '--',
+          selected: false,
+        },
+        {
+          value: '0',
+          text: '00',
+          selected: false,
+        },
+        {
+          value: '5',
+          text: '05',
+          selected: false,
+        },
+        {
+          value: '10',
+          text: '10',
+          selected: true,
+        },
+      ])
+    })
+
+    it('should select selected even when select is 0', () => {
+      expect(toTimeItems(['00', '05', '10'], 0)).toEqual([
+        {
+          value: '-',
+          text: '--',
+          selected: false,
+        },
+        {
+          value: '0',
+          text: '00',
+          selected: true,
+        },
+        {
+          value: '5',
+          text: '05',
+          selected: false,
+        },
+        {
+          value: '10',
+          text: '10',
+          selected: false,
+        },
+      ])
+    })
+  })
+
+  describe('toPrisonerDescription', () => {
+    it('should return name, number and cell location separated by pipe characters', () => {
+      const prisoner = {
+        prisonerNumber: 'A1234BC',
+        firstName: 'Test',
+        lastName: 'Prisoner',
+        cellLocation: '1-1-1',
+      } as Prisoner
+      expect(toPrisonerDescription(prisoner)).toEqual('Test Prisoner | A1234BC | 1-1-1')
+    })
+  })
+
+  describe('toPrisonerSummary', () => {
+    it('should return name, number and cell location separated by line breaks', () => {
+      const prisoner = {
+        prisonerNumber: 'A1234BC',
+        firstName: 'Test',
+        lastName: 'Prisoner',
+        cellLocation: '1-1-1',
+      } as Prisoner
+      expect(toPrisonerSummary(prisoner)).toEqual('Test Prisoner<br/>A1234BC<br/>1-1-1')
+    })
+  })
+
+  describe('exampleDateOneWeekAhead', () => {
+    it('should return the date one week from now in dd MM yyyy format', () => {
+      const nextWeek = new Date()
+      nextWeek.setDate(nextWeek.getDate() + 7)
+      expect(exampleDateOneWeekAhead('Example, ')).toEqual(`Example, ${formatDate(nextWeek, 'dd MM yyyy')}`)
     })
   })
 })
