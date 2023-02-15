@@ -1,9 +1,5 @@
-import { nodeListForEach } from '../govuk-esm/common.mjs'
-import '../govuk-esm/vendor/polyfills/Function/prototype/bind.mjs'
-import '../govuk-esm/vendor/polyfills/Element/prototype/classList.mjs'
-
-function MultiSelect(options) {
-  this.container = options.container
+ActivitiesFrontend.MultiSelect = function (container) {
+  this.container = container
 
   this.toggleAllButton = $(this.container.querySelector('#checkboxes-all'))
   this.checkboxes = $(this.container.querySelectorAll('tbody .govuk-checkboxes__input'))
@@ -17,7 +13,7 @@ function MultiSelect(options) {
   this.toggleAllButton.attr('autocomplete', 'off')
 }
 
-MultiSelect.prototype.handleCheckboxChanged = function () {
+ActivitiesFrontend.MultiSelect.prototype.handleCheckboxChanged = function () {
   var count = this.checkboxes.filter(':checked').length
   this.selectedCount.innerText = `${count} selected`
 
@@ -28,7 +24,7 @@ MultiSelect.prototype.handleCheckboxChanged = function () {
   }
 }
 
-MultiSelect.prototype.handleToggleAllButtonChanged = function () {
+ActivitiesFrontend.MultiSelect.prototype.handleToggleAllButtonChanged = function () {
   this.checkboxes.each(
     $.proxy(function (index, el) {
       var event = document.createEvent('HTMLEvents')
@@ -37,10 +33,3 @@ MultiSelect.prototype.handleToggleAllButtonChanged = function () {
     }, this)
   )
 }
-
-var $multiSelects = document.querySelectorAll('[data-module="activities-multi-select"]')
-nodeListForEach($multiSelects, function ($multiSelect) {
-  new MultiSelect({
-    container: $multiSelect,
-  })
-})
