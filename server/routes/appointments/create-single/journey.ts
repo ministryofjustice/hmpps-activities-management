@@ -4,6 +4,7 @@ export type CreateSingleAppointmentJourney = {
     displayName: string
     cellLocation: string
     description: string
+    summary: string
   }
   category?: {
     id: number

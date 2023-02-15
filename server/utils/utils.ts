@@ -170,7 +170,7 @@ export const toTimeItems = (array: string[], selected: number) => {
     items.push({
       value,
       text: item,
-      selected: selected && value === selected.toString(),
+      selected: selected !== undefined && selected !== null && value === selected.toString(),
     })
   })
 
@@ -243,6 +243,11 @@ export const toMoney = (x: number): string => `£${(x / 100).toFixed(2)}`
 
 export const toPrisonerDescription = (prisoner: Prisoner) =>
   `${convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)} | ${prisoner.prisonerNumber} | ${
+    prisoner.cellLocation
+  }`
+
+export const toPrisonerSummary = (prisoner: Prisoner) =>
+  `${convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)}<br/>${prisoner.prisonerNumber}<br/>${
     prisoner.cellLocation
   }`
 

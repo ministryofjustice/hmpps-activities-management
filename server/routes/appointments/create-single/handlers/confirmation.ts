@@ -6,7 +6,7 @@ export default class ConfirmationRoutes {
 
     res.render('pages/appointments/create-single/confirmation', {
       id: req.params.id as unknown as number,
-      confirmationMessage: `You have successfully created a ${createSingleAppointmentJourney.category.description} appointment for ${createSingleAppointmentJourney.prisoner.description} at ${createSingleAppointmentJourney.startTime.display} to ${createSingleAppointmentJourney.endTime.display} on ${createSingleAppointmentJourney.startDate.display} in the ${createSingleAppointmentJourney.location.description}.`,
+      confirmationMessage: `You have successfully created an appointment for ${createSingleAppointmentJourney.prisoner.displayName} on ${createSingleAppointmentJourney.startDate.display}.`,
     })
   }
 }

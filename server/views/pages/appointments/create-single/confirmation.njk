@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% set pageTitle = "Appointments Management - Create Single Appointment - Confirmation" %}
 {% set pageId = 'appointments-create-single-confirmation-page' %}
@@ -14,9 +15,13 @@
             <p class="govuk-body">
                 {{ confirmationMessage }}
             </p>
-            <h2 class="govuk-heading-m">What happens next</h2>
+
+            <h2 class="govuk-heading-m">What you can do next</h2>
             <p class="govuk-body">
                 <a href="/appointments/create-single/start" class="govuk-link">Create another appointment</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#" class="govuk-link">View and edit appointment details</a>
             </p>
         </div>
     </div>

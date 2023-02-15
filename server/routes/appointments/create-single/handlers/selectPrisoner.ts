@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
-import { convertToTitleCase, toPrisonerDescription } from '../../../../utils/utils'
+import { convertToTitleCase, toPrisonerDescription, toPrisonerSummary } from '../../../../utils/utils'
 
 export class PrisonerSearch {
   @Expose()
@@ -46,6 +46,7 @@ export default class SelectPrisonerRoutes {
       displayName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
       cellLocation: prisoner.cellLocation,
       description: toPrisonerDescription(prisoner),
+      summary: toPrisonerSummary(prisoner),
     }
 
     return res.redirectOrReturn('category')

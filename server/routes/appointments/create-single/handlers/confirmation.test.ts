@@ -20,6 +20,7 @@ describe('Route Handlers - Create Single Appointment - Confirmation', () => {
             displayName: 'Test Prisoner',
             cellLocation: '1-1-1',
             description: 'Test Prisoner | A1234BC | 1-1-1',
+            summary: 'Test Prisoner<br/>A1234BC<br/>1-1-1',
           },
           category: {
             id: 11,
@@ -62,8 +63,7 @@ describe('Route Handlers - Create Single Appointment - Confirmation', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-single/confirmation', {
         id: '1',
-        confirmationMessage:
-          'You have successfully created a Medical - Doctor appointment for Test Prisoner | A1234BC | 1-1-1 at 09:30 to 13:00 on Sunday 23 April 2023 in the Interview Room.',
+        confirmationMessage: 'You have successfully created an appointment for Test Prisoner on Sunday 23 April 2023.',
       })
     })
   })

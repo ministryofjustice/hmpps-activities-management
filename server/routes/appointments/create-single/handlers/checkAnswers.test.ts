@@ -25,6 +25,7 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
             displayName: 'Test Prisoner',
             cellLocation: '1-1-1',
             description: 'Test Prisoner | A1234BC | 1-1-1',
+            summary: 'Test Prisoner<br/>A1234BC<br/>1-1-1',
           },
           category: {
             id: 11,

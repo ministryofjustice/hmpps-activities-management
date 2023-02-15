@@ -17,8 +17,8 @@
                         key: {
                             text: "Prisoner"
                         },
-                            value: {
-                            text: session.createSingleAppointmentJourney.prisoner.description
+                        value: {
+                            html: session.createSingleAppointmentJourney.prisoner.summary
                         },
                         actions: {
                             items: [
@@ -123,7 +123,8 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Accept and save"
+                        text: "Accept and save",
+                        preventDoubleClick: true
                     }) }}
                 </div>
             </form>
