@@ -53,8 +53,11 @@ export default class PayRoutes {
       .then(bands => bands.find(band => band.id === bandId))
       .then(band => [band.alias, band.displaySequence])
 
+    const allIncentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
+
     req.session.createJourney.pay.push(
       ...incentiveLevels.map((incentiveLevel: string) => ({
+        incentiveNomisCode: allIncentiveLevels.find(s2 => s2.iepDescription === incentiveLevel).iepLevel,
         incentiveLevel,
         rate,
         bandId,

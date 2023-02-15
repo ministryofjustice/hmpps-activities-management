@@ -25,9 +25,9 @@ export default class CheckPayRoutes {
       .getIncentiveLevels(user.activeCaseLoadId, user)
       .then(levels => _.sortBy(levels, 'sequence'))
       .then(levels => levels.find(l => pay.find(p => p.incentiveLevel === l.iepDescription)))
-      .then(level => level.iepDescription)
 
-    req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel as string
+    req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.iepLevel
+    req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.iepDescription
 
     res.redirect(`check-answers`)
   }

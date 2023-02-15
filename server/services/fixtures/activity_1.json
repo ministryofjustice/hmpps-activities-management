@@ -21,6 +21,7 @@
   "pay": [
     {
       "id": 81,
+      "incentiveNomisCode": "BAS",
       "incentiveLevel": "Basic",
       "payBand": "A",
       "rate": 125,
@@ -29,6 +30,7 @@
     },
     {
       "id": 82,
+      "incentiveNomisCode": "BAS",
       "incentiveLevel": "Basic",
       "payBand": "B",
       "rate": 150,
@@ -37,6 +39,7 @@
     },
     {
       "id": 83,
+      "incentiveNomisCode": "STD",
       "incentiveLevel": "Standard",
       "payBand": "A",
       "rate": 125,
@@ -45,6 +48,7 @@
     },
     {
       "id": 84,
+      "incentiveNomisCode": "STD",
       "incentiveLevel": "Standard",
       "payBand": "B",
       "rate": 150,
@@ -53,6 +57,7 @@
     },
     {
       "id": 85,
+      "incentiveNomisCode": "ENH",
       "incentiveLevel": "Enhanced",
       "payBand": "A",
       "rate": 125,
@@ -61,6 +66,7 @@
     },
     {
       "id": 86,
+      "incentiveNomisCode": "ENH",
       "incentiveLevel": "Enhanced",
       "payBand": "B",
       "rate": 150,
@@ -69,6 +75,7 @@
     },
     {
       "id": 87,
+      "incentiveNomisCode": "EN2",
       "incentiveLevel": "Enhanced 2",
       "payBand": "A",
       "rate": 125,
@@ -77,6 +84,7 @@
     },
     {
       "id": 88,
+      "incentiveNomisCode": "EN2",
       "incentiveLevel": "Enhanced 2",
       "payBand": "B",
       "rate": 150,
@@ -85,6 +93,7 @@
     },
     {
       "id": 89,
+      "incentiveNomisCode": "EN3",
       "incentiveLevel": "Enhanced 3",
       "payBand": "A",
       "rate": 125,
@@ -93,6 +102,7 @@
     },
     {
       "id": 90,
+      "incentiveNomisCode": "EN3",
       "incentiveLevel": "Enhanced 3",
       "payBand": "B",
       "rate": 150,
@@ -103,6 +113,7 @@
   "startDate": "14/01/2023",
   "endDate": null,
   "riskLevel": "high",
+  "minimumIncentiveNomisCode": "BAS",
   "minimumIncentiveLevel": "Basic",
   "createdTime": "14/01/2023 10:55",
   "createdBy": "SCH_ACTIVITY"
