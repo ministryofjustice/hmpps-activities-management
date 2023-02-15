@@ -85,18 +85,54 @@ describe('Route Handlers - Create an activity - Pay', () => {
         incentiveLevels: ['Basic', 'Standard'],
       }
 
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValueOnce([
+          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
+          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
+          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
+        ] as IepLevel[])
+
       await handler.POST(req, res)
 
       expect(req.session.createJourney.pay).toEqual([
-        { incentiveLevel: 'Basic', bandId: 2, rate: 100, bandAlias: 'High', displaySequence: 2 },
-        { incentiveLevel: 'Standard', bandId: 2, rate: 100, bandAlias: 'High', displaySequence: 2 },
+        {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          bandId: 2,
+          rate: 100,
+          bandAlias: 'High',
+          displaySequence: 2,
+        },
+        {
+          incentiveNomisCode: 'STD',
+          incentiveLevel: 'Standard',
+          bandId: 2,
+          rate: 100,
+          bandAlias: 'High',
+          displaySequence: 2,
+        },
       ])
       expect(res.redirect).toHaveBeenCalledWith('check-pay')
     })
 
     it('should add to existing pay in session', async () => {
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValueOnce([
+          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
+          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
+          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
+        ] as IepLevel[])
       req.session.createJourney.pay = [
-        { incentiveLevel: 'Basic', bandId: 2, rate: 100, bandAlias: 'High', displaySequence: 2 },
+        {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          bandId: 2,
+          rate: 100,
+          bandAlias: 'High',
+          displaySequence: 2,
+        },
       ]
 
       req.body = {
@@ -108,8 +144,22 @@ describe('Route Handlers - Create an activity - Pay', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.pay).toEqual([
-        { incentiveLevel: 'Basic', bandId: 2, rate: 100, bandAlias: 'High', displaySequence: 2 },
-        { incentiveLevel: 'Standard', bandId: 2, rate: 100, bandAlias: 'High', displaySequence: 2 },
+        {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          bandId: 2,
+          rate: 100,
+          bandAlias: 'High',
+          displaySequence: 2,
+        },
+        {
+          incentiveNomisCode: 'STD',
+          incentiveLevel: 'Standard',
+          bandId: 2,
+          rate: 100,
+          bandAlias: 'High',
+          displaySequence: 2,
+        },
       ])
       expect(res.redirect).toHaveBeenCalledWith('check-pay')
     })

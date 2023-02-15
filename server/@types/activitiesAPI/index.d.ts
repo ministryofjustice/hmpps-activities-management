@@ -61,19 +61,19 @@ export interface paths {
      */
     post: operations['prisonerAllocations']
   }
+  '/job/create-scheduled-instances': {
+    /**
+     * Trigger the job to create the scheduled instances in advance for the active schedules on activities
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    post: operations['triggerCreateScheduledInstancesJob']
+  }
   '/job/create-attendance-records': {
     /**
      * Trigger the job to create attendance records in advance
      * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
     post: operations['triggerCreateAttendanceRecordsJob']
-  }
-  '/job/create-activity-sessions': {
-    /**
-     * Trigger the job to create activity sessions in advance
-     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
-     */
-    post: operations['triggerCreateActivitySessionsJob']
   }
   '/activities': {
     /**
@@ -166,6 +166,13 @@ export interface paths {
     /** Get list of activities at a specified prison */
     get: operations['getActivities']
   }
+  '/prison/prison-regime/{prisonCode}': {
+    /**
+     * Get a prison regime by its code
+     * @description Returns a single prison regime and its details by its unique prison code.
+     */
+    get: operations['getPrisonRegimeByPrisonCode']
+  }
   '/locations/prison/{prisonCode}': {
     /**
      * List of cell locations for a prison group supplied as a query parameter
@@ -196,11 +203,18 @@ export interface paths {
   }
   '/appointment-categories': {
     /** Get the list of top-level appointment categories */
-    get: operations['getAppointmentCategories']
+    get: operations['getCategories']
+  }
+  '/allocations/id/{allocationId}': {
+    /**
+     * Get an allocation by its id
+     * @description Returns a single allocation and its details by its unique identifier.
+     */
+    get: operations['getAllocationById']
   }
   '/activity-categories': {
     /** Get the list of top-level activity categories */
-    get: operations['getCategories']
+    get: operations['getCategories_1']
   }
   '/activities/{activityId}': {
     /**
@@ -219,58 +233,16 @@ export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
-    Message: {
-      messageId?: string
-      receiptHandle?: string
-      body?: string
-      attributes?: {
-        [key: string]: string | undefined
+    DlqMessage: {
+      body: {
+        [key: string]: Record<string, never> | undefined
       }
-      messageAttributes?: {
-        [key: string]: components['schemas']['MessageAttributeValue'] | undefined
-      }
-      md5OfMessageAttributes?: string
-      md5OfBody?: string
-    }
-    MessageAttributeValue: {
-      stringValue?: string
-      binaryValue?: {
-        /** Format: int32 */
-        short?: number
-        char?: string
-        /** Format: int32 */
-        int?: number
-        /** Format: int64 */
-        long?: number
-        /** Format: float */
-        float?: number
-        /** Format: double */
-        double?: number
-        direct?: boolean
-        readOnly?: boolean
-      }
-      stringListValues?: string[]
-      binaryListValues?: {
-        /** Format: int32 */
-        short?: number
-        char?: string
-        /** Format: int32 */
-        int?: number
-        /** Format: int64 */
-        long?: number
-        /** Format: float */
-        float?: number
-        /** Format: double */
-        double?: number
-        direct?: boolean
-        readOnly?: boolean
-      }[]
-      dataType?: string
+      messageId: string
     }
     RetryDlqResult: {
       /** Format: int32 */
       messagesFoundCount: number
-      messages: components['schemas']['Message'][]
+      messages: components['schemas']['DlqMessage'][]
     }
     PurgeQueueResult: {
       /** Format: int32 */
@@ -543,7 +515,6 @@ export interface components {
       /**
        * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
        * @example H
-       * @enum {string}
        */
       payPerSession?: string
       /**
@@ -584,10 +555,15 @@ export interface components {
        */
       riskLevel?: string
       /**
+       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
+       * @example BAS
+       */
+      minimumIncentiveNomisCode: string
+      /**
        * @description The minimum incentive/earned privilege level for this activity
        * @example Basic
        */
-      minimumIncentiveLevel?: string
+      minimumIncentiveLevel: string
       /**
        * Format: date
        * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
@@ -604,10 +580,15 @@ export interface components {
     /** @description Describes the pay rates and bands to be created for an activity */
     ActivityPayCreateRequest: {
       /**
+       * @description The NOMIS code for the incentive/earned privilege level (nullable)
+       * @example BAS
+       */
+      incentiveNomisCode: string
+      /**
        * @description The incentive/earned privilege level (nullable)
        * @example Basic
        */
-      incentiveLevel?: string
+      incentiveLevel: string
       /**
        * Format: int64
        * @description The id of the prison pay band used
@@ -669,7 +650,6 @@ export interface components {
       /**
        * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
        * @example H
-       * @enum {string}
        */
       payPerSession: string
       /**
@@ -711,10 +691,15 @@ export interface components {
        */
       riskLevel?: string
       /**
+       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
+       * @example BAS
+       */
+      minimumIncentiveNomisCode: string
+      /**
        * @description The minimum incentive/earned privilege level for this activity
        * @example Basic
        */
-      minimumIncentiveLevel?: string
+      minimumIncentiveLevel: string
       /**
        * Format: date-time
        * @description The date and time when this activity was created
@@ -799,7 +784,6 @@ export interface components {
       /**
        * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
        * @example H
-       * @enum {string}
        */
       payPerSession: string
       /**
@@ -819,10 +803,15 @@ export interface components {
        */
       riskLevel?: string
       /**
+       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
+       * @example BAS
+       */
+      minimumIncentiveNomisCode: string
+      /**
        * @description The minimum incentive/earned privilege level for this activity
        * @example Basic
        */
-      minimumIncentiveLevel?: string
+      minimumIncentiveLevel: string
     }
     /** @description Describes the pay rates and bands which apply to an activity */
     ActivityPay: {
@@ -833,10 +822,15 @@ export interface components {
        */
       id: number
       /**
+       * @description The NOMIS code for the incentive/earned privilege level (nullable)
+       * @example BAS
+       */
+      incentiveNomisCode: string
+      /**
        * @description The incentive/earned privilege level (nullable)
        * @example Basic
        */
-      incentiveLevel?: string
+      incentiveLevel: string
       prisonPayBand: components['schemas']['PrisonPayBand']
       /**
        * Format: int32
@@ -1371,18 +1365,62 @@ export interface components {
        */
       rolloutDate?: string
     }
-    DlqMessage: {
-      body: {
-        [key: string]: Record<string, never> | undefined
-      }
-      messageId: string
-    }
     GetDlqResult: {
       /** Format: int32 */
       messagesFoundCount: number
       /** Format: int32 */
       messagesReturnedCount: number
       messages: components['schemas']['DlqMessage'][]
+    }
+    /** @description Describes a top-level activity */
+    PrisonRegime: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this prison regime
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example MDI
+       */
+      prisonCode: string
+      /**
+       * Format: partial-time
+       * @description The start time for the am slot
+       * @example 09:00
+       */
+      amStart: string
+      /**
+       * Format: partial-time
+       * @description The end time for the am slot
+       * @example 12:00
+       */
+      amFinish: string
+      /**
+       * Format: partial-time
+       * @description The start time for the pm slot
+       * @example 13:00
+       */
+      pmStart: string
+      /**
+       * Format: partial-time
+       * @description The end time for the pm slot
+       * @example 16:30
+       */
+      pmFinish: string
+      /**
+       * Format: partial-time
+       * @description The start time for the ed slot
+       * @example 18:00
+       */
+      edStart: string
+      /**
+       * Format: partial-time
+       * @description The end time for the ed slot
+       * @example 20:00
+       */
+      edFinish: string
     }
     Location: {
       /**
@@ -2130,9 +2168,9 @@ export interface operations {
       }
     }
   }
-  triggerCreateAttendanceRecordsJob: {
+  triggerCreateScheduledInstancesJob: {
     /**
-     * Trigger the job to create attendance records in advance
+     * Trigger the job to create the scheduled instances in advance for the active schedules on activities
      * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
     responses: {
@@ -2144,9 +2182,9 @@ export interface operations {
       }
     }
   }
-  triggerCreateActivitySessionsJob: {
+  triggerCreateAttendanceRecordsJob: {
     /**
-     * Trigger the job to create activity sessions in advance
+     * Trigger the job to create attendance records in advance
      * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
     responses: {
@@ -2722,6 +2760,43 @@ export interface operations {
       }
     }
   }
+  getPrisonRegimeByPrisonCode: {
+    /**
+     * Get a prison regime by its code
+     * @description Returns a single prison regime and its details by its unique prison code.
+     */
+    parameters: {
+      path: {
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Prison regime found */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonRegime']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The prison regime for this prison code was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   getCellLocationsForGroup: {
     /**
      * List of cell locations for a prison group supplied as a query parameter
@@ -2888,7 +2963,7 @@ export interface operations {
       }
     }
   }
-  getAppointmentCategories: {
+  getCategories: {
     /** Get the list of top-level appointment categories */
     responses: {
       /** @description Appointment categories found */
@@ -2905,7 +2980,44 @@ export interface operations {
       }
     }
   }
-  getCategories: {
+  getAllocationById: {
+    /**
+     * Get an allocation by its id
+     * @description Returns a single allocation and its details by its unique identifier.
+     */
+    parameters: {
+      path: {
+        allocationId: number
+      }
+    }
+    responses: {
+      /** @description allocation found */
+      200: {
+        content: {
+          'application/json': components['schemas']['Allocation']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The allocation for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getCategories_1: {
     /** Get the list of top-level activity categories */
     responses: {
       /** @description Activity categories found */
