@@ -21,6 +21,7 @@
   "pay": [
     {
       "id": 81,
+      "incentiveNomisCode": "BAS",
       "incentiveLevel": "Basic",
       "prisonPayBand": {
         "id": 1,
@@ -36,6 +37,7 @@
     },
     {
       "id": 82,
+      "incentiveNomisCode": "BAS",
       "incentiveLevel": "Basic",
       "prisonPayBand": {
         "id": 1,
@@ -51,6 +53,7 @@
     },
     {
       "id": 83,
+      "incentiveNomisCode": "STD",
       "incentiveLevel": "Standard",
       "prisonPayBand": {
         "id": 1,
@@ -66,6 +69,7 @@
     },
     {
       "id": 84,
+      "incentiveNomisCode": "STD",
       "incentiveLevel": "Standard",
       "prisonPayBand": {
         "id": 2,
@@ -81,6 +85,7 @@
     },
     {
       "id": 85,
+      "incentiveNomisCode": "ENH",
       "incentiveLevel": "Enhanced",
       "prisonPayBand": {
         "id": 1,
@@ -96,6 +101,7 @@
     },
     {
       "id": 86,
+      "incentiveNomisCode": "ENH",
       "incentiveLevel": "Enhanced",
       "prisonPayBand": {
         "id": 2,
@@ -111,6 +117,7 @@
     },
     {
       "id": 87,
+      "incentiveNomisCode": "EN2",
       "incentiveLevel": "Enhanced 2",
       "prisonPayBand": {
         "id": 1,
@@ -126,6 +133,7 @@
     },
     {
       "id": 88,
+      "incentiveNomisCode": "EN2",
       "incentiveLevel": "Enhanced 2",
       "prisonPayBand": {
         "id": 2,
@@ -141,6 +149,7 @@
     },
     {
       "id": 89,
+      "incentiveNomisCode": "EN3",
       "incentiveLevel": "Enhanced 3",
       "prisonPayBand": {
         "id": 1,
@@ -156,6 +165,7 @@
     },
     {
       "id": 90,
+      "incentiveNomisCode": "EN3",
       "incentiveLevel": "Enhanced 3",
       "prisonPayBand": {
         "id": 2,
@@ -173,6 +183,7 @@
   "startDate": "14/01/2023",
   "endDate": null,
   "riskLevel": "high",
+  "minimumIncentiveNomisCode": "BAS",
   "minimumIncentiveLevel": "Basic",
   "createdTime": "14/01/2023 10:55",
   "createdBy": "SCH_ACTIVITY"
