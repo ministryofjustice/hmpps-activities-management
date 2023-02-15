@@ -16,7 +16,7 @@ export default class LocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const locations = await this.prisonService.getLocationsForAppointments(user.activeCaseLoad.caseLoadId, user)
+    const locations = await this.prisonService.getLocationsForAppointments(user.activeCaseLoadId, user)
 
     res.render('pages/appointments/create-single/location', {
       locations,
@@ -28,7 +28,7 @@ export default class LocationRoutes {
     const { user } = res.locals
 
     const location = await this.prisonService
-      .getLocationsForAppointments(user.activeCaseLoad.caseLoadId, user)
+      .getLocationsForAppointments(user.activeCaseLoadId, user)
       .then(locations => locations.find(l => l.locationId === locationId))
 
     if (!location) {

@@ -69,7 +69,7 @@ describe('Route Handlers - Create Single Appointment - Category', () => {
   })
 
   describe('POST', () => {
-    it('should save selected category in session and redirect to check answers page', async () => {
+    it('should save selected category in session and redirect to location page', async () => {
       req.body = {
         categoryId: 11,
       }
