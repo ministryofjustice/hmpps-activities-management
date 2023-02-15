@@ -85,10 +85,19 @@ describe('Route Handlers - Create an activity - Pay', () => {
         incentiveLevels: ['Basic', 'Standard'],
       }
 
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValueOnce([
+          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
+          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
+          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
+        ] as IepLevel[])
+
       await handler.POST(req, res)
 
       expect(req.session.createJourney.pay).toEqual([
         {
+          incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
           bandId: 2,
           rate: 100,
@@ -96,6 +105,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           displaySequence: 2,
         },
         {
+          incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
           bandId: 2,
           rate: 100,
@@ -107,6 +117,13 @@ describe('Route Handlers - Create an activity - Pay', () => {
     })
 
     it('should add to existing pay in session', async () => {
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValueOnce([
+          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
+          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
+          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
+        ] as IepLevel[])
       req.session.createJourney.pay = [
         {
           incentiveNomisCode: 'BAS',
@@ -136,6 +153,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           displaySequence: 2,
         },
         {
+          incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
           bandId: 2,
           rate: 100,
