@@ -24,6 +24,7 @@
                         text: "Search by prison number"
                     },
                     classes: "govuk-input--width-20",
+                    spellcheck: false,
                     errorMessage: validationErrors | findError('number'),
                     value: formResponses.number or session.createSingleAppointmentJourney.prisoner.number
                 }) }}
