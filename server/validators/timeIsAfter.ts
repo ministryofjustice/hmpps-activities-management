@@ -15,6 +15,7 @@ export default function TimeIsAfter(property: string, validationOptions?: Valida
           if (value === undefined) return true
           const date = value.toDate()
           const [relatedPropertyName] = args.constraints
+          if (args.object[relatedPropertyName] === undefined) return true
           const relatedDate = args.object[relatedPropertyName].toDate()
           return isValid(date) && isValid(relatedDate) ? date > relatedDate : true
         },

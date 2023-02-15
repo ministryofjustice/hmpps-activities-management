@@ -1,46 +1,44 @@
 import { Expose, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import IsValidDate from './isValidDate'
-import SimpleDate from '../commonValidationTypes/simpleDate'
+import IsValidTime from './isValidTime'
+import SimpleTime from '../commonValidationTypes/simpleTime'
 import { associateErrorsWithProperty } from '../utils/utils'
 
-describe('isValidDate', () => {
+describe('isValidTime', () => {
   class DummyForm {
     @Expose()
-    @IsValidDate({ message: 'Enter a valid date' })
-    date: SimpleDate
+    @IsValidTime({ message: 'Enter a valid time' })
+    time: SimpleTime
   }
 
-  it('should fail validation for a bad date', async () => {
+  it('should fail validation for a bad time', async () => {
     const body = {
-      date: plainToInstance(SimpleDate, {
-        day: 32,
-        month: 2,
-        year: 2022,
+      time: plainToInstance(SimpleTime, {
+        hour: 'twelve',
+        minute: 'thirty',
       }),
     }
 
     const requestObject = plainToInstance(DummyForm, body)
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-    expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
+    expect(errors).toEqual([{ property: 'time', error: 'Enter a valid time' }])
   })
 
-  it('should fail validation for an undefined date', async () => {
+  it('should fail validation for an undefined time', async () => {
     const body = {}
 
     const requestObject = plainToInstance(DummyForm, body)
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-    expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
+    expect(errors).toEqual([{ property: 'time', error: 'Enter a valid time' }])
   })
 
-  it('should pass validation for a good date', async () => {
+  it('should pass validation for a good time', async () => {
     const body = {
-      date: plainToInstance(SimpleDate, {
-        day: 28,
-        month: 2,
-        year: 2022,
+      time: plainToInstance(SimpleTime, {
+        hour: 12,
+        minute: 30,
       }),
     }
 
