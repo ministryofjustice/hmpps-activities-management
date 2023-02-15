@@ -7,7 +7,7 @@
 {% set pageId = 'appointments-create-single-category-page' %}
 {% set backLinkHref = "/select-prisoner" %}
 
-{% set categoryOptions = [{ value: "-", text: "Select" }] %}
+{% set categoryOptions = [{ value: "-", text: "" }] %}
 {% for category in categories %}
     {% set categoryOptions = (categoryOptions.push(
         {
@@ -17,6 +17,10 @@
         }
     ), categoryOptions) %}
 {% endfor %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="categoryId"/>
+{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">

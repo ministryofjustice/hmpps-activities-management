@@ -95,5 +95,69 @@ describe('simpleDate', () => {
       const requestObject = plainToInstance(SimpleDate, body)
       expect(requestObject.toString()).toEqual('2022-12-30')
     })
+
+    it('should not pad date components', async () => {
+      const body = {
+        day: 1,
+        month: 2,
+        year: 952,
+      }
+
+      const requestObject = plainToInstance(SimpleDate, body)
+
+      expect(requestObject.toString()).toEqual('952-2-1')
+    })
+  })
+
+  describe('toIsoString', () => {
+    it('should convert to iso string', async () => {
+      const body = {
+        day: 23,
+        month: 3,
+        year: 2023,
+      }
+
+      const requestObject = plainToInstance(SimpleDate, body)
+
+      expect(requestObject.toIsoString()).toEqual('2023-03-23')
+    })
+
+    it('should pad date components', async () => {
+      const body = {
+        day: 1,
+        month: 2,
+        year: 952,
+      }
+
+      const requestObject = plainToInstance(SimpleDate, body)
+
+      expect(requestObject.toIsoString()).toEqual('0952-02-01')
+    })
+  })
+
+  describe('toDisplayString', () => {
+    it('should convert to string', async () => {
+      const body = {
+        day: 23,
+        month: 3,
+        year: 2023,
+      }
+
+      const requestObject = plainToInstance(SimpleDate, body)
+
+      expect(requestObject.toDisplayString()).toEqual('Thursday 23 March 2023')
+    })
+
+    it('should pad date components', async () => {
+      const body = {
+        day: 1,
+        month: 2,
+        year: 952,
+      }
+
+      const requestObject = plainToInstance(SimpleDate, body)
+
+      expect(requestObject.toDisplayString()).toEqual('Tuesday 1 February 0952')
+    })
   })
 })
