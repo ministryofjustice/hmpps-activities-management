@@ -129,9 +129,7 @@ describe('simpleTime', () => {
 
       expect(requestObject.toString()).toEqual('12:25')
     })
-  })
 
-  describe('toString', () => {
     it('should not pad time components', async () => {
       const body = {
         hour: 8,
@@ -141,6 +139,87 @@ describe('simpleTime', () => {
       const requestObject = plainToInstance(SimpleTime, body)
 
       expect(requestObject.toString()).toEqual('8:5')
+    })
+
+    it('should use 24 hour clock', async () => {
+      const body = {
+        hour: 14,
+        minute: 55,
+      }
+
+      const requestObject = plainToInstance(SimpleTime, body)
+
+      expect(requestObject.toString()).toEqual('14:55')
+    })
+  })
+
+  describe('toIsoString', () => {
+    it('should convert to iso string', async () => {
+      const body = {
+        hour: 12,
+        minute: 25,
+      }
+
+      const requestObject = plainToInstance(SimpleTime, body)
+
+      expect(requestObject.toIsoString()).toEqual('12:25')
+    })
+
+    it('should pad time components', async () => {
+      const body = {
+        hour: 8,
+        minute: 5,
+      }
+
+      const requestObject = plainToInstance(SimpleTime, body)
+
+      expect(requestObject.toIsoString()).toEqual('08:05')
+    })
+
+    it('should use 24 hour clock', async () => {
+      const body = {
+        hour: 14,
+        minute: 55,
+      }
+
+      const requestObject = plainToInstance(SimpleTime, body)
+
+      expect(requestObject.toIsoString()).toEqual('14:55')
+    })
+  })
+
+  describe('toDisplayString', () => {
+    it('should convert to string', async () => {
+      const body = {
+        hour: 12,
+        minute: 25,
+      }
+
+      const requestObject = plainToInstance(SimpleTime, body)
+
+      expect(requestObject.toDisplayString()).toEqual('12:25')
+    })
+
+    it('should pad time components', async () => {
+      const body = {
+        hour: 8,
+        minute: 5,
+      }
+
+      const requestObject = plainToInstance(SimpleTime, body)
+
+      expect(requestObject.toDisplayString()).toEqual('08:05')
+    })
+
+    it('should use 24 hour clock', async () => {
+      const body = {
+        hour: 14,
+        minute: 55,
+      }
+
+      const requestObject = plainToInstance(SimpleTime, body)
+
+      expect(requestObject.toDisplayString()).toEqual('14:55')
     })
   })
 })
