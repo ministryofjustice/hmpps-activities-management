@@ -48,7 +48,7 @@ describe('Unlock list routes - select date and location', () => {
         locationGroups: mockedLocationGroups,
       })
       expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)
-      expect(activitiesService.getLocationGroups).toHaveBeenCalledWith('MDI', res.locals.user)
+      expect(activitiesService.getLocationGroups).toHaveBeenCalledWith(res.locals.user)
     })
   })
 
@@ -63,9 +63,7 @@ describe('Unlock list routes - select date and location', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?datePresetOption=today&date=${todaysDate}&slot=am&location=here`,
-      )
+      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${todaysDate}&slot=am&location=here`)
     })
 
     it("redirect with the expected query params for when yesterday's date is selected", async () => {
@@ -78,9 +76,7 @@ describe('Unlock list routes - select date and location', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?datePresetOption=yesterday&date=${yesterdaysDate}&slot=am&location=here`,
-      )
+      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${yesterdaysDate}&slot=am&location=here`)
     })
 
     it('redirects with the expected query params for when a custom date is selected', async () => {
@@ -99,9 +95,7 @@ describe('Unlock list routes - select date and location', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?datePresetOption=other&date=2022-12-01&slot=am&location=here`,
-      )
+      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=2022-12-01&slot=am&location=here`)
     })
   })
 

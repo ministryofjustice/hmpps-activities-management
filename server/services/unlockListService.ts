@@ -15,27 +15,13 @@ export default class UnlockListService {
     private readonly activitiesApiClient: ActivitiesApiClient,
   ) {}
 
-  async getFilteredUnlockList(
-    locationGroup: string,
-    subLocations: string[],
-    unlockFilters: UnlockFilters,
-    unlockDate: string,
-    slot: string,
-    user: ServiceUser,
-  ): Promise<UnlockListItem[]> {
+  async getFilteredUnlockList(unlockFilters: UnlockFilters, user: ServiceUser): Promise<UnlockListItem[]> {
     const prison = user.activeCaseLoadId
 
-    // Get the cell-location prefix for the main location group e.g. Houseblock 1 = MDI-1-
-    const locationGroupPrefix = await this.activitiesApiClient.getPrisonLocationPrefixByGroup(
-      prison,
-      locationGroup,
-      user,
-    )
-
-    // Get the cell-matching regexp patterns for each of the subgroups for the main location e.g [A-Wing, B-Wing C-Wing]
+    // Get the cell-matching regexp for each sub-location of the main location e.g [A-Wing, B-Wing C-Wing]
     const subLocationCellPatterns = await Promise.all(
-      subLocations.map(async sub => {
-        const locGroup = `${locationGroup}_${sub}`
+      unlockFilters.subLocations.map(async sub => {
+        const locGroup = `${unlockFilters.location}_${sub}`
         const prefix = await this.activitiesApiClient.getPrisonLocationPrefixByGroup(prison, locGroup, user)
         return { subLocation: sub, locationPrefix: prefix.locationPrefix } as SubLocationCellPattern
       }),
@@ -43,10 +29,10 @@ export default class UnlockListService {
 
     logger.info(`SubLocationCellPatterns = ${JSON.stringify(subLocationCellPatterns)}`)
 
-    // Get all prisoners located in the main location group e.g. "Houseblock 1" by prefix MDI-1-
+    // Get all prisoners located in the main location by cell prefix e.g. MDI-1-
     const results = await this.prisonerSearchApiClient.searchPrisonersByLocationPrefix(
       prison,
-      locationGroupPrefix.locationPrefix,
+      unlockFilters.cellPrefix,
       0,
       1024,
       user,
@@ -67,33 +53,22 @@ export default class UnlockListService {
         alerts: prisoner?.alerts,
         status: prisoner?.inOutStatus,
         prisonCode: prisoner?.prisonId,
-        locationGroup,
+        locationGroup: unlockFilters.location,
         locationSubGroup: this.getSubLocationFromCell(prison, subLocationCellPatterns, prisoner?.cellLocation),
       } as unknown as UnlockListItem
     })
 
-    // Filter the list to those sub locations in the unlock list filters
-    const locationFilters = unlockFilters.subLocations.filter(loc => loc.checked === true).map(loc => loc.value)
-    const filteredPrisoners = locationFilters.includes('All')
-      ? prisoners
-      : prisoners.filter(prisoner => locationFilters.includes(prisoner.locationSubGroup) === true)
-
-    /*
-    TODO: Re-instate this when implementing the staying or leaving filter on appointments/activities
-    const inCellFilters = unlockFilters.stayingOrLeaving
-      .filter(inCell => inCell.checked === true)
-      .map(inCell => inCell.value)
-    const staying = inCellFilters.includes('All') || inCellFilters.includes('Staying')
-    const leaving = inCellFilters.includes('All') || inCellFilters.includes('Leaving')
-     */
+    // Apply filters for selected sub-locations
+    const locationFilters = unlockFilters.locationFilters.filter(loc => loc.checked === true).map(loc => loc.value)
+    const filteredPrisoners = prisoners.filter(prisoner => locationFilters.includes(prisoner.locationSubGroup) === true)
 
     // Get the scheduled events from their master source for these prisoners (activities, court, visits, appointments)
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       prison,
-      unlockDate,
+      unlockFilters.unlockDate,
       filteredPrisoners.map(p => p.prisonerNumber),
       user,
-      slot,
+      unlockFilters.timeSlot,
     )
 
     logger.info(`Total activities: ${scheduledEvents?.activities.length}`)
@@ -119,9 +94,16 @@ export default class UnlockListService {
       } as UnlockListItem
     })
 
-    logger.info(`Number of unlock list items ${unlockListItems?.length}`)
+    // Apply filter for with or without activities in this time slot
+    const withActivityFilters = unlockFilters.activityFilters.filter(act => act.checked === true).map(act => act.value)
+    const withActivities = withActivityFilters.includes('With')
+    const filteredUnlockListItems = withActivityFilters.includes('Both')
+      ? unlockListItems
+      : unlockListItems.filter(item => (withActivities ? item.events.length > 0 : item.events.length === 0))
 
-    return unlockListItems
+    logger.info(`Number of unlock list items ${filteredUnlockListItems?.length}`)
+
+    return filteredUnlockListItems
   }
 
   private getSubLocationFromCell = (
@@ -140,7 +122,7 @@ export default class UnlockListService {
         }
       }
     }
-    logger.error(`No sub-location match for cell location ${prison}-${cellLocation} - check API location mapping`)
+    // Where a location has no sub-locations e.g. Segregation unit, there will be no cell-patterns to match against.
     return ''
   }
 

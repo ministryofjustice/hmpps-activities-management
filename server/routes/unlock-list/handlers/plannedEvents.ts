@@ -16,106 +16,201 @@ export default class PlannedEventsRoutes {
     const { user } = res.locals
     const { date, slot, location } = req.query
     const formattedDate = formatDate(toDate(date.toString()), 'cccc do LLLL y')
-    const locationGroup: string = (location as string) || undefined
+    const locationName: string = (location as string) || undefined
     let { unlockFilters } = req.session
 
-    // Get the main location group selected and its child-locations, if any present (e.g. HB1 -> A-Wing, B-Wing)
-    const locationsAtPrison = await this.activitiesService.getLocationGroups(user.activeCaseLoadId, user)
-    const subLocations = locationsAtPrison.filter(loc => loc.name === locationGroup)[0].children.map(loc => loc.name)
-
-    // Set the default unlock filters if not already present in the user's session
     if (!unlockFilters) {
-      unlockFilters = defaultUnlockFilters(subLocations)
+      const [prefix, locationsAtPrison] = await Promise.all([
+        this.activitiesService.getLocationPrefix(locationName, user),
+        this.activitiesService.getLocationGroups(user),
+      ])
+
+      const subLocations = locationsAtPrison.filter(loc => loc.name === locationName)[0].children.map(loc => loc.name)
+      unlockFilters = defaultFilters(
+        locationName,
+        prefix.locationPrefix,
+        date.toString(),
+        formattedDate,
+        slot.toString(),
+        subLocations,
+      )
+
       req.session.unlockFilters = unlockFilters
     }
 
+    // TODO: Caching of unlockListItems here - check and refresh if necessary - 10 mins?
     logger.info(`UnlockFilters: ${JSON.stringify(unlockFilters)}`)
+    const unlockListItems = await this.unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-    // Get the filtered unlock list
-    const unlockListItems = await this.unlockListService.getFilteredUnlockList(
-      locationGroup,
-      subLocations,
-      unlockFilters,
-      date.toString(),
-      slot.toString(),
-      user,
-    )
-
-    // Render unlock list with current filters set
-    res.render('pages/unlock-list/planned-events', {
-      locationGroup,
-      unlockFilters,
-      unlockListItems,
-      plannedDate: formattedDate,
-      plannedSlot: slot,
-    })
+    res.render('pages/unlock-list/planned-events', { unlockFilters, unlockListItems })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     // The only values posted here are changes to the filtering options
     const { user } = res.locals
     const { unlockFilters } = req.session
+    const { date, slot, location } = req.query
 
-    logger.info(`POST body = ${JSON.stringify(req.body)} user ${user.name}`)
+    if (unlockFilters) {
+      logger.info(`POST body = ${JSON.stringify(req.body)} user ${user.name}`)
 
-    // Get the changed filter options from the POST body to create new filters
-    const newFilters = parseFiltersFromPost(
-      unlockFilters,
-      req.body?.sublocations,
-      req.body?.activityNames,
-      req.body?.stayingOrLeaving,
-    )
+      // Get the changed filter options from the POST body to create new filters
+      const newFilters = parseFiltersFromPost(
+        unlockFilters,
+        req.body?.locationFilters,
+        req.body?.activityFilters,
+        req.body?.stayingOrLeavingFilters,
+      )
 
-    // Save the new filters on the user's session
-    req.session.unlockFilters = newFilters
-
-    // Redirect to display unlock list with new filters
-    return res.redirect(
-      `planned-events?datePresetOption=${req.query.datePresetOption}` +
-        `&date=${req.query.date}` +
-        `&slot=${req.query.slot}` +
-        `&location=${req.query.location}`,
-    )
+      logger.info(`POST new filters = ${JSON.stringify(newFilters)}`)
+      req.session.unlockFilters = newFilters
+      res.redirect(`planned-events?date=${date}&slot=${slot}&location=${location}`)
+    } else {
+      res.redirect(`select-date-and-location`)
+    }
   }
+
+  FILTERS = async (req: Request, res: Response): Promise<void> => {
+    // GET requests to remove selected filters by clicking 'x' tags
+    const { clearFilters, clearLocation, clearActivity, clearStaying } = req.query
+    let { unlockFilters } = req.session
+
+    if (unlockFilters) {
+      unlockFilters = amendFilters(
+        unlockFilters,
+        clearFilters as string,
+        clearLocation as string,
+        clearActivity as string,
+        clearStaying as string,
+      )
+
+      req.session.unlockFilters = unlockFilters
+      const { unlockDate, timeSlot, location } = unlockFilters
+      res.redirect(`planned-events?date=${unlockDate}&slot=${timeSlot}&location=${location}`)
+    } else {
+      res.redirect(`select-date-and-location`)
+    }
+  }
+}
+
+const amendFilters = (
+  unlockFilters: UnlockFilters,
+  clearFilters: string,
+  clearLocation: string,
+  clearActivity: string,
+  clearStaying: string,
+): UnlockFilters => {
+  let newFilters
+  if (clearFilters) {
+    newFilters = defaultFilters(
+      unlockFilters.location,
+      unlockFilters.cellPrefix,
+      unlockFilters.unlockDate,
+      unlockFilters.formattedDate,
+      unlockFilters.timeSlot,
+      unlockFilters.subLocations,
+    )
+  } else if (clearLocation) {
+    newFilters = clearLocationItem(unlockFilters, clearLocation)
+  } else if (clearActivity) {
+    newFilters = clearActivityItem(unlockFilters, clearActivity)
+  } else if (clearStaying) {
+    newFilters = clearStayingItem(unlockFilters, clearStaying)
+  }
+  return newFilters
+}
+
+const clearLocationItem = (unlockFilters: UnlockFilters, loc: string): UnlockFilters => {
+  const newLocationFilters = unlockFilters.locationFilters.map(l => {
+    return { value: l.value, text: l.text, checked: l.value === loc ? false : l.checked }
+  })
+  const newFilters = unlockFilters
+  newFilters.locationFilters = newLocationFilters
+  return newFilters
+}
+
+const clearActivityItem = (unlockFilters: UnlockFilters, act: string): UnlockFilters => {
+  const newActivityFilters = unlockFilters.activityFilters.map(a => {
+    return { value: a.value, text: a.text, checked: a.value === act ? false : a.checked }
+  })
+  const newFilters = unlockFilters
+  newFilters.activityFilters = newActivityFilters
+  return newFilters
+}
+
+const clearStayingItem = (unlockFilters: UnlockFilters, staying: string): UnlockFilters => {
+  const newStayingOrLeavingFilters = unlockFilters.stayingOrLeavingFilters.map(s => {
+    return { value: s.value, text: s.text, checked: s.value === staying ? false : s.checked }
+  })
+  const newFilters = unlockFilters
+  newFilters.stayingOrLeavingFilters = newStayingOrLeavingFilters
+  return newFilters
 }
 
 const parseFiltersFromPost = (
   oldFilters: UnlockFilters,
   locations: string | string[],
   activities: string | string[],
-  staying: string | string[],
+  stayingOrLeaving: string | string[],
 ): UnlockFilters => {
-  // Convert the posted body values into filter options
-  const subLocations = oldFilters.subLocations.map(loc => {
+  const locationFilters = oldFilters.locationFilters.map(loc => {
     const checked = convertToArray(locations).includes(loc.value)
     return { value: loc.value, text: loc.text, checked } as UnlockFilterItem
   })
 
-  const activityNames = oldFilters.activityNames.map(act => {
+  const activityFilters = oldFilters.activityFilters.map(act => {
     const checked = convertToArray(activities).includes(act.value)
     return { value: act.value, text: act.text, checked } as UnlockFilterItem
   })
 
-  const stayingOrLeaving = oldFilters.stayingOrLeaving.map(stay => {
-    const checked = convertToArray(staying).includes(stay.value)
+  const stayingOrLeavingFilters = oldFilters.stayingOrLeavingFilters.map(stay => {
+    const checked = convertToArray(stayingOrLeaving).includes(stay.value)
     return { value: stay.value, text: stay.text, checked } as UnlockFilterItem
   })
 
-  // Return the new filter object
-  return { subLocations, activityNames, stayingOrLeaving } as UnlockFilters
+  const newFilters = oldFilters
+
+  // Only override filter values if something was provided in the POST body
+  if (convertToArray(locations).length > 0) newFilters.activityFilters = activityFilters
+  if (convertToArray(activities).length > 0) newFilters.locationFilters = locationFilters
+  if (convertToArray(stayingOrLeaving).length > 0) newFilters.stayingOrLeavingFilters = stayingOrLeavingFilters
+
+  return newFilters
 }
 
-const defaultUnlockFilters = (childLocations: string[]): UnlockFilters => {
-  const realSubLocations = childLocations.map(loc => {
-    return { value: loc, text: loc, checked: false } as UnlockFilterItem
+const defaultFilters = (
+  location: string,
+  cellPrefix: string,
+  unlockDate: string,
+  formattedDate: string,
+  timeSlot: string,
+  subLocations: string[],
+): UnlockFilters => {
+  const locationFilters = subLocations.map(loc => {
+    return { value: loc, text: loc, checked: true } as UnlockFilterItem
   })
-  const subLocations = [{ value: 'All', text: 'All', checked: true } as UnlockFilterItem, ...realSubLocations]
-  const activityNames = [{ value: 'All', text: 'All', checked: true }] as UnlockFilterItem[]
-  const stayingOrLeaving = [
-    { value: 'Both', text: 'Staying and leaving', checked: true },
+
+  const activityFilters = [
+    { value: 'Both', text: 'Both', checked: true },
+    { value: 'With', text: 'With', checked: false },
+    { value: 'Without', text: 'Without', checked: false },
+  ] as UnlockFilterItem[]
+
+  const stayingOrLeavingFilters = [
+    { value: 'Both', text: 'Both', checked: true },
     { value: 'Staying', text: 'Staying', checked: false },
     { value: 'Leaving', text: 'Leaving', checked: false },
   ] as UnlockFilterItem[]
 
-  return { subLocations, activityNames, stayingOrLeaving }
+  return {
+    location,
+    cellPrefix,
+    unlockDate,
+    formattedDate,
+    timeSlot,
+    subLocations,
+    locationFilters,
+    activityFilters,
+    stayingOrLeavingFilters,
+  } as UnlockFilters
 }

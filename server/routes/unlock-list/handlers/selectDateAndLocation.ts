@@ -44,18 +44,18 @@ export default class SelectDateAndLocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    if (req.session?.unlockFilters) delete req.session.unlockFilters
-    const locationGroups = await this.activitiesService.getLocationGroups(user.activeCaseLoadId, user)
+    if (req.session?.unlockFilters) {
+      delete req.session.unlockFilters
+    }
+    // Uses the user's activeCaseLoadId to get the prison location groups
+    const locationGroups = await this.activitiesService.getLocationGroups(user)
     res.render('pages/unlock-list/select-date-and-location', { locationGroups })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const selectedDate = this.getDateValue(req.body)
     return res.redirect(
-      `planned-events?datePresetOption=${req.body.datePresetOption}` +
-        `&date=${selectedDate}` +
-        `&slot=${req.body.activitySlot}` +
-        `&location=${req.body.location}`,
+      `planned-events?date=${selectedDate}&slot=${req.body.activitySlot}&location=${req.body.location}`,
     )
   }
 

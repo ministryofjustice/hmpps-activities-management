@@ -3,6 +3,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
 
@@ -22,8 +23,13 @@
     <div class="govuk-grid-row govuk-!-margin-bottom-2">
 
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-1">{{ locationGroup }}</h1>
-            <span class="govuk-body ">{{ plannedDate }} - {{ plannedSlot | upper }}</span>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-1">{{ unlockFilters.location }} Unlock list</h1>
+            <span class="govuk-body ">{{ unlockFilters.formattedDate }} - {{ unlockFilters.timeSlot | upper }}</span>
+            <div class="govuk-body govuk-!-display-none-print govuk-!-margin-top-2">
+                <a href="/unlock-list/select-date-and-location" class="govuk-link--no-visited-state">
+                    Choose a different unlock list
+                </a>
+            </div>
         </div>
 
         <div class="govuk-grid-column-one-quarter govuk-!-display-none-print">
@@ -47,8 +53,8 @@
     {% set filterOptionsHtml %}
 
         {{ govukCheckboxes({
-            idPrefix: 'sublocations',
-            name: 'sublocations',
+            idPrefix: 'locationFilters',
+            name: 'locationFilters',
             classes: "govuk-checkboxes--small",
             fieldset: {
                 legend: {
@@ -56,33 +62,33 @@
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
-            items: unlockFilters.subLocations
+            items: unlockFilters.locationFilters
         }) }}
 
-        {{ govukCheckboxes({
-            idPrefix: 'activityNames',
-            name: 'activityNames',
-            classes: "govuk-checkboxes--small",
+        {{ govukRadios({
+            idPrefix: 'activityFilters',
+            name: 'activityFilters',
+            classes: "govuk-radios--small",
             fieldset: {
                 legend: {
                     text: 'Activities',
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
-            items: unlockFilters.activityNames
+            items: unlockFilters.activityFilters
         }) }}
 
-        {{ govukCheckboxes({
-            idPrefix: 'stayingOrLeaving',
-            name: 'stayingOrLeaving',
-            classes: "govuk-checkboxes--small",
+        {{ govukRadios({
+            idPrefix: 'stayingOrLeavingFilters',
+            name: 'stayingOrLeavingFilters',
+            classes: "govuk-radios--small",
             fieldset: {
                 legend: {
                     text: 'Staying or leaving',
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
-            items: unlockFilters.stayingOrLeaving
+            items: unlockFilters.stayingOrLeavingFilters
         }) }}
 
     {% endset %}
@@ -96,23 +102,28 @@
 
                 {# Set the selected filter items and links to remove them #}
                 {% set selectedLocations = [] %}
-                {% for location in unlockFilters.subLocations %}
+                {% for location in unlockFilters.locationFilters %}
                     {% if (location.checked === true) %}
-                       {%  set selectedLocations = (selectedLocations.push({ href: '#', text: location.value }), selectedLocations) %}
+                       {%  set selectedLocations = (selectedLocations.push({
+                           href: 'update-filters?clearLocation=' + location.value, text: location.value }), selectedLocations) %}
                     {% endif %}
                 {% endfor %}
 
                 {% set selectedActivities = [] %}
-                {% for activity in unlockFilters.activityNames %}
+                {% for activity in unlockFilters.activityFilters %}
                     {% if (activity.checked === true) %}
-                       {%  set selectedActivities = (selectedActivities.push({ href: '#', text: activity.value }), selectedActivities) %}
+                       {%  set selectedActivities = (selectedActivities.push({
+                           href: 'update-filters?clearActivity=' + activity.value, text: activity.value
+                       }), selectedActivities) %}
                     {% endif %}
                 {%  endfor %}
 
                 {% set selectedStayingOrLeaving = [] %}
-                {% for stayingOrLeaving in unlockFilters.stayingOrLeaving %}
+                {% for stayingOrLeaving in unlockFilters.stayingOrLeavingFilters %}
                     {% if stayingOrLeaving.checked === true %}
-                        {%  set selectedStayingOrLeaving = (selectedStayingOrLeaving.push({ href: '#', text: stayingOrLeaving.value }), selectedStayingOrLeaving) %}
+                        {%  set selectedStayingOrLeaving = (selectedStayingOrLeaving.push({
+                            href: 'update-filters?clearStaying=' + stayingOrLeaving.value, text: stayingOrLeaving.value
+                        }), selectedStayingOrLeaving) %}
                     {% endif %}
                 {%  endfor %}
 
@@ -125,7 +136,8 @@
                             text: 'Selected filters'
                         },
                         clearLink: {
-                            text: 'Clear filters'
+                            text: 'Clear filters',
+                            href: 'update-filters?clearFilters=true'
                         },
                         categories: [
                             {
@@ -171,7 +183,7 @@
                             },
                             {
                                 attributes: { id: 'cell-location-' + loop.index, "data-sort-value": item.cellLocation },
-                                text: item.cellLocation,
+                                text: item.locationSubGroup + ' ' + item.cellLocation,
                                 classes: 'govuk-table_cell'
                             },
                             {
@@ -187,11 +199,6 @@
                             {
                                 attributes: { id: 'activity-' + loop.index },
                                 html: showUnlockEvents(item.events),
-                                classes: 'govuk-table__cell'
-                            },
-                            {
-                                attributes: { id: 'sub-' + loop.index },
-                                text: item.locationSubGroup,
                                 classes: 'govuk-table__cell'
                             }
                         ]), rows) %}
@@ -227,12 +234,7 @@
                                 classes: 'govuk-table__header'
                             },
                             {
-                                text: "Activity",
-                                attributes: { "aria-sort": "none" },
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                text: "Sub location",
+                                text: "Session",
                                 attributes: { "aria-sort": "none" },
                                 classes: 'govuk-table__header'
                             }

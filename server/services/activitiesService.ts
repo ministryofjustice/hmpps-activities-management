@@ -22,6 +22,7 @@ import {
   PrisonerScheduledEvents,
   Appointment,
   AppointmentCategory,
+  LocationPrefix,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -211,8 +212,15 @@ export default class ActivitiesService {
     return this.activitiesApiClient.updateAttendances(attendanceUpdates, user)
   }
 
-  async getLocationGroups(prisonCode: string, user: ServiceUser): Promise<LocationGroup[]> {
-    return this.activitiesApiClient.getPrisonLocationGroups(prisonCode, user)
+  // TODO: Test case
+  async getLocationPrefix(loc: string, user: ServiceUser): Promise<LocationPrefix> {
+    const { activeCaseLoadId } = user
+    return this.activitiesApiClient.getPrisonLocationPrefixByGroup(activeCaseLoadId, loc, user)
+  }
+
+  async getLocationGroups(user: ServiceUser): Promise<LocationGroup[]> {
+    const { activeCaseLoadId } = user
+    return this.activitiesApiClient.getPrisonLocationGroups(activeCaseLoadId, user)
   }
 
   async getAllocations(id: number, user: ServiceUser): Promise<Allocation[]> {

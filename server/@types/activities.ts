@@ -87,9 +87,15 @@ export type UnlockFilterItem = {
 }
 
 export type UnlockFilters = {
-  subLocations: UnlockFilterItem[]
-  activityNames: UnlockFilterItem[]
-  stayingOrLeaving: UnlockFilterItem[]
+  location: string
+  cellPrefix: string
+  unlockDate: string
+  formattedDate: string
+  timeSlot: string
+  subLocations: string[]
+  locationFilters: UnlockFilterItem[]
+  activityFilters: UnlockFilterItem[]
+  stayingOrLeavingFilters: UnlockFilterItem[]
 }
 
 export type SubLocationCellPattern = {
