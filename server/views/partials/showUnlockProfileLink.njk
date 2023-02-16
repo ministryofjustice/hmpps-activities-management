@@ -1,8 +1,9 @@
 
-{% macro showUnlockProfileLink(prisonerNumber, displayName) %}
+{% macro showUnlockProfileLink(prisonerNumber, displayName, dpsUrl) %}
   <div>
     <div>
-      <a href="/prisoners/{{ prisonerNumber }}/profile"
+      <a href="{{ dpsUrl }}/prisoner/{{ prisonerNumber }}"
+         target="_blank"
          class="govuk-link govuk-link--no-visited-state">
         {{ displayName }}
       </a>

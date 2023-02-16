@@ -15,6 +15,7 @@ import {
   toDateString,
   formatDate,
   toMoney,
+  convertToArray,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
@@ -199,6 +200,17 @@ describe('utils', () => {
       expect(toMoney(150)).toEqual('£1.50')
       expect(toMoney(15000)).toEqual('£150.00')
       expect(toMoney(15.53)).toEqual('£0.16')
+    })
+  })
+
+  describe('convertToArray', () => {
+    it.each([
+      ['Undefined', undefined, 0],
+      ['Single string value', 'a string', 1],
+      ['Has 3 elements', ['a', 'a', 'a'], 3],
+      ['Empty list', [], 0],
+    ])('%s convertToArray(%s) has %s elements', (desc: string, maybeArray: string | string[], size: number) => {
+      expect(convertToArray(maybeArray)).toHaveLength(size)
     })
   })
 })

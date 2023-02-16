@@ -1,11 +1,6 @@
 {
   "prisonCode": "MDI",
-  "prisonerNumbers": [
-    "G4572UO",
-    "A7789DY",
-    "G7218GI",
-    "G5897GP"
-  ],
+  "prisonerNumbers": ["G4572UO", "A7789DY", "G7218GI", "G5897GP"],
   "startDate": "2023-02-02",
   "endDate": "2023-02-02",
   "appointments": [],

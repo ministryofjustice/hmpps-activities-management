@@ -93,9 +93,7 @@
         "id": 8,
         "startTime": "14:00",
         "endTime": "15:00",
-        "daysOfWeek": [
-          "Thu"
-        ]
+        "daysOfWeek": ["Thu"]
       }
     ],
     "startDate": "10/10/2022",
