@@ -41,9 +41,7 @@
           "id": 7,
           "startTime": "10:00",
           "endTime": "11:00",
-          "daysOfWeek": [
-            "Thu"
-          ]
+          "daysOfWeek": ["Thu"]
         }
       ],
       "startDate": "10/10/2022",
@@ -145,9 +143,7 @@
           "id": 8,
           "startTime": "14:00",
           "endTime": "15:00",
-          "daysOfWeek": [
-            "Thu"
-          ]
+          "daysOfWeek": ["Thu"]
         }
       ],
       "startDate": "10/10/2022",
@@ -196,24 +192,13 @@
           "id": 12,
           "startTime": "15:00",
           "endTime": "17:00",
-          "daysOfWeek": [
-            "Tue",
-            "Thu",
-            "Sun"
-          ]
+          "daysOfWeek": ["Tue", "Thu", "Sun"]
         },
         {
           "id": 13,
           "startTime": "19:00",
           "endTime": "20:00",
-          "daysOfWeek": [
-            "Tue",
-            "Wed",
-            "Thu",
-            "Fri",
-            "Sat",
-            "Sun"
-          ]
+          "daysOfWeek": ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         }
       ],
       "startDate": "10/10/2022",
@@ -262,24 +247,13 @@
           "id": 12,
           "startTime": "15:00",
           "endTime": "17:00",
-          "daysOfWeek": [
-            "Tue",
-            "Thu",
-            "Sun"
-          ]
+          "daysOfWeek": ["Tue", "Thu", "Sun"]
         },
         {
           "id": 13,
           "startTime": "19:00",
           "endTime": "20:00",
-          "daysOfWeek": [
-            "Tue",
-            "Wed",
-            "Thu",
-            "Fri",
-            "Sat",
-            "Sun"
-          ]
+          "daysOfWeek": ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         }
       ],
       "startDate": "10/10/2022",

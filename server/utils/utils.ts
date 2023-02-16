@@ -241,6 +241,10 @@ export const getAttendanceSummary = (attendance: Attendance[]) => {
 
 export const toMoney = (x: number): string => `£${(x / 100).toFixed(2)}`
 
+export const convertToArray = (maybeArray: string | string[]): string[] => {
+  return maybeArray ? [maybeArray].flat() : []
+}
+
 export const exampleDateOneWeekAhead = (message: string) => {
   const nextWeek = new Date()
   nextWeek.setDate(nextWeek.getDate() + 7)

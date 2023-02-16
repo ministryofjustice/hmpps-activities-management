@@ -283,10 +283,10 @@ describe('Activities Service', () => {
   describe('getLocationGroups', () => {
     it('should fetch the location groups for a prison using the activities API', async () => {
       when(activitiesApiClient.getPrisonLocationGroups)
-        .calledWith(atLeast('MDI'))
+        .calledWith(atLeast(user))
         .mockResolvedValueOnce(mockedLocationGroups)
 
-      const results = await activitiesService.getLocationGroups('MDI', user)
+      const results = await activitiesService.getLocationGroups(user)
 
       expect(results.length).toEqual(1)
       expect(results[0]).toEqual(mockedLocationGroups[0])
