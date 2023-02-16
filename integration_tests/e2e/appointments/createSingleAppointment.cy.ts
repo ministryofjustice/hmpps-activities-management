@@ -61,11 +61,19 @@ context('Create single appointment', () => {
     dateAndTimePage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    checkAnswersPage.assertCategory('Chaplaincy')
+    checkAnswersPage.assertLocation('Chapel')
+    checkAnswersPage.assertStartDate(tomorrow)
+    checkAnswersPage.assertStartTime(14, 0)
+    checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.assertMessageEquals(
       `You have successfully created an appointment for Stephen Gregs on ${formatDate(tomorrow, 'EEEE d MMMM yyyy')}.`,
     )
+    confirmationPage.assertCreateAnotherLinkExists()
+    confirmationPage.assertViewAppointmentLinkExists()
   })
 })

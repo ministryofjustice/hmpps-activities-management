@@ -40,7 +40,7 @@
                             text: "Category"
                         },
                         value: {
-                            text: session.createSingleAppointmentJourney.category.description
+                            html: '<span data-qa="category">' + session.createSingleAppointmentJourney.category.description + '</span>'
                         },
                         actions: {
                             items: [
@@ -57,7 +57,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: session.createSingleAppointmentJourney.location.description
+                            html: '<span data-qa="location">' + session.createSingleAppointmentJourney.location.description + '</span>'
                         },
                         actions: {
                             items: [
@@ -74,7 +74,7 @@
                             text: "Date"
                         },
                         value: {
-                            text: startDate | formatDate('EEEE d MMMM yyyy')
+                            html: '<span data-qa="start-date">' + startDate | formatDate('EEEE d MMMM yyyy') + '</span>'
                         },
                         actions: {
                             items: [
@@ -91,7 +91,7 @@
                             text: "Start time"
                         },
                         value: {
-                            text: startTime | formatDate('HH:mm')
+                            html: '<span data-qa="start-time">' + startTime | formatDate('HH:mm') + '</span>'
                         },
                         actions: {
                             items: [
@@ -108,7 +108,7 @@
                             text: "End time"
                         },
                         value: {
-                            text: endTime | formatDate('HH:mm')
+                            html: '<span data-qa="end-time">' + endTime | formatDate('HH:mm') + '</span>'
                         },
                         actions: {
                             items: [
