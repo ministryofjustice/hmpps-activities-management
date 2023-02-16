@@ -42,7 +42,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
   post('/date-and-time', dateAndTimeRoutesHandler.POST, DateAndTime)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
-  get('/confirmation/:id', confirmationHandler.GET)
+  get('/confirmation/:id', confirmationHandler.GET, true)
 
   return router
 }

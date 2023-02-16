@@ -31,10 +31,8 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
         createSingleAppointmentJourney: {
           prisoner: {
             number: 'A1234BC',
-            displayName: 'Test Prisoner',
+            name: 'Test Prisoner',
             cellLocation: '1-1-1',
-            description: 'Test Prisoner | A1234BC | 1-1-1',
-            summary: 'Test Prisoner<br/>A1234BC<br/>1-1-1',
           },
           category: {
             id: 11,
@@ -48,17 +46,17 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
             day: 23,
             month: 4,
             year: 2023,
-            display: 'Sunday 23 April 2023',
+            date: '2023-04-23T00:00:00.000+0100',
           },
           startTime: {
             hour: 9,
             minute: 30,
-            display: '09:30',
+            date: '2023-04-23T09:30:00.000+0100',
           },
           endTime: {
             hour: 13,
             minute: 0,
-            display: '13:00',
+            date: '2023-04-23T13:00:00.000+0100',
           },
         },
       },
@@ -72,7 +70,11 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
   describe('GET', () => {
     it('should render the check answers page with data from session', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-single/check-answers')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-single/check-answers', {
+        startDate: new Date('2023-04-23T00:00:00.000+0100'),
+        startTime: new Date('2023-04-23T09:30:00.000+0100'),
+        endTime: new Date('2023-04-23T13:00:00.000+0100'),
+      })
     })
   })
 

@@ -13,7 +13,7 @@
                 titleText: "Appointment created"
             }) }}
             <p class="govuk-body">
-                {{ confirmationMessage }}
+                You have successfully created an appointment for {{ session.createSingleAppointmentJourney.prisoner.name | toTitleCase }} on {{ startDate | formatDate('EEEE d MMMM yyyy') }}.
             </p>
 
             <h2 class="govuk-heading-m">What you can do next</h2>

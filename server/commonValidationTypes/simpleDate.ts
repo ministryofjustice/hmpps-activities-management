@@ -34,6 +34,4 @@ export default class SimpleDate {
   toString = () => `${this.year}-${this.month}-${this.day}`
 
   toIsoString = () => formatDate(this.toRichDate(), 'yyyy-MM-dd')
-
-  toDisplayString = () => formatDate(this.toRichDate(), 'EEEE d MMMM yyyy')
 }

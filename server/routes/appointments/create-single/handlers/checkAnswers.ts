@@ -9,7 +9,13 @@ export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render(`pages/appointments/create-single/check-answers`)
+    const { createSingleAppointmentJourney } = req.session
+
+    res.render(`pages/appointments/create-single/check-answers`, {
+      startDate: new Date(createSingleAppointmentJourney.startDate.date),
+      startTime: new Date(createSingleAppointmentJourney.startTime.date),
+      endTime: new Date(createSingleAppointmentJourney.endTime.date),
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

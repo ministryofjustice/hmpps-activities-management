@@ -20,8 +20,8 @@ export default class SimpleTime {
   @Max(59, { message: MINUTE_MESSAGE })
   minute: number
 
-  toDate = () => {
-    const date = new Date()
+  toDate = (baseDate?: Date) => {
+    const date = baseDate ? new Date(baseDate) : new Date()
     date.setHours(this.hour, this.minute, 0, 0)
     return date
   }
@@ -29,6 +29,4 @@ export default class SimpleTime {
   toString = () => `${this.hour}:${this.minute}`
 
   toIsoString = () => formatDate(this.toDate(), 'HH:mm')
-
-  toDisplayString = () => formatDate(this.toDate(), 'HH:mm')
 }

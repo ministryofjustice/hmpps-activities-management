@@ -104,7 +104,7 @@ describe('simpleTime', () => {
   })
 
   describe('toDate', () => {
-    it("should convert to today's date with supplied time", () => {
+    it("should convert to today's date with supplied time if no base date is specified", () => {
       const body = {
         hour: 9,
         minute: 30,
@@ -115,6 +115,21 @@ describe('simpleTime', () => {
       const requestObject = plainToInstance(SimpleTime, body)
 
       expect(requestObject.toDate()).toEqual(expectedDate)
+    })
+
+    it("should use base date's date with supplied time", () => {
+      const body = {
+        hour: 9,
+        minute: 30,
+      }
+      const baseDate = new Date('2023-05-06T01:02:03')
+
+      const expectedDate = new Date('2023-05-06')
+      expectedDate.setHours(9, 30, 0, 0)
+
+      const requestObject = plainToInstance(SimpleTime, body)
+
+      expect(requestObject.toDate(baseDate)).toEqual(expectedDate)
     })
   })
 
@@ -185,41 +200,6 @@ describe('simpleTime', () => {
       const requestObject = plainToInstance(SimpleTime, body)
 
       expect(requestObject.toIsoString()).toEqual('14:55')
-    })
-  })
-
-  describe('toDisplayString', () => {
-    it('should convert to string', async () => {
-      const body = {
-        hour: 12,
-        minute: 25,
-      }
-
-      const requestObject = plainToInstance(SimpleTime, body)
-
-      expect(requestObject.toDisplayString()).toEqual('12:25')
-    })
-
-    it('should pad time components', async () => {
-      const body = {
-        hour: 8,
-        minute: 5,
-      }
-
-      const requestObject = plainToInstance(SimpleTime, body)
-
-      expect(requestObject.toDisplayString()).toEqual('08:05')
-    })
-
-    it('should use 24 hour clock', async () => {
-      const body = {
-        hour: 14,
-        minute: 55,
-      }
-
-      const requestObject = plainToInstance(SimpleTime, body)
-
-      expect(requestObject.toDisplayString()).toEqual('14:55')
     })
   })
 })

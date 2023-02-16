@@ -18,7 +18,12 @@
                             text: "Prisoner"
                         },
                         value: {
-                            html: session.createSingleAppointmentJourney.prisoner.summary
+                            html:
+                                "<div>
+                                    <div>" + session.createSingleAppointmentJourney.prisoner.name | toTitleCase + "</div>
+                                    <div>" + session.createSingleAppointmentJourney.prisoner.prisonerNumber + "</div>
+                                    <div>" + session.createSingleAppointmentJourney.prisoner.cellLocation + "</div>
+                                </div>"
                         },
                         actions: {
                             items: [
@@ -69,7 +74,7 @@
                             text: "Date"
                         },
                         value: {
-                            text: session.createSingleAppointmentJourney.startDate.display
+                            text: startDate | formatDate('EEEE d MMMM yyyy')
                         },
                         actions: {
                             items: [
@@ -86,7 +91,7 @@
                             text: "Start time"
                         },
                         value: {
-                            text: session.createSingleAppointmentJourney.startTime.display
+                            text: startTime | formatDate('HH:mm')
                         },
                         actions: {
                             items: [
@@ -103,7 +108,7 @@
                             text: "End time"
                         },
                         value: {
-                            text: session.createSingleAppointmentJourney.endTime.display
+                            text: endTime | formatDate('HH:mm')
                         },
                         actions: {
                             items: [

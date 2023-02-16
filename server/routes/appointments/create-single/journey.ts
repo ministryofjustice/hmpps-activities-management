@@ -1,10 +1,8 @@
 export type CreateSingleAppointmentJourney = {
   prisoner?: {
     number: string
-    displayName: string
+    name: string
     cellLocation: string
-    description: string
-    summary: string
   }
   category?: {
     id: number
@@ -18,16 +16,16 @@ export type CreateSingleAppointmentJourney = {
     day: number
     month: number
     year: number
-    display: string
+    date: Date
   }
   startTime?: {
     hour: number
     minute: number
-    display: string
+    date: Date
   }
   endTime?: {
     hour: number
     minute: number
-    display: string
+    date: Date
   }
 }

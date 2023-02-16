@@ -45,19 +45,19 @@ export default class DateAndTimeRoutes {
       day: startDate.day,
       month: startDate.month,
       year: startDate.year,
-      display: startDate.toDisplayString(),
+      date: startDate.toRichDate(),
     }
 
     req.session.createSingleAppointmentJourney.startTime = {
       hour: startTime.hour,
       minute: startTime.minute,
-      display: startTime.toDisplayString(),
+      date: startTime.toDate(req.session.createSingleAppointmentJourney.startDate.date),
     }
 
     req.session.createSingleAppointmentJourney.endTime = {
       hour: endTime.hour,
       minute: endTime.minute,
-      display: endTime.toDisplayString(),
+      date: endTime.toDate(req.session.createSingleAppointmentJourney.startDate.date),
     }
 
     res.redirect(`check-answers`)

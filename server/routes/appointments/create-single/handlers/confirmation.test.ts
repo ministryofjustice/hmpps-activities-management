@@ -17,10 +17,8 @@ describe('Route Handlers - Create Single Appointment - Confirmation', () => {
         createSingleAppointmentJourney: {
           prisoner: {
             number: 'A1234BC',
-            displayName: 'Test Prisoner',
+            name: 'Test Prisoner',
             cellLocation: '1-1-1',
-            description: 'Test Prisoner | A1234BC | 1-1-1',
-            summary: 'Test Prisoner<br/>A1234BC<br/>1-1-1',
           },
           category: {
             id: 11,
@@ -34,17 +32,17 @@ describe('Route Handlers - Create Single Appointment - Confirmation', () => {
             day: 23,
             month: 4,
             year: 2023,
-            display: 'Sunday 23 April 2023',
+            date: '2023-04-23T00:00:00.000+0100',
           },
           startTime: {
             hour: 9,
             minute: 30,
-            display: '09:30',
+            date: '2023-04-23T09:30:00.000+0100',
           },
           endTime: {
             hour: 13,
             minute: 0,
-            display: '13:00',
+            date: '2023-04-23T13:00:00.000+0100',
           },
         },
       },
@@ -63,7 +61,7 @@ describe('Route Handlers - Create Single Appointment - Confirmation', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-single/confirmation', {
         id: '1',
-        confirmationMessage: 'You have successfully created an appointment for Test Prisoner on Sunday 23 April 2023.',
+        startDate: new Date('2023-04-23T00:00:00.000+0100'),
       })
     })
   })

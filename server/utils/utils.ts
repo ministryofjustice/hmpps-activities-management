@@ -241,16 +241,6 @@ export const getAttendanceSummary = (attendance: Attendance[]) => {
 
 export const toMoney = (x: number): string => `£${(x / 100).toFixed(2)}`
 
-export const toPrisonerDescription = (prisoner: Prisoner) =>
-  `${convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)} | ${prisoner.prisonerNumber} | ${
-    prisoner.cellLocation
-  }`
-
-export const toPrisonerSummary = (prisoner: Prisoner) =>
-  `${convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)}<br/>${prisoner.prisonerNumber}<br/>${
-    prisoner.cellLocation
-  }`
-
 export const exampleDateOneWeekAhead = (message: string) => {
   const nextWeek = new Date()
   nextWeek.setDate(nextWeek.getDate() + 7)

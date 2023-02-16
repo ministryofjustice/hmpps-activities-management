@@ -65,10 +65,8 @@ describe('Route Handlers - Create Single Appointment - Select Prisoner', () => {
 
       expect(req.session.createSingleAppointmentJourney.prisoner).toEqual({
         number: 'A1234BC',
-        displayName: 'Test Prisoner',
+        name: 'Test Prisoner',
         cellLocation: '1-1-1',
-        description: 'Test Prisoner | A1234BC | 1-1-1',
-        summary: 'Test Prisoner<br/>A1234BC<br/>1-1-1',
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('category')
     })

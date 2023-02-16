@@ -134,30 +134,4 @@ describe('simpleDate', () => {
       expect(requestObject.toIsoString()).toEqual('0952-02-01')
     })
   })
-
-  describe('toDisplayString', () => {
-    it('should convert to string', async () => {
-      const body = {
-        day: 23,
-        month: 3,
-        year: 2023,
-      }
-
-      const requestObject = plainToInstance(SimpleDate, body)
-
-      expect(requestObject.toDisplayString()).toEqual('Thursday 23 March 2023')
-    })
-
-    it('should pad date components', async () => {
-      const body = {
-        day: 1,
-        month: 2,
-        year: 952,
-      }
-
-      const requestObject = plainToInstance(SimpleDate, body)
-
-      expect(requestObject.toDisplayString()).toEqual('Tuesday 1 February 0952')
-    })
-  })
 })

@@ -16,13 +16,10 @@ import {
   formatDate,
   toMoney,
   toTimeItems,
-  toPrisonerDescription,
-  toPrisonerSummary,
   exampleDateOneWeekAhead,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
-import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 
 describe('utils', () => {
   describe('convert to title case', () => {
@@ -271,30 +268,6 @@ describe('utils', () => {
           selected: false,
         },
       ])
-    })
-  })
-
-  describe('toPrisonerDescription', () => {
-    it('should return name, number and cell location separated by pipe characters', () => {
-      const prisoner = {
-        prisonerNumber: 'A1234BC',
-        firstName: 'Test',
-        lastName: 'Prisoner',
-        cellLocation: '1-1-1',
-      } as Prisoner
-      expect(toPrisonerDescription(prisoner)).toEqual('Test Prisoner | A1234BC | 1-1-1')
-    })
-  })
-
-  describe('toPrisonerSummary', () => {
-    it('should return name, number and cell location separated by line breaks', () => {
-      const prisoner = {
-        prisonerNumber: 'A1234BC',
-        firstName: 'Test',
-        lastName: 'Prisoner',
-        cellLocation: '1-1-1',
-      } as Prisoner
-      expect(toPrisonerSummary(prisoner)).toEqual('Test Prisoner<br/>A1234BC<br/>1-1-1')
     })
   })
 

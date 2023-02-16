@@ -35,12 +35,14 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
 
   describe('POST', () => {
     it('should save start date, start time and end time in session and redirect to check answers page', async () => {
-      const today = new Date()
+      const tomorrow = new Date()
+      tomorrow.setDate(getDate(tomorrow) + 1)
+
       req.body = {
         startDate: plainToInstance(SimpleDate, {
-          day: getDate(today) + 1,
-          month: getMonth(today),
-          year: getYear(today),
+          day: getDate(tomorrow),
+          month: getMonth(tomorrow) + 1,
+          year: getYear(tomorrow),
         }),
         startTime: plainToInstance(SimpleTime, {
           hour: 11,
@@ -55,20 +57,20 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
       await handler.POST(req, res)
 
       expect(req.session.createSingleAppointmentJourney.startDate).toEqual({
-        day: getDate(today) + 1,
-        month: getMonth(today),
-        year: getYear(today),
-        display: req.body.startDate.toDisplayString(),
+        day: getDate(tomorrow),
+        month: getMonth(tomorrow) + 1,
+        year: getYear(tomorrow),
+        date: req.body.startDate.toRichDate(),
       })
       expect(req.session.createSingleAppointmentJourney.startTime).toEqual({
         hour: 11,
         minute: 30,
-        display: '11:30',
+        date: req.body.startTime.toDate(tomorrow),
       })
       expect(req.session.createSingleAppointmentJourney.endTime).toEqual({
         hour: 13,
         minute: 0,
-        display: '13:00',
+        date: req.body.endTime.toDate(tomorrow),
       })
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
@@ -100,7 +102,7 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
       const body = {
         startDate: plainToInstance(SimpleDate, {
           day: getDate(today) - 1,
-          month: getMonth(today),
+          month: getMonth(today) + 1,
           year: getYear(today),
         }),
         startTime: plainToInstance(SimpleTime, {
@@ -128,7 +130,7 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
       const body = {
         startDate: plainToInstance(SimpleDate, {
           day: getDate(today) + 1,
-          month: getMonth(today),
+          month: getMonth(today) + 1,
           year: getYear(today),
         }),
         startTime: plainToInstance(SimpleTime, {
