@@ -1,31 +1,40 @@
 import { Request, Response } from 'express'
+import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
+import SimpleDate from '../../../../commonValidationTypes/simpleDate'
+import SimpleTime from '../../../../commonValidationTypes/simpleTime'
+import { AppointmentCreateRequest } from '../../../../@types/activitiesAPI/types'
 
 export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render(`pages/appointments/create-single/check-answers`)
+    const { createSingleAppointmentJourney } = req.session
+
+    res.render(`pages/appointments/create-single/check-answers`, {
+      startDate: new Date(createSingleAppointmentJourney.startDate.date),
+      startTime: new Date(createSingleAppointmentJourney.startTime.date),
+      endTime: new Date(createSingleAppointmentJourney.endTime.date),
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // const { user } = res.locals
-    // const { createSingleAppointmentJourney } = req.session
+    const { user } = res.locals
+    const { createSingleAppointmentJourney } = req.session
 
-    // TODO: Populate create object and post to API
-    // const appointment = {
-    //   bookingId:
-    //   prisonerNumber:
-    //   prisonCode: user.activeCaseLoadId,
-    //   internalLocationId: ,
-    //   categoryId:
-    //   startDate:
-    //   startTime:
-    //   endTime:
-    // } as AppointmentCreateRequest
+    const appointment = {
+      categoryId: createSingleAppointmentJourney.category.id,
+      prisonCode: user.activeCaseLoadId,
+      internalLocationId: createSingleAppointmentJourney.location.id,
+      inCell: false,
+      startDate: plainToInstance(SimpleDate, createSingleAppointmentJourney.startDate).toIsoString(),
+      startTime: plainToInstance(SimpleTime, createSingleAppointmentJourney.startTime).toIsoString(),
+      endTime: plainToInstance(SimpleTime, createSingleAppointmentJourney.endTime).toIsoString(),
+      prisonerNumbers: [createSingleAppointmentJourney.prisoner.number],
+    } as AppointmentCreateRequest
 
-    // const response = await this.activitiesService.createAppointment(appointment, user)
-    // res.redirect(`confirmation/${response.id}`)
-    res.redirect(`check-answers`)
+    const response = await this.activitiesService.createAppointment(appointment, user)
+
+    res.redirect(`confirmation/${response.id}`)
   }
 }

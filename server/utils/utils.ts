@@ -153,6 +153,30 @@ export const addDefaultSelectedValue = (items: any, text: any, show: any) => {
   ]
 }
 
+export const toTimeItems = (array: string[], selected: number) => {
+  if (!array) return null
+
+  const items = [
+    {
+      value: '-',
+      text: '--',
+      selected: false,
+    },
+  ]
+
+  array.forEach(item => {
+    const timeValue = parseInt(item, 10)
+    const value = Number.isNaN(timeValue) ? item : timeValue.toString()
+    items.push({
+      value,
+      text: item,
+      selected: selected !== undefined && selected !== null && value === selected.toString(),
+    })
+  })
+
+  return items
+}
+
 export const findError = (array: FieldValidationError[], formFieldId: string) => {
   if (!array) return null
   const item = array.find(error => error.field === formFieldId)
@@ -219,4 +243,10 @@ export const toMoney = (x: number): string => `£${(x / 100).toFixed(2)}`
 
 export const convertToArray = (maybeArray: string | string[]): string[] => {
   return maybeArray ? [maybeArray].flat() : []
+}
+
+export const exampleDateOneWeekAhead = (message: string) => {
+  const nextWeek = new Date()
+  nextWeek.setDate(nextWeek.getDate() + 7)
+  return message + formatDate(nextWeek, 'dd MM yyyy')
 }

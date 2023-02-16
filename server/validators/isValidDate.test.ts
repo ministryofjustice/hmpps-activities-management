@@ -26,6 +26,15 @@ describe('isValidDate', () => {
     expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
   })
 
+  it('should fail validation for an undefined date', async () => {
+    const body = {}
+
+    const requestObject = plainToInstance(DummyForm, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
+  })
+
   it('should pass validation for a good date', async () => {
     const body = {
       date: plainToInstance(SimpleDate, {

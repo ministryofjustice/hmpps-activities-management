@@ -21,6 +21,7 @@ describe('Route Handlers - Create Single Appointment - Select Prisoner', () => {
       locals: {
         user: {
           username: 'test.user',
+          activeCaseLoadId: 'TPR',
         },
       },
       render: jest.fn(),
@@ -55,17 +56,17 @@ describe('Route Handlers - Create Single Appointment - Select Prisoner', () => {
       }
 
       when(prisonService.searchInmates)
-        .calledWith({ prisonerIdentifier: 'A1234BC', includeAliases: false }, res.locals.user)
+        .calledWith({ prisonIds: ['TPR'], prisonerIdentifier: 'A1234BC', includeAliases: false }, res.locals.user)
         .mockResolvedValue([
-          { prisonerNumber: 'A1234BC', bookingId: '456', firstName: 'Test', lastName: 'Prisoner' } as Prisoner,
+          { prisonerNumber: 'A1234BC', firstName: 'Test', lastName: 'Prisoner', cellLocation: '1-1-1' } as Prisoner,
         ])
 
       await handler.POST(req, res)
 
       expect(req.session.createSingleAppointmentJourney.prisoner).toEqual({
         number: 'A1234BC',
-        bookingId: 456,
-        displayName: 'Prisoner, Test',
+        name: 'Test Prisoner',
+        cellLocation: '1-1-1',
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('category')
     })
@@ -76,7 +77,7 @@ describe('Route Handlers - Create Single Appointment - Select Prisoner', () => {
       }
 
       when(prisonService.searchInmates)
-        .calledWith({ prisonerIdentifier: 'A1234BC', includeAliases: false }, res.locals.user)
+        .calledWith({ prisonIds: ['TPR'], prisonerIdentifier: 'A1234BC', includeAliases: false }, res.locals.user)
         .mockResolvedValue([])
 
       await handler.POST(req, res)
