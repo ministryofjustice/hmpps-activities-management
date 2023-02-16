@@ -64,5 +64,10 @@ describe('Route Handlers - Create Single Appointment - Confirmation', () => {
         startDate: new Date('2023-04-23T00:00:00.000+0100'),
       })
     })
+
+    it('should clear session', async () => {
+      await handler.GET(req, res)
+      expect(req.session.createSingleAppointmentJourney).toBeNull()
+    })
   })
 })

@@ -9,6 +9,6 @@ export default class ConfirmationRoutes {
       startDate: new Date(createSingleAppointmentJourney.startDate.date),
     })
 
-    req.session.createJourney = null
+    req.session.createSingleAppointmentJourney = null
   }
 }
