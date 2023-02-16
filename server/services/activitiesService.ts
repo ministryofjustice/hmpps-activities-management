@@ -1,6 +1,7 @@
 import { format } from 'date-fns'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
+import PrisonApiClient from '../data/prisonApiClient'
 import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
@@ -28,6 +29,10 @@ import {
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
+import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
+import { AppointmentDetails, AppointmentOccurrenceSummary } from '../@types/appointments'
+import { LocationLenient } from '../@types/prisonApiImportCustom'
+import { convertToTitleCase } from '../utils/utils'
 
 const processError = (error: SanitisedError): undefined => {
   if (!error.status) throw error
@@ -39,6 +44,7 @@ export default class ActivitiesService {
   constructor(
     private readonly activitiesApiClient: ActivitiesApiClient,
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
+    private readonly prisonApiClient: PrisonApiClient,
   ) {}
 
   getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
@@ -241,6 +247,71 @@ export default class ActivitiesService {
 
   async getAppointment(appointmentId: number, user: ServiceUser): Promise<Appointment> {
     return this.activitiesApiClient.getAppointment(appointmentId, user)
+  }
+
+  async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
+    const appointment = await this.getAppointment(appointmentId, user)
+
+    const locationsMap = (
+      await this.prisonApiClient.getLocationsForEventType(appointment.prisonCode, 'APP', user)
+    ).reduce((map, location) => {
+      return map.set(location.locationId, location)
+    }, new Map<number, LocationLenient>())
+
+    const occurrenceSummaries = appointment.occurrences.map(occurrence => {
+      return {
+        id: occurrence.id,
+        internalLocation: locationsMap.get(occurrence.internalLocationId),
+        inCell: occurrence.inCell,
+        startDate: new Date(occurrence.startDate),
+        startTime: new Date(`${occurrence.startDate}T${occurrence.startTime}:00`),
+        endTime: occurrence.endTime !== null ? new Date(`${occurrence.startDate}T${occurrence.endTime}:00`) : null,
+        comment: occurrence.comment,
+        isCancelled: false,
+        updated: null,
+        updatedBy: null,
+        isEdited: false,
+      } as AppointmentOccurrenceSummary
+    })
+
+    const prisonerNumbers = appointment.occurrences
+      .map(occurrence =>
+        occurrence.allocations.map(allocation => {
+          return allocation.prisonerNumber
+        }),
+      )
+      .flat()
+    const prisoners = await this.prisonerSearchApiClient.searchByPrisonerNumbers({ prisonerNumbers }, user)
+    const prisonerMap = prisoners.reduce((map, prisoner) => {
+      return map.set(prisoner.prisonerNumber, prisoner)
+    }, new Map<string, Prisoner>())
+
+    const createdByUserDetail = await this.prisonApiClient.getUserByUsername(appointment.createdBy, user)
+    const createdBy = convertToTitleCase(`${createdByUserDetail.firstName} ${createdByUserDetail.lastName}`)
+
+    let updatedBy = null
+    if (appointment.updatedBy !== null) {
+      const updatedByUserDetail = await this.prisonApiClient.getUserByUsername(appointment.updatedBy, user)
+      updatedBy = convertToTitleCase(`${updatedByUserDetail.firstName} ${updatedByUserDetail.lastName}`)
+    }
+
+    return {
+      id: appointment.id,
+      category: appointment.category,
+      internalLocation: locationsMap.get(appointment.internalLocationId),
+      inCell: appointment.inCell,
+      startDate: new Date(appointment.startDate),
+      startTime: new Date(`${appointment.startDate}T${appointment.startTime}:00`),
+      endTime: appointment.endTime !== null ? new Date(`${appointment.startDate}T${appointment.endTime}:00`) : null,
+      comment: appointment.comment,
+      created: new Date(appointment.created),
+      createdBy,
+      updated: appointment.updated !== null ? new Date(appointment.updated) : null,
+      updatedBy,
+      occurrences: occurrenceSummaries,
+      prisoners,
+      prisonerMap,
+    }
   }
 
   async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategory[]> {

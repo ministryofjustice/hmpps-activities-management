@@ -32,6 +32,10 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     return this.get({ path: '/api/users/me', authToken: user.token })
   }
 
+  async getUserByUsername(username: string, user: ServiceUser): Promise<PrisonApiUserDetail> {
+    return this.get({ path: `/api/users/${username}`, authToken: user.token })
+  }
+
   async getUserCaseLoads(user: ServiceUser): Promise<CaseLoad[]> {
     return this.get({ path: '/api/users/me/caseLoads', authToken: user.token })
   }

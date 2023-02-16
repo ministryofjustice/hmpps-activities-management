@@ -35,6 +35,8 @@ export default class CheckAnswersRoutes {
 
     const response = await this.activitiesService.createAppointment(appointment, user)
 
+    req.session.createSingleAppointmentJourney = null
+
     res.redirect(`confirmation/${response.id}`)
   }
 }

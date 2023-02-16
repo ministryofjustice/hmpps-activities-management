@@ -2,6 +2,7 @@ import { when } from 'jest-when'
 import atLeast from '../../jest.setup'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
+import PrisonApiClient from '../data/prisonApiClient'
 import ActivitiesService from './activitiesService'
 import { ServiceUser } from '../@types/express'
 import {
@@ -27,11 +28,13 @@ import activityScheduleAllocation from './fixtures/activity_schedule_allocation_
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
+jest.mock('../data/prisonApiClient')
 
 describe('Activities Service', () => {
   const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
   const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
-  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
+  const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
+  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient, prisonApiClient)
 
   const user = { activeCaseLoadId: 'MDI' } as ServiceUser
 
