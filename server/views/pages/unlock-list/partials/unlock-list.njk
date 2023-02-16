@@ -1,0 +1,73 @@
+{# Main unlock list body #}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+    {% set rows = [] %}
+    {% for item in unlockListItems %}
+        {% set rows = (rows.push([
+            {
+                attributes: { id: 'activity-' + loop.index, "data-sort-value": item.displayName },
+                html: showUnlockProfileLink(item.prisonerNumber, item.displayName),
+                classes: 'govuk-table_cell'
+            },
+            {
+                attributes: { id: 'cell-location-' + loop.index, "data-sort-value": item.cellLocation },
+                text: item.cellLocation,
+                classes: 'govuk-table_cell'
+            },
+            {
+                attributes: { id: 'prisoner-number-' + loop.index, "data-sort-value": item.prisonerNumber },
+                text: item.prisonerNumber,
+                classes: 'govuk-table_cell print-only'
+            },
+            {
+                attributes: { id: 'alerts-' + loop.index },
+                html: showUnlockAlerts(item.alerts),
+                classes: 'govuk-table__cell'
+            },
+            {
+                attributes: { id: 'unlock-events-' + loop.index },
+                html: showUnlockEvents(item.events),
+                classes: 'govuk-table__cell'
+            }
+        ]), rows) %}
+    {% endfor %}
+
+    {{ govukTable({
+        attributes: {
+            'data-module': 'moj-sortable-table',
+            id: 'unlock-list-table'
+        },
+        caption: "Prisoners",
+        classes: "alternating-row-shading",
+        captionClasses: "govuk-visually-hidden",
+        head: [
+            {
+                text: "Name",
+                attributes: { "aria-sort": "ascending" },
+                classes: 'govuk-table__header'
+            },
+            {
+                text: "Cell location",
+                attributes: { "aria-sort": "ascending" },
+                classes: 'govuk-table__header'
+            },
+            {
+                text: "Prisoner number",
+                attributes: { "aria-sort": "ascending" },
+                classes: 'govuk-table__header print-only'
+            },
+            {
+                text: "Relevant alerts",
+                attributes: { "aria-sort": "none" },
+                classes: 'govuk-table__header'
+            },
+            {
+                text: "Activity",
+                attributes: { "aria-sort": "none" },
+                classes: 'govuk-table__header'
+            }
+        ],
+        rows: rows
+    }) }}
+    </div>
+</div>

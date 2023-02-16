@@ -37,9 +37,14 @@
       padding: 0;
     }
 
+    &__header {
+      vertical-align: bottom;
+    }
+
     // Remove styling from MOJ sortable table colum headers
     [aria-sort] button {
       color: inherit;
+      padding: 0;
 
       &:before,
       &:after {
@@ -74,5 +79,16 @@
 
   .print-align-right {
     text-align: right;
+  }
+
+  .print-checkbox {
+    $_checkbox-size: 30px;
+    width: $_checkbox-size;
+    height: $_checkbox-size;
+    border: $govuk-border-width-form-element solid $govuk-input-border-colour;
+    background: govuk-colour("white");
+    color: govuk-colour("mid-grey");
+    line-height: $_checkbox-size;
+    text-align: center;
   }
 }

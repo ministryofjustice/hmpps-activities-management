@@ -1,0 +1,84 @@
+{# Main unlock list body #}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+    {% set rows = [] %}
+    {% for item in unlockListItems %}
+        {% set prisonerHtml %}
+            <div class="govuk-grid-row">
+                <div class="hmpps-grid-column-two-thirds-print">
+                    <div>{{ showUnlockProfileLink(item.prisonerNumber, item.displayName) }}</div>
+                    <div class="govuk-!-font-weight-bold">{{ item.cellLocation }}</div>
+                    <div class="secondary-text-colour">{{ item.prisonerNumber }}</div>
+                </div>
+                <div class="hmpps-grid-column-one-third-print govuk-!-padding-left-0">
+                    <div class="govuk-!-padding-right-2">{{ showUnlockAlerts(item.alerts) }}</div>
+                </div>
+            </div>
+        {% endset %}
+
+        {% set rows = (rows.push([
+            {
+                html: prisonerHtml,
+                classes: 'govuk-table_cell govuk-!-padding-top-2 govuk-!-padding-bottom-2'
+            },
+            {
+                html: showUnlockEvents(item.events),
+                classes: 'govuk-table_cell govuk-!-padding-top-2 govuk-!-padding-bottom-2'
+            },
+            {
+                html: '<div class="print-checkbox">R</div>',
+                classes: 'govuk-table_cell govuk-!-padding-top-2 govuk-!-padding-bottom-2'
+            },
+            {
+                html: '<div class="print-checkbox">S</div>',
+                classes: 'govuk-table__cell govuk-!-padding-top-2 govuk-!-padding-bottom-2'
+            },
+            {
+                html: '<div class="print-checkbox">G</div>',
+                classes: 'govuk-table__cell govuk-!-padding-top-2 govuk-!-padding-bottom-2'
+            },
+            {
+                classes: 'govuk-table__cell govuk-!-padding-top-2 govuk-!-padding-bottom-2',
+                html: ''
+            }
+        ]), rows) %}
+    {% endfor %}
+
+    {{ govukTable({
+        attributes: {
+            id: 'unlock-list-print-table'
+        },
+        caption: "Prisoners",
+        classes: "alternating-row-shading fixed-layout-table",
+        captionClasses: "govuk-visually-hidden",
+        head: [
+            {
+                text: "Prisoner details",
+                classes: 'govuk-table__header'
+            },
+            {
+                text: "Event details",
+                classes: 'govuk-table__header'
+            },
+            {
+                html: "<span>Refused</span>",
+                classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1'
+            },
+            {
+                html: "<span>Sick</span>",
+                classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1'
+            },
+            {
+                html: "<span>Gone</span>",
+                classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1'
+            },
+            {
+                text: "Notes",
+                classes: 'govuk-table__header',
+                attributes: { style: 'width: 20%' }
+            }
+        ],
+        rows: rows
+    }) }}
+    </div>
+</div>
