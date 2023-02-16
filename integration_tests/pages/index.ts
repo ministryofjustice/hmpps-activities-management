@@ -10,4 +10,6 @@ export default class IndexPage extends Page {
   allocateToActivityCard = (): Cypress.Chainable => cy.get('[data-qa=allocate-to-activities-card]')
 
   recordAttendanceCard = (): Cypress.Chainable => cy.get('[data-qa=record-attendance-card]')
+
+  appointmentsManagementCard = (): Cypress.Chainable => cy.get('[data-qa=appointments-management-card]')
 }
