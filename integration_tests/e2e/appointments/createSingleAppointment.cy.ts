@@ -1,3 +1,4 @@
+import { getDate } from 'date-fns'
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
@@ -7,6 +8,10 @@ import LocationPage from '../../pages/appointments/createSingle/locationPage'
 import prisonerAllocations from '../../fixtures/prisonerSearchApi/postMatchPrisonerA8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
+import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
+import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
+import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
+import { formatDate } from '../../../server/utils/utils'
 
 context('Create single appointment', () => {
   beforeEach(() => {
@@ -17,6 +22,7 @@ context('Create single appointment', () => {
     cy.stubEndpoint('POST', '/prisoner-search/match-prisoners', prisonerAllocations)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
+    cy.stubEndpoint('POST', '/appointments')
   })
 
   it('Should complete create single appointment journey', () => {
@@ -35,7 +41,7 @@ context('Create single appointment', () => {
     appointmentsManagementPage.createSingleAppointmentCard().click()
 
     const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
-    selectPrisonerPage.enterPrisonerNumber('A1234BC')
+    selectPrisonerPage.enterPrisonerNumber('A8644DY')
     selectPrisonerPage.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
@@ -45,5 +51,21 @@ context('Create single appointment', () => {
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')
     locationPage.continue()
+
+    const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
+    const tomorrow = new Date()
+    tomorrow.setDate(getDate(tomorrow) + 1)
+    dateAndTimePage.enterStartDate(tomorrow)
+    dateAndTimePage.selectStartTime(14, 0)
+    dateAndTimePage.selectEndTime(15, 30)
+    dateAndTimePage.continue()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.createAppointment()
+
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.assertMessageEquals(
+      `You have successfully created an appointment for Stephen Gregs on ${formatDate(tomorrow, 'EEEE d MMMM yyyy')}.`,
+    )
   })
 })

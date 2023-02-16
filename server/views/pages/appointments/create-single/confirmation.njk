@@ -12,16 +12,16 @@
             {{ govukPanel({
                 titleText: "Appointment created"
             }) }}
-            <p class="govuk-body">
+            <p class="govuk-body" data-qa="message">
                 You have successfully created an appointment for {{ session.createSingleAppointmentJourney.prisoner.name | toTitleCase }} on {{ startDate | formatDate('EEEE d MMMM yyyy') }}.
             </p>
 
             <h2 class="govuk-heading-m">What you can do next</h2>
             <p class="govuk-body">
-                <a href="/appointments/create-single/start" class="govuk-link">Create another appointment</a>
+                <a href="/appointments/create-single/start" class="govuk-link" data-qa="create-another-link">Create another appointment</a>
             </p>
             <p class="govuk-body">
-                <a href="#" class="govuk-link">View and edit appointment details</a>
+                <a href="#" class="govuk-link" data-qa="view-appointment-link">View and edit appointment details</a>
             </p>
         </div>
     </div>

@@ -20,9 +20,9 @@
                         value: {
                             html:
                                 '<div>
-                                    <div>' + session.createSingleAppointmentJourney.prisoner.name | toTitleCase + '</div>
-                                    <div>' + session.createSingleAppointmentJourney.prisoner.prisonerNumber + '</div>
-                                    <div>' + session.createSingleAppointmentJourney.prisoner.cellLocation + '</div>
+                                    <div data-qa="prisoner-name">' + session.createSingleAppointmentJourney.prisoner.name | toTitleCase + '</div>
+                                    <div data-qa="prisoner-number">' + session.createSingleAppointmentJourney.prisoner.number + '</div>
+                                    <div data-qa="prisoner-cell-location">' + session.createSingleAppointmentJourney.prisoner.cellLocation + '</div>
                                 </div>'
                         },
                         actions: {
