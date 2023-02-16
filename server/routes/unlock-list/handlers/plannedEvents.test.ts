@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
+import { UnlockFilterItem, UnlockFilters } from '../../../@types/activities'
 import PlannedEventRoutes from './plannedEvents'
 import ActivitiesService from '../../../services/activitiesService'
 import UnlockListService from '../../../services/unlockListService'
-import { UnlockFilterItem, UnlockFilters } from '../../../@types/activities'
 import { LocationGroup } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
@@ -252,7 +252,7 @@ describe('Unlock list routes - planned events', () => {
     })
   })
 
-  describe('GET - Filter links', () => {
+  describe('FILTERS', () => {
     it('no filters in session - redirect to first unlock form', async () => {
       req = {
         query: { clearFilters: true },

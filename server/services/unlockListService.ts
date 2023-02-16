@@ -1,8 +1,7 @@
-// eslint-disable-next-line import/no-cycle
+import { SubLocationCellPattern, UnlockFilters, UnlockListItem } from '../@types/activities'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
-import { SubLocationCellPattern, UnlockFilters, UnlockListItem } from '../@types/activities'
 import { ServiceUser } from '../@types/express'
 import { ScheduledEvent } from '../@types/activitiesAPI/types'
 import { convertToTitleCase } from '../utils/utils'
@@ -26,8 +25,6 @@ export default class UnlockListService {
         return { subLocation: sub, locationPrefix: prefix.locationPrefix } as SubLocationCellPattern
       }),
     )
-
-    logger.info(`SubLocationCellPatterns = ${JSON.stringify(subLocationCellPatterns)}`)
 
     // Get all prisoners located in the main location by cell prefix e.g. MDI-1-
     const results = await this.prisonerSearchApiClient.searchPrisonersByLocationPrefix(
@@ -100,6 +97,8 @@ export default class UnlockListService {
     const filteredUnlockListItems = withActivityFilters.includes('Both')
       ? unlockListItems
       : unlockListItems.filter(item => (withActivities ? item.events.length > 0 : item.events.length === 0))
+
+    // TODO: Apply filter for staying or leaving (an event, its type and locaction in relation to cell-location)
 
     logger.info(`Number of unlock list items ${filteredUnlockListItems?.length}`)
 

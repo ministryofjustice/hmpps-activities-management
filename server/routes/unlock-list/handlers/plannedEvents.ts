@@ -1,10 +1,8 @@
 import { Request, Response } from 'express'
-// eslint-disable-next-line import/no-cycle
+import { UnlockFilterItem, UnlockFilters } from '../../../@types/activities'
 import ActivitiesService from '../../../services/activitiesService'
 import UnlockListService from '../../../services/unlockListService'
 import { toDate, formatDate, convertToArray } from '../../../utils/utils'
-import logger from '../../../../logger'
-import { UnlockFilterItem, UnlockFilters } from '../../../@types/activities'
 
 export default class PlannedEventsRoutes {
   constructor(
@@ -39,7 +37,6 @@ export default class PlannedEventsRoutes {
     }
 
     // TODO: Caching of unlockListItems here - check and refresh if necessary - 10 mins?
-    logger.info(`UnlockFilters: ${JSON.stringify(unlockFilters)}`)
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(unlockFilters, user)
 
     res.render('pages/unlock-list/planned-events', { unlockFilters, unlockListItems })
@@ -47,23 +44,16 @@ export default class PlannedEventsRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     // The only values posted here are changes to the filtering options
-    const { user } = res.locals
     const { unlockFilters } = req.session
     const { date, slot, location } = req.query
 
     if (unlockFilters) {
-      logger.info(`POST body = ${JSON.stringify(req.body)} user ${user.name}`)
-
-      // Get the changed filter options from the POST body to create new filters
-      const newFilters = parseFiltersFromPost(
+      req.session.unlockFilters = parseFiltersFromPost(
         unlockFilters,
         req.body?.locationFilters,
         req.body?.activityFilters,
         req.body?.stayingOrLeavingFilters,
       )
-
-      logger.info(`POST new filters = ${JSON.stringify(newFilters)}`)
-      req.session.unlockFilters = newFilters
       res.redirect(`planned-events?date=${date}&slot=${slot}&location=${location}`)
     } else {
       res.redirect(`select-date-and-location`)
@@ -84,8 +74,9 @@ export default class PlannedEventsRoutes {
         clearStaying as string,
       )
 
-      req.session.unlockFilters = unlockFilters
       const { unlockDate, timeSlot, location } = unlockFilters
+      req.session.unlockFilters = unlockFilters
+
       res.redirect(`planned-events?date=${unlockDate}&slot=${timeSlot}&location=${location}`)
     } else {
       res.redirect(`select-date-and-location`)
