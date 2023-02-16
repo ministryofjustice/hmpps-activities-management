@@ -84,7 +84,7 @@ module.exports = grunt => {
     },
     watch: {
       scripts: {
-        files: ['**/*.scss', '**/*.js'],
+        files: ['frontend/**/*.js', 'frontend/**/*.scss'],
         tasks: ['default'],
       },
     },
@@ -107,5 +107,4 @@ module.exports = grunt => {
     'uglify',
     'copy',
   ])
-  grunt.registerTask('watch', ['watch'])
 }
