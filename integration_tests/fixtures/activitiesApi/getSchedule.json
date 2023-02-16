@@ -3,7 +3,7 @@
   "instances": [
     {
       "id": 45,
-      "date": "11/10/2022",
+      "date": "2022-10-11",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -13,7 +13,7 @@
     },
     {
       "id": 46,
-      "date": "18/10/2022",
+      "date": "2022-10-18",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -23,7 +23,7 @@
     },
     {
       "id": 47,
-      "date": "25/10/2022",
+      "date": "2022-10-25",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -33,7 +33,7 @@
     },
     {
       "id": 48,
-      "date": "01/11/2022",
+      "date": "2022-11-01",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -43,7 +43,7 @@
     },
     {
       "id": 49,
-      "date": "08/11/2022",
+      "date": "2022-11-08",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -53,7 +53,7 @@
     },
     {
       "id": 50,
-      "date": "15/11/2022",
+      "date": "2022-11-15",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -63,7 +63,7 @@
     },
     {
       "id": 51,
-      "date": "22/11/2022",
+      "date": "2022-11-22",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -73,7 +73,7 @@
     },
     {
       "id": 52,
-      "date": "29/11/2022",
+      "date": "2022-11-29",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -83,7 +83,7 @@
     },
     {
       "id": 53,
-      "date": "06/12/2022",
+      "date": "2022-12-06",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -93,7 +93,7 @@
     },
     {
       "id": 54,
-      "date": "13/12/2022",
+      "date": "2022-12-13",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -103,7 +103,7 @@
     },
     {
       "id": 55,
-      "date": "20/12/2022",
+      "date": "2022-12-20",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -113,7 +113,7 @@
     },
     {
       "id": 104,
-      "date": "07/02/2023",
+      "date": "2023-02-07",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -123,7 +123,7 @@
     },
     {
       "id": 123,
-      "date": "14/02/2023",
+      "date": "2023-02-14",
       "startTime": "10:00",
       "endTime": "11:00",
       "cancelled": false,
@@ -140,9 +140,9 @@
       "activitySummary": "English level 1",
       "scheduleDescription": "Entry level English 1",
       "payBandId": 1,
-      "startDate": "10/10/2022",
+      "startDate": "2022-10-10",
       "endDate": null,
-      "allocatedTime": "10/10/2022 09:30",
+      "allocatedTime": "2022-10-10T09:30:00",
       "allocatedBy": "MR BLOGS",
       "deallocatedTime": null,
       "deallocatedBy": null,
@@ -184,6 +184,6 @@
       "daysOfWeek": ["Tue"]
     }
   ],
-  "startDate": "10/10/2022",
+  "startDate": "2022-10-10",
   "endDate": null
 }
