@@ -75,7 +75,6 @@ export default class AllocationDashboardRoutes {
   }
 
   private getCandidates = async (scheduleId: number, user: ServiceUser) => {
-    // TODO: Filtering logic will be added in here
     const currentlyAllocated = await this.activitiesService
       .getAllocations(scheduleId, user)
       .then(allocations => allocations.map(allocation => allocation.prisonerNumber))
