@@ -5,5 +5,7 @@ export default class LocationPage extends Page {
     super('appointments-create-single-location-page')
   }
 
-  selectLocation = (text: string) => this.getInputById('locationId').type(text)
+  selectLocation = (location: string) => this.getInputById('locationId').type(location)
+
+  assertSelectedLocation = (location: string) => this.getInputById('locationId').should('have.value', location)
 }
