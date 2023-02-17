@@ -74,7 +74,7 @@
                             text: "Created by"
                         },
                         value: {
-                            html: '<span data-qa="created-by">' + appointment.createdBy | initialiseName + '</span>'
+                            html: '<span data-qa="created-by">' + appointment.createdBy | toTitleCase | initialiseName + '</span>'
                         }
                     }
                 ],

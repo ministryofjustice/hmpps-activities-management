@@ -32,7 +32,6 @@ import { ActivityScheduleAllocation } from '../@types/activities'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { AppointmentDetails, AppointmentOccurrenceSummary } from '../@types/appointments'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
-import { convertToTitleCase } from '../utils/utils'
 
 const processError = (error: SanitisedError): undefined => {
   if (!error.status) throw error
@@ -249,6 +248,7 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAppointment(appointmentId, user)
   }
 
+  // TODO: Unit test
   async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
     const appointment = await this.getAppointment(appointmentId, user)
 
@@ -286,13 +286,14 @@ export default class ActivitiesService {
       return map.set(prisoner.prisonerNumber, prisoner)
     }, new Map<string, Prisoner>())
 
+    // TODO: Cope with 404s and set created by to Unknown User
     const createdByUserDetail = await this.prisonApiClient.getUserByUsername(appointment.createdBy, user)
-    const createdBy = convertToTitleCase(`${createdByUserDetail.firstName} ${createdByUserDetail.lastName}`)
+    const createdBy = `${createdByUserDetail.firstName} ${createdByUserDetail.lastName}`
 
     let updatedBy = null
     if (appointment.updatedBy !== null) {
       const updatedByUserDetail = await this.prisonApiClient.getUserByUsername(appointment.updatedBy, user)
-      updatedBy = convertToTitleCase(`${updatedByUserDetail.firstName} ${updatedByUserDetail.lastName}`)
+      updatedBy = `${updatedByUserDetail.firstName} ${updatedByUserDetail.lastName}`
     }
 
     return {
