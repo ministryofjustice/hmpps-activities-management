@@ -1,7 +1,7 @@
 [
   {
     "id": 92,
-    "date": "02/02/2023",
+    "date": "2023-02-02",
     "startTime": "10:00",
     "endTime": "11:00",
     "cancelled": false,
@@ -44,13 +44,13 @@
           "daysOfWeek": ["Thu"]
         }
       ],
-      "startDate": "10/10/2022",
+      "startDate": "2022-10-10",
       "endDate": null
     }
   },
   {
     "id": 93,
-    "date": "02/02/2023",
+    "date": "2023-02-02",
     "startTime": "14:00",
     "endTime": "15:00",
     "cancelled": false,
@@ -146,13 +146,13 @@
           "daysOfWeek": ["Thu"]
         }
       ],
-      "startDate": "10/10/2022",
+      "startDate": "2022-10-10",
       "endDate": null
     }
   },
   {
     "id": 94,
-    "date": "02/02/2023",
+    "date": "2023-02-02",
     "startTime": "14:30",
     "endTime": "17:00",
     "cancelled": false,
@@ -201,13 +201,13 @@
           "daysOfWeek": ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         }
       ],
-      "startDate": "10/10/2022",
+      "startDate": "2022-10-10",
       "endDate": null
     }
   },
   {
     "id": 95,
-    "date": "02/02/2023",
+    "date": "2023-02-02",
     "startTime": "19:00",
     "endTime": "20:00",
     "cancelled": false,
@@ -256,7 +256,7 @@
           "daysOfWeek": ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         }
       ],
-      "startDate": "10/10/2022",
+      "startDate": "2022-10-10",
       "endDate": null
     }
   }

@@ -35,7 +35,7 @@
         "daysOfWeek": ["Tue"]
       }
     ],
-    "startDate": "10/10/2022",
+    "startDate": "2022-10-10",
     "endDate": null
   },
   {
@@ -74,7 +74,7 @@
         "daysOfWeek": ["Tue"]
       }
     ],
-    "startDate": "10/10/2022",
+    "startDate": "2022-10-10",
     "endDate": null
   },
   {
@@ -113,7 +113,7 @@
         "daysOfWeek": ["Thu"]
       }
     ],
-    "startDate": "10/10/2022",
+    "startDate": "2022-10-10",
     "endDate": null
   },
   {
@@ -152,7 +152,7 @@
         "daysOfWeek": ["Thu"]
       }
     ],
-    "startDate": "10/10/2022",
+    "startDate": "2022-10-10",
     "endDate": null
   }
 ]
