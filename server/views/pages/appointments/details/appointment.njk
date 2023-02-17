@@ -1,0 +1,92 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Appointments Management - Appointment Details" %}
+{% set pageId = 'appointments-view-details-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">View and edit appointment details</h1>
+            <h2 class="govuk-heading-m">Appointment details</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Prisoner"
+                        },
+                        value: {
+                            html:
+                                '<div>
+                                    <div data-qa="prisoner-name">' + (appointment.prisoners[0].firstName + ' ' + appointment.prisoners[0].lastName) | toTitleCase + '</div>
+                                    <div data-qa="prisoner-number">' + appointment.prisoners[0].prisonerNumber + '</div>
+                                    <div data-qa="prisoner-cell-location">' + appointment.prisoners[0].cellLocation + '</div>
+                                </div>'
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Category"
+                        },
+                        value: {
+                            html: '<span data-qa="category">' + appointment.category.description + '</span>'
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            html: '<span data-qa="location">' + appointment.internalLocation.userDescription + '</span>'
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Date"
+                        },
+                        value: {
+                            html: '<span data-qa="start-date">' + appointment.startDate | formatDate('EEEE d MMMM yyyy') + '</span>'
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Start time"
+                        },
+                        value: {
+                            html: '<span data-qa="start-time">' + appointment.startTime | formatDate('HH:mm') + '</span>'
+                        }
+                    },
+                    {
+                        key: {
+                            text: "End time"
+                        },
+                        value: {
+                            html: '<span data-qa="end-time">' + appointment.endTime | formatDate('HH:mm') + '</span>'
+                        }
+                    }
+                ],
+                classes: "govuk-!-margin-bottom-9"
+            }) }}
+
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Created by"
+                        },
+                        value: {
+                            html: '<span data-qa="created-by">' + appointment.createdBy | initialiseName + '</span>'
+                        }
+                    }
+                ],
+                classes: "govuk-!-margin-bottom-9"
+            }) }}
+
+            <p class="govuk-body">
+                <a href="#" class="govuk-link" data-qa="print-movement-slip-link">Print movement slip</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
