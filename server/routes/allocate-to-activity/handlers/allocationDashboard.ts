@@ -19,7 +19,7 @@ export default class AllocationDashboardRoutes {
   constructor(
     private readonly prisonService: PrisonService,
     private readonly capacitiesService: CapacitiesService,
-    private readonly activitiesService: ActivityService
+    private readonly activitiesService: ActivityService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -91,7 +91,7 @@ export default class AllocationDashboardRoutes {
           prisonerNumber: inmate.prisonerNumber,
           cellLocation: inmate.cellLocation,
           releaseDate: inmate.conditionalReleaseDate ? parseDate(inmate.conditionalReleaseDate) : null,
-        }))
+        })),
       )
   }
 }
