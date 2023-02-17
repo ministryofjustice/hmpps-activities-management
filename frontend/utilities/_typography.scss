@@ -26,6 +26,10 @@
                     bottom: govuk-spacing(2);
                     transform: rotate(-45deg);
                     transform-origin: 3px center;
+
+                    &:first-letter { 
+                        text-decoration: underline;
+                    }
                 }
             }
         }
