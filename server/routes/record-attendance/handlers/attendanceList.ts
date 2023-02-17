@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { areIntervalsOverlapping, parse } from 'date-fns'
 import { Expose, Transform } from 'class-transformer'
 import ActivitiesService from '../../../services/activitiesService'
-import { getAttendanceSummary } from '../../../utils/utils'
+import { getAttendanceSummary, toDate } from '../../../utils/utils'
 import PrisonService from '../../../services/prisonService'
 import { Attendance, ScheduledActivity, ScheduledEvent } from '../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../validators/hasAtLeastOne'
@@ -25,7 +25,7 @@ export default class AttendanceListRoutes {
     const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
     const prisonerNumbers = instance.attendances.map(a => a.prisonerNumber)
     const otherScheduledEvents = await this.activitiesService
-      .getScheduledEventsForPrisoners(parse(instance.date, 'yyyy-MM-dd', new Date()), prisonerNumbers, user)
+      .getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user)
       .then(response => [
         ...response.activities,
         ...response.appointments,
@@ -50,7 +50,7 @@ export default class AttendanceListRoutes {
         name: instance.activitySchedule.activity.summary,
         location: instance.activitySchedule.internalLocation.description,
         time: `${instance.startTime} - ${instance.endTime}`,
-        date: parse(instance.date, 'yyyy-MM-dd', new Date()),
+        date: toDate(instance.date),
         ...getAttendanceSummary(instance.attendances),
       },
       attendees,
@@ -76,12 +76,12 @@ export default class AttendanceListRoutes {
   }
 
   private eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity): boolean => {
-    const toDate = (time: string) => parse(time, 'HH:mm', new Date())
+    const timeToDate = (time: string) => parse(time, 'HH:mm', new Date())
     const toInterval = (start: Date, end: Date) => ({ start, end })
 
     const re = areIntervalsOverlapping(
-      toInterval(toDate(event.startTime), toDate(event.endTime)),
-      toInterval(toDate(thisActivity.startTime), toDate(thisActivity.endTime)),
+      toInterval(timeToDate(event.startTime), timeToDate(event.endTime)),
+      toInterval(timeToDate(thisActivity.startTime), timeToDate(thisActivity.endTime)),
     )
 
     return re
