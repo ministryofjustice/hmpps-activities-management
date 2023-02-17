@@ -3,6 +3,8 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
+{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
+
 {% set pageTitle = "Appointments Management - Appointment Details" %}
 {% set pageId = 'appointments-view-details-page' %}
 
@@ -18,12 +20,7 @@
                             text: "Prisoner"
                         },
                         value: {
-                            html:
-                                '<div>
-                                    <div data-qa="prisoner-name">' + (appointment.prisoners[0].firstName + ' ' + appointment.prisoners[0].lastName) | toTitleCase + '</div>
-                                    <div data-qa="prisoner-number">' + appointment.prisoners[0].prisonerNumber + '</div>
-                                    <div data-qa="prisoner-cell-location">' + appointment.prisoners[0].cellLocation + '</div>
-                                </div>'
+                            html: appointmentPrisonerSummary(appointment.prisoners[0].firstName + ' ' + appointment.prisoners[0].lastName, appointment.prisoners[0].prisonerNumber, appointment.prisoners[0].cellLocation, dpsUrl)
                         }
                     },
                     {
