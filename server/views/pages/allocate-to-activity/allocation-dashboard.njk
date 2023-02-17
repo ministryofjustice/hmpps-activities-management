@@ -7,6 +7,8 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Allocate" %}
+{% set pageId = 'allocation-dashboard-page' %}
+{% set backLinkHref = "/allocate/categories" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -97,7 +99,7 @@
         items: [
             {
                 label: "Currently allocated",
-                id: "currently-allocted-tab",
+                id: "currently-allocated-tab",
                 panel: {
                     html: currentlyAllocatedHtml
                 }
