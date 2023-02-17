@@ -19,7 +19,7 @@ export default class AllocationDashboardRoutes {
   constructor(
     private readonly prisonService: PrisonService,
     private readonly capacitiesService: CapacitiesService,
-    private readonly activitiesService: ActivityService,
+    private readonly activitiesService: ActivityService
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -84,19 +84,14 @@ export default class AllocationDashboardRoutes {
       .getInmates(user.activeCaseLoad.caseLoadId, user)
       .then(page => page.content)
       .then(inmates => inmates.filter(i => !currentlyAllocated.includes(i.prisonerNumber)))
-      .then(inmates =>
-        inmates
-          .filter(i => i.status === 'ACTIVE IN')
-          .filter(i => i.legalStatus !== 'DEAD')
-          .filter(i => i.currentIncentive),
-      )
+      .then(inmates => inmates.filter(i => i.status === 'ACTIVE IN').filter(i => i.legalStatus !== 'DEAD'))
       .then(inmates =>
         inmates.map(inmate => ({
           name: `${inmate.firstName} ${inmate.lastName}`,
           prisonerNumber: inmate.prisonerNumber,
           cellLocation: inmate.cellLocation,
           releaseDate: inmate.conditionalReleaseDate ? parseDate(inmate.conditionalReleaseDate) : null,
-        })),
+        }))
       )
   }
 }

@@ -18,6 +18,7 @@ import {
   convertToArray,
   toTimeItems,
   exampleDateOneWeekAhead,
+  parseDate,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
@@ -39,7 +40,7 @@ describe('utils', () => {
     })
   })
 
-  describe('initialise name', () => {
+  describe('initialiseName', () => {
     it.each([
       [null, null, null],
       ['Empty string', '', null],
@@ -49,6 +50,15 @@ describe('utils', () => {
       ['Double barrelled', 'Robert-John Smith-Jones-Wilson', 'R. Smith-Jones-Wilson'],
     ])('%s initialiseName(%s, %s)', (_: string, a: string, expected: string) => {
       expect(initialiseName(a)).toEqual(expected)
+    })
+  })
+
+  describe('parseDate', () => {
+    it.each([
+      ['2022-02-17', undefined, new Date(2022, 1, 17)],
+      ['17/02/2022', 'dd/MM/yyyy', new Date(2022, 1, 17)],
+    ])('%s parseDate(%s, %s)', (date: string, fmt: string, expected: Date) => {
+      expect(parseDate(date, fmt)).toEqual(expected)
     })
   })
 

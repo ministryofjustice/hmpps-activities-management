@@ -34,7 +34,7 @@ describe('Prison Service', () => {
     prisonApiClient,
     prisonerSearchApiClient,
     whereaboutsApiClient,
-    incentivesApiClient,
+    incentivesApiClient
   )
 
   const user = {} as ServiceUser
@@ -54,13 +54,16 @@ describe('Prison Service', () => {
 
   describe('getIncentiveLevels', () => {
     it('should get the prisons incentive levels from incentives API', async () => {
-      const expectedResult = [{ data: 'response' }] as unknown as IepLevel[]
+      const apiResponse = [
+        { id: 1, active: false },
+        { id: 2, active: true },
+      ] as unknown as IepLevel[]
 
-      when(incentivesApiClient.getIncentiveLevels).calledWith(atLeast('MDI')).mockResolvedValue(expectedResult)
+      when(incentivesApiClient.getIncentiveLevels).calledWith(atLeast('MDI')).mockResolvedValue(apiResponse)
 
       const actualResult = await prisonService.getIncentiveLevels('MDI', user)
 
-      expect(actualResult).toEqual(expectedResult)
+      expect(actualResult).toEqual([{ id: 2, active: true }])
       expect(incentivesApiClient.getIncentiveLevels).toHaveBeenCalledWith('MDI', user)
     })
   })
@@ -160,7 +163,7 @@ describe('Prison Service', () => {
         'MDI',
         '2022-08-01',
         ['G8785VP', 'G3439UH'],
-        user,
+        user
       )
       expect(prisonApiClient.getAlerts).toHaveBeenCalledWith('MDI', ['G8785VP', 'G3439UH'], user)
       expect(prisonApiClient.getAssessments).toHaveBeenCalledWith('CATEGORY', ['G8785VP', 'G3439UH'], user)
@@ -170,14 +173,14 @@ describe('Prison Service', () => {
         '2022-08-01',
         'AM',
         ['G8785VP', 'G3439UH'],
-        user,
+        user
       )
       expect(prisonApiClient.getActivities).toHaveBeenCalledWith(
         'MDI',
         '2022-08-01',
         'AM',
         ['G8785VP', 'G3439UH'],
-        user,
+        user
       )
     })
   })
@@ -217,7 +220,7 @@ describe('Prison Service', () => {
         true,
         'reason',
         'comments',
-        user,
+        user
       )
       expect(reasons.attendances.length).toEqual(2)
       expect(whereaboutsApiClient.getAbsenceReasons).toHaveBeenCalledWith(user)
