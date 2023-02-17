@@ -29,6 +29,6 @@ export default class CheckPayRoutes {
     req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.iepLevel
     req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.iepDescription
 
-    res.redirect(`check-answers`)
+    res.redirect(`qualification`)
   }
 }

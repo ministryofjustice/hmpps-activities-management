@@ -12,6 +12,10 @@ import ConfirmationRoutes from './handlers/confirmation'
 import PayRoutes, { Pay } from './handlers/pay'
 import CheckPayRoutes from './handlers/checkPay'
 import RemovePayRoutes from './handlers/removePay'
+import QualificationRoutes, { Qualification } from './handlers/qualifications'
+import EducationLevelRoutes, { EducationLevel } from './handlers/educationLevel'
+import RemoveEducationLevelRoutes from './handlers/removeEducationLevel'
+import CheckEducationLevelRoutes from './handlers/checkEducationLevels'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -27,6 +31,10 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const payHandler = new PayRoutes(prisonService, activitiesService)
   const removePayHandler = new RemovePayRoutes()
   const checkPayHandler = new CheckPayRoutes(prisonService)
+  const qualificationHandler = new QualificationRoutes()
+  const educationLevelHandler = new EducationLevelRoutes(prisonService)
+  const removeEducationLevelHandler = new RemoveEducationLevelRoutes()
+  const checkEducationLevelHandler = new CheckEducationLevelRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, prisonService)
   const confirmationHandler = new ConfirmationRoutes()
 
@@ -42,6 +50,13 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/remove-pay', removePayHandler.GET, true)
   get('/check-pay', checkPayHandler.GET, true)
   post('/check-pay', checkPayHandler.POST)
+  get('/qualification', qualificationHandler.GET, true)
+  post('/qualification', qualificationHandler.POST, Qualification)
+  get('/education-level', educationLevelHandler.GET, true)
+  post('/education-level', educationLevelHandler.POST, EducationLevel)
+  get('/remove-education-level', removeEducationLevelHandler.GET, true)
+  get('/check-education-level', checkEducationLevelHandler.GET, true)
+  post('/check-education-level', checkEducationLevelHandler.POST)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
   get('/confirmation/:id', confirmationHandler.GET, true)

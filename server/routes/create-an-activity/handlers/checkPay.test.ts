@@ -84,7 +84,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
 
       await handler.POST(req, res)
       expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Standard')
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      expect(res.redirect).toHaveBeenCalledWith('qualification')
     })
   })
 })

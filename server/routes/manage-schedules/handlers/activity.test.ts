@@ -38,6 +38,7 @@ describe('Route Handlers - View Activity', () => {
     tier: { code: '', description: '', id: 0 },
     waitingList: [],
     id: 1,
+    minimumEducationLevel: [],
   })
 
   beforeEach(() => {
@@ -89,6 +90,7 @@ describe('Route Handlers - View Activity', () => {
           tier: { code: '', description: '', id: 0 },
           waitingList: [],
           id: 1,
+          minimumEducationLevel: [],
         },
         incentiveLevelPays: [],
       })

@@ -1,0 +1,61 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "components/activitySummary.njk" import activitySummary %}
+
+{% set pageTitle = applicationName + " - Create an activty - education level" %}
+{% set pageId = 'create-activity-education-level-page' %}
+{% set backLinkHref = "/" %}
+
+{% set options = [{ value: '', text: '' }] %}
+{% for referenceCode in referenceCodes %}
+    {% set options = (options.push( { value: referenceCode.code, text: referenceCode.description }), options) %}
+{% endfor %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="referenceCode"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half">
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-xl">Enter an education level for {{ session.createJourney.name }}</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukSelect({
+                    id: "referenceCode",
+                    name: "referenceCode",
+                    label: {
+                        text: "Education Level",
+                        classes: "govuk-label--xl",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "Start typing an education level and select from the list of options."
+                    },
+                    formGroup: {
+                        classes: "referenceCode-autocomplete-formgroup"
+                    },
+                    errorMessage: validationErrors | findError('referenceCode'),
+                    value: formResponses.referenceCode or session.createActivityJourney.educationLevels.educationLevelCode,
+                    items: options
+                }) }}
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
