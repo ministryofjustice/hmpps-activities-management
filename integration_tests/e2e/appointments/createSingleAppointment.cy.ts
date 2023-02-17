@@ -75,5 +75,7 @@ context('Create single appointment', () => {
     )
     confirmationPage.assertCreateAnotherLinkExists()
     confirmationPage.assertViewAppointmentLinkExists()
+
+    // TODO: Click through to appointment details page and verify content matches above
   })
 })
