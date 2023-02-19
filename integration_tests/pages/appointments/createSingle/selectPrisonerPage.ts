@@ -6,4 +6,7 @@ export default class SelectPrisonerPage extends Page {
   }
 
   enterPrisonerNumber = (prisonerNumber: string) => this.getInputByName('number').type(prisonerNumber)
+
+  assertEnteredPrisonerNumber = (prisonerNumber: string) =>
+    this.getInputByName('number').should('have.value', prisonerNumber)
 }
