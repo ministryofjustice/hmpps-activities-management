@@ -64,7 +64,7 @@ export default class AllocationDashboardRoutes {
         name: `${inmate.firstName} ${inmate.lastName}`,
         prisonerNumber: inmate.prisonerNumber,
         cellLocation: inmate.cellLocation,
-        releaseDate: inmate.conditionalReleaseDate ? parseDate(inmate.conditionalReleaseDate) : null,
+        releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
         dateAllocated: parseDate(thisAllocation.allocatedTime, "yyyy-MM-dd'T'HH:mm:ss"),
         otherAllocations: otherAllocations.map(a => ({
           id: a.scheduleId,
@@ -89,7 +89,7 @@ export default class AllocationDashboardRoutes {
           name: `${inmate.firstName} ${inmate.lastName}`,
           prisonerNumber: inmate.prisonerNumber,
           cellLocation: inmate.cellLocation,
-          releaseDate: inmate.conditionalReleaseDate ? parseDate(inmate.conditionalReleaseDate) : null,
+          releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
         })),
       )
   }

@@ -44,8 +44,8 @@ export default class PrisonService {
     return this.prisonApiClient.getInmateDetail(nomisId, user)
   }
 
-  async getInmates(prisonCode: string, user: ServiceUser, includeRestricted?: boolean): Promise<PagePrisoner> {
-    return this.prisonerSearchApiClient.getInmates(prisonCode, 0, 10, user, includeRestricted)
+  async getInmates(prisonCode: string, user: ServiceUser): Promise<PagePrisoner> {
+    return this.prisonerSearchApiClient.getInmates(prisonCode, 0, 10, user)
   }
 
   getIncentiveLevels(prisonId: string, user: ServiceUser): Promise<IepLevel[]> {

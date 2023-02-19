@@ -79,14 +79,14 @@ describe('Route Handlers - Allocation dashboard', () => {
             firstName: 'Joe',
             lastName: 'Bloggs',
             cellLocation: 'MDI-1-1-101',
-            conditionalReleaseDate: '2023-12-25',
+            releaseDate: '2023-12-25',
           },
           {
             prisonerNumber: '321CBA',
             firstName: 'John',
             lastName: 'Smith',
             cellLocation: 'MDI-1-1-103',
-            conditionalReleaseDate: '2023-12-26',
+            releaseDate: '2023-12-26',
           },
         ] as Prisoner[])
       when(activitiesService.getPrisonerAllocations)
@@ -118,7 +118,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               firstName: 'John',
               lastName: 'Smith',
               cellLocation: 'MDI-1-1-103',
-              conditionalReleaseDate: '2023-12-26',
+              releaseDate: '2023-12-26',
             },
             {
               prisonerNumber: 'TEST123',
@@ -127,7 +127,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               firstName: 'Jim',
               lastName: 'Hamilton',
               cellLocation: 'MDI-1-1-104',
-              conditionalReleaseDate: '2023-12-26',
+              releaseDate: '2023-12-26',
             },
             {
               prisonerNumber: 'XYZ123',
@@ -145,7 +145,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               firstName: 'Bill',
               lastName: 'Wilkins',
               cellLocation: 'MDI-1-1-106',
-              conditionalReleaseDate: '2023-12-26',
+              releaseDate: '2023-12-26',
             },
           ],
         } as PagePrisoner)
