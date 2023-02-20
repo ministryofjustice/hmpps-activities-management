@@ -39,7 +39,7 @@ describe('Route Handlers - Attendance List', () => {
         .calledWith(1, res.locals.user)
         .mockResolvedValue({
           id: 1,
-          date: format(new Date(), '08/12/2022'),
+          date: format(new Date(), '2022-12-08'),
           startTime: '10:00',
           endTime: '11:00',
           activitySchedule: {

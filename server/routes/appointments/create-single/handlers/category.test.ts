@@ -69,7 +69,7 @@ describe('Route Handlers - Create Single Appointment - Category', () => {
   })
 
   describe('POST', () => {
-    it('should save selected category in session and redirect to check answers page', async () => {
+    it('should save selected category in session and redirect to location page', async () => {
       req.body = {
         categoryId: 11,
       }
@@ -82,7 +82,7 @@ describe('Route Handlers - Create Single Appointment - Category', () => {
         id: 11,
         description: 'Medical - Doctor',
       })
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
 
     it('validation fails when selected category is not found', async () => {
@@ -96,7 +96,7 @@ describe('Route Handlers - Create Single Appointment - Category', () => {
 
       expect(req.flash).toHaveBeenCalledWith(
         'validationErrors',
-        JSON.stringify([{ field: 'categoryId', message: `Select a category` }]),
+        JSON.stringify([{ field: 'categoryId', message: `Selected category not found` }]),
       )
       expect(res.redirect).toHaveBeenCalledWith('back')
     })

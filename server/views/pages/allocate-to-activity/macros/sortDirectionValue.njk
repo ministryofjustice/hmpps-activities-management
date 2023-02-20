@@ -1,9 +1,0 @@
-{% macro sortDirectionValue(field, sort) -%}
-    {% if sort.field != field -%}
-        asc
-    {%- elif sort.direction == 'desc' -%}
-        asc
-    {%- else -%}
-        desc
-    {%- endif %}
-{%- endmacro %}

@@ -23,6 +23,7 @@ import {
   PrisonPayBand,
   Appointment,
   AppointmentCategory,
+  AppointmentCreateRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -276,6 +277,14 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/appointment-categories`,
       authToken: user.token,
+    })
+  }
+
+  async postCreateAppointment(appointment: AppointmentCreateRequest, user: ServiceUser): Promise<Appointment> {
+    return this.post({
+      path: `/appointments`,
+      authToken: user.token,
+      data: appointment,
     })
   }
 }

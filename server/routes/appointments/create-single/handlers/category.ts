@@ -31,7 +31,7 @@ export default class CategoryRoutes {
       .then(categories => categories.find(c => c.id === categoryId))
 
     if (!category) {
-      req.flash('validationErrors', JSON.stringify([{ field: 'categoryId', message: `Select a category` }]))
+      req.flash('validationErrors', JSON.stringify([{ field: 'categoryId', message: `Selected category not found` }]))
       return res.redirect('back')
     }
 
@@ -40,6 +40,6 @@ export default class CategoryRoutes {
       description: category.description,
     }
 
-    return res.redirect('check-answers')
+    return res.redirectOrReturn('location')
   }
 }

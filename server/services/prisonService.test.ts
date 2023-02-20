@@ -54,13 +54,16 @@ describe('Prison Service', () => {
 
   describe('getIncentiveLevels', () => {
     it('should get the prisons incentive levels from incentives API', async () => {
-      const expectedResult = [{ data: 'response' }] as unknown as IepLevel[]
+      const apiResponse = [
+        { id: 1, active: false },
+        { id: 2, active: true },
+      ] as unknown as IepLevel[]
 
-      when(incentivesApiClient.getIncentiveLevels).calledWith(atLeast('MDI')).mockResolvedValue(expectedResult)
+      when(incentivesApiClient.getIncentiveLevels).calledWith(atLeast('MDI')).mockResolvedValue(apiResponse)
 
       const actualResult = await prisonService.getIncentiveLevels('MDI', user)
 
-      expect(actualResult).toEqual(expectedResult)
+      expect(actualResult).toEqual([{ id: 2, active: true }])
       expect(incentivesApiClient.getIncentiveLevels).toHaveBeenCalledWith('MDI', user)
     })
   })
@@ -89,6 +92,19 @@ describe('Prison Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(prisonApiClient.getEventLocations).toHaveBeenCalledWith('MDI', user)
+    })
+  })
+
+  describe('getLocationsForAppointments', () => {
+    it('should get the prisons event locations from the prisons API', async () => {
+      const expectedResult = [{ data: 'response' }] as unknown as LocationLenient[]
+
+      when(prisonApiClient.getLocationsForEventType).calledWith(atLeast('MDI', 'APP')).mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.getLocationsForAppointments('MDI', user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(prisonApiClient.getLocationsForEventType).toHaveBeenCalledWith('MDI', 'APP', user)
     })
   })
 

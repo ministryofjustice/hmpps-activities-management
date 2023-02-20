@@ -518,4 +518,63 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('postCreateAppointment', () => {
+    it('should return created appointment from api when valid request is sent', async () => {
+      const request = {
+        categoryId: 51,
+        prisonCode: 'SKI',
+        internalLocationId: 123,
+        inCell: false,
+        startDate: '2023-02-07',
+        startTime: '09:00',
+        endTime: '10:30',
+        comment: 'This appointment will help adjusting to life outside of prison',
+        prisonerNumbers: ['A1234BC'],
+      }
+
+      const response = {
+        id: 12345,
+        category: {
+          id: 51,
+          code: 'CHAP',
+          description: 'Chaplaincy',
+        },
+        prisonCode: 'SKI',
+        internalLocationId: 123,
+        startDate: '2023-02-07',
+        startTime: '09:00',
+        endTime: '10:30',
+        comment: 'This appointment will help adjusting to life outside of prison',
+        created: '2023-02-07T15:37:59.266Z',
+        createdBy: 'AAA01U',
+        occurrences: [
+          {
+            id: 123456,
+            internalLocationId: 123,
+            startDate: '2023-02-07',
+            startTime: '13:00',
+            endTime: '13:30',
+            comment: 'This appointment occurrence has been rescheduled due to staff availability',
+            cancelled: false,
+            updated: '2023-02-07T15:37:59.266Z',
+            updatedBy: 'AAA01U',
+            allocations: [
+              {
+                id: 123456,
+                prisonerNumber: 'A1234BC',
+                bookingId: 456,
+              },
+            ],
+          },
+        ],
+      } as Appointment
+
+      fakeActivitiesApi.post('/appointments', request).matchHeader('authorization', `Bearer token`).reply(200, response)
+
+      const output = await activitiesApiClient.postCreateAppointment(request, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

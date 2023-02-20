@@ -22,7 +22,7 @@ export default class SelectPrisonerRoutes {
     const { user } = res.locals
 
     const prisoners = await this.prisonService.searchInmates(
-      { prisonerIdentifier: number, includeAliases: false },
+      { prisonIds: [user.activeCaseLoadId], prisonerIdentifier: number, includeAliases: false },
       user,
     )
 
@@ -42,8 +42,8 @@ export default class SelectPrisonerRoutes {
 
     req.session.createSingleAppointmentJourney.prisoner = {
       number: prisoner.prisonerNumber,
-      bookingId: parseInt(prisoner.bookingId, 10),
-      displayName: `${prisoner.lastName}, ${prisoner.firstName}`,
+      name: `${prisoner.firstName} ${prisoner.lastName}`,
+      cellLocation: prisoner.cellLocation,
     }
 
     return res.redirectOrReturn('category')

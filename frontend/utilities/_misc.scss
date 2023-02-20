@@ -21,12 +21,6 @@ body {
   padding-bottom: 0;
 }
 
-table th,
-table td,
-table .form-control {
-  font-size: 16px;
-}
-
 .govuk-table__cell-no-border {
   padding: 10px 20px 10px 0;
   text-align: left;
@@ -66,4 +60,12 @@ table .form-control {
 
 .bottom-hint {
   margin-bottom: 30px;
+}
+
+.govuk-table__header, .govuk-table__cell{
+  vertical-align: middle;
+}
+
+.govuk-tabs__tab {
+  @include govuk-font($size: 19, $weight: bold);
 }

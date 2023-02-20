@@ -22,6 +22,8 @@ import {
   PrisonerScheduledEvents,
   Appointment,
   AppointmentCategory,
+  LocationPrefix,
+  AppointmentCreateRequest,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -211,8 +213,15 @@ export default class ActivitiesService {
     return this.activitiesApiClient.updateAttendances(attendanceUpdates, user)
   }
 
-  async getLocationGroups(prisonCode: string, user: ServiceUser): Promise<LocationGroup[]> {
-    return this.activitiesApiClient.getPrisonLocationGroups(prisonCode, user)
+  // TODO: Test case
+  async getLocationPrefix(loc: string, user: ServiceUser): Promise<LocationPrefix> {
+    const { activeCaseLoadId } = user
+    return this.activitiesApiClient.getPrisonLocationPrefixByGroup(activeCaseLoadId, loc, user)
+  }
+
+  async getLocationGroups(user: ServiceUser): Promise<LocationGroup[]> {
+    const { activeCaseLoadId } = user
+    return this.activitiesApiClient.getPrisonLocationGroups(activeCaseLoadId, user)
   }
 
   async getAllocations(id: number, user: ServiceUser): Promise<Allocation[]> {
@@ -224,6 +233,9 @@ export default class ActivitiesService {
     prisonerNumbers: string[],
     user: ServiceUser,
   ): Promise<PrisonerAllocations[]> {
+    if (prisonerNumbers.length < 1) {
+      return []
+    }
     return this.activitiesApiClient.getPrisonerAllocations(prisonCode, prisonerNumbers, user)
   }
 
@@ -233,5 +245,9 @@ export default class ActivitiesService {
 
   async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategory[]> {
     return this.activitiesApiClient.getAppointmentCategories(user)
+  }
+
+  createAppointment(appointment: AppointmentCreateRequest, user: ServiceUser): Promise<Appointment> {
+    return this.activitiesApiClient.postCreateAppointment(appointment, user)
   }
 }

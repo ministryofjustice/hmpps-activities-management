@@ -15,6 +15,10 @@ import {
   toDateString,
   formatDate,
   toMoney,
+  convertToArray,
+  toTimeItems,
+  exampleDateOneWeekAhead,
+  parseDate,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
@@ -36,7 +40,7 @@ describe('utils', () => {
     })
   })
 
-  describe('initialise name', () => {
+  describe('initialiseName', () => {
     it.each([
       [null, null, null],
       ['Empty string', '', null],
@@ -46,6 +50,15 @@ describe('utils', () => {
       ['Double barrelled', 'Robert-John Smith-Jones-Wilson', 'R. Smith-Jones-Wilson'],
     ])('%s initialiseName(%s, %s)', (_: string, a: string, expected: string) => {
       expect(initialiseName(a)).toEqual(expected)
+    })
+  })
+
+  describe('parseDate', () => {
+    it.each([
+      ['2022-02-17', undefined, new Date(2022, 1, 17)],
+      ['17/02/2022', 'dd/MM/yyyy', new Date(2022, 1, 17)],
+    ])('%s parseDate(%s, %s)', (date: string, fmt: string, expected: Date) => {
+      expect(parseDate(date, fmt)).toEqual(expected)
     })
   })
 
@@ -199,6 +212,92 @@ describe('utils', () => {
       expect(toMoney(150)).toEqual('£1.50')
       expect(toMoney(15000)).toEqual('£150.00')
       expect(toMoney(15.53)).toEqual('£0.16')
+    })
+  })
+
+  describe('convertToArray', () => {
+    it.each([
+      ['Undefined', undefined, 0],
+      ['Single string value', 'a string', 1],
+      ['Has 3 elements', ['a', 'a', 'a'], 3],
+      ['Empty list', [], 0],
+    ])('%s convertToArray(%s) has %s elements', (desc: string, maybeArray: string | string[], size: number) => {
+      expect(convertToArray(maybeArray)).toHaveLength(size)
+    })
+  })
+
+  describe('toTimeItems', () => {
+    it('should add default -- option', () => {
+      expect(toTimeItems(['00'], undefined)).toEqual([
+        {
+          value: '-',
+          text: '--',
+          selected: false,
+        },
+        {
+          value: '0',
+          text: '00',
+          selected: false,
+        },
+      ])
+    })
+
+    it('should select selected', () => {
+      expect(toTimeItems(['00', '05', '10'], 10)).toEqual([
+        {
+          value: '-',
+          text: '--',
+          selected: false,
+        },
+        {
+          value: '0',
+          text: '00',
+          selected: false,
+        },
+        {
+          value: '5',
+          text: '05',
+          selected: false,
+        },
+        {
+          value: '10',
+          text: '10',
+          selected: true,
+        },
+      ])
+    })
+
+    it('should select selected even when select is 0', () => {
+      expect(toTimeItems(['00', '05', '10'], 0)).toEqual([
+        {
+          value: '-',
+          text: '--',
+          selected: false,
+        },
+        {
+          value: '0',
+          text: '00',
+          selected: true,
+        },
+        {
+          value: '5',
+          text: '05',
+          selected: false,
+        },
+        {
+          value: '10',
+          text: '10',
+          selected: false,
+        },
+      ])
+    })
+  })
+
+  describe('exampleDateOneWeekAhead', () => {
+    it('should return the date one week from now in dd MM yyyy format', () => {
+      const nextWeek = new Date()
+      nextWeek.setDate(nextWeek.getDate() + 7)
+      expect(exampleDateOneWeekAhead('Example, ')).toEqual(`Example, ${formatDate(nextWeek, 'dd MM yyyy')}`)
     })
   })
 })

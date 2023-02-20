@@ -1,0 +1,972 @@
+[
+  {
+    "locationId": 27187,
+    "locationType": "ADJU",
+    "description": "RES-MCASU-MCASU",
+    "agencyId": "MDI",
+    "parentLocationId": 27186,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-MCASU-MCASU",
+    "userDescription": "Adj"
+  },
+  {
+    "locationId": 197684,
+    "locationType": "ASSO",
+    "description": "RES-IND-ASSO",
+    "agencyId": "MDI",
+    "parentLocationId": 197681,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-IND-ASSO",
+    "userDescription": "Association"
+  },
+  {
+    "locationId": 27218,
+    "locationType": "SPOR",
+    "description": "GYM-BADMINTON",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-BADMINTON",
+    "userDescription": "Badminton"
+  },
+  {
+    "locationId": 27223,
+    "locationType": "SPOR",
+    "description": "GYM-BASKETBALL",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-BASKETBALL",
+    "userDescription": "Basketball"
+  },
+  {
+    "locationId": 26153,
+    "locationType": "LOCA",
+    "description": "PROG_ACT-CARAT1",
+    "agencyId": "MDI",
+    "parentLocationId": 26148,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-PROG_ACT-CARAT1",
+    "userDescription": "Carat Group Room 1"
+  },
+  {
+    "locationId": 26154,
+    "locationType": "AREA",
+    "description": "PROG_ACT-CARAT2",
+    "agencyId": "MDI",
+    "parentLocationId": 26148,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-PROG_ACT-CARAT2",
+    "userDescription": "Carat Group Room 2"
+  },
+  {
+    "locationId": 27219,
+    "locationType": "SPOR",
+    "description": "GYM-CV",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-CV",
+    "userDescription": "Cardio"
+  },
+  {
+    "locationId": 27000,
+    "locationType": "STOR",
+    "description": "WORK_IND-CES",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-CES",
+    "userDescription": "CES"
+  },
+  {
+    "locationId": 26152,
+    "locationType": "LOCA",
+    "description": "PROG_ACT-CHAP",
+    "agencyId": "MDI",
+    "parentLocationId": 26148,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-PROG_ACT-CHAP",
+    "userDescription": "Chapel"
+  },
+  {
+    "locationId": 27209,
+    "locationType": "SPOR",
+    "description": "GYM-ADULT CIRCUI",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-ADULT CIRCUI",
+    "userDescription": "Circuit"
+  },
+  {
+    "locationId": 27207,
+    "locationType": "SPOR",
+    "description": "GYM-CIRCUIT",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-CIRCUIT",
+    "userDescription": "Circuit"
+  },
+  {
+    "locationId": 197682,
+    "locationType": "CLAS",
+    "description": "RES-IND-CLAS",
+    "agencyId": "MDI",
+    "parentLocationId": 197681,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-IND-CLAS",
+    "userDescription": "Classroom"
+  },
+  {
+    "locationId": 26996,
+    "locationType": "LOCA",
+    "description": "VISITS-CLO_VIS",
+    "agencyId": "MDI",
+    "parentLocationId": 26993,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-VISITS-CLO_VIS",
+    "userDescription": "Closed Visits"
+  },
+  {
+    "locationId": 26997,
+    "locationType": "LOCA",
+    "description": "VISITS-ENH_VIS",
+    "agencyId": "MDI",
+    "parentLocationId": 26993,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-VISITS-ENH_VIS",
+    "userDescription": "Enhanced Visits"
+  },
+  {
+    "locationId": 197683,
+    "locationType": "EXER",
+    "description": "RES-IND-EXER",
+    "agencyId": "MDI",
+    "parentLocationId": 197681,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-IND-EXER",
+    "userDescription": "Exercise"
+  },
+  {
+    "locationId": 26999,
+    "locationType": "IGRO",
+    "description": "WORK_IND-GARD",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-GARD",
+    "userDescription": "Farms/gardens"
+  },
+  {
+    "locationId": 27217,
+    "locationType": "SPOR",
+    "description": "GYM-FIT BALL",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-FIT BALL",
+    "userDescription": "Fit Ball"
+  },
+  {
+    "locationId": 27215,
+    "locationType": "SPOR",
+    "description": "GYM-FOOTBALL",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-FOOTBALL",
+    "userDescription": "Football"
+  },
+  {
+    "locationId": 27224,
+    "locationType": "SPOR",
+    "description": "GYM-FOOTBALL SQU",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-FOOTBALL SQU",
+    "userDescription": "Football Squ"
+  },
+  {
+    "locationId": 26149,
+    "locationType": "SPOR",
+    "description": "PROG_ACT-GYM",
+    "agencyId": "MDI",
+    "parentLocationId": 26148,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-PROG_ACT-GYM",
+    "userDescription": "Gym"
+  },
+  {
+    "locationId": 26962,
+    "locationType": "RESI",
+    "description": "RES-HB1-HB1CL1",
+    "agencyId": "MDI",
+    "parentLocationId": 26960,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB1-HB1CL1",
+    "userDescription": "HB1 Classroom 1"
+  },
+  {
+    "locationId": 26963,
+    "locationType": "RESI",
+    "description": "RES-HB1-DOC",
+    "agencyId": "MDI",
+    "parentLocationId": 26960,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB1-DOC",
+    "userDescription": "HB1 Doctors"
+  },
+  {
+    "locationId": 26961,
+    "locationType": "ROOM",
+    "description": "RES-HB1-HB1EX",
+    "agencyId": "MDI",
+    "parentLocationId": 26960,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB1-HB1EX",
+    "userDescription": "HB1 Exercise"
+  },
+  {
+    "locationId": 27229,
+    "locationType": "SPOR",
+    "description": "GYM-HB1 WEIGHTS",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-HB1 WEIGHTS",
+    "userDescription": "HB1 Weights"
+  },
+  {
+    "locationId": 26967,
+    "locationType": "RESI",
+    "description": "RES-HB2-HB2CL1",
+    "agencyId": "MDI",
+    "parentLocationId": 26965,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB2-HB2CL1",
+    "userDescription": "HB2 Classroom 1"
+  },
+  {
+    "locationId": 26968,
+    "locationType": "RESI",
+    "description": "RES-HB2-HB2CL2",
+    "agencyId": "MDI",
+    "parentLocationId": 26965,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB2-HB2CL2",
+    "userDescription": "HB2 Classroom 2"
+  },
+  {
+    "locationId": 26966,
+    "locationType": "ROOM",
+    "description": "RES-HB2-HB2EX",
+    "agencyId": "MDI",
+    "parentLocationId": 26965,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB2-HB2EX",
+    "userDescription": "HB2 Exercise"
+  },
+  {
+    "locationId": 27230,
+    "locationType": "SPOR",
+    "description": "GYM-HB2 WEIGHTS",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-HB2 WEIGHTS",
+    "userDescription": "HB2 Weights"
+  },
+  {
+    "locationId": 26973,
+    "locationType": "RESI",
+    "description": "RES-HB3-HB3CL1",
+    "agencyId": "MDI",
+    "parentLocationId": 26971,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB3-HB3CL1",
+    "userDescription": "HB3 Classroom 1"
+  },
+  {
+    "locationId": 26974,
+    "locationType": "RESI",
+    "description": "RES-HB3-HB3CL2",
+    "agencyId": "MDI",
+    "parentLocationId": 26971,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB3-HB3CL2",
+    "userDescription": "HB3 Classroom 2"
+  },
+  {
+    "locationId": 26972,
+    "locationType": "ROOM",
+    "description": "RES-HB3-HB3EX",
+    "agencyId": "MDI",
+    "parentLocationId": 26971,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB3-HB3EX",
+    "userDescription": "HB3 Exercise"
+  },
+  {
+    "locationId": 27231,
+    "locationType": "SPOR",
+    "description": "GYM-HB3 WEIGHTS",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-HB3 WEIGHTS",
+    "userDescription": "HB3 Weights"
+  },
+  {
+    "locationId": 26979,
+    "locationType": "RESI",
+    "description": "RES-HB4-HB4CL1",
+    "agencyId": "MDI",
+    "parentLocationId": 26977,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB4-HB4CL1",
+    "userDescription": "HB4 Classroom 1"
+  },
+  {
+    "locationId": 26980,
+    "locationType": "RESI",
+    "description": "RES-HB4-HB4CL2",
+    "agencyId": "MDI",
+    "parentLocationId": 26977,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB4-HB4CL2",
+    "userDescription": "HB4 Classroom 2"
+  },
+  {
+    "locationId": 26978,
+    "locationType": "ROOM",
+    "description": "RES-HB4-HB4EX",
+    "agencyId": "MDI",
+    "parentLocationId": 26977,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB4-HB4EX",
+    "userDescription": "HB4 Exercise"
+  },
+  {
+    "locationId": 27225,
+    "locationType": "SPOR",
+    "description": "GYM-HB4 WEIGHTS",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-HB4 WEIGHTS",
+    "userDescription": "HB4 Weights"
+  },
+  {
+    "locationId": 26983,
+    "locationType": "ROOM",
+    "description": "RES-HB5-HB5AEX",
+    "agencyId": "MDI",
+    "parentLocationId": 26982,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB5-HB5AEX",
+    "userDescription": "Hb5a Exercise"
+  },
+  {
+    "locationId": 26985,
+    "locationType": "RESI",
+    "description": "RES-HB5-HB5CL1",
+    "agencyId": "MDI",
+    "parentLocationId": 26982,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB5-HB5CL1",
+    "userDescription": "Hb5a2 Classroom"
+  },
+  {
+    "locationId": 26984,
+    "locationType": "RESI",
+    "description": "RES-HB5-HB5BEX",
+    "agencyId": "MDI",
+    "parentLocationId": 26982,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB5-HB5BEX",
+    "userDescription": "Hb5b Exercise"
+  },
+  {
+    "locationId": 26986,
+    "locationType": "RESI",
+    "description": "RES-HB5-HB5CL2",
+    "agencyId": "MDI",
+    "parentLocationId": 26982,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB5-HB5CL2",
+    "userDescription": "Hb5b2 Classroom"
+  },
+  {
+    "locationId": 26144,
+    "locationType": "ROOM",
+    "description": "HCARE-EXER",
+    "agencyId": "MDI",
+    "parentLocationId": 26143,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-HCARE-EXER",
+    "userDescription": "HCC Exercise"
+  },
+  {
+    "locationId": 26145,
+    "locationType": "MEDI",
+    "description": "HCARE-HCARE",
+    "agencyId": "MDI",
+    "parentLocationId": 26143,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-HCARE-HCARE",
+    "userDescription": "Health Care"
+  },
+  {
+    "locationId": 26964,
+    "locationType": "WING",
+    "description": "RES-HB1-HB1",
+    "agencyId": "MDI",
+    "parentLocationId": 26960,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB1-HB1",
+    "userDescription": "Houseblock 1"
+  },
+  {
+    "locationId": 26970,
+    "locationType": "WING",
+    "description": "RES-HB2-HB2",
+    "agencyId": "MDI",
+    "parentLocationId": 26965,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB2-HB2",
+    "userDescription": "Houseblock 2"
+  },
+  {
+    "locationId": 26976,
+    "locationType": "WING",
+    "description": "RES-HB3-HB3",
+    "agencyId": "MDI",
+    "parentLocationId": 26971,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB3-HB3",
+    "userDescription": "Houseblock 3"
+  },
+  {
+    "locationId": 26981,
+    "locationType": "WING",
+    "description": "RES-HB4-HB4",
+    "agencyId": "MDI",
+    "parentLocationId": 26977,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB4-HB4",
+    "userDescription": "Houseblock 4"
+  },
+  {
+    "locationId": 26987,
+    "locationType": "WING",
+    "description": "RES-HB5-HB5",
+    "agencyId": "MDI",
+    "parentLocationId": 26982,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB5-HB5",
+    "userDescription": "Houseblock 5"
+  },
+  {
+    "locationId": 721670,
+    "locationType": "WING",
+    "description": "RES-HB6-HB6",
+    "agencyId": "MDI",
+    "parentLocationId": 357590,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB6-HB6",
+    "userDescription": "Houseblock 6"
+  },
+  {
+    "locationId": 27222,
+    "locationType": "SPOR",
+    "description": "GYM-INDOOR CRICK",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-INDOOR CRICK",
+    "userDescription": "Indoor Cricket"
+  },
+  {
+    "locationId": 26969,
+    "locationType": "RESI",
+    "description": "RES-HB2-INDCL",
+    "agencyId": "MDI",
+    "parentLocationId": 26965,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB2-INDCL",
+    "userDescription": "Induction Classroom"
+  },
+  {
+    "locationId": 357595,
+    "locationType": "INTE",
+    "description": "RES-HB6-HB6INTER",
+    "agencyId": "MDI",
+    "parentLocationId": 357590,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB6-HB6INTER",
+    "userDescription": "Interview Room"
+  },
+  {
+    "locationId": 27002,
+    "locationType": "STOR",
+    "description": "WORK_IND-KITCH",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-KITCH",
+    "userDescription": "Kitchen - Closed Until 30.7.2019"
+  },
+  {
+    "locationId": 26151,
+    "locationType": "LOCA",
+    "description": "PROG_ACT-LIBR",
+    "agencyId": "MDI",
+    "parentLocationId": 26148,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-PROG_ACT-LIBR",
+    "userDescription": "Library"
+  },
+  {
+    "locationId": 26975,
+    "locationType": "RESI",
+    "description": "RES-HB3-LIFE",
+    "agencyId": "MDI",
+    "parentLocationId": 26971,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RES-HB3-LIFE",
+    "userDescription": "Lifer Room"
+  },
+  {
+    "locationId": 27001,
+    "locationType": "STOR",
+    "description": "WORK_IND-MSTOR",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-MSTOR",
+    "userDescription": "Main/stores"
+  },
+  {
+    "locationId": 26958,
+    "locationType": "ROOM",
+    "description": "RECEP-RAREA-MDT",
+    "agencyId": "MDI",
+    "parentLocationId": 26957,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-RECEP-RAREA-MDT",
+    "userDescription": "MDT"
+  },
+  {
+    "locationId": 26995,
+    "locationType": "LOCA",
+    "description": "VISITS-OFF_VIS",
+    "agencyId": "MDI",
+    "parentLocationId": 26993,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-VISITS-OFF_VIS",
+    "userDescription": "Official Visits"
+  },
+  {
+    "locationId": 27234,
+    "locationType": "SPOR",
+    "description": "GYM-OVER 35 CIR",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-OVER 35 CIR",
+    "userDescription": "Over 35 Circuit"
+  },
+  {
+    "locationId": 27212,
+    "locationType": "SPOR",
+    "description": "GYM-PUMP FUSION",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-PUMP FUSION",
+    "userDescription": "Pump Fusion"
+  },
+  {
+    "locationId": 26141,
+    "locationType": "AREA",
+    "description": "EDUC-MAIN",
+    "agencyId": "MDI",
+    "parentLocationId": 26140,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-EDUC-MAIN",
+    "userDescription": "Res 1 Education"
+  },
+  {
+    "locationId": 26142,
+    "locationType": "AREA",
+    "description": "EDUC-EDUC",
+    "agencyId": "MDI",
+    "parentLocationId": 26140,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-EDUC-EDUC",
+    "userDescription": "Res 2 Education"
+  },
+  {
+    "locationId": 27221,
+    "locationType": "SPOR",
+    "description": "GYM-RUGBY SQUAD",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-RUGBY SQUAD",
+    "userDescription": "Rugby Squad"
+  },
+  {
+    "locationId": 27211,
+    "locationType": "SPOR",
+    "description": "GYM-RUNNING",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-RUNNING",
+    "userDescription": "Running"
+  },
+  {
+    "locationId": 26994,
+    "locationType": "LOCA",
+    "description": "VISITS-SOC_VIS",
+    "agencyId": "MDI",
+    "parentLocationId": 26993,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-VISITS-SOC_VIS",
+    "userDescription": "Social Visits"
+  },
+  {
+    "locationId": 27213,
+    "locationType": "SPOR",
+    "description": "GYM-SOFT TENNIS",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-SOFT TENNIS",
+    "userDescription": "Soft Tennis"
+  },
+  {
+    "locationId": 200532,
+    "locationType": "SPOR",
+    "description": "GYM-SPORTS HALL",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-SPORTS HALL",
+    "userDescription": "Sports Hall"
+  },
+  {
+    "locationId": 27220,
+    "locationType": "SPOR",
+    "description": "GYM-STRONG MAN",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-STRONG MAN",
+    "userDescription": "Strongman"
+  },
+  {
+    "locationId": 27210,
+    "locationType": "SPOR",
+    "description": "GYM-TAG RUGBY",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-TAG RUGBY",
+    "userDescription": "Tag Rugby"
+  },
+  {
+    "locationId": 721853,
+    "locationType": "VIDE",
+    "description": "VIDEO LINK-VCC ROOM 1",
+    "agencyId": "MDI",
+    "parentLocationId": 721846,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-VIDEO LINK-VCC ROOM 1",
+    "userDescription": "VCC Room 1"
+  },
+  {
+    "locationId": 721854,
+    "locationType": "VIDE",
+    "description": "VIDEO LINK-VCC ROOM 2",
+    "agencyId": "MDI",
+    "parentLocationId": 721846,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-VIDEO LINK-VCC ROOM 2",
+    "userDescription": "VCC Room 2"
+  },
+  {
+    "locationId": 721855,
+    "locationType": "VIDE",
+    "description": "VIDEO LINK-VCC ROOM 3",
+    "agencyId": "MDI",
+    "parentLocationId": 721846,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-VIDEO LINK-VCC ROOM 3",
+    "userDescription": "VCC Room 3"
+  },
+  {
+    "locationId": 27227,
+    "locationType": "SPOR",
+    "description": "GYM-VOLLEYB SQ",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-VOLLEYB SQ",
+    "userDescription": "Volleyb Sq"
+  },
+  {
+    "locationId": 27226,
+    "locationType": "SPOR",
+    "description": "GYM-VOLLEYBALL",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-VOLLEYBALL",
+    "userDescription": "Volleyball"
+  },
+  {
+    "locationId": 27208,
+    "locationType": "SPOR",
+    "description": "GYM-WALKING",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-WALKING",
+    "userDescription": "Walking"
+  },
+  {
+    "locationId": 27003,
+    "locationType": "WORK",
+    "description": "WORK_IND-WAST",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WAST",
+    "userDescription": "Waste Management"
+  },
+  {
+    "locationId": 27206,
+    "locationType": "SPOR",
+    "description": "GYM-WEIGHTS",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-WEIGHTS",
+    "userDescription": "Weights"
+  },
+  {
+    "locationId": 27004,
+    "locationType": "WORK",
+    "description": "WORK_IND-WS1",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS1",
+    "userDescription": "Workshop 1 - Vt Catering"
+  },
+  {
+    "locationId": 27020,
+    "locationType": "TRAI",
+    "description": "WORK_IND-WS10",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS10",
+    "userDescription": "Workshop 10 - Bricks"
+  },
+  {
+    "locationId": 27021,
+    "locationType": "TRAI",
+    "description": "WORK_IND-WS11",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS11",
+    "userDescription": "Workshop 11 -"
+  },
+  {
+    "locationId": 27022,
+    "locationType": "TRAI",
+    "description": "WORK_IND-WS12",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS12",
+    "userDescription": "Workshop 12 - Furniture Repair"
+  },
+  {
+    "locationId": 27023,
+    "locationType": "WORK",
+    "description": "WORK_IND-WS13",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS13",
+    "userDescription": "Workshop 13 - Waste Management"
+  },
+  {
+    "locationId": 27024,
+    "locationType": "TRAI",
+    "description": "WORK_IND-WS14",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS14",
+    "userDescription": "Workshop 14 - Yard Party"
+  },
+  {
+    "locationId": 27025,
+    "locationType": "TRAI",
+    "description": "WORK_IND-WS15",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS15",
+    "userDescription": "Workshop 15 - Clothing Exchange Store"
+  },
+  {
+    "locationId": 27026,
+    "locationType": "TRAI",
+    "description": "WORK_IND-WS16",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS16",
+    "userDescription": "Workshop 16 - Joinery"
+  },
+  {
+    "locationId": 27027,
+    "locationType": "WORK",
+    "description": "WORK_IND-WS17",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS17",
+    "userDescription": "Workshop 17 - DHL"
+  },
+  {
+    "locationId": 27028,
+    "locationType": "WORK",
+    "description": "WORK_IND-WS18",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS18",
+    "userDescription": "Workshop 18 - Breakfast Packs"
+  },
+  {
+    "locationId": 27029,
+    "locationType": "WORK",
+    "description": "WORK_IND-WS19",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS19",
+    "userDescription": "Workshop 19 - Braille"
+  },
+  {
+    "locationId": 27008,
+    "locationType": "WORK",
+    "description": "WORK_IND-WS2-WS2",
+    "agencyId": "MDI",
+    "parentLocationId": 27005,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS2-WS2",
+    "userDescription": "Workshop 2"
+  },
+  {
+    "locationId": 27009,
+    "locationType": "STOR",
+    "description": "WORK_IND-WS3",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS3",
+    "userDescription": "Workshop 3 - Plastics"
+  },
+  {
+    "locationId": 27010,
+    "locationType": "WORK",
+    "description": "WORK_IND-WS4",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS4",
+    "userDescription": "Workshop 4 - PICTA"
+  },
+  {
+    "locationId": 27011,
+    "locationType": "TRAI",
+    "description": "WORK_IND-WS5",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS5",
+    "userDescription": "Workshop 5 -"
+  },
+  {
+    "locationId": 27012,
+    "locationType": "TRAI",
+    "description": "WORK_IND-WS6",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS6",
+    "userDescription": "Workshop 6 - Painting & Decorating"
+  },
+  {
+    "locationId": 27017,
+    "locationType": "WORK",
+    "description": "WORK_IND-WS7-WS7",
+    "agencyId": "MDI",
+    "parentLocationId": 27013,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS7-WS7",
+    "userDescription": "Workshop 7"
+  },
+  {
+    "locationId": 27018,
+    "locationType": "WORK",
+    "description": "WORK_IND-WS8",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS8",
+    "userDescription": "Workshop 8 - TV Repair"
+  },
+  {
+    "locationId": 27019,
+    "locationType": "TRAI",
+    "description": "WORK_IND-WS9",
+    "agencyId": "MDI",
+    "parentLocationId": 26998,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-WORK_IND-WS9",
+    "userDescription": "Workshop 9"
+  },
+  {
+    "locationId": 27214,
+    "locationType": "SPOR",
+    "description": "GYM-YOGA",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-YOGA",
+    "userDescription": "Yoga"
+  },
+  {
+    "locationId": 27228,
+    "locationType": "SPOR",
+    "description": "GYM-YP CIRCUIT",
+    "agencyId": "MDI",
+    "parentLocationId": 27205,
+    "currentOccupancy": 0,
+    "locationPrefix": "MDI-GYM-YP CIRCUIT",
+    "userDescription": "Yp Circuit"
+  }
+]
