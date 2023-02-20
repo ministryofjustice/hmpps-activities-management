@@ -1,12 +1,10 @@
 import { Request, Response } from 'express'
 
 import { when } from 'jest-when'
-import { plainToInstance } from 'class-transformer'
-import { validate } from 'class-validator'
+
 import PrisonService from '../../../services/prisonService'
-import { associateErrorsWithProperty } from '../../../utils/utils'
 import { ReferenceCode } from '../../../@types/prisonApiImport/types'
-import EducationLevelRoutes, { EducationLevel } from './educationLevel'
+import EducationLevelRoutes from './educationLevel'
 import educationLevels from '../../../services/fixtures/education_levels_1.json'
 
 jest.mock('../../../services/prisonService')
@@ -40,6 +38,7 @@ describe('Route Handlers - Create an activity - Education Level', () => {
           },
           riskLevel: 'High',
           incentiveLevels: ['Basic', 'Standard'],
+          educationLevels: [{ educationLevelCode: '1', educationLevelDescription: 'Reading Measure 1.0' }],
         },
       },
     } as unknown as Request
@@ -89,7 +88,7 @@ describe('Route Handlers - Create an activity - Education Level', () => {
   describe('POST', () => {
     it('should save selected education level in session and redirect to check education levels page', async () => {
       req.body = {
-        referenceCode: '1',
+        referenceCode: '1.1',
       }
 
       when(prisonService.getReferenceCodes).mockResolvedValue(educationLevels)
@@ -101,21 +100,12 @@ describe('Route Handlers - Create an activity - Education Level', () => {
           educationLevelCode: '1',
           educationLevelDescription: 'Reading Measure 1.0',
         },
+        {
+          educationLevelCode: '1.1',
+          educationLevelDescription: 'Reading Measure 1.1',
+        },
       ])
       expect(res.redirect).toHaveBeenCalledWith('check-education-level')
-    })
-  })
-
-  describe('education level validation', () => {
-    it('validation fails if a value is not entered', async () => {
-      const body = {}
-
-      const requestObject = plainToInstance(EducationLevel, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'referenceCode', error: 'Select an education level' }]),
-      )
     })
   })
 })
