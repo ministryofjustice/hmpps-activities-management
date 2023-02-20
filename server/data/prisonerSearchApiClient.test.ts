@@ -30,12 +30,12 @@ describe('prisonerSearchApiClient', () => {
       const response = { data: 'data' }
 
       fakePrisonerSearchApi
-        .get('/prisoner-search/prison/MDI')
-        .query({ page: '1', size: '10', 'include-restricted-patients': true })
+        .get('/prison/MDI/prisoners')
+        .query({ page: '1', size: '10' })
         .matchHeader('authorization', `Bearer accessToken`)
         .reply(200, response)
 
-      const output = await prisonerSearchApiClient.getInmates('MDI', 1, 10, user, true)
+      const output = await prisonerSearchApiClient.getInmates('MDI', 1, 10, user)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

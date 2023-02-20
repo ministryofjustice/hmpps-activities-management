@@ -1,0 +1,15 @@
+.related-tasks {
+  padding: 10px 10px 20px 20px;
+  border: 2px solid govuk-colour("light-grey");
+
+  &::before {
+    @include govuk-font($size: 19, $weight: bold);
+    display: block;
+    content: "Related tasks";
+  }
+
+  a {
+    @include govuk-font($size: 19);
+    display: inline-block;
+  }
+}

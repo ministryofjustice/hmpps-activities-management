@@ -14,22 +14,11 @@ export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
     super('Prisoner search API', config.apis.prisonerSearchApi as ApiConfig)
   }
 
-  async getInmates(
-    prisonCode: string,
-    page: number,
-    size: number,
-    user: ServiceUser,
-    includeRestricted?: boolean,
-  ): Promise<PagePrisoner> {
-    const searchParams = new URLSearchParams({
-      page: page.toString(),
-      size: size.toString(),
-      'include-restricted-patients': includeRestricted ? 'true' : 'false',
-    })
+  async getInmates(prisonCode: string, page: number, size: number, user: ServiceUser): Promise<PagePrisoner> {
     return this.get(
       {
-        path: `/prisoner-search/prison/${prisonCode}`,
-        query: searchParams.toString(),
+        path: `/prison/${prisonCode}/prisoners`,
+        query: { page: page.toString(), size: size.toString() },
       },
       user,
     )

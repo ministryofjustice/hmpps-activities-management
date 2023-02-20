@@ -1,0 +1,283 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Allocate" %}
+{% set pageId = 'allocation-dashboard-page' %}
+{% set backLinkHref = "/allocate/categories" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-xl">You're allocating to {{ schedule.description }}</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-3">
+        <div class="govuk-grid-column-two-thirds">
+            <p>Check the requirements for this activity so that you can allocate suitable candidates.</p>
+        </div>
+        <div class="govuk-grid-column-one-third">
+            <div class='related-tasks'>
+                <a href="/allocate/categories" class="govuk-link">Find other activities with vacancies</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-6">
+        <div class="govuk-grid-column-one-third">
+            <div class="information-card">
+                {{ govukTable({
+                    caption: "Current allocation",
+                    captionClasses: "govuk-table__caption--m",
+                    firstCellIsHeader: true,
+                    rows: [
+                        [
+                            {
+                                text: "Vacancies:"
+                            },
+                            {
+                                text: allocationSummaryView.vacancies
+                            }
+                        ],
+                        [
+                            {
+                                text: "Allocated:"
+                            },
+                            {
+                                text: allocationSummaryView.allocated
+                            }
+                        ],
+                        [
+                            {
+                                text: "Capacity:"
+                            },
+                            {
+                                text: allocationSummaryView.capacity
+                            }
+                        ]
+                    ]
+                }) }}
+            </div>
+        </div>
+        <div class="govuk-grid-column-two-thirds">
+            <div class="information-card">
+                {{ govukTable({
+                    caption: "Requirements",
+                    captionClasses: "govuk-table__caption--m",
+                    firstCellIsHeader: true,
+                    rows: [
+                        [
+                            {
+                                text: "Suitable for workplace risk assessment:"
+                            },
+                            {
+                                text: ("Low" if schedule.activity.riskLevel == 'low') +
+                                      ("Low and Medium" if schedule.activity.riskLevel == 'medium') +
+                                      ("Low, Medium and High" if schedule.activity.riskLevel == 'high')
+                            }
+                        ],
+                        [
+                            {
+                                text: "Suitable for minimum incentive level:"
+                            },
+                            {
+                                text: schedule.activity.minimumIncentiveLevel
+                            }
+                        ]
+                    ]
+                }) }}
+            </div>
+        </div>
+    </div>
+
+    {{ govukTabs({
+        items: [
+            {
+                label: "Currently allocated",
+                id: "currently-allocated-tab",
+                panel: {
+                    html: currentlyAllocatedHtml
+                }
+            },
+            {
+                label: "Candidates",
+                id: "candidates-tab",
+                panel: {
+                    html: candidatesHtml
+                }
+            },
+            {
+                label: schedule.description + " schedule",
+                id: "schedule-tab",
+                panel: {
+                    html: scheduleHtml
+                }
+            }
+        ]
+    }) }}
+{% endblock %}
+
+{% set currentlyAllocatedHtml %}
+    {% set rows = [] %}
+    {% for row in currentlyAllocated %}
+        {% set otherAllocationsHtml %}
+            <div>
+                {% for allocation in row.otherAllocations %}
+                    <div>{{ allocation.scheduleName }}</div>
+                {% endfor %}
+            </div>
+        {% endset %}
+
+        {% set rows = (rows.push([
+            {
+                html: '
+                    <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                        <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
+                           class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase + '
+                        </a>
+                    </h2>
+                    <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
+                    <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
+                ',
+                attributes: {
+                    "data-sort-value": row.name
+                }
+            },
+            {
+                text: row.dateAllocated | formatDate('do MMMM yyyy')
+            },
+            {
+                html: otherAllocationsHtml
+            },
+            {
+                text: row.releaseDate | formatDate('do MMMM yyyy') if row.releaseDate else 'TBC'
+            }
+        ]), rows) %}
+    {% endfor %}
+
+    <p>Review the list of people currently allocated to identify any non-associations.</p>
+    {{ govukTable({
+        attributes: {
+            'data-module': 'moj-sortable-table'
+        },
+        caption: "Currently allocated",
+        captionClasses: "govuk-visually-hidden",
+        head: [
+            {
+                text: "Prisoner details",
+                attributes: {
+                    "aria-sort": "ascending"
+                }
+            },
+            {
+                text: "Date allocated"
+            },
+            {
+                text: "Other allocations"
+            },
+            {
+                text: "Earliest release date"
+            }
+        ],
+        rows: rows
+    }) }}
+{% endset %}
+
+{% set candidatesHtml %}
+    <p>
+        Your candidate list has been filtered to show people who match all the requirements for this activity.
+        Use the filters to expand or reduce the list. You can also search for someone you want to allocate.
+    </p>
+    {% set rows = [] %}
+    {% for row in candidates %}
+        {% set id = 'selectedAllocation' + (('-' + loop.index0) if loop.index0 else '') %}
+        {% set rows = (rows.push([
+            {
+                html: '
+                    <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input govuk-!-padding-top-3" id="' + id + '" name="selectedAllocation" type="radio" value="' + row.prisonerNumber + '">
+                            <label class="govuk-label govuk-radios__label" for="' + id + '">
+                                <h2 class="govuk-heading-s govuk-!-margin-bottom-1">
+                                    <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
+                                       class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase + '
+                                    </a>
+                                </h2>
+                                <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
+                                <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
+                            </label>
+                        </div>
+                    </div>
+                '
+            },
+            {
+                text: row.releaseDate | formatDate('do MMMM yyyy') if row.releaseDate else 'TBC'
+            }
+        ]), rows) %}
+    {% endfor %}
+
+    <form method='POST'>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{ govukTable({
+            caption: "Candidates",
+            captionClasses: "govuk-visually-hidden",
+            head: [
+                {
+                    text: "Candidate details"
+                },
+                {
+                    text: "Earliest release date"
+                }
+            ],
+            rows: rows
+        }) }}
+
+        {{ govukButton({
+            text: "Select candidate"
+        }) }}
+    </form>
+{% endset %}
+
+{% set scheduleHtml %}
+    {% set rows = [] %}
+
+    {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+        {% set columns = [
+            {
+                text: day
+            }
+        ] %}
+
+        {% for timeSlot in ['am', 'pm', 'ed'] %}
+            {% set slotMatches = false %}
+            {% for slot in schedule.slots %}
+                {% set dayMatchesSlot = day | startsWithAny(slot.daysOfWeek) %}
+                {% set slotMatches = dayMatchesSlot and (slotMatches or slot.startTime | getTimeSlotFromTime == timeSlot) %}
+            {% endfor %}
+
+            {% set columns = (columns.push(
+                {
+                    html: govukTag({
+                        text: "Yes" if slotMatches else "No",
+                        classes: "govuk-tag--grey" if not slotMatches
+                    })
+                }
+            ), columns) %}
+        {% endfor %}
+
+        {% set rows = (rows.push(columns), rows) %}
+    {% endfor %}
+
+    <p>Check the schedule is compatible with the candidate's current allocations if they have any.</p>
+    {{ govukTable({
+        caption: "Schedule",
+        captionClasses: "govuk-visually-hidden",
+        head: [ { text: "Days" }, { text: "AM" }, { text: "PM" }, { text: "ED" } ],
+        rows: rows
+    }) }}
+{% endset %}

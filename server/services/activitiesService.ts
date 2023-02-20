@@ -233,6 +233,9 @@ export default class ActivitiesService {
     prisonerNumbers: string[],
     user: ServiceUser,
   ): Promise<PrisonerAllocations[]> {
+    if (prisonerNumbers.length < 1) {
+      return []
+    }
     return this.activitiesApiClient.getPrisonerAllocations(prisonCode, prisonerNumbers, user)
   }
 

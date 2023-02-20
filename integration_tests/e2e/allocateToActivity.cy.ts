@@ -5,6 +5,7 @@ import getActivityCapacity from '../fixtures/activitiesApi/getActivityCapacity.j
 import getSchedulesInActivity from '../fixtures/activitiesApi/getSchedulesInActivity.json'
 import getScheduleCapacity from '../fixtures/activitiesApi/getScheduleCapacity.json'
 import getAllocations from '../fixtures/activitiesApi/getAllocations.json'
+import inmateDetails from '../fixtures/prisonerSearchApi/prisonerSearchG4793VF.json'
 import prisonerAllocations from '../fixtures/activitiesApi/prisonerAllocations.json'
 import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
 import inmateDetailList from '../fixtures/prisonApi/inmateDetailList.json'
@@ -19,13 +20,11 @@ import Page from '../pages/page'
 import CategoriesDashboardPage from '../pages/allocateToActivity/categoriesDashboard'
 import ActivitiesDashboardPage from '../pages/allocateToActivity/activitiesDashboard'
 import SchedulesDashboardPage from '../pages/allocateToActivity/schedulesDashboard'
-import PeopleAllocatedNowTabPage from '../pages/allocateToActivity/peopleAllocatedNowTab'
-import ScheduleTabPage from '../pages/allocateToActivity/scheduleTab'
-import IdentifyCandidatesTabPage from '../pages/allocateToActivity/identifyCandidatesTab'
 import PayBandPage from '../pages/allocateToActivity/payBand'
 import CheckAnswersPage from '../pages/allocateToActivity/checkAnswers'
 import CancelPage from '../pages/allocateToActivity/cancel'
 import ConfirmationPage from '../pages/allocateToActivity/confirmation'
+import AllocationDashboard from '../pages/allocateToActivity/AllocationDashboard'
 
 context('Allocate to activity', () => {
   beforeEach(() => {
@@ -39,15 +38,12 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/activities/(\\d)*/capacity', getActivityCapacity)
     cy.stubEndpoint('GET', '/activities/2/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/(\\d)*/capacity', getScheduleCapacity)
-    cy.stubEndpoint('GET', '/schedules/5/allocations', getAllocations)
-    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('GET', '/schedules/5', getSchedule)
+    cy.stubEndpoint('GET', '/schedules/5/allocations', getAllocations)
+    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
+    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('POST', '/api/bookings/offenders', inmateDetailList)
-    cy.stubEndpoint(
-      'GET',
-      '/prisoner-search/prison/MDI\\?page=0&size=1000&include-restricted-patients=false',
-      getAllInmatesPerPrison,
-    )
+    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?page=0&size=10', getAllInmatesPerPrison)
     cy.stubEndpoint('GET', '/api/offenders/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/iep/reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/activities/2', getActivity)
@@ -73,17 +69,13 @@ context('Allocate to activity', () => {
     schedulesPage.scheduleRows().should('have.length', 4)
     schedulesPage.selectScheduleWithName('Entry level English 1')
 
-    const peopleAllocatedNowTab = Page.verifyOnPage(PeopleAllocatedNowTabPage)
-    peopleAllocatedNowTab.allocatedPeopleRows().should('have.length', 1)
-    peopleAllocatedNowTab.tabWithTitle('Entry level English 1 schedule').click()
-
-    const scheduleTab = Page.verifyOnPage(ScheduleTabPage)
-    scheduleTab.activeTimeSlots().should('have.length', 1)
-    scheduleTab.tabWithTitle('Identify candidates').click()
-
-    const identifyCandidatesTab = Page.verifyOnPage(IdentifyCandidatesTabPage)
-    identifyCandidatesTab.candidateRows().should('have.length', 10)
-    identifyCandidatesTab.selectCandidateWithName('Cholak, Alfonso')
+    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    allocatePage.allocatedPeopleRows().should('have.length', 1)
+    allocatePage.tabWithTitle('Entry level English 1 schedule').click()
+    allocatePage.activeTimeSlots().should('have.length', 1)
+    allocatePage.tabWithTitle('Candidates').click()
+    allocatePage.candidateRows().should('have.length', 10)
+    allocatePage.selectCandidateWithName('Alfonso Cholak')
 
     const payBandPage = Page.verifyOnPage(PayBandPage)
     payBandPage.selectPayBand('Medium (£1.75)')

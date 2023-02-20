@@ -1,0 +1,21 @@
+.information-card {
+  padding: 25px;
+  border: 2px solid govuk-colour("light-grey");
+
+  .govuk-table {
+    margin: 0;
+
+    &__caption {
+      background-color: govuk-colour("light-grey");
+      padding: 5px 0;
+    }
+
+    &__header {
+      border-bottom-color: govuk-colour("light-grey");
+    }
+
+    &__cell {
+      border-bottom-color: govuk-colour("light-grey");
+    }
+  }
+}

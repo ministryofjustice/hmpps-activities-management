@@ -44,12 +44,12 @@ export default class PrisonService {
     return this.prisonApiClient.getInmateDetail(nomisId, user)
   }
 
-  async getInmates(prisonCode: string, user: ServiceUser, includeRestricted?: boolean): Promise<PagePrisoner> {
-    return this.prisonerSearchApiClient.getInmates(prisonCode, 0, 1000, user, includeRestricted)
+  async getInmates(prisonCode: string, user: ServiceUser): Promise<PagePrisoner> {
+    return this.prisonerSearchApiClient.getInmates(prisonCode, 0, 10, user)
   }
 
   getIncentiveLevels(prisonId: string, user: ServiceUser): Promise<IepLevel[]> {
-    return this.incentivesApiClient.getIncentiveLevels(prisonId, user)
+    return this.incentivesApiClient.getIncentiveLevels(prisonId, user).then(ieps => ieps.filter(iep => iep.active))
   }
 
   getPrisonerIepSummary(prisonerNumber: string, user: ServiceUser): Promise<IepSummary> {
@@ -58,6 +58,13 @@ export default class PrisonService {
 
   async searchInmates(prisonerSearchCriteria: PrisonerSearchCriteria, user: ServiceUser): Promise<Prisoner[]> {
     return this.prisonerSearchApiClient.searchInmates(prisonerSearchCriteria, user)
+  }
+
+  async searchInmatesByPrisonerNumbers(prisonerNumbers: string[], user: ServiceUser): Promise<Prisoner[]> {
+    if (prisonerNumbers.length < 1) {
+      return []
+    }
+    return this.prisonerSearchApiClient.searchByPrisonerNumbers({ prisonerNumbers }, user)
   }
 
   async getEventLocations(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
