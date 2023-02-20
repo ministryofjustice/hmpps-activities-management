@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { format, subDays } from 'date-fns'
+import { format, addDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import SelectDateAndLocationRoutes, { DateAndLocation } from './selectDateAndLocation'
@@ -66,17 +66,17 @@ describe('Unlock list routes - select date and location', () => {
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${todaysDate}&slot=am&location=here`)
     })
 
-    it("redirect with the expected query params for when yesterday's date is selected", async () => {
+    it("redirect with the expected query params for when tomorrow's date is selected", async () => {
       req.body = {
-        datePresetOption: 'yesterday',
+        datePresetOption: 'tomorrow',
         activitySlot: 'am',
         location: 'here',
       }
-      const yesterdaysDate = format(subDays(new Date(), 1), 'yyyy-MM-dd')
+      const tomorrowsDate = format(addDays(new Date(), 1), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${yesterdaysDate}&slot=am&location=here`)
+      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${tomorrowsDate}&slot=am&location=here`)
     })
 
     it('redirects with the expected query params for when a custom date is selected', async () => {

@@ -1,14 +1,14 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsIn, IsNotEmpty, ValidateIf, ValidateNested } from 'class-validator'
-import { format, subDays } from 'date-fns'
+import { format, addDays } from 'date-fns'
 import SimpleDate from '../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../validators/isValidDate'
 import ActivitiesService from '../../../services/activitiesService'
 
 enum PresetDateOptions {
   TODAY = 'today',
-  YESTERDAY = 'yesterday',
+  TOMORROW = 'tomorrow',
   OTHER = 'other',
 }
 
@@ -63,8 +63,8 @@ export default class SelectDateAndLocationRoutes {
     if (body.datePresetOption === PresetDateOptions.TODAY) {
       return this.formatDate(new Date())
     }
-    if (body.datePresetOption === PresetDateOptions.YESTERDAY) {
-      return this.formatDate(subDays(new Date(), 1)).toString()
+    if (body.datePresetOption === PresetDateOptions.TOMORROW) {
+      return this.formatDate(addDays(new Date(), 1)).toString()
     }
     // Use the POSTed date, which is a SimpleDate.
     return this.formatDate(body.date.toRichDate())

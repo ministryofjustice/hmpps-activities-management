@@ -213,7 +213,6 @@ export default class ActivitiesService {
     return this.activitiesApiClient.updateAttendances(attendanceUpdates, user)
   }
 
-  // TODO: Test case
   async getLocationPrefix(loc: string, user: ServiceUser): Promise<LocationPrefix> {
     const { activeCaseLoadId } = user
     return this.activitiesApiClient.getPrisonLocationPrefixByGroup(activeCaseLoadId, loc, user)

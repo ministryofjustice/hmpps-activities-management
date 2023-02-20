@@ -322,7 +322,10 @@ describe('Unlock list routes - planned events', () => {
       const { unlockFilters } = req.session
 
       expect(unlockFilters).toBeDefined()
-      expect(unlockFilters.activityFilters.filter(loc => loc.checked === true)).toHaveLength(0)
+      // Both is added back in whenever a radio option is cleared
+      expect(
+        unlockFilters.activityFilters.filter(loc => loc.checked === true).filter(loc => loc.value === 'Both'),
+      ).toHaveLength(1)
       const { unlockDate, timeSlot, location } = unlockFilters
       expect(res.redirect).toHaveBeenCalledWith(
         `planned-events?date=${unlockDate}&slot=${timeSlot}&location=${location}`,
@@ -340,7 +343,10 @@ describe('Unlock list routes - planned events', () => {
       const { unlockFilters } = req.session
 
       expect(unlockFilters).toBeDefined()
-      expect(unlockFilters.stayingOrLeavingFilters.filter(loc => loc.checked === true)).toHaveLength(0)
+      // Both is added back in whenever a radio option is cleared
+      expect(
+        unlockFilters.activityFilters.filter(loc => loc.checked === true).filter(loc => loc.value === 'Both'),
+      ).toHaveLength(1)
       const { unlockDate, timeSlot, location } = unlockFilters
       expect(res.redirect).toHaveBeenCalledWith(
         `planned-events?date=${unlockDate}&slot=${timeSlot}&location=${location}`,
