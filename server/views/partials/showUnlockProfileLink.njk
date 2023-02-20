@@ -1,13 +1,19 @@
+{% from "partials/showUnlockAlerts.njk" import showUnlockAlerts %}
 
-{% macro showUnlockProfileLink(prisonerNumber, displayName, dpsUrl) %}
-  <div>
-    <div>
-      <a href="{{ dpsUrl }}/prisoner/{{ prisonerNumber }}"
-         target="_blank"
-         class="govuk-link govuk-link--no-visited-state">
-        {{ displayName }}
-      </a>
+{% macro showUnlockProfileLink(prisonerNumber, displayName, alerts, dpsUrl) %}
+    <div class="hmpps-inline-block">
+      <div>
+        <a href="{{ dpsUrl }}/prisoner/{{ prisonerNumber }}"
+          target="_blank"
+          class="govuk-link govuk-link--no-visited-state">
+          {{ displayName }}
+        </a>
+      </div>
+      <div class="govuk-!-font-size-14">{{ prisonerNumber }}</div>
+      {% if alerts.length > 0 %}
+        <div>
+          {{ showUnlockAlerts(alerts) }}
+        </div>
+      {% endif %}
     </div>
-    <div class="govuk-!-font-size-14 govuk-!-display-none-print">{{ prisonerNumber }}</div>
-  </div>
 {% endmacro %}

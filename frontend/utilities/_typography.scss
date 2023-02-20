@@ -1,0 +1,37 @@
+.secondary-text-colour {
+    color: $govuk-secondary-text-colour;
+}
+
+// There's not a good way(?) to rotate text 45 degrees and force the parent
+// container to respect the child's altered height / width.
+//
+// Because the only use (currently) is for single word table headers this
+// solution is tailored to that usecase.
+//
+// Specifically, it manually sets an appropriate width & height for the table
+// header, then rotates and positions any child with absolute positioning.
+//
+// This class *should not* be reused without stress testing first.
+.hmpps-table {
+    &__header {
+        &--angled-table-header {
+            &, &[aria-sort] {
+                position: relative;
+                width: 50px;
+                height: 60px;
+
+                > *, button {
+                    position: absolute;
+                    left: 0;
+                    bottom: govuk-spacing(2);
+                    transform: rotate(-45deg);
+                    transform-origin: 3px center;
+
+                    &:first-letter { 
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+}

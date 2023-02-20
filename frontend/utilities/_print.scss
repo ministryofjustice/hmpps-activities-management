@@ -33,23 +33,29 @@
   .govuk-table {
     font-size: 10pt;
 
-    &__cell {
-      padding: 0;
+    &__header {
+      vertical-align: bottom;
     }
 
     // Remove styling from MOJ sortable table colum headers
     [aria-sort] button {
-      color: inherit;
+      display: inline;
+      position: static;
+      color: black;
+      padding: 0;
+      box-sizing: content-box;
 
       &:before,
       &:after {
         content: '';
+        position: static;
       }
     }
   }
 
   .govuk-link {
     text-decoration: none;
+    font-weight: bold;
 
     &:link,
     &:visited {
@@ -65,7 +71,8 @@
   }
 
   .govuk-tag {
-    margin: 5px 0;
+    margin: 0;
+    margin-bottom: 5px;
     font-size: 6pt;
     color: red;
     background-color: transparent;
@@ -74,5 +81,23 @@
 
   .print-align-right {
     text-align: right;
+  }
+
+  .print-checkbox {
+    display: inline-block;
+    $_checkbox-size: 30px;
+    width: $_checkbox-size;
+    height: $_checkbox-size;
+    border: $govuk-border-width-form-element solid $govuk-input-border-colour;
+    background: govuk-colour("white");
+    color: govuk-colour("mid-grey");
+    line-height: $_checkbox-size;
+    text-align: center;
+  }
+}
+
+.govuk-table {
+  td, th {
+    page-break-inside: avoid;
   }
 }
