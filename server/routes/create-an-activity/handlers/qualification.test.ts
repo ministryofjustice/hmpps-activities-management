@@ -39,7 +39,7 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
   })
 
   describe('POST', () => {
-    it('should save the selected qualification option in session and redirect to the education level page', async () => {
+    it('Yes: should save the selected qualification option in session and redirect to the education level page', async () => {
       req.body = {
         qualificationOption: 'yes',
       }
@@ -48,6 +48,19 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
 
       expect(req.session.createJourney.qualificationOption).toEqual('yes')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('education-level')
+    })
+  })
+
+  describe('POST', () => {
+    it('No: should save the selected qualification option in session and redirect to the check answers page', async () => {
+      req.body = {
+        qualificationOption: 'no',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.qualificationOption).toEqual('no')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
   })
 
