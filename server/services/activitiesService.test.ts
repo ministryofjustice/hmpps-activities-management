@@ -5,6 +5,7 @@ import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import PrisonApiClient from '../data/prisonApiClient'
 import ActivitiesService from './activitiesService'
 import { ServiceUser } from '../@types/express'
+import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import {
   Activity,
   ActivityCategory,
@@ -20,9 +21,12 @@ import {
   Appointment,
   AppointmentCategory,
 } from '../@types/activitiesAPI/types'
+import { PrisonApiUserDetail } from '../@types/prisonApiImport/types'
+import { LocationLenient } from '../@types/prisonApiImportCustom'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
+import appointment from './fixtures/appointment_1.json'
 import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
 
@@ -257,9 +261,9 @@ describe('Activities Service', () => {
   describe('getActivitySchedules', () => {
     it('should fetch activity schedules using the activities API', async () => {
       const criteria = { prisonerNumbers: ['G4793VF'] }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      when(prisonerSearchApiClient.searchByPrisonerNumbers).calledWith(criteria, user).mockResolvedValue(prisoners)
+      when(prisonerSearchApiClient.searchByPrisonerNumbers)
+        .calledWith(criteria, user)
+        .mockResolvedValue(prisoners as Prisoner[])
       when(activitiesApiClient.getActivitySchedules)
         .calledWith(atLeast('10001'))
         .mockResolvedValueOnce(activitySchedules)
@@ -299,48 +303,50 @@ describe('Activities Service', () => {
 
   describe('getAppointment', () => {
     it('should return appointment from api when valid appointment id is used', async () => {
-      const expectedResult = {
-        id: 12345,
-        category: {
-          id: 51,
-          code: 'CHAP',
-          description: 'Chaplaincy',
-        },
-        prisonCode: 'SKI',
-        internalLocationId: 123,
-        startDate: '2023-02-07',
-        startTime: '09:00',
-        endTime: '10:30',
-        comment: 'This appointment will help adjusting to life outside of prison',
-        created: '2023-02-07T15:37:59.266Z',
-        createdBy: 'AAA01U',
-        occurrences: [
-          {
-            id: 123456,
-            internalLocationId: 123,
-            startDate: '2023-02-07',
-            startTime: '13:00',
-            endTime: '13:30',
-            comment: 'This appointment occurrence has been rescheduled due to staff availability',
-            cancelled: false,
-            updated: '2023-02-07T15:37:59.266Z',
-            updatedBy: 'AAA01U',
-            allocations: [
-              {
-                id: 123456,
-                prisonerNumber: 'A1234BC',
-                bookingId: 456,
-              },
-            ],
-          },
-        ],
-      } as Appointment
-
-      when(activitiesApiClient.getAppointment).calledWith(12345, user).mockResolvedValue(expectedResult)
+      when(activitiesApiClient.getAppointment).calledWith(12345, user).mockResolvedValue(appointment)
 
       const actualResult = await activitiesService.getAppointment(12345, user)
 
-      expect(actualResult).toEqual(expectedResult)
+      expect(actualResult).toEqual(appointment)
+    })
+  })
+
+  describe('getAppointmentDetails', () => {
+    it('should return appointment details from api when valid appointment id is used', async () => {
+      when(activitiesApiClient.getAppointment).calledWith(12345, user).mockResolvedValue(appointment)
+
+      const getLocationsForEventTypeResponse = [{ locationId: appointment.internalLocationId }] as LocationLenient[]
+      when(prisonApiClient.getLocationsForEventType)
+        .calledWith('SKI', 'APP', user)
+        .mockResolvedValue(getLocationsForEventTypeResponse)
+
+      const appointmentPrisonerNo = appointment.occurrences[0].allocations[0].prisonerNumber
+      const criteria = { prisonerNumbers: [appointmentPrisonerNo] }
+
+      when(prisonerSearchApiClient.searchByPrisonerNumbers)
+        .calledWith(criteria, user)
+        .mockResolvedValue(prisoners as Prisoner[])
+
+      const appointmentUser = { firstName: 'Lee', lastName: 'Jacobson', staffId: 1000 }
+      when(prisonApiClient.getUserByUsername)
+        .calledWith(appointment.createdBy, user)
+        .mockResolvedValue(appointmentUser as PrisonApiUserDetail)
+
+      when(prisonApiClient.getUserByUsername)
+        .calledWith(appointment.updatedBy, user)
+        .mockResolvedValue(appointmentUser as PrisonApiUserDetail)
+
+      const actualAppointmentResult = await activitiesService.getAppointmentDetails(12345, user)
+
+      expect(actualAppointmentResult.id).toEqual(12345)
+      expect(actualAppointmentResult.occurrences.length).toEqual(1)
+      expect(actualAppointmentResult.internalLocation.locationId).toEqual(123)
+      expect(actualAppointmentResult.occurrences[0].internalLocation.locationId).toEqual(123)
+      expect(actualAppointmentResult.prisoners.length).toEqual(1)
+      expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
+      expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
+      expect(actualAppointmentResult.createdBy).toEqual('Lee Jacobson')
+      expect(actualAppointmentResult.updatedBy).toEqual('Lee Jacobson')
     })
   })
 

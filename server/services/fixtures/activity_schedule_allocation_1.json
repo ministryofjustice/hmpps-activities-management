@@ -63,6 +63,10 @@
       "restrictedPatient": false,
       "status": "ACTIVE IN",
       "youthOffender": false,
+      "maritalStatus": "Widowed",
+      "religion": "Church of England (Anglican)",
+      "nationality": "Egyptian",
+      "mostSeriousOffence": "Robbery",
       "alerts": [],
       "aliases": [
         {
