@@ -1,0 +1,9 @@
+// Print dialogs can print to different page sizes.
+// These grid classes only apply print media types and override the default responsive behaviour of GDS grid classes
+@include govuk-media-query($media-type: print) {
+  @each $width in map-keys($govuk-grid-widths) {
+    .hmpps-grid-column-#{$width}-print {
+      @include govuk-grid-column($width, $at: 0);
+    }
+  }
+}
