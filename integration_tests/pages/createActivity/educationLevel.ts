@@ -5,7 +5,7 @@ export default class EducationLevelPage extends Page {
     super('create-activity-education-level-page')
   }
 
-  selectEducationLevel = (referenceCode: string) => this.getInputByName('referenceCode').select(referenceCode)
+  selectEducationLevel = (educationLevel: string) => this.getInputById('referenceCode').type(educationLevel)
 
   reviewAndAddMoreEducationLevels = () => cy.get('button').contains('Review and add more education levels').click()
 }

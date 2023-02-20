@@ -11,6 +11,7 @@ import CheckEducationLevelsPage from '../pages/createActivity/checkEducationLeve
 import getCategories from '../fixtures/activitiesApi/getCategories.json'
 import moorlandPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import moorlandIncentiveLevels from '../fixtures/activitiesApi/getMdiPrisonIncentiveLevels.json'
+import educationLevels from '../fixtures/prisonApi/educationLevels.json'
 import CheckAnswersPage from '../pages/createActivity/checkAnswers'
 import ConfirmationPage from '../pages/createActivity/confirmation'
 
@@ -23,6 +24,7 @@ context('Change location', () => {
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
+    cy.stubEndpoint('GET', '/api/reference-domains/domains/EDU_LEVEL/codes', educationLevels)
     cy.stubEndpoint('POST', '/activities')
   })
 
@@ -68,7 +70,7 @@ context('Change location', () => {
     qualificationPage.continue()
 
     const educationLevelPage = Page.verifyOnPage(EducationLevelPage)
-    educationLevelPage.selectEducationLevel('1')
+    educationLevelPage.selectEducationLevel('Reading Measure 17.0')
     educationLevelPage.reviewAndAddMoreEducationLevels()
 
     const checkEducationLevelPage = Page.verifyOnPage(CheckEducationLevelsPage)
