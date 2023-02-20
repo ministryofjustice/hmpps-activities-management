@@ -1,0 +1,3415 @@
+[
+  {
+    "domain": "EDU_LEVEL",
+    "code": "1",
+    "description": "Reading Measure 1.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "1.1",
+    "description": "Reading Measure 1.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "1.2",
+    "description": "Reading Measure 1.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "1.3",
+    "description": "Reading Measure 1.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "1.4",
+    "description": "Reading Measure 1.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "1.5",
+    "description": "Reading Measure 1.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "1.6",
+    "description": "Reading Measure 1.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "1.7",
+    "description": "Reading Measure 1.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "1.8",
+    "description": "Reading Measure 1.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "1.9",
+    "description": "Reading Measure 1.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "10",
+    "description": "Reading Measure 10.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "10.1",
+    "description": "Reading Measure 10.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "10.2",
+    "description": "Reading Measure 10.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "10.3",
+    "description": "Reading Measure 10.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "10.4",
+    "description": "Reading Measure 10.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "10.5",
+    "description": "Reading Measure 10.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "10.6",
+    "description": "Reading Measure 10.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "10.7",
+    "description": "Reading Measure 10.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "10.8",
+    "description": "Reading Measure 10.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "10.9",
+    "description": "Reading Measure 10.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "11",
+    "description": "Reading Measure 11.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "11.1",
+    "description": "Reading Measure 11.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "11.2",
+    "description": "Reading Measure 11.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "11.3",
+    "description": "Reading Measure 11.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "11.4",
+    "description": "Reading Measure 11.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "11.5",
+    "description": "Reading Measure 11.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "11.6",
+    "description": "Reading Measure 11.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "11.7",
+    "description": "Reading Measure 11.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "11.8",
+    "description": "Reading Measure 11.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "11.9",
+    "description": "Reading Measure 11.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "12",
+    "description": "Reading Measure 12.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "12.1",
+    "description": "Reading Measure 12.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "12.2",
+    "description": "Reading Measure 12.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "12.3",
+    "description": "Reading Measure 12.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "12.4",
+    "description": "Reading Measure 12.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "12.5",
+    "description": "Reading Measure 12.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "12.6",
+    "description": "Reading Measure 12.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "12.7",
+    "description": "Reading Measure 12.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "12.8",
+    "description": "Reading Measure 12.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "12.9",
+    "description": "Reading Measure 12.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "13",
+    "description": "Reading Measure 13.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "13.1",
+    "description": "Reading Measure 13.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "13.2",
+    "description": "Reading Measure 13.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "13.3",
+    "description": "Reading Measure 13.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "13.4",
+    "description": "Reading Measure 13.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "13.5",
+    "description": "Reading Measure 13.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "13.6",
+    "description": "Reading Measure 13.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "13.7",
+    "description": "Reading Measure 13.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "13.8",
+    "description": "Reading Measure 13.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "13.9",
+    "description": "Reading Measure 13.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "14",
+    "description": "Reading Measure 14.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "14.1",
+    "description": "Reading Measure 14.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "14.2",
+    "description": "Reading Measure 14.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "14.3",
+    "description": "Reading Measure 14.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "14.4",
+    "description": "Reading Measure 14.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "14.5",
+    "description": "Reading Measure 14.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "14.6",
+    "description": "Reading Measure 14.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "14.7",
+    "description": "Reading Measure 14.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "14.8",
+    "description": "Reading Measure 14.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "14.9",
+    "description": "Reading Measure 14.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "15",
+    "description": "Reading Measure 15.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "15.1",
+    "description": "Reading Measure 15.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "15.2",
+    "description": "Reading Measure 15.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "15.3",
+    "description": "Reading Measure 15.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "15.4",
+    "description": "Reading Measure 15.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "15.5",
+    "description": "Reading Measure 15.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "15.6",
+    "description": "Reading Measure 15.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "15.7",
+    "description": "Reading Measure 15.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "15.8",
+    "description": "Reading Measure 15.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "15.9",
+    "description": "Reading Measure 15.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "16",
+    "description": "Reading Measure 16.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "16.1",
+    "description": "Reading Measure 16.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "16.2",
+    "description": "Reading Measure 16.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "16.3",
+    "description": "Reading Measure 16.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "16.4",
+    "description": "Reading Measure 16.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "16.5",
+    "description": "Reading Measure 16.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "16.6",
+    "description": "Reading Measure 16.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "16.7",
+    "description": "Reading Measure 16.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "16.8",
+    "description": "Reading Measure 16.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "16.9",
+    "description": "Reading Measure 16.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "17",
+    "description": "Reading Measure 17.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "17.1",
+    "description": "Reading Measure 17.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "17.2",
+    "description": "Reading Measure 17.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "17.3",
+    "description": "Reading Measure 17.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "17.4",
+    "description": "Reading Measure 17.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "17.5",
+    "description": "Reading Measure 17.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "17.6",
+    "description": "Reading Measure 17.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "2",
+    "description": "Reading Measure 2.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "2.1",
+    "description": "Reading Measure 2.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "2.2",
+    "description": "Reading Measure 2.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "2.3",
+    "description": "Reading Measure 2.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "2.4",
+    "description": "Reading Measure 2.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "2.5",
+    "description": "Reading Measure 2.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "2.6",
+    "description": "Reading Measure 2.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "2.7",
+    "description": "Reading Measure 2.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "2.8",
+    "description": "Reading Measure 2.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "2.9",
+    "description": "Reading Measure 2.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "3",
+    "description": "Reading Measure 3.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "3.1",
+    "description": "Reading Measure 3.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "3.2",
+    "description": "Reading Measure 3.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "3.3",
+    "description": "Reading Measure 3.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "3.4",
+    "description": "Reading Measure 3.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "3.5",
+    "description": "Reading Measure 3.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "3.6",
+    "description": "Reading Measure 3.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "3.7",
+    "description": "Reading Measure 3.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "3.8",
+    "description": "Reading Measure 3.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "3.9",
+    "description": "Reading Measure 3.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "4",
+    "description": "Reading Measure 4.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "4.1",
+    "description": "Reading Measure 4.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "4.2",
+    "description": "Reading Measure 4.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "4.3",
+    "description": "Reading Measure 4.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "4.4",
+    "description": "Reading Measure 4.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "4.5",
+    "description": "Reading Measure 4.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "4.6",
+    "description": "Reading Measure 4.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "4.7",
+    "description": "Reading Measure 4.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "4.8",
+    "description": "Reading Measure 4.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "4.9",
+    "description": "Reading Measure 4.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "5",
+    "description": "Reading Measure 5.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "5.1",
+    "description": "Reading Measure 5.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "5.2",
+    "description": "Reading Measure 5.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "5.3",
+    "description": "Reading Measure 5.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "5.4",
+    "description": "Reading Measure 5.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "5.5",
+    "description": "Reading Measure 5.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "5.6",
+    "description": "Reading Measure 5.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "5.7",
+    "description": "Reading Measure 5.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "5.8",
+    "description": "Reading Measure 5.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "5.9",
+    "description": "Reading Measure 5.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "6",
+    "description": "Reading Measure 6.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "6.1",
+    "description": "Reading Measure 6.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "6.2",
+    "description": "Reading Measure 6.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "6.3",
+    "description": "Reading Measure 6.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "6.4",
+    "description": "Reading Measure 6.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "6.5",
+    "description": "Reading Measure 6.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "6.6",
+    "description": "Reading Measure 6.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "6.7",
+    "description": "Reading Measure 6.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "6.8",
+    "description": "Reading Measure 6.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "6.9",
+    "description": "Reading Measure 6.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "7",
+    "description": "Reading Measure 7.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "7.1",
+    "description": "Reading Measure 7.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "7.2",
+    "description": "Reading Measure 7.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "7.3",
+    "description": "Reading Measure 7.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "7.4",
+    "description": "Reading Measure 7.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "7.5",
+    "description": "Reading Measure 7.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "7.6",
+    "description": "Reading Measure 7.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "7.7",
+    "description": "Reading Measure 7.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "7.8",
+    "description": "Reading Measure 7.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "7.9",
+    "description": "Reading Measure 7.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "8",
+    "description": "Reading Measure 8.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "8.1",
+    "description": "Reading Measure 8.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "8.2",
+    "description": "Reading Measure 8.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "8.3",
+    "description": "Reading Measure 8.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "8.4",
+    "description": "Reading Measure 8.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "8.5",
+    "description": "Reading Measure 8.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "8.6",
+    "description": "Reading Measure 8.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "8.7",
+    "description": "Reading Measure 8.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "8.8",
+    "description": "Reading Measure 8.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "8.9",
+    "description": "Reading Measure 8.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "9",
+    "description": "Reading Measure 9.0",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "9.1",
+    "description": "Reading Measure 9.1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "9.2",
+    "description": "Reading Measure 9.2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "9.3",
+    "description": "Reading Measure 9.3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "9.4",
+    "description": "Reading Measure 9.4",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "9.5",
+    "description": "Reading Measure 9.5",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "9.6",
+    "description": "Reading Measure 9.6",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "9.7",
+    "description": "Reading Measure 9.7",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "9.8",
+    "description": "Reading Measure 9.8",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "9.9",
+    "description": "Reading Measure 9.9",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ALEVEL",
+    "description": "A Level",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "APCM",
+    "description": "Accredited Programme Case Manager",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "APM",
+    "description": "Accredited Programme Manager",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "APT",
+    "description": "Accredited Programme Tutor",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ASLEVEL",
+    "description": "AS Level",
+    "activeFlag": "Y",
+    "listSeq": 4,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "AWARDICT3",
+    "description": "Award in Using ICT (QCF) Entry 3 OCR",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "BARISTA2",
+    "description": "Barista Skills L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "BAWLA",
+    "description": "British Amateur Weight Lifting Assoc",
+    "activeFlag": "Y",
+    "listSeq": 7,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "BEHAVEWORK3",
+    "description": "Behaving appropriately at Work Entry 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "BUSADMIN3",
+    "description": "Working in Business and Admin Entry 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "BUSENVIRO1",
+    "description": "Work in a Business Environment L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "BUSENVIRO2",
+    "description": "Working in a Business Environment L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "BUSMODEL",
+    "description": "Small Business Model",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "BUSPROBS2",
+    "description": "Solve business problems L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "C&G",
+    "description": "C&G (City & Guilds)",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "C&G_H&S",
+    "description": "C&G AWARD L1 H&S Built Environment",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CAMB_AWARD",
+    "description": "Cambridge Awards",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CAMMATHS3",
+    "description": "Cambridge Award in Maths Entry 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT001",
+    "description": "Certificate Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT002",
+    "description": "Certificate Level 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT003",
+    "description": "Certificate Level 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT004",
+    "description": "Diploma Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT005",
+    "description": "Diploma Level 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT006",
+    "description": "Extended Award Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT007",
+    "description": "Award Entry Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT008",
+    "description": "Award Entry Level 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT009",
+    "description": "Award Entry Level 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT010",
+    "description": "Award Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT011",
+    "description": "Award Level 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT012",
+    "description": "Non Regulated SFA funded Entry Level",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT013",
+    "description": "Non Regulated SFA funded Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT014",
+    "description": "Non Regulated SFA funded Level 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT015",
+    "description": "Wastesmart Certificate",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT016",
+    "description": "BICSc Kitchen/Wing Awareness certificate",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT017",
+    "description": "BICSc Base Units 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT018",
+    "description": "BICSc Base Units 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT019",
+    "description": "BICSc Additional Units 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT020",
+    "description": "BICSc Additional Units 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT021",
+    "description": "BICSc Specialist Units",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT022",
+    "description": "BICSc Mandatory Unit Card",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT023",
+    "description": "Bio Hazard Major Certificate",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT024",
+    "description": "Bio Hazard Minor Certificate",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT025",
+    "description": "BICSc Assessor Certificate",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT026",
+    "description": "Train the Trainer Certificate",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT027",
+    "description": "Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT028",
+    "description": "Level 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERT029",
+    "description": "Level 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERTCREATE1",
+    "description": "Certificate in Creative Techniques L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CERTTECH2D1",
+    "description": "Cert Creative Tech in 2D (QCF) L1 CG",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CLEANSER2",
+    "description": "Cert Cleaning & Supp Services Skills L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "COMMISSART2",
+    "description": "Commissioned Art L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "COMPSENT1",
+    "description": "Cam Award Eng Construct comp sent L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "COOKVEG2",
+    "description": "Cook finish basic veg dishes L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CQSW",
+    "description": "Certificate of Qualification Social Work",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CREACOMP3",
+    "description": "ICT produce creative compo Entry 3 OCR",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CSE",
+    "description": "Certificate Secondary Education",
+    "activeFlag": "Y",
+    "listSeq": 4,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CTCOUTREACH",
+    "description": "CTC Outreach",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "CYQ_PE",
+    "description": "CYQ (PE)",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "DEGREE",
+    "description": "Degree Level or Higher",
+    "activeFlag": "Y",
+    "listSeq": 5,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "DIARYSYS2",
+    "description": "Use a Diary System L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "DIPPS",
+    "description": "Diploma in Probation Studies",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "DIPSW",
+    "description": "Diploma in Social Work",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "DOCSBUS2",
+    "description": "Produce docs in a business enviro L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "EL3",
+    "description": "Entry Level 3 Award",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ELQ",
+    "description": "Entry Level Qualification",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ELQL1",
+    "description": "Literacy 1",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ELQL2",
+    "description": "Literacy 2",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ELQL3",
+    "description": "Literacy 3",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ELQN1",
+    "description": "Numeracy 1",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ELQN2",
+    "description": "Numeracy 2",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ELQN3",
+    "description": "Numeracy 3",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ENG1",
+    "description": "English Level 1",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ENG2",
+    "description": "English Level 2",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ENG3",
+    "description": "English Level 3",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ENGE1",
+    "description": "English Entry Level 1",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ENGE2",
+    "description": "English Entry Level 2",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ENGE3",
+    "description": "English Entry Level 3",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ESOL1",
+    "description": "ESOL Reading & Writing - Level 1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ESOL2",
+    "description": "ESOL Reading & Writing - Level 2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ESOL3",
+    "description": "ESOL Reading & Writing - Level 3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "FOODSAFE2",
+    "description": "Award Food Safety in Catering (OCF) L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "FULL",
+    "description": "Full manual completed",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "FUNCMATHS3",
+    "description": "Func Skills qual Maths Entry 3 OCR",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "FUNCT_ENT",
+    "description": "Functional Skills Entry Level",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "FUNCT_LVL1",
+    "description": "Functional Skills Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "FUNCT_LVL2",
+    "description": "Functional Skills Level 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "FUNCT_LVL3",
+    "description": "Functional Skills Level 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "GCEA",
+    "description": "GCE Advanced",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "GCSE",
+    "description": "General Certificate Secondary Education",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "GNVQ1",
+    "description": "General National Vocational Part One",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "GNVQ2",
+    "description": "General National Vocational Part Two",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "GNVQ3",
+    "description": "General National Vocational Part Three",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "HOSP_CERT",
+    "description": "Cert Intro to Hosp (Entry 3 QCF) CG",
+    "parentCode": "HOSP",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "HOSP_EFF1",
+    "description": "Work Effectively as part of Hosp Team L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "HOSP_QCF",
+    "description": "Award Intro to Hospitality (Entry 3 QCF)",
+    "parentCode": "HOSP",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "HOSP_QCFCG",
+    "description": "Award Intro to Hosp (Entry 3 QCF) CG",
+    "parentCode": "HOSP",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ICTSYS3",
+    "description": "Induction to using ICT System Entry 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ICT_ENTRY1",
+    "description": "Func Skills Qual in ICT Entry 1 OCR",
+    "parentCode": "ICT",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ICT_ENTRY2",
+    "description": "Func Skills Qual in ICT Entry 2 OCR",
+    "parentCode": "ICT",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "INTROLEARN",
+    "description": "Introduction to Learning (7 to 12 hours)",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "INTROWASTE1",
+    "description": "Introduction to Waste and Recycling L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ITESENTRY",
+    "description": "iTES Entry Level",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ITSECURITY1",
+    "description": "IT Security for Users L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ITSECURITY2",
+    "description": "IT Security for Users Level 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "KESKLS",
+    "description": "Key Skills",
+    "activeFlag": "N",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "expiredDate": "2015-01-27",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "KNIVES1",
+    "description": "Maintain Handle Clean knives L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "LIFELIVE2",
+    "description": "Award in Life and Living Skills Entry 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "LIT1",
+    "description": "Literacy - Level 1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "LIT2",
+    "description": "Literacy - Level 2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "LIT3",
+    "description": "Literacy - Level 3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "LITE1",
+    "description": "Literacy - Entry Level 1",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "LITE2",
+    "description": "Literacy - Entry Level 2",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "LITE3",
+    "description": "Literacy - Entry Level 3",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "LITPRE",
+    "description": "Literacy - Pre-entry Level",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MATHSSKILLS",
+    "description": "Using Maths Skills to problem solve",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MEAT2",
+    "description": "Cook finish basic meat dishes L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MENT",
+    "description": "Mentoring qualification",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MINI",
+    "description": "Mini manual completed",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MINUTES2",
+    "description": "Take Minutes L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MONEYMAN1",
+    "description": "Award in Managing your Money L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MTH1",
+    "description": "Maths Level 1",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MTH2",
+    "description": "Maths Level 2",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MTH3",
+    "description": "Maths Level 3",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MTHE1",
+    "description": "Maths Entry Level 1",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MTHE2",
+    "description": "Maths Entry Level 2",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "MTHE3",
+    "description": "Maths Entry Level 3",
+    "activeFlag": "Y",
+    "listSeq": 3,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "NIL",
+    "description": "No Qualifications Gained",
+    "activeFlag": "Y",
+    "listSeq": 1,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "NVQ1",
+    "description": "National Vocational Level 1",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "NVQ2",
+    "description": "National Vocational Level 2",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "NVQ3",
+    "description": "National Vocational Level 3",
+    "activeFlag": "Y",
+    "listSeq": 2,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "NVQPROCOOK",
+    "description": "NVQ Dip in Pro Cookery (Prep & Cooking)",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "NVQ_ENT",
+    "description": "NVQ Entry Level",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "OFFEQUIP2",
+    "description": "Use Office Equipment L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "OFFEQUIP3",
+    "description": "Using Office Equip Bus Enviro Entry 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "OLEVEL",
+    "description": "O Level",
+    "activeFlag": "Y",
+    "listSeq": 4,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "ORGMEET2",
+    "description": "Support the Organisation of meetings L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "POULTRY2",
+    "description": "Cook finish basic poultry dishes L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PRE",
+    "description": "PRE Entry",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREHOTSAUCE2",
+    "description": "Prep cook finish basic hot sauces L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPBREAD2",
+    "description": "Prep cook finish basic bread & dough L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPCAKES2",
+    "description": "Basic cakes/sponges/biscuits/scones L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPCOLD2",
+    "description": "Prep present food cold presentation L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPEGG1",
+    "description": "Prepare and cook eggs L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPEGG2",
+    "description": "Prep cook finish basic egg dishes L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPFISH2",
+    "description": "Prep fish for basic dishes L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPPASTA2",
+    "description": "Prep cook finish basic pasta dishes L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPPASTRY2",
+    "description": "Prep cook finish basic pastry product L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPPOULTRY2",
+    "description": "Prepare poultry for basic dishes Level 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPRICE2",
+    "description": "Prep cook finish basic rice dishes L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPSOUP2",
+    "description": "Prep cook finish basic soups L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPTEXT2",
+    "description": "Prep text using touch typing 40wpm L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PREPVEG2",
+    "description": "Prep veg for basic dishes L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PRERELEASE",
+    "description": "Pre-release Programme",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "PRESSOFT1",
+    "description": "Presentation Software Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "RECEP2",
+    "description": "Provide Reception Services L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "RECOVER3",
+    "description": "Recovery Entry Level (E3) (21-44glh)",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "REF",
+    "description": "Refusal",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "RESEARCH3",
+    "description": "Research Project L3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "SHSWE1",
+    "description": "Safe Hygienic Secure Work Enviro L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "SOFTWARE1",
+    "description": "Imaging Software L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STAC_STL",
+    "description": "Achievement certificate",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STCC_STL",
+    "description": "Completion certificate ",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STCM_STL",
+    "description": "Commendation certificate",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STCM_STM",
+    "description": "Commendation certificate",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STDD_STL",
+    "description": "End reason - deported",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STDD_STM",
+    "description": "End reason - deported",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STIT_STL",
+    "description": "Picked up on transfer",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STIT_STM",
+    "description": "Picked up on transfer",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STLI_STL",
+    "description": "End reason - lost interest ",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STLI_STM",
+    "description": "End reason - lost interest ",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STMT_STM",
+    "description": "Mentor Training certificate",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STOT_STL",
+    "description": "End reason - other ",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STOT_STM",
+    "description": "End reason - other ",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STRE_STL",
+    "description": "End reason - release",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STRE_STM",
+    "description": "End reason - release",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STRF_STL",
+    "description": "End reason - refused",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STRF_STM",
+    "description": "End reason - refused",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STSD_STL",
+    "description": "Start date",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STSD_STM",
+    "description": "Start date",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STST_STL",
+    "description": "End rsn - stop attending education",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STST_STM",
+    "description": "End rsn - stop attending education",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STTX_STL",
+    "description": "Transfer date ",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "STTX_STM",
+    "description": "Transfer date ",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 6,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "TEXTNOTES2",
+    "description": "Prepare Text from Notes L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "UNDERPIN2",
+    "description": "FS Underpinning 2 aims",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "UNDERPIN4",
+    "description": "FS Underpinning 4 aims",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "VTAWAREHOSP1",
+    "description": "VT Intro Awareness (Hosp & Catering) L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "VTAWAREINDC2",
+    "description": "VT Intro Awareness (Ind Cleaning ) L2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "EDU_LEVEL",
+    "code": "VTINTROIMEDI",
+    "description": "VT Intro Awareness (imedia/ICT) L1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  }
+]
