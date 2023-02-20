@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import {
@@ -54,7 +55,10 @@ export default class PrisonService {
   }
 
   getIncentiveLevels(prisonId: string, user: ServiceUser): Promise<IepLevel[]> {
-    return this.incentivesApiClient.getIncentiveLevels(prisonId, user).then(ieps => ieps.filter(iep => iep.active))
+    return this.incentivesApiClient
+      .getIncentiveLevels(prisonId, user)
+      .then(ieps => ieps.filter(iep => iep.active))
+      .then(ieps => _.sortBy(ieps, 'sequence'))
   }
 
   getPrisonerIepSummary(prisonerNumber: string, user: ServiceUser): Promise<IepSummary> {

@@ -1,7 +1,18 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { getDate, getHours, getMinutes, getMonth, getYear } from 'date-fns'
+import {
+  addDays,
+  addHours,
+  addMonths,
+  getDate,
+  getHours,
+  getMinutes,
+  getMonth,
+  getYear,
+  subDays,
+  subMinutes,
+} from 'date-fns'
 import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
@@ -36,12 +47,12 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
   describe('POST', () => {
     it('should save start date, start time and end time in session and redirect to check answers page', async () => {
       const tomorrow = new Date()
-      tomorrow.setDate(getDate(tomorrow) + 1)
+      tomorrow.setDate(getDate(addDays(tomorrow, 1)))
 
       req.body = {
         startDate: plainToInstance(SimpleDate, {
           day: getDate(tomorrow),
-          month: getMonth(tomorrow) + 1,
+          month: getMonth(addMonths(tomorrow, 1)),
           year: getYear(tomorrow),
         }),
         startTime: plainToInstance(SimpleTime, {
@@ -99,8 +110,8 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
       const today = new Date()
       const body = {
         startDate: plainToInstance(SimpleDate, {
-          day: getDate(today) - 1,
-          month: getMonth(today) + 1,
+          day: getDate(subDays(today, 1)),
+          month: getMonth(addMonths(today, 1)),
           year: getYear(today),
         }),
         startTime: plainToInstance(SimpleTime, {
@@ -127,15 +138,15 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
     const body = {
       startDate: plainToInstance(SimpleDate, {
         day: getDate(today),
-        month: getMonth(today) + 1,
+        month: getMonth(addMonths(today, 1)),
         year: getYear(today),
       }),
       startTime: plainToInstance(SimpleTime, {
         hour: getHours(today),
-        minute: getMinutes(today) - 1,
+        minute: getMinutes(subMinutes(today, 1)),
       }),
       endTime: plainToInstance(SimpleTime, {
-        hour: getHours(today) + 1,
+        hour: getHours(addHours(today, 1)),
         minute: getMinutes(today),
       }),
     }

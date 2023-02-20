@@ -35,4 +35,8 @@ export default class AllocationDashboard extends Page {
   enterCandidateQuery = (query: string) => cy.get('#candidate-search-input').type(query)
 
   search = () => cy.get('button').contains('Search').click()
+
+  selectRiskLevelOption = (option: string) => cy.get('#riskLevelFilter').select(option)
+
+  applyFilters = () => cy.get('button').contains('Apply filters').click()
 }

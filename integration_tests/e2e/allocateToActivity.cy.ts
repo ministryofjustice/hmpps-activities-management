@@ -8,6 +8,7 @@ import getAllocations from '../fixtures/activitiesApi/getAllocations.json'
 import inmateDetails from '../fixtures/prisonerSearchApi/prisonerSearchG4793VF.json'
 import prisonerAllocations from '../fixtures/activitiesApi/prisonerAllocations.json'
 import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
+import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
 import inmateDetailList from '../fixtures/prisonApi/inmateDetailList.json'
 import getAllInmatesPerPrison from '../fixtures/prisonerSearchApi/getAllInmatesPerPrison.json'
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetails.json'
@@ -39,6 +40,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/activities/2/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/(\\d)*/capacity', getScheduleCapacity)
     cy.stubEndpoint('GET', '/schedules/5', getSchedule)
+    cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/schedules/5/allocations', getAllocations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
@@ -75,6 +77,8 @@ context('Allocate to activity', () => {
     allocatePage.activeTimeSlots().should('have.length', 1)
 
     allocatePage.tabWithTitle('Candidates').click()
+    allocatePage.selectRiskLevelOption('Any Workplace Risk Assessment')
+    allocatePage.applyFilters()
     allocatePage.candidateRows().should('have.length', 10)
     allocatePage.enterCandidateQuery('alfonso')
     allocatePage.search()
