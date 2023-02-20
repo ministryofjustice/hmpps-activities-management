@@ -42,7 +42,13 @@ export default abstract class Page {
         cy.get(`#${id}`)
       })
 
+  getInputById = (id: string): Cypress.Chainable => cy.get(`[id=${id}]`)
+
   getInputByName = (name: string): Cypress.Chainable => cy.get(`[name="${name}"]`)
 
   continue = () => cy.get('button').contains('Continue').click()
+
+  back = () => cy.get('.govuk-back-link').contains('Back').click()
+
+  assertNoBackLink = () => cy.get('.govuk-back-link').should('not.exist')
 }

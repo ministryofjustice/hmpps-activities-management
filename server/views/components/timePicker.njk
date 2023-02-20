@@ -1,0 +1,71 @@
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% macro timePicker(params) %}
+    {% set hours = [{ value: "-", text: "Select" }] %}
+    {%  set hours = [
+        '00','01','02','03','04','05','06','07','08','09','10','11','12',
+        '13','14','15','16','17','18','19','20','21','22','23'
+    ] %}
+
+    {% set minutes = [
+        '00','05','10','15','20','25','30','35','40','45','50', '55'
+    ] %}
+
+    <div class="govuk-form-group{%
+        if params.renderedErrorMessage or
+        params.validationErrors | findError(params.id + '-hour') or
+        params.validationErrors | findError(params.id + '-minute')
+    %} govuk-form-group--error{% endif %} time-picker">
+        <fieldset class="govuk-fieldset" role="group" aria-describedby="{{ params.hint.id }}">
+            {% if params.label %}
+                <legend class="govuk-fieldset__legend {{ params.label.classes }}">
+                    {{ params.label.text }}
+                </legend>
+            {% endif %}
+            {% if params.hint %}
+                <div id="{{ params.id }}-hint" class="govuk-hint {{ params.hint.classes }}">
+                    {{ params.hint.text }}
+                </div>
+            {% endif %}
+            {% if params.renderedErrorMessage %}
+                <span id="{{ params.id }}-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span>
+                    <span>{{ params.renderedErrorMessage.text }}</span>
+                </span>
+            {% endif %}
+            <div class="govuk-date-input" id="{{ params.id }}">
+                <div class="govuk-date-input__item">
+                    {{ govukSelect({
+                        id: params.id +'-hour',
+                        name: params.name + '[hour]',
+                        label: {
+                            text: "Hour",
+                            classes: "govuk-date-input__label"
+                        },
+                        errorMessage: params.validationErrors | findError(params.id + '-hour'),
+                        items: hours | toTimeItems(params.formResponses['hour']),
+                        attributes: {
+                            'aria-label': 'Hour'
+                        }
+                    }) }}
+                </div>
+                <div class="govuk-date-input__item">
+                    {{ govukSelect({
+                        id: params.id +'-minute',
+                        name: params.name + '[minute]',
+                        label: {
+                            text: "Minute",
+                            classes: "govuk-date-input__label"
+                        },
+                        errorMessage: params.validationErrors | findError(params.id + '-minute'),
+                        classes: "govuk-input--width-20",
+                        items: minutes | toTimeItems(params.formResponses['minute']),
+                        attributes: {
+                            'aria-label': 'Minute'
+                        }
+                    }) }}
+                </div>
+            </div>
+        </fieldset>
+    </div>
+{% endmacro %}

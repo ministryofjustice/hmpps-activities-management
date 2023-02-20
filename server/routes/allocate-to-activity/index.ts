@@ -6,9 +6,7 @@ import ActivitiesRoutes from './handlers/activities'
 import SchedulesRoutes from './handlers/schedules'
 import PayBandRoutes, { PayBand } from './handlers/payBand'
 import validationMiddleware from '../../middleware/validationMiddleware'
-import PeopleAllocatedNowRoutes from './handlers/peopleAllocatedNow'
-import IdentifyCandidatesRoutes from './handlers/identifyCandidates'
-import ScheduleRoutes from './handlers/schedule'
+import AllocationDashboardRoutes, { SelectedAllocation } from './handlers/allocationDashboard'
 import StartJourneyRoutes from './handlers/startJourney'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
@@ -25,9 +23,7 @@ export default function Index({ activitiesService, prisonService, capacitiesServ
   const categoriesHandler = new CategoriesRoutes(activitiesService, capacitiesService)
   const activitiesHandler = new ActivitiesRoutes(activitiesService, capacitiesService)
   const schedulesHandler = new SchedulesRoutes(activitiesService, capacitiesService)
-  const identifyCandidatesHandler = new IdentifyCandidatesRoutes(prisonService, capacitiesService, activitiesService)
-  const peopleAllocatedNowHandler = new PeopleAllocatedNowRoutes(prisonService, capacitiesService, activitiesService)
-  const scheduleHandler = new ScheduleRoutes(capacitiesService, activitiesService)
+  const allocationDashboardHandler = new AllocationDashboardRoutes(prisonService, capacitiesService, activitiesService)
   const startJourneyHandler = new StartJourneyRoutes(prisonService, activitiesService)
   const payBandHandler = new PayBandRoutes(activitiesService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
@@ -37,12 +33,8 @@ export default function Index({ activitiesService, prisonService, capacitiesServ
   get('/categories', categoriesHandler.GET)
   get('/categories/:categoryId/activities', activitiesHandler.GET)
   get('/activities/:activityId/schedules', schedulesHandler.GET)
-
-  get('/:scheduleId/identify-candidates', identifyCandidatesHandler.GET)
-  post('/:scheduleId/identify-candidates', identifyCandidatesHandler.POST)
-  get('/:scheduleId/people-allocated-now', peopleAllocatedNowHandler.GET)
-  get('/:scheduleId/schedule', scheduleHandler.GET)
-
+  get('/:scheduleId/allocate', allocationDashboardHandler.GET)
+  post('/:scheduleId/allocate', allocationDashboardHandler.POST, SelectedAllocation)
   get('/:scheduleId/allocate/:prisonerNumber', startJourneyHandler.GET)
   get('/pay-band', payBandHandler.GET, true)
   post('/pay-band', payBandHandler.POST, PayBand)

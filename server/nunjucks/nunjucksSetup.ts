@@ -16,6 +16,8 @@ import {
   setSelected,
   startsWithAny,
   toMoney,
+  toTimeItems,
+  exampleDateOneWeekAhead,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -84,6 +86,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('setSelected', setSelected)
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
+  njkEnv.addFilter('toTimeItems', toTimeItems)
   njkEnv.addFilter('findError', findError)
   njkEnv.addFilter('buildErrorSummaryList', buildErrorSummaryList)
   njkEnv.addFilter('formatDate', formatDate)
@@ -100,6 +103,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('startsWithAny', startsWithAny)
   njkEnv.addFilter('toMoney', toMoney)
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
+  njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

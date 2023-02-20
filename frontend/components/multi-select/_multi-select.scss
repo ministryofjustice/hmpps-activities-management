@@ -6,15 +6,8 @@
   }
 
   .govuk-table__header {
-    @include govuk-font(19, 'bold');
     background: govuk-colour("white");
     box-shadow: inset 0 -2px 0 govuk-colour("mid-grey");
-    vertical-align: middle;
-  }
-
-  .govuk-table__cell {
-    @include govuk-font(19);
-    vertical-align: middle;
   }
 
   .govuk-checkboxes__item {

@@ -51,6 +51,14 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  async getLocationsForEventType(prisonCode: string, eventType: string, user: ServiceUser): Promise<LocationLenient[]> {
+    return this.get({
+      path: `/api/agencies/${prisonCode}/locations`,
+      query: { eventType },
+      authToken: user.token,
+    })
+  }
+
   async searchActivityLocations(
     prisonCode: string,
     date: string,

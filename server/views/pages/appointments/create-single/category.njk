@@ -7,7 +7,7 @@
 {% set pageId = 'appointments-create-single-category-page' %}
 {% set backLinkHref = "/select-prisoner" %}
 
-{% set categoryOptions = [] %}
+{% set categoryOptions = [{ value: "-", text: "" }] %}
 {% for category in categories %}
     {% set categoryOptions = (categoryOptions.push(
         {
@@ -18,23 +18,23 @@
     ), categoryOptions) %}
 {% endfor %}
 
+{% block meta %}
+    <meta name="autocompleteElements" content="categoryId"/>
+{% endblock %}
+
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukSelect({
+                    id: "categoryId",
+                    name: "categoryId",
                     label: {
                         text: "What is the appointment category?",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
-                    hint: {
-                        text: "Select one option"
-                    },
-                    id: "categoryId",
-                    name: "categoryId",
-                    classes: "govuk-input--width-20",
                     errorMessage: validationErrors | findError('categoryId'),
                     items: categoryOptions
                 }) }}

@@ -5,7 +5,10 @@ import validationMiddleware from '../../../middleware/validationMiddleware'
 import StartJourneyRoutes from './handlers/startJourney'
 import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/selectPrisoner'
 import CategoryRoutes, { Category } from './handlers/category'
+import LocationRoutes, { Location } from './handlers/location'
+import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import CheckAnswersRoutes from './handlers/checkAnswers'
+import ConfirmationRoutes from './handlers/confirmation'
 import { Services } from '../../../services'
 
 export default function Index({ prisonService, activitiesService }: Services): Router {
@@ -23,15 +26,23 @@ export default function Index({ prisonService, activitiesService }: Services): R
   const startHandler = new StartJourneyRoutes()
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const categoryHandler = new CategoryRoutes(activitiesService)
+  const locationHandler = new LocationRoutes(prisonService)
+  const dateAndTimeRoutesHandler = new DateAndTimeRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
+  const confirmationHandler = new ConfirmationRoutes()
 
   get('/start', startHandler.GET)
   get('/select-prisoner', selectPrisonerHandler.GET, true)
   post('/select-prisoner', selectPrisonerHandler.POST, PrisonerSearch)
   get('/category', categoryHandler.GET, true)
   post('/category', categoryHandler.POST, Category)
+  get('/location', locationHandler.GET, true)
+  post('/location', locationHandler.POST, Location)
+  get('/date-and-time', dateAndTimeRoutesHandler.GET, true)
+  post('/date-and-time', dateAndTimeRoutesHandler.POST, DateAndTime)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
+  get('/confirmation/:id', confirmationHandler.GET, true)
 
   return router
 }

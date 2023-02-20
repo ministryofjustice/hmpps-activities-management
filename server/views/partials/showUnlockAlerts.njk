@@ -1,11 +1,12 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
 {% macro showUnlockAlerts(alerts) %}
     <div>
-        {% set counter = 0 %}
         {% for a in alerts %}
-            {# TODO: Only showing the first 4 alerts - temporary - until design issue sorted #}
-            {% if a.active and counter < 4 %}
-                <span class="govuk-tag govuk-tag--grey">{{ a.alertCode | upper }}</span>
-              {% set counter = counter + 1 %}
+            {% if a.active and ['ACCT', 'PEEP'].includes(a.alertCode) %}
+                {{ govukTag({
+                    text: a.alertCode | upper
+                }) }}
             {% endif %}
         {% endfor %}
     </div>
