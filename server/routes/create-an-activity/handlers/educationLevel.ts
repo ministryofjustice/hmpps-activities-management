@@ -1,12 +1,11 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
+import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../services/prisonService'
 import EducationLevelNotDuplicated from '../../../validators/educationLevelNotDuplicated'
 
 export class EducationLevel {
   @Expose()
-  @Type(() => String)
   @IsNotEmpty({ message: 'Select an education level' })
   @EducationLevelNotDuplicated({ message: 'The education level already exists on this activity' })
   referenceCode: string

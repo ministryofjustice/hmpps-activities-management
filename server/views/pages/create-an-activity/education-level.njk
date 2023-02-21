@@ -5,7 +5,7 @@
 
 {% from "components/activitySummary.njk" import activitySummary %}
 
-{% set pageTitle = applicationName + " - Create an activty - education level" %}
+{% set pageTitle = applicationName + " - Create an activity - education level" %}
 {% set pageId = 'create-activity-education-level-page' %}
 {% set backLinkHref = "/" %}
 
@@ -39,14 +39,10 @@
                     name: "referenceCode",
                     label: {
                         text: "Education Level",
-                        classes: "govuk-label--xl",
-                        isPageHeading: true
+                        isPageHeading: false
                     },
                     hint: {
                         text: "Start typing an education level and select from the list of options."
-                    },
-                    formGroup: {
-                        classes: "referenceCode-autocomplete-formgroup"
                     },
                     errorMessage: validationErrors | findError('referenceCode'),
                     value: formResponses.referenceCode or session.createActivityJourney.educationLevels.educationLevelCode,
