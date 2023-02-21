@@ -67,6 +67,11 @@
                 classes: "govuk-!-margin-bottom-9"
             }) }}
 
+            {% if appointment.createdBy %}
+                {% set createBy = appointment.createdBy | toTitleCase | initialiseName %}
+            {% else %}
+                {% set createBy = '[Unknown User]' %}
+            {% endif %}
             {{ govukSummaryList({
                 rows: [
                     {
@@ -74,16 +79,21 @@
                             text: "Created by"
                         },
                         value: {
-                            html: '<span data-qa="created-by">' + appointment.createdBy | toTitleCase | initialiseName + '</span>'
+                            html: '<span data-qa="created-by">' + createBy + '</span>'
                         }
                     }
                 ],
                 classes: "govuk-!-margin-bottom-9"
             }) }}
 
-            <p class="govuk-body">
-                <a href="#" class="govuk-link" data-qa="print-movement-slip-link">Print movement slip</a>
-            </p>
+            <div class="govuk-button-group govuk-!-display-none-print no-js-hidden">
+                {{ govukButton({
+                    attributes: { id: 'print-movement-slip' },
+                    text: "Print movement slip",
+                    classes: "govuk-button--secondary js-print",
+                    preventDoubleClick: true
+                }) }}
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -32,6 +32,7 @@ import { ActivityScheduleAllocation } from '../@types/activities'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { AppointmentDetails, AppointmentOccurrenceSummary } from '../@types/appointments'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
+import logger from '../../logger'
 
 const processError = (error: SanitisedError): undefined => {
   if (!error.status) throw error
@@ -248,7 +249,6 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAppointment(appointmentId, user)
   }
 
-  // TODO: Unit test
   async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
     const appointment = await this.getAppointment(appointmentId, user)
 
@@ -286,12 +286,23 @@ export default class ActivitiesService {
       return map.set(prisoner.prisonerNumber, prisoner)
     }, new Map<string, Prisoner>())
 
-    // TODO: Cope with 404s and set created by to Unknown User
-    const createdByUserDetail = await this.prisonApiClient.getUserByUsername(appointment.createdBy, user)
-    const createdBy = `${createdByUserDetail.firstName} ${createdByUserDetail.lastName}`
+    let createdBy = null
+    try {
+      const createdByUserDetail = await this.prisonApiClient.getUserByUsername(appointment.createdBy, user)
+      createdBy = `${createdByUserDetail.firstName} ${createdByUserDetail.lastName}`
+    } catch (e) {
+      // If the username isn't found, log the error and continue
+      if (e.status === 404) {
+        logger.info(`Couldn't get user with username, ${appointment.createdBy}`)
+      } else {
+        throw e
+      }
+    }
 
     let updatedBy = null
-    if (appointment.updatedBy !== null) {
+    if (appointment.createdBy === appointment.updatedBy) {
+      updatedBy = createdBy
+    } else if (appointment.updatedBy !== null) {
       const updatedByUserDetail = await this.prisonApiClient.getUserByUsername(appointment.updatedBy, user)
       updatedBy = `${updatedByUserDetail.firstName} ${updatedByUserDetail.lastName}`
     }
