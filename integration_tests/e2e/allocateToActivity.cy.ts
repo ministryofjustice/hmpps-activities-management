@@ -73,8 +73,12 @@ context('Allocate to activity', () => {
     allocatePage.allocatedPeopleRows().should('have.length', 1)
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
     allocatePage.activeTimeSlots().should('have.length', 1)
+
     allocatePage.tabWithTitle('Candidates').click()
     allocatePage.candidateRows().should('have.length', 10)
+    allocatePage.enterCandidateQuery('alfonso')
+    allocatePage.search()
+    allocatePage.candidateRows().should('have.length', 1)
     allocatePage.selectCandidateWithName('Alfonso Cholak')
 
     const payBandPage = Page.verifyOnPage(PayBandPage)
