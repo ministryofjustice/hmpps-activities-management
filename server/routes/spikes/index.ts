@@ -11,6 +11,7 @@ export default function Index({ activitiesService }: Services): Router {
   const calendarSpikeHandler = new CalendarSpikeRoutes(activitiesService)
 
   get('/calendar-spike', calendarSpikeHandler.GET)
+  get('/calendar-spike/search', calendarSpikeHandler.PRISONER_SEARCH)
 
   return router
 }
