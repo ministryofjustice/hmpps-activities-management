@@ -8,7 +8,7 @@
     "displayOrder": 1
   },
   "prisonCode": "SKI",
-  "internalLocationId": 123,
+  "internalLocationId": 26963,
   "inCell": false,
   "startDate": "2023-02-17",
   "startTime": "09:00",
@@ -32,7 +32,7 @@
   "occurrences": [
     {
       "id": 123456,
-      "internalLocationId": 123,
+      "internalLocationId": 26963,
       "inCell": false,
       "startDate": "2023-02-17",
       "startTime": "13:00",

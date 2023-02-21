@@ -340,8 +340,8 @@ describe('Activities Service', () => {
 
       expect(actualAppointmentResult.id).toEqual(12345)
       expect(actualAppointmentResult.occurrences.length).toEqual(1)
-      expect(actualAppointmentResult.internalLocation.locationId).toEqual(123)
-      expect(actualAppointmentResult.occurrences[0].internalLocation.locationId).toEqual(123)
+      expect(actualAppointmentResult.internalLocation.locationId).toEqual(26963)
+      expect(actualAppointmentResult.occurrences[0].internalLocation.locationId).toEqual(26963)
       expect(actualAppointmentResult.prisoners.length).toEqual(1)
       expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
       expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')

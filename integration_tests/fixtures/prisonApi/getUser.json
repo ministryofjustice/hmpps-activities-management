@@ -1,0 +1,11 @@
+{
+  "accountStatus": "ACTIVE",
+  "active": true,
+  "activeCaseLoadId": "MDI",
+  "expiredFlag": false,
+  "firstName": "john",
+  "lastName": "smith",
+  "lockedFlag": false,
+  "staffId": 231232,
+  "username": "USER1"
+}
