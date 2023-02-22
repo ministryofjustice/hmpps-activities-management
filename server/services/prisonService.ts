@@ -1,6 +1,11 @@
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
-import { InmateDetail, ScheduledAppointmentDto, InmateBasicDetails } from '../@types/prisonApiImport/types'
+import {
+  InmateDetail,
+  ScheduledAppointmentDto,
+  InmateBasicDetails,
+  ReferenceCode,
+} from '../@types/prisonApiImport/types'
 import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 import WhereaboutsApiClient from '../data/whereaboutsApiClient'
@@ -243,5 +248,9 @@ export default class PrisonService {
 
   async getInmateDetails(offenderNumbers: string[], user: ServiceUser): Promise<InmateBasicDetails[]> {
     return this.prisonApiClient.getInmateDetails(offenderNumbers, user)
+  }
+
+  async getReferenceCodes(domain: string, user: ServiceUser): Promise<ReferenceCode[]> {
+    return this.prisonApiClient.getReferenceCodes(domain, user)
   }
 }
