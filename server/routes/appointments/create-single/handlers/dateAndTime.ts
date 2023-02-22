@@ -23,7 +23,7 @@ export class DateAndTime {
   @ValidateNested()
   @IsNotEmpty({ message: 'Select a start time for the appointment' })
   @IsValidTime({ message: 'Select a valid start time for the appointment' })
-  @TimeAndDateIsAfter(new Date(), 'startDate', { message: 'Start time must be in the future' })
+  @TimeAndDateIsAfter(new Date(), 'startDate', { message: 'Select a start time that is in the future' })
   startTime: SimpleTime
 
   @Expose()

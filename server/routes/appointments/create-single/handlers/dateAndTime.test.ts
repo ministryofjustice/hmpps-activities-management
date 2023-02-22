@@ -144,7 +144,7 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
     expect(errors).toEqual(
-      expect.arrayContaining([{ error: 'Start time must be in the future', property: 'startTime' }]),
+      expect.arrayContaining([{ error: 'Select a start time that is in the future', property: 'startTime' }]),
     )
   })
 

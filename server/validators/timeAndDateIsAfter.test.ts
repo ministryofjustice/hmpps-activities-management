@@ -11,7 +11,9 @@ describe('timeAndDateIsAfter', () => {
     date: SimpleDate
 
     @Expose()
-    @TimeAndDateIsAfter(new Date('2023-02-22T12:30:00.000Z'), 'date', { message: 'Time must be in the future' })
+    @TimeAndDateIsAfter(new Date('2023-02-22T12:30:00.000Z'), 'date', {
+      message: 'Select a time that is in the future',
+    })
     time: SimpleTime
   }
 
@@ -31,7 +33,7 @@ describe('timeAndDateIsAfter', () => {
     const requestObject = plainToInstance(DummyForm, body)
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-    expect(errors).toEqual([{ property: 'time', error: 'Time must be in the future' }])
+    expect(errors).toEqual([{ property: 'time', error: 'Select a time that is in the future' }])
   })
 
   it('should fail validation for a time equal to the supplied date', async () => {
@@ -50,7 +52,7 @@ describe('timeAndDateIsAfter', () => {
     const requestObject = plainToInstance(DummyForm, body)
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-    expect(errors).toEqual([{ property: 'time', error: 'Time must be in the future' }])
+    expect(errors).toEqual([{ property: 'time', error: 'Select a time that is in the future' }])
   })
 
   it('should pass validation for a time after the supplied date', async () => {
