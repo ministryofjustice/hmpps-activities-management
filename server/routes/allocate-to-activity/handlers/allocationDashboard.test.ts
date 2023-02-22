@@ -48,6 +48,7 @@ describe('Route Handlers - Allocation dashboard', () => {
   describe('GET', () => {
     it('should render the correct view', async () => {
       req.params = { scheduleId: '1' }
+      req.query = { candidateQuery: 'jack' }
 
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
@@ -115,6 +116,15 @@ describe('Route Handlers - Allocation dashboard', () => {
               prisonerNumber: 'ABC123',
               status: 'ACTIVE IN',
               legalStatus: 'OTHER',
+              firstName: 'Joe',
+              lastName: 'Bloggs',
+              cellLocation: 'MDI-1-1-101',
+              releaseDate: '2023-12-25',
+            },
+            {
+              prisonerNumber: '321CBA',
+              status: 'ACTIVE IN',
+              legalStatus: 'OTHER',
               firstName: 'John',
               lastName: 'Smith',
               cellLocation: 'MDI-1-1-103',
@@ -145,6 +155,15 @@ describe('Route Handlers - Allocation dashboard', () => {
               firstName: 'Bill',
               lastName: 'Wilkins',
               cellLocation: 'MDI-1-1-106',
+              releaseDate: '2023-12-26',
+            },
+            {
+              prisonerNumber: 'G3439UH',
+              status: 'ACTIVE IN',
+              legalStatus: 'OTHER',
+              firstName: 'Jack',
+              lastName: 'Daniels',
+              cellLocation: 'MDI-1-1-107',
               releaseDate: '2023-12-26',
             },
           ],
@@ -185,12 +204,13 @@ describe('Route Handlers - Allocation dashboard', () => {
         ],
         candidates: [
           {
-            cellLocation: 'MDI-1-1-106',
-            name: 'Bill Wilkins',
-            prisonerNumber: 'QWERTY',
+            cellLocation: 'MDI-1-1-107',
+            name: 'Jack Daniels',
+            prisonerNumber: 'G3439UH',
             releaseDate: new Date(2023, 11, 26),
           },
         ],
+        candidateQuery: 'jack',
       })
     })
   })
