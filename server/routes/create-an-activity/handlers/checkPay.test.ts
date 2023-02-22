@@ -36,7 +36,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
         },
       },
       render: jest.fn(),
-      redirect: jest.fn(),
+      redirectOrReturn: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -84,7 +84,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
 
       await handler.POST(req, res)
       expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Standard')
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
     })
   })
 })

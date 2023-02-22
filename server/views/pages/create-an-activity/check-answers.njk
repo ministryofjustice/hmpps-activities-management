@@ -94,6 +94,23 @@
                         value: {
                             text: session.createJourney.minimumIncentiveLevel
                         }
+                    },
+                    {
+                        key: {
+                            text: "Education Levels"
+                        },
+                        value: {
+                            html: educationLevelSummary(session.createJourney.educationLevels)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "check-education-level?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change education levels"
+                                }
+                            ]
+                        }
                     }
                 ]
             }) }}
@@ -119,5 +136,11 @@
                 <div>{{ pay.bandAlias }}: {{ pay.rate | toMoney }}</div>
             {% endfor %}
         </div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro educationLevelSummary(educationLevels) %}
+    {% for educationLevel in educationLevels %}
+        <div>{{ educationLevel.educationLevelDescription }}</div>
     {% endfor %}
 {% endmacro %}

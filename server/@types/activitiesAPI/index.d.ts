@@ -1005,7 +1005,21 @@ export interface components {
        * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
        * @example 2022-12-23
        */
-      endDate?: string
+      /** @description The list of minimum education levels that apply to this activity */
+      minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
+    }
+    /** @description Describes the minimum education levels to be created for an activity */
+    ActivityMinimumEducationLevelCreateRequest: {
+      /**
+       * @description The Education level code
+       * @example 1
+       */
+      educationLevelCode: string
+      /**
+       * @description The Education level description
+       * @example Reading Measure 1.0
+       */
+      educationLevelDescription: string
     }
     /** @description Describes the pay rates and bands to be created for an activity */
     ActivityPayCreateRequest: {
@@ -1141,6 +1155,8 @@ export interface components {
        * @example Adam Smith
        */
       createdBy: string
+      /** @description The list of minimum education levels that can apply to this activity */
+      minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevel'][]
     }
     /** @description Describes a top-level activity category */
     ActivityCategory: {
