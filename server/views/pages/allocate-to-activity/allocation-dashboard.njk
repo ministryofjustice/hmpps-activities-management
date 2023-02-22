@@ -5,7 +5,6 @@
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "components/searchBar.njk" import searchBar %}
 
 {% set pageTitle = applicationName + " - Allocate" %}
 {% set pageId = 'allocation-dashboard-page' %}
@@ -190,31 +189,19 @@
 {% endset %}
 
 {% set candidatesHtml %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds-from-desktop govuk-grid-column-one-half">
-            <p>
-                Your candidate list has been filtered to show people who match all the requirements for this activity.
-                Use the filters to expand or reduce the list. You can also search for someone you want to allocate.
-            </p>
-        </div>
-        <div class="govuk-grid-column-one-third-from-desktop govuk-grid-column-one-half">
-            <form method='GET' action='#candidates-tab'>
-                <label class="govuk-label" for="candidate-search-input">Search by name or prison number:</label>
-                {{ searchBar({
-                    inputParams: {
-                        id: 'candidate-search-input',
-                        name: 'candidateQuery',
-                        value: candidateQuery
-                    },
-                    buttonParams: {
-                        text: 'Search'
-                    }
-                }) }}
-            </form>
-        </div>
-    </div>
+    <p>
+        Your candidate list has been filtered to show people who match all the requirements for this activity.
+        Use the filters to expand or reduce the list. You can also search for someone you want to allocate.
+    </p>
     {% set rows = [] %}
     {% for row in candidates %}
+        {% set currentAllocationsHtml %}
+            <div>
+                {% for allocation in row.otherAllocations %}
+                    <div>{{ allocation.scheduleName }}</div>
+                {% endfor %}
+            </div>
+        {% endset %}
         {% set id = 'selectedAllocation' + (('-' + loop.index0) if loop.index0 else '') %}
         {% set rows = (rows.push([
             {
@@ -236,6 +223,9 @@
                 '
             },
             {
+                html: currentAllocationsHtml
+            },
+            {
                 text: row.releaseDate | formatDate('do MMMM yyyy') if row.releaseDate else 'TBC'
             }
         ]), rows) %}
@@ -249,6 +239,9 @@
             head: [
                 {
                     text: "Candidate details"
+                },
+                {
+                    text: "Current Allocation"
                 },
                 {
                     text: "Earliest release date"
