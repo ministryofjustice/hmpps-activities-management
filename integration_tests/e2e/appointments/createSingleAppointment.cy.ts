@@ -35,7 +35,7 @@ context('Create single appointment', () => {
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisonersByNumbers)
     cy.stubEndpoint('GET', '/api/users/USER1', getUser)
-    cy.stubEndpoint('GET', '/appointments/(\\d)*', getAppointment)
+    cy.stubEndpoint('GET', '/appointments/10', getAppointment)
   })
 
   it('Should complete create single appointment journey', () => {
