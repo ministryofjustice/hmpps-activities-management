@@ -215,19 +215,9 @@ describe('Route Handlers - Allocation dashboard', () => {
         ],
         candidates: [
           {
-            cellLocation: 'MDI-1-1-106',
-            name: 'Bill Wilkins',
-            otherAllocations: [],
-            prisonerNumber: 'QWERTY',
-            releaseDate: new Date(2023, 12, 26),
-          },
-          {
             cellLocation: 'MDI-1-1-107',
             name: 'Jack Daniels',
-            otherAllocations: [
-              { id: 1, scheduleName: 'this schedule' },
-              { id: 2, scheduleName: 'other schedule' },
-            ],
+            otherAllocations: [],
             prisonerNumber: 'G3439UH',
             releaseDate: new Date(2023, 11, 26),
           },

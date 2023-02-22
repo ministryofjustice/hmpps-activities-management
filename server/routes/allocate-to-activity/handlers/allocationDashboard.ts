@@ -26,11 +26,13 @@ export default class AllocationDashboardRoutes {
     const { user } = res.locals
     const { scheduleId } = req.params
 
+    const candidateQuery = req.query.candidateQuery as string
+
     const [schedule, allocationSummaryView, currentlyAllocated, candidates] = await Promise.all([
       this.activitiesService.getActivitySchedule(+scheduleId, user),
       this.capacitiesService.getScheduleAllocationsSummary(+scheduleId, user),
       this.getCurrentlyAllocated(+scheduleId, user),
-      this.getCandidates(+scheduleId, user),
+      this.getCandidates(+scheduleId, candidateQuery, user),
     ])
 
     res.render('pages/allocate-to-activity/allocation-dashboard', {
@@ -74,16 +76,28 @@ export default class AllocationDashboardRoutes {
     })
   }
 
-  private getCandidates = async (scheduleId: number, user: ServiceUser) => {
+  private getCandidates = async (scheduleId: number, candidateQuery: string, user: ServiceUser) => {
     const currentlyAllocated = await this.activitiesService
       .getAllocations(scheduleId, user)
       .then(allocations => allocations.map(allocation => allocation.prisonerNumber))
+
+    const candidateQueryLower = candidateQuery?.toLowerCase()
 
     const pageOfInmates = await this.prisonService
       .getInmates(user.activeCaseLoad.caseLoadId, user)
       .then(page => page.content)
       .then(inmates => inmates.filter(i => !currentlyAllocated.includes(i.prisonerNumber)))
       .then(inmates => inmates.filter(i => i.status === 'ACTIVE IN').filter(i => i.legalStatus !== 'DEAD'))
+      .then(inmates =>
+        inmates.filter(i => {
+          if (!candidateQueryLower) return true
+          if (i.prisonerNumber.toLowerCase().includes(candidateQueryLower)) return true
+          let name = `${i.firstName} ${i.lastName}`
+          name = name.toLowerCase()
+          if (name.includes(candidateQueryLower)) return true
+          return false
+        }),
+      )
 
     const currentAllocations = await this.activitiesService.getPrisonerAllocations(
       user.activeCaseLoad.caseLoadId,
@@ -96,8 +110,8 @@ export default class AllocationDashboardRoutes {
       prisonerNumber: inmate.prisonerNumber,
       otherAllocations:
         currentAllocations
-          .find(a => a.prisonerNumber === inmate.prisonerNumber)
-          ?.allocations?.map(a => ({
+          ?.find(a => a.prisonerNumber === inmate.prisonerNumber)
+          ?.allocations.map(a => ({
             id: a.scheduleId,
             scheduleName: a.scheduleDescription,
           })) || [],
