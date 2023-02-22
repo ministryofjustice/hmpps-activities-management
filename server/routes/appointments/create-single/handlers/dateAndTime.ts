@@ -7,6 +7,7 @@ import IsValidDate from '../../../../validators/isValidDate'
 import IsValidTime from '../../../../validators/isValidTime'
 import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
+import TimeAndDateIsAfter from '../../../../validators/timeAndDateIsAfter'
 
 export class DateAndTime {
   @Expose()
@@ -22,6 +23,7 @@ export class DateAndTime {
   @ValidateNested()
   @IsNotEmpty({ message: 'Select a start time for the appointment' })
   @IsValidTime({ message: 'Select a valid start time for the appointment' })
+  @TimeAndDateIsAfter(new Date(), 'startDate', { message: 'Start time must be in the future' })
   startTime: SimpleTime
 
   @Expose()
