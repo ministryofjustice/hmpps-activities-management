@@ -191,28 +191,28 @@
 
 {% set candidatesHtml %}
     <div class="govuk-grid-row">
-         <div class="govuk-grid-column-two-thirds-from-desktop govuk-grid-column-one-half">
-             <p>
-                 Your candidate list has been filtered to show people who match all the requirements for this activity.
-                 Use the filters to expand or reduce the list. You can also search for someone you want to allocate.
-             </p>
-         </div>
-         <div class="govuk-grid-column-one-third-from-desktop govuk-grid-column-one-half">
-             <form method='GET' action='#candidates-tab'>
-                 <label class="govuk-label" for="candidate-search-input">Search by name or prison number:</label>
-                 {{ searchBar({
-                     inputParams: {
-                         id: 'candidate-search-input',
-                         name: 'candidateQuery',
-                         value: candidateQuery
-                     },
-                     buttonParams: {
-                         text: 'Search'
-                     }
-                 }) }}
-             </form>
-         </div>
-     </div>
+        <div class="govuk-grid-column-two-thirds-from-desktop govuk-grid-column-one-half">
+            <p>
+                Your candidate list has been filtered to show people who match all the requirements for this activity.
+                Use the filters to expand or reduce the list. You can also search for someone you want to allocate.
+            </p>
+        </div>
+        <div class="govuk-grid-column-one-third-from-desktop govuk-grid-column-one-half">
+            <form method='GET' action='#candidates-tab'>
+                <label class="govuk-label" for="candidate-search-input">Search by name or prison number:</label>
+                {{ searchBar({
+                    inputParams: {
+                        id: 'candidate-search-input',
+                        name: 'candidateQuery',
+                        value: candidateQuery
+                    },
+                    buttonParams: {
+                        text: 'Search'
+                    }
+                }) }}
+            </form>
+        </div>
+    </div>
     {% set rows = [] %}
     {% for row in candidates %}
         {% set currentAllocationsHtml %}
