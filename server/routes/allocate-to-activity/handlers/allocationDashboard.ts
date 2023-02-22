@@ -40,6 +40,7 @@ export default class AllocationDashboardRoutes {
       schedule,
       currentlyAllocated,
       candidates,
+      candidateQuery,
     })
   }
 

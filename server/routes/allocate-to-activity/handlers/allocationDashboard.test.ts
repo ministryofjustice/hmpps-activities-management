@@ -222,6 +222,7 @@ describe('Route Handlers - Allocation dashboard', () => {
             releaseDate: new Date(2023, 11, 26),
           },
         ],
+        candidateQuery: 'jack',
       })
     })
   })
