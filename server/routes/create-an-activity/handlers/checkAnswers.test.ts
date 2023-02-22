@@ -53,6 +53,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           pay: [{ incentiveLevel: 'Standard', bandId: 1, rate: 100 }],
           minimumIncentiveLevel: 'Standard',
           incentiveLevels: ['Standard', 'Enhanced'],
+          educationLevels: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
         },
       },
     } as unknown as Request
@@ -85,6 +86,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         riskLevel: 'High',
         minimumIncentiveLevel: 'Standard',
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+        minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
       }
 
       when(activitiesService.createActivity).calledWith(atLeast(expectedActivity)).mockResolvedValueOnce(activity)

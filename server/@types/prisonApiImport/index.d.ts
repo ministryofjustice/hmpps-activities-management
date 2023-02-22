@@ -4537,7 +4537,7 @@ export interface components {
     /** Reference Code */
     ReferenceCode: {
       /** Reference data item active indicator flag. */
-      activeFlag: 'N' | 'Y'
+      activeFlag: string
       /** Reference data item code. */
       code: string
       /** Reference data item description. */
@@ -4555,12 +4555,12 @@ export interface components {
       /** List of subordinate reference data items associated with this reference data item. */
       subCodes?: components['schemas']['ReferenceCode'][]
       /** System Data Flag */
-      systemDataFlag?: 'N' | 'Y'
+      systemDataFlag?: string
     }
     /** Reference Code Data */
     ReferenceCodeInfo: {
       /** Reference data item active indicator flag. */
-      activeFlag: 'N' | 'Y'
+      activeFlag: string
       /** Reference data item description. */
       description: string
       /** Expired Date */
@@ -4572,7 +4572,7 @@ export interface components {
       /** Parent reference data item domain. */
       parentDomain?: string
       /** System Data Flag */
-      systemDataFlag?: 'N' | 'Y'
+      systemDataFlag?: string
     }
     /** Offender transaction drill down details */
     RelatedTransactionDetails: {

@@ -1,0 +1,54 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Create an activity - Qualifications" %}
+{% set pageId = 'qualification-page' %}
+{% set backLinkHref = "name" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half">
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Do people need education levels?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--xl"
+                        }
+                    },
+                    name: "qualificationOption",
+                    errorMessage: validationErrors | findError('qualificationOption'),
+                    hint: {
+                        text: "Do people need education levels?"
+                    },
+                    items: [
+                        {
+                            value: "yes",
+                            html: "Yes",
+                            checked: formResponses.qualificationOption == 'yes' or session.createJourney.qualificationOption == 'yes'
+                        },
+                        {
+                            value: "no",
+                            html: "No",
+                            checked: formResponses.qualificationOption == 'no' or session.createJourney.qualificationOption == 'no'
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
