@@ -84,7 +84,7 @@ export default class AllocationDashboardRoutes {
 
     const candidateQueryLower = candidateQuery?.toLowerCase()
 
-    return this.prisonService
+    const pageOfInmates = await this.prisonService
       .getInmates(user.activeCaseLoad.caseLoadId, user)
       .then(page => page.content)
       .then(inmates => inmates.filter(i => !currentlyAllocated.includes(i.prisonerNumber)))
@@ -99,13 +99,25 @@ export default class AllocationDashboardRoutes {
           return false
         }),
       )
-      .then(inmates =>
-        inmates.map(inmate => ({
-          name: `${inmate.firstName} ${inmate.lastName}`,
-          prisonerNumber: inmate.prisonerNumber,
-          cellLocation: inmate.cellLocation,
-          releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
-        })),
-      )
+
+    const currentAllocations = await this.activitiesService.getPrisonerAllocations(
+      user.activeCaseLoad.caseLoadId,
+      pageOfInmates.map(i => i.prisonerNumber),
+      user,
+    )
+
+    return pageOfInmates.map(inmate => ({
+      name: `${inmate.firstName} ${inmate.lastName}`,
+      prisonerNumber: inmate.prisonerNumber,
+      otherAllocations:
+        currentAllocations
+          .find(a => a.prisonerNumber === inmate.prisonerNumber)
+          ?.allocations.map(a => ({
+            id: a.scheduleId,
+            scheduleName: a.scheduleDescription,
+          })) || [],
+      cellLocation: inmate.cellLocation,
+      releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
+    }))
   }
 }

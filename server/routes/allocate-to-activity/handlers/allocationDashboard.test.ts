@@ -108,6 +108,17 @@ describe('Route Handlers - Allocation dashboard', () => {
             ],
           },
         ] as PrisonerAllocations[])
+      when(activitiesService.getPrisonerAllocations)
+        .calledWith(atLeast('MDI', ['G3439UH']))
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'G3439UH',
+            allocations: [
+              { scheduleId: 1, scheduleDescription: 'this schedule' },
+              { scheduleId: 2, scheduleDescription: 'other schedule' },
+            ],
+          },
+        ] as PrisonerAllocations[])
       when(prisonService.getInmates)
         .calledWith(atLeast('MDI'))
         .mockResolvedValue({
@@ -155,7 +166,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               firstName: 'Bill',
               lastName: 'Wilkins',
               cellLocation: 'MDI-1-1-106',
-              releaseDate: '2023-12-26',
+              releaseDate: '2024-01-26',
             },
             {
               prisonerNumber: 'G3439UH',
@@ -206,6 +217,16 @@ describe('Route Handlers - Allocation dashboard', () => {
           {
             cellLocation: 'MDI-1-1-107',
             name: 'Jack Daniels',
+            otherAllocations: [
+              {
+                id: 1,
+                scheduleName: 'this schedule',
+              },
+              {
+                id: 2,
+                scheduleName: 'other schedule',
+              },
+            ],
             prisonerNumber: 'G3439UH',
             releaseDate: new Date(2023, 11, 26),
           },

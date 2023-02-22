@@ -215,6 +215,13 @@
     </div>
     {% set rows = [] %}
     {% for row in candidates %}
+        {% set currentAllocationsHtml %}
+            <div>
+                {% for allocation in row.otherAllocations %}
+                    <div>{{ allocation.scheduleName }}</div>
+                {% endfor %}
+            </div>
+        {% endset %}
         {% set id = 'selectedAllocation' + (('-' + loop.index0) if loop.index0 else '') %}
         {% set rows = (rows.push([
             {
@@ -236,6 +243,9 @@
                 '
             },
             {
+                html: currentAllocationsHtml
+            },
+            {
                 text: row.releaseDate | formatDate('do MMMM yyyy') if row.releaseDate else 'TBC'
             }
         ]), rows) %}
@@ -249,6 +259,9 @@
             head: [
                 {
                     text: "Candidate details"
+                },
+                {
+                    text: "Current Allocation"
                 },
                 {
                     text: "Earliest release date"
