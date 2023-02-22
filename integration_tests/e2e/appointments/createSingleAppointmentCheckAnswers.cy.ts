@@ -6,13 +6,15 @@ import SelectPrisonerPage from '../../pages/appointments/createSingle/selectPris
 import CategoryPage from '../../pages/appointments/createSingle/categoryPage'
 import LocationPage from '../../pages/appointments/createSingle/locationPage'
 import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatchPrisonerA8644DY.json'
+import postMatchPrisonerA1350DZ from '../../fixtures/prisonerSearchApi/postMatchPrisonerA1350DZ.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
+import { formatDate } from '../../../server/utils/utils'
 
-context('Create single appointment - back links', () => {
+context('Create single appointment - check answers change links', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -24,8 +26,8 @@ context('Create single appointment - back links', () => {
     cy.stubEndpoint('POST', '/appointments')
   })
 
-  it('Create single appointment - back links', () => {
-    // Move through the journey to final page with back link
+  it('Create single appointment - check answers change links', () => {
+    // Move through the journey to check answers page
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
 
@@ -45,26 +47,6 @@ context('Create single appointment - back links', () => {
     locationPage.continue()
 
     const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
-
-    // Click through back links
-    dateAndTimePage.back()
-    Page.verifyOnPage(LocationPage)
-    locationPage.assertSelectedLocation('Chapel')
-
-    locationPage.back()
-    Page.verifyOnPage(CategoryPage)
-    categoryPage.assertSelectedCategory('Chaplaincy')
-
-    categoryPage.back()
-    Page.verifyOnPage(SelectPrisonerPage)
-    selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
-
-    // Continue to date and time page
-    selectPrisonerPage.continue()
-    categoryPage.continue()
-    locationPage.continue()
-
-    Page.verifyOnPage(DateAndTimePage)
     const tomorrow = new Date()
     tomorrow.setDate(getDate(tomorrow) + 1)
     dateAndTimePage.enterStartDate(tomorrow)
@@ -72,43 +54,69 @@ context('Create single appointment - back links', () => {
     dateAndTimePage.selectEndTime(15, 30)
     dateAndTimePage.continue()
 
+    // Verify initial answers
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
-    checkAnswersPage.assertNoBackLink()
+    checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    checkAnswersPage.assertCategory('Chaplaincy')
+    checkAnswersPage.assertLocation('Chapel')
+    checkAnswersPage.assertStartDate(tomorrow)
+    checkAnswersPage.assertStartTime(14, 0)
+    checkAnswersPage.assertEndTime(15, 30)
 
-    // Back links from check answers
+    // Change each answer
     checkAnswersPage.changePrisoner()
     Page.verifyOnPage(SelectPrisonerPage)
-    selectPrisonerPage.back()
-    Page.verifyOnPage(CheckAnswersPage)
+    selectPrisonerPage.enterPrisonerNumber('A8644DY')
+    cy.stubEndpoint('POST', '/prisoner-search/match-prisoners', postMatchPrisonerA1350DZ)
+    selectPrisonerPage.continue()
+    checkAnswersPage.assertPrisonerSummary('David Winchurch', 'A1350DZ', '2-2-024')
 
     checkAnswersPage.changeCategory()
     Page.verifyOnPage(CategoryPage)
-    categoryPage.back()
-    Page.verifyOnPage(CheckAnswersPage)
+    categoryPage.selectCategory('Gym - Weights')
+    categoryPage.continue()
+    checkAnswersPage.assertCategory('Gym - Weights')
 
     checkAnswersPage.changeLocation()
     Page.verifyOnPage(LocationPage)
-    locationPage.back()
-    Page.verifyOnPage(CheckAnswersPage)
+    locationPage.selectLocation('Gym')
+    locationPage.continue()
+    checkAnswersPage.assertLocation('Gym')
 
     checkAnswersPage.changeStartDate()
     Page.verifyOnPage(DateAndTimePage)
-    dateAndTimePage.back()
+    dateAndTimePage.assertStartDate(tomorrow)
+    const dayAfterTomorrow = new Date()
+    dayAfterTomorrow.setDate(getDate(dayAfterTomorrow) + 2)
+    dateAndTimePage.enterStartDate(dayAfterTomorrow)
+    dateAndTimePage.continue()
     Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.assertStartDate(dayAfterTomorrow)
 
     checkAnswersPage.changeStartTime()
     Page.verifyOnPage(DateAndTimePage)
-    dateAndTimePage.back()
+    dateAndTimePage.assertStartTime(14, 0)
+    dateAndTimePage.selectStartTime(15, 5)
+    dateAndTimePage.continue()
     Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.assertStartTime(15, 5)
 
     checkAnswersPage.changeEndTime()
     Page.verifyOnPage(DateAndTimePage)
-    dateAndTimePage.back()
+    dateAndTimePage.assertEndTime(15, 30)
+    dateAndTimePage.selectEndTime(16, 15)
+    dateAndTimePage.continue()
     Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.assertEndTime(16, 15)
 
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    confirmationPage.assertNoBackLink()
+    confirmationPage.assertMessageEquals(
+      `You have successfully created an appointment for David Winchurch on ${formatDate(
+        dayAfterTomorrow,
+        'EEEE d MMMM yyyy',
+      )}.`,
+    )
   })
 })

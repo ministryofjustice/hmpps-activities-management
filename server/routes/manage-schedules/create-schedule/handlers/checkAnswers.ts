@@ -70,7 +70,7 @@ function mapSlots(createScheduleJourney: CreateScheduleJourney) {
         break
       case 'sunday':
         if (createScheduleJourney.timeSlotsSunday) {
-          createScheduleJourney.timeSlotsFriday.forEach(slotSetter())
+          createScheduleJourney.timeSlotsSunday.forEach(slotSetter())
         }
         break
       default:
