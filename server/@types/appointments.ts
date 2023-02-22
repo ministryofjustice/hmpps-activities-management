@@ -1,4 +1,5 @@
 import { AppointmentCategory } from './activitiesAPI/types'
+import { PrisonApiUserDetail } from './prisonApiImport/types'
 import { LocationLenient } from './prisonApiImportCustom'
 import { Prisoner } from './activities'
 
@@ -12,9 +13,9 @@ export type AppointmentDetails = {
   endTime?: Date
   comment: string
   created: Date
-  createdBy: string
+  createdBy: PrisonApiUserDetail
   updated?: Date
-  updatedBy?: string
+  updatedBy?: PrisonApiUserDetail
   occurrences: AppointmentOccurrenceSummary[]
   prisoners: Prisoner[]
   prisonerMap: Map<string, Prisoner>

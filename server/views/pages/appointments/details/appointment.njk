@@ -68,7 +68,7 @@
             }) }}
 
             {% if appointment.createdBy %}
-                {% set createBy = appointment.createdBy | toTitleCase | initialiseName %}
+                {% set createBy = appointment.createdBy | fullName | toTitleCase | initialiseName %}
             {% else %}
                 {% set createBy = '[Unknown User]' %}
             {% endif %}

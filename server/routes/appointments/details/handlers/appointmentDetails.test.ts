@@ -40,7 +40,10 @@ describe('Route Handlers - Appointment Details', () => {
     endTime: new Date('2023-02-22T13:15:00.000Z'),
     comment: '',
     created: new Date('2023-02-17T10:22:04.000Z'),
-    createdBy: 'Schedule Activity',
+    createdBy: {
+      firstName: 'John',
+      lastName: 'Smith',
+    },
     updated: null,
     updatedBy: null,
     occurrences: [{ id: 10 }],
@@ -78,7 +81,6 @@ describe('Route Handlers - Appointment Details', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/details/appointment', {
-        id: 10,
         appointment: appointmentDetails,
       })
     })

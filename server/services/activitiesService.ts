@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { uniq, without } from 'lodash'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import PrisonApiClient from '../data/prisonApiClient'
@@ -31,6 +32,7 @@ import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { AppointmentDetails, AppointmentOccurrenceSummary } from '../@types/appointments'
+import { PrisonApiUserDetail } from '../@types/prisonApiImport/types'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
 import logger from '../../logger'
 
@@ -286,26 +288,25 @@ export default class ActivitiesService {
       return map.set(prisoner.prisonerNumber, prisoner)
     }, new Map<string, Prisoner>())
 
-    let createdBy = null
-    try {
-      const createdByUserDetail = await this.prisonApiClient.getUserByUsername(appointment.createdBy, user)
-      createdBy = `${createdByUserDetail.firstName} ${createdByUserDetail.lastName}`
-    } catch (e) {
-      // If the username isn't found, log the error and continue
-      if (e.status === 404) {
-        logger.info(`Couldn't get user with username, ${appointment.createdBy}`)
-      } else {
-        throw e
-      }
-    }
+    const allUserDetails = (
+      await Promise.all<PrisonApiUserDetail>(
+        uniq(without([appointment.createdBy, appointment.updatedBy], null)).map(username =>
+          this.prisonApiClient.getUserByUsername(username, user).catch(e => {
+            if (e.status === 404) {
+              logger.info(`Couldn't get user with username, ${username}`)
+              return null
+            }
+            throw e
+          }),
+        ),
+      )
+    ).reduce((map, userDetails) => {
+      if (userDetails) return map.set(userDetails.username, userDetails)
+      return map
+    }, new Map<string, PrisonApiUserDetail>())
 
-    let updatedBy = null
-    if (appointment.createdBy === appointment.updatedBy) {
-      updatedBy = createdBy
-    } else if (appointment.updatedBy !== null) {
-      const updatedByUserDetail = await this.prisonApiClient.getUserByUsername(appointment.updatedBy, user)
-      updatedBy = `${updatedByUserDetail.firstName} ${updatedByUserDetail.lastName}`
-    }
+    const createdBy = allUserDetails.get(appointment.createdBy) || null
+    const updatedBy = allUserDetails.get(appointment.updatedBy) || null
 
     return {
       id: appointment.id,

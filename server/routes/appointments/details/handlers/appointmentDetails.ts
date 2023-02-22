@@ -10,9 +10,6 @@ export default class AppointmentDetailsRoutes {
 
     const appointment = await this.activitiesService.getAppointmentDetails(id, user)
 
-    res.render('pages/appointments/details/appointment', {
-      id,
-      appointment,
-    })
+    res.render('pages/appointments/details/appointment', { appointment })
   }
 }

@@ -44,6 +44,14 @@ export const initialiseName = (fullName?: string): string | null => {
   return `${array[0][0]}. ${array.reverse()[0]}`
 }
 
+export const fullName = (user?: { firstName: string; lastName: string; middleNames?: string }): string | null => {
+  if (!user) return null
+  return [user.firstName, user.middleNames, user.lastName]
+    .filter(part => part)
+    .reduce((parts, part) => `${parts} ${part}`, '')
+    .trim()
+}
+
 export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {
   return parse(date, fromFormat, new Date())
 }
