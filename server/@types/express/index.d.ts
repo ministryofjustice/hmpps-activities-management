@@ -6,6 +6,8 @@ import { AllocateToActivityJourney } from '../../routes/allocate-to-activity/jou
 import { CreateAnActivityJourney } from '../../routes/create-an-activity/journey'
 import { CreateScheduleJourney } from '../../routes/manage-schedules/create-schedule/journey'
 import { CreateSingleAppointmentJourney } from '../../routes/appointments/create-single/journey'
+import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
+
 // eslint-disable-next-line import/no-cycle
 import { UnlockFilters } from '../activities'
 
@@ -23,6 +25,7 @@ declare module 'express-session' {
     allocateJourney: AllocateToActivityJourney
     createScheduleJourney: CreateScheduleJourney
     createSingleAppointmentJourney: CreateSingleAppointmentJourney
+    calendarSpikeJourney: CalendarSpikeJourney
     unlockFilters: UnlockFilters
   }
 }
