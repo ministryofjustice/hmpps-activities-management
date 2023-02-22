@@ -11,8 +11,7 @@ export default class CalendarSpikeRoutes {
     const firstDayInMonth = new Date(format(referenceDate, 'yyyy-MM-01'))
     const lastDayInMonth = lastDayOfMonth(referenceDate)
     const { user } = res.locals
-
-    const prisonerNumber = req.query.prisonerNumber as string
+    const prisonerNumber = this.extractPrisonerNumber(req)
 
     try {
       const activities = await this.activitiesService
@@ -40,5 +39,15 @@ export default class CalendarSpikeRoutes {
 
   PRISONER_SEARCH = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/spikes/calendarSpikePrisonerSearch')
+  }
+
+  private extractPrisonerNumber = (req: Request): string => {
+    let prisonerNumber = req.query.prisonerNumber as string
+    if (!prisonerNumber) {
+      prisonerNumber = req.session.calendarSpikeJourney?.prisonerNumber
+    } else {
+      req.session.calendarSpikeJourney = { prisonerNumber }
+    }
+    return prisonerNumber
   }
 }
