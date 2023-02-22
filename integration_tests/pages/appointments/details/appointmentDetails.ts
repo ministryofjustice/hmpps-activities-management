@@ -27,5 +27,5 @@ export default class AppointmentPage extends Page {
 
   assertCreatedBy = (createdBy: string) => cy.get('[data-qa=created-by]').contains(createdBy)
 
-  assertPrintMovementSlipButton = () => cy.get('#print-movement-slip').contains('Print movement slip')
+  assertPrintMovementSlipLink = () => cy.get('a').contains('Print movement slip')
 }

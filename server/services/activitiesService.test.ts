@@ -350,6 +350,68 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('getAppointmentDetails', () => {
+    when(activitiesApiClient.getAppointment).calledWith(12345, user).mockResolvedValue(appointment)
+
+    const getLocationsForEventTypeResponse = [{ locationId: appointment.internalLocationId }] as LocationLenient[]
+    when(prisonApiClient.getLocationsForEventType)
+      .calledWith('SKI', 'APP', user)
+      .mockResolvedValue(getLocationsForEventTypeResponse)
+
+    const appointmentPrisonerNo = appointment.occurrences[0].allocations[0].prisonerNumber
+    const criteria = { prisonerNumbers: [appointmentPrisonerNo] }
+
+    when(prisonerSearchApiClient.searchByPrisonerNumbers)
+      .calledWith(criteria, user)
+      .mockResolvedValue(prisoners as Prisoner[])
+
+    const appointmentUser = { firstName: 'Lee', lastName: 'Jacobson', staffId: 1000 }
+    when(prisonApiClient.getUserByUsername)
+      .calledWith(appointment.createdBy, user)
+      .mockResolvedValue(appointmentUser as PrisonApiUserDetail)
+      .defaultRejectedValue({
+        status: 404,
+      })
+
+    when(prisonApiClient.getUserByUsername)
+      .calledWith(appointment.updatedBy, user)
+      .mockResolvedValue(appointmentUser as PrisonApiUserDetail)
+
+    it('should return appointment details from api when valid appointment id is used', async () => {
+      const actualAppointmentResult = await activitiesService.getAppointmentDetails(12345, user)
+
+      expect(actualAppointmentResult.id).toEqual(12345)
+      expect(actualAppointmentResult.occurrences.length).toEqual(1)
+      expect(actualAppointmentResult.internalLocation.locationId).toEqual(26963)
+      expect(actualAppointmentResult.occurrences[0].internalLocation.locationId).toEqual(26963)
+      expect(actualAppointmentResult.prisoners.length).toEqual(1)
+      expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
+      expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
+      expect(actualAppointmentResult.createdBy).toEqual('Lee Jacobson')
+      expect(actualAppointmentResult.updatedBy).toEqual('Lee Jacobson')
+    })
+
+    it("should return appointment details when created by username isn't found", async () => {
+      const unknownUserAppointment = {
+        ...appointment,
+        createdBy: 'AN_UNKNOWN_USERNAME',
+      }
+      when(activitiesApiClient.getAppointment).calledWith(12345, user).mockResolvedValue(unknownUserAppointment)
+
+      const actualAppointmentResult = await activitiesService.getAppointmentDetails(12345, user)
+
+      expect(actualAppointmentResult.id).toEqual(12345)
+      expect(actualAppointmentResult.occurrences.length).toEqual(1)
+      expect(actualAppointmentResult.internalLocation.locationId).toEqual(26963)
+      expect(actualAppointmentResult.occurrences[0].internalLocation.locationId).toEqual(26963)
+      expect(actualAppointmentResult.prisoners.length).toEqual(1)
+      expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
+      expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
+      expect(actualAppointmentResult.createdBy).toEqual(null)
+      expect(actualAppointmentResult.updatedBy).toEqual('Lee Jacobson')
+    })
+  })
+
   describe('getAppointmentCategories', () => {
     it('should return all categories from api', async () => {
       const expectedResult = [

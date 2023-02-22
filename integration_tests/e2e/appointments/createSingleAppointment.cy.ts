@@ -97,6 +97,6 @@ context('Create single appointment', () => {
     appointmentDetailsPage.assertStartTime(14, 0)
     appointmentDetailsPage.assertEndTime(15, 30)
     appointmentDetailsPage.assertCreatedBy('J. Smith')
-    appointmentDetailsPage.assertPrintMovementSlipButton()
+    appointmentDetailsPage.assertPrintMovementSlipLink()
   })
 })

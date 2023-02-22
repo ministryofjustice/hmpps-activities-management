@@ -86,14 +86,9 @@
                 classes: "govuk-!-margin-bottom-9"
             }) }}
 
-            <div class="govuk-button-group govuk-!-display-none-print no-js-hidden">
-                {{ govukButton({
-                    attributes: { id: 'print-movement-slip' },
-                    text: "Print movement slip",
-                    classes: "govuk-button--secondary js-print",
-                    preventDoubleClick: true
-                }) }}
-            </div>
+            <p class="govuk-body govuk-!-display-none-print no-js-hidden">
+                <a href="#" class="govuk-link govuk-link--no-visited-state" data-qa="print-movement-slip-link">Print movement slip</a>
+            </p>
         </div>
     </div>
 {% endblock %}
