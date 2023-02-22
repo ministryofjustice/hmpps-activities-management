@@ -111,7 +111,7 @@ export default class AllocationDashboardRoutes {
       prisonerNumber: inmate.prisonerNumber,
       otherAllocations:
         currentAllocations
-          ?.find(a => a.prisonerNumber === inmate.prisonerNumber)
+          .find(a => a.prisonerNumber === inmate.prisonerNumber)
           ?.allocations.map(a => ({
             id: a.scheduleId,
             scheduleName: a.scheduleDescription,
