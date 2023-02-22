@@ -2,11 +2,7 @@ import { registerDecorator, ValidationArguments, ValidationOptions } from 'class
 import { isValid } from 'date-fns'
 import SimpleTime from '../commonValidationTypes/simpleTime'
 
-export default function TimeAndDateIsAfter(
-  dateToCompare: Date,
-  datePropertyName: string,
-  validationOptions?: ValidationOptions,
-) {
+export default function TimeAndDateIsAfterNow(datePropertyName: string, validationOptions?: ValidationOptions) {
   return (object: unknown, propertyName: string) => {
     registerDecorator({
       name: 'timeIsAfter',
@@ -21,7 +17,7 @@ export default function TimeAndDateIsAfter(
           if (args.object[relatedPropertyName] === undefined) return true
           const relatedDate = args.object[relatedPropertyName].toRichDate()
           const date = value.toDate(relatedDate)
-          return isValid(relatedDate) && isValid(date) ? date > dateToCompare : true
+          return isValid(relatedDate) && isValid(date) ? date > new Date() : true
         },
       },
     })

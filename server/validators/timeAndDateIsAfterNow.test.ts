@@ -1,8 +1,9 @@
 import { Expose, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { getDate, getHours, getMinutes, getMonth, getYear } from 'date-fns'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 import { associateErrorsWithProperty } from '../utils/utils'
-import TimeAndDateIsAfter from './timeAndDateIsAfter'
+import TimeAndDateIsAfterNow from './timeAndDateIsAfterNow'
 import SimpleTime from '../commonValidationTypes/simpleTime'
 
 describe('timeAndDateIsAfter', () => {
@@ -11,22 +12,21 @@ describe('timeAndDateIsAfter', () => {
     date: SimpleDate
 
     @Expose()
-    @TimeAndDateIsAfter(new Date('2023-02-22T12:30:00.000Z'), 'date', {
-      message: 'Select a time that is in the future',
-    })
+    @TimeAndDateIsAfterNow('date', { message: 'Select a time that is in the future' })
     time: SimpleTime
   }
 
-  it('should fail validation for a time before the supplied date', async () => {
+  it('should fail validation for a time in the past', async () => {
+    const now = new Date()
     const body = {
       date: plainToInstance(SimpleDate, {
-        day: 22,
-        month: 2,
-        year: 2023,
+        day: getDate(now),
+        month: getMonth(now) + 1,
+        year: getYear(now),
       }),
       time: plainToInstance(SimpleTime, {
-        hour: 12,
-        minute: 25,
+        hour: getHours(now),
+        minute: getMinutes(now) - 5,
       }),
     }
 
@@ -36,16 +36,17 @@ describe('timeAndDateIsAfter', () => {
     expect(errors).toEqual([{ property: 'time', error: 'Select a time that is in the future' }])
   })
 
-  it('should fail validation for a time equal to the supplied date', async () => {
+  it('should fail validation for a time equal to now', async () => {
+    const now = new Date()
     const body = {
       date: plainToInstance(SimpleDate, {
-        day: 22,
-        month: 2,
-        year: 2023,
+        day: getDate(now),
+        month: getMonth(now) + 1,
+        year: getYear(now),
       }),
       time: plainToInstance(SimpleTime, {
-        hour: 12,
-        minute: 30,
+        hour: getHours(now),
+        minute: getMinutes(now),
       }),
     }
 
@@ -55,16 +56,17 @@ describe('timeAndDateIsAfter', () => {
     expect(errors).toEqual([{ property: 'time', error: 'Select a time that is in the future' }])
   })
 
-  it('should pass validation for a time after the supplied date', async () => {
+  it('should pass validation for a time after now', async () => {
+    const now = new Date()
     const body = {
       date: plainToInstance(SimpleDate, {
-        day: 22,
-        month: 2,
-        year: 2023,
+        day: getDate(now),
+        month: getMonth(now) + 1,
+        year: getYear(now),
       }),
       time: plainToInstance(SimpleTime, {
-        hour: 12,
-        minute: 35,
+        hour: getHours(now),
+        minute: getMinutes(now) + 5,
       }),
     }
 
@@ -74,16 +76,17 @@ describe('timeAndDateIsAfter', () => {
     expect(errors).toHaveLength(0)
   })
 
-  it('should pass validation for a earlier than the supplied date but a day later', async () => {
+  it('should pass validation for a earlier than now but a day later', async () => {
+    const now = new Date()
     const body = {
       date: plainToInstance(SimpleDate, {
-        day: 23,
-        month: 2,
-        year: 2023,
+        day: getDate(now) + 1,
+        month: getMonth(now) + 1,
+        year: getYear(now),
       }),
       time: plainToInstance(SimpleTime, {
-        hour: 12,
-        minute: 25,
+        hour: getHours(now),
+        minute: getMinutes(now) - 5,
       }),
     }
 
