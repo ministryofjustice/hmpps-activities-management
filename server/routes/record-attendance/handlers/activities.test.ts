@@ -7,7 +7,7 @@ import { ScheduledActivity } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null, null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Activities', () => {
   const handler = new ActivitiesRoutes(activitiesService)

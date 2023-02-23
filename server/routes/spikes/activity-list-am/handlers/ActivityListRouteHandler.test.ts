@@ -5,15 +5,18 @@ import ActivityListRouteHandler from './ActivityListRouteHandler'
 import ActivitiesService from '../../../../services/activitiesService'
 import ActivitiesApiClient from '../../../../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../../../../data/prisonerSearchApiClient'
+import PrisonApiClient from '../../../../data/prisonApiClient'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../data/activitiesApiClient')
 jest.mock('../../../../data/prisonerSearchApiClient')
+jest.mock('../../../../data/prisonApiClient')
 
 describe('activityListRouteHandler', () => {
   const activitiesApiClient = new ActivitiesApiClient()
   const prisonerSearchApiClient = new PrisonerSearchApiClient()
-  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
+  const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
+  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient, prisonApiClient)
 
   let controller: ActivityListRouteHandler
 
