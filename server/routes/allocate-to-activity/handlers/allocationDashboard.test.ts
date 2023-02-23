@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Request, Response } from 'express'
 
 import { when } from 'jest-when'
@@ -285,7 +283,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     it('should calculate suitable iep correctly', async () => {
       req.params = { scheduleId: '1' }
-      ;(activitiesService.getActivitySchedule as jest.Mocked<any>).mockRestore()
+      ;(activitiesService.getActivitySchedule as jest.Mock).mockRestore()
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
         .mockResolvedValue({
@@ -313,7 +311,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     it('should calculate suitable workplace risk assessment correctly - LOW', async () => {
       req.params = { scheduleId: '1' }
-      ;(activitiesService.getActivitySchedule as jest.Mocked<any>).mockRestore()
+      ;(activitiesService.getActivitySchedule as jest.Mock).mockRestore()
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
         .mockResolvedValue({
@@ -336,7 +334,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     it('should calculate suitable workplace risk assessment correctly - MEDIUM', async () => {
       req.params = { scheduleId: '1' }
-      ;(activitiesService.getActivitySchedule as jest.Mocked<any>).mockRestore()
+      ;(activitiesService.getActivitySchedule as jest.Mock).mockRestore()
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
         .mockResolvedValue({
@@ -359,7 +357,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     it('should calculate suitable workplace risk assessment correctly - HIGH', async () => {
       req.params = { scheduleId: '1' }
-      ;(activitiesService.getActivitySchedule as jest.Mocked<any>).mockRestore()
+      ;(activitiesService.getActivitySchedule as jest.Mock).mockRestore()
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
         .mockResolvedValue({
