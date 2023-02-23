@@ -34,7 +34,7 @@ export default class CheckAnswersRoutes {
         payBandId: pay.bandId,
         rate: pay.rate,
       })),
-      minimumEducationLevel: createJourney.educationLevels.map(educationLevel => ({
+      minimumEducationLevel: createJourney.educationLevels?.map(educationLevel => ({
         educationLevelCode: educationLevel.educationLevelCode,
         educationLevelDescription: educationLevel.educationLevelDescription,
       })),

@@ -95,5 +95,24 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
     })
+
+    it('should create the allocation when no education levels selected', async () => {
+      const expectedActivity = {
+        prisonCode: 'MDI',
+        summary: 'Maths level 1',
+        categoryId: 1,
+        riskLevel: 'High',
+        minimumIncentiveLevel: 'Standard',
+        pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+      }
+
+      req.session.createJourney.educationLevels = undefined
+
+      when(activitiesService.createActivity).calledWith(atLeast(expectedActivity)).mockResolvedValueOnce(activity)
+
+      await handler.POST(req, res)
+      expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
+    })
   })
 })
