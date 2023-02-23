@@ -173,8 +173,8 @@
       "name": "Education",
       "description": "Such as classes in English, maths, construction and computer skills"
     },
-    "riskLevel": null,
-    "minimumIncentiveLevel": null
+    "riskLevel": "low",
+    "minimumIncentiveLevel": "Basic"
   },
   "slots": [
     {

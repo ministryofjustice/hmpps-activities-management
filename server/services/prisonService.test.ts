@@ -56,14 +56,18 @@ describe('Prison Service', () => {
     it('should get the prisons incentive levels from incentives API', async () => {
       const apiResponse = [
         { id: 1, active: false },
-        { id: 2, active: true },
+        { id: 2, active: true, sequence: 1 },
+        { id: 3, active: true, sequence: 0 },
       ] as unknown as IepLevel[]
 
       when(incentivesApiClient.getIncentiveLevels).calledWith(atLeast('MDI')).mockResolvedValue(apiResponse)
 
       const actualResult = await prisonService.getIncentiveLevels('MDI', user)
 
-      expect(actualResult).toEqual([{ id: 2, active: true }])
+      expect(actualResult).toEqual([
+        { id: 3, active: true, sequence: 0 },
+        { id: 2, active: true, sequence: 1 },
+      ])
       expect(incentivesApiClient.getIncentiveLevels).toHaveBeenCalledWith('MDI', user)
     })
   })

@@ -1,0 +1,24 @@
+.filter {
+  padding: 20px 0;
+  margin-bottom: 20px;
+
+  background-color: govuk-colour("light-grey");
+
+  &__items {
+    display: flex;
+    flex-wrap: wrap;
+
+    .govuk-form-group {
+      flex: 0 0 calc(50% - 20px);
+      padding: 0 10px;
+    }
+  }
+
+  button {
+    margin: 0 10px;
+  }
+
+  form {
+    display: inherit;
+  }
+}
