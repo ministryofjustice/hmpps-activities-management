@@ -11,6 +11,7 @@ import {
   getAttendanceSummary,
   getCurrentPeriod,
   initialiseName,
+  fullName,
   toDate,
   toDateString,
   formatDate,
@@ -50,6 +51,21 @@ describe('utils', () => {
       ['Double barrelled', 'Robert-John Smith-Jones-Wilson', 'R. Smith-Jones-Wilson'],
     ])('%s initialiseName(%s, %s)', (_: string, a: string, expected: string) => {
       expect(initialiseName(a)).toEqual(expected)
+    })
+  })
+
+  describe('fullName', () => {
+    it.each([
+      [null, null, null],
+      ['First name', { firstName: 'Robert', lastName: null }, 'Robert'],
+      ['First name, last name', { firstName: 'Robert', lastName: 'Smith' }, 'Robert Smith'],
+      [
+        'First name, middle names, last name',
+        { firstName: 'Robert', middleNames: 'James', lastName: 'Smith' },
+        'Robert James Smith',
+      ],
+    ])('%s fullName(%s, %s)', (_: string, user: Parameters<typeof fullName>[0], expected: string) => {
+      expect(fullName(user)).toEqual(expected)
     })
   })
 

@@ -4,6 +4,7 @@ import SelectActivityLocationRouteHandler from './SelectActivityLocationRouteHan
 import PrisonerSearchApiClient from '../../../../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../../../../data/activitiesApiClient'
 import ActivitiesService from '../../../../services/activitiesService'
+import PrisonApiClient from '../../../../data/prisonApiClient'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../data/prisonApiClient')
@@ -13,7 +14,8 @@ jest.mock('../../../../data/whereaboutsApiClient')
 describe('selectActivityLocationRouteHandler', () => {
   const prisonerSearchApiClient = new PrisonerSearchApiClient()
   const activitiesApiClient = new ActivitiesApiClient()
-  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
+  const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
+  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient, prisonApiClient)
   let controller: SelectActivityLocationRouteHandler
 
   beforeEach(() => {

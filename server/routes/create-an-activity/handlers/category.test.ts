@@ -9,7 +9,7 @@ import { ActivityCategory } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null, null, null)
 
 describe('Route Handlers - Create an activity - Category', () => {
   const handler = new CategoryRoutes(activitiesService)

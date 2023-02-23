@@ -1,0 +1,13 @@
+{% macro appointmentPrisonerSummary(prisonerName, prisonerNumber, cellLocation, dpsUrl) %}
+  <div>
+    <div data-qa="prisoner-name">
+      <a href="{{ dpsUrl }}/prisoner/{{ prisonerNumber }}"
+         target="_blank"
+         class="govuk-link govuk-link--no-visited-state">
+        {{ prisonerName | toTitleCase }}
+      </a>
+    </div>
+    <div data-qa="prisoner-number"> {{ prisonerNumber }} </div>
+    <div data-qa="prisoner-cell-location"> {{ cellLocation }} </div>
+  </div>
+{% endmacro %}

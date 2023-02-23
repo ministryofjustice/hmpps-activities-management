@@ -10,7 +10,7 @@ import createScheduleResponse from '../../../../services/fixtures/create_schedul
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null, null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Create an activity schedule - Check answers', () => {
   const handler = new CheckAnswersRoutes(activitiesService)

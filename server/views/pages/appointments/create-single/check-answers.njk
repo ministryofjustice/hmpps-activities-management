@@ -3,6 +3,8 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
+{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
+
 {% set pageTitle = "Appointments Management - Create Single Appointment - Check Answers" %}
 {% set pageId = 'appointments-create-single-check-answers-page' %}
 
@@ -18,12 +20,7 @@
                             text: "Prisoner"
                         },
                         value: {
-                            html:
-                                '<div>
-                                    <div data-qa="prisoner-name">' + session.createSingleAppointmentJourney.prisoner.name | toTitleCase + '</div>
-                                    <div data-qa="prisoner-number">' + session.createSingleAppointmentJourney.prisoner.number + '</div>
-                                    <div data-qa="prisoner-cell-location">' + session.createSingleAppointmentJourney.prisoner.cellLocation + '</div>
-                                </div>'
+                            html: appointmentPrisonerSummary(session.createSingleAppointmentJourney.prisoner.name, session.createSingleAppointmentJourney.prisoner.number, session.createSingleAppointmentJourney.prisoner.cellLocation, dpsUrl)
                         },
                         actions: {
                             items: [
