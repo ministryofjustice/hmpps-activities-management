@@ -21,6 +21,11 @@ export default class CheckPayRoutes {
     const { user } = res.locals
     const { pay } = req.session.createJourney
 
+    if (pay.length === 0) {
+      req.flash('validationErrors', JSON.stringify([{ field: '', message: `Add at least one pay band` }]))
+      return res.redirect('back')
+    }
+
     const minimumIncentiveLevel = await this.prisonService
       .getIncentiveLevels(user.activeCaseLoadId, user)
       .then(levels => _.sortBy(levels, 'sequence'))
@@ -29,6 +34,6 @@ export default class CheckPayRoutes {
     req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.iepLevel
     req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.iepDescription
 
-    res.redirectOrReturn(`qualification`)
+    return res.redirectOrReturn(`qualification`)
   }
 }
