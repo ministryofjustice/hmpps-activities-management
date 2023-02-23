@@ -4,6 +4,7 @@
   "activeCaseLoadId": "MDI",
   "expiredFlag": false,
   "firstName": "john",
+  "middleNames": "james",
   "lastName": "smith",
   "lockedFlag": false,
   "staffId": 231232,
