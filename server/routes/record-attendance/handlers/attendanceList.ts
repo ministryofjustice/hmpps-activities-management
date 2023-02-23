@@ -80,7 +80,8 @@ export default class AttendanceListRoutes {
     const toInterval = (start: Date, end: Date) => ({ start, end })
 
     const re = areIntervalsOverlapping(
-      toInterval(timeToDate(event.startTime), timeToDate(event.endTime)),
+      // TODO: Events from prison API may not have an endtime, so default the endtime to equal the start time. May need to handle this better
+      toInterval(timeToDate(event.startTime), timeToDate(event.endTime || event.startTime)),
       toInterval(timeToDate(thisActivity.startTime), timeToDate(thisActivity.endTime)),
     )
 
