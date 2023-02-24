@@ -1,3 +1,4 @@
+import { formatDate, toDate } from '../utils/utils'
 import PrisonApiClient from '../data/prisonApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
@@ -85,9 +86,8 @@ const testUnlockFilters = (
   return {
     location: 'HB1',
     cellPrefix: 'MDI-1-',
-    unlockDate: '2022-01-01',
+    unlockDate: toDate('2022-01-01'),
     timeSlot: 'am',
-    formattedDate: '',
     subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
     locationFilters,
     activityFilters,
@@ -139,7 +139,7 @@ describe('Unlock list service', () => {
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledTimes(1)
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledWith(
         user.activeCaseLoadId,
-        unlockFilters.unlockDate,
+        formatDate(unlockFilters.unlockDate, 'yyyy-MM-dd'),
         prisonerNumbers,
         user,
         unlockFilters.timeSlot,
@@ -173,7 +173,7 @@ describe('Unlock list service', () => {
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledTimes(1)
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledWith(
         user.activeCaseLoadId,
-        unlockFilters.unlockDate,
+        formatDate(unlockFilters.unlockDate, 'yyyy-MM-dd'),
         prisonerNumbers,
         user,
         unlockFilters.timeSlot,

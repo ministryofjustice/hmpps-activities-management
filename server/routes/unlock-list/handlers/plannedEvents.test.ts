@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { UnlockFilterItem, UnlockFilters } from '../../../@types/activities'
+import { toDate, formatDate } from '../../../utils/utils'
 import PlannedEventRoutes from './plannedEvents'
 import ActivitiesService from '../../../services/activitiesService'
 import UnlockListService from '../../../services/unlockListService'
@@ -159,13 +160,14 @@ describe('Unlock list routes - planned events', () => {
 
       const { unlockFilters } = req.session
 
-      // Differences from default filter values
+      // Different from default filter values
       expect(unlockFilters.locationFilters.includes({ value: 'A-Wing', text: 'A-Wing', checked: true }))
       expect(unlockFilters.locationFilters.includes({ value: 'B-Wing', text: 'B-Wing', checked: false }))
       expect(unlockFilters.locationFilters.includes({ value: 'C-Wing', text: 'C-Wing', checked: true }))
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?date=${unlockFilters.unlockDate}&slot=${unlockFilters.timeSlot}&location=${unlockFilters.location}`,
+        `planned-events?date=${formatDate(unlockFilters.unlockDate, 'yyyy-MM-dd')}` +
+          `&slot=${unlockFilters.timeSlot}&location=${unlockFilters.location}`,
       )
     })
 
@@ -188,13 +190,14 @@ describe('Unlock list routes - planned events', () => {
 
       const { unlockFilters } = req.session
 
-      // Differences from default filter values
+      // Different from the default filter values
       expect(unlockFilters.activityFilters.includes({ value: 'Both', text: 'Both', checked: false }))
       expect(unlockFilters.activityFilters.includes({ value: 'With', text: 'With', checked: true }))
       expect(unlockFilters.activityFilters.includes({ value: 'Without', text: 'Without', checked: false }))
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?date=${unlockFilters.unlockDate}&slot=${unlockFilters.timeSlot}&location=${unlockFilters.location}`,
+        `planned-events?date=${formatDate(unlockFilters.unlockDate, 'yyyy-MM-dd')}` +
+          `&slot=${unlockFilters.timeSlot}&location=${unlockFilters.location}`,
       )
     })
 
@@ -217,13 +220,14 @@ describe('Unlock list routes - planned events', () => {
 
       const { unlockFilters } = req.session
 
-      // Differences from default filter values
+      // Different from the default filter values
       expect(unlockFilters.stayingOrLeavingFilters.includes({ value: 'Both', text: 'Both', checked: false }))
       expect(unlockFilters.stayingOrLeavingFilters.includes({ value: 'Staying', text: 'Staying', checked: true }))
       expect(unlockFilters.stayingOrLeavingFilters.includes({ value: 'Leaving', text: 'Leaving', checked: false }))
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?date=${unlockFilters.unlockDate}&slot=${unlockFilters.timeSlot}&location=${unlockFilters.location}`,
+        `planned-events?date=${formatDate(unlockFilters.unlockDate, 'yyyy-MM-dd')}` +
+          `&slot=${unlockFilters.timeSlot}&location=${unlockFilters.location}`,
       )
     })
 
@@ -247,7 +251,7 @@ describe('Unlock list routes - planned events', () => {
       const defaultFilters = testUnlockFilters()
       expect(unlockFilters).toEqual(defaultFilters)
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?date=${unlockDate}&slot=${timeSlot}&location=${location}`,
+        `planned-events?date=${formatDate(unlockDate, 'yyyy-MM-dd')}&slot=${timeSlot}&location=${location}`,
       )
     })
   })
@@ -285,9 +289,10 @@ describe('Unlock list routes - planned events', () => {
       const { unlockFilters } = req.session
       expect(unlockFilters).toBeDefined()
       expect(unlockFilters).toEqual(testUnlockFilters())
+
       const { unlockDate, timeSlot, location } = unlockFilters
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?date=${unlockDate}&slot=${timeSlot}&location=${location}`,
+        `planned-events?date=${formatDate(unlockDate, 'yyyy-MM-dd')}&slot=${timeSlot}&location=${location}`,
       )
     })
 
@@ -305,9 +310,10 @@ describe('Unlock list routes - planned events', () => {
         'B-Wing',
         'C-Wing',
       ])
+
       const { unlockDate, timeSlot, location } = unlockFilters
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?date=${unlockDate}&slot=${timeSlot}&location=${location}`,
+        `planned-events?date=${formatDate(unlockDate, 'yyyy-MM-dd')}&slot=${timeSlot}&location=${location}`,
       )
     })
 
@@ -322,10 +328,14 @@ describe('Unlock list routes - planned events', () => {
       const { unlockFilters } = req.session
 
       expect(unlockFilters).toBeDefined()
-      expect(unlockFilters.activityFilters.filter(loc => loc.checked === true)).toHaveLength(0)
+      // Both is added back in whenever a radio option is cleared
+      expect(
+        unlockFilters.activityFilters.filter(loc => loc.checked === true).filter(loc => loc.value === 'Both'),
+      ).toHaveLength(1)
+
       const { unlockDate, timeSlot, location } = unlockFilters
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?date=${unlockDate}&slot=${timeSlot}&location=${location}`,
+        `planned-events?date=${formatDate(unlockDate, 'yyyy-MM-dd')}&slot=${timeSlot}&location=${location}`,
       )
     })
 
@@ -340,10 +350,13 @@ describe('Unlock list routes - planned events', () => {
       const { unlockFilters } = req.session
 
       expect(unlockFilters).toBeDefined()
-      expect(unlockFilters.stayingOrLeavingFilters.filter(loc => loc.checked === true)).toHaveLength(0)
+      // Both is added back in whenever a radio option is cleared
+      expect(
+        unlockFilters.activityFilters.filter(loc => loc.checked === true).filter(loc => loc.value === 'Both'),
+      ).toHaveLength(1)
       const { unlockDate, timeSlot, location } = unlockFilters
       expect(res.redirect).toHaveBeenCalledWith(
-        `planned-events?date=${unlockDate}&slot=${timeSlot}&location=${location}`,
+        `planned-events?date=${formatDate(unlockDate, 'yyyy-MM-dd')}&slot=${timeSlot}&location=${location}`,
       )
     })
   })
@@ -375,9 +388,8 @@ const testUnlockFilters = (
   return {
     location: 'Houseblock 1',
     cellPrefix: 'MDI-1-',
-    unlockDate: '2022-01-01',
+    unlockDate: toDate('2022-01-01'),
     timeSlot: 'am',
-    formattedDate: '',
     subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
     locationFilters,
     activityFilters,

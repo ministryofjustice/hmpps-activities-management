@@ -89,8 +89,7 @@ export type UnlockFilterItem = {
 export type UnlockFilters = {
   location: string
   cellPrefix: string
-  unlockDate: string
-  formattedDate: string
+  unlockDate: Date
   timeSlot: string
   subLocations: string[]
   locationFilters: UnlockFilterItem[]
