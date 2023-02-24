@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { UnlockFilterItem, UnlockFilters } from '../../../@types/activities'
 import ActivitiesService from '../../../services/activitiesService'
 import UnlockListService from '../../../services/unlockListService'
-import { toDate, formatDate, convertToArray } from '../../../utils/utils'
+import { toDate, convertToArray, formatDate } from '../../../utils/utils'
 
 export default class PlannedEventsRoutes {
   constructor(
@@ -13,7 +13,7 @@ export default class PlannedEventsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { date, slot, location } = req.query
-    const formattedDate = formatDate(toDate(date.toString()), 'cccc do LLLL y')
+    const unlockDate = toDate(date.toString())
     const locationName: string = (location as string) || undefined
     let { unlockFilters } = req.session
 
@@ -22,31 +22,22 @@ export default class PlannedEventsRoutes {
         this.activitiesService.getLocationPrefix(locationName, user),
         this.activitiesService.getLocationGroups(user),
       ])
-
       const subLocations = locationsAtPrison.filter(loc => loc.name === locationName)[0].children.map(loc => loc.name)
-      unlockFilters = defaultFilters(
-        locationName,
-        prefix.locationPrefix,
-        date.toString(),
-        formattedDate,
-        slot.toString(),
-        subLocations,
-      )
-
+      unlockFilters = defaultFilters(locationName, prefix.locationPrefix, unlockDate, slot.toString(), subLocations)
       req.session.unlockFilters = unlockFilters
+    } else {
+      // Important - during serialization to/from session storage the date object is altered to a string
+      unlockFilters.unlockDate = new Date(unlockFilters.unlockDate)
     }
 
     // TODO: Caching of unlockListItems here - check and refresh if necessary - 10 mins?
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(unlockFilters, user)
-
     res.render('pages/unlock-list/planned-events', { unlockFilters, unlockListItems })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // The only values posted here are changes to the filtering options
     const { unlockFilters } = req.session
     const { date, slot, location } = req.query
-
     if (unlockFilters) {
       req.session.unlockFilters = parseFiltersFromPost(
         unlockFilters,
@@ -61,7 +52,6 @@ export default class PlannedEventsRoutes {
   }
 
   FILTERS = async (req: Request, res: Response): Promise<void> => {
-    // GET requests to remove selected filters by clicking 'x' tags
     const { clearFilters, clearLocation, clearActivity, clearStaying } = req.query
     let { unlockFilters } = req.session
 
@@ -73,11 +63,15 @@ export default class PlannedEventsRoutes {
         clearActivity as string,
         clearStaying as string,
       )
-
-      const { unlockDate, timeSlot, location } = unlockFilters
       req.session.unlockFilters = unlockFilters
 
-      res.redirect(`planned-events?date=${unlockDate}&slot=${timeSlot}&location=${location}`)
+      // Reconstruct the query parameters from the amended filters
+      const { unlockDate, timeSlot, location } = unlockFilters
+
+      // Important - during serialization to/from session storage the date object is altered to a string
+      const isoDateString = formatDate(new Date(unlockDate), 'yyyy-MM-dd')
+
+      res.redirect(`planned-events?date=${isoDateString}&slot=${timeSlot}&location=${location}`)
     } else {
       res.redirect(`select-date-and-location`)
     }
@@ -91,13 +85,12 @@ const amendFilters = (
   clearActivity: string,
   clearStaying: string,
 ): UnlockFilters => {
-  let newFilters
+  let newFilters = unlockFilters
   if (clearFilters) {
     newFilters = defaultFilters(
       unlockFilters.location,
       unlockFilters.cellPrefix,
       unlockFilters.unlockDate,
-      unlockFilters.formattedDate,
       unlockFilters.timeSlot,
       unlockFilters.subLocations,
     )
@@ -152,6 +145,8 @@ const parseFiltersFromPost = (
   activities: string | string[],
   stayingOrLeaving: string | string[],
 ): UnlockFilters => {
+  const newFilters = oldFilters
+
   const locationFilters = oldFilters.locationFilters.map(loc => {
     const checked = convertToArray(locations).includes(loc.value)
     return { value: loc.value, text: loc.text, checked } as UnlockFilterItem
@@ -167,8 +162,6 @@ const parseFiltersFromPost = (
     return { value: stay.value, text: stay.text, checked } as UnlockFilterItem
   })
 
-  const newFilters = oldFilters
-
   // Only override filter values if something was provided in the POST body
   if (convertToArray(locations).length > 0) newFilters.activityFilters = activityFilters
   if (convertToArray(activities).length > 0) newFilters.locationFilters = locationFilters
@@ -180,8 +173,7 @@ const parseFiltersFromPost = (
 const defaultFilters = (
   location: string,
   cellPrefix: string,
-  unlockDate: string,
-  formattedDate: string,
+  unlockDate: Date,
   timeSlot: string,
   subLocations: string[],
 ): UnlockFilters => {
@@ -205,7 +197,6 @@ const defaultFilters = (
     location,
     cellPrefix,
     unlockDate,
-    formattedDate,
     timeSlot,
     subLocations,
     locationFilters,

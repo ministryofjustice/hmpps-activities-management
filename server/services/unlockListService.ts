@@ -4,7 +4,7 @@ import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
 import { ScheduledEvent } from '../@types/activitiesAPI/types'
-import { convertToTitleCase } from '../utils/utils'
+import { convertToTitleCase, toDateString } from '../utils/utils'
 import logger from '../../logger'
 
 export default class UnlockListService {
@@ -62,7 +62,7 @@ export default class UnlockListService {
     // Get the scheduled events from their master source for these prisoners (activities, court, visits, appointments)
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       prison,
-      unlockFilters.unlockDate,
+      toDateString(unlockFilters.unlockDate),
       filteredPrisoners.map(p => p.prisonerNumber),
       user,
       unlockFilters.timeSlot,
@@ -101,7 +101,6 @@ export default class UnlockListService {
     // TODO: Apply filter for staying or leaving (an event, its type and locaction in relation to cell-location)
 
     logger.info(`Number of unlock list items ${filteredUnlockListItems?.length}`)
-
     return filteredUnlockListItems
   }
 
