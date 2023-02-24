@@ -60,15 +60,18 @@ context('Allocate to activity', () => {
     indexPage.allocateToActivityCard().click()
 
     const categoriesPage = Page.verifyOnPage(CategoriesDashboardPage)
-    categoriesPage.categoryRows().should('have.length', 7)
+    categoriesPage.categoryRows().should('have.length', 8)
+    categoriesPage.categoryRows().last().should('contain', 'Total')
+    categoriesPage.sortByTableHeader('Activity category')
+    categoriesPage.categoryRows().last().should('contain', 'Total')
     categoriesPage.selectCategoryWithName('Education')
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
-    activitiesPage.activityRows().should('have.length', 2)
+    activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
     const schedulesPage = Page.verifyOnPage(SchedulesDashboardPage)
-    schedulesPage.scheduleRows().should('have.length', 4)
+    schedulesPage.scheduleRows().should('have.length', 5)
     schedulesPage.selectScheduleWithName('Entry level English 1')
 
     const allocatePage = Page.verifyOnPage(AllocationDashboard)

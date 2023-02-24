@@ -5,13 +5,7 @@ export default class ActivitiesDashboardPage extends Page {
     super('allocate-to-activity-activities-page')
   }
 
-  activityRows = (): Cypress.Chainable =>
-    cy
-      .get('.govuk-table__body')
-      .find('tr')
-      .then($el => {
-        return Cypress.$.makeArray($el).slice(0, -1)
-      })
+  activityRows = (): Cypress.Chainable => cy.get('.govuk-table__body').find('tr')
 
   selectActivityWithName = (activityName: string) => this.activityRows().find(`a:contains(${activityName})`).click()
 }
