@@ -218,5 +218,6 @@
       "endTime": "11:00",
       "daysOfWeek": ["Mon"]
     }
-  ]
+  ],
+  "runsOnBankHoliday": false
 }

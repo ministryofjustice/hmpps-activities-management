@@ -1,0 +1,52 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% from "components/activitySummary.njk" import activitySummary %}
+
+{% set pageTitle = applicationName + " - Create a schedule - Bank Holiday option" %}
+{% set pageId = 'create-schedule-bank-holiday-option-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            {{ activitySummary(activity) }}
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    classes: "govuk-radios--inline",
+                    name: "runsOnBankHoliday",
+                    fieldset: {
+                        legend: {
+                            text: "Does this activity run on bank holidays?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "yes",
+                            text: "Yes"
+                        },
+                        {
+                            value: "no",
+                            text: "No"
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('runsOnBankHoliday')
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

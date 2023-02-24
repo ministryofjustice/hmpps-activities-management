@@ -131,6 +131,7 @@ export default class CheckAnswersRoutes {
       locationId: createScheduleJourney.location.id,
       capacity: createScheduleJourney.capacity,
       slots,
+      runsOnBankHoliday: createScheduleJourney.runsOnBankHoliday,
     } as ActivityScheduleCreateRequest
 
     const response = await this.activitiesService.createScheduleActivity(activityId, activitySchedule, user)

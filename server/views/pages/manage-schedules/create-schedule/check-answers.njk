@@ -71,6 +71,19 @@
                         ]
                     }
                     },
+                     {
+                        key: { text: "Runs on bank holidays" },
+                        value: { text: session.createScheduleJourney.runsOnBankHoliday },
+                        actions: {
+                        items: [
+                            {
+                                href: "bank-holiday-option?fromReview=true",
+                                text: "Change",
+                                visuallyHiddenText: "Change location"
+                            }
+                        ]
+                    }
+                    },
                     {
                         key: { text: "Location" },
                         value: { text: session.createScheduleJourney.location.name },
