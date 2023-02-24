@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
-import { IsNotEmpty } from 'class-validator'
+import { IsNotEmpty, MaxLength } from 'class-validator'
 
 export class Name {
   @Expose()
   @IsNotEmpty({ message: 'Enter a name for the activity' })
+  @MaxLength(40, { message: 'Enter a name for the activity that is 40 characters or less' })
   name: string
 }
 

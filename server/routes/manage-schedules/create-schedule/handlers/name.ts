@@ -5,7 +5,7 @@ import { IsNotEmpty, MaxLength } from 'class-validator'
 export class Name {
   @Expose()
   @IsNotEmpty({ message: 'Enter a name for the schedule' })
-  @MaxLength(50, { message: 'Enter a name for the schedule that is 50 characters or less' })
+  @MaxLength(40, { message: 'Enter a name for the schedule that is 40 characters or less' })
   name: string
 }
 
