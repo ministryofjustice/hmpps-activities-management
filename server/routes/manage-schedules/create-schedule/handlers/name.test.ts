@@ -73,7 +73,7 @@ describe('Route Handlers - Create an activity schedule - Name', () => {
 
     it('validation fails if name contains more than 40 characters', async () => {
       const body = {
-        name: 'An unreasonably long activity name to test validation',
+        name: 'An unreasonably long schedule name to test validation',
       }
 
       const requestObject = plainToInstance(Name, body)
