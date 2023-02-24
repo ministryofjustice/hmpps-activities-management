@@ -10,7 +10,7 @@ export default class SchedulesDashboardPage extends Page {
       .get('.govuk-table__body')
       .find('tr')
       .then($el => {
-        return Cypress.$.makeArray($el).slice(1)
+        return Cypress.$.makeArray($el).slice(0, -1)
       })
 
   selectScheduleWithName = (scheduleName: string) => this.scheduleRows().find(`a:contains(${scheduleName})`).click()
