@@ -3,6 +3,8 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
+{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
+
 {% set pageTitle = "Appointments Management - Create Single Appointment - Check Answers" %}
 {% set pageId = 'appointments-create-single-check-answers-page' %}
 
@@ -18,19 +20,16 @@
                             text: "Prisoner"
                         },
                         value: {
-                            html:
-                                '<div>
-                                    <div data-qa="prisoner-name">' + session.createSingleAppointmentJourney.prisoner.name | toTitleCase + '</div>
-                                    <div data-qa="prisoner-number">' + session.createSingleAppointmentJourney.prisoner.number + '</div>
-                                    <div data-qa="prisoner-cell-location">' + session.createSingleAppointmentJourney.prisoner.cellLocation + '</div>
-                                </div>'
+                            html: appointmentPrisonerSummary(session.createSingleAppointmentJourney.prisoner.name, session.createSingleAppointmentJourney.prisoner.number, session.createSingleAppointmentJourney.prisoner.cellLocation, dpsUrl)
                         },
                         actions: {
                             items: [
                                 {
                                     href: "select-prisoner?fromReview=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change prisoner"
+                                    visuallyHiddenText: "change prisoner",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-prisoner' }
                                 }
                             ]
                         }
@@ -47,7 +46,9 @@
                                 {
                                     href: "category?fromReview=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change category"
+                                    visuallyHiddenText: "change category",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-category' }
                                 }
                             ]
                         }
@@ -64,7 +65,9 @@
                                 {
                                     href: "location?fromReview=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change location"
+                                    visuallyHiddenText: "change location",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-location' }
                                 }
                             ]
                         }
@@ -81,7 +84,9 @@
                                 {
                                     href: "date-and-time?fromReview=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change date"
+                                    visuallyHiddenText: "change date",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-start-date' }
                                 }
                             ]
                         }
@@ -98,7 +103,9 @@
                                 {
                                     href: "date-and-time?fromReview=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change start time"
+                                    visuallyHiddenText: "change start time",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-start-time' }
                                 }
                             ]
                         }
@@ -115,7 +122,9 @@
                                 {
                                     href: "date-and-time?fromReview=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change end time"
+                                    visuallyHiddenText: "change end time",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-end-time' }
                                 }
                             ]
                         }

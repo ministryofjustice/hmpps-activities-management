@@ -8,6 +8,7 @@ import {
   TransferEvent,
   CaseLoad,
   InmateBasicDetails,
+  ReferenceCode,
 } from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
 import {
@@ -29,6 +30,10 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
 
   async getUser(user: ServiceUser): Promise<PrisonApiUserDetail> {
     return this.get({ path: '/api/users/me', authToken: user.token })
+  }
+
+  async getUserByUsername(username: string, user: ServiceUser): Promise<PrisonApiUserDetail> {
+    return this.get({ path: `/api/users/${username}`, authToken: user.token })
   }
 
   async getUserCaseLoads(user: ServiceUser): Promise<CaseLoad[]> {
@@ -201,6 +206,13 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     return this.post({
       path: `/api/bookings/offenders`,
       data: offenderNumbers,
+      authToken: user.token,
+    })
+  }
+
+  async getReferenceCodes(domain: string, user: ServiceUser): Promise<ReferenceCode[]> {
+    return this.get({
+      path: `/api/reference-domains/domains/${domain}/codes`,
       authToken: user.token,
     })
   }

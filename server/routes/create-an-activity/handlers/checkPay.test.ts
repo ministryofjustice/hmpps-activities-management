@@ -36,10 +36,12 @@ describe('Route Handlers - Create an activity - Check pay', () => {
         },
       },
       render: jest.fn(),
+      redirectOrReturn: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
 
     req = {
+      flash: jest.fn(),
       session: {
         createJourney: {
           name: 'Maths level 1',
@@ -73,6 +75,18 @@ describe('Route Handlers - Create an activity - Check pay', () => {
   })
 
   describe('POST', () => {
+    it('should add a validation message to flash if no pay bands are added', async () => {
+      req.session.createJourney.pay = []
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('back')
+      expect(req.flash).toHaveBeenCalledWith(
+        'validationErrors',
+        JSON.stringify([{ field: '', message: 'Add at least one pay band' }]),
+      )
+    })
+
     it('should add the minimum incentive level to the session and redirect', async () => {
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
@@ -84,7 +98,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
 
       await handler.POST(req, res)
       expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Standard')
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
     })
   })
 })

@@ -25,5 +25,17 @@ export default class CheckAnswersPage extends Page {
   assertEndTime = (hour: number, minute: number) =>
     cy.get('[data-qa=end-time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
+  changePrisoner = () => cy.get('[data-qa=change-prisoner]').click()
+
+  changeCategory = () => cy.get('[data-qa=change-category]').click()
+
+  changeLocation = () => cy.get('[data-qa=change-location]').click()
+
+  changeStartDate = () => cy.get('[data-qa=change-start-date]').click()
+
+  changeStartTime = () => cy.get('[data-qa=change-start-time]').click()
+
+  changeEndTime = () => cy.get('[data-qa=change-end-time]').click()
+
   createAppointment = () => cy.get('button').contains('Accept and save').click()
 }

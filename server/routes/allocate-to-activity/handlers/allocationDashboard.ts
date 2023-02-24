@@ -6,8 +6,15 @@ import ActivityService from '../../../services/activitiesService'
 import CapacitiesService from '../../../services/capacitiesService'
 import { ServiceUser } from '../../../@types/express'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
-import { PrisonerAllocations } from '../../../@types/activitiesAPI/types'
+import { ActivitySchedule, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 import { parseDate } from '../../../utils/utils'
+import { IepLevel } from '../../../@types/incentivesApi/types'
+
+type Filters = {
+  candidateQuery: string
+  incentiveLevelFilter: string
+  riskLevelFilter: string
+}
 
 export class SelectedAllocation {
   @Expose()
@@ -25,12 +32,25 @@ export default class AllocationDashboardRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { scheduleId } = req.params
+    const filters = req.query as Filters
 
-    const [schedule, allocationSummaryView, currentlyAllocated, candidates] = await Promise.all([
+    const [schedule, incentiveLevels]: [ActivitySchedule, IepLevel[]] = await Promise.all([
       this.activitiesService.getActivitySchedule(+scheduleId, user),
+      this.prisonService.getIncentiveLevels(user.activeCaseLoad.caseLoadId, user),
+    ])
+
+    const suitableForIep = this.getSuitableForIep(schedule.activity.minimumIncentiveLevel, incentiveLevels)
+    const suitableForWra = this.getSuitableForWra(schedule.activity.riskLevel)
+
+    if (Object.values(filters).length === 0) {
+      filters.incentiveLevelFilter = suitableForIep
+      filters.riskLevelFilter = suitableForWra
+    }
+
+    const [allocationSummaryView, currentlyAllocated, candidates] = await Promise.all([
       this.capacitiesService.getScheduleAllocationsSummary(+scheduleId, user),
       this.getCurrentlyAllocated(+scheduleId, user),
-      this.getCandidates(+scheduleId, user),
+      this.getCandidates(+scheduleId, filters, user),
     ])
 
     res.render('pages/allocate-to-activity/allocation-dashboard', {
@@ -38,12 +58,42 @@ export default class AllocationDashboardRoutes {
       schedule,
       currentlyAllocated,
       candidates,
+      incentiveLevels,
+      filters,
+      suitableForIep,
+      suitableForWra,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { selectedAllocation } = req.body
     res.redirect(`allocate/${selectedAllocation}`)
+  }
+
+  private getSuitableForIep = (minimumIncentiveLevel: string, iepLevels: IepLevel[]) => {
+    let string = ''
+    let sequenceOfMinimumIep: number
+    iepLevels.forEach(i => {
+      if (i.iepDescription === minimumIncentiveLevel) {
+        string = i.iepDescription
+        sequenceOfMinimumIep = i.sequence
+      }
+
+      if (i.sequence > sequenceOfMinimumIep) {
+        string = `${string} or ${i.iepDescription}`
+      }
+    })
+
+    if (string.split(' or ').length === iepLevels.length) {
+      string = 'All Incentive Levels'
+    }
+    return string
+  }
+
+  private getSuitableForWra = (riskLevel: string) => {
+    if (riskLevel === 'low') return 'Low'
+    if (riskLevel === 'medium') return 'Low or Medium'
+    return 'Low or Medium or High'
   }
 
   private getCurrentlyAllocated = async (scheduleId: number, user: ServiceUser) => {
@@ -74,23 +124,75 @@ export default class AllocationDashboardRoutes {
     })
   }
 
-  private getCandidates = async (scheduleId: number, user: ServiceUser) => {
+  private getCandidates = async (scheduleId: number, filters: Filters, user: ServiceUser) => {
+    const candidateQueryLower = filters.candidateQuery?.toLowerCase()
+    const suitableIeps = filters.incentiveLevelFilter?.split(' or ')
+    const suitableWpas = filters.riskLevelFilter?.split(' or ')
+
     const currentlyAllocated = await this.activitiesService
       .getAllocations(scheduleId, user)
       .then(allocations => allocations.map(allocation => allocation.prisonerNumber))
 
-    return this.prisonService
+    const pageOfInmates = await this.prisonService
       .getInmates(user.activeCaseLoad.caseLoadId, user)
       .then(page => page.content)
       .then(inmates => inmates.filter(i => !currentlyAllocated.includes(i.prisonerNumber)))
       .then(inmates => inmates.filter(i => i.status === 'ACTIVE IN').filter(i => i.legalStatus !== 'DEAD'))
       .then(inmates =>
-        inmates.map(inmate => ({
-          name: `${inmate.firstName} ${inmate.lastName}`,
-          prisonerNumber: inmate.prisonerNumber,
-          cellLocation: inmate.cellLocation,
-          releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
-        })),
+        inmates.filter(
+          i =>
+            filters.incentiveLevelFilter === 'All Incentive Levels' ||
+            !suitableIeps ||
+            suitableIeps.includes(i.currentIncentive.level.description),
+        ),
       )
+      .then(inmates => this.filterByWra(inmates, filters, suitableWpas))
+      .then(inmates =>
+        inmates.filter(
+          i =>
+            !candidateQueryLower ||
+            i.prisonerNumber.toLowerCase().includes(candidateQueryLower) ||
+            `${i.firstName} ${i.lastName}`.toLowerCase().includes(candidateQueryLower),
+        ),
+      )
+
+    const currentAllocations = await this.activitiesService.getPrisonerAllocations(
+      user.activeCaseLoad.caseLoadId,
+      pageOfInmates.map(i => i.prisonerNumber),
+      user,
+    )
+
+    return pageOfInmates.map(inmate => ({
+      name: `${inmate.firstName} ${inmate.lastName}`,
+      prisonerNumber: inmate.prisonerNumber,
+      otherAllocations:
+        currentAllocations
+          .find(a => a.prisonerNumber === inmate.prisonerNumber)
+          ?.allocations.map(a => ({
+            id: a.scheduleId,
+            scheduleName: a.scheduleDescription,
+          })) || [],
+      cellLocation: inmate.cellLocation,
+      releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
+    }))
+  }
+
+  private filterByWra = (inmates: Prisoner[], filters: Filters, suitableWras: string[]): Prisoner[] => {
+    /* Alert codes mapping to workplace risk assessments:
+       RHI - High
+       RME - Medium
+       RLO - Low
+     */
+    const allAlertCodes = ['RHI', 'RME', 'RLO']
+    const suitableAlertCodes = suitableWras?.map(w => `R${w.toUpperCase().slice(0, 2)}`)
+
+    return inmates.filter(
+      i =>
+        !suitableWras ||
+        filters.riskLevelFilter === 'Any Workplace Risk Assessment' ||
+        (filters.riskLevelFilter === 'No Workplace Risk Assessment' &&
+          i.alerts.find(a => a.alertType === 'R' && allAlertCodes.includes(a.alertCode)) === undefined) ||
+        i.alerts.find(a => a.alertType === 'R' && suitableAlertCodes.includes(a.alertCode)) !== undefined,
+    )
   }
 }

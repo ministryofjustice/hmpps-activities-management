@@ -36,12 +36,31 @@ const properCaseName = (name: string): string => (isBlank(name) ? '' : name.spli
 export const convertToTitleCase = (sentence: string): string =>
   isBlank(sentence) ? '' : sentence.split(' ').map(properCaseName).join(' ')
 
+/**
+ * Converts an unformatted name string to the format, 'J. Bloggs'.
+ * Specifically, this method initialises the first name and appends it by the last name. Any middle names are stripped.
+ * @param name name to be converted.
+ * @returns name converted to initialised format.
+ */
 export const initialiseName = (fullName?: string): string | null => {
   // this check is for the authError page
   if (!fullName) return null
 
   const array = fullName.split(' ')
   return `${array[0][0]}. ${array.reverse()[0]}`
+}
+
+/**
+ * Converts a user object containing firstName, lastName and middleNames to a full name string.
+ * @param user user to extract full name from
+ * @returns name string
+ */
+export const fullName = (user?: { firstName: string; lastName: string; middleNames?: string }): string | null => {
+  if (!user) return null
+  return [user.firstName, user.middleNames, user.lastName]
+    .filter(part => part)
+    .reduce((parts, part) => `${parts} ${part}`, '')
+    .trim()
 }
 
 export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {

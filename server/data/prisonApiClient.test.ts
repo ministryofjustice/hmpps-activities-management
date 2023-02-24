@@ -51,6 +51,19 @@ describe('prisonApiClient', () => {
     })
   })
 
+  describe('getUserByUsername', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakePrisonApi.get('/api/users/USERNAME').matchHeader('authorization', `Bearer token`).reply(200, response)
+
+      const output = await prisonApiClient.getUserByUsername('USERNAME', user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getUserCaseLoads', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }

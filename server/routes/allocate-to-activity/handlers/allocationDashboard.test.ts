@@ -12,6 +12,7 @@ import { ActivitySchedule, Allocation, PrisonerAllocations } from '../../../@typ
 import { AllocationsSummary } from '../../../@types/activities'
 import { PagePrisoner, Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../utils/utils'
+import { IepLevel } from '../../../@types/incentivesApi/types'
 
 jest.mock('../../../services/prisonService')
 jest.mock('../../../services/capacitiesService')
@@ -19,7 +20,7 @@ jest.mock('../../../services/activitiesService')
 
 const prisonService = new PrisonService(null, null, null, null) as jest.Mocked<PrisonService>
 const capacitiesService = new CapacitiesService(null) as jest.Mocked<CapacitiesService>
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null, null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Allocation dashboard', () => {
   const handler = new AllocationDashboardRoutes(prisonService, capacitiesService, activitiesService)
@@ -40,18 +41,28 @@ describe('Route Handlers - Allocation dashboard', () => {
       redirect: jest.fn(),
     } as unknown as Response
 
-    req = {} as unknown as Request
+    req = {
+      query: {},
+    } as unknown as Request
   })
 
   afterEach(() => jest.resetAllMocks())
 
   describe('GET', () => {
-    it('should render the correct view', async () => {
-      req.params = { scheduleId: '1' }
-
+    beforeEach(() => {
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ scheduleId: 1 } as unknown as ActivitySchedule)
+        .mockResolvedValue({
+          scheduleId: 1,
+          activity: { minimumIncentiveLevel: 'Basic' },
+        } as unknown as ActivitySchedule)
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValue([
+          { sequence: 0, iepDescription: 'Basic' },
+          { sequence: 1, iepDescription: 'Standard' },
+          { sequence: 2, iepDescription: 'Enhanced' },
+        ] as IepLevel[])
       when(capacitiesService.getScheduleAllocationsSummary)
         .calledWith(atLeast(1))
         .mockResolvedValue({
@@ -107,6 +118,17 @@ describe('Route Handlers - Allocation dashboard', () => {
             ],
           },
         ] as PrisonerAllocations[])
+      when(activitiesService.getPrisonerAllocations)
+        .calledWith(atLeast('MDI', ['G3439UH']))
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'G3439UH',
+            allocations: [
+              { scheduleId: 1, scheduleDescription: 'this schedule' },
+              { scheduleId: 2, scheduleDescription: 'other schedule' },
+            ],
+          },
+        ] as PrisonerAllocations[])
       when(prisonService.getInmates)
         .calledWith(atLeast('MDI'))
         .mockResolvedValue({
@@ -115,10 +137,21 @@ describe('Route Handlers - Allocation dashboard', () => {
               prisonerNumber: 'ABC123',
               status: 'ACTIVE IN',
               legalStatus: 'OTHER',
+              firstName: 'Joe',
+              lastName: 'Bloggs',
+              cellLocation: 'MDI-1-1-101',
+              releaseDate: '2023-12-25',
+              alerts: [],
+            },
+            {
+              prisonerNumber: '321CBA',
+              status: 'ACTIVE IN',
+              legalStatus: 'OTHER',
               firstName: 'John',
               lastName: 'Smith',
               cellLocation: 'MDI-1-1-103',
               releaseDate: '2023-12-26',
+              alerts: [],
             },
             {
               prisonerNumber: 'TEST123',
@@ -128,6 +161,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               lastName: 'Hamilton',
               cellLocation: 'MDI-1-1-104',
               releaseDate: '2023-12-26',
+              alerts: [],
             },
             {
               prisonerNumber: 'XYZ123',
@@ -137,6 +171,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               lastName: 'West',
               cellLocation: 'MDI-1-1-105',
               conditionalReleaseDate: '2023-12-26',
+              alerts: [],
             },
             {
               prisonerNumber: 'QWERTY',
@@ -145,16 +180,48 @@ describe('Route Handlers - Allocation dashboard', () => {
               firstName: 'Bill',
               lastName: 'Wilkins',
               cellLocation: 'MDI-1-1-106',
+              releaseDate: '2024-01-26',
+              alerts: [
+                {
+                  alertType: 'R',
+                  alertCode: 'RLO',
+                },
+              ],
+              currentIncentive: {
+                level: { description: 'Basic' },
+              },
+            },
+            {
+              prisonerNumber: 'G3439UH',
+              status: 'ACTIVE IN',
+              legalStatus: 'OTHER',
+              firstName: 'Jack',
+              lastName: 'Daniels',
+              cellLocation: 'MDI-1-1-107',
               releaseDate: '2023-12-26',
+              alerts: [
+                {
+                  alertType: 'R',
+                  alertCode: 'RLO',
+                },
+              ],
+              currentIncentive: {
+                level: { description: 'Standard' },
+              },
             },
           ],
         } as PagePrisoner)
+    })
+
+    it('should render the correct view', async () => {
+      req.params = { scheduleId: '1' }
+      req.query = { candidateQuery: 'jack' }
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/allocation-dashboard', {
         allocationSummaryView: { capacity: 20, allocated: 10, vacancies: 10 },
-        schedule: { scheduleId: 1 },
+        schedule: { scheduleId: 1, activity: { minimumIncentiveLevel: 'Basic' } },
         currentlyAllocated: [
           {
             cellLocation: 'MDI-1-1-101',
@@ -185,13 +252,168 @@ describe('Route Handlers - Allocation dashboard', () => {
         ],
         candidates: [
           {
-            cellLocation: 'MDI-1-1-106',
-            name: 'Bill Wilkins',
-            prisonerNumber: 'QWERTY',
+            cellLocation: 'MDI-1-1-107',
+            name: 'Jack Daniels',
+            otherAllocations: [
+              {
+                id: 1,
+                scheduleName: 'this schedule',
+              },
+              {
+                id: 2,
+                scheduleName: 'other schedule',
+              },
+            ],
+            prisonerNumber: 'G3439UH',
             releaseDate: new Date(2023, 11, 26),
           },
         ],
+        incentiveLevels: [
+          { sequence: 0, iepDescription: 'Basic' },
+          { sequence: 1, iepDescription: 'Standard' },
+          { sequence: 2, iepDescription: 'Enhanced' },
+        ],
+        filters: {
+          candidateQuery: 'jack',
+        },
+        suitableForIep: 'All Incentive Levels',
+        suitableForWra: 'Low or Medium or High',
       })
+    })
+
+    it('should calculate suitable iep correctly', async () => {
+      req.params = { scheduleId: '1' }
+      activitiesService.getActivitySchedule = jest.fn()
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({
+          scheduleId: 1,
+          activity: { minimumIncentiveLevel: 'Standard' },
+        } as unknown as ActivitySchedule)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/allocate-to-activity/allocation-dashboard',
+        expect.objectContaining({
+          candidates: [
+            expect.objectContaining({
+              prisonerNumber: 'G3439UH',
+            }),
+          ],
+          filters: expect.objectContaining({
+            incentiveLevelFilter: 'Standard or Enhanced',
+          }),
+          suitableForIep: 'Standard or Enhanced',
+        }),
+      )
+    })
+
+    it('should calculate suitable workplace risk assessment correctly - LOW', async () => {
+      req.params = { scheduleId: '1' }
+      activitiesService.getActivitySchedule = jest.fn()
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({
+          scheduleId: 1,
+          activity: { minimumIncentiveLevel: 'Standard', riskLevel: 'low' },
+        } as unknown as ActivitySchedule)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/allocate-to-activity/allocation-dashboard',
+        expect.objectContaining({
+          filters: expect.objectContaining({
+            riskLevelFilter: 'Low',
+          }),
+          suitableForWra: 'Low',
+        }),
+      )
+    })
+
+    it('should calculate suitable workplace risk assessment correctly - MEDIUM', async () => {
+      req.params = { scheduleId: '1' }
+      activitiesService.getActivitySchedule = jest.fn()
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({
+          scheduleId: 1,
+          activity: { minimumIncentiveLevel: 'Standard', riskLevel: 'medium' },
+        } as unknown as ActivitySchedule)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/allocate-to-activity/allocation-dashboard',
+        expect.objectContaining({
+          filters: expect.objectContaining({
+            riskLevelFilter: 'Low or Medium',
+          }),
+          suitableForWra: 'Low or Medium',
+        }),
+      )
+    })
+
+    it('should calculate suitable workplace risk assessment correctly - HIGH', async () => {
+      req.params = { scheduleId: '1' }
+      activitiesService.getActivitySchedule = jest.fn()
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({
+          scheduleId: 1,
+          activity: { minimumIncentiveLevel: 'Standard', riskLevel: 'high' },
+        } as unknown as ActivitySchedule)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/allocate-to-activity/allocation-dashboard',
+        expect.objectContaining({
+          filters: expect.objectContaining({
+            riskLevelFilter: 'Low or Medium or High',
+          }),
+          suitableForWra: 'Low or Medium or High',
+        }),
+      )
+    })
+
+    it('should return correct candidates with risk level filter set to any', async () => {
+      req.params = { scheduleId: '1' }
+      req.query = { candidateQuery: 'jack', riskLevelFilter: 'Any Workplace Risk Assessment' }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/allocate-to-activity/allocation-dashboard',
+        expect.objectContaining({
+          candidates: [
+            expect.objectContaining({
+              prisonerNumber: 'G3439UH',
+            }),
+          ],
+          filters: expect.objectContaining({
+            riskLevelFilter: 'Any Workplace Risk Assessment',
+          }),
+        }),
+      )
+    })
+
+    it('should return correct candidates with risk level filter set to none', async () => {
+      req.params = { scheduleId: '1' }
+      req.query = { candidateQuery: 'jack', riskLevelFilter: 'No Workplace Risk Assessment' }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/allocate-to-activity/allocation-dashboard',
+        expect.objectContaining({
+          candidates: [],
+          filters: expect.objectContaining({
+            riskLevelFilter: 'No Workplace Risk Assessment',
+          }),
+        }),
+      )
     })
   })
 

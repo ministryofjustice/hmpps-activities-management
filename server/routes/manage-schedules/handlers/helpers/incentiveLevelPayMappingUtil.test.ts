@@ -92,6 +92,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
           rate: 300,
         },
       ],
+      minimumEducationLevel: [],
     }
 
     user = {

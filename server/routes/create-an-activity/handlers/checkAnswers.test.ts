@@ -22,7 +22,7 @@ jest.mock('./helpers/incentiveLevelPayMappingUtil', () => {
   }
 })
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null, null, null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create an activity - Check answers', () => {
@@ -53,6 +53,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           pay: [{ incentiveLevel: 'Standard', bandId: 1, rate: 100 }],
           minimumIncentiveLevel: 'Standard',
           incentiveLevels: ['Standard', 'Enhanced'],
+          educationLevels: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
         },
       },
     } as unknown as Request
@@ -85,7 +86,27 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         riskLevel: 'High',
         minimumIncentiveLevel: 'Standard',
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+        minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
       }
+
+      when(activitiesService.createActivity).calledWith(atLeast(expectedActivity)).mockResolvedValueOnce(activity)
+
+      await handler.POST(req, res)
+      expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
+    })
+
+    it('should create the allocation when no education levels selected', async () => {
+      const expectedActivity = {
+        prisonCode: 'MDI',
+        summary: 'Maths level 1',
+        categoryId: 1,
+        riskLevel: 'High',
+        minimumIncentiveLevel: 'Standard',
+        pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+      }
+
+      req.session.createJourney.educationLevels = undefined
 
       when(activitiesService.createActivity).calledWith(atLeast(expectedActivity)).mockResolvedValueOnce(activity)
 

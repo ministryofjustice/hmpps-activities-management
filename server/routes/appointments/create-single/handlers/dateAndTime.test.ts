@@ -1,7 +1,18 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { getDate, getMonth, getYear } from 'date-fns'
+import {
+  addDays,
+  addHours,
+  addMonths,
+  getDate,
+  getHours,
+  getMinutes,
+  getMonth,
+  getYear,
+  subDays,
+  subMinutes,
+} from 'date-fns'
 import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
@@ -36,12 +47,12 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
   describe('POST', () => {
     it('should save start date, start time and end time in session and redirect to check answers page', async () => {
       const tomorrow = new Date()
-      tomorrow.setDate(getDate(tomorrow) + 1)
+      tomorrow.setDate(getDate(addDays(tomorrow, 1)))
 
       req.body = {
         startDate: plainToInstance(SimpleDate, {
           day: getDate(tomorrow),
-          month: getMonth(tomorrow) + 1,
+          month: getMonth(addMonths(tomorrow, 1)),
           year: getYear(tomorrow),
         }),
         startTime: plainToInstance(SimpleTime, {
@@ -94,15 +105,13 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
         ]),
       )
     })
-  })
 
-  describe('Validation', () => {
     it('validation fails when start date is in the past', async () => {
       const today = new Date()
       const body = {
         startDate: plainToInstance(SimpleDate, {
-          day: getDate(today) - 1,
-          month: getMonth(today) + 1,
+          day: getDate(subDays(today, 1)),
+          month: getMonth(addMonths(today, 1)),
           year: getYear(today),
         }),
         startTime: plainToInstance(SimpleTime, {
@@ -124,31 +133,55 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
     })
   })
 
-  describe('Validation', () => {
-    it('validation fails when end time after the start time', async () => {
-      const today = new Date()
-      const body = {
-        startDate: plainToInstance(SimpleDate, {
-          day: getDate(today) + 1,
-          month: getMonth(today) + 1,
-          year: getYear(today),
-        }),
-        startTime: plainToInstance(SimpleTime, {
-          hour: 11,
-          minute: 30,
-        }),
-        endTime: plainToInstance(SimpleTime, {
-          hour: 11,
-          minute: 30,
-        }),
-      }
+  it('validation fails when start time is in the past', async () => {
+    const today = new Date()
+    const body = {
+      startDate: plainToInstance(SimpleDate, {
+        day: getDate(today),
+        month: getMonth(addMonths(today, 1)),
+        year: getYear(today),
+      }),
+      startTime: plainToInstance(SimpleTime, {
+        hour: getHours(today),
+        minute: getMinutes(subMinutes(today, 1)),
+      }),
+      endTime: plainToInstance(SimpleTime, {
+        hour: getHours(addHours(today, 1)),
+        minute: getMinutes(today),
+      }),
+    }
 
-      const requestObject = plainToInstance(DateAndTime, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+    const requestObject = plainToInstance(DateAndTime, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(
-        expect.arrayContaining([{ error: 'Select an end time after the start time', property: 'endTime' }]),
-      )
-    })
+    expect(errors).toEqual(
+      expect.arrayContaining([{ error: 'Select a start time that is in the future', property: 'startTime' }]),
+    )
+  })
+
+  it('validation fails when end time after the start time', async () => {
+    const today = new Date()
+    const body = {
+      startDate: plainToInstance(SimpleDate, {
+        day: getDate(today) + 1,
+        month: getMonth(today) + 1,
+        year: getYear(today),
+      }),
+      startTime: plainToInstance(SimpleTime, {
+        hour: 11,
+        minute: 30,
+      }),
+      endTime: plainToInstance(SimpleTime, {
+        hour: 11,
+        minute: 30,
+      }),
+    }
+
+    const requestObject = plainToInstance(DateAndTime, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    expect(errors).toEqual(
+      expect.arrayContaining([{ error: 'Select an end time after the start time', property: 'endTime' }]),
+    )
   })
 })

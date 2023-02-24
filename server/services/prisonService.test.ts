@@ -4,7 +4,7 @@ import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import WhereaboutsApiClient from '../data/whereaboutsApiClient'
 import PrisonService from './prisonService'
-import { InmateDetail } from '../@types/prisonApiImport/types'
+import { InmateDetail, ReferenceCode } from '../@types/prisonApiImport/types'
 import { Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 import activityLocations from './fixtures/activity_locations_1.json'
@@ -56,14 +56,18 @@ describe('Prison Service', () => {
     it('should get the prisons incentive levels from incentives API', async () => {
       const apiResponse = [
         { id: 1, active: false },
-        { id: 2, active: true },
+        { id: 2, active: true, sequence: 1 },
+        { id: 3, active: true, sequence: 0 },
       ] as unknown as IepLevel[]
 
       when(incentivesApiClient.getIncentiveLevels).calledWith(atLeast('MDI')).mockResolvedValue(apiResponse)
 
       const actualResult = await prisonService.getIncentiveLevels('MDI', user)
 
-      expect(actualResult).toEqual([{ id: 2, active: true }])
+      expect(actualResult).toEqual([
+        { id: 3, active: true, sequence: 0 },
+        { id: 2, active: true, sequence: 1 },
+      ])
       expect(incentivesApiClient.getIncentiveLevels).toHaveBeenCalledWith('MDI', user)
     })
   })
@@ -224,6 +228,19 @@ describe('Prison Service', () => {
       )
       expect(reasons.attendances.length).toEqual(2)
       expect(whereaboutsApiClient.getAbsenceReasons).toHaveBeenCalledWith(user)
+    })
+  })
+
+  describe('getReferenceCodes', () => {
+    it('should get the reference codes for the supplied domain from the prisons API', async () => {
+      const expectedResult = [{ data: 'response' }] as unknown as ReferenceCode[]
+
+      when(prisonApiClient.getReferenceCodes).calledWith(atLeast('EDU_LEVEL')).mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.getReferenceCodes('EDU_LEVEL', user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(prisonApiClient.getReferenceCodes).toHaveBeenCalledWith('EDU_LEVEL', user)
     })
   })
 })

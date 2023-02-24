@@ -3,6 +3,7 @@ import { when } from 'jest-when'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import ActivitiesService from '../services/activitiesService'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
+import PrisonApiClient from '../data/prisonApiClient'
 import fetchActivity from './fetchActivity'
 import atLeast from '../../jest.setup'
 
@@ -11,11 +12,13 @@ import activity from './fixtures/activity_1.json'
 jest.mock('../services/activitiesService')
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
+jest.mock('../data/prisonApiClient')
 
 describe('fetchActivityList', () => {
   const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
   const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
-  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
+  const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
+  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient, prisonApiClient)
 
   it('Success', async () => {
     const req = getMockReq({

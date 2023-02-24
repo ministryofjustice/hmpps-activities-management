@@ -5,6 +5,7 @@
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/searchBar.njk" import searchBar %}
 
 {% set pageTitle = applicationName + " - Allocate" %}
 {% set pageId = 'allocation-dashboard-page' %}
@@ -76,17 +77,15 @@
                                 text: "Suitable for workplace risk assessment:"
                             },
                             {
-                                text: ("Low" if schedule.activity.riskLevel == 'low') +
-                                      ("Low and Medium" if schedule.activity.riskLevel == 'medium') +
-                                      ("Low, Medium and High" if schedule.activity.riskLevel == 'high')
+                                text: suitableForWra
                             }
                         ],
                         [
                             {
-                                text: "Suitable for minimum incentive level:"
+                                text: "Suitable for incentive level:"
                             },
                             {
-                                text: schedule.activity.minimumIncentiveLevel
+                                text: suitableForIep
                             }
                         ]
                     ]
@@ -189,12 +188,141 @@
 {% endset %}
 
 {% set candidatesHtml %}
-    <p>
-        Your candidate list has been filtered to show people who match all the requirements for this activity.
-        Use the filters to expand or reduce the list. You can also search for someone you want to allocate.
-    </p>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop govuk-grid-column-one-half">
+            <p>
+                Your candidate list has been filtered to show people who match all the requirements for this activity.
+                Use the filters to expand or reduce the list. You can also search for someone you want to allocate.
+            </p>
+        </div>
+        <div class="govuk-grid-column-one-third-from-desktop govuk-grid-column-one-half">
+            <form method='GET'>
+                <label class="govuk-label" for="candidate-search-input">Search by name or prison number:</label>
+                {{ searchBar({
+                    inputParams: {
+                        id: 'candidate-search-input',
+                        name: 'candidateQuery',
+                        value: filters.candidateQuery
+                    },
+                    buttonParams: {
+                        text: 'Search'
+                    }
+                }) }}
+            </form>
+        </div>
+    </div>
+    <div class='filter'>
+        <form method='GET'>
+            <div class="filter__items">
+                {% set riskLevelOptions = [
+                    {
+                        value: 'Low',
+                        text: 'Low',
+                        selected: filters.riskLevelFilter == 'Low'
+                    },
+                    {
+                        value: 'Low or Medium',
+                        text: 'Low or Medium',
+                        selected: filters.riskLevelFilter == 'Low or Medium'
+                    },
+                    {
+                        value: 'Low or Medium or High',
+                        text: 'Low or Medium or High',
+                        selected: filters.riskLevelFilter == 'Low or Medium or High'
+                    },
+                    {
+                        value: 'No Workplace Risk Assessment',
+                        text: 'No Workplace Risk Assessment',
+                        selected: filters.riskLevelFilter == 'No Workplace Risk Assessment'
+                    },
+                    {
+                        value: 'Any Workplace Risk Assessment',
+                        text: 'Any Workplace Risk Assessment',
+                        selected: filters.riskLevelFilter == 'Any Workplace Risk Assessment'
+                    }
+                ] %}
+                {{ govukSelect({
+                    id: "riskLevelFilter",
+                    name: "riskLevelFilter",
+                    classes: "govuk-!-width-full",
+                    label: {
+                        text: "Showing people whose workplace risk assessment is:"
+                    },
+                    items: riskLevelOptions
+                }) }}
+
+                {% set incentiveLevelOptions = [] %}
+                {% for incentiveLevel in incentiveLevels %}
+                    {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                        {
+                            value: incentiveLevel.iepDescription,
+                            text: incentiveLevel.iepDescription,
+                            selected: filters.incentiveLevelFilter == incentiveLevel.iepDescription
+                        }
+                    ), incentiveLevelOptions) %}
+                {% endfor %}
+                {% for incentiveLevel in incentiveLevels %}
+                    {% if loop.first or loop.last %}
+                        {% set option = incentiveLevel.iepDescription %}
+                    {% else %}
+                        {% set option = option + ' or ' + incentiveLevel.iepDescription %}
+                        {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                            {
+                                value: option,
+                                text: option,
+                                selected: filters.incentiveLevelFilter == option
+                            }
+                        ), incentiveLevelOptions) %}
+                    {% endif %}
+                {% endfor %}
+                {% for incentiveLevel in incentiveLevels | reverse %}
+                    {% if loop.first or loop.last %}
+                        {% set option = incentiveLevel.iepDescription %}
+                    {% else %}
+                        {% set option = incentiveLevel.iepDescription + ' or ' + option %}
+                        {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                            {
+                                value: option,
+                                text: option,
+                                selected: filters.incentiveLevelFilter == option
+                            }
+                        ), incentiveLevelOptions) %}
+                    {% endif %}
+                {% endfor %}
+                {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                    {
+                        value: 'All Incentive Levels',
+                        text: 'All Incentive Levels',
+                        selected: filters.incentiveLevelFilter == 'All Incentive Levels'
+                    }
+                ), incentiveLevelOptions) %}
+
+                {{ govukSelect({
+                    id: "incentiveLevelFilter",
+                    name: "incentiveLevelFilter",
+                    classes: "govuk-!-width-full",
+                    label: {
+                        text: "Showing people who have the following incentive level:"
+                    },
+                    items: incentiveLevelOptions
+                }) }}
+            </div>
+
+            {{ govukButton({
+                text: "Apply filters"
+            }) }}
+        </form>
+    </div>
+
     {% set rows = [] %}
     {% for row in candidates %}
+        {% set currentAllocationsHtml %}
+            <div>
+                {% for allocation in row.otherAllocations %}
+                    <div>{{ allocation.scheduleName }}</div>
+                {% endfor %}
+            </div>
+        {% endset %}
         {% set id = 'selectedAllocation' + (('-' + loop.index0) if loop.index0 else '') %}
         {% set rows = (rows.push([
             {
@@ -216,6 +344,9 @@
                 '
             },
             {
+                html: currentAllocationsHtml
+            },
+            {
                 text: row.releaseDate | formatDate('do MMMM yyyy') if row.releaseDate else 'TBC'
             }
         ]), rows) %}
@@ -231,15 +362,20 @@
                     text: "Candidate details"
                 },
                 {
+                    text: "Current Allocation"
+                },
+                {
                     text: "Earliest release date"
                 }
             ],
             rows: rows
         }) }}
 
-        {{ govukButton({
-            text: "Select candidate"
-        }) }}
+        {% if rows.length > 0 %}
+            {{ govukButton({
+                text: "Select candidate"
+            }) }}
+        {% endif %}
     </form>
 {% endset %}
 

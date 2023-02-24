@@ -9,7 +9,7 @@ import { LocationGroup } from '../../../@types/activitiesAPI/types'
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/unlockListService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null, null, null) as jest.Mocked<ActivitiesService>
 const unlockListService = new UnlockListService(null, null, null) as jest.Mocked<UnlockListService>
 
 describe('Unlock list routes - planned events', () => {

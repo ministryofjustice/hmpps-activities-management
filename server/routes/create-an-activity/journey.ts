@@ -15,4 +15,9 @@ export type CreateAnActivityJourney = {
   }>
   minimumIncentiveNomisCode?: string
   minimumIncentiveLevel?: string
+  qualificationOption?: string
+  educationLevels?: Array<{
+    educationLevelCode: string
+    educationLevelDescription: string
+  }>
 }

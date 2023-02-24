@@ -31,4 +31,12 @@ export default class AllocationDashboard extends Page {
   }
 
   activeTimeSlots = () => cy.get('.govuk-table__cell > .govuk-tag').contains('Yes')
+
+  enterCandidateQuery = (query: string) => cy.get('#candidate-search-input').type(query)
+
+  search = () => cy.get('button').contains('Search').click()
+
+  selectRiskLevelOption = (option: string) => cy.get('#riskLevelFilter').select(option)
+
+  applyFilters = () => cy.get('button').contains('Apply filters').click()
 }

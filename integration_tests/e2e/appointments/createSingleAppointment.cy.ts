@@ -5,24 +5,37 @@ import AppointmentsManagementPage from '../../pages/appointments/appointmentsMan
 import SelectPrisonerPage from '../../pages/appointments/createSingle/selectPrisonerPage'
 import CategoryPage from '../../pages/appointments/createSingle/categoryPage'
 import LocationPage from '../../pages/appointments/createSingle/locationPage'
-import prisonerAllocations from '../../fixtures/prisonerSearchApi/postMatchPrisonerA8644DY.json'
+import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatchPrisonerA8644DY.json'
+import prisonersByNumbers from '../../fixtures/prisonerSearchApi/postPrisonerNumbers.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
+import getUser from '../../fixtures/prisonApi/getUser.json'
+import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
+import AppointmentDetails from '../../pages/appointments/details/appointmentDetails'
 import { formatDate } from '../../../server/utils/utils'
 
 context('Create single appointment', () => {
+  const tomorrow = new Date()
+  tomorrow.setDate(getDate(tomorrow) + 1)
+  // To pass validation we must ensure the appointment create date and start date are always set to tomorrow
+  getAppointment.created = tomorrow
+  getAppointment.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
     cy.signIn()
-    cy.stubEndpoint('POST', '/prisoner-search/match-prisoners', prisonerAllocations)
+    cy.stubEndpoint('POST', '/prisoner-search/match-prisoners', postMatchPrisonerA8644DY)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
-    cy.stubEndpoint('POST', '/appointments')
+    cy.stubEndpoint('POST', '/appointments', getAppointment)
+    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisonersByNumbers)
+    cy.stubEndpoint('GET', '/api/users/USER1', getUser)
+    cy.stubEndpoint('GET', '/appointments/10', getAppointment)
   })
 
   it('Should complete create single appointment journey', () => {
@@ -53,8 +66,6 @@ context('Create single appointment', () => {
     locationPage.continue()
 
     const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
-    const tomorrow = new Date()
-    tomorrow.setDate(getDate(tomorrow) + 1)
     dateAndTimePage.enterStartDate(tomorrow)
     dateAndTimePage.selectStartTime(14, 0)
     dateAndTimePage.selectEndTime(15, 30)
@@ -75,5 +86,17 @@ context('Create single appointment', () => {
     )
     confirmationPage.assertCreateAnotherLinkExists()
     confirmationPage.assertViewAppointmentLinkExists()
+
+    confirmationPage.viewAppointmentLink().click()
+
+    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetails)
+    appointmentDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    appointmentDetailsPage.assertCategory('Chaplaincy')
+    appointmentDetailsPage.assertLocation('Chapel')
+    appointmentDetailsPage.assertStartDate(tomorrow)
+    appointmentDetailsPage.assertStartTime(14, 0)
+    appointmentDetailsPage.assertEndTime(15, 30)
+    appointmentDetailsPage.assertCreatedBy('J. Smith')
+    appointmentDetailsPage.assertPrintMovementSlipLink()
   })
 })

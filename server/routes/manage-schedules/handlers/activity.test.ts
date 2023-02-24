@@ -7,7 +7,7 @@ import PrisonService from '../../../services/prisonService'
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null, null, null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - View Activity', () => {
@@ -38,6 +38,7 @@ describe('Route Handlers - View Activity', () => {
     tier: { code: '', description: '', id: 0 },
     waitingList: [],
     id: 1,
+    minimumEducationLevel: [],
   })
 
   beforeEach(() => {
@@ -89,6 +90,7 @@ describe('Route Handlers - View Activity', () => {
           tier: { code: '', description: '', id: 0 },
           waitingList: [],
           id: 1,
+          minimumEducationLevel: [],
         },
         incentiveLevelPays: [],
       })
