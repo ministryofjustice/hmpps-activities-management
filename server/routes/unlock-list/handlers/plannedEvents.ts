@@ -116,14 +116,14 @@ const clearLocationItem = (unlockFilters: UnlockFilters, loc: string): UnlockFil
 const clearActivityItem = (unlockFilters: UnlockFilters, act: string): UnlockFilters => {
   const newActivityFilters = unlockFilters.activityFilters
     .map(a => ({
-      value: a.value, 
-      text: a.text, 
-      checked: a.value === act ? false : a.checked
+      value: a.value,
+      text: a.text,
+      checked: a.value === act ? false : a.checked,
     }))
     .map(a => ({
-      value: a.value, 
-      text: a.text, 
-      checked: a.value === 'Both' ? true : a.checked
+      value: a.value,
+      text: a.text,
+      checked: a.value === 'Both' ? true : a.checked,
     }))
   const newFilters = unlockFilters
   newFilters.activityFilters = newActivityFilters
@@ -133,14 +133,14 @@ const clearActivityItem = (unlockFilters: UnlockFilters, act: string): UnlockFil
 const clearStayingItem = (unlockFilters: UnlockFilters, staying: string): UnlockFilters => {
   const newStayingOrLeavingFilters = unlockFilters.stayingOrLeavingFilters
     .map(s => ({
-      value: s.value, 
-      text: s.text, 
-      checked: s.value === staying ? false : s.checked
+      value: s.value,
+      text: s.text,
+      checked: s.value === staying ? false : s.checked,
     }))
     .map(a => ({
-      value: a.value, 
-      text: a.text, 
-      checked: a.value === 'Both' ? true : a.checked
+      value: a.value,
+      text: a.text,
+      checked: a.value === 'Both' ? true : a.checked,
     }))
   const newFilters = unlockFilters
   newFilters.stayingOrLeavingFilters = newStayingOrLeavingFilters
