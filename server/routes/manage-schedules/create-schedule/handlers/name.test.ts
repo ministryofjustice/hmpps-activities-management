@@ -54,6 +54,7 @@ describe('Route Handlers - Create an activity schedule - Name', () => {
       }
 
       const requestObject = plainToInstance(Name, body)
+
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'name', error: 'Enter a name for the schedule' }])
@@ -68,6 +69,19 @@ describe('Route Handlers - Create an activity schedule - Name', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'name', error: 'Enter a name for the schedule' }])
+    })
+
+    it('validation fails if name contains more than 40 characters', async () => {
+      const body = {
+        name: 'An unreasonably long schedule name to test validation',
+      }
+
+      const requestObject = plainToInstance(Name, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        { property: 'name', error: 'Enter a name for the schedule that is 40 characters or less' },
+      ])
     })
   })
 })
