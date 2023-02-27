@@ -35,10 +35,11 @@
                         classes: "form-group-with-bottom-hint"
                     },
                     errorMessage: validationErrors | findError('name'),
-                    value: formResponses.name or session.createScheduleJourney.name
+                    value: formResponses.name or session.createScheduleJourney.name,
+                    describedBy: 'with-hint-info'
                 }) }}
                 <div id="with-hint-info" class="govuk-hint govuk-character-count__message bottom-hint">
-                    Maximum number of characters: 50
+                    Maximum number of characters: 40
                 </div>
                 {{ govukButton({
                     text: "Continue"
