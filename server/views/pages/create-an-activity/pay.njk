@@ -25,9 +25,11 @@
         <div class="govuk-grid-column-full">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% if pay.bandId %}<input type="hidden" name="currentPayBand" value="{{ pay.bandId }}" />{% endif %}
+                {% if pay.incentiveLevel %}<input type="hidden" name="currentIncentiveLevel" value="{{ pay.incentiveLevel }}" />{% endif %}
 
                 <p class="govuk-body">Add all the pay rates available for this activity.</p>
-                <p class="govuk-body">You can add up to 10 rates for each incentive level. Each time you add one you'll have the option to add another.</p>
+                <p class="govuk-body">You can add up to {{ payBands | length }} rates for each incentive level. Each time you add one you'll have the option to add another.</p>
                 <p class="govuk-body">When you come to allocate someone to this activity, all the rates that can be paid will be displayed.</p>
 
                 {{ govukInput({
@@ -45,7 +47,7 @@
                     },
                     classes: "govuk-input--width-5",
                     errorMessage: validationErrors | findError('rate'),
-                    value: formResponses.rate
+                    value: formResponses.rate or (pay.rate / 100) | toFixed or ''
                 }) }}
 
                 {% set payBandOptions = [
@@ -59,7 +61,7 @@
                         {
                             value: payBand.id,
                             text: payBand.alias,
-                            selected: formResponses.bandId == payBand.id
+                            selected: payBand.id == (formResponses.bandId or pay.bandId)
                         }
                     ), payBandOptions) %}
                 {% endfor %}
@@ -75,14 +77,13 @@
                     items: payBandOptions
                 }) }}
 
-
                 {% set incentiveLevelOptions = [] %}
                 {% for incentiveLevel in incentiveLevels %}
                     {% set incentiveLevelOptions = (incentiveLevelOptions.push(
                         {
                             value: incentiveLevel.iepDescription,
                             text: incentiveLevel.iepDescription,
-                            checked: incentiveLevel.iepDescription in formResponses.incentiveLevels if formResponses.incentiveLevels
+                            checked: incentiveLevel.iepDescription in (formResponses.incentiveLevels if formResponses.incentiveLevels) or incentiveLevel.iepDescription == pay.incentiveLevel
                         }
                     ), incentiveLevelOptions) %}
                 {% endfor %}

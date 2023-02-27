@@ -47,6 +47,11 @@
                             actions: {
                                 items: [
                                     {
+                                        href: "pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId,
+                                        text: "Change",
+                                        visuallyHiddenText: "change pay rate"
+                                    },
+                                    {
                                         href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId,
                                         text: "Remove",
                                         visuallyHiddenText: "remove pay rate"

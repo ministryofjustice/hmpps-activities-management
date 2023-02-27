@@ -31,22 +31,32 @@ export default class PayRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { iep } = req.query
+    const bandId = +req.query.bandId
+
+    const pay = req.session.createJourney?.pay?.find(p => p.bandId === bandId && p.incentiveLevel === iep)
 
     const [incentiveLevels, payBands] = await Promise.all([
       this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user).then(levels => levels.filter(l => l.active)),
       this.activitiesService.getPayBandsForPrison(user),
     ])
 
-    res.render(`pages/create-an-activity/pay`, { incentiveLevels, payBands })
+    res.render(`pages/create-an-activity/pay`, { incentiveLevels, payBands, pay })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { rate, bandId, incentiveLevels } = req.body
+    const { rate, bandId, incentiveLevels, currentPayBand, currentIncentiveLevel } = req.body
 
     if (!req.session.createJourney.pay) {
       req.session.createJourney.pay = []
     }
+
+    // Remove the current pay rate to prevent duplicate pay rates
+    const payIndex = req.session.createJourney.pay.findIndex(
+      p => p.bandId === currentPayBand && p.incentiveLevel === currentIncentiveLevel,
+    )
+    if (payIndex >= 0) req.session.createJourney.pay.splice(payIndex, 1)
 
     const [bandAlias, displaySequence] = await this.activitiesService
       .getPayBandsForPrison(user)
