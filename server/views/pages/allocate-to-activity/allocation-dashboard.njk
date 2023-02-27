@@ -148,13 +148,13 @@
                 }
             },
             {
-                text: row.dateAllocated | formatDate('do MMMM yyyy')
+                text: row.dateAllocated | formatDate('d MMMM yyyy')
             },
             {
                 html: otherAllocationsHtml
             },
             {
-                text: row.releaseDate | formatDate('do MMMM yyyy') if row.releaseDate else 'TBC'
+                text: row.releaseDate | formatDate('d MMMM yyyy') if row.releaseDate else 'TBC'
             }
         ]), rows) %}
     {% endfor %}
@@ -347,7 +347,7 @@
                 html: currentAllocationsHtml
             },
             {
-                text: row.releaseDate | formatDate('do MMMM yyyy') if row.releaseDate else 'TBC'
+                text: row.releaseDate | formatDate('d MMMM yyyy') if row.releaseDate else 'TBC'
             }
         ]), rows) %}
     {% endfor %}
@@ -362,7 +362,7 @@
                     text: "Candidate details"
                 },
                 {
-                    text: "Current Allocation"
+                    text: "Current allocations"
                 },
                 {
                     text: "Earliest release date"

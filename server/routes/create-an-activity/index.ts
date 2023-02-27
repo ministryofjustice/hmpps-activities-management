@@ -11,7 +11,7 @@ import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import PayRoutes, { Pay } from './handlers/pay'
 import CheckPayRoutes from './handlers/checkPay'
-import RemovePayRoutes from './handlers/removePay'
+import RemovePayRoutes, { ConfirmRemoveOptions } from './handlers/removePay'
 import QualificationRoutes, { Qualification } from './handlers/qualifications'
 import EducationLevelRoutes, { EducationLevel } from './handlers/educationLevel'
 import RemoveEducationLevelRoutes from './handlers/removeEducationLevel'
@@ -48,6 +48,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/pay', payHandler.GET, true)
   post('/pay', payHandler.POST, Pay)
   get('/remove-pay', removePayHandler.GET, true)
+  post('/remove-pay', removePayHandler.POST, ConfirmRemoveOptions)
   get('/check-pay', checkPayHandler.GET, true)
   post('/check-pay', checkPayHandler.POST)
   get('/qualification', qualificationHandler.GET, true)
