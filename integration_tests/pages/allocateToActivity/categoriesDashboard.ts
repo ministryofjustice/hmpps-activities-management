@@ -5,13 +5,11 @@ export default class CategoriesDashboardPage extends Page {
     super('allocate-to-activity-categories-page')
   }
 
-  categoryRows = (): Cypress.Chainable =>
-    cy
-      .get('.govuk-table__body')
-      .find('tr')
-      .then($el => {
-        return Cypress.$.makeArray($el).slice(1)
-      })
+  categoryHeaders = (): Cypress.Chainable => cy.get('thead').find('tr')
+
+  categoryRows = (): Cypress.Chainable => cy.get('.govuk-table__body').find('tr')
 
   selectCategoryWithName = (categoryName: string) => this.categoryRows().find(`a:contains(${categoryName})`).click()
+
+  sortByTableHeader = (headerName: string) => this.categoryHeaders().find(`th button:contains(${headerName})`).click()
 }

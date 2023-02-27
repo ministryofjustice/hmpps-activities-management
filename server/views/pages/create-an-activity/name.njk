@@ -24,10 +24,16 @@
                     id: "name",
                     name: "name",
                     classes: "govuk-!-width-one-half",
+                    formGroup: {
+                        classes: "form-group-with-bottom-hint"
+                    },
                     errorMessage: validationErrors | findError('name'),
-                    value: formResponses.name or session.createJourney.name
+                    value: formResponses.name or session.createJourney.name,
+                    describedBy: 'with-hint-info'
                 }) }}
-
+                <div id="with-hint-info" class="govuk-hint govuk-character-count__message bottom-hint">
+                    Maximum number of characters: 40
+                </div>
                 {{ govukButton({
                     text: "Continue"
                 }) }}

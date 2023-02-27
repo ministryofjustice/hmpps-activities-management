@@ -21,32 +21,39 @@
             {% set rows = [
                 [
                     {
-                        html: '<h3 class="govuk-heading-m govuk-!-margin-bottom-3">Total</h3>'
+                        html: '<h3 class="govuk-heading-m govuk-!-margin-bottom-0">Total</h3>',
+                        attributes: {
+                            "data-sort-fixed": "bottom"
+                        }
                     },
                     {
                         attributes: {
-                            id: 'capacity-total'
+                            id: 'capacity-total',
+                            "data-sort-fixed": "bottom"
                         },
                         classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
                         text: total.capacity
                     },
                     {
                         attributes: {
-                            id: 'allocated-total'
+                            id: 'allocated-total',
+                            "data-sort-fixed": "bottom"
                         },
                         classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
                         text: total.allocated
                     },
                     {
                         attributes: {
-                            id: 'percentage-allocated-total'
+                            id: 'percentage-allocated-total',
+                            "data-sort-fixed": "bottom"
                         },
                         classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
                         text: total.percentageAllocated + '%'
                     },
                     {
                         attributes: {
-                            id: 'vacancies-total'
+                            id: 'vacancies-total',
+                            "data-sort-fixed": "bottom"
                         },
                         classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
                         text: total.vacancies
@@ -62,7 +69,7 @@
                             "data-sort-value": category.name
                         },
                         html: '
-                                <h3 class="govuk-heading-m govuk-!-margin-bottom-3">
+                                <h3 class="govuk-heading-m govuk-!-margin-bottom-0">
                                     <a href="categories/' + category.id + '/activities" class="govuk-link govuk-link--no-visited-state">' + category.name + '</a>
                                 </h3>
                               '
@@ -106,7 +113,8 @@
 
             {{ govukTable({
                 attributes: {
-                    'data-module': 'moj-sortable-table'
+                    'data-module': 'moj-sortable-table',
+                    'data-table-fixed-rows': 'true'
                 },
                 caption: "Categories",
                 captionClasses: "govuk-visually-hidden",
