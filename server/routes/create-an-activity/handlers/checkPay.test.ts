@@ -83,7 +83,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       expect(res.redirect).toHaveBeenCalledWith('back')
       expect(req.flash).toHaveBeenCalledWith(
         'validationErrors',
-        JSON.stringify([{ field: '', message: 'Add at least one pay band' }]),
+        JSON.stringify([{ field: '', message: 'Add at least one pay rate' }]),
       )
     })
 

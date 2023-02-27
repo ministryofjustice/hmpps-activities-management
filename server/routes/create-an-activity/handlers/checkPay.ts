@@ -22,7 +22,7 @@ export default class CheckPayRoutes {
     const { pay } = req.session.createJourney
 
     if (pay.length === 0) {
-      req.flash('validationErrors', JSON.stringify([{ field: '', message: `Add at least one pay band` }]))
+      req.flash('validationErrors', JSON.stringify([{ field: '', message: `Add at least one pay rate` }]))
       return res.redirect('back')
     }
 
