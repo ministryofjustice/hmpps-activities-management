@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 
 import RemovePayRoutes from './removePay'
 
+const flash = jest.fn()
+
 describe('Route Handlers - Create an activity - Remove pay', () => {
   const handler = new RemovePayRoutes()
   let req: Request
@@ -20,6 +22,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     } as unknown as Response
 
     req = {
+      flash,
       query: {},
       session: {
         createJourney: {
@@ -29,10 +32,10 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
           },
           riskLevel: 'High',
           pay: [
-            { incentiveLevel: 'Standard', bandId: 1, rate: 100 },
-            { incentiveLevel: 'Standard', bandId: 2, rate: 100 },
-            { incentiveLevel: 'Basic', bandId: 1, rate: 100 },
-            { incentiveLevel: 'Basic', bandId: 2, rate: 100 },
+            { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
+            { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
+            { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
+            { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
           ],
           incentiveLevels: ['Basic', 'Standard'],
         },
@@ -45,15 +48,67 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
   })
 
   describe('GET', () => {
-    it('should remove specified pay and redirect', async () => {
+    it('should show confirmation page', async () => {
       req.query = { iep: 'Basic', bandId: '1' }
       await handler.GET(req, res)
-      expect(req.session.createJourney.pay).toEqual([
-        { incentiveLevel: 'Standard', bandId: 1, rate: 100 },
-        { incentiveLevel: 'Standard', bandId: 2, rate: 100 },
-        { incentiveLevel: 'Basic', bandId: 2, rate: 100 },
-      ])
+      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/remove-pay', { iep: 'Basic', bandId: 1 })
+    })
+
+    it("should redirect back to check pay page if pay rate isn't found", async () => {
+      req.query = { iep: 'NonExistentLevel', bandId: '1' }
+      await handler.GET(req, res)
       expect(res.redirect).toHaveBeenCalledWith('check-pay')
+    })
+  })
+
+  describe('POST', () => {
+    it('should remove specified pay rate', async () => {
+      req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
+      await handler.POST(req, res)
+      expect(req.session.createJourney.pay).toEqual([
+        { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
+        { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
+        { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
+      ])
+    })
+
+    it('should redirect to check pay page', async () => {
+      req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('check-pay')
+    })
+
+    it('should set success message', async () => {
+      req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
+      await handler.POST(req, res)
+      expect(flash).toHaveBeenCalledWith(
+        'successMessage',
+        JSON.stringify({ title: 'Success', message: 'Basic incentive level rate Low removed' }),
+      )
+    })
+
+    it('should not remove pay rate or set success message if action not confirmed', async () => {
+      req.body = { iep: 'Basic', bandId: '1', choice: 'no' }
+      await handler.POST(req, res)
+      expect(req.session.createJourney.pay).toEqual([
+        { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
+        { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
+        { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
+        { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
+      ])
+      expect(flash).toHaveBeenCalledTimes(0)
+    })
+
+    it("should not remove pay rate or set success message if pay rate isn't found", async () => {
+      req.body = { iep: 'NonExistentLevel', bandId: '1', choice: 'yes' }
+      await handler.POST(req, res)
+      expect(req.session.createJourney.pay).toEqual([
+        { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
+        { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
+        { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
+        { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
+      ])
+      expect(flash).toHaveBeenCalledTimes(0)
     })
   })
 })
