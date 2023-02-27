@@ -73,7 +73,7 @@
                     },
                      {
                         key: { text: "Runs on bank holidays" },
-                        value: { text: session.createScheduleJourney.runsOnBankHoliday },
+                        value: { text: "Yes" if session.createScheduleJourney.runsOnBankHoliday else "No"},
                         actions: {
                         items: [
                             {

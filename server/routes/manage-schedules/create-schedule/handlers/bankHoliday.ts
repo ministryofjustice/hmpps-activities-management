@@ -14,7 +14,7 @@ export default class BankHolidayOptionRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createScheduleJourney.runsOnBankHoliday = req.body.runsOnBankHoliday
+    req.session.createScheduleJourney.runsOnBankHoliday = req.body.runsOnBankHoliday === 'yes'
     res.redirectOrReturn(`location`)
   }
 }
