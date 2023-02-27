@@ -46,7 +46,9 @@ export default class PayRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { rate, bandId, incentiveLevels, currentPayBand, currentIncentiveLevel } = req.body
+    const { rate, incentiveLevels, currentIncentiveLevel } = req.body
+    const bandId = +req.body.bandId
+    const currentPayBand = +req.body.currentPayBand
 
     if (!req.session.createJourney.pay) {
       req.session.createJourney.pay = []

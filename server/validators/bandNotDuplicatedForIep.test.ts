@@ -84,4 +84,24 @@ describe('bandNotDuplicatedForIep', () => {
 
     expect(errors).toHaveLength(0)
   })
+
+  it('should not consider the current pay rate as a duplicate', async () => {
+    const body = {
+      bandId: 1,
+      incentiveLevels: ['Basic'],
+      currentPayBand: 1,
+      currentIncentiveLevel: 'Basic',
+    }
+
+    const session = {
+      createJourney: {
+        pay: [{ bandId: 1, incentiveLevel: 'Basic' }],
+      },
+    }
+
+    const requestObject = plainToInstance(DummyForm, { ...body, ...session })
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    expect(errors).toHaveLength(0)
+  })
 })

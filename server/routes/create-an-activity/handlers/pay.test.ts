@@ -45,6 +45,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           incentiveLevels: ['Basic', 'Standard'],
         },
       },
+      query: {},
     } as unknown as Request
 
     when(activitiesService.getPayBandsForPrison).mockResolvedValue([
@@ -73,6 +74,48 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { id: 1, alias: 'Low', displaySequence: 1 },
           { id: 2, alias: 'High', displaySequence: 2 },
         ],
+      })
+    })
+
+    it('should render current pay rate', async () => {
+      req.session.createJourney.pay = [
+        {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          bandId: 1,
+          rate: 100,
+          bandAlias: 'High',
+          displaySequence: 2,
+        },
+      ]
+      req.query = {
+        iep: 'Basic',
+        bandId: '1',
+      }
+
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValue([
+          { iepDescription: 'Basic', active: false },
+          { iepDescription: 'Standard', active: true },
+        ] as IepLevel[])
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/pay', {
+        incentiveLevels: [{ iepDescription: 'Standard', active: true }],
+        payBands: [
+          { id: 1, alias: 'Low', displaySequence: 1 },
+          { id: 2, alias: 'High', displaySequence: 2 },
+        ],
+        pay: {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          bandId: 1,
+          rate: 100,
+          bandAlias: 'High',
+          displaySequence: 2,
+        },
       })
     })
   })
@@ -162,6 +205,43 @@ describe('Route Handlers - Create an activity - Pay', () => {
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('check-pay')
+    })
+
+    it('should allow existing pay rate to be modified', async () => {
+      req.body = {
+        rate: 200,
+        bandId: 2,
+        incentiveLevels: ['Basic'],
+        currentPayBand: 1,
+        currentIncentiveLevel: 'Basic',
+      }
+      req.session.createJourney.pay = [
+        {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          bandId: 1,
+          rate: 100,
+          bandAlias: 'High',
+          displaySequence: 2,
+        },
+      ]
+
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValueOnce([{ iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 }] as IepLevel[])
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.pay).toEqual([
+        {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          bandId: 2,
+          rate: 200,
+          bandAlias: 'High',
+          displaySequence: 2,
+        },
+      ])
     })
   })
 
