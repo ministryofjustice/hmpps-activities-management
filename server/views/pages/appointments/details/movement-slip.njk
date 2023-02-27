@@ -17,9 +17,9 @@
 
 {% block content %}
   <div class="movement-slip">
-    <h1 class="govuk-heading-m">Movement authorisation</h1>
+    <h1 class="govuk-heading-l">Movement authorisation</h1>
     <div class="movement-slip__section">
-      {{ labelAndValue('Name', appointment.prisoners[0].firstName  + ' ' + appointment.prisoners[0].lastName) }}
+      {{ labelAndValue('Name', (appointment.prisoners[0].firstName  + ' ' + appointment.prisoners[0].lastName) | toTitleCase) }}
       {{ labelAndValue('Prison number', appointment.prisoners[0].prisonerNumber) }}
       {{ labelAndValue('Cell location', appointment.prisoners[0].cellLocation) }}
     </div>
