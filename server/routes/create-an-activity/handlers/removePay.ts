@@ -36,7 +36,6 @@ export default class RemovePayRoutes {
     req.flash(
       'successMessage',
       JSON.stringify({
-        title: 'Success',
         message: `${payInfo.incentiveLevel} incentive level rate ${payInfo.bandAlias} removed`,
       }),
     )
