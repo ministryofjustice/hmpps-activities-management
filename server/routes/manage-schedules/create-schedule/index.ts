@@ -33,7 +33,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
   const locationHandler = new LocationRoutes(prisonService)
   const capacityHandler = new CapacityRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
-  const confirmationHandler = new ConfirmationRoutes(activitiesService)
+  const confirmationHandler = new ConfirmationRoutes()
 
   get('/start', startHandler.GET)
   get('/name', nameHandler.GET, true)

@@ -38,7 +38,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/prison/MDI/activity-categories/(\\d)*/capacity', getCategoryCapacity)
     cy.stubEndpoint('GET', '/prison/MDI/activity-categories/1/activities', getActivitiesInCategory)
     cy.stubEndpoint('GET', '/activities/(\\d)*/capacity', getActivityCapacity)
-    cy.stubEndpoint('GET', '/activities/2/schedules', getSchedulesInActivity)
+    cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/(\\d)*/capacity', getScheduleCapacity)
     cy.stubEndpoint('GET', '/schedules/5', getSchedule)
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)

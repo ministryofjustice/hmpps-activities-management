@@ -5,7 +5,7 @@ import ActivitiesService from '../../../services/activitiesService'
 import CapacitiesService from '../../../services/capacitiesService'
 import atLeast from '../../../../jest.setup'
 import ActivitiesRoutes from './activities'
-import { ActivityLite } from '../../../@types/activitiesAPI/types'
+import { ActivityLite, ActivityScheduleLite } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/capacitiesService')
@@ -17,6 +17,17 @@ describe('Route Handlers - Allocation dashboard', () => {
   const handler = new ActivitiesRoutes(activitiesService, capacitiesService)
   let req: Request
   let res: Response
+
+  const scheduleAm = {
+    id: 1,
+    description: 'Houseblock 1 AM',
+    endDate: '2021-01-01',
+  } as ActivityScheduleLite
+  const schedulePm = {
+    id: 2,
+    description: 'Houseblock 1 PM',
+    endDate: null,
+  } as ActivityScheduleLite
 
   const mockActivitiesData = () => {
     const maths = {
@@ -44,6 +55,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         percentageAllocated: 50,
         vacancies: 50,
       })
+
     capacitiesService.getTotalAllocationSummary.mockReturnValue({
       capacity: 250,
       allocated: 155,
@@ -60,7 +72,9 @@ describe('Route Handlers - Allocation dashboard', () => {
       render: jest.fn(),
     } as unknown as Response
 
-    req = {} as unknown as Request
+    req = {
+      params: { categoryId: '1' },
+    } as unknown as Request
 
     mockActivitiesData()
   })
@@ -71,26 +85,93 @@ describe('Route Handlers - Allocation dashboard', () => {
 
   describe('GET', () => {
     it('should render activities with their allocation summaries', async () => {
-      req.params = { categoryId: '1' }
+      activitiesService.getSchedulesOfActivity.mockResolvedValue([scheduleAm, schedulePm])
 
       await handler.GET(req, res)
+
       expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/activities-dashboard', {
         activities: expect.arrayContaining([
           {
-            allocated: 75,
-            capacity: 150,
             summary: 'English level 1',
             id: 2,
-            percentageAllocated: 50,
-            vacancies: 50,
+            allocationSummary: {
+              allocated: 75,
+              capacity: 150,
+              percentageAllocated: 50,
+              vacancies: 50,
+            },
+            schedules: [
+              {
+                id: 1,
+                description: 'Houseblock 1 AM',
+                endDate: '2021-01-01',
+              },
+              {
+                id: 2,
+                description: 'Houseblock 1 PM',
+                endDate: null,
+              },
+            ],
           },
           {
-            allocated: 80,
-            capacity: 100,
             summary: 'Maths level 1',
             id: 1,
-            percentageAllocated: 80,
-            vacancies: 20,
+            allocationSummary: {
+              allocated: 80,
+              capacity: 100,
+              percentageAllocated: 80,
+              vacancies: 20,
+            },
+            schedules: [
+              {
+                id: 1,
+                description: 'Houseblock 1 AM',
+                endDate: '2021-01-01',
+              },
+              {
+                id: 2,
+                description: 'Houseblock 1 PM',
+                endDate: null,
+              },
+            ],
+          },
+        ]),
+        total: { allocated: 155, capacity: 250, percentageAllocated: 62, vacancies: 95 },
+      })
+    })
+
+    it('should not render activities without active an schedule', async () => {
+      when(activitiesService.getSchedulesOfActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce([scheduleAm, schedulePm])
+
+      when(activitiesService.getSchedulesOfActivity).calledWith(atLeast(2)).mockResolvedValueOnce([scheduleAm])
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/activities-dashboard', {
+        activities: expect.arrayContaining([
+          {
+            summary: 'Maths level 1',
+            id: 1,
+            allocationSummary: {
+              allocated: 80,
+              capacity: 100,
+              percentageAllocated: 80,
+              vacancies: 20,
+            },
+            schedules: [
+              {
+                id: 1,
+                description: 'Houseblock 1 AM',
+                endDate: '2021-01-01',
+              },
+              {
+                id: 2,
+                description: 'Houseblock 1 PM',
+                endDate: null,
+              },
+            ],
           },
         ]),
         total: { allocated: 155, capacity: 250, percentageAllocated: 62, vacancies: 95 },
