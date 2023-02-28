@@ -100,6 +100,7 @@ context('Create single appointment', () => {
     appointmentDetailsPage.assertCreatedBy('J. Smith')
     appointmentDetailsPage.assertPrintMovementSlipLink()
 
+    appointmentDetailsPage.printMovementSlipLink().invoke('removeAttr', 'target')
     appointmentDetailsPage.printMovementSlipLink().click()
 
     const appointmentMovementSlipPage = Page.verifyOnPage(AppointmentMovementSlip)
