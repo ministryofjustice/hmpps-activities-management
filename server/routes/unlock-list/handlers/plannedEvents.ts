@@ -30,8 +30,8 @@ export default class PlannedEventsRoutes {
       unlockFilters.unlockDate = new Date(unlockFilters.unlockDate)
     }
 
-    // TODO: Caching of unlockListItems here - check and refresh if necessary - 10 mins?
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(unlockFilters, user)
+
     res.render('pages/unlock-list/planned-events', { unlockFilters, unlockListItems })
   }
 

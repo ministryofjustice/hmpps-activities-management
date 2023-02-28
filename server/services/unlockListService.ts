@@ -74,7 +74,7 @@ export default class UnlockListService {
     logger.info(`Total court hearings: ${scheduledEvents?.courtHearings.length}`)
 
     // TODO: Adjudication hearings (Check with Adjudications team for rolled-out prisons and API options)
-    // TODO: Get ROTLs - Prison API: /api/movements/agency/{prisonCode}/temporary-absences - filtered to today?
+    // TODO: Transfers - already have endpoint in prisonAPI for these
 
     // Match the prisoners with their events by prisonerNumber
     const unlockListItems = filteredPrisoners.map(prisoner => {
@@ -91,17 +91,50 @@ export default class UnlockListService {
       } as UnlockListItem
     })
 
-    // Apply filter for with or without activities in this time slot
-    const withActivityFilters = unlockFilters.activityFilters.filter(act => act.checked === true).map(act => act.value)
-    const withActivities = withActivityFilters.includes('With')
-    const filteredUnlockListItems = withActivityFilters.includes('Both')
+    // Apply filter for with or without activities
+    const selectedActivityFilters = unlockFilters.activityFilters
+      .filter(act => act.checked === true)
+      .map(act => act.value)
+
+    const activityFilteredItems = selectedActivityFilters.includes('Both')
       ? unlockListItems
-      : unlockListItems.filter(item => (withActivities ? item.events.length > 0 : item.events.length === 0))
+      : unlockListItems.filter(item =>
+          selectedActivityFilters.includes('With') ? item.events.length > 0 : item.events.length === 0,
+        )
 
-    // TODO: Apply filter for staying or leaving (an event, its type and locaction in relation to cell-location)
+    // Apply filter for staying or leaving the wing
+    const stayingOrLeavingFilters = unlockFilters.stayingOrLeavingFilters.filter(s => s.checked).map(s => s.value)
+    let filteredItems: UnlockListItem[]
+    if (stayingOrLeavingFilters.includes('Both')) {
+      filteredItems = activityFilteredItems
+    } else if (stayingOrLeavingFilters.includes('Leaving')) {
+      filteredItems = activityFilteredItems.filter(item => this.isLeaving(item))
+    } else {
+      filteredItems = activityFilteredItems.filter(item => !this.isLeaving(item))
+    }
 
-    logger.info(`Number of unlock list items ${filteredUnlockListItems?.length}`)
-    return filteredUnlockListItems
+    logger.info(`Number of unlock list items ${filteredItems?.length}`)
+
+    return filteredItems
+  }
+
+  private isLeaving = (item: UnlockListItem): boolean => {
+    if (item.events.length === 0) {
+      return false
+    }
+
+    // TODO: Check rules - event types which are always off-wing?
+    const leavingEventTypes = ['COURT_HEARING', 'TRANSFER', 'ADJUDICATION_HEARING', 'VISIT']
+    const eventsOffWing = item.events.filter(ev => leavingEventTypes.includes(ev.eventType))
+    if (eventsOffWing.length > 0) {
+      return true
+    }
+
+    // TODO: Check rules. In-cell activities / appointments do not have a prison location id?
+    // Probably need to get and check the in-cell marker for both of these - when they are included
+    const activitiesAndAppointments = item.events.filter(ev => ['ACTIVITY', 'APPOINTMENT'].includes(ev.eventType))
+    const activitiesOffWing = activitiesAndAppointments.filter(aa => !aa.locationId)
+    return activitiesOffWing.length > 0
   }
 
   private getSubLocationFromCell = (
