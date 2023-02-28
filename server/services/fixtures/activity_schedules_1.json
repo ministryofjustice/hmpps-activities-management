@@ -74,6 +74,7 @@
         "endTime": "11:00",
         "daysOfWeek": ["Mon", "Tue", "Wed"]
       }
-    ]
+    ],
+    "runsOnBankHoliday": false
   }
 ]

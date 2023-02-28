@@ -74,6 +74,6 @@ export default class DaysAndTimesRoutes {
     req.session.createScheduleJourney.timeSlotsFriday = sanitizeTimeSlots(req.body.timeSlotsFriday)
     req.session.createScheduleJourney.timeSlotsSaturday = sanitizeTimeSlots(req.body.timeSlotsSaturday)
     req.session.createScheduleJourney.timeSlotsSunday = sanitizeTimeSlots(req.body.timeSlotsSunday)
-    res.redirectOrReturn('location')
+    res.redirectOrReturn('bank-holiday-option')
   }
 }

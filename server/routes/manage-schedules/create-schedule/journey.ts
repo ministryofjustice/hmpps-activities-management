@@ -16,4 +16,5 @@ export type CreateScheduleJourney = {
     name: string
   }
   capacity?: number
+  runsOnBankHoliday?: boolean
 }
