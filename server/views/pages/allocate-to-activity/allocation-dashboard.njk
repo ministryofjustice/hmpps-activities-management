@@ -422,7 +422,10 @@
         {% set rows = (rows.push(columns), rows) %}
     {% endfor %}
 
-    <p>Check the schedule is compatible with the candidate's current allocations if they have any.</p>
+    <p>Check the activity schedule is compatible with any current allocations. 
+    You can check individual schedules using the <a href="{{ dpsUrl }}/prisoner-search?keywords=&location={{ user.activeCaseLoad.caseLoadId }}") }}>prisoner profile</a></p>
+    <p>This schedule {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
+
     {{ govukTable({
         caption: "Schedule",
         captionClasses: "govuk-visually-hidden",

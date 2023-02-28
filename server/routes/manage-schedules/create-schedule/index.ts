@@ -13,6 +13,7 @@ import LocationRoutes, { Location } from './handlers/location'
 import CapacityRoutes, { Capacity } from './handlers/capacity'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
+import BankHolidayOptionRoutes, { BankHolidayOption } from './handlers/bankHoliday'
 
 export default function Index({ prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -28,6 +29,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
   const endDateOptionHandler = new EndDateOptionRoutes()
   const endDateHandler = new EndDateRoutes()
   const daysAndTimesHandler = new DaysAndTimesRoutes()
+  const bankHolidayHandler = new BankHolidayOptionRoutes()
   const locationHandler = new LocationRoutes(prisonService)
   const capacityHandler = new CapacityRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
@@ -44,6 +46,8 @@ export default function Index({ prisonService, activitiesService }: Services): R
   post('/end-date', endDateHandler.POST, EndDate)
   get('/days-and-times', daysAndTimesHandler.GET, true)
   post('/days-and-times', daysAndTimesHandler.POST, DaysAndTimes)
+  get('/bank-holiday-option', bankHolidayHandler.GET, true)
+  post('/bank-holiday-option', bankHolidayHandler.POST, BankHolidayOption)
   get('/location', locationHandler.GET, true)
   post('/location', locationHandler.POST, Location)
   get('/capacity', capacityHandler.GET, true)

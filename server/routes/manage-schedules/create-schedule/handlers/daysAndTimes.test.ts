@@ -47,7 +47,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       expect(req.session.createScheduleJourney.days).toEqual(['tuesday', 'friday'])
       expect(req.session.createScheduleJourney.timeSlotsTuesday).toEqual(['AM'])
       expect(req.session.createScheduleJourney.timeSlotsFriday).toEqual(['PM', 'ED'])
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
     })
   })
 

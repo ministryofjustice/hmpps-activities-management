@@ -12,6 +12,8 @@ export default class AppointmentPage extends Page {
     cy.get('[data-qa=prisoner-cell-location]').contains(cellLocation)
   }
 
+  printMovementSlipLink = () => cy.get('[data-qa=print-movement-slip-link]')
+
   assertCategory = (category: string) => cy.get('[data-qa=category]').contains(category)
 
   assertLocation = (location: string) => cy.get('[data-qa=location]').contains(location)
@@ -27,5 +29,5 @@ export default class AppointmentPage extends Page {
 
   assertCreatedBy = (createdBy: string) => cy.get('[data-qa=created-by]').contains(createdBy)
 
-  assertPrintMovementSlipLink = () => cy.get('a').contains('Print movement slip')
+  assertPrintMovementSlipLink = () => this.printMovementSlipLink().contains('Print movement slip')
 }

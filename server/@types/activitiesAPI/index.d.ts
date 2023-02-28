@@ -448,11 +448,13 @@ export interface components {
       /**
        * Format: date
        * @description The date when the prisoner will start the activity
+       * @example 2022-09-10
        */
       startDate: string
       /**
        * Format: date
        * @description The date when the prisoner will stop attending the activity
+       * @example 2023-09-10
        */
       endDate?: string
       /**
@@ -1123,11 +1125,13 @@ export interface components {
       /**
        * Format: date
        * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
+       * @example 2022-09-21
        */
       startDate: string
       /**
        * Format: date
        * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
+       * @example 2022-12-21
        */
       endDate?: string
       /**
@@ -1337,13 +1341,20 @@ export interface components {
       /**
        * Format: date
        * @description The date on which this schedule will start. From this date, any schedules will be created as real, planned instances
+       * @example 2022-09-21
        */
       startDate: string
       /**
        * Format: date
        * @description The date on which this schedule will end. From this date, any schedules will be created as real, planned instances
+       * @example 2022-10-21
        */
       endDate?: string
+      /**
+       * @description Whether the schedule runs on bank holidays
+       * @example true
+       */
+      runsOnBankHoliday: boolean
     }
     /**
      * @description
@@ -1424,8 +1435,8 @@ export interface components {
        */
       recordedTime?: string
       /**
-       * @description The person whom updated the attendance
-       * @example 10/09/2023
+       * @description The person who updated the attendance
+       * @example A.JONES
        */
       recordedBy?: string
       /**
@@ -1549,12 +1560,13 @@ export interface components {
       /**
        * Format: date
        * @description The specific date for this scheduled instance
+       * @example 2022-09-30
        */
       date: string
       /**
        * Format: partial-time
        * @description The start time for this scheduled instance
-       * @example 9:00
+       * @example 09:00
        */
       startTime: string
       /**
@@ -1586,11 +1598,13 @@ export interface components {
       /**
        * Format: date
        * @description The date from which the activity schedule was suspended
+       * @example 2022-09-02
        */
       suspendedFrom: string
       /**
        * Format: date
-       * @description The date until which the activity schedule was suspended. If null, the schedule is suspended indefinately
+       * @description The date until which the activity schedule was suspended. If null, the schedule is suspended indefinitely
+       * @example 2022-09-02
        */
       suspendedUntil?: string
     }
@@ -1627,6 +1641,11 @@ export interface components {
       capacity?: number
       /** @description The days and times an activity schedule can take place */
       slots: components['schemas']['Slot'][]
+      /**
+       * @description Whether the schedule runs on bank holidays
+       * @example true
+       */
+      runsOnBankHoliday: boolean
     }
     /**
      * @description
@@ -1681,11 +1700,13 @@ export interface components {
       /**
        * Format: date
        * @description The date on which this schedule will start. From this date, any schedules will be created as real, planned instances
+       * @example 2022-09-21
        */
       startDate: string
       /**
        * Format: date
        * @description The date on which this schedule will end. From this date, any schedules will be created as real, planned instances
+       * @example 2022-10-21
        */
       endDate?: string
     }
@@ -1715,12 +1736,13 @@ export interface components {
       /**
        * Format: date
        * @description The specific date for this scheduled instance
+       * @example 2022-09-30
        */
       date: string
       /**
        * Format: partial-time
        * @description The start time for this scheduled instance
-       * @example 9:00
+       * @example 09:00
        */
       startTime: string
       /**
@@ -1774,6 +1796,7 @@ export interface components {
       /**
        * Format: date
        * @description The date rolled out
+       * @example 2022-09-30
        */
       rolloutDate?: string
     }
