@@ -103,7 +103,7 @@ context('Create single appointment', () => {
     appointmentDetailsPage.printMovementSlipLink().click()
 
     const appointmentMovementSlipPage = Page.verifyOnPage(AppointmentMovementSlip)
-    appointmentMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    appointmentMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
     appointmentMovementSlipPage.assertCategory('Chaplaincy')
     appointmentMovementSlipPage.assertLocation('Chapel')
     appointmentMovementSlipPage.assertStartDate(tomorrow)

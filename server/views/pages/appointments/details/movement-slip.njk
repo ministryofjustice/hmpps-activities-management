@@ -25,7 +25,7 @@
     <div class="movement-slip__section">
       {{ labelAndValue('Name', (appointment.prisoners[0].firstName  + ' ' + appointment.prisoners[0].lastName) | toTitleCase) }}
       {{ labelAndValue('Prison number', appointment.prisoners[0].prisonerNumber) }}
-      {{ labelAndValue('Cell location', appointment.prisoners[0].cellLocation) }}
+      {{ labelAndValue('Cell location', (appointment.prisoners[0].prisonId + '-' + appointment.prisoners[0].cellLocation)) }}
     </div>
 
     <div class="movement-slip__section">
