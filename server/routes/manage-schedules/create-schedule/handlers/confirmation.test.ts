@@ -23,6 +23,7 @@ describe('Route Handlers - Create an activity schedule - Confirmation', () => {
       },
       params: {
         id: '1',
+        scheduleId: '5',
       },
     } as unknown as Request
   })
@@ -34,7 +35,10 @@ describe('Route Handlers - Create an activity schedule - Confirmation', () => {
   describe('GET', () => {
     it('should render the expected page', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/create-schedule/confirmation', { id: '1' })
+      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/create-schedule/confirmation', {
+        activityId: 1,
+        scheduleId: 5,
+      })
       expect(req.session.createScheduleJourney).toBeNull()
     })
   })

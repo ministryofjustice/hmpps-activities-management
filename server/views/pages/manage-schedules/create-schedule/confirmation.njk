@@ -13,8 +13,13 @@
             }) }}
             <h2 class="govuk-heading-m">What you can do next</h2>
             <p class="govuk-body">
-                Your schedule has been created
+                You can start <a href="/allocate/{{ scheduleId }}/allocate#candidates-tab" class="govuk-link">allocating people to this schedule</a>.
             </p>
+            <p class="govuk-body">You can also:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li><a href="/schedule/activities/{{ activityId }}/create-schedule/start">Build another schedule for {{ session.createScheduleJourney.name }}</a></li>
+                <li><a href="/schedule/activities">Use the activities dashboard</a> to find a different activity</li>
+            </ul>
         </div>
     </div>
 {% endblock %}

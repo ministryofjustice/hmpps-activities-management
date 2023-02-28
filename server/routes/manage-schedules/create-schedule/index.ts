@@ -54,6 +54,6 @@ export default function Index({ prisonService, activitiesService }: Services): R
   post('/capacity', capacityHandler.POST, Capacity)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
-  get('/confirmation/:id', confirmationHandler.GET, true)
+  get('/confirmation/:scheduleId', confirmationHandler.GET, true)
   return router
 }
