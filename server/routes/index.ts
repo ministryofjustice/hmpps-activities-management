@@ -14,11 +14,13 @@ import appointmentsHomeRoutes from './appointments/home'
 import appointmentsCreateSingleRoutes from './appointments/create-single'
 import appointmentDetailsRoutes from './appointments/details'
 import errorMessageMiddleware from '../middleware/errorMessageMiddleware'
+import successMessageMiddleware from '../middleware/successMessageMiddleware'
 import timeNowMiddleware from '../middleware/timeNowMiddleware'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
   router.use(errorMessageMiddleware())
+  router.use(successMessageMiddleware())
   router.use(timeNowMiddleware())
 
   router.use('/', homeRoutes())

@@ -10,7 +10,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-3">{{ activities.length }} {{ 'activity' if activities.length == 1 else 'activities' }} scheduled for {{ date | formatDate('do MMMM yyyy', true)}}</h1>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-3">{{ activities.length }} {{ 'activity' if activities.length == 1 else 'activities' }} scheduled for {{ date | formatDate('d MMMM yyyy', true)}}</h1>
             <ul class="govuk-list">
                 <li><a href="select-period" class="govuk-link govuk-!-font-size-19">View the schedule for a different day</a></li>
             </ul>
