@@ -15,6 +15,7 @@ import {
   initialiseName,
   setSelected,
   startsWithAny,
+  toFixed,
   toMoney,
   toTimeItems,
   exampleDateOneWeekAhead,
@@ -103,6 +104,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('existsInStringArray', existsInStringArray)
   njkEnv.addFilter('getTimeSlotFromTime', getTimeSlotFromTime)
   njkEnv.addFilter('startsWithAny', startsWithAny)
+  njkEnv.addFilter('toFixed', toFixed)
   njkEnv.addFilter('toMoney', toMoney)
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)

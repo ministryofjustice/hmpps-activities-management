@@ -15,7 +15,11 @@ export default function IsNotDuplicatedForIep(validationOptions?: ValidationOpti
           return (
             existingPay?.find(
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (pay: any) => pay.bandId === bandId && args.object['incentiveLevels'].includes(pay.incentiveLevel),
+              (pay: any) =>
+                pay.bandId === bandId &&
+                args.object['incentiveLevels'].includes(pay.incentiveLevel) &&
+                (pay.bandId !== parseInt(args.object['currentPayBand'], 10) ||
+                  pay.incentiveLevel !== args.object['currentIncentiveLevel']),
             ) === undefined
           )
         },
