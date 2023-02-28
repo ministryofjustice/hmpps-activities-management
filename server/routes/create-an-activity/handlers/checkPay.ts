@@ -12,7 +12,13 @@ export default class CheckPayRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { fromReview } = req.query
+
     const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(req, user)
+
+    if (!req.session.createJourney.fromReview) {
+      req.session.createJourney.fromReview = fromReview === 'true'
+    }
 
     res.render(`pages/create-an-activity/check-pay`, { incentiveLevelPays })
   }
@@ -34,6 +40,9 @@ export default class CheckPayRoutes {
     req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.iepLevel
     req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.iepDescription
 
+    if (req.session.createJourney.fromReview) {
+      return res.redirect(`check-answers`)
+    }
     return res.redirectOrReturn(`qualification`)
   }
 }

@@ -42,6 +42,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
 
     req = {
       flash: jest.fn(),
+      query: {},
       session: {
         createJourney: {
           name: 'Maths level 1',
@@ -99,6 +100,21 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       await handler.POST(req, res)
       expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Standard')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
+    })
+
+    it('should redirect to check answers page if fromCreateActivityReview set', async () => {
+      req.session.createJourney.fromReview = true
+
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValueOnce([
+          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
+          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
+          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
+        ] as IepLevel[])
+
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })
 })
