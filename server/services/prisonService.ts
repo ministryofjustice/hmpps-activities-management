@@ -6,6 +6,7 @@ import {
   ScheduledAppointmentDto,
   InmateBasicDetails,
   ReferenceCode,
+  Education,
 } from '../@types/prisonApiImport/types'
 import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
@@ -51,7 +52,7 @@ export default class PrisonService {
   }
 
   async getInmates(prisonCode: string, user: ServiceUser): Promise<PagePrisoner> {
-    return this.prisonerSearchApiClient.getInmates(prisonCode, 0, 10, user)
+    return this.prisonerSearchApiClient.getInmates(prisonCode, 0, 20, user)
   }
 
   getIncentiveLevels(prisonId: string, user: ServiceUser): Promise<IepLevel[]> {
@@ -256,5 +257,10 @@ export default class PrisonService {
 
   async getReferenceCodes(domain: string, user: ServiceUser): Promise<ReferenceCode[]> {
     return this.prisonApiClient.getReferenceCodes(domain, user)
+  }
+
+  getEducations(prisonerNumber: string | string[], user: ServiceUser): Promise<Education[]> {
+    const prisonerNumbers = [prisonerNumber].flat()
+    return this.prisonApiClient.getEducations(prisonerNumbers, user)
   }
 }
