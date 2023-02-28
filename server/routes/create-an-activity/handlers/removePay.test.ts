@@ -83,7 +83,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       await handler.POST(req, res)
       expect(flash).toHaveBeenCalledWith(
         'successMessage',
-        JSON.stringify({ title: 'Success', message: 'Basic incentive level rate Low removed' }),
+        JSON.stringify({ message: 'Basic incentive level rate Low removed' }),
       )
     })
 
