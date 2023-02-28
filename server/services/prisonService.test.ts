@@ -4,7 +4,7 @@ import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import WhereaboutsApiClient from '../data/whereaboutsApiClient'
 import PrisonService from './prisonService'
-import { InmateDetail, ReferenceCode } from '../@types/prisonApiImport/types'
+import { Education, InmateDetail, ReferenceCode } from '../@types/prisonApiImport/types'
 import { Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 import activityLocations from './fixtures/activity_locations_1.json'
@@ -241,6 +241,32 @@ describe('Prison Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(prisonApiClient.getReferenceCodes).toHaveBeenCalledWith('EDU_LEVEL', user)
+    })
+  })
+
+  describe('getEducations', () => {
+    it('should get education levels for a prisoner from prison API', async () => {
+      const expectedResult = [{ data: 'response' }] as unknown as Education[]
+
+      when(prisonApiClient.getEducations)
+        .calledWith(atLeast(['ABC123']))
+        .mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.getEducations('ABC123', user)
+
+      expect(actualResult).toEqual(expectedResult)
+    })
+
+    it('should get education levels for a list of prisoners from prison API', async () => {
+      const expectedResult = [{ data: 'response' }] as unknown as Education[]
+
+      when(prisonApiClient.getEducations)
+        .calledWith(atLeast(['ABC123', 'CBA321']))
+        .mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.getEducations(['ABC123', 'CBA321'], user)
+
+      expect(actualResult).toEqual(expectedResult)
     })
   })
 })

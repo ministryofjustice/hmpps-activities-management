@@ -1,0 +1,21 @@
+[
+  {
+    "bookingId": 1200953,
+    "startDate": "2012-10-23",
+    "endDate": "2012-10-23",
+    "studyArea": "Mathematics",
+    "educationLevel": "Level 1",
+    "school": "YCY",
+    "isSpecialEducation": true,
+    "addresses": []
+  },
+  {
+    "bookingId": 1200650,
+    "startDate": "2012-10-23",
+    "endDate": "2012-10-23",
+    "studyArea": "Spanish",
+    "educationLevel": "Level 5",
+    "isSpecialEducation": true,
+    "addresses": []
+  }
+]

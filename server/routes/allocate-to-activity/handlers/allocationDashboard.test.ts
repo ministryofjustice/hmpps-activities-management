@@ -13,6 +13,7 @@ import { AllocationsSummary } from '../../../@types/activities'
 import { PagePrisoner, Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import { IepLevel } from '../../../@types/incentivesApi/types'
+import { Education } from '../../../@types/prisonApiImport/types'
 
 jest.mock('../../../services/prisonService')
 jest.mock('../../../services/capacitiesService')
@@ -129,6 +130,20 @@ describe('Route Handlers - Allocation dashboard', () => {
             ],
           },
         ] as PrisonerAllocations[])
+      when(prisonService.getEducations)
+        .calledWith(atLeast(['G3439UH']))
+        .mockResolvedValue([
+          {
+            bookingId: 100001,
+            studyArea: 'Mathematics',
+            educationLevel: 'Level 1',
+          },
+          {
+            bookingId: 100002,
+            studyArea: 'Spanish',
+            educationLevel: 'Level 1',
+          },
+        ] as Education[])
       when(prisonService.getInmates)
         .calledWith(atLeast('MDI'))
         .mockResolvedValue({
@@ -193,6 +208,7 @@ describe('Route Handlers - Allocation dashboard', () => {
             },
             {
               prisonerNumber: 'G3439UH',
+              bookingId: '100001',
               status: 'ACTIVE IN',
               legalStatus: 'OTHER',
               firstName: 'Jack',
@@ -266,6 +282,13 @@ describe('Route Handlers - Allocation dashboard', () => {
             ],
             prisonerNumber: 'G3439UH',
             releaseDate: new Date(2023, 11, 26),
+            educationLevels: [
+              {
+                bookingId: 100001,
+                educationLevel: 'Level 1',
+                studyArea: 'Mathematics',
+              },
+            ],
           },
         ],
         incentiveLevels: [
