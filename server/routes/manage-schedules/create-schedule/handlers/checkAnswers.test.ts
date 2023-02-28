@@ -24,6 +24,9 @@ describe('Route Handlers - Create an activity schedule - Check answers', () => {
           username: 'joebloggs',
           activeCaseLoadId: 'MDI',
         },
+        activity: {
+          id: 1,
+        },
       },
       render: jest.fn(),
       redirect: jest.fn(),
@@ -34,7 +37,7 @@ describe('Route Handlers - Create an activity schedule - Check answers', () => {
         createScheduleJourney,
       },
       params: {
-        id: '1',
+        activityId: '1',
       },
     } as unknown as Request
   })
@@ -65,7 +68,7 @@ describe('Route Handlers - Create an activity schedule - Check answers', () => {
         .mockResolvedValueOnce(createScheduleResponse)
 
       await handler.POST(req, res)
-      expect(activitiesService.createScheduleActivity).toHaveBeenCalledWith('1', createScheduleRequest, res.locals.user)
+      expect(activitiesService.createScheduleActivity).toHaveBeenCalledWith(1, createScheduleRequest, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/15')
     })
   })

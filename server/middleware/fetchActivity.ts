@@ -5,10 +5,10 @@ import ActivitiesService from '../services/activitiesService'
 export default (activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
     const { user, activity } = res.locals
-    const activityId = req.params.id as unknown as number
+    const activityId = +req.params.activityId
     try {
       if (!activity || activity.id !== activityId) {
-        res.locals.activity = await activitiesService.getActivity(activityId as unknown as number, user)
+        res.locals.activity = await activitiesService.getActivity(activityId, user)
       }
     } catch (error) {
       logger.error(error, `Failed to fetch activity, id: ${activityId}`)

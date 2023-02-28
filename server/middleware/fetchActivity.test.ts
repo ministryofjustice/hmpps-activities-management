@@ -23,7 +23,7 @@ describe('fetchActivityList', () => {
   it('Success', async () => {
     const req = getMockReq({
       params: {
-        id: '1',
+        activityId: '1',
       },
       session: {
         user: {
@@ -38,7 +38,7 @@ describe('fetchActivityList', () => {
       },
     })
     const next = jest.fn()
-    when(activitiesService.getActivity).calledWith(atLeast('1')).mockResolvedValueOnce(activity)
+    when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValueOnce(activity)
 
     await fetchActivity(activitiesService)(req, res, next)
 
@@ -59,7 +59,7 @@ describe('fetchActivityList', () => {
         period: 'AM',
       },
       params: {
-        id: '1',
+        activityId: '1',
       },
       session: {
         user: { token: 'token', activeCaseLoad: { caseLoadId: 'EDI' } },
@@ -72,7 +72,7 @@ describe('fetchActivityList', () => {
     })
     const error = new Error('Error')
     const next = jest.fn()
-    when(activitiesService.getActivity).calledWith(atLeast('1')).mockRejectedValueOnce(error)
+    when(activitiesService.getActivity).calledWith(atLeast(1)).mockRejectedValueOnce(error)
 
     await fetchActivity(activitiesService)(req, res, next)
 

@@ -12,6 +12,9 @@ describe('Route Handlers - Create an activity schedule - Confirmation', () => {
         user: {
           username: 'joebloggs',
         },
+        activity: {
+          id: 1,
+        },
       },
       render: jest.fn(),
       redirect: jest.fn(),
@@ -35,8 +38,9 @@ describe('Route Handlers - Create an activity schedule - Confirmation', () => {
   describe('GET', () => {
     it('should render the expected page', async () => {
       await handler.GET(req, res)
+
       expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/create-schedule/confirmation', {
-        activityId: 1,
+        activity: { id: 1 },
         scheduleId: 5,
       })
       expect(req.session.createScheduleJourney).toBeNull()

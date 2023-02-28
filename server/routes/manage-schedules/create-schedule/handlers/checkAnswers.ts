@@ -117,8 +117,7 @@ export default class CheckAnswersRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const activityId = req.params.id as unknown as number
+    const { user, activity } = res.locals
     const { createScheduleJourney } = req.session
     const slots = mapSlots(createScheduleJourney)
 
@@ -134,7 +133,7 @@ export default class CheckAnswersRoutes {
       runsOnBankHoliday: createScheduleJourney.runsOnBankHoliday,
     } as ActivityScheduleCreateRequest
 
-    const response = await this.activitiesService.createScheduleActivity(activityId, activitySchedule, user)
+    const response = await this.activitiesService.createScheduleActivity(activity.id, activitySchedule, user)
     res.redirect(`confirmation/${response.id}`)
   }
 }
