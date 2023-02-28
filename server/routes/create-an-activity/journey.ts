@@ -20,4 +20,5 @@ export type CreateAnActivityJourney = {
     educationLevelCode: string
     educationLevelDescription: string
   }>
+  fromReview?: boolean
 }

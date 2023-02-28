@@ -20,6 +20,7 @@ import {
   toTimeItems,
   exampleDateOneWeekAhead,
   parseDate,
+  toFixed,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
@@ -314,6 +315,20 @@ describe('utils', () => {
       const nextWeek = new Date()
       nextWeek.setDate(nextWeek.getDate() + 7)
       expect(exampleDateOneWeekAhead('Example, ')).toEqual(`Example, ${formatDate(nextWeek, 'dd MM yyyy')}`)
+    })
+  })
+
+  describe('toFixed', () => {
+    it('should convert number to fixed-point formatted string', () => {
+      const number = 1234.5
+      const fixedPointString = toFixed(number, 2)
+      expect(fixedPointString).toEqual('1234.50')
+    })
+
+    it('should return null if number not provided', () => {
+      const number: number = null
+      const fixedPointString = toFixed(number, 2)
+      expect(fixedPointString).toEqual(null)
     })
   })
 })

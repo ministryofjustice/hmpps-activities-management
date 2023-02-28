@@ -20,23 +20,22 @@ const user = { activeCaseLoadId: 'MDI' } as ServiceUser
 
 const prisoners = {
   totalPages: 1,
-  totalElements: 1,
+  totalElements: 2,
   pages: 1,
-  size: 1,
+  size: 2,
   first: true,
-  numberOfElements: 1,
+  numberOfElements: 2,
   content: [
     {
-      prisonerNumber: 'A1234AA',
-      bookingId: '123456',
-      firstName: 'Test',
-      lastName: 'Tester',
+      prisonerNumber: 'A1111AA',
+      bookingId: '111111',
+      firstName: 'One',
+      lastName: 'Onester',
       dateOfBirth: '2002-10-01',
       gender: 'Male',
-      ethnicity: '',
       youthOffender: false,
       maritalStatus: 'Single',
-      religion: 'Jedi',
+      religion: 'None',
       nationality: 'British',
       status: 'ACTIVE IN',
       inOutStatus: 'IN',
@@ -47,16 +46,96 @@ const prisoners = {
       legalStatus: 'SENTENCED',
       mostSeriousOffence: 'Driving without due care',
     },
+    {
+      prisonerNumber: 'A2222AA',
+      bookingId: '222222',
+      firstName: 'Two',
+      lastName: 'Twoster',
+      dateOfBirth: '2002-10-01',
+      gender: 'Male',
+      youthOffender: false,
+      maritalStatus: 'Single',
+      religion: 'None',
+      nationality: 'British',
+      status: 'ACTIVE IN',
+      inOutStatus: 'IN',
+      prisonId: 'MDI',
+      prisonName: 'HMP Moorland',
+      cellLocation: '1-2-002',
+      category: 'C',
+      legalStatus: 'SENTENCED',
+      mostSeriousOffence: 'Driving without due care',
+    },
   ],
 } as unknown as PagePrisoner
 
 const scheduledEvents = {
   prisonCode: 'MDI',
+  startDate: '2022-01-01',
+  endDate: '2022-01-01',
+  appointments: [],
+  visits: [],
+  courtHearings: [],
+  activities: [],
+} as PrisonerScheduledEvents
+
+const scheduledEventsWithActivities = {
+  prisonCode: 'MDI',
+  startDate: '2022-01-01',
+  endDate: '2022-01-01',
+  appointments: [],
+  visits: [],
+  courtHearings: [],
+  activities: [
+    {
+      prisonCode: 'MDI',
+      eventId: 10001,
+      bookingId: 10001,
+      location: 'WORKSHOP 1',
+      locationId: 10001,
+      eventClass: 'INT_MOV',
+      eventStatus: 'SCH',
+      eventType: 'ACTIVITY',
+      eventTypeDesc: 'Activity',
+      event: 'ACT',
+      eventDesc: 'Metalwork',
+      details: 'Metalwork level 1',
+      prisonerNumber: 'A1111AA',
+      date: '2022-01-01',
+      startTime: '9:00',
+      endTime: '11:30',
+      priority: 4,
+    },
+  ],
+} as PrisonerScheduledEvents
+
+const scheduledEventsWithCourt = {
+  prisonCode: 'MDI',
   startDate: '',
   endDate: '',
   appointments: [],
   visits: [],
-  courtHearings: [],
+  courtHearings: [
+    {
+      prisonCode: 'MDI',
+      eventId: 10001,
+      bookingId: 10001,
+      location: 'EXTERNAL',
+      locationId: 10001,
+      eventClass: 'INT_MOV',
+      eventStatus: 'SCH',
+      eventType: 'COURT_HEARING',
+      eventTypeDesc: 'Court hearing',
+      event: 'CRT',
+      eventDesc: 'Court hearing today',
+      details: 'Bradford Crown Court appeal hearing',
+      prisonerNumber: 'A1111AA',
+      date: '2022-01-01',
+      startTime: '9:00',
+      endTime: '17:00',
+      priority: 1,
+    },
+  ],
   activities: [],
 } as PrisonerScheduledEvents
 
@@ -112,7 +191,7 @@ describe('Unlock list service', () => {
 
   describe('getUnlockListForLocationGroups', () => {
     it('should get the unlock list items for three sub-locations', async () => {
-      const prisonerNumbers = ['A1234AA']
+      const prisonerNumbers = ['A1111AA', 'A2222AA']
       const unlockFilters = testUnlockFilters()
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
@@ -120,7 +199,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems.length).toBe(1)
+      expect(unlockListItems.length).toBe(2)
 
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(3)
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_A-Wing', user)
@@ -178,6 +257,76 @@ describe('Unlock list service', () => {
         user,
         unlockFilters.timeSlot,
       )
+    })
+  })
+
+  describe('unlock list filters', () => {
+    it('filter by activities', async () => {
+      const unlockFilters = testUnlockFilters()
+      unlockFilters.activityFilters = [
+        { value: 'Both', text: 'Both', checked: false },
+        { value: 'With', text: 'With', checked: true },
+        { value: 'Without', text: 'Without', checked: false },
+      ] as UnlockFilterItem[]
+
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithActivities)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+
+      expect(unlockListItems.length).toBe(1)
+      expect(unlockListItems[0].prisonerNumber).toEqual('A1111AA')
+    })
+
+    it('filter by leaving', async () => {
+      const unlockFilters = testUnlockFilters()
+      unlockFilters.stayingOrLeavingFilters = [
+        { value: 'Both', text: 'Both', checked: false },
+        { value: 'Staying', text: 'Staying', checked: false },
+        { value: 'Leaving', text: 'Leaving', checked: true },
+      ] as UnlockFilterItem[]
+
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+
+      expect(unlockListItems.length).toBe(1)
+      expect(unlockListItems[0].prisonerNumber).toEqual('A1111AA')
+    })
+
+    it('filter by staying', async () => {
+      const unlockFilters = testUnlockFilters()
+      unlockFilters.stayingOrLeavingFilters = [
+        { value: 'Both', text: 'Both', checked: false },
+        { value: 'Staying', text: 'Staying', checked: true },
+        { value: 'Leaving', text: 'Leaving', checked: false },
+      ] as UnlockFilterItem[]
+
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+
+      expect(unlockListItems.length).toBe(1)
+      expect(unlockListItems[0].prisonerNumber).toEqual('A2222AA')
+    })
+
+    it('filter by sub-location', async () => {
+      const unlockFilters = testUnlockFilters()
+      unlockFilters.locationFilters = [
+        { value: 'A-Wing', text: 'A-Wing', checked: true },
+        { value: 'B-Wing', text: 'B-Wing', checked: false },
+        { value: 'C-Wing', text: 'C-Wing', checked: false },
+      ] as UnlockFilterItem[]
+
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+
+      expect(unlockListItems.length).toBe(1)
+      expect(unlockListItems[0].prisonerNumber).toEqual('A1111AA')
     })
   })
 })

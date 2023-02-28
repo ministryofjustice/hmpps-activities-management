@@ -15,6 +15,7 @@ import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePa
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
 import AppointmentDetails from '../../pages/appointments/details/appointmentDetails'
+import AppointmentMovementSlip from '../../pages/appointments/details/appointmentMovementSlip'
 import { formatDate } from '../../../server/utils/utils'
 
 context('Create single appointment', () => {
@@ -98,5 +99,17 @@ context('Create single appointment', () => {
     appointmentDetailsPage.assertEndTime(15, 30)
     appointmentDetailsPage.assertCreatedBy('J. Smith')
     appointmentDetailsPage.assertPrintMovementSlipLink()
+
+    appointmentDetailsPage.printMovementSlipLink().invoke('removeAttr', 'target')
+    appointmentDetailsPage.printMovementSlipLink().click()
+
+    const appointmentMovementSlipPage = Page.verifyOnPage(AppointmentMovementSlip)
+    appointmentMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
+    appointmentMovementSlipPage.assertCategory('Chaplaincy')
+    appointmentMovementSlipPage.assertLocation('Chapel')
+    appointmentMovementSlipPage.assertStartDate(tomorrow)
+    appointmentMovementSlipPage.assertStartTime(14, 0)
+    appointmentMovementSlipPage.assertEndTime(15, 30)
+    appointmentMovementSlipPage.assertCreatedBy('J. Smith')
   })
 })

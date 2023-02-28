@@ -262,6 +262,11 @@ export const getAttendanceSummary = (attendance: Attendance[]) => {
   return { allocated, attended, notAttended, notRecorded }
 }
 
+export const toFixed = (num: number, decimals = 2) => {
+  if (!num) return null
+  return num.toFixed(decimals)
+}
+
 export const toMoney = (x: number): string => `£${(x / 100).toFixed(2)}`
 
 export const convertToArray = (maybeArray: string | string[]): string[] => {
