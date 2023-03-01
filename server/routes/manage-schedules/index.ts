@@ -9,7 +9,7 @@ import fetchActivity from '../../middleware/fetchActivity'
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
   router.use(
-    '/activities/:id/create-schedule',
+    '/activities/:activityId/create-schedule',
     fetchActivity(services.activitiesService),
     createScheduleRoutes(services),
   )
