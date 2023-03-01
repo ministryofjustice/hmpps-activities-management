@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays, getDate, getMonth, getYear } from 'date-fns'
+import { addDays } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import StartDateRoutes, { StartDate } from './startDate'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
+import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 
 describe('Route Handlers - Create an activity schedule - Start date', () => {
   const handler = new StartDateRoutes()
@@ -41,11 +41,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
   describe('POST', () => {
     it('should save entered start date in session and redirect to the end date option page', async () => {
       const today = new Date()
-      const startDate = plainToInstance(SimpleDate, {
-        day: getDate(today),
-        month: getMonth(today) + 1,
-        year: getYear(today),
-      })
+      const startDate = simpleDateFromDate(today)
 
       req.body = {
         startDate,
@@ -95,11 +91,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
 
     it('validation fails if start date is in past', async () => {
       const yesterday = addDays(new Date(), -1)
-      const startDate = plainToInstance(SimpleDate, {
-        day: getDate(yesterday),
-        month: getMonth(yesterday) + 1,
-        year: getYear(yesterday),
-      })
+      const startDate = simpleDateFromDate(yesterday)
 
       const body = {
         startDate,
@@ -113,11 +105,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
 
     it('validation fails if start date is not before end date', async () => {
       const today = new Date()
-      const startDate = plainToInstance(SimpleDate, {
-        day: getDate(today),
-        month: getMonth(today) + 1,
-        year: getYear(today),
-      })
+      const startDate = simpleDateFromDate(today)
 
       const body = {
         startDate,

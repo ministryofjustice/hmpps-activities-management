@@ -1,6 +1,6 @@
 import { Expose, plainToInstance, Type } from 'class-transformer'
 import { IsInt, Max, Min } from 'class-validator'
-import { getDate, getMonth, getYear, parse } from 'date-fns'
+import { getDate, getMonth, getYear, isValid, parse } from 'date-fns'
 import { formatDate } from '../utils/utils'
 
 const DAY_MESSAGE = 'Enter a valid day'
@@ -37,9 +37,13 @@ export default class SimpleDate {
 }
 
 export const simpleDateFromDate = (date: Date) => {
-  return plainToInstance(SimpleDate, {
-    day: getDate(date),
-    month: getMonth(date) + 1, // Translate zero indexed month to one indexed
-    year: getYear(date),
-  })
+  if (date && isValid(date)) {
+    return plainToInstance(SimpleDate, {
+      day: getDate(date),
+      month: getMonth(date) + 1, // Translate zero indexed month to one indexed
+      year: getYear(date),
+    })
+  }
+
+  return null
 }

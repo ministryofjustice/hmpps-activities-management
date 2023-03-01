@@ -1,9 +1,8 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { getDate, getMonth, getYear } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
+import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import EndDateRoutes, { EndDate } from './endDate'
 
 describe('Route Handlers - Create an activity schedule - End date', () => {
@@ -41,11 +40,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
   describe('POST', () => {
     it('should save entered end date in session and redirect to the days and times page', async () => {
       const today = new Date()
-      const endDate = plainToInstance(SimpleDate, {
-        day: getDate(today),
-        month: getMonth(today) + 1,
-        year: getYear(today),
-      })
+      const endDate = simpleDateFromDate(today)
 
       req.body = {
         endDate,
@@ -95,11 +90,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
     it('validation fails if end date is not after start date', async () => {
       const today = new Date()
-      const endDate = plainToInstance(SimpleDate, {
-        day: getDate(today),
-        month: getMonth(today) + 1,
-        year: getYear(today),
-      })
+      const endDate = simpleDateFromDate(today)
 
       const body = {
         endDate,

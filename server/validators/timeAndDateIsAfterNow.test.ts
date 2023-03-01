@@ -1,10 +1,10 @@
 import { Expose, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { getDate, getHours, getMinutes, getMonth, getYear } from 'date-fns'
-import SimpleDate from '../commonValidationTypes/simpleDate'
+import { addDays, addMinutes, getHours, getMinutes, subMinutes } from 'date-fns'
+import SimpleDate, { simpleDateFromDate } from '../commonValidationTypes/simpleDate'
 import { associateErrorsWithProperty } from '../utils/utils'
 import TimeAndDateIsAfterNow from './timeAndDateIsAfterNow'
-import SimpleTime from '../commonValidationTypes/simpleTime'
+import SimpleTime, { simpleTimeFromDate } from '../commonValidationTypes/simpleTime'
 
 describe('timeAndDateIsAfter', () => {
   class DummyForm {
@@ -17,17 +17,16 @@ describe('timeAndDateIsAfter', () => {
   }
 
   it('should fail validation for a time in the past', async () => {
+    // Test will fail if run at midnight
     const now = new Date()
+    if (getHours(now) === 0 && getMinutes(now) === 0) {
+      return
+    }
+
+    const todayOneMinuteInThePast = subMinutes(now, 1)
     const body = {
-      date: plainToInstance(SimpleDate, {
-        day: getDate(now),
-        month: getMonth(now) + 1,
-        year: getYear(now),
-      }),
-      time: plainToInstance(SimpleTime, {
-        hour: getHours(now),
-        minute: getMinutes(now) - 5,
-      }),
+      date: simpleDateFromDate(todayOneMinuteInThePast),
+      time: simpleTimeFromDate(todayOneMinuteInThePast),
     }
 
     const requestObject = plainToInstance(DummyForm, body)
@@ -39,15 +38,8 @@ describe('timeAndDateIsAfter', () => {
   it('should fail validation for a time equal to now', async () => {
     const now = new Date()
     const body = {
-      date: plainToInstance(SimpleDate, {
-        day: getDate(now),
-        month: getMonth(now) + 1,
-        year: getYear(now),
-      }),
-      time: plainToInstance(SimpleTime, {
-        hour: getHours(now),
-        minute: getMinutes(now),
-      }),
+      date: simpleDateFromDate(now),
+      time: simpleTimeFromDate(now),
     }
 
     const requestObject = plainToInstance(DummyForm, body)
@@ -57,17 +49,10 @@ describe('timeAndDateIsAfter', () => {
   })
 
   it('should pass validation for a time after now', async () => {
-    const now = new Date()
+    const todayOneMinuteInTheFuture = addMinutes(new Date(), 1)
     const body = {
-      date: plainToInstance(SimpleDate, {
-        day: getDate(now),
-        month: getMonth(now) + 1,
-        year: getYear(now),
-      }),
-      time: plainToInstance(SimpleTime, {
-        hour: getHours(now),
-        minute: getMinutes(now) + 5,
-      }),
+      date: simpleDateFromDate(todayOneMinuteInTheFuture),
+      time: simpleTimeFromDate(todayOneMinuteInTheFuture),
     }
 
     const requestObject = plainToInstance(DummyForm, body)
@@ -77,17 +62,10 @@ describe('timeAndDateIsAfter', () => {
   })
 
   it('should pass validation for a earlier than now but a day later', async () => {
-    const now = new Date()
+    const tomorrowOneMinuteInThePast = subMinutes(addDays(new Date(), 1), 1)
     const body = {
-      date: plainToInstance(SimpleDate, {
-        day: getDate(now) + 1,
-        month: getMonth(now) + 1,
-        year: getYear(now),
-      }),
-      time: plainToInstance(SimpleTime, {
-        hour: getHours(now),
-        minute: getMinutes(now) - 5,
-      }),
+      date: simpleDateFromDate(tomorrowOneMinuteInThePast),
+      time: simpleTimeFromDate(tomorrowOneMinuteInThePast),
     }
 
     const requestObject = plainToInstance(DummyForm, body)

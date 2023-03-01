@@ -1,7 +1,7 @@
 import { validate } from 'class-validator'
 import { plainToInstance } from 'class-transformer'
 import { parse } from 'date-fns'
-import SimpleDate from './simpleDate'
+import SimpleDate, { simpleDateFromDate } from './simpleDate'
 import { associateErrorsWithProperty } from '../utils/utils'
 
 describe('simpleDate', () => {
@@ -132,6 +132,38 @@ describe('simpleDate', () => {
       const requestObject = plainToInstance(SimpleDate, body)
 
       expect(requestObject.toIsoString()).toEqual('0952-02-01')
+    })
+  })
+
+  describe('simpleDateFromDate', () => {
+    it('should convert from valid date', async () => {
+      const date = parse(`2023-03-01`, 'yyyy-MM-dd', new Date())
+
+      const simpleDate = simpleDateFromDate(date)
+
+      expect(simpleDate.day).toEqual(1)
+      expect(simpleDate.month).toEqual(3)
+      expect(simpleDate.year).toEqual(2023)
+    })
+
+    it('should return null when passed an undefined date', async () => {
+      const simpleDate = simpleDateFromDate(undefined)
+
+      expect(simpleDate).toBeNull()
+    })
+
+    it('should return null when passed a null date', async () => {
+      const simpleDate = simpleDateFromDate(null)
+
+      expect(simpleDate).toBeNull()
+    })
+
+    it('should return null when passed an invalid date', async () => {
+      const date = parse(`2023-03-00`, 'yyyy-MM-dd', new Date())
+
+      const simpleDate = simpleDateFromDate(date)
+
+      expect(simpleDate).toBeNull()
     })
   })
 })

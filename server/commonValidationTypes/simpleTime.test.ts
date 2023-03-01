@@ -1,7 +1,8 @@
 import { validate } from 'class-validator'
 import { plainToInstance } from 'class-transformer'
 import _ from 'lodash'
-import SimpleTime from './simpleTime'
+import { parse } from 'date-fns'
+import SimpleTime, { simpleTimeFromDate } from './simpleTime'
 import { associateErrorsWithProperty } from '../utils/utils'
 
 describe('simpleTime', () => {
@@ -200,6 +201,37 @@ describe('simpleTime', () => {
       const requestObject = plainToInstance(SimpleTime, body)
 
       expect(requestObject.toIsoString()).toEqual('14:55')
+    })
+  })
+
+  describe('simpleTimeFromTime', () => {
+    it('should convert from valid date', async () => {
+      const date = parse(`2023-03-01T14:30`, "yyyy-MM-dd'T'HH:mm", new Date())
+
+      const simpleTime = simpleTimeFromDate(date)
+
+      expect(simpleTime.hour).toEqual(14)
+      expect(simpleTime.minute).toEqual(30)
+    })
+
+    it('should return null when passed an undefined date', async () => {
+      const simpleTime = simpleTimeFromDate(undefined)
+
+      expect(simpleTime).toBeNull()
+    })
+
+    it('should return null when passed a null date', async () => {
+      const simpleTime = simpleTimeFromDate(null)
+
+      expect(simpleTime).toBeNull()
+    })
+
+    it('should return null when passed an invalid date', async () => {
+      const date = parse(`2023-03-01T14:61`, "yyyy-MM-dd'T'HH:mm", new Date())
+
+      const simpleTime = simpleTimeFromDate(date)
+
+      expect(simpleTime).toBeNull()
     })
   })
 })

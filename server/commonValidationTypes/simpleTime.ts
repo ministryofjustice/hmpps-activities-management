@@ -1,6 +1,6 @@
 import { Expose, plainToInstance, Type } from 'class-transformer'
 import { IsInt, Max, Min } from 'class-validator'
-import { getHours, getMinutes } from 'date-fns'
+import { getHours, getMinutes, isValid } from 'date-fns'
 import { formatDate } from '../utils/utils'
 
 const HOUR_MESSAGE = 'Select an hour'
@@ -33,8 +33,12 @@ export default class SimpleTime {
 }
 
 export const simpleTimeFromDate = (date: Date) => {
-  return plainToInstance(SimpleTime, {
-    hour: getHours(date),
-    minute: getMinutes(date),
-  })
+  if (date && isValid(date)) {
+    return plainToInstance(SimpleTime, {
+      hour: getHours(date),
+      minute: getMinutes(date),
+    })
+  }
+
+  return null
 }
