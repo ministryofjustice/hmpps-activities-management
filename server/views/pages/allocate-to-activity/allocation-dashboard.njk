@@ -234,6 +234,11 @@
             <div class="filter__items">
                 {% set riskLevelOptions = [
                     {
+                        value: 'Any Workplace Risk Assessment',
+                        text: 'Any Workplace Risk Assessment',
+                        selected: filters.riskLevelFilter == 'Any Workplace Risk Assessment'
+                    },
+                    {
                         value: 'Low',
                         text: 'Low',
                         selected: filters.riskLevelFilter == 'Low'
@@ -252,11 +257,6 @@
                         value: 'No Workplace Risk Assessment',
                         text: 'No Workplace Risk Assessment',
                         selected: filters.riskLevelFilter == 'No Workplace Risk Assessment'
-                    },
-                    {
-                        value: 'Any Workplace Risk Assessment',
-                        text: 'Any Workplace Risk Assessment',
-                        selected: filters.riskLevelFilter == 'Any Workplace Risk Assessment'
                     }
                 ] %}
                 {{ govukSelect({
@@ -269,7 +269,13 @@
                     items: riskLevelOptions
                 }) }}
 
-                {% set incentiveLevelOptions = [] %}
+                {% set incentiveLevelOptions = [
+                    {
+                        value: 'All Incentive Levels',
+                        text: 'All Incentive Levels',
+                        selected: filters.incentiveLevelFilter == 'All Incentive Levels'
+                    }
+                ] %}
                 {% for incentiveLevel in incentiveLevels %}
                     {% set incentiveLevelOptions = (incentiveLevelOptions.push(
                         {
@@ -307,13 +313,6 @@
                         ), incentiveLevelOptions) %}
                     {% endif %}
                 {% endfor %}
-                {% set incentiveLevelOptions = (incentiveLevelOptions.push(
-                    {
-                        value: 'All Incentive Levels',
-                        text: 'All Incentive Levels',
-                        selected: filters.incentiveLevelFilter == 'All Incentive Levels'
-                    }
-                ), incentiveLevelOptions) %}
 
                 {{ govukSelect({
                     id: "incentiveLevelFilter",
