@@ -37,5 +37,15 @@ services:
       - POSTGRES_USER=activities-management
       - POSTGRES_DB=activities-management-db
 
+  # Needed only when running cypress tests
+  wiremock:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: wiremock
+    restart: always
+    ports:
+      - "9091:8080"
+
 networks:
   hmpps:
