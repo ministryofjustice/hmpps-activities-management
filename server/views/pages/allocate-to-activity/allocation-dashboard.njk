@@ -67,6 +67,16 @@
         </div>
         <div class="govuk-grid-column-two-thirds">
             <div class="information-card">
+                {% set requiredEducationHtml %}
+                    <div>
+                        {% for education in schedule.activity.minimumEducationLevel %}
+                            <div>{{ education.educationLevelDescription }}</div>
+                        {% else %}
+                            None required
+                        {% endfor %}
+                    </div>
+                {% endset %}
+
                 {{ govukTable({
                     caption: "Requirements",
                     captionClasses: "govuk-table__caption--m",
@@ -86,6 +96,14 @@
                             },
                             {
                                 text: suitableForIep
+                            }
+                        ],
+                        [
+                            {
+                                text: "Education level:"
+                            },
+                            {
+                                html: requiredEducationHtml
                             }
                         ]
                     ]
@@ -326,7 +344,7 @@
         {% set educationLevelHtml %}
             <div>
                 {% for educationLevel in row.educationLevels %}
-                    <div>{{ educationLevel.studyArea }} {{ educationLevel.educationLevel }}</div>
+                    <div>{{ educationLevel.studyArea }} - {{ educationLevel.educationLevel }}</div>
                 {% endfor %}
             </div>
         {% endset %}

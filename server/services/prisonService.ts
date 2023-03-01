@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { isBefore } from 'date-fns'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import {
@@ -21,7 +22,7 @@ import {
   sortActivitiesByEventThenByLastName,
   extractAttendanceInfo,
 } from './prisonServiceHelper'
-import { sortByDateTime } from '../utils/utils'
+import { parseDate, sortByDateTime } from '../utils/utils'
 import {
   AttendanceDto,
   AttendancesResponse,
@@ -261,6 +262,9 @@ export default class PrisonService {
 
   getEducations(prisonerNumber: string | string[], user: ServiceUser): Promise<Education[]> {
     const prisonerNumbers = [prisonerNumber].flat()
-    return this.prisonApiClient.getEducations(prisonerNumbers, user)
+    return this.prisonApiClient
+      .getEducations(prisonerNumbers, user)
+      .then(edu => edu.filter(e => e.studyArea && e.educationLevel && isBefore(parseDate(e.endDate), new Date())))
+      .then(edu => _.uniqBy(edu, e => e.bookingId + e.studyArea + e.educationLevel))
   }
 }
