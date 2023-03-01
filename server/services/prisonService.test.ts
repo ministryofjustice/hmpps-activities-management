@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import { addDays } from 'date-fns'
 import atLeast from '../../jest.setup'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
@@ -19,6 +20,7 @@ import { OffenderActivityId } from '../@types/dps'
 import IncentivesApiClient from '../data/incentivesApiClient'
 import { IepLevel } from '../@types/incentivesApi/types'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
+import { toDateString } from '../utils/utils'
 
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -246,7 +248,9 @@ describe('Prison Service', () => {
 
   describe('getEducations', () => {
     it('should get education levels for a prisoner from prison API', async () => {
-      const expectedResult = [{ data: 'response' }] as unknown as Education[]
+      const expectedResult = [
+        { studyArea: 'Mathematics', educationLevel: 'Level 1', endDate: '2022-01-01' },
+      ] as unknown as Education[]
 
       when(prisonApiClient.getEducations)
         .calledWith(atLeast(['ABC123']))
@@ -258,7 +262,9 @@ describe('Prison Service', () => {
     })
 
     it('should get education levels for a list of prisoners from prison API', async () => {
-      const expectedResult = [{ data: 'response' }] as unknown as Education[]
+      const expectedResult = [
+        { studyArea: 'Mathematics', educationLevel: 'Level 1', endDate: '2022-01-01' },
+      ] as unknown as Education[]
 
       when(prisonApiClient.getEducations)
         .calledWith(atLeast(['ABC123', 'CBA321']))
@@ -267,6 +273,100 @@ describe('Prison Service', () => {
       const actualResult = await prisonService.getEducations(['ABC123', 'CBA321'], user)
 
       expect(actualResult).toEqual(expectedResult)
+    })
+
+    it('should filter out any results without an end date', async () => {
+      const response = [{ studyArea: 'Mathematics', educationLevel: 'Level 1' }] as unknown as Education[]
+
+      prisonApiClient.getEducations = jest.fn()
+      when(prisonApiClient.getEducations)
+        .calledWith(atLeast(['ABC123']))
+        .mockResolvedValue(response)
+
+      const actualResult = await prisonService.getEducations('ABC123', user)
+
+      expect(actualResult).toEqual([])
+    })
+
+    it('should filter out any results with an end date after now', async () => {
+      const response = [
+        { studyArea: 'Mathematics', educationLevel: 'Level 1', endDate: toDateString(addDays(new Date(), 1)) },
+      ] as unknown as Education[]
+
+      prisonApiClient.getEducations = jest.fn()
+      when(prisonApiClient.getEducations)
+        .calledWith(atLeast(['ABC123']))
+        .mockResolvedValue(response)
+
+      const actualResult = await prisonService.getEducations('ABC123', user)
+
+      expect(actualResult).toEqual([])
+    })
+
+    it('should not filter out any results with an end date after now when inflight certifications are included', async () => {
+      const tomorrowAsString = toDateString(addDays(new Date(), 1))
+      const response = [
+        { studyArea: 'Mathematics', educationLevel: 'Level 1', endDate: tomorrowAsString },
+      ] as unknown as Education[]
+
+      prisonApiClient.getEducations = jest.fn()
+      when(prisonApiClient.getEducations)
+        .calledWith(atLeast(['ABC123']))
+        .mockResolvedValue(response)
+
+      const actualResult = await prisonService.getEducations('ABC123', user, false)
+
+      expect(actualResult).toEqual([
+        {
+          educationLevel: 'Level 1',
+          endDate: tomorrowAsString,
+          studyArea: 'Mathematics',
+        },
+      ])
+    })
+
+    it('should not filter out any duplicate certifications when filter duplicates flag is false', async () => {
+      const response = [
+        {
+          bookingId: 1,
+          studyArea: 'Mathematics',
+          educationLevel: 'Level 1',
+          endDate: '2022-01-01',
+        },
+        {
+          bookingId: 1,
+          studyArea: 'Mathematics',
+          educationLevel: 'Level 1',
+          endDate: '2021-01-01',
+        },
+        {
+          bookingId: 2,
+          studyArea: 'Mathematics',
+          educationLevel: 'Level 1',
+          endDate: '2021-01-01',
+        },
+        {
+          bookingId: 2,
+          studyArea: 'Mathematics',
+          educationLevel: 'Level 2',
+          endDate: '2021-01-01',
+        },
+        {
+          bookingId: 2,
+          studyArea: 'English',
+          educationLevel: 'Level 2',
+          endDate: '2021-01-01',
+        },
+      ] as unknown as Education[]
+
+      prisonApiClient.getEducations = jest.fn()
+      when(prisonApiClient.getEducations)
+        .calledWith(atLeast(['ABC123']))
+        .mockResolvedValue(response)
+
+      const actualResult = await prisonService.getEducations('ABC123', user, true, false)
+
+      expect(actualResult).toEqual(response)
     })
   })
 })

@@ -33,6 +33,7 @@ describe('Views - Allocation dashboard', () => {
         .map((i, e) => $(e).text())
         .get(),
     ).toEqual([
+      'All Incentive Levels',
       'Basic',
       'Standard',
       'Enhanced',
@@ -44,7 +45,6 @@ describe('Views - Allocation dashboard', () => {
       'Enhanced 2 or Enhanced 3',
       'Enhanced or Enhanced 2 or Enhanced 3',
       'Standard or Enhanced or Enhanced 2 or Enhanced 3',
-      'All Incentive Levels',
     ])
   })
 })
