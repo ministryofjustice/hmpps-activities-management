@@ -39,9 +39,9 @@ Then:
 
 Pull images and start dependent services (redis and wiremock):
 
-`$ docker-compose -f docker-compose-test.yml pull`
+`$ docker-compose pull`
 
-`$ docker-compose -f docker-compose-test.yml up -d`
+`$ docker-compose up -d`
 
 In a different terminal:
 
