@@ -1,5 +1,6 @@
-import { Expose, Type } from 'class-transformer'
+import { Expose, plainToInstance, Type } from 'class-transformer'
 import { IsInt, Max, Min } from 'class-validator'
+import { getHours, getMinutes, isValid } from 'date-fns'
 import { formatDate } from '../utils/utils'
 
 const HOUR_MESSAGE = 'Select an hour'
@@ -29,4 +30,15 @@ export default class SimpleTime {
   toString = () => `${this.hour}:${this.minute}`
 
   toIsoString = () => formatDate(this.toDate(), 'HH:mm')
+}
+
+export const simpleTimeFromDate = (date: Date) => {
+  if (date && isValid(date)) {
+    return plainToInstance(SimpleTime, {
+      hour: getHours(date),
+      minute: getMinutes(date),
+    })
+  }
+
+  return null
 }

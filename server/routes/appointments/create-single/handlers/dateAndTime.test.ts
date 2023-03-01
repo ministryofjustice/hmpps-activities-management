@@ -1,21 +1,10 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import {
-  addDays,
-  addHours,
-  addMonths,
-  getDate,
-  getHours,
-  getMinutes,
-  getMonth,
-  getYear,
-  subDays,
-  subMinutes,
-} from 'date-fns'
+import { addDays, addHours, getHours, getMinutes, subDays, subMinutes } from 'date-fns'
 import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import SimpleTime from '../../../../commonValidationTypes/simpleTime'
+import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import SimpleTime, { simpleTimeFromDate } from '../../../../commonValidationTypes/simpleTime'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 describe('Route Handlers - Create Single Appointment - Date and Time', () => {
@@ -46,15 +35,11 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
 
   describe('POST', () => {
     it('should save start date, start time and end time in session and redirect to check answers page', async () => {
-      const tomorrow = new Date()
-      tomorrow.setDate(getDate(addDays(tomorrow, 1)))
+      const tomorrow = addDays(new Date(), 1)
+      const startDate = simpleDateFromDate(tomorrow)
 
       req.body = {
-        startDate: plainToInstance(SimpleDate, {
-          day: getDate(tomorrow),
-          month: getMonth(addMonths(tomorrow, 1)),
-          year: getYear(tomorrow),
-        }),
+        startDate,
         startTime: plainToInstance(SimpleTime, {
           hour: 11,
           minute: 30,
@@ -68,9 +53,9 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
       await handler.POST(req, res)
 
       expect(req.session.createSingleAppointmentJourney.startDate).toEqual({
-        day: getDate(tomorrow),
-        month: getMonth(tomorrow) + 1,
-        year: getYear(tomorrow),
+        day: startDate.day,
+        month: startDate.month,
+        year: startDate.year,
         date: req.body.startDate.toRichDate(),
       })
       expect(req.session.createSingleAppointmentJourney.startTime).toEqual({
@@ -107,13 +92,9 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
     })
 
     it('validation fails when start date is in the past', async () => {
-      const today = new Date()
+      const yesterday = subDays(new Date(), 1)
       const body = {
-        startDate: plainToInstance(SimpleDate, {
-          day: getDate(subDays(today, 1)),
-          month: getMonth(addMonths(today, 1)),
-          year: getYear(today),
-        }),
+        startDate: simpleDateFromDate(yesterday),
         startTime: plainToInstance(SimpleTime, {
           hour: 11,
           minute: 30,
@@ -134,21 +115,17 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
   })
 
   it('validation fails when start time is in the past', async () => {
-    const today = new Date()
+    // Test will fail if run at midnight
+    const now = new Date()
+    if (getHours(now) === 0 && getMinutes(now) === 0) {
+      return
+    }
+
+    const todayOneMinuteInThePast = subMinutes(now, 1)
     const body = {
-      startDate: plainToInstance(SimpleDate, {
-        day: getDate(today),
-        month: getMonth(addMonths(today, 1)),
-        year: getYear(today),
-      }),
-      startTime: plainToInstance(SimpleTime, {
-        hour: getHours(today),
-        minute: getMinutes(subMinutes(today, 1)),
-      }),
-      endTime: plainToInstance(SimpleTime, {
-        hour: getHours(addHours(today, 1)),
-        minute: getMinutes(today),
-      }),
+      startDate: simpleDateFromDate(todayOneMinuteInThePast),
+      startTime: simpleTimeFromDate(todayOneMinuteInThePast),
+      endTime: simpleTimeFromDate(addHours(todayOneMinuteInThePast, 1)),
     }
 
     const requestObject = plainToInstance(DateAndTime, body)
@@ -159,14 +136,10 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
     )
   })
 
-  it('validation fails when end time after the start time', async () => {
+  it('validation fails when end time is not after the start time', async () => {
     const today = new Date()
     const body = {
-      startDate: plainToInstance(SimpleDate, {
-        day: getDate(today) + 1,
-        month: getMonth(today) + 1,
-        year: getYear(today),
-      }),
+      startDate: simpleDateFromDate(today),
       startTime: plainToInstance(SimpleTime, {
         hour: 11,
         minute: 30,
