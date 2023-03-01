@@ -260,11 +260,25 @@ export default class PrisonService {
     return this.prisonApiClient.getReferenceCodes(domain, user)
   }
 
-  getEducations(prisonerNumber: string | string[], user: ServiceUser): Promise<Education[]> {
+  getEducations(
+    prisonerNumber: string | string[],
+    user: ServiceUser,
+    excludeInFlightCertifications = true,
+    filterDuplicateQualifications = true,
+  ): Promise<Education[]> {
     const prisonerNumbers = [prisonerNumber].flat()
     return this.prisonApiClient
       .getEducations(prisonerNumbers, user)
-      .then(edu => edu.filter(e => e.studyArea && e.educationLevel && isBefore(parseDate(e.endDate), new Date())))
-      .then(edu => _.uniqBy(edu, e => e.bookingId + e.studyArea + e.educationLevel))
+      .then(edu =>
+        edu.filter(
+          e =>
+            e.studyArea &&
+            e.educationLevel &&
+            (!excludeInFlightCertifications || isBefore(parseDate(e.endDate), new Date())),
+        ),
+      )
+      .then(edu =>
+        filterDuplicateQualifications ? _.uniqBy(edu, e => e.bookingId + e.studyArea + e.educationLevel) : edu,
+      )
   }
 }

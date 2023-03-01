@@ -303,7 +303,29 @@ describe('Prison Service', () => {
       expect(actualResult).toEqual([])
     })
 
-    it('should filter out any duplicate certifications', async () => {
+    it('should not filter out any results with an end date after now when inflight certifications are included', async () => {
+      const tomorrowAsString = toDateString(addDays(new Date(), 1))
+      const response = [
+        { studyArea: 'Mathematics', educationLevel: 'Level 1', endDate: tomorrowAsString },
+      ] as unknown as Education[]
+
+      prisonApiClient.getEducations = jest.fn()
+      when(prisonApiClient.getEducations)
+        .calledWith(atLeast(['ABC123']))
+        .mockResolvedValue(response)
+
+      const actualResult = await prisonService.getEducations('ABC123', user, false)
+
+      expect(actualResult).toEqual([
+        {
+          educationLevel: 'Level 1',
+          endDate: tomorrowAsString,
+          studyArea: 'Mathematics',
+        },
+      ])
+    })
+
+    it('should not filter out any duplicate certifications when filter duplicates flag is false', async () => {
       const response = [
         {
           bookingId: 1,
@@ -342,34 +364,9 @@ describe('Prison Service', () => {
         .calledWith(atLeast(['ABC123']))
         .mockResolvedValue(response)
 
-      const actualResult = await prisonService.getEducations('ABC123', user)
+      const actualResult = await prisonService.getEducations('ABC123', user, true, false)
 
-      expect(actualResult).toEqual([
-        {
-          bookingId: 1,
-          studyArea: 'Mathematics',
-          educationLevel: 'Level 1',
-          endDate: '2022-01-01',
-        },
-        {
-          bookingId: 2,
-          studyArea: 'Mathematics',
-          educationLevel: 'Level 1',
-          endDate: '2021-01-01',
-        },
-        {
-          bookingId: 2,
-          studyArea: 'Mathematics',
-          educationLevel: 'Level 2',
-          endDate: '2021-01-01',
-        },
-        {
-          bookingId: 2,
-          studyArea: 'English',
-          educationLevel: 'Level 2',
-          endDate: '2021-01-01',
-        },
-      ])
+      expect(actualResult).toEqual(response)
     })
   })
 })
