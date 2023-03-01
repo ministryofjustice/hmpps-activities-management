@@ -10,6 +10,7 @@
 
     .govuk-form-group {
       flex: 0 0 calc(50% - 20px);
+      flex-grow: 1;
       padding: 0 10px;
     }
   }

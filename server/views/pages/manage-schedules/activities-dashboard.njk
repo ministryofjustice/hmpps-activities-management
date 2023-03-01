@@ -23,14 +23,13 @@
             <div class='filter'>
                 <form method='GET'>
                     <div class="filter__items">
-                        {% set categoryOptions = [] %}
-                        {% set categoryOptions = (categoryOptions.push(
+                        {% set categoryOptions = [
                             {
                                 value: "all",
                                 text: "All",
                                 selected: filters.categoryFilter == "all"
                             }
-                        ), categoryOptions) %}
+                        ] %}
 
                         {% for category in categories %}
                             {% set categoryOptions = (categoryOptions.push(
