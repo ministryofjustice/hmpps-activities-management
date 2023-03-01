@@ -9,6 +9,7 @@ import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { ActivitySchedule, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 import { parseDate } from '../../../utils/utils'
 import { IepLevel } from '../../../@types/incentivesApi/types'
+import { Education } from '../../../@types/prisonApiImport/types'
 
 type Filters = {
   candidateQuery: string
@@ -156,15 +157,16 @@ export default class AllocationDashboardRoutes {
         ),
       )
 
-    const currentAllocations = await this.activitiesService.getPrisonerAllocations(
-      user.activeCaseLoad.caseLoadId,
-      pageOfInmates.map(i => i.prisonerNumber),
-      user,
-    )
+    const prisonerNumbers = pageOfInmates.map(i => i.prisonerNumber)
+    const [currentAllocations, educationLevels]: [PrisonerAllocations[], Education[]] = await Promise.all([
+      this.activitiesService.getPrisonerAllocations(user.activeCaseLoad.caseLoadId, prisonerNumbers, user),
+      this.prisonService.getEducations(prisonerNumbers, user),
+    ])
 
     return pageOfInmates.map(inmate => ({
       name: `${inmate.firstName} ${inmate.lastName}`,
       prisonerNumber: inmate.prisonerNumber,
+      cellLocation: inmate.cellLocation,
       otherAllocations:
         currentAllocations
           .find(a => a.prisonerNumber === inmate.prisonerNumber)
@@ -172,8 +174,8 @@ export default class AllocationDashboardRoutes {
             id: a.scheduleId,
             scheduleName: a.scheduleDescription,
           })) || [],
-      cellLocation: inmate.cellLocation,
       releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
+      educationLevels: educationLevels.filter(e => e.bookingId.toString() === inmate.bookingId),
     }))
   }
 
