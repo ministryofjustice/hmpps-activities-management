@@ -10,8 +10,8 @@ import {
   getMinutes,
   getMonth,
   getYear,
-  subDays,
   subMinutes,
+  subMonths,
 } from 'date-fns'
 import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
@@ -110,8 +110,8 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
       const today = new Date()
       const body = {
         startDate: plainToInstance(SimpleDate, {
-          day: getDate(subDays(today, 1)),
-          month: getMonth(addMonths(today, 1)),
+          day: getDate(today),
+          month: getMonth(subMonths(today, 1)),
           year: getYear(today),
         }),
         startTime: plainToInstance(SimpleTime, {
