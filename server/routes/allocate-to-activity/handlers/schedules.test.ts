@@ -22,10 +22,12 @@ describe('Route Handlers - Schedules dashboard', () => {
     const am = {
       id: 1,
       description: 'Houseblock 1 AM',
+      endDate: '2021-01-01',
     } as ActivityScheduleLite
     const pm = {
       id: 2,
       description: 'Houseblock 1 PM',
+      endDate: null,
     } as ActivityScheduleLite
 
     activitiesService.getSchedulesOfActivity.mockResolvedValue([am, pm])
@@ -70,7 +72,7 @@ describe('Route Handlers - Schedules dashboard', () => {
   })
 
   describe('GET', () => {
-    it('should render schedules with their allocation summaries', async () => {
+    it('should render active schedules with their allocation summaries', async () => {
       req.params = { activityId: '1' }
 
       await handler.GET(req, res)
@@ -83,14 +85,7 @@ describe('Route Handlers - Schedules dashboard', () => {
             id: 2,
             percentageAllocated: 50,
             vacancies: 50,
-          },
-          {
-            allocated: 80,
-            capacity: 100,
-            description: 'Houseblock 1 AM',
-            id: 1,
-            percentageAllocated: 80,
-            vacancies: 20,
+            endDate: null,
           },
         ]),
         total: { allocated: 155, capacity: 250, percentageAllocated: 62, vacancies: 95 },

@@ -73,35 +73,35 @@
                     {
                         attributes: {
                             id: 'capacity-' + loop.index,
-                            "data-sort-value": activity.capacity
+                            "data-sort-value": activity.allocationSummary.capacity
                         },
                         classes: 'govuk-table__cell--numeric',
-                        text: activity.capacity
+                        text: activity.allocationSummary.capacity
                     },
                     {
                         attributes: {
                             id: 'allocated-' + loop.index,
-                            "data-sort-value": activity.allocated
+                            "data-sort-value": activity.allocationSummary.allocated
                         },
                         classes: 'govuk-table__cell--numeric',
-                        text: activity.allocated
+                        text: activity.allocationSummary.allocated
                     },
                     {
                         attributes: {
                             id: 'percentage-allocated-' + loop.index,
-                            "data-sort-value": activity.percentageAllocated
+                            "data-sort-value": activity.allocationSummary.percentageAllocated
                         },
                         classes: 'govuk-table__cell--numeric',
-                        text: activity.percentageAllocated + '%'
+                        text: activity.allocationSummary.percentageAllocated + '%'
                     },
                     {
                         attributes: {
                             id: 'vacancies-' + loop.index,
-                            "data-sort-value": activity.vacancies
+                            "data-sort-value": activity.allocationSummary.vacancies
                         },
                         classes: 'govuk-table__cell--numeric',
                         html: '
-                                <span class="govuk-tag govuk-tag--' + ('green' if activity.vacancies <= 0 else 'red') + '">' + activity.vacancies + '</span>
+                                <span class="govuk-tag govuk-tag--' + ('green' if activity.allocationSummary.vacancies <= 0 else 'red') + '">' + activity.allocationSummary.vacancies + '</span>
                               '
                     }
                 ]), rows) %}
