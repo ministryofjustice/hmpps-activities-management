@@ -1,3 +1,6 @@
+import DatePicker from '../components/datePicker'
+import SummaryList from '../components/summaryList'
+
 export default abstract class Page {
   static verifyOnPage<T>(constructor: new () => T): T {
     return new constructor()
@@ -46,9 +49,15 @@ export default abstract class Page {
 
   getInputByName = (name: string): Cypress.Chainable => cy.get(`[name="${name}"]`)
 
+  getLinkByText = text => cy.get('a').contains(text)
+
   continue = () => cy.get('button').contains('Continue').click()
 
   back = () => cy.get('.govuk-back-link').contains('Back').click()
 
   assertNoBackLink = () => cy.get('.govuk-back-link').should('not.exist')
+
+  protected getDatePickerById = (id: string) => new DatePicker(id)
+
+  protected getSummaryListById = (id: string) => new SummaryList(id)
 }
