@@ -97,15 +97,13 @@ export default class CheckAnswersRoutes {
       : 'Not set'
 
     const times = {
-      monday: createScheduleJourney.timeSlotsMonday ? createScheduleJourney.timeSlotsMonday.join(' ') : undefined,
-      tuesday: createScheduleJourney.timeSlotsTuesday ? createScheduleJourney.timeSlotsTuesday.join(' ') : undefined,
-      wednesday: createScheduleJourney.timeSlotsWednesday
-        ? createScheduleJourney.timeSlotsWednesday.join(' ')
-        : undefined,
-      thursday: createScheduleJourney.timeSlotsThursday ? createScheduleJourney.timeSlotsThursday.join(' ') : undefined,
-      friday: createScheduleJourney.timeSlotsFriday ? createScheduleJourney.timeSlotsFriday.join(' ') : undefined,
-      saturday: createScheduleJourney.timeSlotsSaturday ? createScheduleJourney.timeSlotsSaturday.join(' ') : undefined,
-      sunday: createScheduleJourney.timeSlotsSunday ? createScheduleJourney.timeSlotsSunday.join(' ') : undefined,
+      monday: createScheduleJourney.timeSlotsMonday,
+      tuesday: createScheduleJourney.timeSlotsTuesday,
+      wednesday: createScheduleJourney.timeSlotsWednesday,
+      thursday: createScheduleJourney.timeSlotsThursday,
+      friday: createScheduleJourney.timeSlotsFriday,
+      saturday: createScheduleJourney.timeSlotsSaturday,
+      sunday: createScheduleJourney.timeSlotsSunday,
     }
 
     res.render('pages/manage-schedules/create-schedule/check-answers', {

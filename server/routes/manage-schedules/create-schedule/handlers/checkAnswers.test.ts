@@ -54,8 +54,8 @@ describe('Route Handlers - Create an activity schedule - Check answers', () => {
         endDate: '18th January 2023',
         startDate: '17th January 2023',
         times: {
-          tuesday: 'AM',
-          friday: 'PM ED',
+          tuesday: ['AM'],
+          friday: ['PM', 'ED'],
         },
       })
     })
