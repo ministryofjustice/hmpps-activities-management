@@ -1,6 +1,8 @@
 {% extends "layout.njk" %}
 
+{% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "components/multi-select.njk" import multiSelect %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
@@ -45,7 +47,8 @@
     {% for attendee in attendees %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.name,
-            value: attendee.prisonerNumber,
+            value: attendee.attendance.id,
+            selectable: attendee.attendance.status === "SCHEDULED",
             items: [
                 {
                     html: '
@@ -64,7 +67,7 @@
                     html: renderOtherEvents(attendee.otherEvents)
                 },
                 {
-                    text: attendee.attendanceLabel
+                    html: attendanceTag(attendee.attendance) + ' ' + renderPayStatus(attendee.attendance)
                 }
             ]
         }), rows) %}
@@ -75,7 +78,7 @@
         {{ multiSelect({
             caption: "Attendance list",
             captionClasses: "govuk-visually-hidden",
-            name: 'selectedPrisoners',
+            name: 'selectedAttendances',
             head: [
                 {
                     text: "Name"
@@ -119,4 +122,14 @@
             <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.location }}</div>
         </div>
     {% endfor %}
+{% endmacro %}
+
+{# TODO – Render recorded pay status #}
+{% macro renderPayStatus(attendance) %}
+    {% if attendance.status === 'COMPLETED' and attendance.attendanceReason.code ===  'ATT' %}
+        {{ govukTag({
+          text: "Pay",
+          classes: "govuk-tag--blue"
+      }) }}
+    {% endif %}
 {% endmacro %}

@@ -4,7 +4,7 @@ import { Expose, Transform } from 'class-transformer'
 import ActivitiesService from '../../../services/activitiesService'
 import { getAttendanceSummary, toDate } from '../../../utils/utils'
 import PrisonService from '../../../services/prisonService'
-import { Attendance, ScheduledActivity, ScheduledEvent } from '../../../@types/activitiesAPI/types'
+import { ScheduledActivity, ScheduledEvent } from '../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../validators/hasAtLeastOne'
 
 export class AttendanceList {
@@ -12,7 +12,7 @@ export class AttendanceList {
   @Expose()
   @Transform(({ value }) => [value].flat()) // Transform to an array if only one value is provided
   @HasAtLeastOne({ message: 'Select at least one prisoner' })
-  selectedPrisoners: string[]
+  selectedAttendances: number[]
 }
 
 export default class AttendanceListRoutes {
@@ -41,7 +41,7 @@ export default class AttendanceListRoutes {
         prisonerNumber: i.offenderNo,
         location: i.assignedLivingUnitDesc,
         otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.offenderNo),
-        attendanceLabel: this.getAttendanceLabel(i.offenderNo, instance.attendances),
+        attendance: instance.attendances.find(a => a.prisonerNumber === i.offenderNo),
       })),
     )
 
@@ -58,21 +58,23 @@ export default class AttendanceListRoutes {
   }
 
   ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    res.status(419)
-    res.send('ATTENDED : Under construction 🛠️')
+    const { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    const { user } = res.locals
+
+    if (selectedAttendances) {
+      const attendances = selectedAttendances.map(attendance => ({
+        id: +attendance,
+        attendanceReason: 'ATT',
+      }))
+      await this.activitiesService.updateAttendances(attendances, user)
+    }
+
+    return res.redirect('attendance-list')
   }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
     res.status(419)
     res.send('NOT ATTENDED : Under construction 🛠️')
-  }
-
-  private getAttendanceLabel = (prisonerNumber: string, attendances: Attendance[]) => {
-    const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
-    if (attendance.status === 'SCHEDULED') {
-      return 'Not recorded yet'
-    }
-    return attendance.attendanceReason.code === 'ATT' ? 'Attended' : 'Absent'
   }
 
   private eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity): boolean => {

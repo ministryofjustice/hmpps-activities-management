@@ -17,18 +17,22 @@
 
     {% set rows = [] %}
     {% for row in params.rows %}
-        {% set r = [
-            {
-                html: '
-                        <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
-                            <input type="checkbox" name="' + params.name + '" value="' + row.value + '" class="govuk-checkboxes__input" id="row-' + loop.index + '">
-                            <label class="govuk-label govuk-checkboxes__label" for="row-' + loop.index + '">
-                                <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
-                            </label>
-                        </div>
-                      '
-            }
-        ] %}
+        {% if row.selectable %}
+            {% set r = [
+                {
+                    html: '
+                            <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
+                                <input type="checkbox" name="' + params.name + '" value="' + row.value + '" class="govuk-checkboxes__input" id="row-' + loop.index + '">
+                                <label class="govuk-label govuk-checkboxes__label" for="row-' + loop.index + '">
+                                    <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
+                                </label>
+                            </div>
+                        '
+                }
+            ] %}
+         {% else %}
+            {% set r = [{ html: '' }] %}
+        {% endif %}
         {% for item in row.items %}
             {% set r = (r.push(item), r) %}
         {% endfor %}

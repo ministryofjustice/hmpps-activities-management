@@ -98,7 +98,6 @@ describe('Route Handlers - Attendance List', () => {
         },
         attendees: expect.arrayContaining([
           {
-            attendanceLabel: 'Not recorded yet',
             location: 'MDI-1-001',
             name: 'Joe Bloggs',
             otherEvents: [
@@ -111,9 +110,9 @@ describe('Route Handlers - Attendance List', () => {
               },
             ],
             prisonerNumber: 'ABC123',
+            attendance: { prisonerNumber: 'ABC123', status: 'SCHEDULED' },
           },
           {
-            attendanceLabel: 'Attended',
             location: 'MDI-1-002',
             name: 'Alan Key',
             otherEvents: [
@@ -126,13 +125,14 @@ describe('Route Handlers - Attendance List', () => {
               },
             ],
             prisonerNumber: 'ABC321',
+            attendance: { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
           },
           {
-            attendanceLabel: 'Absent',
             location: 'MDI-1-003',
             name: 'Mr Blobby',
             otherEvents: [],
             prisonerNumber: 'ZXY123',
+            attendance: { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
           },
         ]),
       })
