@@ -47,6 +47,7 @@ export default class AllocationDashboardRoutes {
     if (Object.values(filters).length === 0) {
       filters.incentiveLevelFilter = suitableForIep
       filters.riskLevelFilter = suitableForWra
+      filters.employmentFilter = 'Not in work'
     }
 
     const [allocationSummaryView, currentlyAllocated, candidates] = await Promise.all([
