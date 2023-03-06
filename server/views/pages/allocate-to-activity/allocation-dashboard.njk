@@ -232,6 +232,33 @@
     <div class='filter'>
         <form method='GET'>
             <div class="filter__items">
+                {% set employmentOptions = [
+                    {
+                        value: 'Everyone',
+                        text: 'Everyone',
+                        selected: filters.employmentFilter == 'Everyone'
+                    },
+                    {
+                        value: 'Not in work',
+                        text: 'Not in work',
+                        selected: filters.employmentFilter == 'Not in work'
+                    },
+                    {
+                        value: 'In work',
+                        text: 'In work',
+                        selected: filters.employmentFilter == 'In work'
+                    }
+                ] %}
+                {{ govukSelect({
+                    id: "employmentFilter",
+                    name: "employmentFilter",
+                    classes: "govuk-!-width-full",
+                    label: {
+                        text: "Showing people who are:"
+                    },
+                    items: employmentOptions
+                }) }}
+
                 {% set riskLevelOptions = [
                     {
                         value: 'Any Workplace Risk Assessment',
