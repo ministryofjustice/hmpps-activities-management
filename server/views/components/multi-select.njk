@@ -40,7 +40,7 @@
         {% set rows = (rows.push(r), rows) %}
     {% endfor %}
 
-    <div class='multi-select' data-module='activities-multi-select'>
+    <div class='multi-select' data-module='activities-multi-select' {% if params.id %} id={{params.id}} {% endif %}>
         {{ govukTable({
             attributes: {
                 'data-module': 'moj-multi-select',

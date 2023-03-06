@@ -76,6 +76,7 @@
     <form method='POST'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         {{ multiSelect({
+            id: "attendanceList",
             caption: "Attendance list",
             captionClasses: "govuk-visually-hidden",
             name: 'selectedAttendances',
@@ -129,7 +130,7 @@
     {% if attendance.status === 'COMPLETED' and attendance.attendanceReason.code ===  'ATT' %}
         {{ govukTag({
           text: "Pay",
-          classes: "govuk-tag--blue"
+          classes: "govuk-tag--green"
       }) }}
     {% endif %}
 {% endmacro %}

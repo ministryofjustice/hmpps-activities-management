@@ -10,108 +10,108 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l">Activities management</h1>
-        </div>
-    </div>
 
-    <div class="govuk-grid-row card-group">
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "createAnActivityCard",
-                "href": "/create/start",
-                "clickable": "true",
-                "heading": "Create an activity",
-                "description": "Create a schedulable activity in your prison.",
-                "data-qa": "create-an-activity-card"
-            }) }}
-        </div>
+            <div class="card-group">
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "createAnActivityCard",
+                        "href": "/create/start",
+                        "clickable": "true",
+                        "heading": "Create an activity",
+                        "description": "Create a schedulable activity in your prison.",
+                        "data-qa": "create-an-activity-card"
+                    }) }}
+                </div>
 
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "allocateToActivitiesCard",
-                "href": "/allocate/categories",
-                "clickable": "true",
-                "heading": "Allocate to activities",
-                "description": "Allocate an inmate to an activity schedule.",
-                "data-qa": "allocate-to-activities-card"
-            }) }}
-        </div>
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "allocateToActivitiesCard",
+                        "href": "/allocate/categories",
+                        "clickable": "true",
+                        "heading": "Allocate to activities",
+                        "description": "Allocate an inmate to an activity schedule.",
+                        "data-qa": "allocate-to-activities-card"
+                    }) }}
+                </div>
 
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "manageSchedulesCard",
-                "href": "/schedule/activities",
-                "clickable": "true",
-                "heading": "Create or change activity details and schedules",
-                "description": "Set up new activities, add schedules, and change, suspend or archive existing ones.",
-                "data-qa": "manage-schedules-card"
-            }) }}
-        </div>
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "manageSchedulesCard",
+                        "href": "/schedule/activities",
+                        "clickable": "true",
+                        "heading": "Create or change activity details and schedules",
+                        "description": "Set up new activities, add schedules, and change, suspend or archive existing ones.",
+                        "data-qa": "manage-schedules-card"
+                    }) }}
+                </div>
 
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "recordAttendanceCard",
-                "href": "/attendance/select-period",
-                "clickable": "true",
-                "heading": "Record attendance",
-                "description": "Mark attendance at activities and appointments and get printable attendance lists.",
-                "data-qa": "record-attendance-card"
-            }) }}
-        </div>
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "recordAttendanceCard",
+                        "href": "/attendance/select-period",
+                        "clickable": "true",
+                        "heading": "Record attendance",
+                        "description": "Mark attendance at activities and appointments and get printable attendance lists.",
+                        "data-qa": "record-attendance-card"
+                    }) }}
+                </div>
 
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "unlockListCard",
-                "href": "/unlock-list/select-date-and-location",
-                "clickable": "true",
-                "heading": "Unlock list",
-                "description": "View unlock lists for residential locations",
-                "data-qa": "unlock-list-link"
-            }) }}
-        </div>
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "unlockListCard",
+                        "href": "/unlock-list/select-date-and-location",
+                        "clickable": "true",
+                        "heading": "Unlock list",
+                        "description": "View unlock lists for residential locations",
+                        "data-qa": "unlock-list-link"
+                    }) }}
+                </div>
 
-        {% if shouldShowAlphaPrisonActivityListDps %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "id": "alphaActivityListCard",
-                    "href": "/activity-list/select-activity-location",
-                    "clickable": "true",
-                    "heading": "Spike - Whereabouts (prisonAPI): View by activity or appointment location",
-                    "description": "View all activities in an activity or appointment location.",
-                    "data-qa": "alpha-activity-list-dps-link"
-                }) }}
+                {% if shouldShowAlphaPrisonActivityListDps %}
+                    <div class="govuk-grid-column-one-third card-group__item">
+                        {{ card({
+                            "id": "alphaActivityListCard",
+                            "href": "/activity-list/select-activity-location",
+                            "clickable": "true",
+                            "heading": "Spike - Whereabouts (prisonAPI): View by activity or appointment location",
+                            "description": "View all activities in an activity or appointment location.",
+                            "data-qa": "alpha-activity-list-dps-link"
+                        }) }}
+                    </div>
+                {% endif %}
+
+                {% if shouldShowAlphaPrisonActivityListAm %}
+                    <div class="govuk-grid-column-one-third card-group__item">
+                        {{ card({
+                            "id": "alphaActivityListCard",
+                            "href": "/activity-list-am/select-activity-location",
+                            "clickable": "true",
+                            "heading": "Spike - Whereabouts (activitiesAPI): View by activity or appointment location",
+                            "description": "View all activities in an activity or appointment location.",
+                            "data-qa": "alpha-activity-list-am-link"
+                        }) }}
+                    </div>
+                {% endif %}
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "href": "/spikes/calendar-spike/search",
+                        "clickable": "true",
+                        "heading": "Spike - Calendar",
+                        "description": "Implementation of a calendar with bank holidays overlayed"
+                    }) }}
+                </div>
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "href": "/appointments",
+                        "clickable": "true",
+                        "heading": "Appointments management",
+                        "description": "Create and manage appointments for individuals and groups.",
+                        "data-qa": "appointments-management-card"
+                    }) }}
+                </div>
             </div>
-        {% endif %}
-
-        {% if shouldShowAlphaPrisonActivityListAm %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "id": "alphaActivityListCard",
-                    "href": "/activity-list-am/select-activity-location",
-                    "clickable": "true",
-                    "heading": "Spike - Whereabouts (activitiesAPI): View by activity or appointment location",
-                    "description": "View all activities in an activity or appointment location.",
-                    "data-qa": "alpha-activity-list-am-link"
-                }) }}
-            </div>
-        {% endif %}
-
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/spikes/calendar-spike/search",
-                "clickable": "true",
-                "heading": "Spike - Calendar",
-                "description": "Implementation of a calendar with bank holidays overlayed"
-            }) }}
-        </div>
-
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/appointments",
-                "clickable": "true",
-                "heading": "Appointments management",
-                "description": "Create and manage appointments for individuals and groups.",
-                "data-qa": "appointments-management-card"
-            }) }}
         </div>
     </div>
 {% endblock %}
