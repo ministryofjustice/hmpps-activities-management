@@ -5,7 +5,7 @@
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "moj/components/search/macro.njk" import mojSearch %}
+{% from "components/searchBar.njk" import searchBar %}
 
 {% set pageTitle = applicationName + " - Allocate" %}
 {% set pageId = 'allocation-dashboard-page' %}
@@ -206,7 +206,7 @@
 {% endset %}
 
 {% set candidatesHtml %}
-    <div class="govuk-grid-row govuk-!-margin-bottom-6">
+    <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop govuk-grid-column-one-half">
             <p>
                 Your candidate list has been filtered to show people who match all the requirements for this activity.
@@ -214,19 +214,19 @@
             </p>
         </div>
         <div class="govuk-grid-column-one-third-from-desktop govuk-grid-column-one-half">
-            {{ mojSearch({
-                method: 'GET',
-                input: {
-                    id: 'candidate-search-input',
-                    name: 'candidateQuery'
-                },
-                label: {
-                    text: 'Search by name or prison number:'
-                },
-                button: {
-                    text: 'Search'
-                }
-            }) }}
+            <form method='GET'>
+                <label class="govuk-label" for="candidate-search-input">Search by name or prison number:</label>
+                {{ searchBar({
+                    inputParams: {
+                        id: 'candidate-search-input',
+                        name: 'candidateQuery',
+                        value: filters.candidateQuery
+                    },
+                    buttonParams: {
+                        text: 'Search'
+                    }
+                }) }}
+            </form>
         </div>
     </div>
     <div class='filter'>

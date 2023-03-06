@@ -107,15 +107,15 @@ describe('Route Handlers - Allocation dashboard', () => {
           {
             prisonerNumber: 'ABC123',
             allocations: [
-              { scheduleId: 1, scheduleDescription: 'this schedule' },
-              { scheduleId: 2, scheduleDescription: 'other schedule' },
+              { scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+              { scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
             ],
           },
           {
             prisonerNumber: '321CBA',
             allocations: [
-              { scheduleId: 1, scheduleDescription: 'this schedule' },
-              { scheduleId: 2, scheduleDescription: 'other schedule' },
+              { scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+              { scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
             ],
           },
         ] as PrisonerAllocations[])
@@ -125,8 +125,8 @@ describe('Route Handlers - Allocation dashboard', () => {
           {
             prisonerNumber: 'G3439UH',
             allocations: [
-              { scheduleId: 1, scheduleDescription: 'this schedule' },
-              { scheduleId: 2, scheduleDescription: 'other schedule' },
+              { scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+              { scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
             ],
           },
         ] as PrisonerAllocations[])
@@ -269,15 +269,18 @@ describe('Route Handlers - Allocation dashboard', () => {
         candidates: [
           {
             cellLocation: 'MDI-1-1-107',
+            inWork: true,
             name: 'Jack Daniels',
             otherAllocations: [
               {
                 id: 1,
                 scheduleName: 'this schedule',
+                isUnemployment: false,
               },
               {
                 id: 2,
                 scheduleName: 'other schedule',
+                isUnemployment: false,
               },
             ],
             prisonerNumber: 'G3439UH',
@@ -319,11 +322,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/allocate-to-activity/allocation-dashboard',
         expect.objectContaining({
-          candidates: [
-            expect.objectContaining({
-              prisonerNumber: 'G3439UH',
-            }),
-          ],
+          candidates: [],
           filters: expect.objectContaining({
             incentiveLevelFilter: 'Standard or Enhanced',
           }),
@@ -434,6 +433,65 @@ describe('Route Handlers - Allocation dashboard', () => {
           candidates: [],
           filters: expect.objectContaining({
             riskLevelFilter: 'No Workplace Risk Assessment',
+          }),
+        }),
+      )
+    })
+
+    it('should return correct candidates with employlent filter set to In work', async () => {
+      req.params = { scheduleId: '1' }
+      req.query = { candidateQuery: 'jack', employmentFilter: 'In work' }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/allocate-to-activity/allocation-dashboard',
+        expect.objectContaining({
+          candidates: [
+            expect.objectContaining({
+              prisonerNumber: 'G3439UH',
+            }),
+          ],
+          filters: expect.objectContaining({
+            employmentFilter: 'In work',
+          }),
+        }),
+      )
+    })
+
+    it('should return correct candidates with employlent filter set to Everyone', async () => {
+      req.params = { scheduleId: '1' }
+      req.query = { candidateQuery: 'jack', employmentFilter: 'Everyone' }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/allocate-to-activity/allocation-dashboard',
+        expect.objectContaining({
+          candidates: [
+            expect.objectContaining({
+              prisonerNumber: 'G3439UH',
+            }),
+          ],
+          filters: expect.objectContaining({
+            employmentFilter: 'Everyone',
+          }),
+        }),
+      )
+    })
+
+    it('should return correct candidates with employlent filter set to Not in work', async () => {
+      req.params = { scheduleId: '1' }
+      req.query = { candidateQuery: 'jack', employmentFilter: 'Not in work' }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/allocate-to-activity/allocation-dashboard',
+        expect.objectContaining({
+          candidates: [],
+          filters: expect.objectContaining({
+            employmentFilter: 'Not in work',
           }),
         }),
       )

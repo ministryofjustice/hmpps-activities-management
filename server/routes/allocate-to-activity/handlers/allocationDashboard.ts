@@ -190,6 +190,7 @@ export default class AllocationDashboardRoutes {
       })
       .filter(
         i =>
+          !filters.employmentFilter ||
           filters.employmentFilter === 'Everyone' ||
           (filters.employmentFilter === 'In work' && i.inWork) ||
           (filters.employmentFilter === 'Not in work' && !i.inWork),
