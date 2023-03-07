@@ -93,7 +93,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
         },
       ],
       minimumEducationLevel: [],
-    }
+    } as unknown as Activity
 
     user = {
       username: 'joebloggs',

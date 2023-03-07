@@ -6,6 +6,7 @@ import CheckAnswersRoutes from './checkAnswers'
 import activity from '../../../services/fixtures/activity_1.json'
 import atLeast from '../../../../jest.setup'
 import PrisonService from '../../../services/prisonService'
+import { ActivityLite } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
@@ -89,7 +90,9 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
       }
 
-      when(activitiesService.createActivity).calledWith(atLeast(expectedActivity)).mockResolvedValueOnce(activity)
+      when(activitiesService.createActivity)
+        .calledWith(atLeast(expectedActivity))
+        .mockResolvedValueOnce(activity as unknown as ActivityLite)
 
       await handler.POST(req, res)
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
@@ -108,7 +111,9 @@ describe('Route Handlers - Create an activity - Check answers', () => {
 
       req.session.createJourney.educationLevels = undefined
 
-      when(activitiesService.createActivity).calledWith(atLeast(expectedActivity)).mockResolvedValueOnce(activity)
+      when(activitiesService.createActivity)
+        .calledWith(atLeast(expectedActivity))
+        .mockResolvedValueOnce(activity as unknown as ActivityLite)
 
       await handler.POST(req, res)
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)

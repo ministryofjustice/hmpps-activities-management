@@ -15,6 +15,7 @@ type Filters = {
   candidateQuery: string
   incentiveLevelFilter: string
   riskLevelFilter: string
+  employmentFilter: string
 }
 
 export class SelectedAllocation {
@@ -46,6 +47,7 @@ export default class AllocationDashboardRoutes {
     if (Object.values(filters).length === 0) {
       filters.incentiveLevelFilter = suitableForIep
       filters.riskLevelFilter = suitableForWra
+      filters.employmentFilter = 'Not in work'
     }
 
     const [allocationSummaryView, currentlyAllocated, candidates] = await Promise.all([
@@ -163,20 +165,36 @@ export default class AllocationDashboardRoutes {
       this.prisonService.getEducations(prisonerNumbers, user),
     ])
 
-    return pageOfInmates.map(inmate => ({
-      name: `${inmate.firstName} ${inmate.lastName}`,
-      prisonerNumber: inmate.prisonerNumber,
-      cellLocation: inmate.cellLocation,
-      otherAllocations:
-        currentAllocations
-          .find(a => a.prisonerNumber === inmate.prisonerNumber)
-          ?.allocations.map(a => ({
-            id: a.scheduleId,
-            scheduleName: a.scheduleDescription,
-          })) || [],
-      releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
-      educationLevels: educationLevels.filter(e => e.bookingId.toString() === inmate.bookingId),
-    }))
+    return pageOfInmates
+      .map(inmate => {
+        const otherAllocations =
+          currentAllocations
+            .find(a => a.prisonerNumber === inmate.prisonerNumber)
+            ?.allocations.map(a => ({
+              id: a.scheduleId,
+              scheduleName: a.scheduleDescription,
+              isUnemployment: a.isUnemployment,
+            })) || []
+
+        const inWork = otherAllocations.filter(a => !a.isUnemployment).length > 0
+
+        return {
+          name: `${inmate.firstName} ${inmate.lastName}`,
+          prisonerNumber: inmate.prisonerNumber,
+          cellLocation: inmate.cellLocation,
+          otherAllocations,
+          inWork,
+          releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
+          educationLevels: educationLevels.filter(e => e.bookingId.toString() === inmate.bookingId),
+        }
+      })
+      .filter(
+        i =>
+          !filters.employmentFilter ||
+          filters.employmentFilter === 'Everyone' ||
+          (filters.employmentFilter === 'In work' && i.inWork) ||
+          (filters.employmentFilter === 'Not in work' && !i.inWork),
+      )
   }
 
   private filterByWra = (inmates: Prisoner[], filters: Filters, suitableWras: string[]): Prisoner[] => {

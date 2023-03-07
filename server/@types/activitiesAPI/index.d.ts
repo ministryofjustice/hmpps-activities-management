@@ -444,6 +444,8 @@ export interface components {
       /** Format: int64 */
       scheduleId: number
       scheduleDescription: string
+      /** @description Indicates whether this allocation is to an activity within the 'Not in work' category */
+      isUnemployment: boolean
       prisonPayBand: components['schemas']['PrisonPayBand']
       /**
        * Format: date
@@ -744,6 +746,91 @@ export interface components {
     }
     /**
      * @description
+     *   Represents an appointment instance for a specific prisoner to attend at the specified location, date and time.
+     *   The fully denormalised representation of the appointment occurrences and allocations.
+     */
+    AppointmentInstance: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this appointment instance
+       * @example 123456
+       */
+      id: number
+      category: components['schemas']['AppointmentCategory']
+      /**
+       * @description The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * Format: int64
+       * @description
+       *     The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
+       *     Should be null if in cell = true
+       *
+       * @example 123
+       */
+      internalLocationId?: number
+      /**
+       * @description
+       *     Flag to indicate if the location of the appointment is in cell rather than an internal prison location.
+       *     Internal location id should be null if in cell = true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * @description The NOMIS OFFENDERS.OFFENDER_ID_DISPLAY value for mapping to a prisoner record in NOMIS
+       * @example A1234BC
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
+       * @example 456
+       */
+      bookingId: number
+      /**
+       * Format: date
+       * @description The date of the appointment instance
+       */
+      appointmentDate: string
+      /**
+       * Format: partial-time
+       * @description The starting time of the appointment instance
+       * @example 09:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of the appointment instance
+       * @example 10:30
+       */
+      endTime?: string
+      /**
+       * @description
+       *     Notes relating to the appointment instance.
+       *     Could support adding a note specific to an individual prisoner's attendance of a specific group appointment
+       *     occurrence. Something that is supported within existing systems
+       *
+       * @example This appointment will help prisoner A1234BC adjust to life outside of prison
+       */
+      comment?: string
+      /**
+       * @description
+       *     Simple attendance marking model. Expectation that this will be enhanced to support non attendance reasons in future
+       *
+       * @example false
+       */
+      attended?: boolean
+      /**
+       * @description Indicates that the parent appointment occurrence was cancelled
+       * @example false
+       */
+      cancelled: boolean
+    }
+    /**
+     * @description
      *   Represents a specific appointment occurrence. Non recurring appointments will have a single appointment occurrence
      *   containing the same property values as the parent appointment. The same start date, time and end time. Recurring
      *   appointments will have a series of occurrences. The first in the series will also contain the same property values
@@ -835,6 +922,13 @@ export interface components {
        *     will be used.
        */
       allocations: components['schemas']['AppointmentOccurrenceAllocation'][]
+      /**
+       * @description
+       *     The instance or instances of this appointment occurrence. Single non recurring appointments such as medical will have one
+       *     instance record. A group appointment e.g. gym or chaplaincy sessions will have more than one instance record.
+       *     Instances are at the occurrence level supporting alteration of attendees in any future occurrence.
+       */
+      instances: components['schemas']['AppointmentInstance'][]
     }
     /**
      * @description
@@ -983,9 +1077,9 @@ export interface components {
       pay: components['schemas']['ActivityPayCreateRequest'][]
       /**
        * @description The most recent risk assessment level for this activity
-       * @example High
+       * @example high
        */
-      riskLevel?: string
+      riskLevel: string
       /**
        * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
        * @example BAS
@@ -1007,6 +1101,7 @@ export interface components {
        * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
        * @example 2022-12-23
        */
+      endDate?: string
       /** @description The list of minimum education levels that apply to this activity */
       minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
     }
@@ -1098,7 +1193,7 @@ export interface components {
        * @example H
        * @enum {string}
        */
-      payPerSession: string
+      payPerSession: 'H' | 'F'
       /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
@@ -1136,9 +1231,9 @@ export interface components {
       endDate?: string
       /**
        * @description The most recent risk assessment level for this activity
-       * @example High
+       * @example high
        */
-      riskLevel?: string
+      riskLevel: string
       /**
        * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
        * @example BAS
@@ -1251,9 +1346,9 @@ export interface components {
       category: components['schemas']['ActivityCategory']
       /**
        * @description The most recent risk assessment level for this activity
-       * @example High
+       * @example high
        */
-      riskLevel?: string
+      riskLevel: string
       /**
        * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
        * @example BAS
@@ -1264,6 +1359,27 @@ export interface components {
        * @example Basic
        */
       minimumIncentiveLevel: string
+      /** @description The list of minimum education levels that can apply to this activity */
+      minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevel'][]
+    }
+    /** @description Describes the minimum education levels which apply to an activity */
+    ActivityMinimumEducationLevel: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity minimum education level
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The education level code
+       * @example Basic
+       */
+      educationLevelCode: string
+      /**
+       * @description The education level description
+       * @example Basic
+       */
+      educationLevelDescription: string
     }
     /** @description Describes the pay rates and bands which apply to an activity */
     ActivityPay: {
@@ -1386,6 +1502,41 @@ export interface components {
        * @example [Mon,Tue,Wed]
        */
       daysOfWeek: string[]
+      /**
+       * @description Indicates whether the schedule slot takes place on a Monday
+       * @example true
+       */
+      mondayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Tuesday
+       * @example true
+       */
+      tuesdayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Wednesday
+       * @example true
+       */
+      wednesdayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Thursday
+       * @example false
+       */
+      thursdayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Friday
+       * @example false
+       */
+      fridayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Saturday
+       * @example false
+       */
+      saturdayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Sunday
+       * @example false
+       */
+      sundayFlag: boolean
     }
     /**
      * @description An activity tier

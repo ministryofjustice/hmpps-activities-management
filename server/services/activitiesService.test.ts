@@ -21,6 +21,7 @@ import {
   PrisonerScheduledEvents,
   Appointment,
   AppointmentCategory,
+  ActivitySchedule,
 } from '../@types/activitiesAPI/types'
 import { PrisonApiUserDetail } from '../@types/prisonApiImport/types'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
@@ -263,7 +264,7 @@ describe('Activities Service', () => {
         .mockResolvedValue(prisoners as Prisoner[])
       when(activitiesApiClient.getActivitySchedules)
         .calledWith(atLeast('10001'))
-        .mockResolvedValueOnce(activitySchedules)
+        .mockResolvedValueOnce(activitySchedules as unknown as ActivitySchedule[])
 
       when(activitiesApiClient.getActivitySchedules).calledWith(atLeast('10001')).mockResolvedValueOnce([])
 
@@ -277,7 +278,9 @@ describe('Activities Service', () => {
 
   describe('getActivitySchedule', () => {
     it('should fetch activity schedule by id using the activities API', async () => {
-      when(activitiesApiClient.getActivitySchedule).calledWith(atLeast(1)).mockResolvedValueOnce(activitySchedule1)
+      when(activitiesApiClient.getActivitySchedule)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce(activitySchedule1 as unknown as ActivitySchedule)
       const result = await activitiesService.getActivitySchedule(1, user)
       expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(1, user)
       expect(result).toEqual(activitySchedule1)
@@ -311,7 +314,9 @@ describe('Activities Service', () => {
 
   describe('getAppointment', () => {
     it('should return appointment from api when valid appointment id is used', async () => {
-      when(activitiesApiClient.getAppointment).calledWith(12345, user).mockResolvedValue(appointment)
+      when(activitiesApiClient.getAppointment)
+        .calledWith(12345, user)
+        .mockResolvedValue(appointment as Appointment)
 
       const actualResult = await activitiesService.getAppointment(12345, user)
 
@@ -320,7 +325,9 @@ describe('Activities Service', () => {
   })
 
   describe('getAppointmentDetails', () => {
-    when(activitiesApiClient.getAppointment).calledWith(12345, user).mockResolvedValue(appointment)
+    when(activitiesApiClient.getAppointment)
+      .calledWith(12345, user)
+      .mockResolvedValue(appointment as Appointment)
 
     const getLocationsForEventTypeResponse = [{ locationId: appointment.internalLocationId }] as LocationLenient[]
     when(prisonApiClient.getLocationsForEventType)
@@ -359,7 +366,9 @@ describe('Activities Service', () => {
         ...appointment,
         createdBy: 'AN_UNKNOWN_USERNAME',
       }
-      when(activitiesApiClient.getAppointment).calledWith(12345, user).mockResolvedValue(unknownUserAppointment)
+      when(activitiesApiClient.getAppointment)
+        .calledWith(12345, user)
+        .mockResolvedValue(unknownUserAppointment as Appointment)
 
       const actualAppointmentResult = await activitiesService.getAppointmentDetails(12345, user)
 

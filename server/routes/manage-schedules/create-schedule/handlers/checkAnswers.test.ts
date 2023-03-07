@@ -7,6 +7,7 @@ import atLeast from '../../../../../jest.setup'
 import createScheduleJourney from '../../../../services/fixtures/create_schedule_journey_1.json'
 import createScheduleRequest from '../../../../services/fixtures/create_schedule_request_1.json'
 import createScheduleResponse from '../../../../services/fixtures/create_schedule_response_1.json'
+import { ActivityScheduleLite } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -65,7 +66,7 @@ describe('Route Handlers - Create an activity schedule - Check answers', () => {
     it('should create the activity schedule and redirect to confirmation page', async () => {
       when(activitiesService.createScheduleActivity)
         .calledWith(atLeast(createScheduleRequest))
-        .mockResolvedValueOnce(createScheduleResponse)
+        .mockResolvedValueOnce(createScheduleResponse as ActivityScheduleLite)
 
       await handler.POST(req, res)
       expect(activitiesService.createScheduleActivity).toHaveBeenCalledWith(1, createScheduleRequest, res.locals.user)

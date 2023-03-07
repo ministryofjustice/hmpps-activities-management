@@ -8,6 +8,7 @@ import fetchActivity from './fetchActivity'
 import atLeast from '../../jest.setup'
 
 import activity from './fixtures/activity_1.json'
+import { Activity } from '../@types/activitiesAPI/types'
 
 jest.mock('../services/activitiesService')
 jest.mock('../data/activitiesApiClient')
@@ -38,7 +39,9 @@ describe('fetchActivityList', () => {
       },
     })
     const next = jest.fn()
-    when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValueOnce(activity)
+    when(activitiesService.getActivity)
+      .calledWith(atLeast(1))
+      .mockResolvedValueOnce(activity as Activity)
 
     await fetchActivity(activitiesService)(req, res, next)
 
