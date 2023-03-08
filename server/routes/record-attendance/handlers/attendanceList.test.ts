@@ -23,14 +23,22 @@ describe('Route Handlers - Attendance List', () => {
   beforeEach(() => {
     res = {
       locals: {
-        user: {},
+        user: {
+          username: 'joebloggs',
+        },
       },
       render: jest.fn(),
+      redirect: jest.fn(),
     } as unknown as Response
 
     req = {
       params: { id: 1 },
+      body: {},
     } as unknown as Request
+  })
+
+  afterEach(() => {
+    jest.resetAllMocks()
   })
 
   describe('GET', () => {
@@ -98,7 +106,6 @@ describe('Route Handlers - Attendance List', () => {
         },
         attendees: expect.arrayContaining([
           {
-            attendanceLabel: 'Not recorded yet',
             location: 'MDI-1-001',
             name: 'Joe Bloggs',
             otherEvents: [
@@ -111,9 +118,9 @@ describe('Route Handlers - Attendance List', () => {
               },
             ],
             prisonerNumber: 'ABC123',
+            attendance: { prisonerNumber: 'ABC123', status: 'SCHEDULED' },
           },
           {
-            attendanceLabel: 'Attended',
             location: 'MDI-1-002',
             name: 'Alan Key',
             otherEvents: [
@@ -126,16 +133,50 @@ describe('Route Handlers - Attendance List', () => {
               },
             ],
             prisonerNumber: 'ABC321',
+            attendance: { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
           },
           {
-            attendanceLabel: 'Absent',
             location: 'MDI-1-003',
             name: 'Mr Blobby',
             otherEvents: [],
             prisonerNumber: 'ZXY123',
+            attendance: { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
           },
         ]),
       })
+    })
+  })
+
+  describe('ATTENDED', () => {
+    it('should update attendance then redirect to the attendance list page', async () => {
+      req.body = {
+        selectedAttendances: ['1', '2'],
+      }
+
+      await handler.ATTENDED(req, res)
+
+      expect(activitiesService.updateAttendances).toBeCalledWith(
+        [
+          {
+            id: 1,
+            attendanceReason: 'ATT',
+          },
+          {
+            id: 2,
+            attendanceReason: 'ATT',
+          },
+        ],
+        { username: 'joebloggs' },
+      )
+
+      expect(res.redirect).toBeCalledWith('attendance-list')
+    })
+
+    it("shouldn't update attendance when no pirsoners have been selected", async () => {
+      await handler.ATTENDED(req, res)
+
+      expect(activitiesService.updateAttendances).toBeCalledTimes(0)
+      expect(res.redirect).toBeCalledWith('attendance-list')
     })
   })
 })

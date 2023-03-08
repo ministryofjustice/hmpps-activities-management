@@ -24,6 +24,7 @@ context('Record attendance', () => {
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
     cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2023-02-02', getScheduledEvents)
     cy.stubEndpoint('POST', '/api/bookings/offenders', getInmateDetails)
+    cy.stubEndpoint('PUT', '/attendances')
   })
 
   it('should click through record attendance journey', () => {
@@ -41,6 +42,11 @@ context('Record attendance', () => {
     activitiesPage.activityRows().should('have.length', 4)
     activitiesPage.selectActivityWithName('English level 1')
 
-    Page.verifyOnPage(AttendanceListPage)
+    const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.checkAttendanceStatus('Booking Andy', 'Attended')
+    attendanceListPage.checkAttendanceStatus('Booking Andy', 'Pay')
+    attendanceListPage.selectPrisoner('Cudmastarie Aborah')
+    attendanceListPage.selectPrisoner('Eeteljan Arianniver')
+    attendanceListPage.markAsAttended()
   })
 })
