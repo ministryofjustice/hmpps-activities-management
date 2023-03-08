@@ -10,12 +10,15 @@
     {
       "id": 4,
       "prisonerNumber": "A7789DY",
-      "attendanceReason": null,
+      "attendanceReason": {
+        "code": "ATT",
+        "description": "Attended"
+      },
       "comment": null,
       "posted": false,
       "recordedTime": null,
       "recordedBy": null,
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "payAmount": null,
       "bonusAmount": null,
       "pieces": null
@@ -23,12 +26,15 @@
     {
       "id": 3,
       "prisonerNumber": "G4572UO",
-      "attendanceReason": null,
+      "attendanceReason": {
+        "code": "ATT",
+        "description": "Attended"
+      },
       "comment": null,
       "posted": false,
       "recordedTime": null,
       "recordedBy": null,
-      "status": "SCHEDULED",
+      "status": "COMPLETED",
       "payAmount": null,
       "bonusAmount": null,
       "pieces": null
