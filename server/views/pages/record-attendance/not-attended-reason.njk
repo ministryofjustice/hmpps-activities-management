@@ -1,0 +1,121 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+
+{% set pageTitle = applicationName + " - Record attendance - Not Attended Reason" %}
+{% set pageId = 'not-attended-reason-page' %}
+{% set backLinkHref = "/" %}
+
+{% macro nestedReasonData(reasonCode, validationErrors, formResponses, sessionValues) %}
+    {% if (reasonCode == 'SICK') or (reasonCode == 'REST') %}
+       {{ govukRadios({
+            classes: "govuk-radios--inline",
+            hint: {
+                text: "Should the prisoner be paid?"
+            },
+            name: "pay",
+            errorMessage: validationErrors | findError('pay'),
+            items: [
+                {
+                    value: "Yes",
+                    text: "Yes"
+                },
+                {
+                    value: "No",
+                    text: "No"
+                }
+            ]
+        }) }}
+    {% endif %}
+    {% if reasonCode == 'SICK' %}
+        {{ govukInput({
+            label: {
+                text: "Can you provide more detail? (optional)"
+            },
+            name: "sickDetail",
+            classes: "govuk-!-width-one-half",
+            errorMessage: validationErrors | findError('sickDetail')
+        }) }}
+    {% endif %}
+    {% if reasonCode == 'REFUSED' %}
+        {{ govukInput({
+            label: {
+                text: "Add a case note"
+            },
+            name: "caseNote",
+            classes: "govuk-!-width-one-half",
+            errorMessage: validationErrors | findError('caseNote')
+        }) }}
+    {% endif %}
+    {% if reasonCode == 'OTHER' %}
+        {{ govukInput({
+            label: {
+                text: "Add an absence reason"
+            },
+            name: "caseNote",
+            classes: "govuk-!-width-one-half",
+            errorMessage: validationErrors | findError('caseNote')
+        }) }}
+       {{ govukRadios({
+            classes: "govuk-radios--inline",
+            hint: {
+                text: "Was this an acceptable absence and should the prisoner be paid?"
+            },
+            name: "absencePay",
+            errorMessage: validationErrors | findError('absencePay'),
+            items: [
+                {
+                    value: "Yes",
+                    text: "Yes"
+                },
+                {
+                    value: "No",
+                    text: "No"
+                }
+            ]
+        }) }}
+    {% endif %}
+{% endmacro %}
+
+{% set notAttendedReasonOptions = [] %}
+{% for notAttendedReason in notAttendedReasons %}
+    {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
+        {
+            value: notAttendedReason.reasonCode,
+            text: notAttendedReason.reasonName,
+            conditional: {
+                html: nestedReasonData(notAttendedReason.reasonCode, validationErrors, formResponses, session.notAttendedJourney)
+            }
+        }
+    ), notAttendedReasonOptions) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% for prisoner in selectedPrisoners %}
+                    {{ govukRadios({
+                        fieldset: {
+                            legend: {
+                                text: "Select a reason why " + prisoner.prisonerName + " did not attend",
+                                isPageHeading: true,
+                                classes: "govuk-fieldset__legend--xl"
+                            }
+                        },
+                        name: "notAttendedReason",
+                        errorMessage: validationErrors | findError('notAttendedReason'),
+                        items: notAttendedReasonOptions
+                    }) }}
+                {% endfor %}
+
+                {{ govukButton({
+                    text: "Confirm and record attendance"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

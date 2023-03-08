@@ -4,7 +4,7 @@ import { Expose, Transform } from 'class-transformer'
 import ActivitiesService from '../../../services/activitiesService'
 import { getAttendanceSummary, toDate } from '../../../utils/utils'
 import PrisonService from '../../../services/prisonService'
-import { ScheduledActivity, ScheduledEvent } from '../../../@types/activitiesAPI/types'
+import { Attendance, ScheduledActivity, ScheduledEvent } from '../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../validators/hasAtLeastOne'
 
 export class AttendanceList {
@@ -12,13 +12,14 @@ export class AttendanceList {
   @Expose()
   @Transform(({ value }) => [value].flat()) // Transform to an array if only one value is provided
   @HasAtLeastOne({ message: 'Select at least one prisoner' })
-  selectedAttendances: number[]
+  selectedPrisoners: string[]
 }
 
 export default class AttendanceListRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
+    req.session.notAttendedJourney = {}
     const instanceId = req.params.id
     const { user } = res.locals
 
@@ -41,7 +42,7 @@ export default class AttendanceListRoutes {
         prisonerNumber: i.offenderNo,
         location: i.assignedLivingUnitDesc,
         otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.offenderNo),
-        attendance: instance.attendances.find(a => a.prisonerNumber === i.offenderNo),
+        attendanceLabel: this.getAttendanceLabel(i.offenderNo, instance.attendances),
       })),
     )
 
@@ -58,23 +59,67 @@ export default class AttendanceListRoutes {
   }
 
   ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    const { selectedAttendances }: { selectedAttendances: string[] } = req.body
-    const { user } = res.locals
-
-    if (selectedAttendances) {
-      const attendances = selectedAttendances.map(attendance => ({
-        id: +attendance,
-        attendanceReason: 'ATT',
-      }))
-      await this.activitiesService.updateAttendances(attendances, user)
-    }
-
-    return res.redirect('attendance-list')
+    res.status(419)
+    res.send('ATTENDED : Under construction 🛠️')
   }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    res.status(419)
-    res.send('NOT ATTENDED : Under construction 🛠️')
+    const instanceId = req.params.id
+    const { user } = res.locals
+    const { selectedPrisoners }: { selectedPrisoners: string[] } = req.body
+
+    req.session.notAttendedJourney = {}
+    if (!req.session.notAttendedJourney.selectedPrisoners) {
+      req.session.notAttendedJourney.selectedPrisoners = []
+    }
+
+    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
+
+    const otherScheduledEvents = await this.activitiesService
+      .getScheduledEventsForPrisoners(toDate(instance.date), selectedPrisoners, user)
+      .then(response => [
+        ...response.activities,
+        ...response.appointments,
+        ...response.courtHearings,
+        ...response.visits,
+      ])
+      .then(events => events.filter(e => e.eventId !== +instanceId))
+      .then(events => events.filter(e => this.eventClashes(e, instance)))
+
+    const nonAttendees = await this.prisonService.getInmateDetails(selectedPrisoners, user).then(inmates =>
+      inmates.map(i => ({
+        name: `${i.firstName} ${i.lastName}`,
+        prisonerNumber: i.offenderNo,
+        location: i.assignedLivingUnitDesc,
+        otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.offenderNo),
+        attendanceLabel: this.getAttendanceLabel(i.offenderNo, instance.attendances),
+        attendanceId: this.getAttendanceId(i.offenderNo, instance.attendances),
+      })),
+    )
+
+    nonAttendees.forEach(nonAttendee => {
+      req.session.notAttendedJourney.selectedPrisoners.push({
+        attendanceId: nonAttendee.attendanceId,
+        prisonerNumber: nonAttendee.prisonerNumber,
+        prisonerName: nonAttendee.name,
+        otherEvents: nonAttendee.otherEvents,
+      })
+    })
+
+    res.redirect(`/attendance/activities/${instanceId}/not-attended-reason`)
+  }
+
+  private getAttendanceLabel = (prisonerNumber: string, attendances: Attendance[]) => {
+    const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
+    if (attendance.status === 'SCHEDULED') {
+      return 'Not recorded yet'
+    }
+    return attendance.attendanceReason.code === 'ATT' ? 'Attended' : 'Absent'
+  }
+
+  private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {
+    const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
+    return attendance.id
   }
 
   private eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity): boolean => {
