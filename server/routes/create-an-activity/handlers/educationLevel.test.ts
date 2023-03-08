@@ -10,7 +10,7 @@ import educationLevels from '../../../services/fixtures/education_levels_1.json'
 jest.mock('../../../services/prisonService')
 jest.mock('../../../services/activitiesService')
 
-const prisonService = new PrisonService(null, null, null, null) as jest.Mocked<PrisonService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create an activity - Education Level', () => {
   const handler = new EducationLevelRoutes(prisonService)

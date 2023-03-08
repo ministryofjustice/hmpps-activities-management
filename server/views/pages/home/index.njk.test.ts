@@ -16,38 +16,6 @@ describe('Views - Home', () => {
     viewContext = {}
   })
 
-  it('should display whereabouts(prison API) card when flag is true in context', () => {
-    viewContext = { shouldShowAlphaPrisonActivityListDps: true }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=alpha-activity-list-dps-link]')).toHaveLength(1)
-  })
-
-  it('should hide whereabouts(prison API) card when flag is false in context', () => {
-    viewContext = { shouldShowAlphaPrisonActivityListDps: false }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=alpha-activity-list-dps-link]')).toHaveLength(0)
-  })
-
-  it('should display whereabouts(activities API) card when flag is true in context', () => {
-    viewContext = { shouldShowAlphaPrisonActivityListAm: true }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=alpha-activity-list-am-link]')).toHaveLength(1)
-  })
-
-  it('should hide whereabouts(activities API) card when flag is false in context', () => {
-    viewContext = { shouldShowAlphaPrisonActivityListAm: false }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=alpha-activity-list-am-link]')).toHaveLength(0)
-  })
-
   it('should always show the unlock list tile', () => {
     viewContext = {}
     const $ = cheerio.load(compiledTemplate.render(viewContext))

@@ -9,7 +9,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../../services/prisonService')
 
-const prisonService = new PrisonService(null, null, null, null) as jest.Mocked<PrisonService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create Single Appointment - Select Prisoner', () => {
   const handler = new SelectPrisonerRoutes(prisonService)

@@ -11,7 +11,7 @@ import { IepSummary } from '../../../@types/incentivesApi/types'
 jest.mock('../../../services/prisonService')
 jest.mock('../../../services/activitiesService')
 
-const prisonService = new PrisonService(null, null, null, null)
+const prisonService = new PrisonService(null, null, null)
 const activitiesService = new ActivitiesService(null, null, null)
 
 describe('Route Handlers - Allocate - Start', () => {

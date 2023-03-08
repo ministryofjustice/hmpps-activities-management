@@ -1,7 +1,6 @@
 import { CourtEvent, TransferEvent } from '../@types/prisonApiImport/types'
 import { isAfterToday, sortByDateTime } from '../utils/utils'
-import { AttendancesResponse } from '../@types/whereaboutsApiImport/types'
-import { AttendanceInfo, EventLite, EventStatus } from '../@types/dps'
+import { EventLite, EventStatus } from '../@types/dps'
 import {
   AlertLenient,
   AssessmentLenient,
@@ -127,40 +126,4 @@ export const selectCategory = (assessmentData: AssessmentLenient[], offenderNumb
     return ''
   }
   return cat.classificationCode
-}
-
-export const extractAttendanceInfo = (
-  attendanceInformation: AttendancesResponse,
-  event: PrisonerScheduleLenient,
-): AttendanceInfo => {
-  if (attendanceInformation && attendanceInformation.attendances && attendanceInformation.attendances.length > 0) {
-    const offenderAttendanceInfo = attendanceInformation.attendances.find(
-      attendance => attendance.bookingId === event.bookingId && attendance.eventId === event.eventId,
-    )
-    if (!offenderAttendanceInfo) return null
-
-    const { id, absentReason, absentReasonDescription, absentSubReason, attended, paid, comments, locked } =
-      offenderAttendanceInfo || {}
-
-    const attendanceInfo = absentReason
-      ? {
-          id,
-          absentReason: { value: absentReason, name: absentReasonDescription },
-          absentSubReason,
-          comments,
-          attended,
-          paid,
-          locked,
-        }
-      : { id, comments, attended, paid, locked }
-
-    // @ts-expect-error ts-migrate(2339) FIXME: Property 'other' does not exist on type '{ id: any... Remove this comment to see the full error message
-    if (absentReason) attendanceInfo.other = true
-    // @ts-expect-error ts-migrate(2339) FIXME: Property 'pay' does not exist on type '{ id: any; ... Remove this comment to see the full error message
-    if (attended && paid) attendanceInfo.pay = true
-
-    return attendanceInfo
-  }
-
-  return null
 }

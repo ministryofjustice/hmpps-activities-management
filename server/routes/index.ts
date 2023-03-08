@@ -8,8 +8,6 @@ import allocateRoutes from './allocate-to-activity'
 import attendanceRoutes from './record-attendance'
 import unlockListRoutes from './unlock-list'
 import spikeRoutes from './spikes'
-import activityListRoutes from './spikes/activity-list/activityListRoutes'
-import activityListAmRoutes from './spikes/activity-list-am/activityListRoutes'
 import appointmentsHomeRoutes from './appointments/home'
 import appointmentsCreateSingleRoutes from './appointments/create-single'
 import appointmentDetailsRoutes from './appointments/details'
@@ -34,8 +32,6 @@ export default function routes(services: Services): Router {
 
   // Spikes under here spikes
   router.use('/spikes', spikeRoutes(services))
-  router.use('/activity-list', activityListRoutes(services))
-  router.use('/activity-list-am', activityListAmRoutes(services))
 
   // Appointments
   router.use('/appointments', appointmentsHomeRoutes())
