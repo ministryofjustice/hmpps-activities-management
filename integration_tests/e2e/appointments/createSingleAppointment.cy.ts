@@ -10,7 +10,7 @@ import prisonersByNumbers from '../../fixtures/prisonerSearchApi/postPrisonerNum
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
-import getAppointmentDetail from '../../fixtures/activitiesApi/getAppointmentDetail.json'
+import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
 import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
@@ -20,8 +20,8 @@ import { formatDate } from '../../../server/utils/utils'
 
 context('Create single appointment', () => {
   const tomorrow = addDays(new Date(), 1)
-  // To pass validation we must ensure the appointment detail start date are set to tomorrow
-  getAppointmentDetail.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  // To pass validation we must ensure the appointment details start date are set to tomorrow
+  getAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -33,7 +33,7 @@ context('Create single appointment', () => {
     cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisonersByNumbers)
-    cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetail)
+    cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
   })
 
   it('Should complete create single appointment journey', () => {

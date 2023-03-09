@@ -24,7 +24,7 @@ import {
   Appointment,
   AppointmentCategory,
   AppointmentCreateRequest,
-  AppointmentDetail,
+  AppointmentDetails,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -274,7 +274,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getAppointmentDetail(appointmentId: number, user: ServiceUser): Promise<AppointmentDetail> {
+  async getAppointmentDetail(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
     return this.get({
       path: `/appointment-details/${appointmentId}`,
       authToken: user.token,

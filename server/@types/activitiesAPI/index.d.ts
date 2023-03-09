@@ -2132,10 +2132,10 @@ export interface components {
     }
     /**
      * @description
-     *   The top level appointment detail for display purposes. Contains only properties needed to make additional API calls
+     *   The top level appointment details for display purposes. Contains only properties needed to make additional API calls
      *   and to display.
      */
-    AppointmentDetail: {
+    AppointmentDetails: {
       /**
        * Format: int64
        * @description The internally generated identifier for this appointment
@@ -3567,7 +3567,7 @@ export interface operations {
       /** @description Appointment found */
       200: {
         content: {
-          'application/json': components['schemas']['AppointmentDetail']
+          'application/json': components['schemas']['AppointmentDetails']
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */

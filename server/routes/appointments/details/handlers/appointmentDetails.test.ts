@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 
 import AppointmentDetailsRoutes from './appointmentDetails'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AppointmentDetail } from '../../../../@types/activitiesAPI/types'
+import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -14,7 +14,7 @@ describe('Route Handlers - Appointment Details', () => {
   let req: Request
   let res: Response
 
-  const appointmentDetail = {
+  const appointmentDetails = {
     id: 10,
     category: {
       id: 40,
@@ -41,7 +41,7 @@ describe('Route Handlers - Appointment Details', () => {
     updatedBy: null,
     occurrences: [{ id: 10 }],
     prisoners: [{ prisonerNumber: 'A1350DZ' }],
-  } as AppointmentDetail
+  } as AppointmentDetails
 
   beforeEach(() => {
     res = {
@@ -67,12 +67,12 @@ describe('Route Handlers - Appointment Details', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      when(activitiesService.getAppointmentDetail).calledWith(10, res.locals.user).mockResolvedValue(appointmentDetail)
+      when(activitiesService.getAppointmentDetail).calledWith(10, res.locals.user).mockResolvedValue(appointmentDetails)
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/details/appointment', {
-        appointment: appointmentDetail,
+        appointment: appointmentDetails,
       })
     })
   })
