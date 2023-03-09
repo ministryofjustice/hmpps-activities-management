@@ -24,41 +24,6 @@ export type ActivityScheduleAllocation = {
   attendance?: Attendance
 }
 
-export type ActivityListTableRow = {
-  id: number
-  name: string
-  location: string
-  prisonNumber: string
-  relevantAlerts: string[]
-  activity: string
-  attended?: boolean
-  attendanceId?: number
-  payDecision?: boolean
-  paidReason?: string
-  unpaidReason?: string
-}
-
-export type AttendanceForm = {
-  pay?: string
-  moreDetail?: string
-  paidReason?: string
-  unpaidReason?: string
-  incentiveWarning?: string
-}
-
-export type ActivityAttendanceId = {
-  id: number
-  attendanceId: number
-}
-
-export type CandidateListTableRow = {
-  name: string
-  location: string
-  prisonNumber: string
-  incentiveLevel: string
-  alerts: string[]
-}
-
 export type AllocationsSummary = {
   capacity: number
   allocated: number
