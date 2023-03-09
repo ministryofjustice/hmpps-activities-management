@@ -1,4 +1,4 @@
-import { getDate } from 'date-fns'
+import { addDays } from 'date-fns'
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
@@ -9,8 +9,8 @@ import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatch
 import prisonersByNumbers from '../../fixtures/prisonerSearchApi/postPrisonerNumbers.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
-import getUser from '../../fixtures/prisonApi/getUser.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
+import getAppointmentDetail from '../../fixtures/activitiesApi/getAppointmentDetail.json'
 import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
@@ -19,11 +19,9 @@ import AppointmentMovementSlip from '../../pages/appointments/details/appointmen
 import { formatDate } from '../../../server/utils/utils'
 
 context('Create single appointment', () => {
-  const tomorrow = new Date()
-  tomorrow.setDate(getDate(tomorrow) + 1)
-  // To pass validation we must ensure the appointment create date and start date are always set to tomorrow
-  getAppointment.created = tomorrow
-  getAppointment.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  const tomorrow = addDays(new Date(), 1)
+  // To pass validation we must ensure the appointment detail start date are set to tomorrow
+  getAppointmentDetail.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -35,8 +33,7 @@ context('Create single appointment', () => {
     cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisonersByNumbers)
-    cy.stubEndpoint('GET', '/api/users/USER1', getUser)
-    cy.stubEndpoint('GET', '/appointments/10', getAppointment)
+    cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetail)
   })
 
   it('Should complete create single appointment journey', () => {

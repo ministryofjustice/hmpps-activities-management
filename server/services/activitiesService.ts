@@ -26,6 +26,7 @@ import {
   AppointmentCategory,
   LocationPrefix,
   AppointmentCreateRequest,
+  AppointmentDetail,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -248,6 +249,10 @@ export default class ActivitiesService {
 
   async getAppointment(appointmentId: number, user: ServiceUser): Promise<Appointment> {
     return this.activitiesApiClient.getAppointment(appointmentId, user)
+  }
+
+  async getAppointmentDetail(appointmentId: number, user: ServiceUser): Promise<AppointmentDetail> {
+    return this.activitiesApiClient.getAppointmentDetail(appointmentId, user)
   }
 
   async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {

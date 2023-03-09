@@ -36,7 +36,7 @@
                             text: "Location"
                         },
                         value: {
-                            html: '<span data-qa="location">' + appointment.internalLocation.userDescription + '</span>'
+                            html: '<span data-qa="location">' + appointment.internalLocation.description + '</span>'
                         }
                     },
                     {
@@ -44,7 +44,7 @@
                             text: "Date"
                         },
                         value: {
-                            html: '<span data-qa="start-date">' + appointment.startDate | formatDate('EEEE d MMMM yyyy') + '</span>'
+                            html: '<span data-qa="start-date">' + appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy') + '</span>'
                         }
                     },
                     {
@@ -52,7 +52,7 @@
                             text: "Start time"
                         },
                         value: {
-                            html: '<span data-qa="start-time">' + appointment.startTime | formatDate('HH:mm') + '</span>'
+                            html: '<span data-qa="start-time">' + appointment.startTime + '</span>'
                         }
                     },
                     {
@@ -60,7 +60,7 @@
                             text: "End time"
                         },
                         value: {
-                            html: '<span data-qa="end-time">' + appointment.endTime | formatDate('HH:mm') + '</span>'
+                            html: '<span data-qa="end-time">' + appointment.endTime + '</span>'
                         }
                     }
                 ],

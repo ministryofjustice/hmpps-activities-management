@@ -8,7 +8,7 @@ export default class AppointmentMovementSlipRoutes {
     const { user } = res.locals
     const id = parseInt(req.params.id, 10)
 
-    const appointment = await this.activitiesService.getAppointmentDetails(id, user)
+    const appointment = await this.activitiesService.getAppointmentDetail(id, user)
 
     res.render('pages/appointments/details/movement-slip', { appointment })
   }

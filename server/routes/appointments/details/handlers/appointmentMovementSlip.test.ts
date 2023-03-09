@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 
 import AppointmentMovementSlipRoutes from './appointmentMovementSlip'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AppointmentDetails } from '../../../../@types/appointments'
+import { AppointmentDetail } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -14,32 +14,25 @@ describe('Route Handlers - Movement Slip', () => {
   let req: Request
   let res: Response
 
-  const appointmentDetails = {
+  const appointmentDetail = {
     id: 10,
     category: {
       id: 40,
-      parent: null,
       code: 'MEOT',
       description: 'Medical - Other',
-      active: true,
-      displayOrder: null,
     },
+    prisonCode: 'MDI',
     internalLocation: {
-      locationId: 26963,
-      locationType: 'RESI',
-      description: 'RES-HB1-DOC',
-      agencyId: 'MDI',
-      parentLocationId: 26960,
-      currentOccupancy: 0,
-      locationPrefix: 'MDI-RES-HB1-DOC',
-      userDescription: 'HB1 Doctors',
+      id: 26963,
+      prisonCode: 'MDI',
+      description: 'HB1 Doctors',
     },
     inCell: false,
-    startDate: new Date('2023-02-22T00:00:00.000Z'),
-    startTime: new Date('2023-02-22T13:00:00.000Z'),
-    endTime: new Date('2023-02-22T13:15:00.000Z'),
+    startDate: '2023-02-22',
+    startTime: '13:00',
+    endTime: '13:15',
     comment: '',
-    created: new Date('2023-02-17T10:22:04.000Z'),
+    created: '2023-02-17T10:22:04',
     createdBy: {
       firstName: 'John',
       lastName: 'Smith',
@@ -48,7 +41,7 @@ describe('Route Handlers - Movement Slip', () => {
     updatedBy: null,
     occurrences: [{ id: 10 }],
     prisoners: [{ prisonerNumber: 'A1350DZ' }],
-  } as AppointmentDetails
+  } as AppointmentDetail
 
   beforeEach(() => {
     res = {
@@ -74,14 +67,12 @@ describe('Route Handlers - Movement Slip', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      when(activitiesService.getAppointmentDetails)
-        .calledWith(10, res.locals.user)
-        .mockResolvedValue(appointmentDetails)
+      when(activitiesService.getAppointmentDetail).calledWith(10, res.locals.user).mockResolvedValue(appointmentDetail)
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/details/movement-slip', {
-        appointment: appointmentDetails,
+        appointment: appointmentDetail,
       })
     })
   })

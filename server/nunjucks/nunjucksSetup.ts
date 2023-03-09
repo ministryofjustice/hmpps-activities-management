@@ -20,6 +20,7 @@ import {
   toTimeItems,
   exampleDateOneWeekAhead,
   fullName,
+  toDate,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -108,6 +109,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toMoney', toMoney)
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
+  njkEnv.addFilter('toDate', toDate)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
