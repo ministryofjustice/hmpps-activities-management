@@ -274,7 +274,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getAppointmentDetail(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
+  async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
     return this.get({
       path: `/appointment-details/${appointmentId}`,
       authToken: user.token,

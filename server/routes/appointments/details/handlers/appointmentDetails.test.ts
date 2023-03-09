@@ -67,7 +67,9 @@ describe('Route Handlers - Appointment Details', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      when(activitiesService.getAppointmentDetail).calledWith(10, res.locals.user).mockResolvedValue(appointmentDetails)
+      when(activitiesService.getAppointmentDetails)
+        .calledWith(10, res.locals.user)
+        .mockResolvedValue(appointmentDetails)
 
       await handler.GET(req, res)
 

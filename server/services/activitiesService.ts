@@ -243,8 +243,8 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAppointment(appointmentId, user)
   }
 
-  async getAppointmentDetail(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
-    return this.activitiesApiClient.getAppointmentDetail(appointmentId, user)
+  async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
+    return this.activitiesApiClient.getAppointmentDetails(appointmentId, user)
   }
 
   async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategory[]> {

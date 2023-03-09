@@ -323,11 +323,11 @@ describe('Activities Service', () => {
 
   describe('getAppointmentDetail', () => {
     it('should return appointment detail from api when valid appointment id is used', async () => {
-      when(activitiesApiClient.getAppointmentDetail)
+      when(activitiesApiClient.getAppointmentDetails)
         .calledWith(12345, user)
         .mockResolvedValue(appointmentDetails as AppointmentDetails)
 
-      const actualResult = await activitiesService.getAppointmentDetail(12345, user)
+      const actualResult = await activitiesService.getAppointmentDetails(12345, user)
 
       expect(actualResult).toEqual(appointmentDetails)
     })
