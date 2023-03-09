@@ -9,7 +9,7 @@ import { IepLevel } from '../../../../@types/incentivesApi/types'
 
 jest.mock('../../../../services/prisonService')
 
-const prisonService = new PrisonService(null, null, null, null) as jest.Mocked<PrisonService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create an activity - Helper', () => {
   const helper = new IncentiveLevelPayMappingUtil(prisonService)
