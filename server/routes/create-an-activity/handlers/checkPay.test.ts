@@ -20,7 +20,7 @@ jest.mock('./helpers/incentiveLevelPayMappingUtil', () => {
   }
 })
 
-const prisonService = new PrisonService(null, null, null, null) as jest.Mocked<PrisonService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create an activity - Check pay', () => {
   const handler = new CheckPayRoutes(prisonService)

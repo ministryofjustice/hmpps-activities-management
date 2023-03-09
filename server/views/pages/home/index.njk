@@ -11,7 +11,7 @@
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l">Activities management</h1>
 
-            <div class="card-group">
+            <div class="card-group govuk-grid-row">
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
                         "id": "createAnActivityCard",
@@ -66,32 +66,6 @@
                         "data-qa": "unlock-list-link"
                     }) }}
                 </div>
-
-                {% if shouldShowAlphaPrisonActivityListDps %}
-                    <div class="govuk-grid-column-one-third card-group__item">
-                        {{ card({
-                            "id": "alphaActivityListCard",
-                            "href": "/activity-list/select-activity-location",
-                            "clickable": "true",
-                            "heading": "Spike - Whereabouts (prisonAPI): View by activity or appointment location",
-                            "description": "View all activities in an activity or appointment location.",
-                            "data-qa": "alpha-activity-list-dps-link"
-                        }) }}
-                    </div>
-                {% endif %}
-
-                {% if shouldShowAlphaPrisonActivityListAm %}
-                    <div class="govuk-grid-column-one-third card-group__item">
-                        {{ card({
-                            "id": "alphaActivityListCard",
-                            "href": "/activity-list-am/select-activity-location",
-                            "clickable": "true",
-                            "heading": "Spike - Whereabouts (activitiesAPI): View by activity or appointment location",
-                            "description": "View all activities in an activity or appointment location.",
-                            "data-qa": "alpha-activity-list-am-link"
-                        }) }}
-                    </div>
-                {% endif %}
 
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({

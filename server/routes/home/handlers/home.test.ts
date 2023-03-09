@@ -16,12 +16,9 @@ describe('Route Handlers - Home', () => {
   })
 
   describe('GET', () => {
-    it('returns the correct context', async () => {
+    it('renders the page', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/home/index', {
-        shouldShowAlphaPrisonActivityListDps: true,
-        shouldShowAlphaPrisonActivityListAm: false,
-      })
+      expect(res.render).toHaveBeenCalledWith('pages/home/index')
     })
   })
 })

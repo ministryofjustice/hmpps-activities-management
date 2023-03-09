@@ -10,7 +10,7 @@ import eventLocationsFiltered from '../../../../services/fixtures/event_location
 
 jest.mock('../../../../services/prisonService')
 
-const prisonService = new PrisonService(null, null, null, null)
+const prisonService = new PrisonService(null, null, null)
 
 describe('Route Handlers - Create an activity schedule - location', () => {
   const handler = new LocationRoutes(prisonService)
