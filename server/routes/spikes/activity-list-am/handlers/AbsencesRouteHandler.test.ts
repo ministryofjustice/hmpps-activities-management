@@ -2,7 +2,6 @@ import { getMockReq, getMockRes } from '@jest-mock/express'
 import ActivitiesService from '../../../../services/activitiesService'
 import ActivitiesApiClient from '../../../../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../../../../data/prisonerSearchApiClient'
-import PrisonApiClient from '../../../../data/prisonApiClient'
 import AbsencesRouteHandler from './AbsencesRouteHandler'
 import activityScheduleAllocations1 from '../../../../middleware/fixtures/activity_schedule_allocation_1.json'
 import activityScheduleAllocations2 from '../../../../middleware/fixtures/activity_schedule_allocation_2.json'
@@ -12,13 +11,11 @@ import payDetails from '../fixtures/update_attendences_pay_details_request_1.jso
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../data/activitiesApiClient')
 jest.mock('../../../../data/prisonerSearchApiClient')
-jest.mock('../../../../data/prisonApiClient')
 
 describe('activityListAbsencesRouteHandler', () => {
   const activitiesApiClient = new ActivitiesApiClient()
   const prisonerSearchApiClient = new PrisonerSearchApiClient()
-  const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
-  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient, prisonApiClient)
+  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
   let controller: AbsencesRouteHandler
 
   beforeEach(() => {

@@ -1,0 +1,58 @@
+{
+  "id": 12345,
+  "category": {
+    "id": 51,
+    "code": "CHAP",
+    "description": "Chaplaincy"
+  },
+  "prisonCode": "MDI",
+  "internalLocation": {
+    "id": 26963,
+    "prisonCode": "MDI",
+    "description": "HB1 Doctors"
+  },
+  "inCell": false,
+  "startDate": "2023-02-17",
+  "startTime": "09:00",
+  "endTime": "10:30",
+  "comment": "This appointment will help adjusting to life outside of prison",
+  "created": "2023-02-17T17:34:03",
+  "createdBy": {
+    "id": 486797,
+    "username": "AAA01U",
+    "firstName": "TEST",
+    "lastName": "USER"
+  },
+  "updated": null,
+  "updatedBy": null,
+  "occurrences": [
+    {
+      "id": 123456,
+      "internalLocation": {
+        "id": 26963,
+        "prisonCode": "MDI",
+        "description": "HB1 Doctors"
+      },
+      "inCell": false,
+      "startDate": "2023-02-17",
+      "startTime": "09:00",
+      "endTime": "10:30",
+      "comment": "This appointment occurrence has been rescheduled due to staff availability",
+      "isEdited": false,
+      "isCancelled": false,
+      "updated": null,
+      "updatedBy": null,
+      "prisonerCount": 1
+    }
+  ],
+  "prisoners": [
+    {
+      "prisonerNumber": "G4793VF",
+      "bookingId": 456,
+      "firstName": "TEST",
+      "lastName": "PRISONER",
+      "prisonCode": "MDI",
+      "cellLocation": "1-2-3"
+    }
+  ]
+}
