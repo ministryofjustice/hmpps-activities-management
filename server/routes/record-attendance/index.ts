@@ -5,6 +5,7 @@ import validationMiddleware from '../../middleware/validationMiddleware'
 import ActivitiesRoutes from './handlers/activities'
 import { Services } from '../../services'
 import AttendanceListRoutes, { AttendanceList } from './handlers/attendanceList'
+import CancelSessionRoutes from './handlers/cancelSession'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -16,6 +17,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const selectPeriodHandler = new SelectPeriodRoutes()
   const activitiesHandler = new ActivitiesRoutes(activitiesService)
   const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService)
+  const cancelSessionRoutes = new CancelSessionRoutes()
 
   get('/select-period', selectPeriodHandler.GET)
   post('/select-period', selectPeriodHandler.POST, TimePeriod)
@@ -23,6 +25,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/activities/:id/attendance-list', attendanceListHandler.GET)
   post('/activities/:id/attended', attendanceListHandler.ATTENDED, AttendanceList)
   post('/activities/:id/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
+  get('/activities/:id/cancel', cancelSessionRoutes.GET)
 
   return router
 }

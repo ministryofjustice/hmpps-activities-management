@@ -2,6 +2,7 @@
 
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "components/multi-select.njk" import multiSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
@@ -13,7 +14,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-4">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
                 <span class="govuk-caption-l govuk-!-display-none-print">Record attendance</span>
                 {{ activity.name }}: {{ activity.location }}
                 <span class="govuk-caption-l">{{ activity.time }} on {{ activity.date | formatDate('EEEE, do MMMM yyyy') }}</span>
@@ -22,8 +23,24 @@
                 <li><a href="/attendance/select-period" class="govuk-link govuk-!-font-size-19 js-backlink">Choose a different activity</a></li>
                 <li><a href="/attendance/select-period" class="govuk-link govuk-!-font-size-19">View the schedule for a different day</a></li>
             </ul>
-            <h2 class="govuk-heading-s">{{ activity.allocated }} prisoners allocated</h2>
-            <ul class="govuk-list govuk-!-display-none-print">
+            <div class="govuk-button-group govuk-!-display-none-print">
+                {{ govukButton({
+                    text: "Print attendance list",
+                    classes: "govuk-button--blue js-print no-js-hidden"
+                }) }}
+                {{ govukButton({
+                    text: "Cancel this session",
+                    classes: "govuk-button--secondary",
+                    href: 'cancel'
+                }) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">{{ activity.allocated }} prisoners allocated</h2>
+            <ul class="govuk-list">
                 <li>
                     <span>Attended:</span>
                     <span class="govuk-!-font-weight-bold">{{ activity.attended }}</span>
@@ -39,14 +56,6 @@
             </ul>
         </div>
         <div class="govuk-grid-column-one-third">
-            <div class="govuk-button-group float-right govuk-!-display-none-print">
-                {{ govukButton({
-                    attributes: { id: 'print-unlock' },
-                    text: "Print list",
-                    classes: "govuk-button--secondary js-print no-js-hidden",
-                    preventDoubleClick: true
-                }) }}
-            </div>
             <div class="print-only">
                 {{ govukTextarea({
                     attributes: { placeholder: 'Notes' },
