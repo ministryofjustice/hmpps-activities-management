@@ -8,128 +8,198 @@
 {% set pageTitle = "Appointments Management - Create Single Appointment - Check Answers" %}
 {% set pageId = 'appointments-create-single-check-answers-page' %}
 
+{% set summaryListRows = [
+    {
+        key: {
+        text: "Prisoner"
+    },
+        value: {
+        html: appointmentPrisonerSummary(session.createSingleAppointmentJourney.prisoner.name, session.createSingleAppointmentJourney.prisoner.number, session.createSingleAppointmentJourney.prisoner.cellLocation, dpsUrl)
+    },
+        actions: {
+            items: [
+                {
+                    href: "select-prisoner?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change prisoner",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-prisoner' }
+                }
+            ]
+        }
+    },
+    {
+        key: {
+        text: "Category"
+    },
+        value: {
+        html: '<span data-qa="category">' + session.createSingleAppointmentJourney.category.description + '</span>'
+    },
+        actions: {
+            items: [
+                {
+                    href: "category?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change category",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-category' }
+                }
+            ]
+        }
+    },
+    {
+        key: {
+        text: "Location"
+    },
+        value: {
+        html: '<span data-qa="location">' + session.createSingleAppointmentJourney.location.description + '</span>'
+    },
+        actions: {
+            items: [
+                {
+                    href: "location?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change location",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-location' }
+                }
+            ]
+        }
+    },
+    {
+        key: {
+        text: "Date"
+    },
+        value: {
+        html: '<span data-qa="start-date">' + startDate | formatDate('EEEE d MMMM yyyy') + '</span>'
+    },
+        actions: {
+            items: [
+                {
+                    href: "date-and-time?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change date",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-start-date' }
+                }
+            ]
+        }
+    },
+    {
+        key: {
+        text: "Start time"
+    },
+        value: {
+        html: '<span data-qa="start-time">' + startTime | formatDate('HH:mm') + '</span>'
+    },
+        actions: {
+            items: [
+                {
+                    href: "date-and-time?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change start time",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-start-time' }
+                }
+            ]
+        }
+    },
+    {
+        key: {
+        text: "End time"
+    },
+        value: {
+        html: '<span data-qa="end-time">' + endTime | formatDate('HH:mm') + '</span>'
+    },
+        actions: {
+            items: [
+                {
+                    href: "date-and-time?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change end time",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-end-time' }
+                }
+            ]
+        }
+    },
+    {
+        key: {
+        text: "Repeat appointment"
+    },
+        value: {
+        html: '<span data-qa="repeat">' +
+        ("Yes" if session.createSingleAppointmentJourney.repeat == 'yes') +
+        ("No" if session.createSingleAppointmentJourney.repeat == 'no') +
+        '</span>'
+    },
+        actions: {
+            items: [
+                {
+                    href: "repeat?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change repeat appointment",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-repeat' }
+                }
+            ]
+        }
+    }
+] %}
+{% if session.createSingleAppointmentJourney.repeat == 'yes' %}
+  {% set summaryListRows = (summaryListRows.push({
+      key: {
+          text: "Frequency"
+      },
+      value: {
+          html: '<span data-qa="repeat">' +
+          ("Every weekday (Monday to Friday)" if session.createSingleAppointmentJourney.repeatPeriod == 'weekday') +
+          ("Daily (includes weekends)" if session.createSingleAppointmentJourney.repeatPeriod == 'daily') +
+          ("Weekly" if session.createSingleAppointmentJourney.repeatPeriod == 'weekly') +
+          ("Fortnightly" if session.createSingleAppointmentJourney.repeatPeriod == 'fortnightly') +
+          ("Monthly" if session.createSingleAppointmentJourney.repeatPeriod == 'monthly') +
+          '</span>'
+      },
+      actions: {
+          items: [
+              {
+                  href: "repeat-period-and-count?fromReview=true",
+                  text: "Change",
+                  visuallyHiddenText: "change repeat period",
+                  classes: "govuk-link--no-visited-state",
+                  attributes: { 'data-qa': 'change-repeat-period' }
+              }
+          ]
+      }
+  }), summaryListRows) %}
+  {% set summaryListRows = (summaryListRows.push({
+      key: {
+          text: "Occurrences"
+      },
+      value: {
+          html: '<span data-qa="repeat">' + session.createSingleAppointmentJourney.repeatCount + '</span>'
+      },
+      actions: {
+          items: [
+              {
+                  href: "repeat-period-and-count?fromReview=true",
+                  text: "Change",
+                  visuallyHiddenText: "change repeat count",
+                  classes: "govuk-link--no-visited-state",
+                  attributes: { 'data-qa': 'change-repeat-count' }
+              }
+          ]
+      }
+  }), summaryListRows) %}
+{% endif %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">Check your appointment details before you accept and save</h1>
             <h2 class="summary-list-heading govuk-heading-m">Appointment details</h2>
             {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Prisoner"
-                        },
-                        value: {
-                            html: appointmentPrisonerSummary(session.createSingleAppointmentJourney.prisoner.name, session.createSingleAppointmentJourney.prisoner.number, session.createSingleAppointmentJourney.prisoner.cellLocation, dpsUrl)
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "select-prisoner?fromReview=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change prisoner",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'change-prisoner' }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Category"
-                        },
-                        value: {
-                            html: '<span data-qa="category">' + session.createSingleAppointmentJourney.category.description + '</span>'
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "category?fromReview=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change category",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'change-category' }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Location"
-                        },
-                        value: {
-                            html: '<span data-qa="location">' + session.createSingleAppointmentJourney.location.description + '</span>'
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "location?fromReview=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change location",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'change-location' }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Date"
-                        },
-                        value: {
-                            html: '<span data-qa="start-date">' + startDate | formatDate('EEEE d MMMM yyyy') + '</span>'
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "date-and-time?fromReview=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change date",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'change-start-date' }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Start time"
-                        },
-                        value: {
-                            html: '<span data-qa="start-time">' + startTime | formatDate('HH:mm') + '</span>'
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "date-and-time?fromReview=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change start time",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'change-start-time' }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "End time"
-                        },
-                        value: {
-                            html: '<span data-qa="end-time">' + endTime | formatDate('HH:mm') + '</span>'
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "date-and-time?fromReview=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change end time",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'change-end-time' }
-                                }
-                            ]
-                        }
-                    }
-                ]
+                rows: summaryListRows
             }) }}
 
             <form method="POST">

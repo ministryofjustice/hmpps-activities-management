@@ -62,6 +62,6 @@ export default class DateAndTimeRoutes {
       date: endTime.toDate(req.session.createSingleAppointmentJourney.startDate.date),
     }
 
-    res.redirect(`check-answers`)
+    res.redirectOrReturn(`repeat`)
   }
 }

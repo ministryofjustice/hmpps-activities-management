@@ -15,7 +15,7 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
   beforeEach(() => {
     res = {
       render: jest.fn(),
-      redirect: jest.fn(),
+      redirectOrReturn: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -68,7 +68,7 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
         minute: 0,
         date: req.body.endTime.toDate(tomorrow),
       })
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('repeat')
     })
   })
 

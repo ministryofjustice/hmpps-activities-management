@@ -20,7 +20,7 @@ describe('Route Handlers - Create Single Appointment - Start', () => {
     it('should populate the session with journey data and redirect to select prisoner page', async () => {
       await handler.GET(req, res)
 
-      expect(req.session.createSingleAppointmentJourney).toEqual({})
+      expect(req.session.createSingleAppointmentJourney).toEqual({ title: 'Individual appointment' })
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
   })

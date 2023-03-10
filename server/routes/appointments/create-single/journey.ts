@@ -1,4 +1,5 @@
 export type CreateSingleAppointmentJourney = {
+  title: string
   prisoner?: {
     number: string
     name: string
@@ -28,4 +29,7 @@ export type CreateSingleAppointmentJourney = {
     minute: number
     date: Date
   }
+  repeat?: string
+  repeatPeriod?: string
+  repeatCount?: number
 }
