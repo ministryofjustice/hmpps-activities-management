@@ -4,6 +4,13 @@
  */
 
 export interface paths {
+  '/scheduled-instances/{instanceId}/cancel': {
+    /**
+     * Cancel a scheduled instance
+     * @description Cancels scheduled instance and associated attendance records
+     */
+    put: operations['cancelScheduledInstance']
+  }
   '/queue-admin/retry-dlq/{dlqName}': {
     put: operations['retryDlq']
   }
@@ -263,6 +270,24 @@ export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
+    /** @description The scheduled instance cancellation request */
+    ScheduleInstanceCancelRequest: {
+      /**
+       * @description The reason for cancelling the schedule instance
+       * @example No tutor available
+       */
+      reason: string
+      /**
+       * @description The username of the user cancelling the schedule instance
+       * @example RJ56DDE
+       */
+      username: string
+      /**
+       * @description A field for any additional comments
+       * @example No tutor available
+       */
+      comment?: string
+    }
     DlqMessage: {
       body: {
         [key: string]: Record<string, never> | undefined
@@ -2561,6 +2586,54 @@ export interface components {
 export type external = Record<string, never>
 
 export interface operations {
+  cancelScheduledInstance: {
+    /**
+     * Cancel a scheduled instance
+     * @description Cancels scheduled instance and associated attendance records
+     */
+    parameters: {
+      path: {
+        instanceId: number
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ScheduleInstanceCancelRequest']
+      }
+    }
+    responses: {
+      /** @description Scheduled instance successfully cancelled */
+      204: {
+        content: {
+          'application/json': Record<string, never>
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The scheduled instance was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   retryDlq: {
     parameters: {
       path: {
