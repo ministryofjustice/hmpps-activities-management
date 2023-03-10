@@ -11,6 +11,7 @@ ActivitiesFrontend.MultiSelect = function (container) {
 
   this.checkboxes.each((i, cb) => $(cb).attr('autocomplete', 'off'))
   this.toggleAllButton.attr('autocomplete', 'off')
+  this.stickyBar.setAttribute('aria-disabled', 'true')
 }
 
 ActivitiesFrontend.MultiSelect.prototype.handleCheckboxChanged = function () {
@@ -19,8 +20,10 @@ ActivitiesFrontend.MultiSelect.prototype.handleCheckboxChanged = function () {
 
   if (count > 0) {
     this.stickyBar.classList.add('multi-select-sticky--active')
+    this.stickyBar.setAttribute('aria-disabled', 'false')
   } else {
     this.stickyBar.classList.remove('multi-select-sticky--active')
+    this.stickyBar.setAttribute('aria-disabled', 'true')
   }
 }
 
