@@ -3,11 +3,11 @@ import { when } from 'jest-when'
 
 import AppointmentMovementSlipRoutes from './appointmentMovementSlip'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AppointmentDetails } from '../../../../@types/appointments'
+import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Movement Slip', () => {
   const handler = new AppointmentMovementSlipRoutes(activitiesService)
@@ -18,28 +18,21 @@ describe('Route Handlers - Movement Slip', () => {
     id: 10,
     category: {
       id: 40,
-      parent: null,
       code: 'MEOT',
       description: 'Medical - Other',
-      active: true,
-      displayOrder: null,
     },
+    prisonCode: 'MDI',
     internalLocation: {
-      locationId: 26963,
-      locationType: 'RESI',
-      description: 'RES-HB1-DOC',
-      agencyId: 'MDI',
-      parentLocationId: 26960,
-      currentOccupancy: 0,
-      locationPrefix: 'MDI-RES-HB1-DOC',
-      userDescription: 'HB1 Doctors',
+      id: 26963,
+      prisonCode: 'MDI',
+      description: 'HB1 Doctors',
     },
     inCell: false,
-    startDate: new Date('2023-02-22T00:00:00.000Z'),
-    startTime: new Date('2023-02-22T13:00:00.000Z'),
-    endTime: new Date('2023-02-22T13:15:00.000Z'),
+    startDate: '2023-02-22',
+    startTime: '13:00',
+    endTime: '13:15',
     comment: '',
-    created: new Date('2023-02-17T10:22:04.000Z'),
+    created: '2023-02-17T10:22:04',
     createdBy: {
       firstName: 'John',
       lastName: 'Smith',

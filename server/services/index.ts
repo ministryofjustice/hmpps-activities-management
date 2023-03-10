@@ -19,7 +19,7 @@ export default function services() {
   return {
     userService: new UserService(hmppsAuthClient, nomisUserApiClient, prisonApiClient),
     prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient),
-    activitiesService: new ActivitiesService(activitiesApiClient, prisonerSearchApiClient, prisonApiClient),
+    activitiesService: new ActivitiesService(activitiesApiClient, prisonerSearchApiClient),
     capacitiesService: new CapacitiesService(activitiesApiClient),
     ukBankHolidayService: new BankHolidayService(),
     unlockListService: new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient),
