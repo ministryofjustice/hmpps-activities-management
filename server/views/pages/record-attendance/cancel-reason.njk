@@ -1,0 +1,54 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% set backLinkHref = "attendance-list" %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Why are you cancelling the session?</h1>
+      <span class="govuk-caption-m govuk-!-margin-bottom-3">Prisoners will be paid and recorded as having an acceptable absence.</span>
+
+      {{ govukRadios({
+        name: "cancelationReason",
+        items: [
+          {
+            value: "STAFF_UNAVAILABLE",
+            html: "Staff unavailable"
+          },
+          {
+            value: "STAFF_TRAINING",
+            html: "Staff training"
+          },
+          {
+            value: "SESSION_NOT_REQUIRED",
+            html: "Session not required"
+          },
+          {
+            value: "LOCATION_UNAVAILABLE",
+            html: "Location unavailable"
+          },
+          {
+            value: "OPERATIONAL_ISSUE",
+            html: "Prison operational issue"
+          }
+        ]
+      }) }}
+
+      {{ govukTextarea({
+        name: "comments",
+        label: {
+          text: "More details (optional)"
+        },
+        rows: "3"
+      }) }}
+
+      {{ govukButton({
+        text: "Continue"
+      }) }}
+    </div>
+  </div>
+{% endblock %}
