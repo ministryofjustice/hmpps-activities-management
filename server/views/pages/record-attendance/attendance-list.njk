@@ -47,7 +47,7 @@
     {% for attendee in attendees %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.name,
-            value: attendee.attendance.id,
+            value: attendee.attendance.id + '-' + attendee.prisonerNumber,
             selectable: attendee.attendance.status === "SCHEDULED",
             items: [
                 {

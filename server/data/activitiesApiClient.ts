@@ -24,6 +24,7 @@ import {
   Appointment,
   AppointmentCategory,
   AppointmentCreateRequest,
+  AttendanceReason,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -43,6 +44,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
     return this.get({
       path: `/activity-categories`,
+      authToken: user.token,
+    })
+  }
+
+  async getAttendanceReasons(user: ServiceUser): Promise<AttendanceReason[]> {
+    return this.get({
+      path: `/attendance-reasons`,
       authToken: user.token,
     })
   }

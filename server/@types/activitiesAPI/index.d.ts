@@ -1614,20 +1614,65 @@ export interface components {
     AttendanceReason: {
       /**
        * Format: int64
-       * @description The internally-generated ID for this absence reason
-       * @example 123456
+       * @description The internally generated identifier for this (non) attendance reason
+       * @example 1
        */
       id: number
       /**
-       * @description The reason codes - ABS, ACCAB, ATT, CANC, NREQ, SUS, UNACAB, REST
-       * @example ABS
+       * @description The code for the (non) attendance reason
+       * @example SICK
        */
       code: string
       /**
-       * @description The detailed description for this attendance reason
-       * @example Unacceptable absence
+       * @description The description of the (non) attendance reason
+       * @example Sick
        */
       description: string
+      /**
+       * @description A flag to show whether the reason is Attended (true) or Not Attended (false)
+       * @example true
+       */
+      attended: boolean
+      /**
+       * @description A flag to show whether or not to capture whether the prisoner should still be paid
+       * @example true
+       */
+      capturePay: boolean
+      /**
+       * @description A flag to show whether or not to capture more detail
+       * @example true
+       */
+      captureMoreDetail: boolean
+      /**
+       * @description A flag to show whether or not to capture a case note
+       * @example true
+       */
+      captureCaseNote: boolean
+      /**
+       * @description A flag to show whether or not to capture whether an incentive level warning has been issued due to non attendance
+       * @example false
+       */
+      captureIncentiveLevelWarning: boolean
+      /**
+       * @description A flag to show whether or not to capture other text
+       * @example false
+       */
+      captureOtherText: boolean
+      /**
+       * @description A flag to show whether or not the reason should be displayed in the UI as an option for non attendance
+       * @example false
+       */
+      displayInAbsence: boolean
+      /**
+       * @description The sequence in which the reason should be displayed in the UI
+       * @example 1
+       */
+      displaySequence?: number
+      /**
+       * @description Any internal notes to explain the use of the reason
+       * @example Maps to ACCAB in NOMIS
+       */
+      notes: string
     }
     /** @description Defines one eligibility rule */
     EligibilityRule: {

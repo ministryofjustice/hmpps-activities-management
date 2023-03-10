@@ -8,8 +8,8 @@
 {% set pageId = 'not-attended-reason-page' %}
 {% set backLinkHref = "/" %}
 
-{% macro nestedReasonData(reasonCode, validationErrors, formResponses, sessionValues) %}
-    {% if (reasonCode == 'SICK') or (reasonCode == 'REST') %}
+{% macro nestedReasonData(reason, validationErrors, formResponses, sessionValues) %}
+    {% if (reason.capturePay) %}
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
@@ -29,7 +29,7 @@
             ]
         }) }}
     {% endif %}
-    {% if reasonCode == 'SICK' %}
+    {% if reason.captureMoreDetail %}
         {{ govukInput({
             label: {
                 text: "Can you provide more detail? (optional)"
@@ -39,7 +39,7 @@
             errorMessage: validationErrors | findError('sickDetail')
         }) }}
     {% endif %}
-    {% if reasonCode == 'REFUSED' %}
+    {% if reason.captureCaseNote %}
         {{ govukInput({
             label: {
                 text: "Add a case note"
@@ -49,7 +49,7 @@
             errorMessage: validationErrors | findError('caseNote')
         }) }}
     {% endif %}
-    {% if reasonCode == 'OTHER' %}
+    {% if reason.captureOtherText %}
         {{ govukInput({
             label: {
                 text: "Add an absence reason"
@@ -83,10 +83,10 @@
 {% for notAttendedReason in notAttendedReasons %}
     {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
         {
-            value: notAttendedReason.reasonCode,
-            text: notAttendedReason.reasonName,
+            value: notAttendedReason.code,
+            text: notAttendedReason.description,
             conditional: {
-                html: nestedReasonData(notAttendedReason.reasonCode, validationErrors, formResponses, session.notAttendedJourney)
+                html: nestedReasonData(notAttendedReason, validationErrors, formResponses, session.notAttendedJourney)
             }
         }
     ), notAttendedReasonOptions) %}

@@ -12,7 +12,7 @@ export class AttendanceList {
   @Expose()
   @Transform(({ value }) => [value].flat()) // Transform to an array if only one value is provided
   @HasAtLeastOne({ message: 'Select at least one prisoner' })
-  selectedPrisoners: string[]
+  selectedAttendances: number[]
 }
 
 export default class AttendanceListRoutes {
@@ -42,7 +42,7 @@ export default class AttendanceListRoutes {
         prisonerNumber: i.offenderNo,
         location: i.assignedLivingUnitDesc,
         otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.offenderNo),
-        attendanceLabel: this.getAttendanceLabel(i.offenderNo, instance.attendances),
+        attendance: instance.attendances.find(a => a.prisonerNumber === i.offenderNo),
       })),
     )
 
@@ -59,14 +59,32 @@ export default class AttendanceListRoutes {
   }
 
   ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    res.status(419)
-    res.send('ATTENDED : Under construction 🛠️')
+    const { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    const { user } = res.locals
+
+    if (selectedAttendances) {
+      const selectedAttendanceIds: number[] = []
+      selectedAttendances.forEach(selectAttendee => selectedAttendanceIds.push(Number(selectAttendee.split('-')[0])))
+
+      if (selectedAttendanceIds) {
+        const attendances = selectedAttendanceIds.map(attendance => ({
+          id: +attendance,
+          attendanceReason: 'ATT',
+        }))
+        await this.activitiesService.updateAttendances(attendances, user)
+      }
+    }
+
+    return res.redirect('attendance-list')
   }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
     const instanceId = req.params.id
     const { user } = res.locals
-    const { selectedPrisoners }: { selectedPrisoners: string[] } = req.body
+    const { selectedAttendances }: { selectedAttendances: string[] } = req.body
+
+    const selectedPrisoners: string[] = []
+    selectedAttendances.forEach(selectAttendee => selectedPrisoners.push(selectAttendee.split('-')[1]))
 
     req.session.notAttendedJourney = {}
     if (!req.session.notAttendedJourney.selectedPrisoners) {
