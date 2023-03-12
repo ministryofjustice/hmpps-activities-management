@@ -8,17 +8,21 @@ MOJFrontend.SortableTable.prototype.mojSort = MOJFrontend.SortableTable.prototyp
 MOJFrontend.SortableTable.prototype.sort = function (rows, columnNumber, sortDirection) {
   if (!this.table.data('table-fixed-rows')) return MOJFrontend.SortableTable.prototype.mojSort(...arguments)
 
-  var newRows = rows.sort(
-    $.proxy(function (rowA, rowB) {
-      var tdA = $(rowA).find('td').eq(columnNumber)
-      var tdB = $(rowB).find('td').eq(columnNumber)
+  return rows.sort(
+    function (rowA, rowB) {
+      var tdA = rowA.querySelectorAll('td')[columnNumber]
+      var tdB = rowB.querySelectorAll('td')[columnNumber]
 
       // If the cell is fixed, return the fixed sort value
-      if ($(tdA).attr('data-sort-fixed')) return $(tdA).attr('data-sort-fixed') == 'top' ? -1 : 1
-      if ($(tdB).attr('data-sort-fixed')) return $(tdB).attr('data-sort-fixed') == 'top' ? 1 : -1
+      if (tdA.getAttribute('data-sort-fixed')) {
+        return tdA.getAttribute('data-sort-fixed') === 'top' ? -1 : 1
+      }
+      if (tdB.getAttribute('data-sort-fixed')) {
+        return tdB.getAttribute('data-sort-fixed') === 'top' ? 1 : -1
+      }
 
-      var valueA = this.getCellValue(tdA)
-      var valueB = this.getCellValue(tdB)
+      var valueA = this.getCellValue($(tdA))
+      var valueB = this.getCellValue($(tdB))
 
       var sortVal = 0
       if (valueA < valueB) {
@@ -28,7 +32,6 @@ MOJFrontend.SortableTable.prototype.sort = function (rows, columnNumber, sortDir
       }
 
       return sortDirection === 'ascending' ? sortVal : -sortVal
-    }, this)
+    }.bind(this)
   )
-  return newRows
 }

@@ -4,17 +4,17 @@ ActivitiesFrontend.ListFilter = function (container) {
   new MOJFrontend.FilterToggleButton({
     startHidden: true,
     toggleButton: {
-      container: $('.moj-action-bar__filter'),
+      container: document.getElementsByClassName('.moj-action-bar__filter'),
       showText: 'Show filter',
       hideText: 'Hide filter',
       classes: 'govuk-button--secondary',
     },
     closeButton: {
-      container: $('.moj-filter__header-action'),
+      container: document.getElementsByClassName('.moj-filter__header-action'),
       text: 'Close',
     },
     filter: {
-      container: $('.moj-filter'),
+      container: document.getElementsByClassName('.moj-filter'),
     },
   })
 }
