@@ -111,8 +111,10 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
         startDate,
         endDate: formatDate(today, 'yyyy-MM-dd'),
       }
+
       const requestObject = plainToInstance(StartDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
       expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date before the end date' }])
     })
   })
