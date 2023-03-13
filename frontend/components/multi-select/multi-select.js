@@ -1,21 +1,34 @@
 ActivitiesFrontend.MultiSelect = function (container) {
   this.container = container
 
-  this.toggleAllButton = $(this.container.querySelector('#checkboxes-all'))
-  this.checkboxes = $(this.container.querySelectorAll('tbody .govuk-checkboxes__input'))
+  this.toggleAllButton = this.container.querySelector('#checkboxes-all')
+  this.checkboxes = this.container.querySelectorAll('tbody .govuk-checkboxes__input')
   this.stickyBar = this.container.querySelector('.multi-select-sticky')
   this.selectedCount = this.container.querySelector('.multi-select-sticky__count')
 
-  this.checkboxes.on('change', $.proxy(this, 'handleCheckboxChanged'))
-  this.toggleAllButton.on('change', $.proxy(this, 'handleToggleAllButtonChanged'))
-
-  this.checkboxes.each((i, cb) => $(cb).attr('autocomplete', 'off'))
-  this.toggleAllButton.attr('autocomplete', 'off')
   this.stickyBar.setAttribute('aria-disabled', 'true')
+
+  this.toggleAllButton.addEventListener('change', this.handleToggleAllButtonChanged.bind(this))
+  this.toggleAllButton.setAttribute('autocomplete', 'off')
+
+  ActivitiesFrontend.nodeListForEach(
+    this.checkboxes,
+    function ($cb) {
+      $cb.addEventListener('change', this.handleCheckboxChanged.bind(this))
+      $cb.setAttribute('autocomplete', 'off')
+    }.bind(this)
+  )
 }
 
 ActivitiesFrontend.MultiSelect.prototype.handleCheckboxChanged = function () {
-  var count = this.checkboxes.filter(':checked').length
+  var count = 0
+  ActivitiesFrontend.nodeListForEach(
+    this.checkboxes,
+    function ($cb) {
+      if ($cb.checked) count++
+    }.bind(this)
+  )
+
   this.selectedCount.innerText = `${count} selected`
 
   if (count > 0) {
@@ -28,11 +41,12 @@ ActivitiesFrontend.MultiSelect.prototype.handleCheckboxChanged = function () {
 }
 
 ActivitiesFrontend.MultiSelect.prototype.handleToggleAllButtonChanged = function () {
-  this.checkboxes.each(
-    $.proxy(function (index, el) {
+  ActivitiesFrontend.nodeListForEach(
+    this.checkboxes,
+    function ($el) {
       var event = document.createEvent('HTMLEvents')
       event.initEvent('change', false, true)
-      el.dispatchEvent(event)
-    }, this)
+      $el.dispatchEvent(event)
+    }.bind(this)
   )
 }

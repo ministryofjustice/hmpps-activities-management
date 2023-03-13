@@ -35,8 +35,8 @@ const stubCaseload = () =>
       status: 200,
       headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       jsonBody: [
-        { caseLoadId: 'MDI', description: 'Moorland (HMP & YOI)', currentlyActive: true },
-        { caseLoadId: 'LEI', description: 'Leeds (HMP)', currentlyActive: false },
+        { caseLoadId: 'MDI', description: 'Moorland (HMP & YOI)', currentlyActive: true, isAppointmentsEnabled: true },
+        { caseLoadId: 'LEI', description: 'Leeds (HMP)', currentlyActive: false, isAppointmentsEnabled: false },
       ],
     },
   })

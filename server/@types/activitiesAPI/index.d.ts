@@ -1957,6 +1957,11 @@ export interface components {
        * @example 2022-09-30
        */
       rolloutDate?: string
+      /**
+       * @description Whether appointments are being fetched from the activities service (as opposed to the Prison API)
+       * @example true
+       */
+      isAppointmentsEnabled: boolean
     }
     GetDlqResult: {
       /** Format: int32 */
