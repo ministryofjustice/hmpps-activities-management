@@ -13,7 +13,23 @@
                 titleText: "Appointment created"
             }) }}
             <p class="govuk-body" data-qa="message">
-                You have successfully created an appointment for {{ session.createSingleAppointmentJourney.prisoner.name | toTitleCase }} on {{ startDate | formatDate('EEEE d MMMM yyyy') }}.
+                You have successfully created an appointment for {{ session.createSingleAppointmentJourney.prisoner.name | toTitleCase }}
+                {% if session.createSingleAppointmentJourney.repeat == 'yes' %}
+                   starting on {{ startDate | formatDate('EEEE d MMMM yyyy') }}.
+                   It will repeat {{ ("every weekday (Monday to Friday)" if session.createSingleAppointmentJourney.repeatPeriod == 'weekday') +
+                                     ("daily (includes weekends)" if session.createSingleAppointmentJourney.repeatPeriod == 'daily') +
+                                     ("weekly" if session.createSingleAppointmentJourney.repeatPeriod == 'weekly') +
+                                     ("fortnightly" if session.createSingleAppointmentJourney.repeatPeriod == 'fortnightly') +
+                                     ("monthly" if session.createSingleAppointmentJourney.repeatPeriod == 'monthly') }}
+                    for {{ session.createSingleAppointmentJourney.repeatCount }}
+                    {% if session.createSingleAppointmentJourney.repeatCount == 1 %}
+                        occurrence
+                    {% else %}
+                        occurrences
+                    {% endif %}
+                {% else %}
+                    on {{ startDate | formatDate('EEEE d MMMM yyyy') }}.
+                {% endif %}
             </p>
 
             <h2 class="govuk-heading-m">What you can do next</h2>
