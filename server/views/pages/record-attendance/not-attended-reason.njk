@@ -106,6 +106,7 @@
                                 classes: "govuk-fieldset__legend--xl"
                             }
                         },
+                        idPrefix: "notAttendedReason-" + prisoner.prisonerNumber,
                         name: "notAttendedReason",
                         errorMessage: validationErrors | findError('notAttendedReason'),
                         items: notAttendedReasonOptions
