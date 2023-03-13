@@ -72,19 +72,21 @@ context('Create single appointment - check answers change links', () => {
     // Change each answer
     checkAnswersPage.changePrisoner()
     Page.verifyOnPage(SelectPrisonerPage)
-    selectPrisonerPage.enterPrisonerNumber('A8644DY')
+    selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
     cy.stubEndpoint('POST', '/prisoner-search/match-prisoners', postMatchPrisonerA1350DZ)
     selectPrisonerPage.continue()
     checkAnswersPage.assertPrisonerSummary('David Winchurch', 'A1350DZ', '2-2-024')
 
     checkAnswersPage.changeCategory()
     Page.verifyOnPage(CategoryPage)
+    categoryPage.assertSelectedCategory('Chaplaincy')
     categoryPage.selectCategory('Gym - Weights')
     categoryPage.continue()
     checkAnswersPage.assertCategory('Gym - Weights')
 
     checkAnswersPage.changeLocation()
     Page.verifyOnPage(LocationPage)
+    locationPage.assertSelectedLocation('Chapel')
     locationPage.selectLocation('Gym')
     locationPage.continue()
     checkAnswersPage.assertLocation('Gym')

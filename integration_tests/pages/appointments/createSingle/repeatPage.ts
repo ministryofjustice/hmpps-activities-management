@@ -7,5 +7,5 @@ export default class RepeatPage extends Page {
 
   selectRepeat = (option: string) => this.getInputByLabel(option).click()
 
-  assertRepeat = (option: string) => this.getInputByName('repeat').should('have.value', option)
+  assertRepeat = (option: string) => cy.get(`[name='repeat']:checked`).next().should('contain.text', option)
 }

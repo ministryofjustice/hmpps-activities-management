@@ -7,7 +7,7 @@ export default class RepeatPeriodAndCountPage extends Page {
 
   selectRepeatPeriod = (option: string) => this.getInputByLabel(option).click()
 
-  assertRepeatPeriod = (option: string) => this.getInputByName('repeatPeriod').should('have.value', option)
+  assertRepeatPeriod = (option: string) => cy.get(`[name='repeatPeriod']:checked`).next().should('contain.text', option)
 
   enterRepeatCount = (count: string) => this.getInputByName('repeatCount').clear().type(count)
 
