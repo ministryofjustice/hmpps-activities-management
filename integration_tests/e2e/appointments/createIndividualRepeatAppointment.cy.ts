@@ -174,5 +174,22 @@ context('Create individual repeat appointment', () => {
     checkAnswersPage.assertRepeat('Yes')
     checkAnswersPage.assertRepeatPeriod('Daily (includes weekends)')
     checkAnswersPage.assertRepeatCount('7')
+
+    // Change repeat period and count
+    checkAnswersPage.changeRepeatPeriod()
+    Page.verifyOnPage(RepeatPeriodAndCountPage)
+    repeatPeriodAndCountPage.assertRepeatPeriod('Daily (includes weekends)')
+    repeatPeriodAndCountPage.selectRepeatPeriod('Fortnightly')
+    repeatPeriodAndCountPage.continue()
+    Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.assertRepeatPeriod('Fortnightly')
+
+    checkAnswersPage.changeRepeatCount()
+    Page.verifyOnPage(RepeatPeriodAndCountPage)
+    repeatPeriodAndCountPage.assertRepeatCount('7')
+    repeatPeriodAndCountPage.enterRepeatCount('4')
+    repeatPeriodAndCountPage.continue()
+    Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.assertRepeatCount('4')
   })
 })
