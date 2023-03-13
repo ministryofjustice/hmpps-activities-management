@@ -121,6 +121,7 @@ export default class ActivitiesService {
       if (match) {
         const cle = cl as CaseLoadExtended
         cle.isRolledOut = match.active
+        cle.isAppointmentsEnabled = match.isAppointmentsEnabled
         userCaseLoads.push(cle)
         if (cle.caseLoadId === user.activeCaseLoadId) {
           newUser.activeCaseLoad = cle
