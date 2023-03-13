@@ -25,6 +25,12 @@ export default class CheckAnswersPage extends Page {
   assertEndTime = (hour: number, minute: number) =>
     cy.get('[data-qa=end-time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
+  assertRepeat = (option: string) => cy.get('[data-qa=repeat]').contains(option)
+
+  assertRepeatPeriod = (option: string) => cy.get('[data-qa=repeat-period]').contains(option)
+
+  assertRepeatCount = (option: string) => cy.get('[data-qa=repeat-count]').contains(option)
+
   changePrisoner = () => cy.get('[data-qa=change-prisoner]').click()
 
   changeCategory = () => cy.get('[data-qa=change-category]').click()
@@ -36,6 +42,12 @@ export default class CheckAnswersPage extends Page {
   changeStartTime = () => cy.get('[data-qa=change-start-time]').click()
 
   changeEndTime = () => cy.get('[data-qa=change-end-time]').click()
+
+  changeRepeat = () => cy.get('[data-qa=change-repeat]').click()
+
+  changeRepeatPeriod = () => cy.get('[data-qa=change-repeat-period]').click()
+
+  changeRepeatCount = () => cy.get('[data-qa=change-repeat-count]').click()
 
   createAppointment = () => cy.get('button').contains('Accept and save').click()
 }

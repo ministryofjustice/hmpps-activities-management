@@ -152,7 +152,7 @@
           text: "Frequency"
       },
       value: {
-          html: '<span data-qa="repeat">' +
+          html: '<span data-qa="repeat-period">' +
           ("Every weekday (Monday to Friday)" if session.createSingleAppointmentJourney.repeatPeriod == 'weekday') +
           ("Daily (includes weekends)" if session.createSingleAppointmentJourney.repeatPeriod == 'daily') +
           ("Weekly" if session.createSingleAppointmentJourney.repeatPeriod == 'weekly') +
@@ -177,7 +177,7 @@
           text: "Occurrences"
       },
       value: {
-          html: '<span data-qa="repeat">' + session.createSingleAppointmentJourney.repeatCount + '</span>'
+          html: '<span data-qa="repeat-count">' + session.createSingleAppointmentJourney.repeatCount + '</span>'
       },
       actions: {
           items: [

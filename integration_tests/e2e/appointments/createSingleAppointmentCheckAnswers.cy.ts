@@ -10,6 +10,7 @@ import postMatchPrisonerA1350DZ from '../../fixtures/prisonerSearchApi/postMatch
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
+import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
@@ -54,6 +55,10 @@ context('Create single appointment - check answers change links', () => {
     dateAndTimePage.selectEndTime(15, 30)
     dateAndTimePage.continue()
 
+    const repeatPage = Page.verifyOnPage(RepeatPage)
+    repeatPage.selectRepeat('No')
+    repeatPage.continue()
+
     // Verify initial answers
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
@@ -62,6 +67,7 @@ context('Create single appointment - check answers change links', () => {
     checkAnswersPage.assertStartDate(tomorrow)
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
+    checkAnswersPage.assertRepeat('No')
 
     // Change each answer
     checkAnswersPage.changePrisoner()

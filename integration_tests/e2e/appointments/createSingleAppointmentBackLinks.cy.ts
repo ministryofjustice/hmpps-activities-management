@@ -9,6 +9,7 @@ import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatch
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
+import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
 
@@ -45,8 +46,22 @@ context('Create single appointment - back links', () => {
     locationPage.continue()
 
     const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
+    const tomorrow = new Date()
+    tomorrow.setDate(getDate(tomorrow) + 1)
+    dateAndTimePage.enterStartDate(tomorrow)
+    dateAndTimePage.selectStartTime(14, 0)
+    dateAndTimePage.selectEndTime(15, 30)
+    dateAndTimePage.continue()
+
+    const repeatPage = Page.verifyOnPage(RepeatPage)
 
     // Click through back links
+    repeatPage.back()
+    Page.verifyOnPage(DateAndTimePage)
+    dateAndTimePage.assertStartDate(tomorrow)
+    dateAndTimePage.assertStartTime(14, 0)
+    dateAndTimePage.selectStartTime(15, 5)
+
     dateAndTimePage.back()
     Page.verifyOnPage(LocationPage)
     locationPage.assertSelectedLocation('Chapel')
@@ -59,18 +74,15 @@ context('Create single appointment - back links', () => {
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
 
-    // Continue to date and time page
+    // Continue to repeat page
     selectPrisonerPage.continue()
     categoryPage.continue()
     locationPage.continue()
-
-    Page.verifyOnPage(DateAndTimePage)
-    const tomorrow = new Date()
-    tomorrow.setDate(getDate(tomorrow) + 1)
-    dateAndTimePage.enterStartDate(tomorrow)
-    dateAndTimePage.selectStartTime(14, 0)
-    dateAndTimePage.selectEndTime(15, 30)
     dateAndTimePage.continue()
+
+    Page.verifyOnPage(RepeatPage)
+    repeatPage.selectRepeat('No')
+    repeatPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertNoBackLink()
@@ -103,6 +115,11 @@ context('Create single appointment - back links', () => {
 
     checkAnswersPage.changeEndTime()
     Page.verifyOnPage(DateAndTimePage)
+    dateAndTimePage.back()
+    Page.verifyOnPage(CheckAnswersPage)
+
+    checkAnswersPage.changeRepeat()
+    Page.verifyOnPage(RepeatPage)
     dateAndTimePage.back()
     Page.verifyOnPage(CheckAnswersPage)
 
