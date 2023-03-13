@@ -32,7 +32,7 @@ export default class NotAttendedReasonRoutes {
     req.session.notAttendedJourney.selectedPrisoners.forEach(selectedPrisoner => {
       attendanceUpdates.push({
         id: selectedPrisoner.attendanceId,
-        attendanceReason: req.body.notAttendedReason,
+        attendanceReason: req.body[`notAttendedReason${selectedPrisoner.prisonerNumber}`],
       })
     })
 

@@ -8,15 +8,15 @@
 {% set pageId = 'not-attended-reason-page' %}
 {% set backLinkHref = "/" %}
 
-{% macro nestedReasonData(reason, validationErrors, formResponses, sessionValues) %}
-    {% if (reason.capturePay) %}
+{% macro nestedReasonData(reason, prisonerNumber, validationErrors, formResponses, sessionValues) %}
+    {% if (reason.capturePay) and (not reason.captureOtherText) %}
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
                 text: "Should the prisoner be paid?"
             },
-            name: "pay",
-            errorMessage: validationErrors | findError('pay'),
+            name: "pay" + prisonerNumber,
+            errorMessage: validationErrors | findError('pay' + prisonerNumber),
             items: [
                 {
                     value: "Yes",
@@ -34,9 +34,9 @@
             label: {
                 text: "Can you provide more detail? (optional)"
             },
-            name: "sickDetail",
+            name: "sickDetail" + prisonerNumber,
             classes: "govuk-!-width-one-half",
-            errorMessage: validationErrors | findError('sickDetail')
+            errorMessage: validationErrors | findError('sickDetail' + prisonerNumber)
         }) }}
     {% endif %}
     {% if reason.captureCaseNote %}
@@ -44,9 +44,9 @@
             label: {
                 text: "Add a case note"
             },
-            name: "caseNote",
+            name: "caseNote" + prisonerNumber,
             classes: "govuk-!-width-one-half",
-            errorMessage: validationErrors | findError('caseNote')
+            errorMessage: validationErrors | findError('caseNote + prisonerNumber')
         }) }}
     {% endif %}
     {% if reason.captureOtherText %}
@@ -54,9 +54,9 @@
             label: {
                 text: "Add an absence reason"
             },
-            name: "caseNote",
+            name: "absenceReason" + prisonerNumber,
             classes: "govuk-!-width-one-half",
-            errorMessage: validationErrors | findError('caseNote')
+            errorMessage: validationErrors | findError('absenceReason' + prisonerNumber)
         }) }}
        {{ govukRadios({
             classes: "govuk-radios--inline",
@@ -79,25 +79,24 @@
     {% endif %}
 {% endmacro %}
 
-{% set notAttendedReasonOptions = [] %}
-{% for notAttendedReason in notAttendedReasons %}
-    {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
-        {
-            value: notAttendedReason.code,
-            text: notAttendedReason.description,
-            conditional: {
-                html: nestedReasonData(notAttendedReason, validationErrors, formResponses, session.notAttendedJourney)
-            }
-        }
-    ), notAttendedReasonOptions) %}
-{% endfor %}
-
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {% for prisoner in selectedPrisoners %}
+                    {% set notAttendedReasonOptions = [] %}
+                     {% for notAttendedReason in notAttendedReasons %}
+                         {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
+                             {
+                                 value: notAttendedReason.code,
+                                 text: notAttendedReason.description,
+                                 conditional: {
+                                     html: nestedReasonData(notAttendedReason, prisoner.prisonerNumber, validationErrors, formResponses, session.notAttendedJourney)
+                                 }
+                             }
+                         ), notAttendedReasonOptions) %}
+                     {% endfor %}
                     {{ govukRadios({
                         fieldset: {
                             legend: {
@@ -107,7 +106,7 @@
                             }
                         },
                         idPrefix: "notAttendedReason-" + prisoner.prisonerNumber,
-                        name: "notAttendedReason",
+                        name: "notAttendedReason"  + prisoner.prisonerNumber,
                         errorMessage: validationErrors | findError('notAttendedReason'),
                         items: notAttendedReasonOptions
                     }) }}
