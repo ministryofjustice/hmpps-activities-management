@@ -28,7 +28,7 @@ export default abstract class AbstractHmppsRestClient {
 
   protected constructor(private readonly name: string, private readonly apiConfig: ApiConfig) {
     this.agent = apiConfig.url.startsWith('https') ? new HttpsAgent(apiConfig.agent) : new Agent(apiConfig.agent)
-    this.tokenStore = new TokenStore(createRedisClient({ legacyMode: false }))
+    this.tokenStore = new TokenStore(createRedisClient())
   }
 
   private async getSystemToken(username: string): Promise<string> {
