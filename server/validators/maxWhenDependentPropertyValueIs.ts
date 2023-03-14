@@ -16,7 +16,9 @@ export default function MaxWhenDependentPropertyValueIs(
       validator: {
         validate(value: number, args: ValidationArguments) {
           const dependentPropertyValue = args.object[dependentPropertyName]
-          return dependentPropertyValue === validDependentPropertyValue ? value <= maxValue : true
+          return dependentPropertyValue === validDependentPropertyValue && value !== undefined
+            ? value <= maxValue
+            : true
         },
       },
     })
