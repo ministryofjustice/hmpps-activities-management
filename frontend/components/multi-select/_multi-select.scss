@@ -16,7 +16,9 @@
 
   .govuk-table__row {
     &:nth-of-type(even) {
-      background: govuk-colour(light-grey);
+      @media not print {
+        background: govuk-colour(light-grey);
+      }
     }
   }
 

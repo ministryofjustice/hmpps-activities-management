@@ -47,9 +47,8 @@ body {
 
 .alternating-row-shading {
   tr:nth-child(even) {
-    background-color: govuk-tint(govuk-colour("light-grey"), 30);
-    @media print {
-      background: govuk-tint(govuk-colour("light-grey"), 20);
+    @media not print {
+      background-color: govuk-tint(govuk-colour("light-grey"), 30);
     }
   }
 }
