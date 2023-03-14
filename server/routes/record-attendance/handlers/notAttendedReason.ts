@@ -1,12 +1,17 @@
 import { Request, Response } from 'express'
-import { Expose } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 import _ from 'lodash'
+import { IsArray, ValidateNested } from 'class-validator'
 import ActivitiesService from '../../../services/activitiesService'
 import { AttendanceUpdateRequest } from '../../../@types/activitiesAPI/types'
+import NotAttendedData from '../../../validators/validateNotAttendedData'
 
 export class NotAttendedReason {
   @Expose()
-  notAttendedData: string[]
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => NotAttendedData)
+  notAttendedData: NotAttendedData[]
 }
 
 export default class NotAttendedReasonRoutes {
