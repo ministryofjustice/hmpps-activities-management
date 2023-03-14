@@ -25,7 +25,7 @@ export default class RepeatRoutes {
 
     if (repeat === YesNo.YES) {
       if (originalRepeat === YesNo.YES) {
-        res.redirectOrReturn(`repeat-period-and-count`)
+        res.redirect(`check-answers`)
       } else {
         res.redirect(`repeat-period-and-count`)
       }

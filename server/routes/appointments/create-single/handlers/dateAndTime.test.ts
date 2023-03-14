@@ -34,7 +34,7 @@ describe('Route Handlers - Create Single Appointment - Date and Time', () => {
   })
 
   describe('POST', () => {
-    it('should save start date, start time and end time in session and redirect to check answers page', async () => {
+    it('should save start date, start time and end time in session and redirect to repeat page', async () => {
       const tomorrow = addDays(new Date(), 1)
       const startDate = simpleDateFromDate(tomorrow)
 

@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
-import { Appointment } from '../../../../@types/activitiesAPI/types'
+import { Appointment, AppointmentCreateRequest, AppointmentRepeatPeriod } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 
 jest.mock('../../../../services/activitiesService')
@@ -81,8 +81,11 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
   })
 
   describe('POST', () => {
-    it('should create the appointment and redirect to confirmation page', async () => {
-      const expectedRequest = {
+    let expectedRequest: AppointmentCreateRequest
+    let expectedResponse: Appointment
+
+    beforeEach(() => {
+      expectedRequest = {
         categoryId: 11,
         prisonCode: 'TPR',
         internalLocationId: 32,
@@ -91,9 +94,9 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
         startTime: '09:30',
         endTime: '13:00',
         prisonerNumbers: ['A1234BC'],
-      }
+      } as AppointmentCreateRequest
 
-      const expectedResponse = {
+      expectedResponse = {
         id: 15,
         category: {
           id: 11,
@@ -127,7 +130,9 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
           },
         ],
       } as Appointment
+    })
 
+    it('should create the appointment and redirect to confirmation page', async () => {
       when(activitiesService.createAppointment)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
@@ -135,6 +140,24 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
       await handler.POST(req, res)
       expect(activitiesService.createAppointment).toHaveBeenCalledWith(expectedRequest, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/15')
+    })
+
+    it('should create the repeat appointment and redirect to confirmation page', async () => {
+      req.session.createSingleAppointmentJourney.repeat = YesNo.YES
+      req.session.createSingleAppointmentJourney.repeatPeriod = AppointmentRepeatPeriod.WEEKLY
+      req.session.createSingleAppointmentJourney.repeatCount = 6
+
+      expectedRequest.repeat = {
+        period: AppointmentRepeatPeriod.WEEKLY,
+        count: 6,
+      }
+
+      when(activitiesService.createAppointment)
+        .calledWith(atLeast(expectedRequest))
+        .mockResolvedValueOnce(expectedResponse)
+
+      await handler.POST(req, res)
+      expect(activitiesService.createAppointment).toHaveBeenCalledWith(expectedRequest, res.locals.user)
     })
   })
 })
