@@ -175,6 +175,14 @@ context('Create individual repeat appointment', () => {
     checkAnswersPage.assertRepeatPeriod('Daily (includes weekends)')
     checkAnswersPage.assertRepeatCount('7')
 
+    // Click to change repeat from yes but keep yes selected
+    checkAnswersPage.changeRepeat()
+    Page.verifyOnPage(RepeatPage)
+    repeatPage.assertRepeat('Yes')
+    repeatPage.selectRepeat('Yes')
+    repeatPage.continue()
+    Page.verifyOnPage(CheckAnswersPage)
+
     // Change repeat period and count
     checkAnswersPage.changeRepeatPeriod()
     Page.verifyOnPage(RepeatPeriodAndCountPage)

@@ -17,12 +17,18 @@ export default class RepeatRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { repeat } = req.body
 
+    const originalRepeat = req.session.createSingleAppointmentJourney.repeat
+
     if (repeat === YesNo.NO || req.session.createSingleAppointmentJourney.repeat === undefined) {
       req.session.createSingleAppointmentJourney.repeat = repeat
     }
 
     if (repeat === YesNo.YES) {
-      res.redirect(`repeat-period-and-count`)
+      if (originalRepeat === YesNo.YES) {
+        res.redirectOrReturn(`repeat-period-and-count`)
+      } else {
+        res.redirect(`repeat-period-and-count`)
+      }
     } else {
       res.redirect(`check-answers`)
     }
