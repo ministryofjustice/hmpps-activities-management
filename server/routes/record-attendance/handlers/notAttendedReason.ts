@@ -31,23 +31,23 @@ export default class NotAttendedReasonRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
     const instanceId = req.params.id
     const attendanceUpdates: AttendanceUpdateRequest[] = []
 
     req.session.notAttendedJourney.selectedPrisoners.forEach(selectedPrisoner => {
       attendanceUpdates.push({
         id: selectedPrisoner.attendanceId,
-        attendanceReason: req.body.notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason,
-        comment: req.body.notAttendedData[selectedPrisoner.prisonerNumber].moreDetail,
-        issuePayment: req.body.notAttendedData[selectedPrisoner.prisonerNumber].pay
-          ? req.body.notAttendedData[selectedPrisoner.prisonerNumber].pay
+        attendanceReason: notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason,
+        comment: notAttendedData[selectedPrisoner.prisonerNumber].moreDetail,
+        issuePayment: notAttendedData[selectedPrisoner.prisonerNumber].pay
+          ? notAttendedData[selectedPrisoner.prisonerNumber].pay
           : false,
-        caseNote: req.body.notAttendedData[selectedPrisoner.prisonerNumber].caseNote,
-        incentiveLevelWarningIssued: req.body.notAttendedData[selectedPrisoner.prisonerNumber]
-          .incentiveLevelWarningIssued
-          ? req.body.notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
+        caseNote: notAttendedData[selectedPrisoner.prisonerNumber].caseNote,
+        incentiveLevelWarningIssued: notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
+          ? notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
           : false,
-        otherAbsenceReason: req.body.notAttendedData[selectedPrisoner.prisonerNumber].absenceReason,
+        otherAbsenceReason: notAttendedData[selectedPrisoner.prisonerNumber].absenceReason,
       })
     })
 
