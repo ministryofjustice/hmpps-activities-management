@@ -146,7 +146,7 @@
         }
     }
 ] %}
-{% if session.createSingleAppointmentJourney.repeat == 'yes' %}
+{% if session.createSingleAppointmentJourney.repeat == YesNo.YES %}
   {% set summaryListRows = (summaryListRows.push({
       key: {
           text: "Frequency"
