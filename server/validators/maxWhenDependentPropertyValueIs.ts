@@ -8,7 +8,7 @@ export default function MaxWhenDependentPropertyValueIs(
 ) {
   return (object: unknown, propertyName: string) => {
     registerDecorator({
-      name: 'maxWhenOtherPropertyValueIs',
+      name: 'maxWhenDependentPropertyValueIs',
       target: object.constructor,
       propertyName,
       constraints: [maxValue, dependentPropertyName, validDependentPropertyValue],

@@ -60,7 +60,7 @@ context('Create single appointment - back links', () => {
     Page.verifyOnPage(DateAndTimePage)
     dateAndTimePage.assertStartDate(tomorrow)
     dateAndTimePage.assertStartTime(14, 0)
-    dateAndTimePage.selectStartTime(15, 5)
+    dateAndTimePage.assertEndTime(15, 30)
 
     dateAndTimePage.back()
     Page.verifyOnPage(LocationPage)

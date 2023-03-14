@@ -24,7 +24,11 @@ export default class RepeatRoutes {
     }
 
     if (repeat === YesNo.YES) {
-      if (originalRepeat === YesNo.YES) {
+      if (
+        originalRepeat === YesNo.YES &&
+        req.session.createSingleAppointmentJourney.repeatPeriod !== undefined &&
+        req.session.createSingleAppointmentJourney.repeatCount !== undefined
+      ) {
         res.redirect(`check-answers`)
       } else {
         res.redirect(`repeat-period-and-count`)

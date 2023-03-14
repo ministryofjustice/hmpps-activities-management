@@ -4,6 +4,7 @@ import { validate } from 'class-validator'
 import RepeatRoutes, { Repeat } from './repeat'
 import { YesNo } from '../../../../@types/activities'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { AppointmentRepeatPeriod } from '../../../../@types/activitiesAPI/types'
 
 describe('Route Handlers - Create Individual Appointment - Repeat', () => {
   const handler = new RepeatRoutes()
@@ -67,8 +68,38 @@ describe('Route Handlers - Create Individual Appointment - Repeat', () => {
       expect(res.redirect).toHaveBeenCalledWith('repeat-period-and-count')
     })
 
-    it('should redirect to check answers page when repeat = YES has not changed', async () => {
+    it('should redirect to repeat period and count page page when repeat = YES has not changed but repeat period is not set', async () => {
       req.session.createSingleAppointmentJourney.repeat = YesNo.YES
+      req.session.createSingleAppointmentJourney.repeatPeriod = undefined
+      req.session.createSingleAppointmentJourney.repeatCount = 6
+      req.body = {
+        repeat: YesNo.YES,
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.createSingleAppointmentJourney.repeat).toEqual(YesNo.YES)
+      expect(res.redirect).toHaveBeenCalledWith('repeat-period-and-count')
+    })
+
+    it('should redirect to repeat period and count page page when repeat = YES has not changed but repeat count is not set', async () => {
+      req.session.createSingleAppointmentJourney.repeat = YesNo.YES
+      req.session.createSingleAppointmentJourney.repeatPeriod = AppointmentRepeatPeriod.FORTNIGHTLY
+      req.session.createSingleAppointmentJourney.repeatCount = undefined
+      req.body = {
+        repeat: YesNo.YES,
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.createSingleAppointmentJourney.repeat).toEqual(YesNo.YES)
+      expect(res.redirect).toHaveBeenCalledWith('repeat-period-and-count')
+    })
+
+    it('should redirect to check answers page when repeat = YES has not changed and repeat period and count are set', async () => {
+      req.session.createSingleAppointmentJourney.repeat = YesNo.YES
+      req.session.createSingleAppointmentJourney.repeatPeriod = AppointmentRepeatPeriod.DAILY
+      req.session.createSingleAppointmentJourney.repeatCount = 7
       req.body = {
         repeat: YesNo.YES,
       }
