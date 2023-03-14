@@ -1,19 +1,18 @@
-import { IsString, MaxLength } from 'class-validator'
+import { IsBoolean } from 'class-validator'
+import { Expose } from 'class-transformer'
 
 export default class NotAttendedData {
+  @Expose()
+  @IsBoolean({ message: 'Enter a reason for every prisoner' })
   notAttendedReason: boolean
 
   pay: boolean
 
-  @IsString()
-  @MaxLength(10, { message: 'Enter more detail that is 240 characters or less' })
   moreDetail: string
 
-  @IsString()
   caseNote: string
 
   incentiveLevelWarningIssued: boolean
 
-  @IsString()
   absenceReason: string
 }
