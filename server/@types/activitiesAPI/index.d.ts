@@ -266,10 +266,35 @@ export interface components {
        */
       id: number
       /**
-       * @description The reason codes- ABS, ACCAB, ATT, CANC, NREQ, SUS, UNACAB, REST
+       * @description The reason codes- SICK, REFUSED, NREQ, REST, CLASH, OTHER, SUSP, CANC, ATT
        * @example ATT
        */
       attendanceReason: string
+      /**
+       * @description Comments such as more detail for SICK
+       * @example Prisoner has COVID-19
+       */
+      comment?: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description Case note provided for REFUSED
+       * @example Prisoner refused to attend the scheduled activity without reasonable excuse
+       */
+      caseNote?: string
+      /**
+       * @description Was an incentive level warning issued for REFUSED
+       * @example true
+       */
+      incentiveLevelWarningIssued?: boolean
+      /**
+       * @description The absence reason for OTHER
+       * @example Prisoner has another reason for missing the activity
+       */
+      otherAbsenceReason?: string
     }
     ErrorResponse: {
       /** Format: int32 */

@@ -129,10 +129,10 @@ export default class AttendanceListRoutes {
 
   private getAttendanceLabel = (prisonerNumber: string, attendances: Attendance[]) => {
     const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
-    if (attendance.status === 'SCHEDULED') {
+    if (attendance.status === 'WAITING') {
       return 'Not recorded yet'
     }
-    return attendance.attendanceReason.code === 'ATT' ? 'Attended' : 'Absent'
+    return attendance.attendanceReason.description === 'ATT' ? 'Attended' : 'Absent'
   }
 
   private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {

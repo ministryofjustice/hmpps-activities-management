@@ -6,7 +6,7 @@ import { AttendanceUpdateRequest } from '../../../@types/activitiesAPI/types'
 
 export class NotAttendedReason {
   @Expose()
-  selectedPrisoners: string[]
+  notAttendedData: string[]
 }
 
 export default class NotAttendedReasonRoutes {
@@ -32,7 +32,17 @@ export default class NotAttendedReasonRoutes {
     req.session.notAttendedJourney.selectedPrisoners.forEach(selectedPrisoner => {
       attendanceUpdates.push({
         id: selectedPrisoner.attendanceId,
-        attendanceReason: req.body[`notAttendedReason${selectedPrisoner.prisonerNumber}`],
+        attendanceReason: req.body.notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason,
+        comment: req.body.notAttendedData[selectedPrisoner.prisonerNumber].moreDetail,
+        issuePayment: req.body.notAttendedData[selectedPrisoner.prisonerNumber].pay
+          ? req.body.notAttendedData[selectedPrisoner.prisonerNumber].pay
+          : false,
+        caseNote: req.body.notAttendedData[selectedPrisoner.prisonerNumber].caseNote,
+        incentiveLevelWarningIssued: req.body.notAttendedData[selectedPrisoner.prisonerNumber]
+          .incentiveLevelWarningIssued
+          ? req.body.notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
+          : false,
+        otherAbsenceReason: req.body.notAttendedData[selectedPrisoner.prisonerNumber].absenceReason,
       })
     })
 

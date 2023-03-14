@@ -15,15 +15,15 @@
             hint: {
                 text: "Should the prisoner be paid?"
             },
-            name: "pay" + prisonerNumber,
+            name: "notAttendedData["  + prisonerNumber + "][pay]",
             errorMessage: validationErrors | findError('pay' + prisonerNumber),
             items: [
                 {
-                    value: "Yes",
+                    value: true,
                     text: "Yes"
                 },
                 {
-                    value: "No",
+                    value: false,
                     text: "No"
                 }
             ]
@@ -34,7 +34,7 @@
             label: {
                 text: "Can you provide more detail? (optional)"
             },
-            name: "sickDetail" + prisonerNumber,
+            name: "notAttendedData["  + prisonerNumber + "][moreDetail]",
             classes: "govuk-!-width-one-half",
             errorMessage: validationErrors | findError('sickDetail' + prisonerNumber)
         }) }}
@@ -44,9 +44,27 @@
             label: {
                 text: "Add a case note"
             },
-            name: "caseNote" + prisonerNumber,
+            name: "notAttendedData["  + prisonerNumber + "][caseNote]",
             classes: "govuk-!-width-one-half",
             errorMessage: validationErrors | findError('caseNote + prisonerNumber')
+        }) }}
+       {{ govukRadios({
+            classes: "govuk-radios--inline",
+            hint: {
+                text: "Should this be recorded as an incentive level warning?"
+            },
+            name: "notAttendedData["  + prisonerNumber + "][incentiveLevelWarningIssued]",
+            errorMessage: validationErrors | findError('pay' + prisonerNumber),
+            items: [
+                {
+                    value: true,
+                    text: "Yes"
+                },
+                {
+                    value: false,
+                    text: "No"
+                }
+            ]
         }) }}
     {% endif %}
     {% if reason.captureOtherText %}
@@ -54,7 +72,7 @@
             label: {
                 text: "Add an absence reason"
             },
-            name: "absenceReason" + prisonerNumber,
+            name: "notAttendedData["  + prisonerNumber + "][absenceReason]",
             classes: "govuk-!-width-one-half",
             errorMessage: validationErrors | findError('absenceReason' + prisonerNumber)
         }) }}
@@ -63,15 +81,15 @@
             hint: {
                 text: "Was this an acceptable absence and should the prisoner be paid?"
             },
-            name: "absencePay",
+            name: "notAttendedData["  + prisonerNumber + "][pay]",
             errorMessage: validationErrors | findError('absencePay'),
             items: [
                 {
-                    value: "Yes",
+                    value: true,
                     text: "Yes"
                 },
                 {
-                    value: "No",
+                    value: false,
                     text: "No"
                 }
             ]
@@ -105,8 +123,7 @@
                                 classes: "govuk-fieldset__legend--xl"
                             }
                         },
-                        idPrefix: "notAttendedReason-" + prisoner.prisonerNumber,
-                        name: "notAttendedReason"  + prisoner.prisonerNumber,
+                        name: "notAttendedData["  + prisoner.prisonerNumber + "][notAttendedReason]",
                         errorMessage: validationErrors | findError('notAttendedReason'),
                         items: notAttendedReasonOptions
                     }) }}
