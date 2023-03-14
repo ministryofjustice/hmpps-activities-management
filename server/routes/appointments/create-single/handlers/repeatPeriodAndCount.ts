@@ -1,19 +1,13 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
-import { IsIn, Min } from 'class-validator'
-
-enum RepeatPeriodOptions {
-  Weekday = 'weekday',
-  Daily = 'daily',
-  Weekly = 'weekly',
-  Fortnightly = 'fortnightly',
-  Monthly = 'monthly',
-}
+import { IsEnum, Min } from 'class-validator'
+import { AppointmentRepeatPeriod } from '../../../../@types/activitiesAPI/types'
+import { YesNo } from '../../../../@types/activities'
 
 export class RepeatPeriodAndCount {
   @Expose()
-  @IsIn(Object.values(RepeatPeriodOptions), { message: 'Select how often the appointment will repeat' })
-  repeatPeriod: RepeatPeriodOptions
+  @IsEnum(AppointmentRepeatPeriod, { message: 'Select how often the appointment will repeat' })
+  repeatPeriod: AppointmentRepeatPeriod
 
   @Expose()
   @Type(() => Number)
@@ -29,7 +23,7 @@ export default class QualificationRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { repeatPeriod, repeatCount } = req.body
 
-    req.session.createSingleAppointmentJourney.repeat = 'yes'
+    req.session.createSingleAppointmentJourney.repeat = YesNo.YES
     req.session.createSingleAppointmentJourney.repeatPeriod = repeatPeriod
     req.session.createSingleAppointmentJourney.repeatCount = repeatCount
 

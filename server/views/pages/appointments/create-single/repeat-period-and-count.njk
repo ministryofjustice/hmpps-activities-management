@@ -24,29 +24,29 @@
                     errorMessage: validationErrors | findError('repeatPeriod'),
                     items: [
                         {
-                            value: "weekday",
+                            value: AppointmentRepeatPeriod.WEEKDAY,
                             html: "Every weekday (Monday to Friday)",
-                            checked: formResponses.repeatPeriod == 'weekday' or session.createSingleAppointmentJourney.repeatPeriod == 'weekday'
+                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY
                         },
                         {
-                            value: "daily",
+                            value: AppointmentRepeatPeriod.DAILY,
                             html: "Daily (includes weekends)",
-                            checked: formResponses.repeatPeriod == 'daily' or session.createSingleAppointmentJourney.repeatPeriod == 'daily'
+                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.DAILY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.DAILY
                         },
                         {
-                            value: "weekly",
+                            value: AppointmentRepeatPeriod.WEEKLY,
                             html: "Weekly",
-                            checked: formResponses.repeatPeriod == 'weekly' or session.createSingleAppointmentJourney.repeatPeriod == 'weekly'
+                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.WEEKLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKLY
                         },
                         {
-                            value: "fortnightly",
+                            value: AppointmentRepeatPeriod.FORTNIGHTLY,
                             html: "Fortnightly",
-                            checked: formResponses.repeatPeriod == 'fortnightly' or session.createSingleAppointmentJourney.repeatPeriod == 'fortnightly'
+                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY
                         },
                         {
-                            value: "monthly",
+                            value: AppointmentRepeatPeriod.MONTHLY,
                             html: "Monthly",
-                            checked: formResponses.repeatPeriod == 'monthly' or session.createSingleAppointmentJourney.repeatPeriod == 'monthly'
+                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.MONTHLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.MONTHLY
                         }
                     ]
                 }) }}

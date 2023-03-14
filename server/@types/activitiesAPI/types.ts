@@ -25,3 +25,10 @@ export type Appointment = components['schemas']['Appointment']
 export type AppointmentCategory = components['schemas']['AppointmentCategory']
 export type AppointmentCreateRequest = components['schemas']['AppointmentCreateRequest']
 export type AppointmentDetails = components['schemas']['AppointmentDetails']
+export enum AppointmentRepeatPeriod {
+  WEEKDAY = 'WEEKDAY',
+  DAILY = 'DAILY',
+  WEEKLY = 'WEEKLY',
+  FORTNIGHTLY = 'FORTNIGHTLY',
+  MONTHLY = 'MONTHLY',
+}

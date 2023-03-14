@@ -16,11 +16,11 @@
                 You have successfully created an appointment for {{ session.createSingleAppointmentJourney.prisoner.name | toTitleCase }}
                 {% if session.createSingleAppointmentJourney.repeat == 'yes' %}
                    starting on {{ startDate | formatDate('EEEE d MMMM yyyy') }}.
-                   It will repeat {{ ("every weekday (Monday to Friday)" if session.createSingleAppointmentJourney.repeatPeriod == 'weekday') +
-                                     ("daily (includes weekends)" if session.createSingleAppointmentJourney.repeatPeriod == 'daily') +
-                                     ("weekly" if session.createSingleAppointmentJourney.repeatPeriod == 'weekly') +
-                                     ("fortnightly" if session.createSingleAppointmentJourney.repeatPeriod == 'fortnightly') +
-                                     ("monthly" if session.createSingleAppointmentJourney.repeatPeriod == 'monthly') }}
+                   It will repeat {{ ("every weekday (Monday to Friday)" if session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY) +
+                                     ("daily (includes weekends)" if session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.DAILY) +
+                                     ("weekly" if session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKLY) +
+                                     ("fortnightly" if session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY) +
+                                     ("monthly" if session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.MONTHLY) }}
                     for {{ session.createSingleAppointmentJourney.repeatCount }}
                     {% if session.createSingleAppointmentJourney.repeatCount == 1 %}
                         occurrence

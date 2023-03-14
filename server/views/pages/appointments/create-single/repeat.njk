@@ -25,14 +25,14 @@
                     errorMessage: validationErrors | findError('repeat'),
                     items: [
                         {
-                            value: "yes",
+                            value: YesNo.YES,
                             html: "Yes",
-                            checked: formResponses.repeat == 'yes' or session.createSingleAppointmentJourney.repeat == 'yes'
+                            checked: formResponses.repeat == YesNo.YES or session.createSingleAppointmentJourney.repeat == YesNo.YES
                         },
                         {
-                            value: "no",
+                            value: YesNo.NO,
                             html: "No",
-                            checked: formResponses.repeat == 'no' or session.createSingleAppointmentJourney.repeat == 'no'
+                            checked: formResponses.repeat == YesNo.NO or session.createSingleAppointmentJourney.repeat == YesNo.NO
                         }
                     ]
                 }) }}

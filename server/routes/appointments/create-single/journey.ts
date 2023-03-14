@@ -1,3 +1,6 @@
+import { YesNo } from '../../../@types/activities'
+import { AppointmentRepeatPeriod } from '../../../@types/activitiesAPI/types'
+
 export type CreateSingleAppointmentJourney = {
   title: string
   prisoner?: {
@@ -29,7 +32,7 @@ export type CreateSingleAppointmentJourney = {
     minute: number
     date: Date
   }
-  repeat?: string
-  repeatPeriod?: string
+  repeat?: YesNo
+  repeatPeriod?: AppointmentRepeatPeriod
   repeatCount?: number
 }

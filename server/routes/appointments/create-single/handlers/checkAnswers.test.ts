@@ -4,6 +4,7 @@ import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import { Appointment } from '../../../../@types/activitiesAPI/types'
+import { YesNo } from '../../../../@types/activities'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -58,6 +59,7 @@ describe('Route Handlers - Create Single Appointment - Check answers', () => {
             minute: 0,
             date: '2023-04-23T13:00:00.000+0100',
           },
+          repeat: YesNo.NO,
         },
       },
     } as unknown as Request

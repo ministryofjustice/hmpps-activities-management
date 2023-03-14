@@ -61,6 +61,13 @@ export interface paths {
      */
     post: operations['prisonerAllocations']
   }
+  '/job/deallocate-offenders': {
+    /**
+     * Trigger the job to deallocate offenders when end dates are reached
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    post: operations['triggerDeallocateOffendersJob']
+  }
   '/job/create-scheduled-instances': {
     /**
      * Trigger the job to create the scheduled instances in advance for the active schedules on activities
@@ -593,6 +600,7 @@ export interface components {
        * @example This appointment will help adjusting to life outside of prison
        */
       comment: string
+      repeat?: components['schemas']['AppointmentRepeat']
       /**
        * @description The prisoner or prisoners to allocate to the created appointment or series of appointment occurrences
        * @example [
@@ -600,6 +608,29 @@ export interface components {
        * ]
        */
       prisonerNumbers: string[]
+    }
+    /**
+     * @description
+     *   Describes how an appointment will repeat. The period or frequency of those occurrences and how many occurrences there
+     *   will be in total in the series.
+     */
+    AppointmentRepeat: {
+      /**
+       * @description
+       *     The period or frequency of the occurrences in the repeating appointment series. When they will repeat and how often
+       *
+       * @example WEEKLY
+       * @enum {string}
+       */
+      period: 'WEEKDAY' | 'DAILY' | 'WEEKLY' | 'FORTNIGHTLY' | 'MONTHLY'
+      /**
+       * Format: int32
+       * @description
+       *     The total number of occurrences in the appointment series
+       *
+       * @example 6
+       */
+      count: number
     }
     /**
      * @description
@@ -2730,6 +2761,20 @@ export interface operations {
       }
     }
   }
+  triggerDeallocateOffendersJob: {
+    /**
+     * Trigger the job to deallocate offenders when end dates are reached
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    responses: {
+      /** @description Created */
+      201: {
+        content: {
+          'text/plain': string
+        }
+      }
+    }
+  }
   triggerCreateScheduledInstancesJob: {
     /**
      * Trigger the job to create the scheduled instances in advance for the active schedules on activities
@@ -2739,7 +2784,7 @@ export interface operations {
       /** @description Created */
       201: {
         content: {
-          'application/json': string
+          'text/plain': string
         }
       }
     }
@@ -2753,7 +2798,7 @@ export interface operations {
       /** @description Created */
       201: {
         content: {
-          'application/json': string
+          'text/plain': string
         }
       }
     }

@@ -129,8 +129,8 @@
     },
         value: {
         html: '<span data-qa="repeat">' +
-        ("Yes" if session.createSingleAppointmentJourney.repeat == 'yes') +
-        ("No" if session.createSingleAppointmentJourney.repeat == 'no') +
+        ("Yes" if session.createSingleAppointmentJourney.repeat == YesNo.YES) +
+        ("No" if session.createSingleAppointmentJourney.repeat == YesNo.NO) +
         '</span>'
     },
         actions: {
@@ -153,11 +153,11 @@
       },
       value: {
           html: '<span data-qa="repeat-period">' +
-          ("Every weekday (Monday to Friday)" if session.createSingleAppointmentJourney.repeatPeriod == 'weekday') +
-          ("Daily (includes weekends)" if session.createSingleAppointmentJourney.repeatPeriod == 'daily') +
-          ("Weekly" if session.createSingleAppointmentJourney.repeatPeriod == 'weekly') +
-          ("Fortnightly" if session.createSingleAppointmentJourney.repeatPeriod == 'fortnightly') +
-          ("Monthly" if session.createSingleAppointmentJourney.repeatPeriod == 'monthly') +
+          ("Every weekday (Monday to Friday)" if session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY) +
+          ("Daily (includes weekends)" if session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.DAILY) +
+          ("Weekly" if session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKLY) +
+          ("Fortnightly" if session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY) +
+          ("Monthly" if session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.MONTHLY) +
           '</span>'
       },
       actions: {
