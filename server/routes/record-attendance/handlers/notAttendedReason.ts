@@ -1,17 +1,14 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import _ from 'lodash'
-import { IsArray, ValidateNested } from 'class-validator'
 import ActivitiesService from '../../../services/activitiesService'
 import { AttendanceUpdateRequest } from '../../../@types/activitiesAPI/types'
 import NotAttendedData from '../../../validators/validateNotAttendedData'
 
 export class NotAttendedReason {
   @Expose()
-  @IsArray()
-  @ValidateNested({ each: true })
   @Type(() => NotAttendedData)
-  notAttendedData: NotAttendedData[]
+  notAttendedData: NotAttendedData
 }
 
 export default class NotAttendedReasonRoutes {
@@ -31,8 +28,7 @@ export default class NotAttendedReasonRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
-    const instanceId = req.params.id
+    const { notAttendedData }: { notAttendedData: NotAttendedData } = req.body
     const attendanceUpdates: AttendanceUpdateRequest[] = []
 
     req.session.notAttendedJourney.selectedPrisoners.forEach(selectedPrisoner => {
@@ -52,6 +48,6 @@ export default class NotAttendedReasonRoutes {
     })
 
     await this.activitiesService.updateAttendances(attendanceUpdates, user)
-    res.redirectOrReturn(`/attendance/activities/${instanceId}/attendance-list`)
+    return res.redirect('attendance-list')
   }
 }
