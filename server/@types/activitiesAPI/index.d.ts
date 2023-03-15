@@ -592,6 +592,7 @@ export interface components {
        * @example 10:30
        */
       endTime: string
+      repeat?: components['schemas']['AppointmentRepeat']
       /**
        * @description
        *     Notes relating to the appointment.
@@ -600,7 +601,6 @@ export interface components {
        * @example This appointment will help adjusting to life outside of prison
        */
       comment: string
-      repeat?: components['schemas']['AppointmentRepeat']
       /**
        * @description The prisoner or prisoners to allocate to the created appointment or series of appointment occurrences
        * @example [
@@ -2213,6 +2213,7 @@ export interface components {
        * @example 10:30
        */
       endTime?: string
+      repeat?: components['schemas']['AppointmentRepeat']
       /**
        * @description
        *     Notes relating to the appointment
@@ -2292,6 +2293,12 @@ export interface components {
        * @example 123456
        */
       id: number
+      /**
+       * Format: int32
+       * @description The sequence number of this appointment occurrence within the recurring appointment series
+       * @example 3
+       */
+      sequenceNumber: number
       internalLocation?: components['schemas']['AppointmentLocationSummary']
       /**
        * @description
@@ -2482,11 +2489,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Updates attendance records.
+   * @description Updates the given attendance records with the supplied update request details. Requires the 'ACTIVITY_ADMIN' role.
+   */
   markAttendances: {
-    /**
-     * Updates attendance records.
-     * @description Updates the given attendance records with the supplied update request details. Requires the 'ACTIVITY_ADMIN' role.
-     */
     requestBody: {
       content: {
         'application/json': components['schemas']['AttendanceUpdateRequest'][]
@@ -2513,14 +2520,14 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get a list of activity schedule allocations
+   * @description Returns zero or more activity schedule allocations.
+   */
   getAllocationsBy: {
-    /**
-     * Get a list of activity schedule allocations
-     * @description Returns zero or more activity schedule allocations.
-     */
     parameters: {
-      /** @description If true will only return active allocations. Defaults to true. */
-      query?: {
+      query: {
+        /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
       }
       path: {
@@ -2554,11 +2561,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Allocate offender to schedule
+   * @description Allocates the supplied offender allocation request to the activity schedule. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   */
   allocate: {
-    /**
-     * Allocate offender to schedule
-     * @description Allocates the supplied offender allocation request to the activity schedule. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
-     */
     parameters: {
       path: {
         scheduleId: number
@@ -2602,29 +2609,29 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get a list of scheduled events for a prison, prisoner, date range (max 3 months) and optional time slot.
+   * @description
+   *       Returns scheduled events for the prison, prisoner, date range (max 3 months) and optional time slot.
+   *       Court hearings, appointments and visits always come from NOMIS (via prison API).
+   *       Activities come from either NOMIS or the new Activities database, depending on whether the prison is
+   *       marked as rolled-out in the activities database.
+   *       (Intended usage: Prisoner calendar)
+   */
   getScheduledEventsByPrisonAndPrisonerAndDateRange: {
-    /**
-     * Get a list of scheduled events for a prison, prisoner, date range (max 3 months) and optional time slot.
-     * @description
-     *       Returns scheduled events for the prison, prisoner, date range (max 3 months) and optional time slot.
-     *       Court hearings, appointments and visits always come from NOMIS (via prison API).
-     *       Activities come from either NOMIS or the new Activities database, depending on whether the prison is
-     *       marked as rolled-out in the activities database.
-     *       (Intended usage: Prisoner calendar)
-     */
     parameters: {
-      /** @description Prisoner number (required). Format A9999AA. */
-      /** @description Start date of query (required). Format YYYY-MM-DD. */
-      /** @description End date of query (required). Format YYYY-MM-DD. The end date must be within 3 months of the start date) */
-      /** @description Time slot for the events (optional). If supplied, one of AM, PM or ED. */
       query: {
+        /** @description Prisoner number (required). Format A9999AA. */
         prisonerNumber: string
+        /** @description Start date of query (required). Format YYYY-MM-DD. */
         startDate: string
+        /** @description End date of query (required). Format YYYY-MM-DD. The end date must be within 3 months of the start date) */
         endDate: string
+        /** @description Time slot for the events (optional). If supplied, one of AM, PM or ED. */
         timeSlot?: 'AM' | 'PM' | 'ED'
       }
-      /** @description The 3-digit prison code. */
       path: {
+        /** @description The 3-digit prison code. */
         prisonCode: string
       }
     }
@@ -2661,25 +2668,25 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get a list of scheduled events for a prison and list of prisoner numbers for a date and time slot
+   * @description
+   *       Returns scheduled events for the prison, prisoner numbers, single date and an optional time slot.
+   *       Court hearings, appointments and visits always come from NOMIS (via prison API).
+   *       Activities come from either NOMIS or the new activities database, depending on whether the prison is
+   *       marked as rolled-out in the activities database.
+   *       (Intended usage: Unlock list)
+   */
   getScheduledEventsByPrisonAndPrisonersAndDateRange: {
-    /**
-     * Get a list of scheduled events for a prison and list of prisoner numbers for a date and time slot
-     * @description
-     *       Returns scheduled events for the prison, prisoner numbers, single date and an optional time slot.
-     *       Court hearings, appointments and visits always come from NOMIS (via prison API).
-     *       Activities come from either NOMIS or the new activities database, depending on whether the prison is
-     *       marked as rolled-out in the activities database.
-     *       (Intended usage: Unlock list)
-     */
     parameters: {
-      /** @description The exact date to return events for (required) in format YYYY-MM-DD */
-      /** @description Time slot of the events (optional). If supplied, one of AM, PM or ED. */
       query: {
+        /** @description The exact date to return events for (required) in format YYYY-MM-DD */
         date: string
+        /** @description Time slot of the events (optional). If supplied, one of AM, PM or ED. */
         timeSlot?: 'AM' | 'PM' | 'ED'
       }
-      /** @description The 3-character prison code. */
       path: {
+        /** @description The 3-character prison code. */
         prisonCode: string
       }
     }
@@ -2721,14 +2728,14 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get all allocations for prisoners
+   * @description Returns zero or more allocations for the supplied list of prisoners.
+   */
   prisonerAllocations: {
-    /**
-     * Get all allocations for prisoners
-     * @description Returns zero or more allocations for the supplied list of prisoners.
-     */
     parameters: {
-      /** @description If true will only return active allocations. Defaults to true. */
-      query?: {
+      query: {
+        /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
       }
       path: {
@@ -2761,11 +2768,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Trigger the job to deallocate offenders when end dates are reached
+   * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+   */
   triggerDeallocateOffendersJob: {
-    /**
-     * Trigger the job to deallocate offenders when end dates are reached
-     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
-     */
     responses: {
       /** @description Created */
       201: {
@@ -2775,11 +2782,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Trigger the job to create the scheduled instances in advance for the active schedules on activities
+   * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+   */
   triggerCreateScheduledInstancesJob: {
-    /**
-     * Trigger the job to create the scheduled instances in advance for the active schedules on activities
-     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
-     */
     responses: {
       /** @description Created */
       201: {
@@ -2789,11 +2796,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Trigger the job to create attendance records in advance
+   * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+   */
   triggerCreateAttendanceRecordsJob: {
-    /**
-     * Trigger the job to create attendance records in advance
-     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
-     */
     responses: {
       /** @description Created */
       201: {
@@ -2803,13 +2810,13 @@ export interface operations {
       }
     }
   }
+  /**
+   * Create an appointment or series of appointment occurrences
+   * @description
+   *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
+   *     Does not require any specific roles
+   */
   createAppointment: {
-    /**
-     * Create an appointment or series of appointment occurrences
-     * @description
-     *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
-     *     Does not require any specific roles
-     */
     requestBody: {
       content: {
         'application/json': components['schemas']['AppointmentCreateRequest']
@@ -2836,11 +2843,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Create an activity
+   * @description Create an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   */
   create: {
-    /**
-     * Create an activity
-     * @description Create an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
-     */
     requestBody: {
       content: {
         'application/json': components['schemas']['ActivityCreateRequest']
@@ -2873,8 +2880,8 @@ export interface operations {
       }
     }
   }
+  /** Get the capacity and number of allocated slots in an activity */
   getActivitySchedules: {
-    /** Get the capacity and number of allocated slots in an activity */
     parameters: {
       path: {
         activityId: number
@@ -2907,11 +2914,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Adds a new schedule to an existing activity
+   * @description Adds a new schedule to an existing activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   */
   addSchedule: {
-    /**
-     * Adds a new schedule to an existing activity
-     * @description Adds a new schedule to an existing activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
-     */
     parameters: {
       path: {
         activityId: number
@@ -2955,11 +2962,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get an activity schedule by its id
+   * @description Returns a single activity schedule by its unique identifier.
+   */
   getScheduleId: {
-    /**
-     * Get an activity schedule by its id
-     * @description Returns a single activity schedule by its unique identifier.
-     */
     parameters: {
       path: {
         scheduleId: number
@@ -2992,8 +2999,8 @@ export interface operations {
       }
     }
   }
+  /** Get the capacity and number of allocated slots in an activity schedule */
   getActivityScheduleCapacity: {
-    /** Get the capacity and number of allocated slots in an activity schedule */
     parameters: {
       path: {
         activityScheduleId: number
@@ -3026,11 +3033,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get a scheduled instance by ID
+   * @description Returns a scheduled instance.
+   */
   getScheduledInstanceById: {
-    /**
-     * Get a scheduled instance by ID
-     * @description Returns a scheduled instance.
-     */
     parameters: {
       path: {
         instanceId: number
@@ -3063,11 +3070,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get a list of attendances for a scheduled instance
+   * @description Returns one or more attendance records for a particular scheduled activity for a given scheduled instance.
+   */
   getAttendancesByScheduledInstance: {
-    /**
-     * Get a list of attendances for a scheduled instance
-     * @description Returns one or more attendance records for a particular scheduled activity for a given scheduled instance.
-     */
     parameters: {
       path: {
         instanceId: number
@@ -3100,11 +3107,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get a prison by its code
+   * @description Returns a single prison and its details by its unique code.
+   */
   getPrisonByCode: {
-    /**
-     * Get a prison by its code
-     * @description Returns a single prison and its details by its unique code.
-     */
     parameters: {
       path: {
         prisonCode: string
@@ -3139,7 +3146,7 @@ export interface operations {
   }
   getDlqMessages: {
     parameters: {
-      query?: {
+      query: {
         maxMessages?: number
       }
       path: {
@@ -3155,22 +3162,22 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get a list of scheduled instances for a prison, date range (max 3 months) and time slot (AM, PM or ED - optional)
+   * @description Returns zero or more scheduled instances for a prison and date range (max 3 months).
+   */
   getActivityScheduleInstancesByDateRange: {
-    /**
-     * Get a list of scheduled instances for a prison, date range (max 3 months) and time slot (AM, PM or ED - optional)
-     * @description Returns zero or more scheduled instances for a prison and date range (max 3 months).
-     */
     parameters: {
-      /** @description Start date of query (required). Format YYYY-MM-DD. */
-      /** @description End date of query (required). The end date must be within 3 months of the start date. */
-      /** @description The time slot (optional). If supplied, one of AM, PM or ED. */
       query: {
+        /** @description Start date of query (required). Format YYYY-MM-DD. */
         startDate: string
+        /** @description End date of query (required). The end date must be within 3 months of the start date. */
         endDate: string
+        /** @description The time slot (optional). If supplied, one of AM, PM or ED. */
         slot?: 'AM' | 'PM' | 'ED'
       }
-      /** @description The 3-character prison code. */
       path: {
+        /** @description The 3-character prison code. */
         prisonCode: string
       }
     }
@@ -3195,18 +3202,18 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get a list of activity schedules at a given prison
+   * @description Returns zero or more activity schedules at a given prison.
+   */
   getSchedulesByPrisonCode: {
-    /**
-     * Get a list of activity schedules at a given prison
-     * @description Returns zero or more activity schedules at a given prison.
-     */
     parameters: {
-      /** @description Date of activity, default today */
-      /** @description AM, PM or ED */
-      /** @description The internal NOMIS location id of the activity */
-      query?: {
+      query: {
+        /** @description Date of activity, default today */
         date?: string
+        /** @description AM, PM or ED */
         timeSlot?: 'AM' | 'PM' | 'ED'
+        /** @description The internal NOMIS location id of the activity */
         locationId?: number
       }
       path: {
@@ -3234,11 +3241,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get a list of pay bands at a given prison
+   * @description Returns the pay bands at a given prison or a default list of values if none present.
+   */
   getPrisonPayBands: {
-    /**
-     * Get a list of pay bands at a given prison
-     * @description Returns the pay bands at a given prison or a default list of values if none present.
-     */
     parameters: {
       path: {
         prisonCode: string
@@ -3265,16 +3272,16 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get scheduled prison locations
+   * @description Returns a list of zero or more scheduled prison locations for the supplied criteria.
+   */
   getScheduledPrisonLocations: {
-    /**
-     * Get scheduled prison locations
-     * @description Returns a list of zero or more scheduled prison locations for the supplied criteria.
-     */
     parameters: {
-      /** @description Date of activity, default today */
-      /** @description AM, PM or ED */
-      query?: {
+      query: {
+        /** @description Date of activity, default today */
         date?: string
+        /** @description AM, PM or ED */
         timeSlot?: 'AM' | 'PM' | 'ED'
       }
       path: {
@@ -3302,8 +3309,8 @@ export interface operations {
       }
     }
   }
+  /** Get the capacity and number of allocated slots in an activity category within a prison */
   getActivityCategoryCapacity: {
-    /** Get the capacity and number of allocated slots in an activity category within a prison */
     parameters: {
       path: {
         prisonCode: string
@@ -3337,8 +3344,8 @@ export interface operations {
       }
     }
   }
+  /** Get list of activities within a category at a specified prison */
   getActivitiesInCategory: {
-    /** Get list of activities within a category at a specified prison */
     parameters: {
       path: {
         prisonCode: string
@@ -3372,8 +3379,8 @@ export interface operations {
       }
     }
   }
+  /** Get list of activities at a specified prison */
   getActivities: {
-    /** Get list of activities at a specified prison */
     parameters: {
       path: {
         prisonCode: string
@@ -3400,11 +3407,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get a prison regime by its code
+   * @description Returns a single prison regime and its details by its unique prison code.
+   */
   getPrisonRegimeByPrisonCode: {
-    /**
-     * Get a prison regime by its code
-     * @description Returns a single prison regime and its details by its unique prison code.
-     */
     parameters: {
       path: {
         prisonCode: string
@@ -3437,11 +3444,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * List of cell locations for a prison group supplied as a query parameter
+   * @description List of cell locations for a prison group supplied as a query parameter
+   */
   getCellLocationsForGroup: {
-    /**
-     * List of cell locations for a prison group supplied as a query parameter
-     * @description List of cell locations for a prison group supplied as a query parameter
-     */
     parameters: {
       query: {
         groupName: string
@@ -3483,11 +3490,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get the location prefix for a location group supplied as a query parameter
+   * @description Get location prefix for a location group name supplied as a query parameter
+   */
   getLocationPrefixForGroup: {
-    /**
-     * Get the location prefix for a location group supplied as a query parameter
-     * @description Get location prefix for a location group name supplied as a query parameter
-     */
     parameters: {
       query: {
         groupName: string
@@ -3529,11 +3536,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * List of all available location groups defined at a prison
+   * @description List of all available location groups defined at a prison
+   */
   getLocationGroups: {
-    /**
-     * List of all available location groups defined at a prison
-     * @description List of all available location groups defined at a prison
-     */
     parameters: {
       path: {
         prisonCode: string
@@ -3572,11 +3579,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get an appointment by its id
+   * @description Returns an appointment and its details by its unique identifier.
+   */
   getAppointmentById: {
-    /**
-     * Get an appointment by its id
-     * @description Returns an appointment and its details by its unique identifier.
-     */
     parameters: {
       path: {
         appointmentId: number
@@ -3603,11 +3610,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Gets the top level appointment details for display purposes identified by the appointment's id
+   * @description Returns the displayable details of an appointment by its unique identifier.
+   */
   getAppointmentDetailsById: {
-    /**
-     * Gets the top level appointment details for display purposes identified by the appointment's id
-     * @description Returns the displayable details of an appointment by its unique identifier.
-     */
     parameters: {
       path: {
         appointmentId: number
@@ -3634,11 +3641,11 @@ export interface operations {
       }
     }
   }
+  /** Get the list of top-level appointment categories */
   getAppointmentCategories: {
-    /** Get the list of top-level appointment categories */
-    parameters?: {
-      /** @description If true will return all appointment categories otherwise only active categories will be returned. Defaults to false. */
-      query?: {
+    parameters: {
+      query: {
+        /** @description If true will return all appointment categories otherwise only active categories will be returned. Defaults to false. */
         includeInactive?: boolean
       }
     }
@@ -3657,11 +3664,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get an allocation by its id
+   * @description Returns a single allocation and its details by its unique identifier.
+   */
   getAllocationById: {
-    /**
-     * Get an allocation by its id
-     * @description Returns a single allocation and its details by its unique identifier.
-     */
     parameters: {
       path: {
         allocationId: number
@@ -3694,8 +3701,8 @@ export interface operations {
       }
     }
   }
+  /** Get the list of top-level activity categories */
   getCategories: {
-    /** Get the list of top-level activity categories */
     responses: {
       /** @description Activity categories found */
       200: {
@@ -3717,11 +3724,11 @@ export interface operations {
       }
     }
   }
+  /**
+   * Get an activity by its id
+   * @description Returns a single activity and its details by its unique identifier.
+   */
   getActivityById: {
-    /**
-     * Get an activity by its id
-     * @description Returns a single activity and its details by its unique identifier.
-     */
     parameters: {
       path: {
         activityId: number
@@ -3754,8 +3761,8 @@ export interface operations {
       }
     }
   }
+  /** Get the capacity and number of allocated slots in an activity */
   getActivityCapacity: {
-    /** Get the capacity and number of allocated slots in an activity */
     parameters: {
       path: {
         activityId: number
