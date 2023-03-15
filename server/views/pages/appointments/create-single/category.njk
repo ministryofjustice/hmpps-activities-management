@@ -9,13 +9,7 @@
 
 {% set categoryOptions = [{ value: "-", text: "" }] %}
 {% for category in categories %}
-    {% set categoryOptions = (categoryOptions.push(
-        {
-            value: category.id,
-            text: category.description,
-            selected: formResponses.categoryId == category.id or session.createSingleAppointmentJourney.category.id == category.id
-        }
-    ), categoryOptions) %}
+    {% set categoryOptions = (categoryOptions.push( { value: category.id, text: category.description } ), categoryOptions) %}
 {% endfor %}
 
 {% block meta %}
@@ -37,7 +31,8 @@
                         isPageHeading: true
                     },
                     errorMessage: validationErrors | findError('categoryId'),
-                    items: categoryOptions
+                    items: categoryOptions,
+                    value: formResponses.categoryId or session.createSingleAppointmentJourney.category.id
                 }) }}
 
                 {{ govukButton({
