@@ -73,6 +73,6 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('[data-qa=repeat-count]').length).toBeGreaterThan(0)
+    expect(getRepeatCountValueElement($).text().trim()).toEqual('6')
   })
 })

@@ -71,11 +71,6 @@
                 classes: "govuk-!-margin-bottom-9"
             }) }}
 
-            {% if occurrence.createdBy %}
-                {% set createBy = occurrence.createdBy | fullName | toTitleCase | initialiseName %}
-            {% else %}
-                {% set createBy = '[Unknown User]' %}
-            {% endif %}
             {{ govukSummaryList({
                 rows: [
                     {
@@ -83,7 +78,7 @@
                             text: "Created by"
                         },
                         value: {
-                            html: '<span data-qa="created-by">' + createBy + '</span>'
+                            text: occurrence.createdBy | fullName | toTitleCase | initialiseName
                         }
                     }
                 ],

@@ -22,7 +22,7 @@
             text: "Category"
         },
         value: {
-            html: '<span data-qa="category">' + appointment.category.description + '</span>'
+            text: appointment.category.description
         }
     },
     {
@@ -30,7 +30,7 @@
             text: "Location"
         },
         value: {
-            html: '<span data-qa="location">' + appointment.internalLocation.description + '</span>'
+            text: appointment.internalLocation.description
         }
     },
     {
@@ -38,7 +38,7 @@
             text: "Date"
         },
         value: {
-            html: '<span data-qa="start-date">' + appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy') + '</span>'
+            text: appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy')
         }
     },
     {
@@ -46,7 +46,7 @@
             text: "Start time"
         },
         value: {
-            html: '<span data-qa="start-time">' + appointment.startTime + '</span>'
+            text: appointment.startTime
         }
     },
     {
@@ -54,7 +54,7 @@
             text: "End time"
         },
         value: {
-            html: '<span data-qa="end-time">' + appointment.endTime + '</span>'
+            text: appointment.endTime
         }
     },
     {
@@ -62,10 +62,8 @@
             text: "Repeat"
         },
         value: {
-            html: '<span data-qa="repeat">' +
-            ("Yes" if appointment.repeat != null) +
-            ("No" if appointment.repeat == null) +
-            '</span>'
+            text: ("Yes" if appointment.repeat != null) +
+                  ("No" if appointment.repeat == null)
         }
     }
 ] %}
@@ -75,13 +73,11 @@
             text: "Frequency"
         },
         value: {
-            html: '<span data-qa="repeat-period">' +
-            ("Every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
-            ("Daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
-            ("Weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
-            ("Fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
-            ("Monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY) +
-            '</span>'
+            text: ("Every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
+                  ("Daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
+                  ("Weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
+                  ("Fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
+                  ("Monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY)
         }
     }), summaryListRows) %}
     {% set summaryListRows = (summaryListRows.push({
@@ -89,7 +85,7 @@
             text: "Occurrences"
         },
         value: {
-            html: '<span data-qa="repeat-count">' + appointment.repeat.count + '</span>'
+            text: appointment.repeat.count
         }
     }), summaryListRows) %}
 {% endif %}
@@ -100,7 +96,8 @@
             text: "Occurrence"
         },
         value: {
-            html: "<strong>Date</strong>"
+            text: "Date",
+            classes: "govuk-!-font-weight-bold"
         }
     }
 ] %}
@@ -112,7 +109,7 @@
             classes: "govuk-!-font-weight-regular govuk-!-text-align-right"
         },
         value: {
-            html: '<span data-qa="occurrence-' + occurrence.sequenceNumber + '-date">' + occurrenceDate | formatDate('d MMM yyyy') + '</span>'
+            text: occurrenceDate | formatDate('d MMM yyyy')
         },
         actions: {
             items: [
@@ -135,7 +132,8 @@
             <h2 class="govuk-heading-m">Appointment details</h2>
             {{ govukSummaryList({
                 rows: summaryListRows,
-                classes: "govuk-!-margin-bottom-9"
+                classes: "govuk-!-margin-bottom-9",
+                attributes: { 'data-qa': 'appointment-details' }
             }) }}
 
             {% if appointment.repeat != null %}
@@ -143,15 +141,10 @@
                 {{ govukSummaryList({
                     rows: occurrenceSummaryListRows,
                     classes: "summary-list-row-count govuk-!-margin-bottom-9",
-                    attributes: { 'data-qa': 'occurrences-summary-list' }
+                    attributes: { 'data-qa': 'appointment-occurrences' }
                 }) }}
             {% endif %}
 
-            {% if appointment.createdBy %}
-                {% set createBy = appointment.createdBy | fullName | toTitleCase | initialiseName %}
-            {% else %}
-                {% set createBy = '[Unknown User]' %}
-            {% endif %}
             {{ govukSummaryList({
                 rows: [
                     {
@@ -159,11 +152,12 @@
                             text: "Created by"
                         },
                         value: {
-                            html: '<span data-qa="created-by">' + createBy + '</span>'
+                            text: appointment.createdBy | fullName | toTitleCase | initialiseName
                         }
                     }
                 ],
-                classes: "govuk-!-margin-bottom-9"
+                classes: "govuk-!-margin-bottom-9",
+                attributes: { 'data-qa': 'user-details' }
             }) }}
 
             <p class="govuk-body govuk-!-display-none-print no-js-hidden">

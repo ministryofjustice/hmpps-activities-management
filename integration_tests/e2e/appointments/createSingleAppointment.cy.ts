@@ -98,6 +98,7 @@ context('Create single appointment', () => {
     appointmentDetailsPage.assertStartDate(tomorrow)
     appointmentDetailsPage.assertStartTime(14, 0)
     appointmentDetailsPage.assertEndTime(15, 30)
+    appointmentDetailsPage.assertRepeat('No')
     appointmentDetailsPage.assertCreatedBy('J. Smith')
     appointmentDetailsPage.assertPrintMovementSlipLink()
 

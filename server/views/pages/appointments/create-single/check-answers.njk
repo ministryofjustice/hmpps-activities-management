@@ -195,8 +195,8 @@
             <h1 class="govuk-heading-l">Check your appointment details before you accept and save</h1>
             <h2 class="govuk-heading-m">Appointment details</h2>
             {{ govukSummaryList({
-                attributes: { 'data-qa': 'appointment-details' },
-                rows: summaryListRows
+                rows: summaryListRows,
+                attributes: { 'data-qa': 'appointment-details' }
             }) }}
 
             <form method="POST">
