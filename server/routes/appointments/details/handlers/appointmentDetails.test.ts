@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-
+import { addHours, subMinutes } from 'date-fns'
 import AppointmentDetailsRoutes from './appointmentDetails'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { formatDate } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -14,33 +15,17 @@ describe('Route Handlers - Appointment Details', () => {
   let req: Request
   let res: Response
 
-  const appointmentDetails = {
-    id: 10,
-    category: {
-      id: 40,
-      code: 'MEOT',
-      description: 'Medical - Other',
-    },
-    prisonCode: 'MDI',
-    internalLocation: {
-      id: 26963,
-      prisonCode: 'MDI',
-      description: 'HB1 Doctors',
-    },
-    inCell: false,
-    startDate: '2023-02-22',
-    startTime: '13:00',
-    endTime: '13:15',
-    comment: '',
-    created: '2023-02-17T10:22:04',
-    createdBy: {
-      firstName: 'John',
-      lastName: 'Smith',
-    },
-    updated: null,
-    updatedBy: null,
-    occurrences: [{ id: 10 }],
-    prisoners: [{ prisonerNumber: 'A1350DZ' }],
+  let appointmentDetails = {
+    occurrences: [
+      {
+        id: 10,
+        sequenceNumber: 1,
+      },
+      {
+        id: 11,
+        sequenceNumber: 2,
+      },
+    ],
   } as AppointmentDetails
 
   beforeEach(() => {
@@ -59,6 +44,19 @@ describe('Route Handlers - Appointment Details', () => {
         id: '10',
       },
     } as unknown as Request
+
+    appointmentDetails = {
+      occurrences: [
+        {
+          id: 10,
+          sequenceNumber: 1,
+        },
+        {
+          id: 11,
+          sequenceNumber: 2,
+        },
+      ],
+    } as unknown as AppointmentDetails
   })
 
   afterEach(() => {
@@ -75,6 +73,36 @@ describe('Route Handlers - Appointment Details', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/details/appointment', {
         appointment: appointmentDetails,
+      })
+    })
+
+    it('should remove occurrences in the past', async () => {
+      const now = new Date()
+      const todayOneMinuteInThePast = subMinutes(now, 1)
+      const todayOneHourInTheFuture = addHours(now, 1)
+
+      appointmentDetails.occurrences[0].startDate = formatDate(todayOneMinuteInThePast, 'yyyy-MM-dd')
+      appointmentDetails.occurrences[0].startTime = formatDate(todayOneMinuteInThePast, 'HH:mm')
+      appointmentDetails.occurrences[1].startDate = formatDate(todayOneHourInTheFuture, 'yyyy-MM-dd')
+      appointmentDetails.occurrences[1].startTime = formatDate(todayOneHourInTheFuture, 'HH:mm')
+
+      when(activitiesService.getAppointmentDetails)
+        .calledWith(10, res.locals.user)
+        .mockResolvedValue(appointmentDetails)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/details/appointment', {
+        appointment: {
+          occurrences: [
+            {
+              id: 11,
+              sequenceNumber: 2,
+              startDate: formatDate(todayOneHourInTheFuture, 'yyyy-MM-dd'),
+              startTime: formatDate(todayOneHourInTheFuture, 'HH:mm'),
+            },
+          ],
+        },
       })
     })
   })
