@@ -13,6 +13,7 @@
             <span class="govuk-caption-l" data-qa='caption'>{{ session.createSingleAppointmentJourney.title }}</span>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% set repeat = formResponses.repeat or session.createSingleAppointmentJourney.repeat %}
                 {{ govukRadios({
                     name: "repeat",
                     fieldset: {
@@ -27,12 +28,12 @@
                         {
                             value: YesNo.YES,
                             text: "Yes",
-                            checked: formResponses.repeat == YesNo.YES or session.createSingleAppointmentJourney.repeat == YesNo.YES
+                            checked: repeat == YesNo.YES
                         },
                         {
                             value: YesNo.NO,
                             text: "No",
-                            checked: formResponses.repeat == YesNo.NO or session.createSingleAppointmentJourney.repeat == YesNo.NO
+                            checked: repeat == YesNo.NO
                         }
                     ]
                 }) }}

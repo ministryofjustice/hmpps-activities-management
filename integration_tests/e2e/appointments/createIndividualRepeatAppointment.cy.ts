@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns'
+import { addDays, addWeeks } from 'date-fns'
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
@@ -9,18 +9,25 @@ import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatch
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
-import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
+import getRepeatAppointmentDetails from '../../fixtures/activitiesApi/getRepeatAppointmentDetails.json'
+import getOccurrenceDetails from '../../fixtures/activitiesApi/getOccurrenceDetails.json'
 import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
 import RepeatPeriodAndCountPage from '../../pages/appointments/createSingle/repeatPeriodAndCountPage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
+import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
+import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 
 context('Create individual repeat appointment', () => {
   const tomorrow = addDays(new Date(), 1)
-  // To pass validation we must ensure the appointment details start date are set to tomorrow
-  getAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  const weekTomorrow = addWeeks(tomorrow, 1)
+  // To pass validation we must ensure the appointment details start date are set to the future
+  getRepeatAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getRepeatAppointmentDetails.occurrences[0].startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getRepeatAppointmentDetails.occurrences[1].startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
+  getOccurrenceDetails.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -31,7 +38,8 @@ context('Create individual repeat appointment', () => {
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
-    cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
+    cy.stubEndpoint('GET', '/appointment-details/10', getRepeatAppointmentDetails)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getOccurrenceDetails)
 
     // Move through create individual appointment to repeat page
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -65,14 +73,14 @@ context('Create individual repeat appointment', () => {
     repeatPage.continue()
 
     const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-    repeatPeriodAndCountPage.selectRepeatPeriod('Every weekday (Monday to Friday)')
-    repeatPeriodAndCountPage.enterRepeatCount('10')
+    repeatPeriodAndCountPage.selectRepeatPeriod('Weekly')
+    repeatPeriodAndCountPage.enterRepeatCount('2')
     repeatPeriodAndCountPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertRepeat('Yes')
-    checkAnswersPage.assertRepeatPeriod('Every weekday (Monday to Friday)')
-    checkAnswersPage.assertRepeatCount('10')
+    checkAnswersPage.assertRepeatPeriod('Weekly')
+    checkAnswersPage.assertRepeatCount('2')
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
@@ -80,8 +88,59 @@ context('Create individual repeat appointment', () => {
       `You have successfully created an appointment for Stephen Gregs starting on ${formatDate(
         tomorrow,
         'EEEE d MMMM yyyy',
-      )}. It will repeat every weekday (Monday to Friday) for 10 occurrences`,
+      )}. It will repeat weekly for 2 occurrences`,
     )
+
+    confirmationPage.viewAppointmentLink().click()
+
+    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
+    appointmentDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    appointmentDetailsPage.assertCategory('Chaplaincy')
+    appointmentDetailsPage.assertLocation('Chapel')
+    appointmentDetailsPage.assertStartDate(tomorrow)
+    appointmentDetailsPage.assertStartTime(14, 0)
+    appointmentDetailsPage.assertEndTime(15, 30)
+    appointmentDetailsPage.assertRepeat('Yes')
+    appointmentDetailsPage.assertRepeatPeriod('Weekly')
+    appointmentDetailsPage.assertRepeatCount('2')
+    appointmentDetailsPage.assertOccurrences(
+      new Map([
+        [1, formatDate(tomorrow, 'd MMM yyyy')],
+        [2, formatDate(weekTomorrow, 'd MMM yyyy')],
+      ]),
+    )
+    appointmentDetailsPage.assertCreatedBy('J. Smith')
+
+    appointmentDetailsPage.viewEditOccurrenceLink(2).click()
+    const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+    occurrenceDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    occurrenceDetailsPage.assertCategory('Chaplaincy')
+    occurrenceDetailsPage.assertLocation('Chapel')
+    occurrenceDetailsPage.assertStartDate(weekTomorrow)
+    occurrenceDetailsPage.assertStartTime(14, 0)
+    occurrenceDetailsPage.assertEndTime(15, 30)
+    occurrenceDetailsPage.assertCreatedBy('J. Smith')
+    occurrenceDetailsPage.assertPrintMovementSlipLink()
+
+    occurrenceDetailsPage.back()
+
+    Page.verifyOnPage(AppointmentDetailsPage)
+    appointmentDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    appointmentDetailsPage.assertCategory('Chaplaincy')
+    appointmentDetailsPage.assertLocation('Chapel')
+    appointmentDetailsPage.assertStartDate(tomorrow)
+    appointmentDetailsPage.assertStartTime(14, 0)
+    appointmentDetailsPage.assertEndTime(15, 30)
+    appointmentDetailsPage.assertRepeat('Yes')
+    appointmentDetailsPage.assertRepeatPeriod('Weekly')
+    appointmentDetailsPage.assertRepeatCount('2')
+    appointmentDetailsPage.assertOccurrences(
+      new Map([
+        [1, formatDate(tomorrow, 'd MMM yyyy')],
+        [2, formatDate(weekTomorrow, 'd MMM yyyy')],
+      ]),
+    )
+    appointmentDetailsPage.assertCreatedBy('J. Smith')
   })
 
   it('Create individual repeat appointment - back links', () => {
@@ -147,7 +206,7 @@ context('Create individual repeat appointment', () => {
     repeatPage.continue()
 
     const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-    repeatPeriodAndCountPage.selectRepeatPeriod('Weekly')
+    repeatPeriodAndCountPage.selectRepeatPeriod('Every weekday (Monday to Friday)')
     repeatPeriodAndCountPage.enterRepeatCount('5')
 
     // Go back to change answer page and confirm that repeat is still 'No'

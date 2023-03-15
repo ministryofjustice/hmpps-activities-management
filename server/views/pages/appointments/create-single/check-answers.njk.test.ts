@@ -58,13 +58,21 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
     { repeatPeriod: AppointmentRepeatPeriod.WEEKLY, expectedText: 'Weekly' },
     { repeatPeriod: AppointmentRepeatPeriod.FORTNIGHTLY, expectedText: 'Fortnightly' },
     { repeatPeriod: AppointmentRepeatPeriod.MONTHLY, expectedText: 'Monthly' },
-  ])('frequency $repeatPeriod be displayed as $expectedText', ({ repeatPeriod, expectedText }) => {
+  ])('should display frequency $repeatPeriod as $expectedText when repeat = YES', ({ repeatPeriod, expectedText }) => {
     viewContext.session.createSingleAppointmentJourney.repeat = YesNo.YES
     viewContext.session.createSingleAppointmentJourney.repeatPeriod = repeatPeriod
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(getRepeatPeriodValueElement($).text().trim()).toEqual(expectedText)
-    expect(getRepeatCountValueElement($).length).toBeGreaterThan(0)
+  })
+
+  it('should display repeat occurrences when repeat = YES', () => {
+    viewContext.session.createSingleAppointmentJourney.repeat = YesNo.YES
+    viewContext.session.createSingleAppointmentJourney.repeatCount = 6
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getRepeatCountValueElement($).text().trim()).toEqual('6')
   })
 })

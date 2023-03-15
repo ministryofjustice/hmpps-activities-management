@@ -67,7 +67,9 @@ describe('Views - Create Individual Appointment - Repeat Period and Count', () =
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($("[name='repeatPeriod']:checked").val()).toEqual(repeatPeriod.toString())
+    const checked = $("[name='repeatPeriod']:checked")
+    expect(checked.length).toEqual(1)
+    expect(checked.val()).toEqual(repeatPeriod.toString())
   })
 
   it.each([
@@ -81,6 +83,21 @@ describe('Views - Create Individual Appointment - Repeat Period and Count', () =
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($("[name='repeatPeriod']:checked").val()).toEqual(repeatPeriod.toString())
+    const checked = $("[name='repeatPeriod']:checked")
+    expect(checked.length).toEqual(1)
+    expect(checked.val()).toEqual(repeatPeriod.toString())
+  })
+
+  it('should prioritise form response value over session value', () => {
+    viewContext.formResponses = {
+      repeatPeriod: AppointmentRepeatPeriod.WEEKLY,
+    }
+    viewContext.session.createSingleAppointmentJourney.repeatPeriod = AppointmentRepeatPeriod.FORTNIGHTLY
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    const checked = $("[name='repeatPeriod']:checked")
+    expect(checked.length).toEqual(1)
+    expect(checked.val()).toEqual(AppointmentRepeatPeriod.WEEKLY.toString())
   })
 })

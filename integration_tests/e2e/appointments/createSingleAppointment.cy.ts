@@ -14,7 +14,7 @@ import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePa
 import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
-import AppointmentDetails from '../../pages/appointments/details/appointmentDetails'
+import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import AppointmentMovementSlip from '../../pages/appointments/details/appointmentMovementSlip'
 import { formatDate } from '../../../server/utils/utils'
 
@@ -91,13 +91,14 @@ context('Create single appointment', () => {
 
     confirmationPage.viewAppointmentLink().click()
 
-    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetails)
+    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
     appointmentDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
     appointmentDetailsPage.assertCategory('Chaplaincy')
     appointmentDetailsPage.assertLocation('Chapel')
     appointmentDetailsPage.assertStartDate(tomorrow)
     appointmentDetailsPage.assertStartTime(14, 0)
     appointmentDetailsPage.assertEndTime(15, 30)
+    appointmentDetailsPage.assertRepeat('No')
     appointmentDetailsPage.assertCreatedBy('J. Smith')
     appointmentDetailsPage.assertPrintMovementSlipLink()
 

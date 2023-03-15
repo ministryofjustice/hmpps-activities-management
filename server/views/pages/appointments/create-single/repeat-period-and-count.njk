@@ -15,6 +15,7 @@
             <h1 class="govuk-heading-l">Add repeat appointment details</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% set repeatPeriod = formResponses.repeatPeriod or session.createSingleAppointmentJourney.repeatPeriod %}
                 {{ govukRadios({
                     name: "repeatPeriod",
                     label: {
@@ -26,27 +27,27 @@
                         {
                             value: AppointmentRepeatPeriod.WEEKDAY,
                             text: "Every weekday (Monday to Friday)",
-                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY
+                            checked: repeatPeriod == AppointmentRepeatPeriod.WEEKDAY
                         },
                         {
                             value: AppointmentRepeatPeriod.DAILY,
                             text: "Daily (includes weekends)",
-                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.DAILY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.DAILY
+                            checked: repeatPeriod == AppointmentRepeatPeriod.DAILY
                         },
                         {
                             value: AppointmentRepeatPeriod.WEEKLY,
                             text: "Weekly",
-                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.WEEKLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKLY
+                            checked: repeatPeriod == AppointmentRepeatPeriod.WEEKLY
                         },
                         {
                             value: AppointmentRepeatPeriod.FORTNIGHTLY,
                             text: "Fortnightly",
-                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY
+                            checked: repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY
                         },
                         {
                             value: AppointmentRepeatPeriod.MONTHLY,
                             text: "Monthly",
-                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.MONTHLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.MONTHLY
+                            checked: repeatPeriod == AppointmentRepeatPeriod.MONTHLY
                         }
                     ]
                 }) }}

@@ -51,7 +51,9 @@ describe('Views - Create Individual Appointment - Repeat', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($("[name='repeat']:checked").val()).toEqual(repeat.toString())
+    const checked = $("[name='repeat']:checked")
+    expect(checked.length).toEqual(1)
+    expect(checked.val()).toEqual(repeat.toString())
   })
 
   it.each([YesNo.NO, YesNo.YES])('should check correct input based on session value response %s', repeat => {
@@ -59,6 +61,21 @@ describe('Views - Create Individual Appointment - Repeat', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($("[name='repeat']:checked").val()).toEqual(repeat.toString())
+    const checked = $("[name='repeat']:checked")
+    expect(checked.length).toEqual(1)
+    expect(checked.val()).toEqual(repeat.toString())
+  })
+
+  it('should prioritise form response value over session value', () => {
+    viewContext.formResponses = {
+      repeat: YesNo.NO,
+    }
+    viewContext.session.createSingleAppointmentJourney.repeat = YesNo.YES
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    const checked = $("[name='repeat']:checked")
+    expect(checked.length).toEqual(1)
+    expect(checked.val()).toEqual(YesNo.NO.toString())
   })
 })

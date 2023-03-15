@@ -22,12 +22,14 @@ import {
   AppointmentCategory,
   ActivitySchedule,
   AppointmentDetails,
+  AppointmentOccurrenceDetails,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import appointment from './fixtures/appointment_1.json'
 import appointmentDetails from './fixtures/appointment_details_1.json'
+import appointmentOccurrenceDetails from './fixtures/appointment_occurrence_details_1.json'
 import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
 
@@ -330,6 +332,18 @@ describe('Activities Service', () => {
       const actualResult = await activitiesService.getAppointmentDetails(12345, user)
 
       expect(actualResult).toEqual(appointmentDetails)
+    })
+  })
+
+  describe('getAppointmentOccurrenceDetail', () => {
+    it('should return appointment occurrence detail from api when valid appointment id is used', async () => {
+      when(activitiesApiClient.getAppointmentOccurrenceDetails)
+        .calledWith(12, user)
+        .mockResolvedValue(appointmentOccurrenceDetails as AppointmentOccurrenceDetails)
+
+      const actualResult = await activitiesService.getAppointmentOccurrenceDetails(12, user)
+
+      expect(actualResult).toEqual(appointmentOccurrenceDetails)
     })
   })
 

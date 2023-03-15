@@ -15,6 +15,10 @@
   "startDate": "2023-02-22",
   "startTime": "14:00",
   "endTime": "15:30",
+  "repeat": {
+    "period": "WEEKLY",
+    "count": 2
+  },
   "comment": "",
   "created": "2023-02-20T10:00:00",
   "createdBy": {
@@ -36,6 +40,25 @@
       },
       "inCell": false,
       "startDate": "2023-02-22",
+      "startTime": "14:00",
+      "endTime": "15:30",
+      "comment": "",
+      "isEdited": false,
+      "isCancelled": false,
+      "updated": null,
+      "updatedBy": null,
+      "prisonerCount": 1
+    },
+    {
+      "id": 12,
+      "sequenceNumber": 2,
+      "internalLocation": {
+        "id": 26152,
+        "prisonCode": "MDI",
+        "description": "Chapel"
+      },
+      "inCell": false,
+      "startDate": "2023-02-29",
       "startTime": "14:00",
       "endTime": "15:30",
       "comment": "",

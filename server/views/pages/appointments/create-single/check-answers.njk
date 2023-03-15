@@ -125,7 +125,7 @@
     },
     {
         key: {
-            text: "Repeat appointment"
+            text: "Repeat"
         },
         value: {
             text: ("Yes" if session.createSingleAppointmentJourney.repeat == YesNo.YES) +
@@ -136,7 +136,7 @@
                 {
                     href: "repeat?fromReview=true",
                     text: "Change",
-                    visuallyHiddenText: "change repeat appointment",
+                    visuallyHiddenText: "change repeat",
                     classes: "govuk-link--no-visited-state",
                     attributes: { 'data-qa': 'change-repeat' }
                 }
@@ -195,8 +195,8 @@
             <h1 class="govuk-heading-l">Check your appointment details before you accept and save</h1>
             <h2 class="govuk-heading-m">Appointment details</h2>
             {{ govukSummaryList({
-                attributes: { 'data-qa': 'appointment-details' },
-                rows: summaryListRows
+                rows: summaryListRows,
+                attributes: { 'data-qa': 'appointment-details' }
             }) }}
 
             <form method="POST">
