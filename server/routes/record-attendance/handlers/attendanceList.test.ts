@@ -104,6 +104,21 @@ describe('Route Handlers - Attendance List', () => {
           notRecorded: 1,
           time: '10:00 - 11:00',
         },
+        instance: {
+          id: 1,
+          date: format(new Date(), '2022-12-08'),
+          startTime: '10:00',
+          endTime: '11:00',
+          activitySchedule: {
+            activity: { summary: 'Maths level 1' },
+            internalLocation: { description: 'Houseblock 1' },
+          },
+          attendances: [
+            { prisonerNumber: 'ABC123', status: 'SCHEDULED' },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+          ],
+        },
         attendees: expect.arrayContaining([
           {
             location: 'MDI-1-001',

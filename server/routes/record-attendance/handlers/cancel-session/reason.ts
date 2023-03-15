@@ -10,8 +10,8 @@ export class CancelReasonForm {
   reason: string
 
   @Expose()
-  @MaxLength(250, { message: 'Comments must be 250 characters or less' })
-  comments: string
+  @MaxLength(250, { message: 'Details must be 250 characters or less' })
+  comment: string
 }
 
 export default class CancelSessionRoutes {
@@ -19,10 +19,13 @@ export default class CancelSessionRoutes {
     res.render('pages/record-attendance/cancel-session/cancel-reason', { cancellationReasons })
 
   POST = async (req: Request, res: Response) => {
-    const { reason, comments }: CancelReasonForm = req.body
+    const { reason, comment }: CancelReasonForm = req.body
+
+    const textReason = cancellationReasons[reason]
 
     req.session.recordAttendanceRequests = {
-      sessionCancellation: { reason, comments },
+      ...req.session.recordAttendanceRequests,
+      sessionCancellation: { reason: textReason, comment },
     }
 
     res.redirect('cancel/confirm')

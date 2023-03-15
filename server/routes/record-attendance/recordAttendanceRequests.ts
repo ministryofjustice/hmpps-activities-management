@@ -1,6 +1,6 @@
 export type SessionCancellationRequest = {
   reason: string
-  comments?: string
+  comment?: string
 }
 
 export type RecordAttendanceRequests = {

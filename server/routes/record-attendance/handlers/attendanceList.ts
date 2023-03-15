@@ -23,6 +23,7 @@ export default class AttendanceListRoutes {
     const { user } = res.locals
 
     const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
+
     const prisonerNumbers = instance.attendances.map(a => a.prisonerNumber)
     const otherScheduledEvents = await this.activitiesService
       .getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user)
@@ -53,6 +54,7 @@ export default class AttendanceListRoutes {
         date: toDate(instance.date),
         ...getAttendanceSummary(instance.attendances),
       },
+      instance,
       attendees,
     })
   }
