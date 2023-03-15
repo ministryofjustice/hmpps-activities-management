@@ -18,7 +18,7 @@ const getAppointmentDetailsValueElement = ($: CheerioAPI, heading: string) =>
 const getRepeatPeriodValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Frequency')
 const getRepeatCountValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Occurrences')
 
-describe('Views - Create Individual Appointment - Check Answers', () => {
+describe('Views - Appointments Management - Appointment Details', () => {
   let compiledTemplate: Template
   let viewContext = {
     appointment: {} as AppointmentDetails,

@@ -64,7 +64,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa='caption'>View and edit appointment occurrence</span>
-            <h1 class="govuk-heading-l">{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}</h1>
+            <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}</h1>
             <h2 class="govuk-heading-m">Appointment details</h2>
             {{ govukSummaryList({
                 rows: summaryListRows,

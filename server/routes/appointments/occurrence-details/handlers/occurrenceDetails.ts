@@ -10,6 +10,6 @@ export default class OccurrenceDetailsRoutes {
 
     const occurrence = await this.activitiesService.getAppointmentOccurrenceDetails(id, user)
 
-    res.render('pages/appointments/occurrenceDetails/occurrence', { occurrence })
+    res.render('pages/appointments/occurrence-details/occurrence', { occurrence })
   }
 }
