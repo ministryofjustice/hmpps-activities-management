@@ -10,13 +10,15 @@ import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getRepeatAppointmentDetails from '../../fixtures/activitiesApi/getRepeatAppointmentDetails.json'
+import getOccurrenceDetails from '../../fixtures/activitiesApi/getOccurrenceDetails.json'
 import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
 import RepeatPeriodAndCountPage from '../../pages/appointments/createSingle/repeatPeriodAndCountPage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
-import AppointmentDetails from '../../pages/appointments/details/appointmentDetails'
+import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
+import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 
 context('Create individual repeat appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -25,6 +27,7 @@ context('Create individual repeat appointment', () => {
   getRepeatAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
   getRepeatAppointmentDetails.occurrences[0].startDate = formatDate(tomorrow, 'yyyy-MM-dd')
   getRepeatAppointmentDetails.occurrences[1].startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
+  getOccurrenceDetails.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -36,6 +39,7 @@ context('Create individual repeat appointment', () => {
     cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatAppointmentDetails)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getOccurrenceDetails)
 
     // Move through create individual appointment to repeat page
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -89,7 +93,38 @@ context('Create individual repeat appointment', () => {
 
     confirmationPage.viewAppointmentLink().click()
 
-    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetails)
+    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
+    appointmentDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    appointmentDetailsPage.assertCategory('Chaplaincy')
+    appointmentDetailsPage.assertLocation('Chapel')
+    appointmentDetailsPage.assertStartDate(tomorrow)
+    appointmentDetailsPage.assertStartTime(14, 0)
+    appointmentDetailsPage.assertEndTime(15, 30)
+    appointmentDetailsPage.assertRepeat('Yes')
+    appointmentDetailsPage.assertRepeatPeriod('Weekly')
+    appointmentDetailsPage.assertRepeatCount('2')
+    appointmentDetailsPage.assertOccurrences(
+      new Map([
+        [1, formatDate(tomorrow, 'd MMM yyyy')],
+        [2, formatDate(weekTomorrow, 'd MMM yyyy')],
+      ]),
+    )
+    appointmentDetailsPage.assertCreatedBy('J. Smith')
+
+    appointmentDetailsPage.viewEditOccurrenceLink(2).click()
+    const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+    occurrenceDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    occurrenceDetailsPage.assertCategory('Chaplaincy')
+    occurrenceDetailsPage.assertLocation('Chapel')
+    occurrenceDetailsPage.assertStartDate(weekTomorrow)
+    occurrenceDetailsPage.assertStartTime(14, 0)
+    occurrenceDetailsPage.assertEndTime(15, 30)
+    occurrenceDetailsPage.assertCreatedBy('J. Smith')
+    occurrenceDetailsPage.assertPrintMovementSlipLink()
+
+    occurrenceDetailsPage.back()
+
+    Page.verifyOnPage(AppointmentDetailsPage)
     appointmentDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
     appointmentDetailsPage.assertCategory('Chaplaincy')
     appointmentDetailsPage.assertLocation('Chapel')

@@ -1,0 +1,42 @@
+{
+  "id": 12,
+  "appointmentId": 10,
+  "sequenceNumber": 2,
+  "category": {
+    "id": 40,
+    "code": "CHAP",
+    "description": "Chaplaincy"
+  },
+  "prisonCode": "MDI",
+  "internalLocation": {
+    "id": 26152,
+    "prisonCode": "MDI",
+    "description": "Chapel"
+  },
+  "inCell": false,
+  "startDate": "2023-02-29",
+  "startTime": "14:00",
+  "endTime": "15:30",
+  "comment": "",
+  "isEdited": false,
+  "isCancelled": false,
+  "created": "2023-02-20T10:00:00",
+  "createdBy": {
+    "id": 231232,
+    "username": "USER1",
+    "firstName": "john",
+    "lastName": "smith"
+  },
+  "updated": null,
+  "updatedBy": null,
+  "prisoners": [
+    {
+      "prisonerNumber": "A8644DY",
+      "bookingId": 1202189,
+      "firstName": "STEPHEN",
+      "lastName": "GREGS",
+      "prisonCode": "MDI",
+      "cellLocation": "1-3"
+    }
+  ]
+}
