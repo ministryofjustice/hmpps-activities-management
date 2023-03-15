@@ -125,7 +125,7 @@
     },
     {
         key: {
-            text: "Repeat appointment"
+            text: "Repeat"
         },
         value: {
             text: ("Yes" if session.createSingleAppointmentJourney.repeat == YesNo.YES) +
@@ -136,7 +136,7 @@
                 {
                     href: "repeat?fromReview=true",
                     text: "Change",
-                    visuallyHiddenText: "change repeat appointment",
+                    visuallyHiddenText: "change repeat",
                     classes: "govuk-link--no-visited-state",
                     attributes: { 'data-qa': 'change-repeat' }
                 }
