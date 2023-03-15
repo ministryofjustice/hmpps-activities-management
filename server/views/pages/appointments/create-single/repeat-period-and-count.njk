@@ -25,27 +25,27 @@
                     items: [
                         {
                             value: AppointmentRepeatPeriod.WEEKDAY,
-                            html: "Every weekday (Monday to Friday)",
+                            text: "Every weekday (Monday to Friday)",
                             checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY
                         },
                         {
                             value: AppointmentRepeatPeriod.DAILY,
-                            html: "Daily (includes weekends)",
+                            text: "Daily (includes weekends)",
                             checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.DAILY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.DAILY
                         },
                         {
                             value: AppointmentRepeatPeriod.WEEKLY,
-                            html: "Weekly",
+                            text: "Weekly",
                             checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.WEEKLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKLY
                         },
                         {
                             value: AppointmentRepeatPeriod.FORTNIGHTLY,
-                            html: "Fortnightly",
+                            text: "Fortnightly",
                             checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY
                         },
                         {
                             value: AppointmentRepeatPeriod.MONTHLY,
-                            html: "Monthly",
+                            text: "Monthly",
                             checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.MONTHLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.MONTHLY
                         }
                     ]
