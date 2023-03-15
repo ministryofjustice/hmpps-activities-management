@@ -8,64 +8,143 @@
 {% set pageTitle = "Appointments Management - Appointment Details" %}
 {% set pageId = 'appointments-view-details-page' %}
 
+{% set summaryListRows = [
+    {
+        key: {
+            text: "Prisoner"
+        },
+        value: {
+            html: appointmentPrisonerSummary(appointment.prisoners[0].firstName + ' ' + appointment.prisoners[0].lastName, appointment.prisoners[0].prisonerNumber, appointment.prisoners[0].cellLocation, dpsUrl)
+        }
+    },
+    {
+        key: {
+            text: "Category"
+        },
+        value: {
+            html: '<span data-qa="category">' + appointment.category.description + '</span>'
+        }
+    },
+    {
+        key: {
+            text: "Location"
+        },
+        value: {
+            html: '<span data-qa="location">' + appointment.internalLocation.description + '</span>'
+        }
+    },
+    {
+        key: {
+            text: "Date"
+        },
+        value: {
+            html: '<span data-qa="start-date">' + appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy') + '</span>'
+        }
+    },
+    {
+        key: {
+            text: "Start time"
+        },
+        value: {
+            html: '<span data-qa="start-time">' + appointment.startTime + '</span>'
+        }
+    },
+    {
+        key: {
+            text: "End time"
+        },
+        value: {
+            html: '<span data-qa="end-time">' + appointment.endTime + '</span>'
+        }
+    },
+    {
+        key: {
+            text: "Repeat appointment"
+        },
+        value: {
+            html: '<span data-qa="repeat">' +
+            ("Yes" if appointment.repeat != null) +
+            ("No" if appointment.repeat == null) +
+            '</span>'
+        }
+    }
+] %}
+{% if appointment.repeat != null %}
+    {% set summaryListRows = (summaryListRows.push({
+        key: {
+            text: "Frequency"
+        },
+        value: {
+            html: '<span data-qa="repeat-period">' +
+            ("Every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
+            ("Daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
+            ("Weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
+            ("Fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
+            ("Monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY) +
+            '</span>'
+        }
+    }), summaryListRows) %}
+    {% set summaryListRows = (summaryListRows.push({
+        key: {
+            text: "Occurrences"
+        },
+        value: {
+            html: '<span data-qa="repeat-count">' + appointment.repeat.count + '</span>'
+        }
+    }), summaryListRows) %}
+{% endif %}
+
+{% set occurrenceSummaryListRows = [
+    {
+        key: {
+            text: "Occurrence"
+        },
+        value: {
+            html: "<strong>Date</strong>"
+        }
+    }
+] %}
+{% for occurrence in appointment.occurrences %}
+    {% set occurrenceDate = occurrence.startDate | toDate %}
+    {% set occurrenceSummaryListRows = (occurrenceSummaryListRows.push({
+        key: {
+            text: occurrence.sequenceNumber,
+            classes: "govuk-!-font-weight-regular govuk-!-text-align-right"
+        },
+        value: {
+            html: '<span data-qa="occurrence-' + occurrence.sequenceNumber + '-date">' + occurrenceDate | formatDate('d MMM yyyy') + '</span>'
+        },
+        actions: {
+            items: [
+                {
+                    href: "occurrence-details/" + occurrence.id,
+                    text: "View and edit",
+                    visuallyHiddenText: "view and edit occurrence " + occurrence.sequenceNumber,
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'view-and-edit-occurrence-' + occurrence.sequenceNumber }
+                }
+            ]
+        }
+    }), occurrenceSummaryListRows) %}
+{% endfor %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">View and edit appointment details</h1>
             <h2 class="govuk-heading-m">Appointment details</h2>
             {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Prisoner"
-                        },
-                        value: {
-                            html: appointmentPrisonerSummary(appointment.prisoners[0].firstName + ' ' + appointment.prisoners[0].lastName, appointment.prisoners[0].prisonerNumber, appointment.prisoners[0].cellLocation, dpsUrl)
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Category"
-                        },
-                        value: {
-                            html: '<span data-qa="category">' + appointment.category.description + '</span>'
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Location"
-                        },
-                        value: {
-                            html: '<span data-qa="location">' + appointment.internalLocation.description + '</span>'
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Date"
-                        },
-                        value: {
-                            html: '<span data-qa="start-date">' + appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy') + '</span>'
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Start time"
-                        },
-                        value: {
-                            html: '<span data-qa="start-time">' + appointment.startTime + '</span>'
-                        }
-                    },
-                    {
-                        key: {
-                            text: "End time"
-                        },
-                        value: {
-                            html: '<span data-qa="end-time">' + appointment.endTime + '</span>'
-                        }
-                    }
-                ],
+                rows: summaryListRows,
                 classes: "govuk-!-margin-bottom-9"
             }) }}
+
+            {% if appointment.repeat != null %}
+                <h2 class="govuk-heading-m">Appointment occurrences</h2>
+                {{ govukSummaryList({
+                    rows: occurrenceSummaryListRows,
+                    classes: "summary-list-row-count govuk-!-margin-bottom-9"
+                }) }}
+            {% endif %}
 
             {% if appointment.createdBy %}
                 {% set createBy = appointment.createdBy | fullName | toTitleCase | initialiseName %}
