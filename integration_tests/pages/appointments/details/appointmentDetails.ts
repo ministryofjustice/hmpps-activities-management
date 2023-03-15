@@ -9,6 +9,9 @@ export default class AppointmentPage extends Page {
   assertAppointmentDetail = (header: string, value: string) =>
     this.assertSummaryListValue('appointment-details', header, value)
 
+  assertAppointmentOccurrence = (header: string, value: string) =>
+    this.assertSummaryListValue('appointment-occurrences', header, value)
+
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {
     cy.get('[data-qa=prisoner-name]').contains(name)
     cy.get('[data-qa=prisoner-number]').contains(number)
@@ -34,6 +37,9 @@ export default class AppointmentPage extends Page {
   assertRepeatPeriod = (option: string) => this.assertAppointmentDetail('Frequency', option)
 
   assertRepeatCount = (option: string) => this.assertAppointmentDetail('Occurrences', option)
+
+  assertOccurrences = (occurrenceMap: Map<number, string>) =>
+    occurrenceMap.forEach((date, sequenceNumber) => this.assertAppointmentOccurrence(sequenceNumber.toString(), date))
 
   assertCreatedBy = (createdBy: string) => this.assertSummaryListValue('user-details', 'Created by', createdBy)
 
