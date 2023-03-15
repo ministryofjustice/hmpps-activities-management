@@ -9,14 +9,14 @@
 {% set backLinkHref = "/" %}
 
 {% macro nestedReasonData(reason, prisonerNumber, validationErrors, formResponses, sessionValues) %}
-    {% if (reason.capturePay) and (not reason.captureOtherText) %}
+    {% if (reason.capturePay) %}
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
                 text: "Should the prisoner be paid?"
             },
-            name: "notAttendedData["  + prisonerNumber + "][pay]",
-            errorMessage: validationErrors | findError('pay' + prisonerNumber),
+            name: "notAttendedData["  + prisonerNumber + "][" + reason.code + "Pay]",
+            errorMessage: validationErrors | findError("notAttendedData["  + prisonerNumber + "][" + reason.code + "Pay]"),
             items: [
                 {
                     value: true,
@@ -36,7 +36,7 @@
             },
             name: "notAttendedData["  + prisonerNumber + "][moreDetail]",
             classes: "govuk-!-width-one-half",
-            errorMessage: validationErrors | findError('sickDetail' + prisonerNumber)
+            errorMessage: validationErrors | findError("notAttendedData["  + prisonerNumber + "][moreDetail]")
         }) }}
     {% endif %}
     {% if reason.captureCaseNote %}
@@ -46,7 +46,7 @@
             },
             name: "notAttendedData["  + prisonerNumber + "][caseNote]",
             classes: "govuk-!-width-one-half",
-            errorMessage: validationErrors | findError('caseNote + prisonerNumber')
+            errorMessage: validationErrors | findError("notAttendedData["  + prisonerNumber + "][caseNote]")
         }) }}
        {{ govukRadios({
             classes: "govuk-radios--inline",
@@ -54,7 +54,7 @@
                 text: "Should this be recorded as an incentive level warning?"
             },
             name: "notAttendedData["  + prisonerNumber + "][incentiveLevelWarningIssued]",
-            errorMessage: validationErrors | findError('pay' + prisonerNumber),
+            errorMessage: validationErrors | findError("notAttendedData["  + prisonerNumber + "][incentiveLevelWarningIssued]"),
             items: [
                 {
                     value: true,
@@ -74,15 +74,15 @@
             },
             name: "notAttendedData["  + prisonerNumber + "][absenceReason]",
             classes: "govuk-!-width-one-half",
-            errorMessage: validationErrors | findError('absenceReason' + prisonerNumber)
+            errorMessage: validationErrors | findError("notAttendedData["  + prisonerNumber + "][absenceReason]")
         }) }}
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
                 text: "Was this an acceptable absence and should the prisoner be paid?"
             },
-            name: "notAttendedData["  + prisonerNumber + "][pay]",
-            errorMessage: validationErrors | findError('absencePay'),
+            name: "notAttendedData["  + prisonerNumber + "][absencePay]",
+            errorMessage: validationErrors | findError("notAttendedData["  + prisonerNumber + "][absencePay]"),
             items: [
                 {
                     value: true,

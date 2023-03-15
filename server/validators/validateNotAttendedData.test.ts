@@ -128,7 +128,7 @@ describe('validateNotAttendedData', () => {
       notAttendedData: {
         ABC123: {
           notAttendedReason: 'OTHER',
-          pay: true,
+          absencePay: true,
           moreDetail: '',
           caseNote: '',
           absenceReason: '',
@@ -207,14 +207,14 @@ describe('validateNotAttendedData', () => {
       notAttendedData: {
         ABC123: {
           notAttendedReason: 'SICK',
-          pay: true,
+          SICKPay: true,
           moreDetail: 'more detail for sickness',
           caseNote: '',
           absenceReason: '',
         },
         ABC456: {
           notAttendedReason: 'OTHER',
-          pay: true,
+          absencePay: true,
           moreDetail: '',
           caseNote: '',
           absenceReason: 'other reason for absence',
