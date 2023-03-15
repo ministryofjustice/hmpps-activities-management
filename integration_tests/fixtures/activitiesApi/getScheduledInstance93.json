@@ -47,7 +47,7 @@
       "posted": false,
       "recordedTime": null,
       "recordedBy": null,
-      "status": "SCHEDULED",
+      "status": "WAITING",
       "payAmount": null,
       "bonusAmount": null,
       "pieces": null
@@ -60,7 +60,7 @@
       "posted": false,
       "recordedTime": null,
       "recordedBy": null,
-      "status": "SCHEDULED",
+      "status": "WAITING",
       "payAmount": null,
       "bonusAmount": null,
       "pieces": null
