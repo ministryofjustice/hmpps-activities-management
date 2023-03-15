@@ -30,6 +30,8 @@ import {
   sortActivitiesByStartTime,
 } from '../utils/calendarUtilities'
 import { Services } from '../services'
+import { AppointmentRepeatPeriod } from '../@types/activitiesAPI/types'
+import { YesNo } from '../@types/activities'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -113,6 +115,9 @@ export function registerNunjucks(app?: express.Express): Environment {
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
+
+  njkEnv.addGlobal('YesNo', YesNo)
+  njkEnv.addGlobal('AppointmentRepeatPeriod', AppointmentRepeatPeriod)
 
   return njkEnv
 }

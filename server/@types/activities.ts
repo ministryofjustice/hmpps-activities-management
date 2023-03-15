@@ -66,3 +66,8 @@ export type SubLocationCellPattern = {
   subLocation: string
   locationPrefix: string
 }
+
+export enum YesNo {
+  YES = 'YES',
+  NO = 'NO',
+}

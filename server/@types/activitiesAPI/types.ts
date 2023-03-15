@@ -21,7 +21,15 @@ export type ActivityCreateRequest = components['schemas']['ActivityCreateRequest
 export type ActivityScheduleCreateRequest = components['schemas']['ActivityScheduleCreateRequest']
 export type Slot = components['schemas']['Slot']
 export type PrisonPayBand = components['schemas']['PrisonPayBand']
-export type Appointment = components['schemas']['Appointment']
 export type AppointmentCategory = components['schemas']['AppointmentCategory']
+export type Appointment = components['schemas']['Appointment']
+export type AppointmentOccurrence = components['schemas']['AppointmentOccurrence']
 export type AppointmentCreateRequest = components['schemas']['AppointmentCreateRequest']
 export type AppointmentDetails = components['schemas']['AppointmentDetails']
+export enum AppointmentRepeatPeriod {
+  WEEKDAY = 'WEEKDAY',
+  DAILY = 'DAILY',
+  WEEKLY = 'WEEKLY',
+  FORTNIGHTLY = 'FORTNIGHTLY',
+  MONTHLY = 'MONTHLY',
+}

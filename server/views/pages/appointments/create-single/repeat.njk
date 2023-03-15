@@ -1,0 +1,46 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Appointments Management - Create Single Appointment - Repeat" %}
+{% set pageId = 'appointments-create-single-repeat-page' %}
+{% set backLinkHref = "/date-and-time" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa='caption'>{{ session.createSingleAppointmentJourney.title }}</span>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    name: "repeat",
+                    fieldset: {
+                        legend: {
+                            text: "Will the appointment repeat?",
+                            classes: "govuk-label--l",
+                            isPageHeading: true
+                        }
+                    },
+                    errorMessage: validationErrors | findError('repeat'),
+                    items: [
+                        {
+                            value: YesNo.YES,
+                            text: "Yes",
+                            checked: formResponses.repeat == YesNo.YES or session.createSingleAppointmentJourney.repeat == YesNo.YES
+                        },
+                        {
+                            value: YesNo.NO,
+                            text: "No",
+                            checked: formResponses.repeat == YesNo.NO or session.createSingleAppointmentJourney.repeat == YesNo.NO
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

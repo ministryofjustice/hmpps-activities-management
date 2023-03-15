@@ -1,0 +1,77 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Appointments Management - Create Single Appointment - Repeat Period and Count" %}
+{% set pageId = 'appointments-create-single-repeat-period-and-count-page' %}
+{% set backLinkHref = "/date-and-time" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa='caption'>{{ session.createSingleAppointmentJourney.title }}</span>
+            <h1 class="govuk-heading-l">Add repeat appointment details</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    name: "repeatPeriod",
+                    label: {
+                        text: "How often will the appointment repeat?",
+                        classes: "govuk-fieldset__legend--m"
+                    },
+                    errorMessage: validationErrors | findError('repeatPeriod'),
+                    items: [
+                        {
+                            value: AppointmentRepeatPeriod.WEEKDAY,
+                            text: "Every weekday (Monday to Friday)",
+                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY
+                        },
+                        {
+                            value: AppointmentRepeatPeriod.DAILY,
+                            text: "Daily (includes weekends)",
+                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.DAILY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.DAILY
+                        },
+                        {
+                            value: AppointmentRepeatPeriod.WEEKLY,
+                            text: "Weekly",
+                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.WEEKLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKLY
+                        },
+                        {
+                            value: AppointmentRepeatPeriod.FORTNIGHTLY,
+                            text: "Fortnightly",
+                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY
+                        },
+                        {
+                            value: AppointmentRepeatPeriod.MONTHLY,
+                            text: "Monthly",
+                            checked: formResponses.repeatPeriod == AppointmentRepeatPeriod.MONTHLY or session.createSingleAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.MONTHLY
+                        }
+                    ]
+                }) }}
+
+                {{ govukInput({
+                    id: "repeatCount",
+                    name: "repeatCount",
+                    label: {
+                        text: "How many times will the appointment repeat?",
+                        classes: "govuk-fieldset__legend--m"
+                    },
+                    hint: {
+                        text: "Enter the number of times the appointment will repeat up to a maximum of one year"
+                    },
+                    classes: "govuk-input--width-3",
+                    inputmode: "numeric",
+                    spellcheck: false,
+                    errorMessage: validationErrors | findError('repeatCount'),
+                    value: formResponses.repeatCount or session.createSingleAppointmentJourney.repeatCount
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

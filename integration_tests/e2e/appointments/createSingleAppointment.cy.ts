@@ -6,12 +6,12 @@ import SelectPrisonerPage from '../../pages/appointments/createSingle/selectPris
 import CategoryPage from '../../pages/appointments/createSingle/categoryPage'
 import LocationPage from '../../pages/appointments/createSingle/locationPage'
 import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatchPrisonerA8644DY.json'
-import prisonersByNumbers from '../../fixtures/prisonerSearchApi/postPrisonerNumbers.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
 import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
+import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
 import AppointmentDetails from '../../pages/appointments/details/appointmentDetails'
@@ -32,7 +32,6 @@ context('Create single appointment', () => {
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
-    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisonersByNumbers)
     cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
   })
 
@@ -69,6 +68,10 @@ context('Create single appointment', () => {
     dateAndTimePage.selectEndTime(15, 30)
     dateAndTimePage.continue()
 
+    const repeatPage = Page.verifyOnPage(RepeatPage)
+    repeatPage.selectRepeat('No')
+    repeatPage.continue()
+
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
     checkAnswersPage.assertCategory('Chaplaincy')
@@ -76,6 +79,7 @@ context('Create single appointment', () => {
     checkAnswersPage.assertStartDate(tomorrow)
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
+    checkAnswersPage.assertRepeat('No')
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
