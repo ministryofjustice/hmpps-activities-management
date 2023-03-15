@@ -11,6 +11,7 @@ import spikeRoutes from './spikes'
 import appointmentsHomeRoutes from './appointments/home'
 import appointmentsCreateSingleRoutes from './appointments/create-single'
 import appointmentDetailsRoutes from './appointments/details'
+import appointmentOccurrenceDetailsRoutes from './appointments/occurrenceDetails'
 import errorMessageMiddleware from '../middleware/errorMessageMiddleware'
 import successMessageMiddleware from '../middleware/successMessageMiddleware'
 import timeNowMiddleware from '../middleware/timeNowMiddleware'
@@ -37,6 +38,7 @@ export default function routes(services: Services): Router {
   router.use('/appointments', appointmentsHomeRoutes())
   router.use('/appointments/create-single', appointmentsCreateSingleRoutes(services))
   router.use('/appointments', appointmentDetailsRoutes(services))
+  router.use('/appointments/occurrence-details', appointmentOccurrenceDetailsRoutes(services))
 
   return router
 }
