@@ -28,6 +28,7 @@
   "occurrences": [
     {
       "id": 123456,
+      "sequenceNumber": 1,
       "internalLocation": {
         "id": 26963,
         "prisonCode": "MDI",

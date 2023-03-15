@@ -28,14 +28,7 @@
   "occurrences": [
     {
       "id": 11,
-      "appointmentId": 10,
       "sequenceNumber": 1,
-      "category": {
-        "id": 40,
-        "code": "CHAP",
-        "description": "Chaplaincy"
-      },
-      "prisonCode": "MDI",
       "internalLocation": {
         "id": 26152,
         "prisonCode": "MDI",
