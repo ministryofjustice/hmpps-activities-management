@@ -139,10 +139,11 @@
             }) }}
 
             {% if appointment.repeat != null %}
-                <h2 class="govuk-heading-m">Appointment occurrences</h2>
+                <h2 class="govuk-heading-m" data-qa="occurrences-heading">Appointment occurrences</h2>
                 {{ govukSummaryList({
                     rows: occurrenceSummaryListRows,
-                    classes: "summary-list-row-count govuk-!-margin-bottom-9"
+                    classes: "summary-list-row-count govuk-!-margin-bottom-9",
+                    attributes: { 'data-qa': 'occurrences-summary-list' }
                 }) }}
             {% endif %}
 
