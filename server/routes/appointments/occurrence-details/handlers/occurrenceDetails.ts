@@ -6,9 +6,9 @@ export default class OccurrenceDetailsRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const id = parseInt(req.params.id, 10)
+    const { id } = req.params
 
-    const occurrence = await this.activitiesService.getAppointmentOccurrenceDetails(id, user)
+    const occurrence = await this.activitiesService.getAppointmentOccurrenceDetails(+id, user)
 
     res.render('pages/appointments/occurrence-details/occurrence', { occurrence })
   }

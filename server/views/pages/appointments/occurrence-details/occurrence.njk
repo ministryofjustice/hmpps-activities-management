@@ -23,7 +23,7 @@
             text: "Category"
         },
         value: {
-            html: '<span data-qa="category">' + occurrence.category.description + '</span>'
+            text: occurrence.category.description
         }
     },
     {
@@ -31,7 +31,7 @@
             text: "Location"
         },
         value: {
-            html: '<span data-qa="location">' + occurrence.internalLocation.description + '</span>'
+            text: occurrence.internalLocation.description
         }
     },
     {
@@ -39,7 +39,7 @@
             text: "Date"
         },
         value: {
-            html: '<span data-qa="start-date">' + occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy') + '</span>'
+            text: occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy')
         }
     },
     {
@@ -47,7 +47,7 @@
             text: "Start time"
         },
         value: {
-            html: '<span data-qa="start-time">' + occurrence.startTime + '</span>'
+            text: occurrence.startTime
         }
     },
     {
@@ -55,7 +55,7 @@
             text: "End time"
         },
         value: {
-            html: '<span data-qa="end-time">' + occurrence.endTime + '</span>'
+            text: occurrence.endTime
         }
     }
 ] %}
