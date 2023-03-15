@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio'
+import { CheerioAPI } from 'cheerio'
 import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { addDays } from 'date-fns'
@@ -8,6 +9,13 @@ import { YesNo } from '../../../../@types/activities'
 import { CreateSingleAppointmentJourney } from '../../../../routes/appointments/create-single/journey'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-single/check-answers.njk')
+
+const getAppointmentDetailsValueElement = ($: CheerioAPI, heading: string) =>
+  $(`[data-qa=appointment-details] > .govuk-summary-list__row > .govuk-summary-list__key:contains("${heading}")`)
+    .parent()
+    .find('.govuk-summary-list__value')
+const getRepeatPeriodValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Frequency')
+const getRepeatCountValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Occurrences')
 
 describe('Views - Create Individual Appointment - Check Answers', () => {
   let compiledTemplate: Template
@@ -40,8 +48,8 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('[data-qa=repeat-period]').length).toBe(0)
-    expect($('[data-qa=repeat-count]').length).toBe(0)
+    expect(getRepeatPeriodValueElement($).length).toBe(0)
+    expect(getRepeatCountValueElement($).length).toBe(0)
   })
 
   it.each([
@@ -56,7 +64,7 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('[data-qa=repeat-period]').text().trim()).toEqual(expectedText)
-    expect($('[data-qa=repeat-count]').length).toBeGreaterThan(0)
+    expect(getRepeatPeriodValueElement($).text().trim()).toEqual(expectedText)
+    expect(getRepeatCountValueElement($).length).toBeGreaterThan(0)
   })
 })

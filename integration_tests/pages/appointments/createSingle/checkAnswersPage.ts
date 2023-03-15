@@ -6,30 +6,32 @@ export default class CheckAnswersPage extends Page {
     super('appointments-create-single-check-answers-page')
   }
 
+  assertAppointmentDetail = (header: string, value: string) =>
+    this.assertSummaryListValue('appointment-details', header, value)
+
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {
     cy.get('[data-qa=prisoner-name]').contains(name)
     cy.get('[data-qa=prisoner-number]').contains(number)
     cy.get('[data-qa=prisoner-cell-location]').contains(cellLocation)
   }
 
-  assertCategory = (category: string) => cy.get('[data-qa=category]').contains(category)
+  assertCategory = (category: string) => this.assertAppointmentDetail('Category', category)
 
-  assertLocation = (location: string) => cy.get('[data-qa=location]').contains(location)
+  assertLocation = (location: string) => this.assertAppointmentDetail('Location', location)
 
-  assertStartDate = (startDate: Date) =>
-    cy.get('[data-qa=start-date]').contains(formatDate(startDate, 'EEEE d MMMM yyyy'))
+  assertStartDate = (startDate: Date) => this.assertAppointmentDetail('Date', formatDate(startDate, 'EEEE d MMMM yyyy'))
 
   assertStartTime = (hour: number, minute: number) =>
-    cy.get('[data-qa=start-time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
+    this.assertAppointmentDetail('Start time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
   assertEndTime = (hour: number, minute: number) =>
-    cy.get('[data-qa=end-time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
+    this.assertAppointmentDetail('End time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
-  assertRepeat = (option: string) => cy.get('[data-qa=repeat]').contains(option)
+  assertRepeat = (option: string) => this.assertAppointmentDetail('Repeat', option)
 
-  assertRepeatPeriod = (option: string) => cy.get('[data-qa=repeat-period]').contains(option)
+  assertRepeatPeriod = (option: string) => this.assertAppointmentDetail('Frequency', option)
 
-  assertRepeatCount = (option: string) => cy.get('[data-qa=repeat-count]').contains(option)
+  assertRepeatCount = (option: string) => this.assertAppointmentDetail('Occurrences', option)
 
   changePrisoner = () => cy.get('[data-qa=change-prisoner]').click()
 
