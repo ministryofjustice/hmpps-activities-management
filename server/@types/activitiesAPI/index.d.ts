@@ -217,6 +217,13 @@ export interface paths {
      */
     get: operations['getAppointmentById']
   }
+  '/appointment-occurrence-details/{appointmentOccurrenceId}': {
+    /**
+     * Gets the appointment occurrence details for display purposes identified by the appointment occurrence's id
+     * @description Returns the displayable details of an appointment occurrence by its unique identifier.
+     */
+    get: operations['getAppointmentOccurrenceDetailsById']
+  }
   '/appointment-details/{appointmentId}': {
     /**
      * Gets the top level appointment details for display purposes identified by the appointment's id
@@ -2168,6 +2175,208 @@ export interface components {
     }
     /**
      * @description
+     *   Summarises an appointment location for display purposes. Contains only properties needed to make additional API calls
+     *   and to display. NOMIS is the current system of record for appointment locations and they are managed there.
+     */
+    AppointmentLocationSummary: {
+      /**
+       * Format: int64
+       * @description The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
+       * @example 27
+       */
+      id: number
+      /**
+       * @description
+       *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
+       *
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description The description of the appointment location. Mapped from AGENCY_INTERNAL_LOCATIONS.USER_DESC
+       * @example Chapel
+       */
+      description: string
+    }
+    /**
+     * @description
+     *   Details of a specific appointment occurrence. Will contain copies of the parent appointment's properties unless they
+     *   have been changed on this appointment occurrence. Contains only properties needed to make additional API calls
+     *   and to display.
+     */
+    AppointmentOccurrenceDetails: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this appointment occurrence
+       * @example 123456
+       */
+      id: number
+      /**
+       * Format: int64
+       * @description The internally generated identifier for the parent appointment
+       * @example 12345
+       */
+      appointmentId: number
+      /**
+       * Format: int32
+       * @description The sequence number of this appointment occurrence within the recurring appointment series
+       * @example 3
+       */
+      sequenceNumber: number
+      category: components['schemas']['AppointmentCategorySummary']
+      /**
+       * @description
+       *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
+       *     Note, this property does not exist on the appointment occurrences and is therefore consistent across all occurrences
+       *
+       * @example SKI
+       */
+      prisonCode: string
+      internalLocation?: components['schemas']['AppointmentLocationSummary']
+      /**
+       * @description
+       *     Flag to indicate if the location of the appointment is in cell rather than an internal prison location.
+       *     Internal location will be null if in cell = true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * Format: date
+       * @description The date this appointment occurrence is taking place on
+       */
+      startDate: string
+      /**
+       * Format: partial-time
+       * @description The starting time of this appointment occurrence
+       * @example 13:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of this appointment occurrence
+       * @example 13:30
+       */
+      endTime?: string
+      /**
+       * @description
+       *     Notes relating to this appointment occurrence. Can be different to the parent appointment if this occurrence has
+       *     been edited.
+       *
+       * @example This appointment occurrence has been rescheduled due to staff availability
+       */
+      comment: string
+      /**
+       * @description
+       *     Indicates that this appointment occurrence has been independently changed from the original state it was in when
+       *     it was created as part of a recurring series
+       *
+       * @example false
+       */
+      isEdited: boolean
+      /**
+       * @description
+       *     Indicates that this appointment occurrence has been cancelled
+       *
+       * @example false
+       */
+      isCancelled: boolean
+      /**
+       * Format: date-time
+       * @description The date and time the parent appointment was created. Will not change
+       */
+      created: string
+      createdBy: components['schemas']['UserSummary']
+      /**
+       * Format: date-time
+       * @description
+       *     The date and time this appointment occurrence was last edited.
+       *     Will be null if the appointment occurrence has not been independently changed from the original state it was in when
+       *     it was created as part of a recurring series
+       */
+      updated?: string
+      updatedBy?: components['schemas']['UserSummary']
+      /**
+       * @description
+       *     Summary of the prisoner or prisoners allocated to this appointment occurrence. Prisoners are allocated at the
+       *     occurrence level to allow for per occurrence allocation changes.
+       */
+      prisoners: components['schemas']['PrisonerSummary'][]
+    }
+    /**
+     * @description
+     *     Summary of the prisoner or prisoners allocated to the first future occurrence (or most recent past occurrence if all
+     *     occurrences are in the past) of this appointment. Prisoners are allocated at the occurrence level to allow for per
+     *     occurrence allocation changes. The occurrence summary contains a count of allocated prisoners rather than the full
+     *     list as the expected usage is to show a summary of the occurrences then a link to display the full occurrence details.
+     */
+    PrisonerSummary: {
+      /**
+       * @description The NOMIS OFFENDERS.OFFENDER_ID_DISPLAY value for mapping to a prisoner record in NOMIS
+       * @example A1234BC
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
+       * @example 456
+       */
+      bookingId: number
+      /**
+       * @description The prisoner's first name
+       * @example Albert
+       */
+      firstName: string
+      /**
+       * @description The prisoner's first name
+       * @example Abbot
+       */
+      lastName: string
+      /**
+       * @description
+       *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
+       *
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description
+       *     The prisoner's residential cell location when inside the prison.
+       *
+       * @example A-1-002
+       */
+      cellLocation: string
+    }
+    /**
+     * @description
+     *     The summary of the last user to edit this appointment occurrence. Will be null if the appointment occurrence has not
+     *     been independently changed from the original state it was in when it was created as part of a recurring series
+     */
+    UserSummary: {
+      /**
+       * Format: int64
+       * @description The NOMIS STAFF_MEMBERS.STAFF_ID value for mapping to NOMIS.
+       * @example 36
+       */
+      id: number
+      /**
+       * @description The NOMIS STAFF_USER_ACCOUNTS.USERNAME value for mapping to NOMIS
+       * @example AAA01U
+       */
+      username: string
+      /**
+       * @description The user's first name
+       * @example Alice
+       */
+      firstName: string
+      /**
+       * @description The user's last name
+       * @example Akbar
+       */
+      lastName: string
+    }
+    /**
+     * @description
      *   The top level appointment details for display purposes. Contains only properties needed to make additional API calls
      *   and to display.
      */
@@ -2258,31 +2467,6 @@ export interface components {
     }
     /**
      * @description
-     *   Summarises an appointment location for display purposes. Contains only properties needed to make additional API calls
-     *   and to display. NOMIS is the current system of record for appointment locations and they are managed there.
-     */
-    AppointmentLocationSummary: {
-      /**
-       * Format: int64
-       * @description The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
-       * @example 27
-       */
-      id: number
-      /**
-       * @description
-       *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
-       *
-       * @example SKI
-       */
-      prisonCode: string
-      /**
-       * @description The description of the appointment location. Mapped from AGENCY_INTERNAL_LOCATIONS.USER_DESC
-       * @example Chapel
-       */
-      description: string
-    }
-    /**
-     * @description
      *   Summarises a specific appointment occurrence. Will contain copies of the parent appointment's properties unless they
      *   have been changed on this appointment occurrence.
      */
@@ -2365,78 +2549,6 @@ export interface components {
        * @example 3
        */
       prisonerCount: number
-    }
-    /**
-     * @description
-     *     Summary of the prisoner or prisoners allocated to the first future occurrence (or most recent past occurrence if all
-     *     occurrences are in the past) of this appointment. Prisoners are allocated at the occurrence level to allow for per
-     *     occurrence allocation changes. The occurrence summary contains a count of allocated prisoners rather than the full
-     *     list as the expected usage is to show a summary of the occurrences then a link to display the full occurrence details.
-     */
-    PrisonerSummary: {
-      /**
-       * @description The NOMIS OFFENDERS.OFFENDER_ID_DISPLAY value for mapping to a prisoner record in NOMIS
-       * @example A1234BC
-       */
-      prisonerNumber: string
-      /**
-       * Format: int64
-       * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
-       * @example 456
-       */
-      bookingId: number
-      /**
-       * @description The prisoner's first name
-       * @example Albert
-       */
-      firstName: string
-      /**
-       * @description The prisoner's first name
-       * @example Abbot
-       */
-      lastName: string
-      /**
-       * @description
-       *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
-       *
-       * @example SKI
-       */
-      prisonCode: string
-      /**
-       * @description
-       *     The prisoner's residential cell location when inside the prison.
-       *
-       * @example A-1-002
-       */
-      cellLocation: string
-    }
-    /**
-     * @description
-     *     The summary of the last user to edit this appointment occurrence. Will be null if the appointment occurrence has not
-     *     been independently changed from the original state it was in when it was created as part of a recurring series
-     */
-    UserSummary: {
-      /**
-       * Format: int64
-       * @description The NOMIS STAFF_MEMBERS.STAFF_ID value for mapping to NOMIS.
-       * @example 36
-       */
-      id: number
-      /**
-       * @description The NOMIS STAFF_USER_ACCOUNTS.USERNAME value for mapping to NOMIS
-       * @example AAA01U
-       */
-      username: string
-      /**
-       * @description The user's first name
-       * @example Alice
-       */
-      firstName: string
-      /**
-       * @description The user's last name
-       * @example Akbar
-       */
-      lastName: string
     }
   }
   responses: never
@@ -3603,6 +3715,37 @@ export interface operations {
         }
       }
       /** @description The appointment for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Gets the appointment occurrence details for display purposes identified by the appointment occurrence's id
+   * @description Returns the displayable details of an appointment occurrence by its unique identifier.
+   */
+  getAppointmentOccurrenceDetailsById: {
+    parameters: {
+      path: {
+        appointmentOccurrenceId: number
+      }
+    }
+    responses: {
+      /** @description Appointment Occurrence found */
+      200: {
+        content: {
+          'application/json': components['schemas']['AppointmentOccurrenceDetails']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The appointment occurrence for this ID was not found. */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
