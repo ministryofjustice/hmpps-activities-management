@@ -4,7 +4,7 @@
   ABS: "govuk-tag--yellow",
   ACCAB: "govuk-tag--yellow",
   ATT: "govuk-tag--dark-green",
-  CANC: "govuk-tag--yellow",
+  CANC: "",
   NREQ: "govuk-tag--yellow",
   SUS: "govuk-tag--yellow",
   UNACAB: "govuk-tag--red",
@@ -16,11 +16,6 @@
       {{ govukTag({
           text: attendance.attendanceReason.description,
           classes: statusColours[attendance.attendanceReason.code]
-      }) }}
-    {% elseif attendance.status === 'CANCELLED' %}
-      {{ govukTag({
-          text: "Cancelled",
-          classes: "govuk-tag--red"
       }) }}
     {% else %}
       Not recorded yet

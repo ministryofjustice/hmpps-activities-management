@@ -1987,6 +1987,11 @@ export interface components {
        * @example Adam Smith
        */
       cancelledBy?: string
+      /**
+       * @description The reason this scheduled instance was cancelled
+       * @example Staff unavailable
+       */
+      cancelledReason?: string
       /** @description The list of attendees */
       attendances: components['schemas']['Attendance'][]
       activitySchedule: components['schemas']['ActivityScheduleLite']

@@ -31,13 +31,13 @@
         }) }}
 
         {{ govukTextarea({
-          name: "comments",
+          name: "comment",
           label: {
             text: "More details (optional)"
           },
           rows: "3",
-          value: formResponses.comments,
-          errorMessage: validationErrors | findError('comments')
+          value: formResponses.comment,
+          errorMessage: validationErrors | findError('comment')
         }) }}
 
         {{ govukButton({

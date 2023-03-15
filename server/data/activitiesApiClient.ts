@@ -312,7 +312,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     scheduleInstanceId: number,
     cancelRequest: ScheduleInstanceCancelRequest,
     user: ServiceUser,
-  ): Promise<Appointment> {
+  ): Promise<void> {
     return this.put({
       path: `/scheduled-instances/${scheduleInstanceId}/cancel`,
       authToken: user.token,
