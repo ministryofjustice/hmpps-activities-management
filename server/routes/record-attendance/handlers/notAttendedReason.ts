@@ -3,12 +3,24 @@ import { Expose, Type } from 'class-transformer'
 import _ from 'lodash'
 import ActivitiesService from '../../../services/activitiesService'
 import { AttendanceUpdateRequest } from '../../../@types/activitiesAPI/types'
-import NotAttendedData, { ReasonEnteredForAllPrisoners } from '../../../validators/validateNotAttendedData'
+import NotAttendedData, {
+  AbsenceReasonRequired,
+  CaseNoteRequired,
+  IncentiveLevelWarningRequired,
+  PayRequired,
+  ReasonEnteredForAllPrisoners,
+} from '../../../validators/validateNotAttendedData'
 
 export class NotAttendedReason {
   @Expose()
   @Type(() => NotAttendedData)
   @ReasonEnteredForAllPrisoners({ message: 'Enter an absence reason for all prisoners' })
+  @AbsenceReasonRequired({ message: 'Please enter a reason for the absence' })
+  @PayRequired({ message: 'Please specify whether the prisoner should be paid' })
+  @CaseNoteRequired({ message: 'Please enter a case note' })
+  @IncentiveLevelWarningRequired({
+    message: 'Please specify whether this should be recorded as an incentive level warning',
+  })
   notAttendedData: NotAttendedData
 }
 

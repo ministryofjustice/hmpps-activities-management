@@ -124,7 +124,7 @@
                             }
                         },
                         name: "notAttendedData["  + prisoner.prisonerNumber + "][notAttendedReason]",
-                        errorMessage: validationErrors | findError('notAttendedReason'),
+                        errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][notAttendedReason]"),
                         items: notAttendedReasonOptions
                     }) }}
                 {% endfor %}
