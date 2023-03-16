@@ -1,8 +1,6 @@
 import { format } from 'date-fns'
-import { uniq, without } from 'lodash'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
-import PrisonApiClient from '../data/prisonApiClient'
 import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
@@ -27,15 +25,14 @@ import {
   LocationPrefix,
   AppointmentCreateRequest,
   AttendanceReason,
+  AppointmentDetails,
+  AppointmentOccurrenceDetails,
+  ScheduleInstanceCancelRequest,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
-import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
-import { AppointmentDetails, AppointmentOccurrenceSummary } from '../@types/appointments'
-import { PrisonApiUserDetail } from '../@types/prisonApiImport/types'
-import { LocationLenient } from '../@types/prisonApiImportCustom'
-import logger from '../../logger'
+import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
 
 const processError = (error: SanitisedError): undefined => {
   if (!error.status) throw error
@@ -47,7 +44,6 @@ export default class ActivitiesService {
   constructor(
     private readonly activitiesApiClient: ActivitiesApiClient,
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
-    private readonly prisonApiClient: PrisonApiClient,
   ) {}
 
   getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
@@ -133,6 +129,7 @@ export default class ActivitiesService {
       if (match) {
         const cle = cl as CaseLoadExtended
         cle.isRolledOut = match.active
+        cle.isAppointmentsEnabled = match.isAppointmentsEnabled
         userCaseLoads.push(cle)
         if (cle.caseLoadId === user.activeCaseLoadId) {
           newUser.activeCaseLoad = cle
@@ -256,79 +253,14 @@ export default class ActivitiesService {
   }
 
   async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
-    const appointment = await this.getAppointment(appointmentId, user)
+    return this.activitiesApiClient.getAppointmentDetails(appointmentId, user)
+  }
 
-    const locationsMap = (
-      await this.prisonApiClient.getLocationsForEventType(appointment.prisonCode, 'APP', user)
-    ).reduce((map, location) => {
-      return map.set(location.locationId, location)
-    }, new Map<number, LocationLenient>())
-
-    const occurrenceSummaries = appointment.occurrences.map(occurrence => {
-      return {
-        id: occurrence.id,
-        internalLocation: locationsMap.get(occurrence.internalLocationId),
-        inCell: occurrence.inCell,
-        startDate: new Date(occurrence.startDate),
-        startTime: new Date(`${occurrence.startDate}T${occurrence.startTime}:00`),
-        endTime: occurrence.endTime !== null ? new Date(`${occurrence.startDate}T${occurrence.endTime}:00`) : null,
-        comment: occurrence.comment,
-        isCancelled: false,
-        updated: null,
-        updatedBy: null,
-        isEdited: false,
-      } as AppointmentOccurrenceSummary
-    })
-
-    const prisonerNumbers = appointment.occurrences
-      .map(occurrence =>
-        occurrence.allocations.map(allocation => {
-          return allocation.prisonerNumber
-        }),
-      )
-      .flat()
-    const prisoners = await this.prisonerSearchApiClient.searchByPrisonerNumbers({ prisonerNumbers }, user)
-    const prisonerMap = prisoners.reduce((map, prisoner) => {
-      return map.set(prisoner.prisonerNumber, prisoner)
-    }, new Map<string, Prisoner>())
-
-    const allUserDetails = (
-      await Promise.all<PrisonApiUserDetail>(
-        uniq(without([appointment.createdBy, appointment.updatedBy], null)).map(username =>
-          this.prisonApiClient.getUserByUsername(username, user).catch(e => {
-            if (e.status === 404) {
-              logger.info(`Couldn't get user with username, ${username}`)
-              return null
-            }
-            throw e
-          }),
-        ),
-      )
-    ).reduce((map, userDetails) => {
-      if (userDetails) return map.set(userDetails.username, userDetails)
-      return map
-    }, new Map<string, PrisonApiUserDetail>())
-
-    const createdBy = allUserDetails.get(appointment.createdBy) || null
-    const updatedBy = allUserDetails.get(appointment.updatedBy) || null
-
-    return {
-      id: appointment.id,
-      category: appointment.category,
-      internalLocation: locationsMap.get(appointment.internalLocationId),
-      inCell: appointment.inCell,
-      startDate: new Date(appointment.startDate),
-      startTime: new Date(`${appointment.startDate}T${appointment.startTime}:00`),
-      endTime: appointment.endTime !== null ? new Date(`${appointment.startDate}T${appointment.endTime}:00`) : null,
-      comment: appointment.comment,
-      created: new Date(appointment.created),
-      createdBy,
-      updated: appointment.updated !== null ? new Date(appointment.updated) : null,
-      updatedBy,
-      occurrences: occurrenceSummaries,
-      prisoners,
-      prisonerMap,
-    }
+  async getAppointmentOccurrenceDetails(
+    appointmentOccurrenceId: number,
+    user: ServiceUser,
+  ): Promise<AppointmentOccurrenceDetails> {
+    return this.activitiesApiClient.getAppointmentOccurrenceDetails(appointmentOccurrenceId, user)
   }
 
   async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategory[]> {
@@ -337,5 +269,17 @@ export default class ActivitiesService {
 
   createAppointment(appointment: AppointmentCreateRequest, user: ServiceUser): Promise<Appointment> {
     return this.activitiesApiClient.postCreateAppointment(appointment, user)
+  }
+
+  async cancelScheduledActivity(
+    scheduleInstanceId: number,
+    cancelRequest: SessionCancellationRequest,
+    user: ServiceUser,
+  ) {
+    const scheduleInstanceCancelRequest: ScheduleInstanceCancelRequest = {
+      ...cancelRequest,
+      username: user.username,
+    }
+    return this.activitiesApiClient.putCancelScheduledActivity(scheduleInstanceId, scheduleInstanceCancelRequest, user)
   }
 }

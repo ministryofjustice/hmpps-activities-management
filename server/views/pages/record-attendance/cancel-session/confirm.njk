@@ -1,0 +1,43 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% set backLinkHref = "attendance-list" %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Are you sure you want to cancel the session?</h1>
+      <span class="govuk-caption-m govuk-!-margin-bottom-3">Cancelling the session will record an acceptable absence for all prisoners.</span>
+
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {% set cancellationReasonsValues = [] %}
+        {% for reason in cancellationReasons %}
+          {% set cancellationReasonsValues = (cancellationReasonsValues.push({
+            value: reason.key,
+            text: reason.text
+          }), cancellationReasonsValues) %}
+        {% endfor %}
+
+        {{ govukRadios({
+          name: "confirm",
+          items: [{
+            value: 'yes',
+            text: 'Yes'
+          },{
+            value: 'no',
+            text: 'No'
+          }]
+        }) }}
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -10,7 +10,7 @@ import { ActivityLite, ActivityScheduleLite } from '../../../@types/activitiesAP
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/capacitiesService')
 
-const activitiesService = new ActivitiesService(null, null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 const capacitiesService = new CapacitiesService(null) as jest.Mocked<CapacitiesService>
 
 describe('Route Handlers - Allocation dashboard', () => {

@@ -3,7 +3,7 @@ ActivitiesFrontend.BackLink = function (backLink) {
 
   this.backLink.addEventListener('click', e => {
     e.preventDefault()
-    if ($('ul.govuk-error-summary__list').length > 0) {
+    if (document.getElementsByClassName('govuk-error-summary__list').length > 0) {
       window.history.go(-2)
     } else {
       window.history.go(-1)

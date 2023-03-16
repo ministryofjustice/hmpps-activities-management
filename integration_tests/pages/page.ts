@@ -57,6 +57,14 @@ export default abstract class Page {
 
   assertNoBackLink = () => cy.get('.govuk-back-link').should('not.exist')
 
+  assertSummaryListValue = (listIdentifier: string, heading: string, expectedValue: string) =>
+    cy
+      .get(`[data-qa=${listIdentifier}] > .govuk-summary-list__row > .govuk-summary-list__key`)
+      .contains(heading)
+      .parent()
+      .get('.govuk-summary-list__value')
+      .should('contain.text', expectedValue)
+
   protected getDatePickerById = (id: string) => new DatePicker(id)
 
   protected getSummaryListById = (id: string) => new SummaryList(id)

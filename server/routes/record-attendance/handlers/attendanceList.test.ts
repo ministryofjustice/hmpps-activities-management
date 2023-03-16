@@ -11,7 +11,7 @@ import { toDate } from '../../../utils/utils'
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
 
-const activitiesService = new ActivitiesService(null, null, null)
+const activitiesService = new ActivitiesService(null, null)
 const prisonService = new PrisonService(null, null, null)
 
 describe('Route Handlers - Attendance List', () => {
@@ -106,6 +106,21 @@ describe('Route Handlers - Attendance List', () => {
           notAttended: 1,
           notRecorded: 1,
           time: '10:00 - 11:00',
+        },
+        instance: {
+          id: 1,
+          date: format(new Date(), '2022-12-08'),
+          startTime: '10:00',
+          endTime: '11:00',
+          activitySchedule: {
+            activity: { summary: 'Maths level 1' },
+            internalLocation: { description: 'Houseblock 1' },
+          },
+          attendances: [
+            { prisonerNumber: 'ABC123', status: 'SCHEDULED' },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+          ],
         },
         attendees: expect.arrayContaining([
           {

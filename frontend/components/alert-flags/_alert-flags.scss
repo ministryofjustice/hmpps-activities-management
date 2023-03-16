@@ -1,0 +1,95 @@
+%status-style {
+  text-transform: uppercase;
+  min-height: 20px;
+
+  @media screen {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid;
+    padding: 0 10px;
+    margin-left: 0;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1;
+    min-width: 100px;
+    user-select: none;
+  }
+
+  @media print {
+    margin-bottom: 0 !important;
+    font-size: 9pt;
+    color: black !important;
+    border: none !important;
+    background: none !important;
+    min-width: auto;
+  }
+}
+
+.alerts-list {
+  @extend %govuk-list;
+  margin-bottom: 0;
+
+  @media screen {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+.alert-status {
+  @extend %status-style;
+
+  img {
+    height: 14px;
+    margin-right: 3px;
+
+    @media print {
+      display: none;
+    }
+  }
+
+  &--acct {
+    color: #d34700;
+    border-color: #d34700;
+  }
+
+  &--disability {
+    color: #2b88c8;
+    border-color: #2b88c8;
+  }
+
+  &--elist {
+    color: #28a197;
+    border-color: #28a197;
+  }
+
+  &--controlled-unlock {
+    color: #2e358b;
+    border-color: #2e358b;
+  }
+}
+
+.cat-a-status {
+  @extend %status-style;
+
+  &--a,
+  &--e {
+    color: #00437b;
+    border-color: #00437b;
+  }
+
+  &--h {
+    background-color: #00437b;
+    color: white;
+    border-color: #00437b;
+  }
+
+  &--p {
+    border: 3px dashed;
+    color: #00437b;
+    border-color: #00437b;
+  }
+}

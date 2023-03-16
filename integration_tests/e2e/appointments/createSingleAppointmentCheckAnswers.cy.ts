@@ -10,6 +10,7 @@ import postMatchPrisonerA1350DZ from '../../fixtures/prisonerSearchApi/postMatch
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
+import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
@@ -54,6 +55,10 @@ context('Create single appointment - check answers change links', () => {
     dateAndTimePage.selectEndTime(15, 30)
     dateAndTimePage.continue()
 
+    const repeatPage = Page.verifyOnPage(RepeatPage)
+    repeatPage.selectRepeat('No')
+    repeatPage.continue()
+
     // Verify initial answers
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
@@ -62,23 +67,26 @@ context('Create single appointment - check answers change links', () => {
     checkAnswersPage.assertStartDate(tomorrow)
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
+    checkAnswersPage.assertRepeat('No')
 
     // Change each answer
     checkAnswersPage.changePrisoner()
     Page.verifyOnPage(SelectPrisonerPage)
-    selectPrisonerPage.enterPrisonerNumber('A8644DY')
+    selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
     cy.stubEndpoint('POST', '/prisoner-search/match-prisoners', postMatchPrisonerA1350DZ)
     selectPrisonerPage.continue()
     checkAnswersPage.assertPrisonerSummary('David Winchurch', 'A1350DZ', '2-2-024')
 
     checkAnswersPage.changeCategory()
     Page.verifyOnPage(CategoryPage)
+    categoryPage.assertSelectedCategory('Chaplaincy')
     categoryPage.selectCategory('Gym - Weights')
     categoryPage.continue()
     checkAnswersPage.assertCategory('Gym - Weights')
 
     checkAnswersPage.changeLocation()
     Page.verifyOnPage(LocationPage)
+    locationPage.assertSelectedLocation('Chapel')
     locationPage.selectLocation('Gym')
     locationPage.continue()
     checkAnswersPage.assertLocation('Gym')

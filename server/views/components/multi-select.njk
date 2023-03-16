@@ -8,7 +8,8 @@
         {
             attributes: {
                 id: selectAllId
-            }
+            },
+            classes: 'govuk-!-display-none-print'
         }
     ] %}
     {% for column in params.head %}
@@ -27,11 +28,12 @@
                                     <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
                                 </label>
                             </div>
-                        '
+                        ',
+                    classes: 'govuk-!-display-none-print'
                 }
             ] %}
          {% else %}
-            {% set r = [{ html: '' }] %}
+            {% set r = [{ html: '', classes: 'govuk-!-display-none-print' }] %}
         {% endif %}
         {% for item in row.items %}
             {% set r = (r.push(item), r) %}
@@ -52,7 +54,7 @@
             rows: rows
         }) }}
 
-        <div class='multi-select-sticky'>
+        <div class='multi-select-sticky' role='toolbar' aria-live='polite' aria-label='Attendance actions' aria-disabled='false'>
             <div class='govuk-width-container'>
                 <span class='multi-select-sticky__count'></span>
                 <div class='govuk-button-group'>

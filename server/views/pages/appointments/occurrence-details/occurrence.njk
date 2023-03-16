@@ -1,0 +1,95 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
+
+{% set pageTitle = "Appointments Management - Appointment Occurrence Details" %}
+{% set pageId = 'appointment-occurrence-view-details-page' %}
+{% set backLinkHref = "/appointments/" + occurrence.appointmentId %}
+
+{% set summaryListRows = [
+    {
+        key: {
+            text: "Prisoner"
+        },
+        value: {
+            html: appointmentPrisonerSummary(occurrence.prisoners[0].firstName + ' ' + occurrence.prisoners[0].lastName, occurrence.prisoners[0].prisonerNumber, occurrence.prisoners[0].cellLocation, dpsUrl)
+        }
+    },
+    {
+        key: {
+            text: "Category"
+        },
+        value: {
+            text: occurrence.category.description
+        }
+    },
+    {
+        key: {
+            text: "Location"
+        },
+        value: {
+            text: occurrence.internalLocation.description
+        }
+    },
+    {
+        key: {
+            text: "Date"
+        },
+        value: {
+            text: occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+        }
+    },
+    {
+        key: {
+            text: "Start time"
+        },
+        value: {
+            text: occurrence.startTime
+        }
+    },
+    {
+        key: {
+            text: "End time"
+        },
+        value: {
+            text: occurrence.endTime
+        }
+    }
+] %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa='caption'>View and edit appointment occurrence</span>
+            <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}</h1>
+            <h2 class="govuk-heading-m">Appointment details</h2>
+            {{ govukSummaryList({
+                rows: summaryListRows,
+                classes: "govuk-!-margin-bottom-9",
+                attributes: { 'data-qa': 'appointment-details' }
+            }) }}
+
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Created by"
+                        },
+                        value: {
+                            text: occurrence.createdBy | fullName | toTitleCase | initialiseName
+                        }
+                    }
+                ],
+                classes: "govuk-!-margin-bottom-9",
+                attributes: { 'data-qa': 'user-details' }
+            }) }}
+
+            <p class="govuk-body govuk-!-display-none-print no-js-hidden">
+                <a href="/appointments/occurrences/movement-slip/{{ occurrence.id }}" target="_blank" class="govuk-link govuk-link--no-visited-state" data-qa="print-movement-slip-link">Print movement slip</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

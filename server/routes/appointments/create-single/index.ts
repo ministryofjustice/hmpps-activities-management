@@ -7,6 +7,8 @@ import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/selectPrisoner'
 import CategoryRoutes, { Category } from './handlers/category'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
+import RepeatRoutes, { Repeat } from './handlers/repeat'
+import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './handlers/repeatPeriodAndCount'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import { Services } from '../../../services'
@@ -27,7 +29,9 @@ export default function Index({ prisonService, activitiesService }: Services): R
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const categoryHandler = new CategoryRoutes(activitiesService)
   const locationHandler = new LocationRoutes(prisonService)
-  const dateAndTimeRoutesHandler = new DateAndTimeRoutes()
+  const dateAndTimeHandler = new DateAndTimeRoutes()
+  const repeatHandler = new RepeatRoutes()
+  const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
 
@@ -38,8 +42,12 @@ export default function Index({ prisonService, activitiesService }: Services): R
   post('/category', categoryHandler.POST, Category)
   get('/location', locationHandler.GET, true)
   post('/location', locationHandler.POST, Location)
-  get('/date-and-time', dateAndTimeRoutesHandler.GET, true)
-  post('/date-and-time', dateAndTimeRoutesHandler.POST, DateAndTime)
+  get('/date-and-time', dateAndTimeHandler.GET, true)
+  post('/date-and-time', dateAndTimeHandler.POST, DateAndTime)
+  get('/repeat', repeatHandler.GET, true)
+  post('/repeat', repeatHandler.POST, Repeat)
+  get('/repeat-period-and-count', repeatPeriodAndCountHandler.GET, true)
+  post('/repeat-period-and-count', repeatPeriodAndCountHandler.POST, RepeatPeriodAndCount)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
   get('/confirmation/:id', confirmationHandler.GET, true)

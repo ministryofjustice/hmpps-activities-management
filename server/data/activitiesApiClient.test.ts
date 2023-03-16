@@ -14,6 +14,8 @@ import {
   PrisonerAllocations,
   PrisonerScheduledEvents,
   Appointment,
+  AppointmentDetails,
+  AppointmentOccurrenceDetails,
   AppointmentCategory,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
@@ -491,6 +493,40 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getAppointmentDetails', () => {
+    it('should return appointment details from api when valid appointment id is used', async () => {
+      const response = {
+        id: 12345,
+      } as AppointmentDetails
+
+      fakeActivitiesApi
+        .get('/appointment-details/12345')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getAppointmentDetails(12345, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getAppointmentOccurrenceDetails', () => {
+    it('should return appointment occurrence details from api when valid appointment occurrence id is used', async () => {
+      const response = {
+        id: 123456,
+      } as AppointmentOccurrenceDetails
+
+      fakeActivitiesApi
+        .get('/appointment-occurrence-details/123456')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getAppointmentOccurrenceDetails(123456, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getAppointmentCategories', () => {
     it('should return all categories from api', async () => {
       const response = [
@@ -574,6 +610,20 @@ describe('activitiesApiClient', () => {
 
       const output = await activitiesApiClient.postCreateAppointment(request, user)
       expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('putCancelScheduledActivity', () => {
+    it('should cancel scheduled activity', async () => {
+      fakeActivitiesApi.put('/scheduled-instances/1/cancel').matchHeader('authorization', `Bearer token`).reply(200)
+
+      const body = {
+        reason: 'Cancellation reason',
+        username: 'USER1',
+      }
+
+      await activitiesApiClient.putCancelScheduledActivity(1, body, user)
       expect(nock.isDone()).toBe(true)
     })
   })

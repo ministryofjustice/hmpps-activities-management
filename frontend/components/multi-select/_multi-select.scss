@@ -7,7 +7,7 @@
 
   .govuk-table__header {
     background: govuk-colour("white");
-    box-shadow: inset 0 -2px 0 govuk-colour("mid-grey");
+    border-bottom: 2px govuk-colour("mid-grey") solid;
   }
 
   .govuk-checkboxes__item {
@@ -16,7 +16,9 @@
 
   .govuk-table__row {
     &:nth-of-type(even) {
-      background: govuk-colour(light-grey);
+      @media not print {
+        background: govuk-colour(light-grey);
+      }
     }
   }
 

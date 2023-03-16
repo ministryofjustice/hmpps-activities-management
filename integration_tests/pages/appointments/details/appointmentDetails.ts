@@ -1,10 +1,21 @@
 import Page from '../../page'
 import { formatDate } from '../../../../server/utils/utils'
 
-export default class AppointmentPage extends Page {
+export default class AppointmentDetailsPage extends Page {
   constructor() {
     super('appointments-view-details-page')
   }
+
+  viewEditOccurrenceLink = (sequenceNumber: number) =>
+    cy.get(`[data-qa=view-and-edit-occurrence-${sequenceNumber}]`).contains('View and edit')
+
+  printMovementSlipLink = () => cy.get('[data-qa=print-movement-slip-link]')
+
+  assertAppointmentDetail = (header: string, value: string) =>
+    this.assertSummaryListValue('appointment-details', header, value)
+
+  assertAppointmentOccurrence = (header: string, value: string) =>
+    this.assertSummaryListValue('appointment-occurrences', header, value)
 
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {
     cy.get('[data-qa=prisoner-name]').contains(name)
@@ -12,22 +23,28 @@ export default class AppointmentPage extends Page {
     cy.get('[data-qa=prisoner-cell-location]').contains(cellLocation)
   }
 
-  printMovementSlipLink = () => cy.get('[data-qa=print-movement-slip-link]')
+  assertCategory = (category: string) => this.assertAppointmentDetail('Category', category)
 
-  assertCategory = (category: string) => cy.get('[data-qa=category]').contains(category)
+  assertLocation = (location: string) => this.assertAppointmentDetail('Location', location)
 
-  assertLocation = (location: string) => cy.get('[data-qa=location]').contains(location)
-
-  assertStartDate = (startDate: Date) =>
-    cy.get('[data-qa=start-date]').contains(formatDate(startDate, 'EEEE d MMMM yyyy'))
+  assertStartDate = (startDate: Date) => this.assertAppointmentDetail('Date', formatDate(startDate, 'EEEE d MMMM yyyy'))
 
   assertStartTime = (hour: number, minute: number) =>
-    cy.get('[data-qa=start-time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
+    this.assertAppointmentDetail('Start time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
   assertEndTime = (hour: number, minute: number) =>
-    cy.get('[data-qa=end-time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
+    this.assertAppointmentDetail('End time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
-  assertCreatedBy = (createdBy: string) => cy.get('[data-qa=created-by]').contains(createdBy)
+  assertRepeat = (option: string) => this.assertAppointmentDetail('Repeat', option)
+
+  assertRepeatPeriod = (option: string) => this.assertAppointmentDetail('Frequency', option)
+
+  assertRepeatCount = (option: string) => this.assertAppointmentDetail('Occurrences', option)
+
+  assertOccurrences = (occurrenceMap: Map<number, string>) =>
+    occurrenceMap.forEach((date, sequenceNumber) => this.assertAppointmentOccurrence(sequenceNumber.toString(), date))
+
+  assertCreatedBy = (createdBy: string) => this.assertSummaryListValue('user-details', 'Created by', createdBy)
 
   assertPrintMovementSlipLink = () => this.printMovementSlipLink().contains('Print movement slip')
 }

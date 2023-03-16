@@ -25,6 +25,9 @@ import {
   AppointmentCategory,
   AppointmentCreateRequest,
   AttendanceReason,
+  AppointmentDetails,
+  AppointmentOccurrenceDetails,
+  ScheduleInstanceCancelRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -281,6 +284,23 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
+    return this.get({
+      path: `/appointment-details/${appointmentId}`,
+      authToken: user.token,
+    })
+  }
+
+  async getAppointmentOccurrenceDetails(
+    appointmentOccurrenceId: number,
+    user: ServiceUser,
+  ): Promise<AppointmentOccurrenceDetails> {
+    return this.get({
+      path: `/appointment-occurrence-details/${appointmentOccurrenceId}`,
+      authToken: user.token,
+    })
+  }
+
   async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategory[]> {
     return this.get({
       path: `/appointment-categories`,
@@ -293,6 +313,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/appointments`,
       authToken: user.token,
       data: appointment,
+    })
+  }
+
+  async putCancelScheduledActivity(
+    scheduleInstanceId: number,
+    cancelRequest: ScheduleInstanceCancelRequest,
+    user: ServiceUser,
+  ): Promise<void> {
+    return this.put({
+      path: `/scheduled-instances/${scheduleInstanceId}/cancel`,
+      authToken: user.token,
+      data: cancelRequest,
     })
   }
 }

@@ -20,6 +20,7 @@ import {
   toTimeItems,
   exampleDateOneWeekAhead,
   fullName,
+  toDate,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -29,6 +30,8 @@ import {
   sortActivitiesByStartTime,
 } from '../utils/calendarUtilities'
 import { Services } from '../services'
+import { AppointmentRepeatPeriod } from '../@types/activitiesAPI/types'
+import { YesNo } from '../@types/activities'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -108,9 +111,13 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toMoney', toMoney)
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
+  njkEnv.addFilter('toDate', toDate)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
+
+  njkEnv.addGlobal('YesNo', YesNo)
+  njkEnv.addGlobal('AppointmentRepeatPeriod', AppointmentRepeatPeriod)
 
   return njkEnv
 }

@@ -2,7 +2,6 @@ import { when } from 'jest-when'
 import atLeast from '../../jest.setup'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
-import PrisonApiClient from '../data/prisonApiClient'
 import ActivitiesService from './activitiesService'
 import { ServiceUser } from '../@types/express'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
@@ -22,27 +21,27 @@ import {
   Appointment,
   AppointmentCategory,
   ActivitySchedule,
+  AppointmentDetails,
+  AppointmentOccurrenceDetails,
 } from '../@types/activitiesAPI/types'
-import { PrisonApiUserDetail } from '../@types/prisonApiImport/types'
-import { LocationLenient } from '../@types/prisonApiImportCustom'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import appointment from './fixtures/appointment_1.json'
+import appointmentDetails from './fixtures/appointment_details_1.json'
+import appointmentOccurrenceDetails from './fixtures/appointment_occurrence_details_1.json'
 import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
-jest.mock('../data/prisonApiClient')
 
 describe('Activities Service', () => {
   const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
   const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
-  const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
-  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient, prisonApiClient)
+  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
 
-  const user = { activeCaseLoadId: 'MDI' } as ServiceUser
+  const user = { activeCaseLoadId: 'MDI', username: 'USER1' } as ServiceUser
 
   const mockedLocationGroups = [{ name: 'Houseblock 1', key: 'Houseblock 1', children: [] }] as LocationGroup[]
 
@@ -324,63 +323,27 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('getAppointmentDetails', () => {
-    when(activitiesApiClient.getAppointment)
-      .calledWith(12345, user)
-      .mockResolvedValue(appointment as Appointment)
-
-    const getLocationsForEventTypeResponse = [{ locationId: appointment.internalLocationId }] as LocationLenient[]
-    when(prisonApiClient.getLocationsForEventType)
-      .calledWith('SKI', 'APP', user)
-      .mockResolvedValue(getLocationsForEventTypeResponse)
-
-    const appointmentPrisonerNo = appointment.occurrences[0].allocations[0].prisonerNumber
-    const criteria = { prisonerNumbers: [appointmentPrisonerNo] }
-
-    when(prisonerSearchApiClient.searchByPrisonerNumbers)
-      .calledWith(criteria, user)
-      .mockResolvedValue(prisoners as Prisoner[])
-
-    const appointmentUser = { username: 'AAA01U', firstName: 'Lee', lastName: 'Jacobson', staffId: 1000 }
-    when(prisonApiClient.getUserByUsername)
-      .calledWith(appointment.createdBy, user)
-      .mockResolvedValue(appointmentUser as PrisonApiUserDetail)
-      .defaultRejectedValue({ status: 404 })
-
-    it('should return appointment details from api when valid appointment id is used', async () => {
-      const actualAppointmentResult = await activitiesService.getAppointmentDetails(12345, user)
-
-      expect(actualAppointmentResult.id).toEqual(12345)
-      expect(actualAppointmentResult.occurrences.length).toEqual(1)
-      expect(actualAppointmentResult.internalLocation.locationId).toEqual(26963)
-      expect(actualAppointmentResult.occurrences[0].internalLocation.locationId).toEqual(26963)
-      expect(actualAppointmentResult.prisoners.length).toEqual(1)
-      expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
-      expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
-      expect(actualAppointmentResult.createdBy).toEqual(appointmentUser)
-      expect(actualAppointmentResult.updatedBy).toEqual(appointmentUser)
-    })
-
-    it("should return appointment details when created by username isn't found", async () => {
-      const unknownUserAppointment = {
-        ...appointment,
-        createdBy: 'AN_UNKNOWN_USERNAME',
-      }
-      when(activitiesApiClient.getAppointment)
+  describe('getAppointmentDetail', () => {
+    it('should return appointment detail from api when valid appointment id is used', async () => {
+      when(activitiesApiClient.getAppointmentDetails)
         .calledWith(12345, user)
-        .mockResolvedValue(unknownUserAppointment as Appointment)
+        .mockResolvedValue(appointmentDetails as AppointmentDetails)
 
-      const actualAppointmentResult = await activitiesService.getAppointmentDetails(12345, user)
+      const actualResult = await activitiesService.getAppointmentDetails(12345, user)
 
-      expect(actualAppointmentResult.id).toEqual(12345)
-      expect(actualAppointmentResult.occurrences.length).toEqual(1)
-      expect(actualAppointmentResult.internalLocation.locationId).toEqual(26963)
-      expect(actualAppointmentResult.occurrences[0].internalLocation.locationId).toEqual(26963)
-      expect(actualAppointmentResult.prisoners.length).toEqual(1)
-      expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
-      expect(actualAppointmentResult.prisoners[0].prisonerNumber).toEqual('G4793VF')
-      expect(actualAppointmentResult.createdBy).toEqual(null)
-      expect(actualAppointmentResult.updatedBy).toEqual(appointmentUser)
+      expect(actualResult).toEqual(appointmentDetails)
+    })
+  })
+
+  describe('getAppointmentOccurrenceDetail', () => {
+    it('should return appointment occurrence detail from api when valid appointment id is used', async () => {
+      when(activitiesApiClient.getAppointmentOccurrenceDetails)
+        .calledWith(12, user)
+        .mockResolvedValue(appointmentOccurrenceDetails as AppointmentOccurrenceDetails)
+
+      const actualResult = await activitiesService.getAppointmentOccurrenceDetails(12, user)
+
+      expect(actualResult).toEqual(appointmentOccurrenceDetails)
     })
   })
 
@@ -468,6 +431,25 @@ describe('Activities Service', () => {
       const response = await activitiesService.createAppointment(request, user)
 
       expect(response).toEqual(expectedResponse)
+    })
+  })
+
+  describe('cancelScheduledActivity', () => {
+    it('should cancel scheduled activity', async () => {
+      const serviceRequest = {
+        reason: 'Cancel reason',
+        comment: 'Cancel comment',
+      }
+
+      const apiRequest = {
+        reason: 'Cancel reason',
+        comment: 'Cancel comment',
+        username: user.username,
+      }
+
+      await activitiesService.cancelScheduledActivity(1, serviceRequest, user)
+
+      expect(activitiesApiClient.putCancelScheduledActivity).toHaveBeenCalledWith(1, apiRequest, user)
     })
   })
 })

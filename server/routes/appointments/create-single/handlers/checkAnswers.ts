@@ -4,6 +4,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import { AppointmentCreateRequest } from '../../../../@types/activitiesAPI/types'
+import { YesNo } from '../../../../@types/activities'
 
 export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -32,6 +33,13 @@ export default class CheckAnswersRoutes {
       endTime: plainToInstance(SimpleTime, createSingleAppointmentJourney.endTime).toIsoString(),
       prisonerNumbers: [createSingleAppointmentJourney.prisoner.number],
     } as AppointmentCreateRequest
+
+    if (createSingleAppointmentJourney.repeat === YesNo.YES) {
+      appointment.repeat = {
+        period: createSingleAppointmentJourney.repeatPeriod,
+        count: createSingleAppointmentJourney.repeatCount,
+      }
+    }
 
     const response = await this.activitiesService.createAppointment(appointment, user)
 

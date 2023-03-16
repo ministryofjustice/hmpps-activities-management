@@ -6,14 +6,14 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
+{% from "components/alertsList.njk" import alertsList %}
 {% from "partials/showUnlockEvents.njk" import showUnlockEvents %}
 {% from "partials/showUnlockProfileLink.njk" import showUnlockProfileLink %}
+
 {% set pageTitle = applicationName + " - Planned events" %}
 {% set pageId = "planned-events-page" %}
 {% set backLinkHref = "/" %}
-{% block pageStyles %}
-    <link href="/assets/stylesheets/printViews/unlock-list.css?{{ version }}" rel="stylesheet"/>
-{% endblock %}
+
 {% block content %}
     <div class="govuk-grid-row govuk-!-margin-bottom-2">
         <div class="govuk-grid-column-two-thirds">
@@ -170,6 +170,10 @@
                             classes: 'govuk-table_cell'
                         },
                         {
+                            html: alertsList({ alerts: item.alerts, category: item.category }),
+                            classes: 'govuk-table_cell'
+                        },
+                        {
                             attributes: { id: 'activity-' + loop.index },
                             html: showUnlockEvents(item.events),
                             classes: 'govuk-table__cell'
@@ -209,6 +213,10 @@
                         {
                             text: "Cell location",
                             attributes: { "aria-sort": "ascending" },
+                            classes: 'govuk-table__header'
+                        },
+                        {
+                            text: "Relevant alerts",
                             classes: 'govuk-table__header'
                         },
                         {
