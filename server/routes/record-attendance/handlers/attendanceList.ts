@@ -19,7 +19,6 @@ export default class AttendanceListRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    req.session.notAttendedJourney = {}
     const instanceId = req.params.id
     const { user } = res.locals
 
