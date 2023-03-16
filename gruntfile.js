@@ -76,6 +76,12 @@ module.exports = grunt => {
             src: ['./**/*'],
             dest: 'assets/',
           },
+          {
+            expand: true,
+            cwd: 'frontend/images',
+            src: ['./**/*'],
+            dest: 'assets/images/',
+          },
         ],
       },
     },
