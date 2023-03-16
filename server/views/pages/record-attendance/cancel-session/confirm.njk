@@ -15,14 +15,6 @@
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {% set cancellationReasonsValues = [] %}
-        {% for reason in cancellationReasons %}
-          {% set cancellationReasonsValues = (cancellationReasonsValues.push({
-            value: reason.key,
-            text: reason.text
-          }), cancellationReasonsValues) %}
-        {% endfor %}
-
         {{ govukRadios({
           name: "confirm",
           items: [{
