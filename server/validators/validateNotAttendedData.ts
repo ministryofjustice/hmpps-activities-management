@@ -4,8 +4,8 @@ import { registerDecorator, ValidationArguments, ValidationOptions } from 'class
 export default class NotAttendedData {
   [key: string]: {
     notAttendedReason: string
-    SICKPay: boolean
-    RESTPay: boolean
+    sickPay: boolean
+    restPay: boolean
     moreDetail: string
     caseNote: string
     incentiveLevelWarningIssued: boolean
@@ -53,9 +53,9 @@ export function PayRequired(validationOptions?: ValidationOptions) {
           selectedPrisoners.forEach((selectedPrisoner: { prisonerNumber: string }) => {
             if (
               (notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason === 'SICK' &&
-                notAttendedData[selectedPrisoner.prisonerNumber].SICKPay === undefined) ||
+                notAttendedData[selectedPrisoner.prisonerNumber].sickPay === undefined) ||
               (notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason === 'REST' &&
-                notAttendedData[selectedPrisoner.prisonerNumber].RESTPay === undefined) ||
+                notAttendedData[selectedPrisoner.prisonerNumber].restPay === undefined) ||
               (notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason === 'OTHER' &&
                 notAttendedData[selectedPrisoner.prisonerNumber].absencePay === undefined)
             )

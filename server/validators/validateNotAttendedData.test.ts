@@ -207,7 +207,7 @@ describe('validateNotAttendedData', () => {
       notAttendedData: {
         ABC123: {
           notAttendedReason: 'SICK',
-          SICKPay: true,
+          sickPay: true,
           moreDetail: 'more detail for sickness',
           caseNote: '',
           absenceReason: '',

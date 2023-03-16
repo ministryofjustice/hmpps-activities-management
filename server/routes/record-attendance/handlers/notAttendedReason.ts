@@ -49,9 +49,16 @@ export default class NotAttendedReasonRoutes {
         id: selectedPrisoner.attendanceId,
         attendanceReason: notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason,
         comment: notAttendedData[selectedPrisoner.prisonerNumber].moreDetail,
-        issuePayment: notAttendedData[selectedPrisoner.prisonerNumber].SICKPay
-          ? notAttendedData[selectedPrisoner.prisonerNumber].SICKPay
-          : false,
+        issuePayment:
+          (notAttendedData[selectedPrisoner.prisonerNumber].sickPay
+            ? notAttendedData[selectedPrisoner.prisonerNumber].sickPay
+            : false) ||
+          (notAttendedData[selectedPrisoner.prisonerNumber].restPay
+            ? notAttendedData[selectedPrisoner.prisonerNumber].restPay
+            : false) ||
+          (notAttendedData[selectedPrisoner.prisonerNumber].absencePay
+            ? notAttendedData[selectedPrisoner.prisonerNumber].absencePay
+            : false),
         caseNote: notAttendedData[selectedPrisoner.prisonerNumber].caseNote,
         incentiveLevelWarningIssued: notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
           ? notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
