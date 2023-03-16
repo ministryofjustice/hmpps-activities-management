@@ -8,14 +8,14 @@
         {% if 'HA' in alertCodes %}
             <li class='alert-status alert-status--acct'>ACCT</li>
         {% endif %}
-        {% if params.category == 'A' or params.catagory == 'E' %}
+        {% if params.category == 'A' or params.category == 'E' %}
             <li class='cat-a-status cat-a-status--{{ params.category | lower }}'>CAT A</li>
         {% endif %}
         {% if params.category == 'H' %}
             <li class='cat-a-status cat-a-status--{{ params.category | lower }}'>CAT A Higher</li>
         {% endif %}
         {% if params.category == 'P' %}
-            <li class='cat-a-status cat-a-status--{{ params.category | lower }}'>CAT Provisional</li>
+            <li class='cat-a-status cat-a-status--{{ params.category | lower }}'>CAT A Provisional</li>
         {% endif %}
         {% if 'XCU' in alertCodes %}
             <li class='alert-status alert-status--controlled-unlock'>Controlled Unlock</li>
