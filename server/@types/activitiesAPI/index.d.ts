@@ -4,6 +4,13 @@
  */
 
 export interface paths {
+  '/scheduled-instances/{instanceId}/uncancel': {
+    /**
+     * Un-cancels a scheduled instance.
+     * @description Un-cancels a previously cancelled scheduled instance.
+     */
+    put: operations['uncancelScheduledInstance']
+  }
   '/scheduled-instances/{instanceId}/cancel': {
     /**
      * Cancel a scheduled instance
@@ -270,6 +277,28 @@ export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
+    /** @description The uncancel request with the user details */
+    UncancelScheduledInstanceRequest: {
+      /**
+       * @description The username of the user performing the unschedule operation
+       * @example RJ56DDE
+       */
+      username: string
+      /**
+       * @description The displayName of the user performing the unschedule operation
+       * @example Bob Adams
+       */
+      displayName: string
+    }
+    ErrorResponse: {
+      /** Format: int32 */
+      status: number
+      /** Format: int32 */
+      errorCode?: number
+      userMessage?: string
+      developerMessage?: string
+      moreInfo?: string
+    }
     /** @description The scheduled instance cancellation request */
     ScheduleInstanceCancelRequest: {
       /**
@@ -284,7 +313,7 @@ export interface components {
       username: string
       /**
        * @description A field for any additional comments
-       * @example No tutor available
+       * @example Resume tomorrow
        */
       comment?: string
     }
@@ -342,15 +371,7 @@ export interface components {
        */
       otherAbsenceReason?: string
     }
-    ErrorResponse: {
-      /** Format: int32 */
-      status: number
-      /** Format: int32 */
-      errorCode?: number
-      userMessage?: string
-      developerMessage?: string
-      moreInfo?: string
-    }
+
     /** @description The prisoner allocation request details */
     PrisonerAllocationRequest: {
       /**
@@ -2661,11 +2682,55 @@ export interface components {
 export type external = Record<string, never>
 
 export interface operations {
+  /**
+   * Un-cancels a scheduled instance.
+   * @description Un-cancels a previously cancelled scheduled instance.
+   */
+  uncancelScheduledInstance: {
+    parameters: {
+      path: {
+        instanceId: number
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UncancelScheduledInstanceRequest']
+      }
+    }
+    responses: {
+      /** @description The scheduled instance was successfully un cancelled. */
+      204: never
+      /** @description The scheduled instance is not cancelled or it is in the past */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Not Found, the scheduled instance does not exist */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Cancel a scheduled instance
+   * @description Cancels scheduled instance and associated attendance records
+   */
   cancelScheduledInstance: {
-    /**
-     * Cancel a scheduled instance
-     * @description Cancels scheduled instance and associated attendance records
-     */
     parameters: {
       path: {
         instanceId: number

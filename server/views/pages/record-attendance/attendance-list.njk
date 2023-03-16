@@ -15,12 +15,19 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {% set cancelledSessionHeadingHtml %}
-                <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
-                <p class="govuk-body">This activity session has been cancelled for the following reason:</p>
-                <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }}</li></ul>
-            {% endset %}
+            {% if successMessage|length %}
+                {{ govukNotificationBanner({
+                    type: 'success',
+                    text: successMessage.message
+                }) }}
+            {% endif %}
+
             {% if instance.cancelled %}
+                {% set cancelledSessionHeadingHtml %}
+                    <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
+                    <p class="govuk-body">This activity session has been cancelled for the following reason:</p>
+                    <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }}</li></ul>
+                {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
                     html: cancelledSessionHeadingHtml
@@ -42,7 +49,7 @@
                     classes: "govuk-button--blue js-print no-js-hidden"
                 }) }}
                 {% if instance.cancelled %}
-                    <a href="#" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">Uncancel this session</a>
+                    <a href="uncancel" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">Uncancel this session</a>
                 {% else %}
                     {{ govukButton({
                         text: "Cancel this session",

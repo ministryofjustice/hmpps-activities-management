@@ -28,6 +28,7 @@ import {
   AppointmentDetails,
   AppointmentOccurrenceDetails,
   ScheduleInstanceCancelRequest,
+  UncancelScheduledInstanceRequest,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -281,5 +282,17 @@ export default class ActivitiesService {
       username: user.username,
     }
     return this.activitiesApiClient.putCancelScheduledActivity(scheduleInstanceId, scheduleInstanceCancelRequest, user)
+  }
+
+  async uncancelScheduledActivity(scheduleInstanceId: number, user: ServiceUser) {
+    const uncancelScheduledInstanceRequest: UncancelScheduledInstanceRequest = {
+      username: user.username,
+      displayName: `${user.firstName} ${user.lastName}`,
+    }
+    return this.activitiesApiClient.putUncancelScheduledActivity(
+      scheduleInstanceId,
+      uncancelScheduledInstanceRequest,
+      user,
+    )
   }
 }
