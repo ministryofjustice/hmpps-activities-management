@@ -53,6 +53,7 @@ export default class AttendanceListRoutes {
         date: toDate(instance.date),
         ...getAttendanceSummary(instance.attendances),
       },
+      instance,
       attendees,
     })
   }
