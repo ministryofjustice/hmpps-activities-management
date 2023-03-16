@@ -8,7 +8,7 @@
         {% if 'HA' in alertCodes %}
             <li class='alert-status alert-status--acct'>ACCT</li>
         {% endif %}
-        {% if params.category == 'A' or params.catagory == 'E' %}
+        {% if params.category == 'A' or params.category == 'E' %}
             <li class='cat-a-status cat-a-status--{{ params.category | lower }}'>CAT A</li>
         {% endif %}
         {% if params.category == 'H' %}
