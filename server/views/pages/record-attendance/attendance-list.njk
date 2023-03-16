@@ -48,14 +48,16 @@
                     text: "Print attendance list",
                     classes: "govuk-button--blue js-print no-js-hidden"
                 }) }}
-                {% if instance.cancelled %}
-                    <a href="uncancel" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">Uncancel this session</a>
-                {% else %}
-                    {{ govukButton({
-                        text: "Cancel this session",
-                        classes: "govuk-button--secondary",
-                        href: 'cancel'
-                    }) }}
+                {% if instance.isAmendable %}
+                    {% if instance.cancelled %}
+                        <a href="uncancel" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">Uncancel this session</a>
+                    {% else %}
+                        {{ govukButton({
+                            text: "Cancel this session",
+                            classes: "govuk-button--secondary",
+                            href: 'cancel'
+                        }) }}
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

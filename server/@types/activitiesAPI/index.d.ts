@@ -224,6 +224,10 @@ export interface paths {
      */
     get: operations['getLocationGroups']
   }
+  '/attendance-reasons': {
+    /** Get the list of attendance reasons */
+    get: operations['getAttendanceReasons']
+  }
   '/appointments/{appointmentId}': {
     /**
      * Get an appointment by its id
@@ -371,7 +375,6 @@ export interface components {
        */
       otherAbsenceReason?: string
     }
-
     /** @description The prisoner allocation request details */
     PrisonerAllocationRequest: {
       /**
@@ -1695,7 +1698,6 @@ export interface components {
        * @example Prisoner was too unwell to attend the activity.
        */
       comment?: string
-      posted: boolean
       /**
        * Format: date-time
        * @description The date and time the attendance was updated
@@ -1707,8 +1709,8 @@ export interface components {
        */
       recordedBy?: string
       /**
-       * @description SCHEDULED, COMPLETED, CANCELLED.
-       * @example SCHEDULED
+       * @description WAITING, COMPLETED, LOCKED.
+       * @example WAITING
        */
       status: string
       /**
@@ -1725,6 +1727,21 @@ export interface components {
       bonusAmount?: number
       /** Format: int32 */
       pieces?: number
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description Was an incentive level warning issued for REFUSED
+       * @example true
+       */
+      incentiveLevelWarningIssued?: boolean
+      /**
+       * @description Free text to allow other reasons for non attendance against the attendance
+       * @example Prisoner has a valid reason to miss the activity.
+       */
+      otherAbsenceReason?: string
     }
     /** @description The reason for attending or not */
     AttendanceReason: {
@@ -3898,6 +3915,29 @@ export interface operations {
       }
       /** @description Requested resource not found */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** Get the list of attendance reasons */
+  getAttendanceReasons: {
+    responses: {
+      /** @description Attendance reasons found */
+      200: {
+        content: {
+          'application/json': components['schemas']['AttendanceReason'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }

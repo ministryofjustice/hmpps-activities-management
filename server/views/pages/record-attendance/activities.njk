@@ -2,6 +2,7 @@
 
 {% from "components/searchBar.njk" import searchBar %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'activities-page' %}
@@ -61,7 +62,7 @@
                                         <a href="activities/' + activity.id + '/attendance-list" class="govuk-link govuk-link--no-visited-state">' + activity.name + '</a>
                                     </h2>
                                     <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + activity.scheduleName + '</div>
-                                  '
+                                    <div>' + activityCancelledTag(activity.cancelled) + '</div>'
                         },
                         {
                             attributes: {
@@ -135,5 +136,14 @@
                 }) }}
             </div>
         </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro activityCancelledTag(cancelled) %}
+    {% if cancelled %}
+        {{ govukTag({
+            text: "Cancelled",
+            classes: "govuk-tag--red"
+        }) }}
     {% endif %}
 {% endmacro %}
