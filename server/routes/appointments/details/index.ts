@@ -10,11 +10,9 @@ export default function Index({ activitiesService }: Services): Router {
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
   const appointmentDetailsHandler = new AppointmentDetailsRoutes(activitiesService)
-
   const appointmentMovementSlipHandler = new AppointmentMovementSlipRoutes(activitiesService)
 
   get('/:id', appointmentDetailsHandler.GET)
-
   get('/movement-slip/:id', appointmentMovementSlipHandler.GET)
 
   return router

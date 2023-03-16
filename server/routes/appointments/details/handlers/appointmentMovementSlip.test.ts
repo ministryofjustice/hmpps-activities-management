@@ -73,8 +73,8 @@ describe('Route Handlers - Movement Slip', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/details/movement-slip', {
-        appointment: appointmentDetails,
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/individual', {
+        movementSlip: appointmentDetails,
       })
     })
   })

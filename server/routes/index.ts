@@ -38,7 +38,7 @@ export default function routes(services: Services): Router {
   router.use('/appointments', appointmentsHomeRoutes())
   router.use('/appointments/create-single', appointmentsCreateSingleRoutes(services))
   router.use('/appointments', appointmentDetailsRoutes(services))
-  router.use('/appointments/occurrence-details', appointmentOccurrenceDetailsRoutes(services))
+  router.use('/appointment/occurrence', appointmentOccurrenceDetailsRoutes(services))
 
   return router
 }
