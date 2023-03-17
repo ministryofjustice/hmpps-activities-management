@@ -15,7 +15,7 @@ import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
 import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
-import AppointmentMovementSlip from '../../pages/appointments/details/appointmentMovementSlip'
+import IndividualMovementSlip from '../../pages/appointments/movementSlip/individualMovementSlip'
 import { formatDate } from '../../../server/utils/utils'
 
 context('Create single appointment', () => {
@@ -105,13 +105,14 @@ context('Create single appointment', () => {
     appointmentDetailsPage.printMovementSlipLink().invoke('removeAttr', 'target')
     appointmentDetailsPage.printMovementSlipLink().click()
 
-    const appointmentMovementSlipPage = Page.verifyOnPage(AppointmentMovementSlip)
-    appointmentMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
-    appointmentMovementSlipPage.assertCategory('Chaplaincy')
-    appointmentMovementSlipPage.assertLocation('Chapel')
-    appointmentMovementSlipPage.assertStartDate(tomorrow)
-    appointmentMovementSlipPage.assertStartTime(14, 0)
-    appointmentMovementSlipPage.assertEndTime(15, 30)
-    appointmentMovementSlipPage.assertCreatedBy('J. Smith')
+    const individualMovementSlipPage = Page.verifyOnPage(IndividualMovementSlip)
+    individualMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
+    individualMovementSlipPage.assertCategory('Chaplaincy')
+    individualMovementSlipPage.assertLocation('Chapel')
+    individualMovementSlipPage.assertStartDate(tomorrow)
+    individualMovementSlipPage.assertStartTime(14, 0)
+    individualMovementSlipPage.assertEndTime(15, 30)
+    individualMovementSlipPage.assertComments('Appointment level comment')
+    individualMovementSlipPage.assertCreatedBy('J. Smith')
   })
 })

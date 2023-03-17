@@ -1,9 +1,9 @@
 import Page from '../../page'
 import { formatDate } from '../../../../server/utils/utils'
 
-export default class AppointmentMovementSlip extends Page {
+export default class IndividualMovementSlip extends Page {
   constructor() {
-    super('appointments-movement-slip-page')
+    super('individual-movement-slip-page')
   }
 
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {
@@ -24,6 +24,8 @@ export default class AppointmentMovementSlip extends Page {
 
   assertEndTime = (hour: number, minute: number) =>
     cy.get('[data-qa=date-and-time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
+
+  assertComments = (comments: string) => cy.get('[data-qa=comments]').contains(comments)
 
   assertCreatedBy = (createdBy: string) => cy.get('[data-qa=created-by]').contains(createdBy)
 }

@@ -1,0 +1,45 @@
+{% extends "layout.njk" %}
+
+{% macro labelAndValue(label, value) %}
+  <div class="movement-slip__section__values">
+    <div>
+      <strong>{{ label }}</strong>
+    </div>
+    <span data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value if value else "--" }}</span>
+  </div>
+{% endmacro %}
+
+{% set pageTitle = "Appointments Management - Movement Authorisation" %}
+{% set pageId = 'individual-movement-slip-page' %}
+
+{% block header %}
+{% endblock %}
+
+{% block beforeContent %}
+  <span class="govuk-visually-hidden" id="{{ pageId }}"></span>
+{% endblock %}
+
+{% block content %}
+  <div class="movement-slip">
+    <h1 class="govuk-heading-l">Movement authorisation</h1>
+    <div class="movement-slip__section">
+      {{ labelAndValue('Name', (movementSlip.prisoners[0].firstName  + ' ' + movementSlip.prisoners[0].lastName) | toTitleCase) }}
+      {{ labelAndValue('Prison number', movementSlip.prisoners[0].prisonerNumber) }}
+      {{ labelAndValue('Cell location', (movementSlip.prisoners[0].prisonCode + '-' + movementSlip.prisoners[0].cellLocation)) }}
+    </div>
+
+    <div class="movement-slip__section">
+      {{ labelAndValue('Date and time', (movementSlip.startDate | toDate | formatDate('EEEE d MMMM yyyy')) + ' - ' + movementSlip.startTime + ' to ' + movementSlip.endTime) }}
+      {{ labelAndValue('Moving to', movementSlip.internalLocation.description) }}
+      {{ labelAndValue('Reason', movementSlip.category.description) }}
+      {{ labelAndValue('Comments', movementSlip.comment) }}
+    </div>
+
+    <div class="movement-slip__section">
+      {{ labelAndValue('Created by', movementSlip.createdBy | fullName | toTitleCase | initialiseName) }}
+    </div>
+  </div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
