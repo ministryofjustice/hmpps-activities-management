@@ -35,14 +35,8 @@
       {{ labelAndValue('Comments', movementSlip.comment) }}
     </div>
 
-    {% if movementSlip.createdBy %}
-        {% set createBy = movementSlip.createdBy | fullName | toTitleCase | initialiseName %}
-    {% else %}
-        {% set createBy = '[Unknown User]' %}
-    {% endif %}
-
     <div class="movement-slip__section">
-      {{ labelAndValue('Created by', createBy) }}
+      {{ labelAndValue('Created by', movementSlip.createdBy | fullName | toTitleCase | initialiseName) }}
     </div>
   </div>
 {% endblock %}
