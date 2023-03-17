@@ -1,21 +1,23 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 
-import AppointmentMovementSlipRoutes from './appointmentMovementSlip'
+import OccurrenceMovementSlipRoutes from './occurrenceMovementSlip'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Movement Slip', () => {
-  const handler = new AppointmentMovementSlipRoutes(activitiesService)
+  const handler = new OccurrenceMovementSlipRoutes(activitiesService)
   let req: Request
   let res: Response
 
-  const appointmentDetails = {
+  const occurrenceDetails = {
     id: 10,
+    appointmentId: 5,
+    sequenceNumber: 2,
     category: {
       id: 40,
       code: 'MEOT',
@@ -32,6 +34,8 @@ describe('Route Handlers - Movement Slip', () => {
     startTime: '13:00',
     endTime: '13:15',
     comment: '',
+    isEdited: false,
+    isCancelled: false,
     created: '2023-02-17T10:22:04',
     createdBy: {
       firstName: 'John',
@@ -39,9 +43,8 @@ describe('Route Handlers - Movement Slip', () => {
     },
     updated: null,
     updatedBy: null,
-    occurrences: [{ id: 10 }],
     prisoners: [{ prisonerNumber: 'A1350DZ' }],
-  } as AppointmentDetails
+  } as AppointmentOccurrenceDetails
 
   beforeEach(() => {
     res = {
@@ -67,14 +70,14 @@ describe('Route Handlers - Movement Slip', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      when(activitiesService.getAppointmentDetails)
+      when(activitiesService.getAppointmentOccurrenceDetails)
         .calledWith(10, res.locals.user)
-        .mockResolvedValue(appointmentDetails)
+        .mockResolvedValue(occurrenceDetails)
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/individual', {
-        movementSlip: appointmentDetails,
+        movementSlip: occurrenceDetails,
       })
     })
   })
