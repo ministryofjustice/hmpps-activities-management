@@ -5,6 +5,7 @@ import validationMiddleware from '../../middleware/validationMiddleware'
 import ActivitiesRoutes from './handlers/activities'
 import { Services } from '../../services'
 import AttendanceListRoutes, { AttendanceList } from './handlers/attendanceList'
+import NotAttendedReasonRoutes, { NotAttendedReason } from './handlers/notAttendedReason'
 import CancelSessionReasonRoutes, { CancelReasonForm } from './handlers/cancel-session/reason'
 import CancelSessionConfirmationRoutes, { CancelConfirmForm } from './handlers/cancel-session/confirmation'
 
@@ -18,6 +19,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const selectPeriodHandler = new SelectPeriodRoutes()
   const activitiesHandler = new ActivitiesRoutes(activitiesService)
   const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService)
+  const notAttendedReasonHandler = new NotAttendedReasonRoutes(activitiesService)
   const cancelSessionReasonRoutes = new CancelSessionReasonRoutes()
   const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService)
 
@@ -27,6 +29,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/activities/:id/attendance-list', attendanceListHandler.GET)
   post('/activities/:id/attended', attendanceListHandler.ATTENDED, AttendanceList)
   post('/activities/:id/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
+  get('/activities/:id/not-attended-reason', notAttendedReasonHandler.GET)
+  post('/activities/:id/not-attended-reason', notAttendedReasonHandler.POST, NotAttendedReason)
   get('/activities/:id/cancel', cancelSessionReasonRoutes.GET)
   post('/activities/:id/cancel', cancelSessionReasonRoutes.POST, CancelReasonForm)
   get('/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.GET)

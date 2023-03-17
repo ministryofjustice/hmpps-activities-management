@@ -1,0 +1,25 @@
+[
+  {
+    "bookingId": 1177785,
+    "bookingNo": "28600A",
+    "offenderNo": "G5897GP",
+    "firstName": "Cudmastarie",
+    "middleName": "Hallone",
+    "lastName": "Aborah",
+    "agencyId": "MDI",
+    "assignedLivingUnitId": 25982,
+    "assignedLivingUnitDesc": "MDI-4-3-016",
+    "dateOfBirth": "1989-04-22"
+  },
+  {
+    "bookingId": 1151729,
+    "bookingNo": "02558A",
+    "offenderNo": "G7218GI",
+    "firstName": "Eeteljan",
+    "lastName": "Arianniver",
+    "agencyId": "MDI",
+    "assignedLivingUnitId": 25640,
+    "assignedLivingUnitDesc": "MDI-1-3-024",
+    "dateOfBirth": "1993-02-08"
+  }
+]

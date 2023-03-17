@@ -312,10 +312,35 @@ export interface components {
        */
       id: number
       /**
-       * @description The reason codes- ABS, ACCAB, ATT, CANC, NREQ, SUS, UNACAB, REST
-       * @example ATT
+       * @description The reason codes- SICK, REFUSED, NOT_REQUIRED, REST, CLASH, OTHER, SUSPENDED, CANCELLED, ATTENDED
+       * @example ATTENDED
        */
       attendanceReason: string
+      /**
+       * @description Comments such as more detail for SICK
+       * @example Prisoner has COVID-19
+       */
+      comment?: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description Case note provided for REFUSED
+       * @example Prisoner refused to attend the scheduled activity without reasonable excuse
+       */
+      caseNote?: string
+      /**
+       * @description Was an incentive level warning issued for REFUSED
+       * @example true
+       */
+      incentiveLevelWarningIssued?: boolean
+      /**
+       * @description The absence reason for OTHER
+       * @example Prisoner has another reason for missing the activity
+       */
+      otherAbsenceReason?: string
     }
     ErrorResponse: {
       /** Format: int32 */
@@ -1684,20 +1709,65 @@ export interface components {
     AttendanceReason: {
       /**
        * Format: int64
-       * @description The internally-generated ID for this absence reason
-       * @example 123456
+       * @description The internally generated identifier for this (non) attendance reason
+       * @example 1
        */
       id: number
       /**
-       * @description The reason codes - ABS, ACCAB, ATT, CANC, NREQ, SUS, UNACAB, REST
-       * @example ABS
+       * @description The code for the (non) attendance reason
+       * @example SICK
        */
       code: string
       /**
-       * @description The detailed description for this attendance reason
-       * @example Unacceptable absence
+       * @description The description of the (non) attendance reason
+       * @example Sick
        */
       description: string
+      /**
+       * @description A flag to show whether the reason is Attended (true) or Not Attended (false)
+       * @example true
+       */
+      attended: boolean
+      /**
+       * @description A flag to show whether or not to capture whether the prisoner should still be paid
+       * @example true
+       */
+      capturePay: boolean
+      /**
+       * @description A flag to show whether or not to capture more detail
+       * @example true
+       */
+      captureMoreDetail: boolean
+      /**
+       * @description A flag to show whether or not to capture a case note
+       * @example true
+       */
+      captureCaseNote: boolean
+      /**
+       * @description A flag to show whether or not to capture whether an incentive level warning has been issued due to non attendance
+       * @example false
+       */
+      captureIncentiveLevelWarning: boolean
+      /**
+       * @description A flag to show whether or not to capture other text
+       * @example false
+       */
+      captureOtherText: boolean
+      /**
+       * @description A flag to show whether or not the reason should be displayed in the UI as an option for non attendance
+       * @example false
+       */
+      displayInAbsence: boolean
+      /**
+       * @description The sequence in which the reason should be displayed in the UI
+       * @example 1
+       */
+      displaySequence?: number
+      /**
+       * @description Any internal notes to explain the use of the reason
+       * @example Maps to ACCAB in NOMIS
+       */
+      notes: string
     }
     /** @description Defines one eligibility rule */
     EligibilityRule: {

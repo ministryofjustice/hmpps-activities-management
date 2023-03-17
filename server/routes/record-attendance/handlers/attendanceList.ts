@@ -4,7 +4,7 @@ import { Expose, Transform } from 'class-transformer'
 import ActivitiesService from '../../../services/activitiesService'
 import { getAttendanceSummary, toDate } from '../../../utils/utils'
 import PrisonService from '../../../services/prisonService'
-import { ScheduledActivity, ScheduledEvent } from '../../../@types/activitiesAPI/types'
+import { Attendance, ScheduledActivity, ScheduledEvent } from '../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../validators/hasAtLeastOne'
 
 export class AttendanceList {
@@ -63,19 +63,81 @@ export default class AttendanceListRoutes {
     const { user } = res.locals
 
     if (selectedAttendances) {
-      const attendances = selectedAttendances.map(attendance => ({
-        id: +attendance,
-        attendanceReason: 'ATT',
-      }))
-      await this.activitiesService.updateAttendances(attendances, user)
+      const selectedAttendanceIds: number[] = []
+      selectedAttendances.forEach(selectAttendee => selectedAttendanceIds.push(Number(selectAttendee.split('-')[0])))
+
+      if (selectedAttendanceIds) {
+        const attendances = selectedAttendanceIds.map(attendance => ({
+          id: +attendance,
+          attendanceReason: 'ATTENDED',
+        }))
+        await this.activitiesService.updateAttendances(attendances, user)
+      }
     }
 
     return res.redirect('attendance-list')
   }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    res.status(419)
-    res.send('NOT ATTENDED : Under construction 🛠️')
+    const instanceId = req.params.id
+    const { user } = res.locals
+    const { selectedAttendances }: { selectedAttendances: string[] } = req.body
+
+    const selectedPrisoners: string[] = []
+    selectedAttendances.forEach(selectAttendee => selectedPrisoners.push(selectAttendee.split('-')[1]))
+
+    req.session.notAttendedJourney = {}
+    if (!req.session.notAttendedJourney.selectedPrisoners) {
+      req.session.notAttendedJourney.selectedPrisoners = []
+    }
+
+    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
+
+    const otherScheduledEvents = await this.activitiesService
+      .getScheduledEventsForPrisoners(toDate(instance.date), selectedPrisoners, user)
+      .then(response => [
+        ...response.activities,
+        ...response.appointments,
+        ...response.courtHearings,
+        ...response.visits,
+      ])
+      .then(events => events.filter(e => e.eventId !== +instanceId))
+      .then(events => events.filter(e => this.eventClashes(e, instance)))
+
+    const nonAttendees = await this.prisonService.getInmateDetails(selectedPrisoners, user).then(inmates =>
+      inmates.map(i => ({
+        name: `${i.firstName} ${i.lastName}`,
+        prisonerNumber: i.offenderNo,
+        location: i.assignedLivingUnitDesc,
+        otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.offenderNo),
+        attendanceLabel: this.getAttendanceLabel(i.offenderNo, instance.attendances),
+        attendanceId: this.getAttendanceId(i.offenderNo, instance.attendances),
+      })),
+    )
+
+    nonAttendees.forEach(nonAttendee => {
+      req.session.notAttendedJourney.selectedPrisoners.push({
+        attendanceId: nonAttendee.attendanceId,
+        prisonerNumber: nonAttendee.prisonerNumber,
+        prisonerName: nonAttendee.name,
+        otherEvents: nonAttendee.otherEvents,
+      })
+    })
+
+    res.redirect(`/attendance/activities/${instanceId}/not-attended-reason`)
+  }
+
+  private getAttendanceLabel = (prisonerNumber: string, attendances: Attendance[]) => {
+    const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
+    if (attendance.status === 'WAITING') {
+      return 'Not recorded yet'
+    }
+    return attendance.attendanceReason.description === 'ATTENDED' ? 'Attended' : 'Absent'
+  }
+
+  private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {
+    const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
+    return attendance.id
   }
 
   private eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity): boolean => {

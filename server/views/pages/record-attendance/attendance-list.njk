@@ -89,8 +89,9 @@
     {% for attendee in attendees %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.name,
-            value: attendee.attendance.id,
-            selectable: attendee.attendance.status === "WAIT",
+            value: attendee.attendance.id + '-' + attendee.prisonerNumber,
+            selectable: attendee.attendance.status === "WAITING",
+
             items: [
                 {
                     html: '<span class="print-checkbox govuk-!-margin-left-3"></span>',
@@ -187,7 +188,7 @@
 
 {# TODO – Render recorded pay status for attended activities #}
 {% macro renderPayStatus(attendance) %}
-    {% if attendance.attendanceReason.code ===  'ATT' or attendance.payAmount > 0 %}
+    {% if attendance.attendanceReason.code ===  'ATTENDED' or attendance.payAmount > 0 %}
         {{ govukTag({
             text: "Pay",
             classes: "govuk-tag--green"

@@ -33,6 +33,9 @@ describe('Route Handlers - Attendance List', () => {
 
     req = {
       params: { id: 1 },
+      session: {
+        notAttendedJourney: {},
+      },
       body: {},
     } as unknown as Request
   })
@@ -55,9 +58,9 @@ describe('Route Handlers - Attendance List', () => {
             internalLocation: { description: 'Houseblock 1' },
           },
           attendances: [
-            { prisonerNumber: 'ABC123', status: 'SCHEDULED' },
-            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
-            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+            { prisonerNumber: 'ABC123', status: 'WAITING' },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
           ],
         } as ScheduledActivity)
 
@@ -114,9 +117,9 @@ describe('Route Handlers - Attendance List', () => {
             internalLocation: { description: 'Houseblock 1' },
           },
           attendances: [
-            { prisonerNumber: 'ABC123', status: 'SCHEDULED' },
-            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
-            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+            { prisonerNumber: 'ABC123', status: 'WAITING' },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
           ],
         },
         attendees: expect.arrayContaining([
@@ -133,7 +136,7 @@ describe('Route Handlers - Attendance List', () => {
               },
             ],
             prisonerNumber: 'ABC123',
-            attendance: { prisonerNumber: 'ABC123', status: 'SCHEDULED' },
+            attendance: { prisonerNumber: 'ABC123', status: 'WAITING' },
           },
           {
             location: 'MDI-1-002',
@@ -148,14 +151,14 @@ describe('Route Handlers - Attendance List', () => {
               },
             ],
             prisonerNumber: 'ABC321',
-            attendance: { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
+            attendance: { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
           },
           {
             location: 'MDI-1-003',
             name: 'Mr Blobby',
             otherEvents: [],
             prisonerNumber: 'ZXY123',
-            attendance: { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+            attendance: { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
           },
         ]),
       })
@@ -174,11 +177,11 @@ describe('Route Handlers - Attendance List', () => {
         [
           {
             id: 1,
-            attendanceReason: 'ATT',
+            attendanceReason: 'ATTENDED',
           },
           {
             id: 2,
-            attendanceReason: 'ATT',
+            attendanceReason: 'ATTENDED',
           },
         ],
         { username: 'joebloggs' },
@@ -187,11 +190,73 @@ describe('Route Handlers - Attendance List', () => {
       expect(res.redirect).toBeCalledWith('attendance-list')
     })
 
-    it("shouldn't update attendance when no pirsoners have been selected", async () => {
+    it("shouldn't update attendance when no prisoners have been selected", async () => {
       await handler.ATTENDED(req, res)
 
       expect(activitiesService.updateAttendances).toBeCalledTimes(0)
       expect(res.redirect).toBeCalledWith('attendance-list')
+    })
+
+    it('non attendance should be redirected to the non attendance page', async () => {
+      req = {
+        params: { id: 1 },
+        session: {
+          notAttendedJourney: {},
+        },
+        body: {
+          selectedAttendances: ['1-ABC123'],
+        },
+      } as unknown as Request
+
+      when(activitiesService.getScheduledActivity)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({
+          id: 1,
+          date: format(new Date(), '2022-12-08'),
+          startTime: '10:00',
+          endTime: '11:00',
+          activitySchedule: {
+            activity: { summary: 'Maths level 1' },
+            internalLocation: { description: 'Houseblock 1' },
+          },
+          attendances: [
+            { prisonerNumber: 'ABC123', status: 'WAITING' },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+          ],
+        } as ScheduledActivity)
+
+      when(activitiesService.getScheduledEventsForPrisoners)
+        .calledWith(new Date(2022, 11, 8), ['ABC123'], res.locals.user)
+        .mockResolvedValue({
+          activities: [
+            { eventId: 1, eventDesc: 'Maths', startTime: '10:00', endTime: '11:00', prisonerNumber: 'ABC123' },
+          ],
+          appointments: [
+            {
+              eventId: 2,
+              eventDesc: 'Appointment with the guv',
+              startTime: '15:00',
+              endTime: '16:00',
+              prisonerNumber: 'ABC123',
+            },
+          ],
+          courtHearings: [
+            { eventId: 3, eventDesc: 'Video link', startTime: '09:00', endTime: '10:00', prisonerNumber: 'ABC123' },
+            { eventId: 4, eventDesc: 'Video link', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC321' },
+          ],
+          visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC123' }],
+        } as PrisonerScheduledEvents)
+
+      when(prisonService.getInmateDetails)
+        .calledWith(['ABC123'], res.locals.user)
+        .mockResolvedValue([
+          { offenderNo: 'ABC123', firstName: 'Joe', lastName: 'Bloggs', assignedLivingUnitDesc: 'MDI-1-001' },
+        ] as InmateBasicDetails[])
+
+      await handler.NOT_ATTENDED(req, res)
+
+      expect(res.redirect).toBeCalledWith('/attendance/activities/1/not-attended-reason')
     })
   })
 })

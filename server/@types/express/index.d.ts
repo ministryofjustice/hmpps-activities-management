@@ -7,6 +7,7 @@ import { CreateAnActivityJourney } from '../../routes/create-an-activity/journey
 import { CreateScheduleJourney } from '../../routes/manage-schedules/create-schedule/journey'
 import { CreateSingleAppointmentJourney } from '../../routes/appointments/create-single/journey'
 import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
+import { NotAttendedJourney } from '../../routes/record-attendance/journey'
 import { RecordAttendanceRequests } from '../../routes/record-attendance/recordAttendanceRequests'
 
 // eslint-disable-next-line import/no-cycle
@@ -28,6 +29,7 @@ declare module 'express-session' {
     createSingleAppointmentJourney: CreateSingleAppointmentJourney
     calendarSpikeJourney: CalendarSpikeJourney
     unlockFilters: UnlockFilters
+    notAttendedJourney: NotAttendedJourney
     recordAttendanceRequests: RecordAttendanceRequests
   }
 }

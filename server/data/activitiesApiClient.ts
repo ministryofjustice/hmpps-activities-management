@@ -24,6 +24,7 @@ import {
   Appointment,
   AppointmentCategory,
   AppointmentCreateRequest,
+  AttendanceReason,
   AppointmentDetails,
   AppointmentOccurrenceDetails,
   ScheduleInstanceCancelRequest,
@@ -46,6 +47,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
     return this.get({
       path: `/activity-categories`,
+      authToken: user.token,
+    })
+  }
+
+  async getAttendanceReasons(user: ServiceUser): Promise<AttendanceReason[]> {
+    return this.get({
+      path: `/attendance-reasons`,
       authToken: user.token,
     })
   }

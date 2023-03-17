@@ -18,4 +18,6 @@ export default class AttendanceListPage extends Page {
       .contains(status)
 
   markAsAttended = () => cy.get('button').contains('Mark as attended').click()
+
+  markAsNotAttended = () => cy.get('button').contains('Mark as not attended').click()
 }

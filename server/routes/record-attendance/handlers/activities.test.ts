@@ -41,9 +41,9 @@ describe('Route Handlers - Activities', () => {
           internalLocation: { description: 'Classroom' },
         },
         attendances: [
-          { status: 'SCHEDULED' },
-          { status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
-          { status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+          { status: 'WAITING' },
+          { status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+          { status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
         ],
       },
       {
@@ -56,9 +56,9 @@ describe('Route Handlers - Activities', () => {
           internalLocation: { description: 'Classroom 2' },
         },
         attendances: [
-          { status: 'SCHEDULED' },
-          { status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
-          { status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+          { status: 'WAITING' },
+          { status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+          { status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
         ],
       },
     ] as ScheduledActivity[]

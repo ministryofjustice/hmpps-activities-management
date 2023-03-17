@@ -1,14 +1,15 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% set statusColours = {
-  ABS: "govuk-tag--yellow",
-  ACCAB: "govuk-tag--yellow",
-  ATT: "govuk-tag--dark-green",
-  CANC: "",
-  NREQ: "govuk-tag--yellow",
-  SUS: "govuk-tag--yellow",
-  UNACAB: "govuk-tag--red",
-  REST: "govuk-tag--yellow"
+  SICK: "govuk-tag--yellow",
+  CLASH: "govuk-tag--yellow",
+  ATTENDED: "govuk-tag--dark-green",
+  CANCELLED: "",
+  NOT_REQUIRED: "govuk-tag--yellow",
+  SUSPENDED: "govuk-tag--yellow",
+  REFUSED: "govuk-tag--red",
+  REST: "govuk-tag--yellow",
+  OTHER: "govuk-tag--yellow"
 } %}
 
 {% macro attendanceTag(attendance) %}

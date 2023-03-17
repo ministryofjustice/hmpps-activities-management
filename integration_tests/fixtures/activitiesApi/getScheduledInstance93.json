@@ -11,7 +11,7 @@
       "id": 4,
       "prisonerNumber": "A7789DY",
       "attendanceReason": {
-        "code": "ATT",
+        "code": "ATTENDED",
         "description": "Attended"
       },
       "comment": null,
@@ -27,7 +27,7 @@
       "id": 3,
       "prisonerNumber": "G4572UO",
       "attendanceReason": {
-        "code": "ATT",
+        "code": "ATTENDED",
         "description": "Attended"
       },
       "comment": null,
@@ -47,7 +47,7 @@
       "posted": false,
       "recordedTime": null,
       "recordedBy": null,
-      "status": "WAIT",
+      "status": "WAITING",
       "payAmount": null,
       "bonusAmount": null,
       "pieces": null
@@ -60,7 +60,7 @@
       "posted": false,
       "recordedTime": null,
       "recordedBy": null,
-      "status": "WAIT",
+      "status": "WAITING",
       "payAmount": null,
       "bonusAmount": null,
       "pieces": null
