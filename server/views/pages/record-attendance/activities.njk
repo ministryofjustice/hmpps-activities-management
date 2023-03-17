@@ -92,6 +92,22 @@
                             },
                             classes: 'govuk-table__cell--numeric',
                             text: activity.attended
+                        },
+                        {
+                            attributes: {
+                                id: 'notRecorded-' + tableNumber + '-' + loop.index,
+                                "data-sort-value": activity.notRecorded
+                            },
+                            classes: 'govuk-table__cell--numeric',
+                            text: activity.notRecorded
+                        },
+                        {
+                            attributes: {
+                                id: 'notAttended-' + tableNumber + '-' + loop.index,
+                                "data-sort-value": activity.notAttended
+                            },
+                            classes: 'govuk-table__cell--numeric',
+                            text: activity.notAttended
                         }
                     ]), rows) %}
                 {% endfor %}
@@ -124,11 +140,31 @@
                         },
                         {
                             text: "Scheduled",
-                            classes: 'govuk-table__header--numeric'
+                            classes: 'govuk-table__header--numeric',
+                            attributes: {
+                                "aria-sort": "none"
+                            }
                         },
                         {
                             text: "Attended",
-                            classes: 'govuk-table__header--numeric'
+                            classes: 'govuk-table__header--numeric',
+                            attributes: {
+                                "aria-sort": "none"
+                            }
+                        },
+                        {
+                            text: "Not recorded",
+                            classes: 'govuk-table__header--numeric',
+                            attributes: {
+                                "aria-sort": "none"
+                            }
+                        },
+                        {
+                            text: "All absences",
+                            classes: 'govuk-table__header--numeric',
+                            attributes: {
+                                "aria-sort": "none"
+                            }
                         }
                     ],
                     rows: rows
