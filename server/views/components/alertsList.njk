@@ -1,0 +1,33 @@
+{% macro alertsList(params) %}
+    <ul class="alerts-list">
+        {% set alertCodes = [] %}
+        {% for alert in params.alerts %}
+            {% set alertCodes = (alertCodes.push(alert.alertCode), alertCodes) %}
+        {% endfor %}
+
+        {% if 'HA' in alertCodes %}
+            <li class='alert-status alert-status--acct'>ACCT</li>
+        {% endif %}
+        {% if params.category == 'A' or params.category == 'E' %}
+            <li class='cat-a-status cat-a-status--{{ params.category | lower }}'>CAT A</li>
+        {% endif %}
+        {% if params.category == 'H' %}
+            <li class='cat-a-status cat-a-status--{{ params.category | lower }}'>CAT A Higher</li>
+        {% endif %}
+        {% if params.category == 'P' %}
+            <li class='cat-a-status cat-a-status--{{ params.category | lower }}'>CAT A Provisional</li>
+        {% endif %}
+        {% if 'XCU' in alertCodes %}
+            <li class='alert-status alert-status--controlled-unlock'>Controlled Unlock</li>
+        {% endif %}
+        {% if 'XEL' in alertCodes %}
+            <li class='alert-status alert-status--elist'>E-List</li>
+        {% endif %}
+        {% if 'PEEP' in alertCodes %}
+            <li class='alert-status alert-status--disability'>
+                <img src='/assets/images/disability_icon.png' alt='PEEP'>
+                PEEP
+            </li>
+        {% endif %}
+    </ul>
+{% endmacro %}

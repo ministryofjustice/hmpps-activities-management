@@ -613,4 +613,18 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('putCancelScheduledActivity', () => {
+    it('should cancel scheduled activity', async () => {
+      fakeActivitiesApi.put('/scheduled-instances/1/cancel').matchHeader('authorization', `Bearer token`).reply(200)
+
+      const body = {
+        reason: 'Cancellation reason',
+        username: 'USER1',
+      }
+
+      await activitiesApiClient.putCancelScheduledActivity(1, body, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

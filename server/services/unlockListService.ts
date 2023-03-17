@@ -5,7 +5,6 @@ import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
 import { ScheduledEvent } from '../@types/activitiesAPI/types'
 import { convertToTitleCase, toDateString } from '../utils/utils'
-import logger from '../../logger'
 
 export default class UnlockListService {
   constructor(
@@ -34,8 +33,6 @@ export default class UnlockListService {
       1024,
       user,
     )
-
-    logger.info(`Prisoner search results count = ${results.totalElements}`)
 
     // Create unlock list items for each prisoner returned and populate their sub-location by cell-matching
     const prisoners = results?.content?.map(prisoner => {
@@ -67,11 +64,6 @@ export default class UnlockListService {
       user,
       unlockFilters.timeSlot,
     )
-
-    logger.info(`Total activities: ${scheduledEvents?.activities.length}`)
-    logger.info(`Total visits: ${scheduledEvents?.visits.length}`)
-    logger.info(`Total appointments: ${scheduledEvents?.appointments.length}`)
-    logger.info(`Total court hearings: ${scheduledEvents?.courtHearings.length}`)
 
     // TODO: Adjudication hearings (Check with Adjudications team for rolled-out prisons and API options)
     // TODO: Transfers - already have endpoint in prisonAPI for these
@@ -112,8 +104,6 @@ export default class UnlockListService {
     } else {
       filteredItems = activityFilteredItems.filter(item => !this.isLeaving(item))
     }
-
-    logger.info(`Number of unlock list items ${filteredItems?.length}`)
 
     return filteredItems
   }

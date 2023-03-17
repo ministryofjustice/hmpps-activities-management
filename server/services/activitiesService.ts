@@ -26,10 +26,12 @@ import {
   AppointmentCreateRequest,
   AppointmentDetails,
   AppointmentOccurrenceDetails,
+  ScheduleInstanceCancelRequest,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
+import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
 
 const processError = (error: SanitisedError): undefined => {
   if (!error.status) throw error
@@ -262,5 +264,17 @@ export default class ActivitiesService {
 
   createAppointment(appointment: AppointmentCreateRequest, user: ServiceUser): Promise<Appointment> {
     return this.activitiesApiClient.postCreateAppointment(appointment, user)
+  }
+
+  async cancelScheduledActivity(
+    scheduleInstanceId: number,
+    cancelRequest: SessionCancellationRequest,
+    user: ServiceUser,
+  ) {
+    const scheduleInstanceCancelRequest: ScheduleInstanceCancelRequest = {
+      ...cancelRequest,
+      username: user.username,
+    }
+    return this.activitiesApiClient.putCancelScheduledActivity(scheduleInstanceId, scheduleInstanceCancelRequest, user)
   }
 }

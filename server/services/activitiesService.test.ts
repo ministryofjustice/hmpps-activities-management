@@ -41,7 +41,7 @@ describe('Activities Service', () => {
   const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
   const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
 
-  const user = { activeCaseLoadId: 'MDI' } as ServiceUser
+  const user = { activeCaseLoadId: 'MDI', username: 'USER1' } as ServiceUser
 
   const mockedLocationGroups = [{ name: 'Houseblock 1', key: 'Houseblock 1', children: [] }] as LocationGroup[]
 
@@ -431,6 +431,25 @@ describe('Activities Service', () => {
       const response = await activitiesService.createAppointment(request, user)
 
       expect(response).toEqual(expectedResponse)
+    })
+  })
+
+  describe('cancelScheduledActivity', () => {
+    it('should cancel scheduled activity', async () => {
+      const serviceRequest = {
+        reason: 'Cancel reason',
+        comment: 'Cancel comment',
+      }
+
+      const apiRequest = {
+        reason: 'Cancel reason',
+        comment: 'Cancel comment',
+        username: user.username,
+      }
+
+      await activitiesService.cancelScheduledActivity(1, serviceRequest, user)
+
+      expect(activitiesApiClient.putCancelScheduledActivity).toHaveBeenCalledWith(1, apiRequest, user)
     })
   })
 })
