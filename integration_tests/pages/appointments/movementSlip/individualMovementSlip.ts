@@ -1,9 +1,9 @@
 import Page from '../../page'
 import { formatDate } from '../../../../server/utils/utils'
 
-export default class AppointmentMovementSlip extends Page {
+export default class IndividualMovementSlip extends Page {
   constructor() {
-    super('appointments-movement-slip-page')
+    super('individual-movement-slip-page')
   }
 
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {

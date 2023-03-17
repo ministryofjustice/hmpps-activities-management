@@ -19,6 +19,7 @@ import ConfirmationPage from '../../pages/appointments/createSingle/confirmation
 import { formatDate } from '../../../server/utils/utils'
 import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
+import IndividualMovementSlip from '../../pages/appointments/movementSlip/individualMovementSlip'
 
 context('Create individual repeat appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -111,6 +112,7 @@ context('Create individual repeat appointment', () => {
     )
     appointmentDetailsPage.assertCreatedBy('J. Smith')
 
+    // View appointment occurrence
     appointmentDetailsPage.viewEditOccurrenceLink(2).click()
     const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
     occurrenceDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
@@ -122,25 +124,25 @@ context('Create individual repeat appointment', () => {
     occurrenceDetailsPage.assertCreatedBy('J. Smith')
     occurrenceDetailsPage.assertPrintMovementSlipLink()
 
+    // Go back to appointment details
     occurrenceDetailsPage.back()
-
     Page.verifyOnPage(AppointmentDetailsPage)
-    appointmentDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
-    appointmentDetailsPage.assertCategory('Chaplaincy')
-    appointmentDetailsPage.assertLocation('Chapel')
-    appointmentDetailsPage.assertStartDate(tomorrow)
-    appointmentDetailsPage.assertStartTime(14, 0)
-    appointmentDetailsPage.assertEndTime(15, 30)
-    appointmentDetailsPage.assertRepeat('Yes')
-    appointmentDetailsPage.assertRepeatPeriod('Weekly')
-    appointmentDetailsPage.assertRepeatCount('2')
-    appointmentDetailsPage.assertOccurrences(
-      new Map([
-        [1, formatDate(tomorrow, 'd MMM yyyy')],
-        [2, formatDate(weekTomorrow, 'd MMM yyyy')],
-      ]),
-    )
-    appointmentDetailsPage.assertCreatedBy('J. Smith')
+
+    // Print occurrence movement slip
+    appointmentDetailsPage.viewEditOccurrenceLink(2).click()
+    Page.verifyOnPage(OccurrenceDetailsPage)
+
+    occurrenceDetailsPage.printMovementSlipLink().invoke('removeAttr', 'target')
+    occurrenceDetailsPage.printMovementSlipLink().click()
+
+    const occurrenceMovementSlipPage = Page.verifyOnPage(IndividualMovementSlip)
+    occurrenceMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
+    occurrenceMovementSlipPage.assertCategory('Chaplaincy')
+    occurrenceMovementSlipPage.assertLocation('Chapel')
+    occurrenceMovementSlipPage.assertStartDate(weekTomorrow)
+    occurrenceMovementSlipPage.assertStartTime(14, 0)
+    occurrenceMovementSlipPage.assertEndTime(15, 30)
+    occurrenceMovementSlipPage.assertCreatedBy('J. Smith')
   })
 
   it('Create individual repeat appointment - back links', () => {
