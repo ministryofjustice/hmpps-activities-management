@@ -210,9 +210,9 @@ describe('utils', () => {
   describe('getAttendanceSummary', () => {
     it('calculates the attendance summary', () => {
       const attendance = [
-        { status: 'SCHEDULED' },
-        { status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
-        { status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+        { status: 'WAITING' },
+        { status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+        { status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
       ] as Attendance[]
 
       expect(getAttendanceSummary(attendance)).toEqual({

@@ -70,7 +70,7 @@ describe('Route Handlers - Non Attendance', () => {
           },
           {
             id: 2,
-            code: 'ATT',
+            code: 'ATTENDED',
             description: 'Attended',
             attended: true,
             capturePay: false,

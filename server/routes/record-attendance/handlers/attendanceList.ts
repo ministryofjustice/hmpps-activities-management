@@ -69,7 +69,7 @@ export default class AttendanceListRoutes {
       if (selectedAttendanceIds) {
         const attendances = selectedAttendanceIds.map(attendance => ({
           id: +attendance,
-          attendanceReason: 'ATT',
+          attendanceReason: 'ATTENDED',
         }))
         await this.activitiesService.updateAttendances(attendances, user)
       }
@@ -132,7 +132,7 @@ export default class AttendanceListRoutes {
     if (attendance.status === 'WAITING') {
       return 'Not recorded yet'
     }
-    return attendance.attendanceReason.description === 'ATT' ? 'Attended' : 'Absent'
+    return attendance.attendanceReason.description === 'ATTENDED' ? 'Attended' : 'Absent'
   }
 
   private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {

@@ -29,7 +29,7 @@
   },
   {
     "id": 3,
-    "code": "NREQ",
+    "code": "NOT_REQUIRED",
     "description": "Not required or excused",
     "attended": false,
     "capturePay": false,
@@ -85,7 +85,7 @@
   },
   {
     "id": 7,
-    "code": "SUSP",
+    "code": "SUSPENDED",
     "description": "Suspended",
     "attended": false,
     "capturePay": false,
@@ -99,7 +99,7 @@
   },
   {
     "id": 8,
-    "code": "CANC",
+    "code": "CANCELLED",
     "description": "Cancelled",
     "attended": false,
     "capturePay": false,
@@ -113,7 +113,7 @@
   },
   {
     "id": 9,
-    "code": "ATT",
+    "code": "ATTENDED",
     "description": "Attended",
     "attended": true,
     "capturePay": false,

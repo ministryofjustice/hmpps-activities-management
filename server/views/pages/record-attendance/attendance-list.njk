@@ -188,7 +188,7 @@
 
 {# TODO – Render recorded pay status for attended activities #}
 {% macro renderPayStatus(attendance) %}
-    {% if attendance.attendanceReason.code ===  'ATT' or attendance.payAmount > 0 %}
+    {% if attendance.attendanceReason.code ===  'ATTENDED' or attendance.payAmount > 0 %}
         {{ govukTag({
             text: "Pay",
             classes: "govuk-tag--green"

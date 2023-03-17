@@ -255,8 +255,8 @@ export const existsInStringArray = (key: string, arr: string[]): boolean => {
 
 export const getAttendanceSummary = (attendance: Attendance[]) => {
   const allocated = attendance.length
-  const attended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason.code === 'ATT').length
-  const notAttended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason.code !== 'ATT').length
+  const attended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason.code === 'ATTENDED').length
+  const notAttended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason.code !== 'ATTENDED').length
   const notRecorded = allocated - attended - notAttended
 
   return { allocated, attended, notAttended, notRecorded }

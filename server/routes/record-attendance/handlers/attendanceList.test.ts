@@ -58,9 +58,9 @@ describe('Route Handlers - Attendance List', () => {
             internalLocation: { description: 'Houseblock 1' },
           },
           attendances: [
-            { prisonerNumber: 'ABC123', status: 'SCHEDULED' },
-            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
-            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+            { prisonerNumber: 'ABC123', status: 'WAITING' },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
           ],
         } as ScheduledActivity)
 
@@ -117,9 +117,9 @@ describe('Route Handlers - Attendance List', () => {
             internalLocation: { description: 'Houseblock 1' },
           },
           attendances: [
-            { prisonerNumber: 'ABC123', status: 'SCHEDULED' },
-            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
-            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+            { prisonerNumber: 'ABC123', status: 'WAITING' },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
           ],
         },
         attendees: expect.arrayContaining([
@@ -136,7 +136,7 @@ describe('Route Handlers - Attendance List', () => {
               },
             ],
             prisonerNumber: 'ABC123',
-            attendance: { prisonerNumber: 'ABC123', status: 'SCHEDULED' },
+            attendance: { prisonerNumber: 'ABC123', status: 'WAITING' },
           },
           {
             location: 'MDI-1-002',
@@ -151,14 +151,14 @@ describe('Route Handlers - Attendance List', () => {
               },
             ],
             prisonerNumber: 'ABC321',
-            attendance: { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
+            attendance: { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
           },
           {
             location: 'MDI-1-003',
             name: 'Mr Blobby',
             otherEvents: [],
             prisonerNumber: 'ZXY123',
-            attendance: { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+            attendance: { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
           },
         ]),
       })
@@ -177,11 +177,11 @@ describe('Route Handlers - Attendance List', () => {
         [
           {
             id: 1,
-            attendanceReason: 'ATT',
+            attendanceReason: 'ATTENDED',
           },
           {
             id: 2,
-            attendanceReason: 'ATT',
+            attendanceReason: 'ATTENDED',
           },
         ],
         { username: 'joebloggs' },
@@ -221,8 +221,8 @@ describe('Route Handlers - Attendance List', () => {
           },
           attendances: [
             { prisonerNumber: 'ABC123', status: 'WAITING' },
-            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATT' } },
-            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'ABS' } },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
           ],
         } as ScheduledActivity)
 
