@@ -114,7 +114,7 @@
         actions: {
             items: [
                 {
-                    href: "occurrence-details/" + occurrence.id,
+                    href: "/appointment/occurrence/" + occurrence.id,
                     text: "View and edit",
                     visuallyHiddenText: "view and edit occurrence " + occurrence.sequenceNumber,
                     classes: "govuk-link--no-visited-state",
@@ -161,7 +161,7 @@
             }) }}
 
             <p class="govuk-body govuk-!-display-none-print no-js-hidden">
-                <a href="/appointments/movement-slip/{{ appointment.id }}" target="_blank" class="govuk-link govuk-link--no-visited-state" data-qa="print-movement-slip-link">Print movement slip</a>
+                <a href="movement-slip/{{ appointment.id }}" target="_blank" class="govuk-link govuk-link--no-visited-state" data-qa="print-movement-slip-link">Print movement slip</a>
             </p>
         </div>
     </div>
