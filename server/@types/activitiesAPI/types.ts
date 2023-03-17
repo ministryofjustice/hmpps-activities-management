@@ -22,12 +22,16 @@ export type ActivityScheduleCreateRequest = components['schemas']['ActivitySched
 export type Slot = components['schemas']['Slot']
 export type PrisonPayBand = components['schemas']['PrisonPayBand']
 export type AppointmentCategory = components['schemas']['AppointmentCategory']
+export type AppointmentCategorySummary = components['schemas']['AppointmentCategorySummary']
+export type AppointmentLocationSummary = components['schemas']['AppointmentLocationSummary']
 export type Appointment = components['schemas']['Appointment']
 export type AppointmentOccurrence = components['schemas']['AppointmentOccurrence']
 export type AppointmentCreateRequest = components['schemas']['AppointmentCreateRequest']
 export type AppointmentDetails = components['schemas']['AppointmentDetails']
 export type AppointmentOccurrenceDetails = components['schemas']['AppointmentOccurrenceDetails']
 export type ScheduleInstanceCancelRequest = components['schemas']['ScheduleInstanceCancelRequest']
+export type UserSummary = components['schemas']['UserSummary']
+export type PrisonerSummary = components['schemas']['PrisonerSummary']
 
 export enum AppointmentRepeatPeriod {
   WEEKDAY = 'WEEKDAY',

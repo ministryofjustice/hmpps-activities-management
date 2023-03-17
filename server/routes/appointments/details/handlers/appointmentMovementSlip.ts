@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
+import { MovementSlip } from '../../../../@types/appointments'
 
 export default class AppointmentMovementSlipRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -8,7 +9,7 @@ export default class AppointmentMovementSlipRoutes {
     const { user } = res.locals
     const { id } = req.params
 
-    const movementSlip = await this.activitiesService.getAppointmentDetails(+id, user)
+    const movementSlip = (await this.activitiesService.getAppointmentDetails(+id, user)) as MovementSlip
 
     res.render('pages/appointments/movement-slip/individual', { movementSlip })
   }

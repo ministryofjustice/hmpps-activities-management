@@ -32,7 +32,7 @@
       {{ labelAndValue('Date and time', (movementSlip.startDate | toDate | formatDate('EEEE d MMMM yyyy')) + ' - ' + movementSlip.startTime + ' to ' + movementSlip.endTime) }}
       {{ labelAndValue('Moving to', movementSlip.internalLocation.description) }}
       {{ labelAndValue('Reason', movementSlip.category.description) }}
-      {{ labelAndValue('Comments', '') }}
+      {{ labelAndValue('Comments', movementSlip.comment) }}
     </div>
 
     {% if movementSlip.createdBy %}

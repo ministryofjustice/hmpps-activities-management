@@ -112,6 +112,7 @@ context('Create single appointment', () => {
     individualMovementSlipPage.assertStartDate(tomorrow)
     individualMovementSlipPage.assertStartTime(14, 0)
     individualMovementSlipPage.assertEndTime(15, 30)
+    individualMovementSlipPage.assertComments('Appointment level comment')
     individualMovementSlipPage.assertCreatedBy('J. Smith')
   })
 })

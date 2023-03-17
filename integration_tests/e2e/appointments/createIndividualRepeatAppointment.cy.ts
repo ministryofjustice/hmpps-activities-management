@@ -142,6 +142,7 @@ context('Create individual repeat appointment', () => {
     occurrenceMovementSlipPage.assertStartDate(weekTomorrow)
     occurrenceMovementSlipPage.assertStartTime(14, 0)
     occurrenceMovementSlipPage.assertEndTime(15, 30)
+    occurrenceMovementSlipPage.assertComments('Appointment occurrence level comment')
     occurrenceMovementSlipPage.assertCreatedBy('J. Smith')
   })
 

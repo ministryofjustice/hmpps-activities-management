@@ -25,5 +25,7 @@ export default class IndividualMovementSlip extends Page {
   assertEndTime = (hour: number, minute: number) =>
     cy.get('[data-qa=date-and-time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
+  assertComments = (comments: string) => cy.get('[data-qa=comments]').contains(comments)
+
   assertCreatedBy = (createdBy: string) => cy.get('[data-qa=created-by]').contains(createdBy)
 }
