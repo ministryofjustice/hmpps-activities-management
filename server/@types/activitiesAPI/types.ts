@@ -30,6 +30,7 @@ export type AppointmentOccurrence = components['schemas']['AppointmentOccurrence
 export type AppointmentCreateRequest = components['schemas']['AppointmentCreateRequest']
 export type AppointmentDetails = components['schemas']['AppointmentDetails']
 export type AppointmentOccurrenceDetails = components['schemas']['AppointmentOccurrenceDetails']
+export type UncancelScheduledInstanceRequest = components['schemas']['UncancelScheduledInstanceRequest']
 export type ScheduleInstanceCancelRequest = components['schemas']['ScheduleInstanceCancelRequest']
 export type UserSummary = components['schemas']['UserSummary']
 export type PrisonerSummary = components['schemas']['PrisonerSummary']

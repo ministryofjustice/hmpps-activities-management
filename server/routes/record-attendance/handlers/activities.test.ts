@@ -40,6 +40,7 @@ describe('Route Handlers - Activities', () => {
           description: 'Houseblock 1',
           internalLocation: { description: 'Classroom' },
         },
+        cancelled: false,
         attendances: [
           { status: 'WAITING' },
           { status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
@@ -55,6 +56,7 @@ describe('Route Handlers - Activities', () => {
           description: 'Houseblock 2',
           internalLocation: { description: 'Classroom 2' },
         },
+        cancelled: false,
         attendances: [
           { status: 'WAITING' },
           { status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
@@ -103,6 +105,7 @@ describe('Route Handlers - Activities', () => {
               notRecorded: 1,
               time: '10:00 - 11:00',
               timeSlot: 'am',
+              cancelled: false,
             },
           ],
           pm: [
@@ -117,6 +120,7 @@ describe('Route Handlers - Activities', () => {
               notRecorded: 1,
               time: '13:00 - 14:00',
               timeSlot: 'pm',
+              cancelled: false,
             },
           ],
           length: 2,
@@ -156,6 +160,7 @@ describe('Route Handlers - Activities', () => {
               notRecorded: 1,
               time: '10:00 - 11:00',
               timeSlot: 'am',
+              cancelled: false,
             },
           ],
           length: 1,

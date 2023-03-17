@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { areIntervalsOverlapping, parse } from 'date-fns'
+import { areIntervalsOverlapping, parse, startOfToday, endOfDay } from 'date-fns'
 import { Expose, Transform } from 'class-transformer'
 import ActivitiesService from '../../../services/activitiesService'
 import { getAttendanceSummary, toDate } from '../../../utils/utils'
@@ -22,7 +22,11 @@ export default class AttendanceListRoutes {
     const instanceId = req.params.id
     const { user } = res.locals
 
-    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
+    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user).then(i => ({
+      ...i,
+      isAmendable: endOfDay(toDate(i.date)) > startOfToday(),
+    }))
+
     const prisonerNumbers = instance.attendances.map(a => a.prisonerNumber)
     const otherScheduledEvents = await this.activitiesService
       .getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user)

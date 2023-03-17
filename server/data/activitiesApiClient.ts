@@ -28,6 +28,7 @@ import {
   AppointmentDetails,
   AppointmentOccurrenceDetails,
   ScheduleInstanceCancelRequest,
+  UncancelScheduledInstanceRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -325,6 +326,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/scheduled-instances/${scheduleInstanceId}/cancel`,
       authToken: user.token,
       data: cancelRequest,
+    })
+  }
+
+  async putUncancelScheduledActivity(
+    scheduleInstanceId: number,
+    uncancelRequest: UncancelScheduledInstanceRequest,
+    user: ServiceUser,
+  ): Promise<void> {
+    return this.put({
+      path: `/scheduled-instances/${scheduleInstanceId}/uncancel`,
+      authToken: user.token,
+      data: uncancelRequest,
     })
   }
 }
