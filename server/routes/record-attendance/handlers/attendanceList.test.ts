@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { format, startOfToday, startOfYesterday } from 'date-fns'
+import { format, startOfYesterday } from 'date-fns'
 import ActivitiesService from '../../../services/activitiesService'
 import { PrisonerScheduledEvents, ScheduledActivity } from '../../../@types/activitiesAPI/types'
 import PrisonService from '../../../services/prisonService'
@@ -121,12 +121,10 @@ describe('Route Handlers - Attendance List', () => {
         activity: {
           allocated: 3,
           attended: 1,
-          date: startOfToday(),
           location: 'Houseblock 1',
           name: 'Maths level 1',
           notAttended: 1,
           notRecorded: 1,
-          time: '10:00 - 11:00',
         },
         instance: {
           id: 1,
@@ -200,7 +198,6 @@ describe('Route Handlers - Attendance List', () => {
 
     it("shouldn't be amendable if session is in the past", async () => {
       viewContext.instance.isAmendable = false
-      viewContext.activity.date = startOfYesterday()
       viewContext.instance.date = format(startOfYesterday(), 'yyyy-MM-dd')
 
       when(activitiesService.getScheduledActivity)
