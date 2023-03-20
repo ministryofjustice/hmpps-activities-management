@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { parse } from 'date-fns'
+import { addDays, parse, subDays } from 'date-fns'
 import ActivitiesRoutes from './activities'
 import ActivitiesService from '../../../services/activitiesService'
 import { ScheduledActivity } from '../../../@types/activitiesAPI/types'
@@ -79,6 +79,8 @@ describe('Route Handlers - Activities', () => {
     it('should render with the expected view', async () => {
       const dateString = '2022-12-08'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      const previousDay = subDays(new Date(date), 1)
+      const nextDay = addDays(new Date(date), 1)
 
       when(activitiesService.getScheduledActivitiesAtPrison)
         .calledWith(date, res.locals.user)
@@ -122,6 +124,8 @@ describe('Route Handlers - Activities', () => {
           length: 2,
         },
         date,
+        previousDay,
+        nextDay,
         searchString: undefined,
       })
     })
@@ -131,6 +135,8 @@ describe('Route Handlers - Activities', () => {
       const searchTerm = 'math'
 
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      const previousDay = subDays(new Date(date), 1)
+      const nextDay = addDays(new Date(date), 1)
 
       when(activitiesService.getScheduledActivitiesAtPrison)
         .calledWith(date, res.locals.user)
@@ -161,6 +167,8 @@ describe('Route Handlers - Activities', () => {
           length: 1,
         },
         date,
+        previousDay,
+        nextDay,
         searchTerm: 'math',
       })
     })

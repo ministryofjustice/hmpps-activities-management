@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
+import { addDays, subDays } from 'date-fns'
 import ActivitiesService from '../../../services/activitiesService'
 import { getAttendanceSummary, getTimeSlotFromTime, toDate } from '../../../utils/utils'
 
@@ -14,6 +15,9 @@ export default class ActivitiesRoutes {
     if (date === undefined) {
       return res.redirect('select-period')
     }
+
+    const previousDay = subDays(new Date(date), 1)
+    const nextDay = addDays(new Date(date), 1)
 
     const activitiesModel = await this.activitiesService
       .getScheduledActivitiesAtPrison(date, user)
@@ -34,7 +38,13 @@ export default class ActivitiesRoutes {
         ...{ length: scheduledActivities.length },
       }))
 
-    return res.render('pages/record-attendance/activities', { activities: activitiesModel, date, searchTerm })
+    return res.render('pages/record-attendance/activities', {
+      activities: activitiesModel,
+      date,
+      searchTerm,
+      previousDay,
+      nextDay,
+    })
   }
 
   private nameIncludesSearchTerm = (name: string, searchTerm: string) =>
