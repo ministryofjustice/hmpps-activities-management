@@ -6,6 +6,7 @@ import ActivitiesPage from '../pages/recordAttendance/activitiesPage'
 import AttendanceListPage from '../pages/recordAttendance/attendanceList'
 import CancelSessionReason from '../pages/recordAttendance/cancelSessionReason'
 import CancelSessionConfirm from '../pages/recordAttendance/cancelSessionConfirm'
+import UncancelSessionConfirm from '../pages/recordAttendance/uncancelSessionConfirm'
 import getScheduledInstances from '../fixtures/activitiesApi/getScheduledInstancesMdi20230202.json'
 import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance93.json'
 import getCancelledScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance-cancelled.json'
@@ -73,5 +74,24 @@ context('Record attendance', () => {
     cancelSessionConfirmPage.continue()
 
     Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.checkAttendanceStatus('Booking Andy', 'Cancelled')
+    attendanceListPage.checkAttendanceStatus('Booking Andy', 'Pay')
+    attendanceListPage.checkAttendanceStatus('Egurztof Aisho', 'Cancelled')
+    attendanceListPage.checkAttendanceStatus('Egurztof Aisho', 'Pay')
+    attendanceListPage.assertNotificationContents(
+      'Session cancelled',
+      'This activity session has been cancelled for the following reason:',
+    )
+
+    attendanceListPage.getLinkByText('Uncancel this session').click()
+
+    cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
+
+    const uncancelSessionConfirmPage = Page.verifyOnPage(UncancelSessionConfirm)
+    uncancelSessionConfirmPage.selectReason('Yes')
+    uncancelSessionConfirmPage.continue()
+
+    Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.assertNotificationContents('Session no longer cancelled')
   })
 })
