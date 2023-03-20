@@ -1,0 +1,207 @@
+{
+  "activity": {
+    "name": "ATTENDANCE_TEST",
+    "location": "ACTIVITY HUB LIST",
+    "allocated": 3,
+    "attended": 1,
+    "notAttended": 0,
+    "notRecorded": 2
+  },
+  "instance": {
+    "id": 1,
+    "date": "2023-03-20",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "cancelled": false,
+    "cancelledTime": null,
+    "cancelledBy": null,
+    "cancelledReason": null,
+    "attendances": [
+      {
+        "id": 3,
+        "prisonerNumber": "A1349DZ",
+        "attendanceReason": null,
+        "comment": null,
+        "recordedTime": null,
+        "recordedBy": null,
+        "status": "WAITING",
+        "payAmount": null,
+        "bonusAmount": null,
+        "pieces": null,
+        "issuePayment": null,
+        "incentiveLevelWarningIssued": null,
+        "otherAbsenceReason": null
+      },
+      {
+        "id": 1,
+        "prisonerNumber": "A8467DY",
+        "attendanceReason": null,
+        "comment": null,
+        "recordedTime": null,
+        "recordedBy": null,
+        "status": "WAITING",
+        "payAmount": null,
+        "bonusAmount": null,
+        "pieces": null,
+        "issuePayment": null,
+        "incentiveLevelWarningIssued": null,
+        "otherAbsenceReason": null
+      },
+      {
+        "id": 2,
+        "prisonerNumber": "G9584VP",
+        "attendanceReason": {
+          "id": 9,
+          "code": "ATTENDED",
+          "description": "Attended",
+          "attended": true,
+          "capturePay": false,
+          "captureMoreDetail": false,
+          "captureCaseNote": false,
+          "captureIncentiveLevelWarning": false,
+          "captureOtherText": false,
+          "displayInAbsence": false,
+          "displaySequence": null,
+          "notes": "Maps to ATT in NOMIS"
+        },
+        "comment": null,
+        "recordedTime": null,
+        "recordedBy": null,
+        "status": "COMPLETED",
+        "payAmount": null,
+        "bonusAmount": null,
+        "pieces": null,
+        "issuePayment": null,
+        "incentiveLevelWarningIssued": null,
+        "otherAbsenceReason": null
+      }
+    ],
+    "activitySchedule": {
+      "id": 13,
+      "description": "ATTENDANCE_TEST",
+      "internalLocation": {
+        "id": 721771,
+        "code": "ACTIVITYHUB",
+        "description": "ACTIVITY HUB LIST"
+      },
+      "capacity": 8,
+      "activity": {
+        "id": 5,
+        "prisonCode": "MDI",
+        "attendanceRequired": true,
+        "inCell": false,
+        "pieceWork": false,
+        "outsideWork": false,
+        "payPerSession": "H",
+        "summary": "ATTENDANCE_TEST",
+        "description": null,
+        "category": {
+          "id": 1,
+          "code": "SAA_EDUCATION",
+          "name": "Education",
+          "description": "Such as classes in English, maths, construction or barbering"
+        },
+        "riskLevel": "low",
+        "minimumIncentiveNomisCode": "BAS",
+        "minimumIncentiveLevel": "Basic",
+        "minimumEducationLevel": []
+      },
+      "slots": [
+        {
+          "id": 14,
+          "startTime": "09:00",
+          "endTime": "12:00",
+          "daysOfWeek": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+          "mondayFlag": true,
+          "tuesdayFlag": true,
+          "wednesdayFlag": true,
+          "thursdayFlag": true,
+          "fridayFlag": true,
+          "saturdayFlag": false,
+          "sundayFlag": false
+        }
+      ],
+      "startDate": "2023-03-30",
+      "endDate": null
+    },
+    "isAmendable": true
+  },
+  "attendees": [
+    {
+      "name": "Gerry Allen",
+      "prisonerNumber": "A1349DZ",
+      "location": "MDI-1-2-005",
+      "otherEvents": [],
+      "attendance": {
+        "id": 3,
+        "prisonerNumber": "A1349DZ",
+        "attendanceReason": null,
+        "comment": null,
+        "recordedTime": null,
+        "recordedBy": null,
+        "status": "WAITING",
+        "payAmount": null,
+        "bonusAmount": null,
+        "pieces": null,
+        "issuePayment": null,
+        "incentiveLevelWarningIssued": null,
+        "otherAbsenceReason": null
+      }
+    },
+    {
+      "name": "Nicole  Fernandez",
+      "prisonerNumber": "A8467DY",
+      "location": "MDI-4-1-017",
+      "otherEvents": [],
+      "attendance": {
+        "id": 1,
+        "prisonerNumber": "A8467DY",
+        "attendanceReason": null,
+        "comment": null,
+        "recordedTime": null,
+        "recordedBy": null,
+        "status": "WAITING",
+        "payAmount": null,
+        "bonusAmount": null,
+        "pieces": null,
+        "issuePayment": null,
+        "incentiveLevelWarningIssued": null,
+        "otherAbsenceReason": null
+      }
+    },
+    {
+      "name": "Ashton Bau",
+      "prisonerNumber": "G9584VP",
+      "location": "MDI-1-3-004",
+      "otherEvents": [],
+      "attendance": {
+        "id": 2,
+        "prisonerNumber": "G9584VP",
+        "attendanceReason": {
+          "id": 9,
+          "code": "ATTENDED",
+          "description": "Attended",
+          "attended": true,
+          "capturePay": false,
+          "captureMoreDetail": false,
+          "captureCaseNote": false,
+          "captureIncentiveLevelWarning": false,
+          "captureOtherText": false,
+          "displayInAbsence": false,
+          "displaySequence": null,
+          "notes": "Maps to ATT in NOMIS"
+        },
+        "comment": null,
+        "recordedTime": null,
+        "recordedBy": null,
+        "status": "COMPLETED",
+        "payAmount": null,
+        "bonusAmount": null,
+        "pieces": null,
+        "issuePayment": null,
+        "incentiveLevelWarningIssued": null,
+        "otherAbsenceReason": null
+      }
+    }
+  ]
+}
