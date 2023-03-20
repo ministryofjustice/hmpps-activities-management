@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
+{% from "components/alertsList.njk" import alertsList %}
 {% from "components/multi-select.njk" import multiSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
@@ -109,7 +110,7 @@
                     html: '
                             <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
                                 <a href="' + dpsUrl + '/prisoner/' + attendee.prisonerNumber + '"
-                                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + attendee.name + '
+                                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + attendee.name | toTitleCase + '
                                 </a>
                             </h2>
                             <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + attendee.prisonerNumber + '</div>
@@ -117,6 +118,10 @@
                 },
                 {
                     text: attendee.location
+                },
+                {
+                    html: alertsList({ alerts: attendee.alerts, category: attendee.category }),
+                    classes: 'hmpps-max-width-240'
                 },
                 {
                     html: renderOtherEvents(attendee.otherEvents)
@@ -150,6 +155,9 @@
                 },
                 {
                     text: "Cell location"
+                },
+                {
+                    text: "Relevant alerts"
                 },
                 {
                     text: "Other scheduled events"

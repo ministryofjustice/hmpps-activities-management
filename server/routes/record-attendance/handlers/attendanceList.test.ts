@@ -5,7 +5,7 @@ import ActivitiesService from '../../../services/activitiesService'
 import { PrisonerScheduledEvents, ScheduledActivity } from '../../../@types/activitiesAPI/types'
 import PrisonService from '../../../services/prisonService'
 import AttendanceListRoutes from './attendanceList'
-import { InmateBasicDetails } from '../../../@types/prisonApiImport/types'
+import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
@@ -78,13 +78,34 @@ describe('Route Handlers - Attendance List', () => {
         visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC123' }],
       } as PrisonerScheduledEvents)
 
-    when(prisonService.getInmateDetails)
+    when(prisonService.searchInmatesByPrisonerNumbers)
       .calledWith(['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
       .mockResolvedValue([
-        { offenderNo: 'ABC123', firstName: 'Joe', lastName: 'Bloggs', assignedLivingUnitDesc: 'MDI-1-001' },
-        { offenderNo: 'ABC321', firstName: 'Alan', lastName: 'Key', assignedLivingUnitDesc: 'MDI-1-002' },
-        { offenderNo: 'ZXY123', firstName: 'Mr', lastName: 'Blobby', assignedLivingUnitDesc: 'MDI-1-003' },
-      ] as InmateBasicDetails[])
+        {
+          prisonerNumber: 'ABC123',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          cellLocation: 'MDI-1-001',
+          alerts: [{ alertCode: 'HA' }, { alertCode: 'XCU' }],
+          category: 'A',
+        },
+        {
+          prisonerNumber: 'ABC321',
+          firstName: 'Alan',
+          lastName: 'Key',
+          cellLocation: 'MDI-1-002',
+          alerts: [],
+          category: 'A',
+        },
+        {
+          prisonerNumber: 'ZXY123',
+          firstName: 'Mr',
+          lastName: 'Blobby',
+          cellLocation: 'MDI-1-003',
+          alerts: [],
+          category: 'A',
+        },
+      ] as Prisoner[])
   })
 
   afterEach(() => {
@@ -125,6 +146,8 @@ describe('Route Handlers - Attendance List', () => {
         },
         attendees: expect.arrayContaining([
           {
+            category: 'A',
+            alerts: [{ alertCode: 'HA' }],
             location: 'MDI-1-001',
             name: 'Joe Bloggs',
             otherEvents: [
@@ -140,6 +163,8 @@ describe('Route Handlers - Attendance List', () => {
             attendance: { prisonerNumber: 'ABC123', status: 'WAITING' },
           },
           {
+            category: 'A',
+            alerts: [],
             location: 'MDI-1-002',
             name: 'Alan Key',
             otherEvents: [
@@ -155,6 +180,8 @@ describe('Route Handlers - Attendance List', () => {
             attendance: { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
           },
           {
+            category: 'A',
+            alerts: [],
             location: 'MDI-1-003',
             name: 'Mr Blobby',
             otherEvents: [],
@@ -265,11 +292,18 @@ describe('Route Handlers - Attendance List', () => {
           visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC123' }],
         } as PrisonerScheduledEvents)
 
-      when(prisonService.getInmateDetails)
+      when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC123'], res.locals.user)
         .mockResolvedValue([
-          { offenderNo: 'ABC123', firstName: 'Joe', lastName: 'Bloggs', assignedLivingUnitDesc: 'MDI-1-001' },
-        ] as InmateBasicDetails[])
+          {
+            prisonerNumber: 'ABC123',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
+            cellLocation: 'MDI-1-001',
+            alerts: [],
+            category: 'A',
+          },
+        ] as Prisoner[])
 
       await handler.NOT_ATTENDED(req, res)
 
