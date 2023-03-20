@@ -1,12 +1,24 @@
-$hmpps-widths: (
+$hmpps-width-percentages: (
     20-percent: 20%,
     40-percent: 40%,
     60-percent: 60%,
     80-percent: 80%
 );
 
-@each $width in map-keys($hmpps-widths) {
+@each $width in map-keys($hmpps-width-percentages) {
     .hmpps-width-#{$width} {
-        width: map-get($hmpps-widths, $width);
+        width: map-get($hmpps-width-percentages, $width);
+    }
+}
+
+$hmpps-widths: (
+    200: 200px,
+    220: 220px,
+    240: 240px
+);
+
+@each $width in map-keys($hmpps-widths) {
+    .hmpps-max-width-#{$width} {
+        max-width: map-get($hmpps-widths, $width);
     }
 }

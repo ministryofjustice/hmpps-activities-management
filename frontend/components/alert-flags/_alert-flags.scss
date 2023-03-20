@@ -10,7 +10,6 @@
     padding: 0 10px;
     margin-left: 0;
     margin-right: 5px;
-    margin-bottom: 5px;
     font-size: 14px;
     font-weight: bold;
     text-align: center;
@@ -43,7 +42,7 @@
   @extend %status-style;
 
   img {
-    height: 14px;
+    height: 16px;
     margin-right: 3px;
 
     @media print {
@@ -54,6 +53,21 @@
   &--acct {
     color: #d34700;
     border-color: #d34700;
+  }
+
+  &--arsonist {
+    color: #df3034;
+    border-color: #df3034;
+  }
+
+  &--assault {
+    color: #4c2c92;
+    border-color: #4c2c92;
+  }
+
+  &--conflict {
+    color: #800000;
+    border-color: #800000;
   }
 
   &--disability {
@@ -69,6 +83,21 @@
   &--controlled-unlock {
     color: #2e358b;
     border-color: #2e358b;
+  }
+
+  &--no-one-to-one {
+    color: #903;
+    border-color: #903;
+  }
+
+  &--risk-females {
+    color: #6f71af;
+    border-color: #6f71af;
+  }
+
+  &--tact {
+    color: #d53880;
+    border-color: #d53880;
   }
 }
 

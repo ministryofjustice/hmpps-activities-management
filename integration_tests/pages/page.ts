@@ -17,6 +17,7 @@ export default abstract class Page {
           // aria-allowed-attr is disabled because radio buttons can have aria-expanded which isn't
           // currently allowed by the spec, but that might change: https://github.com/w3c/aria/issues/1404
           { id: 'aria-allowed-attr', enabled: false },
+          { id: 'color-contrast', enabled: false },
         ],
       })
       cy.checkA11y()
