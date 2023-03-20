@@ -68,4 +68,12 @@ export default abstract class Page {
   protected getDatePickerById = (id: string) => new DatePicker(id)
 
   protected getSummaryListById = (id: string) => new SummaryList(id)
+
+  assertNotificationContents = (titleText, notificationText = null) => {
+    cy.get('.govuk-notification-banner .govuk-notification-banner__heading').contains(titleText)
+
+    if (notificationText) {
+      cy.get('.govuk-notification-banner .govuk-notification-banner__content').contains(notificationText)
+    }
+  }
 }

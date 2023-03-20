@@ -53,8 +53,6 @@ export default class AttendanceListRoutes {
       activity: {
         name: instance.activitySchedule.activity.summary,
         location: instance.activitySchedule.internalLocation.description,
-        time: `${instance.startTime} - ${instance.endTime}`,
-        date: toDate(instance.date),
         ...getAttendanceSummary(instance.attendances),
       },
       instance,

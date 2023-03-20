@@ -5,6 +5,8 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
 {% set backLinkHref = "attendance-list" %}
+{% set pageTitle = applicationName + " - Cancel session - Reason" %}
+{% set pageId = 'cancel-session-reason-page' %}
 
 {% block content %}
   <div class="govuk-grid-row">
@@ -31,6 +33,7 @@
         }) }}
 
         {{ govukTextarea({
+          id: "comment",
           name: "comment",
           label: {
             text: "More details (optional)"

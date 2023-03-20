@@ -37,7 +37,7 @@
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
                 <span class="govuk-caption-l govuk-!-display-none-print">Record attendance</span>
                 {{ activity.name }}: {{ activity.location }}
-                <span class="govuk-caption-l">{{ activity.time }} on {{ activity.date | formatDate('EEEE, do MMMM yyyy') }}</span>
+                <span class="govuk-caption-l">{{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('EEEE, do MMMM yyyy') }}</span>
             </h1>
             <ul class="govuk-list govuk-!-display-none-print">
                 <li><a href="/attendance/select-period" class="govuk-link govuk-!-font-size-19 js-backlink">Choose a different activity</a></li>
