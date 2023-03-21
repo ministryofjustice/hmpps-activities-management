@@ -13,11 +13,10 @@ export default class ActivitiesRoutes {
     const { user } = res.locals
     const activityDate = req.query.date ? toDate(req.query.date as string) : undefined
     let { activitiesFilters } = req.session
-    const { searchTerm } = activitiesFilters
 
     if (!activitiesFilters) {
       const [categories] = await Promise.all([this.activitiesService.getActivityCategories(user)])
-      activitiesFilters = defaultFilters(activityDate, searchTerm, categories)
+      activitiesFilters = defaultFilters(activityDate, '', categories)
       req.session.activitiesFilters = activitiesFilters
     }
 
@@ -50,7 +49,9 @@ export default class ActivitiesRoutes {
           ...getAttendanceSummary(activity.attendances),
         })),
       )
-      .then(scheduledActivities => scheduledActivities.filter(a => this.nameIncludesSearchTerm(a.name, searchTerm)))
+      .then(scheduledActivities =>
+        scheduledActivities.filter(a => this.nameIncludesSearchTerm(a.name, activitiesFilters.searchTerm)),
+      )
       .then(scheduledActivities =>
         scheduledActivities.filter(a => sessionFilters.includes(a.timeSlot.toUpperCase()) === true),
       )
@@ -65,7 +66,6 @@ export default class ActivitiesRoutes {
     return res.render('pages/record-attendance/activities', {
       activities: activitiesModel,
       activityDate,
-      searchTerm,
       previousDay,
       nextDay,
       activitiesFilters,
@@ -112,7 +112,7 @@ export default class ActivitiesRoutes {
 }
 
 const defaultFilters = (activityDate: Date, searchTerm: string, categories: ActivityCategory[]): ActivitiesFilters => {
-  const categoryFilters: FilterItem[] = [{ value: 'ALL', text: 'ALL', checked: true }]
+  const categoryFilters: FilterItem[] = [{ value: 'ALL', text: 'All Categories', checked: true }]
   categories.forEach(category => categoryFilters.push({ value: category.code, text: category.name, checked: false }))
   const sessionFilters = [
     { value: 'AM', text: 'Morning (AM)', checked: true },
