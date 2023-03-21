@@ -8,6 +8,7 @@ import getScheduledInstances from '../fixtures/activitiesApi/getScheduledInstanc
 import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance93.json'
 import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForAttendance.json'
+import getCategories from '../fixtures/activitiesApi/getCategories.json'
 
 context('Record attendance', () => {
   beforeEach(() => {
@@ -25,6 +26,7 @@ context('Record attendance', () => {
     cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2023-02-02', getScheduledEvents)
     cy.stubEndpoint('POST', '/api/bookings/offenders', getInmateDetails)
     cy.stubEndpoint('PUT', '/attendances')
+    cy.stubEndpoint('GET', '/activity-categories', getCategories)
   })
 
   it('should click through record attendance journey', () => {

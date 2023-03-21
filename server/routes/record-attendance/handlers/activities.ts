@@ -75,13 +75,13 @@ export default class ActivitiesRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { activitiesFilters } = req.session
     const activityDate = req.query.date ? toDate(req.query.date as string) : undefined
-    activitiesFilters.searchTerm = req.body?.searchTerm as string
+    activitiesFilters.searchTerm = req.body?.searchTerm ? (req.body?.searchTerm as string) : ''
     const isoDateString = formatDate(new Date(activityDate), 'yyyy-MM-dd')
 
     req.session.activitiesFilters = parseFiltersFromPost(
       activitiesFilters,
-      req.body?.sessionFilters,
-      req.body?.categoryFilters,
+      req.body?.sessionFilters ? req.body?.sessionFilters : undefined,
+      req.body?.categoryFilters ? req.body?.categoryFilters : undefined,
     )
     res.redirect(`activities?date=${isoDateString}`)
   }
