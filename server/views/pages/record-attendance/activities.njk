@@ -1,7 +1,10 @@
 {% extends "layout.njk" %}
 
 {% from "components/searchBar.njk" import searchBar %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'activities-page' %}
@@ -10,185 +13,237 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-3">{{ activities.length }} {{ 'activity' if activities.length == 1 else 'activities' }} scheduled for {{ date | formatDate('d MMMM yyyy', true)}}</h1>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-3">{{ activities.length }} {{ 'activity' if activities.length == 1 else 'activities' }} scheduled for {{ activityDate | formatDate('d MMMM yyyy', true)}}</h1>
             <ul class="govuk-list">
                 <li><a href="select-period" class="govuk-link govuk-!-font-size-19">View the schedule for a different day</a></li>
             </ul>
         </div>
     </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form>
-                <input type="hidden" name="date" value="{{ date | formatDate('yyyy-MM-dd') }}">
-                {{ searchBar({
-                    inputParams: {
-                        id: 'searchTerm',
-                        name: 'searchTerm',
-                        label: {
-                            text: 'Search by activity name',
-                            classes: 'govuk-label--s'
-                        },
-                        value: searchTerm
+    {% set filterOptionsHtml %}
+    {{ govukCheckboxes({
+            idPrefix: 'sessionFilters',
+            name: 'sessionFilters',
+            classes: "govuk-checkboxes--small",
+            fieldset: {
+                legend: {
+                    text: 'Session',
+                    classes: 'govuk-fieldset__legend--m'
+                }
+            },
+            items: activitiesFilters.sessionFilters
+        }) }}
+    {{ govukRadios({
+            idPrefix: 'categoryFilters',
+            name: 'categoryFilters',
+            classes: "govuk-radios--small",
+            fieldset: {
+                legend: {
+                    text: 'Categories',
+                    classes: 'govuk-fieldset__legend--m'
+                }
+            },
+            items: activitiesFilters.categoryFilters
+        }) }}
+    {% endset %}
+
+    <div class="moj-filter-layout" data-module="activities-list-filter">
+        <form id="filter-form" method="POST" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <input type="hidden" name="activityDate" value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
+            {{ searchBar({
+                inputParams: {
+                    id: 'searchTerm',
+                    name: 'searchTerm',
+                    label: {
+                        text: 'Search by activity name',
+                        classes: 'govuk-label--s'
                     },
-                    buttonParams: {
-                        text: 'Search'
-                    }
+                    value: searchTerm
+                },
+                buttonParams: {
+                    text: 'Search'
+                }
+            }) }}
+            <div class="moj-filter-layout__filter govuk-!-display-none-print">
+                {# Set the selected filter items and links to remove them #}
+                {% set selectedSessions = [] %}
+                {% for session in activitiesFilters.sessionFilters %}
+                    {% if (session.checked === true) %}
+                        {% set selectedSessions = (selectedSessions.push({
+                           href: 'update-filters?clearSession=' + session.value, text: session.value }), selectedSessions) %}
+                    {% endif %}
+                {% endfor %}
+                {% set selectedCategories = [] %}
+                {% for category in activitiesFilters.categoryFilters %}
+                    {% if (category.checked === true) %}
+                        {% set selectedCategories = (selectedCategories.push({
+                           href: 'update-filters?clearCategory=' + category.value, text: category.value
+                       }), selectedCategories) %}
+                    {% endif %}
+                {% endfor %}
+                {{ mojFilter({
+                    heading: {
+                        text: 'Filter'
+                    },
+                    optionsHtml: filterOptionsHtml
                 }) }}
-            </form>
-        </div>
-    </div>
+            </div>
+            <hr class="print-only"/>
+            <div class="moj-filter-layout__content">
+                <div class="moj-action-bar govuk-!-display-none-print">
+                    <div class="moj-action-bar__filter"></div>
+                </div>
 
-    {{ scheduledActivitiesTable('Morning sessions', activities.am, 1) }}
-    {{ scheduledActivitiesTable('Afternoon sessions', activities.pm, 2) }}
-    {{ scheduledActivitiesTable('Evening sessions', activities.ed, 3) }}
+                {{ scheduledActivitiesTable('Morning sessions', activities.am, 1) }}
+                {{ scheduledActivitiesTable('Afternoon sessions', activities.pm, 2) }}
+                {{ scheduledActivitiesTable('Evening sessions', activities.ed, 3) }}
 
-    <nav class="govuk-pagination govuk-pagination--block" role="navigation" aria-label="results"><div class="govuk-pagination__prev">
-      <a class="govuk-link govuk-pagination__link" href="activities?date={{ previousDay | formatDate('yyyy-MM-dd') }}" rel="prev">
-        <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
-          <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
-        </svg>
-        <span class="govuk-pagination__link-title">Previous day</span><span class="govuk-visually-hidden">:</span>
-          <span class="govuk-pagination__link-label">{{ previousDay | formatDate('EEEE d MMMM yyyy') }}</span></a>
+                <nav class="govuk-pagination govuk-pagination--block" role="navigation" aria-label="results">
+                    <div class="govuk-pagination__prev">
+                      <a class="govuk-link govuk-pagination__link" href="activities?date={{ previousDay | formatDate('yyyy-MM-dd') }}" rel="prev">
+                        <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                          <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                        </svg>
+                        <span class="govuk-pagination__link-title">Previous day</span><span class="govuk-visually-hidden">:</span>
+                          <span class="govuk-pagination__link-label">{{ previousDay | formatDate('EEEE d MMMM yyyy') }}</span></a>
+                    </div>
+                    <div class="govuk-pagination__next">
+                      <a class="govuk-link govuk-pagination__link" href="activities?date={{ nextDay | formatDate('yyyy-MM-dd') }}" rel="next">
+                      <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                        <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                      </svg>
+                        <span class="govuk-pagination__link-title">Next day</span><span class="govuk-visually-hidden">:</span>
+                          <span class="govuk-pagination__link-label">{{ nextDay | formatDate('EEEE d MMMM yyyy') }}</span></a>
+                    </div>
+                </nav>
+            </div>
+        </form>
     </div>
-    <div class="govuk-pagination__next">
-      <a class="govuk-link govuk-pagination__link" href="activities?date={{ nextDay | formatDate('yyyy-MM-dd') }}" rel="next">
-      <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
-        <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
-      </svg>
-        <span class="govuk-pagination__link-title">Next day</span><span class="govuk-visually-hidden">:</span>
-          <span class="govuk-pagination__link-label">{{ nextDay | formatDate('EEEE d MMMM yyyy') }}</span></a>
-    </div>
-    </nav>
-
 {% endblock %}
 
 {% macro scheduledActivitiesTable(caption, activities, tableNumber) %}
     {% if activities %}
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                {% set rows = [] %}
-                {% for activity in activities %}
-                    {% set rows = (rows.push([
-                        {
-                            attributes: {
-                                id: 'activity-' + tableNumber + '-' + loop.index,
-                                "data-sort-value": activity.name
-                            },
-                            html: '
-                                    <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                                        <a href="activities/' + activity.id + '/attendance-list" class="govuk-link govuk-link--no-visited-state">' + activity.name + '</a>
-                                    </h2>
-                                    <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + activity.scheduleName + '</div>
-                                  '
-                        },
-                        {
-                            attributes: {
-                                id: 'location-' + tableNumber + '-' + loop.index,
-                                "data-sort-value": activity.location
-                            },
-                            text: activity.location
-                        },
-                        {
-                            attributes: {
-                                id: 'time-' + tableNumber + '-' + loop.index,
-                                "data-sort-value": activity.time
-                            },
-                            text: activity.time
-                        },
-                        {
-                            attributes: {
-                                id: 'scheduled-' + tableNumber + '-'  + loop.index,
-                                "data-sort-value": activity.allocated
-                            },
-                            classes: 'govuk-table__cell--numeric',
-                            text: activity.allocated
-                        },
-                        {
-                            attributes: {
-                                id: 'attended-' + tableNumber + '-' + loop.index,
-                                "data-sort-value": activity.attended
-                            },
-                            classes: 'govuk-table__cell--numeric',
-                            text: activity.attended
-                        },
-                        {
-                            attributes: {
-                                id: 'notRecorded-' + tableNumber + '-' + loop.index,
-                                "data-sort-value": activity.notRecorded
-                            },
-                            classes: 'govuk-table__cell--numeric',
-                            text: activity.notRecorded
-                        },
-                        {
-                            attributes: {
-                                id: 'notAttended-' + tableNumber + '-' + loop.index,
-                                "data-sort-value": activity.notAttended
-                            },
-                            classes: 'govuk-table__cell--numeric',
-                            text: activity.notAttended
-                        }
-                    ]), rows) %}
-                {% endfor %}
-
-                {{ govukTable({
+        {% set rows = [] %}
+        {% for activity in activities %}
+            {% set rows = (rows.push([
+                {
                     attributes: {
-                        'data-module': 'moj-sortable-table'
+                        id: 'activity-' + tableNumber + '-' + loop.index,
+                        "data-sort-value": activity.name
                     },
-                    caption: caption + " (" + rows.length + ")",
-                    head: [
-                        {
-                            text: "Activity",
-                            attributes: {
-                                "aria-sort": "ascending"
-                            },
-                            classes: 'govuk-!-width-one-quarter'
-                        },
-                        {
-                            text: "Location",
-                            attributes: {
-                                "aria-sort": "none"
-                            },
-                            classes: 'govuk-!-width-one-quarter'
-                        },
-                        {
-                            text: "Time",
-                            attributes: {
-                                "aria-sort": "none"
-                            }
-                        },
-                        {
-                            text: "Scheduled",
-                            classes: 'govuk-table__header--numeric',
-                            attributes: {
-                                "aria-sort": "none"
-                            }
-                        },
-                        {
-                            text: "Attended",
-                            classes: 'govuk-table__header--numeric',
-                            attributes: {
-                                "aria-sort": "none"
-                            }
-                        },
-                        {
-                            text: "Not recorded",
-                            classes: 'govuk-table__header--numeric',
-                            attributes: {
-                                "aria-sort": "none"
-                            }
-                        },
-                        {
-                            text: "All absences",
-                            classes: 'govuk-table__header--numeric',
-                            attributes: {
-                                "aria-sort": "none"
-                            }
-                        }
-                    ],
-                    rows: rows
-                }) }}
-            </div>
-        </div>
+                    html: '
+                            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                                <a href="activities/' + activity.id + '/attendance-list" class="govuk-link govuk-link--no-visited-state">' + activity.name + '</a>
+                            </h2>
+                            <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + activity.scheduleName + '</div>
+                          '
+                },
+                {
+                    attributes: {
+                        id: 'location-' + tableNumber + '-' + loop.index,
+                        "data-sort-value": activity.location
+                    },
+                    text: activity.location
+                },
+                {
+                    attributes: {
+                        id: 'time-' + tableNumber + '-' + loop.index,
+                        "data-sort-value": activity.time
+                    },
+                    text: activity.time
+                },
+                {
+                    attributes: {
+                        id: 'scheduled-' + tableNumber + '-'  + loop.index,
+                        "data-sort-value": activity.allocated
+                    },
+                    classes: 'govuk-table__cell--numeric',
+                    text: activity.allocated
+                },
+                {
+                    attributes: {
+                        id: 'attended-' + tableNumber + '-' + loop.index,
+                        "data-sort-value": activity.attended
+                    },
+                    classes: 'govuk-table__cell--numeric',
+                    text: activity.attended
+                },
+                {
+                    attributes: {
+                        id: 'notRecorded-' + tableNumber + '-' + loop.index,
+                        "data-sort-value": activity.notRecorded
+                    },
+                    classes: 'govuk-table__cell--numeric',
+                    text: activity.notRecorded
+                },
+                {
+                    attributes: {
+                        id: 'notAttended-' + tableNumber + '-' + loop.index,
+                        "data-sort-value": activity.notAttended
+                    },
+                    classes: 'govuk-table__cell--numeric',
+                    text: activity.notAttended
+                }
+            ]), rows) %}
+        {% endfor %}
+
+        {{ govukTable({
+            attributes: {
+                'data-module': 'moj-sortable-table'
+            },
+            caption: caption + " (" + rows.length + ")",
+            head: [
+                {
+                    text: "Activity",
+                    attributes: {
+                        "aria-sort": "ascending"
+                    },
+                    classes: 'govuk-!-width-one-quarter'
+                },
+                {
+                    text: "Location",
+                    attributes: {
+                        "aria-sort": "none"
+                    },
+                    classes: 'govuk-!-width-one-quarter'
+                },
+                {
+                    text: "Time",
+                    attributes: {
+                        "aria-sort": "none"
+                    }
+                },
+                {
+                    text: "Scheduled",
+                    classes: 'govuk-table__header--numeric',
+                    attributes: {
+                        "aria-sort": "none"
+                    }
+                },
+                {
+                    text: "Attended",
+                    classes: 'govuk-table__header--numeric',
+                    attributes: {
+                        "aria-sort": "none"
+                    }
+                },
+                {
+                    text: "Not recorded",
+                    classes: 'govuk-table__header--numeric',
+                    attributes: {
+                        "aria-sort": "none"
+                    }
+                },
+                {
+                    text: "All absences",
+                    classes: 'govuk-table__header--numeric',
+                    attributes: {
+                        "aria-sort": "none"
+                    }
+                }
+            ],
+            rows: rows
+        }) }}
     {% endif %}
 {% endmacro %}

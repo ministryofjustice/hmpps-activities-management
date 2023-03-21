@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { UnlockFilterItem, UnlockFilters } from '../../../@types/activities'
+import { FilterItem, UnlockFilters } from '../../../@types/activities'
 import ActivitiesService from '../../../services/activitiesService'
 import UnlockListService from '../../../services/unlockListService'
 import { toDate, convertToArray, formatDate } from '../../../utils/utils'
@@ -157,17 +157,17 @@ const parseFiltersFromPost = (
 
   const locationFilters = oldFilters.locationFilters.map(loc => {
     const checked = convertToArray(locations).includes(loc.value)
-    return { value: loc.value, text: loc.text, checked } as UnlockFilterItem
+    return { value: loc.value, text: loc.text, checked } as FilterItem
   })
 
   const activityFilters = oldFilters.activityFilters.map(act => {
     const checked = convertToArray(activities).includes(act.value)
-    return { value: act.value, text: act.text, checked } as UnlockFilterItem
+    return { value: act.value, text: act.text, checked } as FilterItem
   })
 
   const stayingOrLeavingFilters = oldFilters.stayingOrLeavingFilters.map(stay => {
     const checked = convertToArray(stayingOrLeaving).includes(stay.value)
-    return { value: stay.value, text: stay.text, checked } as UnlockFilterItem
+    return { value: stay.value, text: stay.text, checked } as FilterItem
   })
 
   // Only override filter values if something was provided in the POST body
@@ -186,20 +186,20 @@ const defaultFilters = (
   subLocations: string[],
 ): UnlockFilters => {
   const locationFilters = subLocations.map(loc => {
-    return { value: loc, text: loc, checked: true } as UnlockFilterItem
+    return { value: loc, text: loc, checked: true } as FilterItem
   })
 
   const activityFilters = [
     { value: 'Both', text: 'Both', checked: true },
     { value: 'With', text: 'With', checked: false },
     { value: 'Without', text: 'Without', checked: false },
-  ] as UnlockFilterItem[]
+  ] as FilterItem[]
 
   const stayingOrLeavingFilters = [
     { value: 'Both', text: 'Both', checked: true },
     { value: 'Staying', text: 'Staying', checked: false },
     { value: 'Leaving', text: 'Leaving', checked: false },
-  ] as UnlockFilterItem[]
+  ] as FilterItem[]
 
   return {
     location,
