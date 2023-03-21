@@ -114,7 +114,7 @@ export default class AttendanceListRoutes {
       .searchInmatesByPrisonerNumbers(selectedPrisoners, user)
       .then(inmates =>
         inmates.map(i => ({
-          name: `${i.firstName} ${i.lastName}`,
+          name: `${this.capitalize(i.firstName)} ${this.capitalize(i.lastName)}`,
           prisonerNumber: i.prisonerNumber,
           location: i.cellLocation,
           otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
@@ -159,5 +159,9 @@ export default class AttendanceListRoutes {
     )
 
     return re
+  }
+
+  private capitalize(s: string) {
+    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
   }
 }
