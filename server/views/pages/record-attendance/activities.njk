@@ -169,6 +169,22 @@
                     },
                     classes: 'govuk-table__cell--numeric',
                     text: activity.attended
+                },
+                {
+                    attributes: {
+                        id: 'attended-' + tableNumber + '-' + loop.index,
+                        "data-sort-value": activity.notRecorded
+                    },
+                    classes: 'govuk-table__cell--numeric',
+                    text: activity.notRecorded
+                },
+                {
+                    attributes: {
+                        id: 'attended-' + tableNumber + '-' + loop.index,
+                        "data-sort-value": activity.notAttended
+                    },
+                    classes: 'govuk-table__cell--numeric',
+                    text: activity.notAttended
                 }
             ]), rows) %}
         {% endfor %}

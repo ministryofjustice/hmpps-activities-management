@@ -279,6 +279,7 @@ describe('Route Handlers - Activities', () => {
             {
               allocated: 3,
               attended: 1,
+              cancelled: false,
               category: 'Maths',
               id: 1,
               location: 'Classroom',
@@ -344,6 +345,7 @@ describe('Route Handlers - Activities', () => {
             {
               allocated: 3,
               attended: 1,
+              cancelled: false,
               category: 'English',
               id: 2,
               location: 'Classroom 2',
