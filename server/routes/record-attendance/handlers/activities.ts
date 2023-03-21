@@ -46,6 +46,7 @@ export default class ActivitiesRoutes {
           location: activity.activitySchedule.internalLocation.description,
           timeSlot: getTimeSlotFromTime(activity.startTime),
           time: `${activity.startTime} - ${activity.endTime}`,
+          cancelled: activity.cancelled,
           ...getAttendanceSummary(activity.attendances),
         })),
       )

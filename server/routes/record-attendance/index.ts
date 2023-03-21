@@ -8,6 +8,7 @@ import AttendanceListRoutes, { AttendanceList } from './handlers/attendanceList'
 import NotAttendedReasonRoutes, { NotAttendedReason } from './handlers/notAttendedReason'
 import CancelSessionReasonRoutes, { CancelReasonForm } from './handlers/cancel-session/reason'
 import CancelSessionConfirmationRoutes, { CancelConfirmForm } from './handlers/cancel-session/confirmation'
+import UncancelSessionConfirmationRoutes, { UncancelConfirmForm } from './handlers/uncancel-session/confirmation'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -22,6 +23,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const notAttendedReasonHandler = new NotAttendedReasonRoutes(activitiesService)
   const cancelSessionReasonRoutes = new CancelSessionReasonRoutes()
   const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService)
+  const uncancelSessionConfirmationRoutes = new UncancelSessionConfirmationRoutes(activitiesService)
 
   get('/select-period', selectPeriodHandler.GET)
   post('/select-period', selectPeriodHandler.POST, TimePeriod)
@@ -37,6 +39,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/activities/:id/cancel', cancelSessionReasonRoutes.POST, CancelReasonForm)
   get('/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.GET)
   post('/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.POST, CancelConfirmForm)
+  get('/activities/:id/uncancel', uncancelSessionConfirmationRoutes.GET)
+  post('/activities/:id/uncancel', uncancelSessionConfirmationRoutes.POST, UncancelConfirmForm)
 
   return router
 }

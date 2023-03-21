@@ -5,6 +5,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'activities-page' %}
@@ -137,7 +138,7 @@
                                 <a href="activities/' + activity.id + '/attendance-list" class="govuk-link govuk-link--no-visited-state">' + activity.name + '</a>
                             </h2>
                             <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + activity.scheduleName + '</div>
-                          '
+                            <div>' + activityCancelledTag(activity.cancelled) + '</div>'
                 },
                 {
                     attributes: {
@@ -168,22 +169,6 @@
                     },
                     classes: 'govuk-table__cell--numeric',
                     text: activity.attended
-                },
-                {
-                    attributes: {
-                        id: 'notRecorded-' + tableNumber + '-' + loop.index,
-                        "data-sort-value": activity.notRecorded
-                    },
-                    classes: 'govuk-table__cell--numeric',
-                    text: activity.notRecorded
-                },
-                {
-                    attributes: {
-                        id: 'notAttended-' + tableNumber + '-' + loop.index,
-                        "data-sort-value": activity.notAttended
-                    },
-                    classes: 'govuk-table__cell--numeric',
-                    text: activity.notAttended
                 }
             ]), rows) %}
         {% endfor %}
@@ -244,6 +229,15 @@
                 }
             ],
             rows: rows
+        }) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro activityCancelledTag(cancelled) %}
+    {% if cancelled %}
+        {{ govukTag({
+            text: "Cancelled",
+            classes: "govuk-tag--red"
         }) }}
     {% endif %}
 {% endmacro %}

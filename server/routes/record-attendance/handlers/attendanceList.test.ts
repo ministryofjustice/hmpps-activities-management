@@ -1,12 +1,11 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { format } from 'date-fns'
+import { format, startOfYesterday } from 'date-fns'
 import ActivitiesService from '../../../services/activitiesService'
 import { PrisonerScheduledEvents, ScheduledActivity } from '../../../@types/activitiesAPI/types'
 import PrisonService from '../../../services/prisonService'
 import AttendanceListRoutes from './attendanceList'
-import { InmateBasicDetails } from '../../../@types/prisonApiImport/types'
-import { toDate } from '../../../utils/utils'
+import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
@@ -38,6 +37,75 @@ describe('Route Handlers - Attendance List', () => {
       },
       body: {},
     } as unknown as Request
+
+    when(activitiesService.getScheduledActivity)
+      .calledWith(1, res.locals.user)
+      .mockResolvedValue({
+        id: 1,
+        date: format(new Date(), 'yyyy-MM-dd'),
+        startTime: '10:00',
+        endTime: '11:00',
+        activitySchedule: {
+          activity: { summary: 'Maths level 1' },
+          internalLocation: { description: 'Houseblock 1' },
+        },
+        attendances: [
+          { prisonerNumber: 'ABC123', status: 'WAITING' },
+          { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+          { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+        ],
+      } as ScheduledActivity)
+
+    when(activitiesService.getScheduledEventsForPrisoners)
+      .calledWith(expect.any(Date), ['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
+      .mockResolvedValue({
+        activities: [
+          { eventId: 1, eventDesc: 'Maths', startTime: '10:00', endTime: '11:00', prisonerNumber: 'ABC123' },
+        ],
+        appointments: [
+          {
+            eventId: 2,
+            eventDesc: 'Appointment with the guv',
+            startTime: '15:00',
+            endTime: '16:00',
+            prisonerNumber: 'ABC123',
+          },
+        ],
+        courtHearings: [
+          { eventId: 3, eventDesc: 'Video link', startTime: '09:00', endTime: '10:00', prisonerNumber: 'ABC123' },
+          { eventId: 4, eventDesc: 'Video link', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC321' },
+        ],
+        visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC123' }],
+      } as PrisonerScheduledEvents)
+
+    when(prisonService.searchInmatesByPrisonerNumbers)
+      .calledWith(['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
+      .mockResolvedValue([
+        {
+          prisonerNumber: 'ABC123',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          cellLocation: 'MDI-1-001',
+          alerts: [{ alertCode: 'HA' }, { alertCode: 'XCU' }],
+          category: 'A',
+        },
+        {
+          prisonerNumber: 'ABC321',
+          firstName: 'Alan',
+          lastName: 'Key',
+          cellLocation: 'MDI-1-002',
+          alerts: [],
+          category: 'A',
+        },
+        {
+          prisonerNumber: 'ZXY123',
+          firstName: 'Mr',
+          lastName: 'Blobby',
+          cellLocation: 'MDI-1-003',
+          alerts: [],
+          category: 'A',
+        },
+      ] as Prisoner[])
   })
 
   afterEach(() => {
@@ -45,71 +113,23 @@ describe('Route Handlers - Attendance List', () => {
   })
 
   describe('GET', () => {
-    it('should render with the expected view', async () => {
-      when(activitiesService.getScheduledActivity)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue({
-          id: 1,
-          date: format(new Date(), '2022-12-08'),
-          startTime: '10:00',
-          endTime: '11:00',
-          activitySchedule: {
-            activity: { summary: 'Maths level 1' },
-            internalLocation: { description: 'Houseblock 1' },
-          },
-          attendances: [
-            { prisonerNumber: 'ABC123', status: 'WAITING' },
-            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
-            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
-          ],
-        } as ScheduledActivity)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let viewContext: any = {}
 
-      when(activitiesService.getScheduledEventsForPrisoners)
-        .calledWith(new Date(2022, 11, 8), ['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
-        .mockResolvedValue({
-          activities: [
-            { eventId: 1, eventDesc: 'Maths', startTime: '10:00', endTime: '11:00', prisonerNumber: 'ABC123' },
-          ],
-          appointments: [
-            {
-              eventId: 2,
-              eventDesc: 'Appointment with the guv',
-              startTime: '15:00',
-              endTime: '16:00',
-              prisonerNumber: 'ABC123',
-            },
-          ],
-          courtHearings: [
-            { eventId: 3, eventDesc: 'Video link', startTime: '09:00', endTime: '10:00', prisonerNumber: 'ABC123' },
-            { eventId: 4, eventDesc: 'Video link', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC321' },
-          ],
-          visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC123' }],
-        } as PrisonerScheduledEvents)
-
-      when(prisonService.getInmateDetails)
-        .calledWith(['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
-        .mockResolvedValue([
-          { offenderNo: 'ABC123', firstName: 'Joe', lastName: 'Bloggs', assignedLivingUnitDesc: 'MDI-1-001' },
-          { offenderNo: 'ABC321', firstName: 'Alan', lastName: 'Key', assignedLivingUnitDesc: 'MDI-1-002' },
-          { offenderNo: 'ZXY123', firstName: 'Mr', lastName: 'Blobby', assignedLivingUnitDesc: 'MDI-1-003' },
-        ] as InmateBasicDetails[])
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/attendance-list', {
+    beforeEach(() => {
+      viewContext = {
         activity: {
           allocated: 3,
           attended: 1,
-          date: toDate('2022-12-08'),
           location: 'Houseblock 1',
           name: 'Maths level 1',
           notAttended: 1,
           notRecorded: 1,
-          time: '10:00 - 11:00',
         },
         instance: {
           id: 1,
-          date: format(new Date(), '2022-12-08'),
+          date: format(new Date(), 'yyyy-MM-dd'),
+          isAmendable: true,
           startTime: '10:00',
           endTime: '11:00',
           activitySchedule: {
@@ -124,6 +144,8 @@ describe('Route Handlers - Attendance List', () => {
         },
         attendees: expect.arrayContaining([
           {
+            category: 'A',
+            alerts: [{ alertCode: 'HA' }],
             location: 'MDI-1-001',
             name: 'Joe Bloggs',
             otherEvents: [
@@ -139,6 +161,8 @@ describe('Route Handlers - Attendance List', () => {
             attendance: { prisonerNumber: 'ABC123', status: 'WAITING' },
           },
           {
+            category: 'A',
+            alerts: [],
             location: 'MDI-1-002',
             name: 'Alan Key',
             otherEvents: [
@@ -154,6 +178,8 @@ describe('Route Handlers - Attendance List', () => {
             attendance: { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
           },
           {
+            category: 'A',
+            alerts: [],
             location: 'MDI-1-003',
             name: 'Mr Blobby',
             otherEvents: [],
@@ -161,7 +187,40 @@ describe('Route Handlers - Attendance List', () => {
             attendance: { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
           },
         ]),
-      })
+      }
+    })
+
+    it('should render with the expected view', async () => {
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/attendance-list', viewContext)
+    })
+
+    it("shouldn't be amendable if session is in the past", async () => {
+      viewContext.instance.isAmendable = false
+      viewContext.instance.date = format(startOfYesterday(), 'yyyy-MM-dd')
+
+      when(activitiesService.getScheduledActivity)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({
+          id: 1,
+          date: format(startOfYesterday(), 'yyyy-MM-dd'),
+          startTime: '10:00',
+          endTime: '11:00',
+          activitySchedule: {
+            activity: { summary: 'Maths level 1' },
+            internalLocation: { description: 'Houseblock 1' },
+          },
+          attendances: [
+            { prisonerNumber: 'ABC123', status: 'WAITING' },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+          ],
+        } as ScheduledActivity)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/attendance-list', viewContext)
     })
   })
 
@@ -208,26 +267,8 @@ describe('Route Handlers - Attendance List', () => {
         },
       } as unknown as Request
 
-      when(activitiesService.getScheduledActivity)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue({
-          id: 1,
-          date: format(new Date(), '2022-12-08'),
-          startTime: '10:00',
-          endTime: '11:00',
-          activitySchedule: {
-            activity: { summary: 'Maths level 1' },
-            internalLocation: { description: 'Houseblock 1' },
-          },
-          attendances: [
-            { prisonerNumber: 'ABC123', status: 'WAITING' },
-            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
-            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
-          ],
-        } as ScheduledActivity)
-
       when(activitiesService.getScheduledEventsForPrisoners)
-        .calledWith(new Date(2022, 11, 8), ['ABC123'], res.locals.user)
+        .calledWith(expect.any(Date), ['ABC123'], res.locals.user)
         .mockResolvedValue({
           activities: [
             { eventId: 1, eventDesc: 'Maths', startTime: '10:00', endTime: '11:00', prisonerNumber: 'ABC123' },
@@ -248,11 +289,18 @@ describe('Route Handlers - Attendance List', () => {
           visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC123' }],
         } as PrisonerScheduledEvents)
 
-      when(prisonService.getInmateDetails)
+      when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC123'], res.locals.user)
         .mockResolvedValue([
-          { offenderNo: 'ABC123', firstName: 'Joe', lastName: 'Bloggs', assignedLivingUnitDesc: 'MDI-1-001' },
-        ] as InmateBasicDetails[])
+          {
+            prisonerNumber: 'ABC123',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
+            cellLocation: 'MDI-1-001',
+            alerts: [],
+            category: 'A',
+          },
+        ] as Prisoner[])
 
       await handler.NOT_ATTENDED(req, res)
 

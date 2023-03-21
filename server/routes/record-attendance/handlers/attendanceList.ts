@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { areIntervalsOverlapping, parse } from 'date-fns'
+import { areIntervalsOverlapping, parse, startOfToday, endOfDay } from 'date-fns'
 import { Expose, Transform } from 'class-transformer'
 import ActivitiesService from '../../../services/activitiesService'
 import { getAttendanceSummary, toDate } from '../../../utils/utils'
@@ -18,11 +18,17 @@ export class AttendanceList {
 export default class AttendanceListRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
 
+  private RELEVANT_ALERT_CODES = ['HA', 'XA', 'RCON', 'XEL', 'RNO121', 'PEEP', 'XRF', 'XSA', 'XTACT']
+
   GET = async (req: Request, res: Response): Promise<void> => {
     const instanceId = req.params.id
     const { user } = res.locals
 
-    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
+    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user).then(i => ({
+      ...i,
+      isAmendable: endOfDay(toDate(i.date)) > startOfToday(),
+    }))
+
     const prisonerNumbers = instance.attendances.map(a => a.prisonerNumber)
     const otherScheduledEvents = await this.activitiesService
       .getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user)
@@ -35,13 +41,15 @@ export default class AttendanceListRoutes {
       .then(events => events.filter(e => e.eventId !== +instanceId))
       .then(events => events.filter(e => this.eventClashes(e, instance)))
 
-    const attendees = await this.prisonService.getInmateDetails(prisonerNumbers, user).then(inmates =>
+    const attendees = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
       inmates.map(i => ({
         name: `${i.firstName} ${i.lastName}`,
-        prisonerNumber: i.offenderNo,
-        location: i.assignedLivingUnitDesc,
-        otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.offenderNo),
-        attendance: instance.attendances.find(a => a.prisonerNumber === i.offenderNo),
+        prisonerNumber: i.prisonerNumber,
+        location: i.cellLocation,
+        alerts: i.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
+        category: i.category,
+        otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
+        attendance: instance.attendances.find(a => a.prisonerNumber === i.prisonerNumber),
       })),
     )
 
@@ -49,8 +57,6 @@ export default class AttendanceListRoutes {
       activity: {
         name: instance.activitySchedule.activity.summary,
         location: instance.activitySchedule.internalLocation.description,
-        time: `${instance.startTime} - ${instance.endTime}`,
-        date: toDate(instance.date),
         ...getAttendanceSummary(instance.attendances),
       },
       instance,
@@ -104,16 +110,18 @@ export default class AttendanceListRoutes {
       .then(events => events.filter(e => e.eventId !== +instanceId))
       .then(events => events.filter(e => this.eventClashes(e, instance)))
 
-    const nonAttendees = await this.prisonService.getInmateDetails(selectedPrisoners, user).then(inmates =>
-      inmates.map(i => ({
-        name: `${i.firstName} ${i.lastName}`,
-        prisonerNumber: i.offenderNo,
-        location: i.assignedLivingUnitDesc,
-        otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.offenderNo),
-        attendanceLabel: this.getAttendanceLabel(i.offenderNo, instance.attendances),
-        attendanceId: this.getAttendanceId(i.offenderNo, instance.attendances),
-      })),
-    )
+    const nonAttendees = await this.prisonService
+      .searchInmatesByPrisonerNumbers(selectedPrisoners, user)
+      .then(inmates =>
+        inmates.map(i => ({
+          name: `${i.firstName} ${i.lastName}`,
+          prisonerNumber: i.prisonerNumber,
+          location: i.cellLocation,
+          otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
+          attendanceLabel: this.getAttendanceLabel(i.prisonerNumber, instance.attendances),
+          attendanceId: this.getAttendanceId(i.prisonerNumber, instance.attendances),
+        })),
+      )
 
     nonAttendees.forEach(nonAttendee => {
       req.session.notAttendedJourney.selectedPrisoners.push({

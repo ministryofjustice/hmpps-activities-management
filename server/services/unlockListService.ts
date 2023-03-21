@@ -13,6 +13,8 @@ export default class UnlockListService {
     private readonly activitiesApiClient: ActivitiesApiClient,
   ) {}
 
+  private RELEVANT_ALERT_CODES = ['HA', 'PEEP', 'XEL', 'XCU']
+
   async getFilteredUnlockList(unlockFilters: UnlockFilters, user: ServiceUser): Promise<UnlockListItem[]> {
     const prison = user.activeCaseLoadId
 
@@ -44,7 +46,7 @@ export default class UnlockListService {
         cellLocation: prisoner?.cellLocation,
         category: prisoner?.category,
         incentiveLevel: prisoner?.currentIncentive,
-        alerts: prisoner?.alerts,
+        alerts: prisoner?.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
         status: prisoner?.inOutStatus,
         prisonCode: prisoner?.prisonId,
         locationGroup: unlockFilters.location,

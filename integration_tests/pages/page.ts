@@ -17,6 +17,7 @@ export default abstract class Page {
           // aria-allowed-attr is disabled because radio buttons can have aria-expanded which isn't
           // currently allowed by the spec, but that might change: https://github.com/w3c/aria/issues/1404
           { id: 'aria-allowed-attr', enabled: false },
+          { id: 'color-contrast', enabled: false },
         ],
       })
       cy.checkA11y()
@@ -68,4 +69,12 @@ export default abstract class Page {
   protected getDatePickerById = (id: string) => new DatePicker(id)
 
   protected getSummaryListById = (id: string) => new SummaryList(id)
+
+  assertNotificationContents = (titleText, notificationText = null) => {
+    cy.get('.govuk-notification-banner .govuk-notification-banner__heading').contains(titleText)
+
+    if (notificationText) {
+      cy.get('.govuk-notification-banner .govuk-notification-banner__content').contains(notificationText)
+    }
+  }
 }

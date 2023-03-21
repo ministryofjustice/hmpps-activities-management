@@ -36,7 +36,6 @@ module.exports = grunt => {
       },
       jsDist: {
         src: [
-          'node_modules/jquery/dist/jquery.js', // TODO: Peer dependency of moj-frontend, consider helping to remove this from there and therefore as a dependency of this project
           'node_modules/govuk-frontend/govuk/all.js',
           'node_modules/@ministryofjustice/frontend/moj/all.js',
           'node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js',

@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
+{% from "components/alertsList.njk" import alertsList %}
 {% from "components/multi-select.njk" import multiSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
@@ -15,23 +16,29 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {% set cancelledSessionHeadingHtml %}
-                <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
-                <p class="govuk-body">This activity session has been cancelled for the following reason:</p>
-                <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }}</li></ul>
-            {% endset %}
+            {% if successMessage|length %}
+                {{ govukNotificationBanner({
+                    type: 'success',
+                    text: successMessage.message
+                }) }}
+            {% endif %}
+
             {% if instance.cancelled %}
+                {% set cancelledSessionHeadingHtml %}
+                    <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
+                    <p class="govuk-body">This activity session has been cancelled for the following reason:</p>
+                    <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }}</li></ul>
+                {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
                     html: cancelledSessionHeadingHtml
                 }) }}
             {% endif %}
 
-
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
                 <span class="govuk-caption-l govuk-!-display-none-print">Record attendance</span>
                 {{ activity.name }}: {{ activity.location }}
-                <span class="govuk-caption-l">{{ activity.time }} on {{ activity.date | formatDate('EEEE, do MMMM yyyy') }}</span>
+                <span class="govuk-caption-l">{{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('EEEE, do MMMM yyyy') }}</span>
             </h1>
             <ul class="govuk-list govuk-!-display-none-print">
                 <li><a href="/attendance/select-period" class="govuk-link govuk-!-font-size-19 js-backlink">Choose a different activity</a></li>
@@ -42,14 +49,16 @@
                     text: "Print attendance list",
                     classes: "govuk-button--blue js-print no-js-hidden"
                 }) }}
-                {% if instance.cancelled %}
-                    <a href="#" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">Uncancel this session</a>
-                {% else %}
-                    {{ govukButton({
-                        text: "Cancel this session",
-                        classes: "govuk-button--secondary",
-                        href: 'cancel'
-                    }) }}
+                {% if instance.isAmendable %}
+                    {% if instance.cancelled %}
+                        <a href="uncancel" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">Uncancel this session</a>
+                    {% else %}
+                        {{ govukButton({
+                            text: "Cancel this session",
+                            classes: "govuk-button--secondary",
+                            href: 'cancel'
+                        }) }}
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -101,7 +110,7 @@
                     html: '
                             <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
                                 <a href="' + dpsUrl + '/prisoner/' + attendee.prisonerNumber + '"
-                                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + attendee.name + '
+                                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + attendee.name | toTitleCase + '
                                 </a>
                             </h2>
                             <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + attendee.prisonerNumber + '</div>
@@ -109,6 +118,10 @@
                 },
                 {
                     text: attendee.location
+                },
+                {
+                    html: alertsList({ alerts: attendee.alerts, category: attendee.category }),
+                    classes: 'hmpps-max-width-240'
                 },
                 {
                     html: renderOtherEvents(attendee.otherEvents)
@@ -142,6 +155,9 @@
                 },
                 {
                     text: "Cell location"
+                },
+                {
+                    text: "Relevant alerts"
                 },
                 {
                     text: "Other scheduled events"

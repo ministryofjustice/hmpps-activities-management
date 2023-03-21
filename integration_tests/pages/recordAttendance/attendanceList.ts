@@ -14,10 +14,12 @@ export default class AttendanceListPage extends Page {
       .find('td:nth-child(3)')
       .contains(name)
       .parents('tr')
-      .find('td:nth-child(6)')
+      .find('td:nth-child(7)')
       .contains(status)
 
   markAsAttended = () => cy.get('button').contains('Mark as attended').click()
 
   markAsNotAttended = () => cy.get('button').contains('Mark as not attended').click()
+
+  cancelSessionButton = () => cy.get('a').contains('Cancel this session')
 }
