@@ -2,7 +2,7 @@ import Page from '../../page'
 
 export default class CategoryPage extends Page {
   constructor() {
-    super('appointments-create-single-category-page')
+    super('appointments-create-category-page')
   }
 
   selectCategory = (category: string) => this.getInputById('categoryId').clear().type(category)

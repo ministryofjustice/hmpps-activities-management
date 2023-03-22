@@ -1,0 +1,63 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "components/datePicker.njk" import datePicker %}
+{% from "components/timePicker.njk" import timePicker %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+
+
+{% set pageTitle = "Appointments Management - Create Appointment - Date and Time" %}
+{% set pageId = 'appointments-create-date-and-time-page' %}
+{% set backLinkHref = "name" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.createAppointmentJourney.type) }}
+            <h1 class="govuk-heading-l">When is the appointment?</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ datePicker({
+                    id: 'startDate',
+                    name: 'startDate',
+                    label: {
+                        text: "Appointment date",
+                        classes: "govuk-fieldset__legend--m"
+                    },
+                    hint: {
+                        text: "For example, " | exampleDateOneWeekAhead
+                    },
+                    renderedErrorMessage: validationErrors | findError('startDate'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.startDate or session.createAppointmentJourney.startDate
+                }) }}
+                {{ timePicker({
+                    id: 'startTime',
+                    name: 'startTime',
+                    label: {
+                        text: 'Start time',
+                        classes: "govuk-fieldset__legend--m"
+                    },
+                    renderedErrorMessage: validationErrors | findError('startTime'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.startTime or session.createAppointmentJourney.startTime
+                }) }}
+                {{ timePicker({
+                    id: 'endTime',
+                    name: 'endTime',
+                    label: {
+                        text: 'End time',
+                        classes: "govuk-fieldset__legend--m"
+                    },
+                    renderedErrorMessage: validationErrors | findError('endTime'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.endTime or session.createAppointmentJourney.endTime
+                }) }}
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

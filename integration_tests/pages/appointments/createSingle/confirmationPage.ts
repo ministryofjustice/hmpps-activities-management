@@ -2,7 +2,7 @@ import Page from '../../page'
 
 export default class ConfirmationPage extends Page {
   constructor() {
-    super('appointments-create-single-confirmation-page')
+    super('appointments-create-confirmation-page')
   }
 
   viewAppointmentLink = () => cy.get('[data-qa=view-appointment-link]')

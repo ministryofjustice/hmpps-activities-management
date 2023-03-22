@@ -1,0 +1,48 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set pageTitle = "Appointments Management - Create Appointment - Confirmation" %}
+{% set pageId = 'appointments-create-confirmation-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukPanel({
+                titleText: "Appointment created"
+            }) }}
+            <p class="govuk-body" data-qa="message">
+                {% if session.createAppointmentJourney.type == 'single' %}
+                    You have successfully created an appointment for {{ session.createAppointmentJourney.prisoners[0].name | toTitleCase }}
+                {% elseif session.createAppointmentJourney.type == 'group' %}
+                    You have successfully created an appointment for {{ session.createAppointmentJourney.prisoners | length }} prisoners
+                {% endif %}
+                {% if session.createAppointmentJourney.repeat == YesNo.YES %}
+                   starting on {{ startDate | formatDate('EEEE d MMMM yyyy') }}.
+                   It will repeat {{ ("every weekday (Monday to Friday)" if session.createAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY) +
+                                     ("daily (includes weekends)" if session.createAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.DAILY) +
+                                     ("weekly" if session.createAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKLY) +
+                                     ("fortnightly" if session.createAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY) +
+                                     ("monthly" if session.createAppointmentJourney.repeatPeriod == AppointmentRepeatPeriod.MONTHLY) }}
+                    for {{ session.createAppointmentJourney.repeatCount }}
+                    {% if session.createAppointmentJourney.repeatCount == 1 %}
+                        occurrence
+                    {% else %}
+                        occurrences
+                    {% endif %}
+                {% else %}
+                    on {{ startDate | formatDate('EEEE d MMMM yyyy') }}.
+                {% endif %}
+            </p>
+
+            <h2 class="govuk-heading-m">What you can do next</h2>
+            <p class="govuk-body">
+                <a href="/appointments/create/start" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">Create another appointment</a>
+            </p>
+            <p class="govuk-body">
+                <a href="/appointments/{{ id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and edit appointment details</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

@@ -2,7 +2,7 @@ import Page from '../../page'
 
 export default class RepeatPeriodAndCountPage extends Page {
   constructor() {
-    super('appointments-create-single-repeat-period-and-count-page')
+    super('appointments-create-repeat-period-and-count-page')
   }
 
   selectRepeatPeriod = (option: string) => this.getInputByLabel(option).click()

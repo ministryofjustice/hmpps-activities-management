@@ -3,7 +3,7 @@ import Page from '../../page'
 
 export default class DateAndTimePage extends Page {
   constructor() {
-    super('appointments-create-single-date-and-time-page')
+    super('appointments-create-date-and-time-page')
   }
 
   enterStartDate = (startDate: Date) => {

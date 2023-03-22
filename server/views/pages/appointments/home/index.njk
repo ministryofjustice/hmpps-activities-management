@@ -6,16 +6,15 @@
 {% set backLinkHref = "/" %}
 
 {% block content %}
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l">Appointments management</h1>
 
-            <div class="card-group">
+            <div class="card-group govuk-grid-row">
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
                         "id": "createSingleAppointmentCard",
-                        "href": "appointments/create-single/start",
+                        "href": "appointments/create/start-single",
                         "clickable": "true",
                         "heading": "Create a single appointment",
                         "description": "Create an appointment for a single prisoner in your prison.",

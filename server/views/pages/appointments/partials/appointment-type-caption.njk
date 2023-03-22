@@ -1,0 +1,7 @@
+{% macro appointmentTypeCaption(appointmentType) %}
+  {% if appointmentType == 'single' %}
+    <span class="govuk-caption-l" data-qa="caption">Individual appointment</span>
+  {% elseif appointmentType == 'group' %}
+    <span class="govuk-caption-l" data-qa="caption">Group appointment</span>
+  {% endif %}
+{% endmacro %}

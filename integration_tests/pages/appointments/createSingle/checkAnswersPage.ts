@@ -3,7 +3,7 @@ import { formatDate } from '../../../../server/utils/utils'
 
 export default class CheckAnswersPage extends Page {
   constructor() {
-    super('appointments-create-single-check-answers-page')
+    super('appointments-create-check-answers-page')
   }
 
   assertAppointmentDetail = (header: string, value: string) =>
