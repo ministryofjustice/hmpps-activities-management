@@ -255,6 +255,18 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('getDefaultScheduleOfActivity', () => {
+    it('should fetch the default schedule from an activity', async () => {
+      const activity = {
+        schedules: [{ id: 110 }, { id: 111 }, { id: 112 }],
+      } as unknown as Activity
+
+      activitiesService.getDefaultScheduleOfActivity(activity, user)
+
+      expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(110, user)
+    })
+  })
+
   describe('getActivitySchedules', () => {
     it('should fetch activity schedules using the activities API', async () => {
       const criteria = { prisonerNumbers: ['G4793VF'] }

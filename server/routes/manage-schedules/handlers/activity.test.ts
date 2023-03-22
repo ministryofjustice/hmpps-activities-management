@@ -1,8 +1,13 @@
 import { Request, Response } from 'express'
+import { when } from 'jest-when'
 
 import ActivitiesService from '../../../services/activitiesService'
 import ActivityRoutes from './activity'
 import PrisonService from '../../../services/prisonService'
+import atLeast from '../../../../jest.setup'
+
+import activitySchedule from '../../../services/fixtures/activity_schedule_1.json'
+import { Activity, ActivityScheduleLite } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
@@ -15,31 +20,37 @@ describe('Route Handlers - View Activity', () => {
   let req: Request
   let res: Response
 
-  activitiesService.getActivity.mockResolvedValue({
-    attendanceRequired: false,
-    category: { code: 'EDUCATION', id: 1, name: 'Education' },
-    createdBy: '',
-    createdTime: '',
-    description: '',
-    eligibilityRules: [],
-    endDate: '',
-    inCell: false,
-    minimumIncentiveNomisCode: 'BAS',
-    minimumIncentiveLevel: 'Basic',
-    outsideWork: false,
-    pay: [],
-    payPerSession: 'H',
-    pieceWork: false,
-    prisonCode: '',
-    riskLevel: '',
-    schedules: [],
-    startDate: '',
-    summary: 'Maths Level 1',
-    tier: { code: '', description: '', id: 0 },
-    waitingList: [],
-    id: 1,
-    minimumEducationLevel: [],
-  })
+  when(activitiesService.getActivity)
+    .calledWith(atLeast(1))
+    .mockResolvedValue({
+      attendanceRequired: false,
+      category: { code: 'EDUCATION', id: 1, name: 'Education' },
+      createdBy: '',
+      createdTime: '',
+      description: '',
+      eligibilityRules: [],
+      endDate: '',
+      inCell: false,
+      minimumIncentiveNomisCode: 'BAS',
+      minimumIncentiveLevel: 'Basic',
+      outsideWork: false,
+      pay: [],
+      payPerSession: 'H',
+      pieceWork: false,
+      prisonCode: '',
+      riskLevel: '',
+      schedules: [activitySchedule],
+      startDate: '',
+      summary: 'Maths Level 1',
+      tier: { code: '', description: '', id: 0 },
+      waitingList: [],
+      id: 1,
+      minimumEducationLevel: [],
+    } as unknown as Activity)
+
+  when(activitiesService.getDefaultScheduleOfActivity).mockResolvedValue(
+    activitySchedule as unknown as ActivityScheduleLite,
+  )
 
   beforeEach(() => {
     res = {
@@ -54,7 +65,7 @@ describe('Route Handlers - View Activity', () => {
 
     req = {
       params: {
-        id: '1',
+        activityId: '1',
       },
     } as unknown as Request
   })
@@ -84,7 +95,7 @@ describe('Route Handlers - View Activity', () => {
           pieceWork: false,
           prisonCode: '',
           riskLevel: '',
-          schedules: [],
+          schedules: [activitySchedule],
           startDate: '',
           summary: 'Maths Level 1',
           tier: { code: '', description: '', id: 0 },
@@ -93,6 +104,21 @@ describe('Route Handlers - View Activity', () => {
           minimumEducationLevel: [],
         },
         incentiveLevelPays: [],
+        schedule: {
+          ...activitySchedule,
+          dailySlots: [
+            {
+              day: 'Monday',
+              slots: [
+                {
+                  id: 1,
+                  startTime: '10:00',
+                  endTime: '11:00',
+                },
+              ],
+            },
+          ],
+        },
       })
     })
   })
