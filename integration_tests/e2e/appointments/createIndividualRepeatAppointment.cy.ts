@@ -2,20 +2,20 @@ import { addDays, addWeeks } from 'date-fns'
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
-import SelectPrisonerPage from '../../pages/appointments/createSingle/selectPrisonerPage'
-import CategoryPage from '../../pages/appointments/createSingle/categoryPage'
-import LocationPage from '../../pages/appointments/createSingle/locationPage'
+import SelectPrisonerPage from '../../pages/appointments/create/selectPrisonerPage'
+import CategoryPage from '../../pages/appointments/create/categoryPage'
+import LocationPage from '../../pages/appointments/create/locationPage'
 import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatchPrisonerA8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getRepeatAppointmentDetails from '../../fixtures/activitiesApi/getRepeatAppointmentDetails.json'
 import getOccurrenceDetails from '../../fixtures/activitiesApi/getOccurrenceDetails.json'
-import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
-import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
-import RepeatPeriodAndCountPage from '../../pages/appointments/createSingle/repeatPeriodAndCountPage'
-import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
-import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
+import DateAndTimePage from '../../pages/appointments/create/dateAndTimePage'
+import RepeatPage from '../../pages/appointments/create/repeatPage'
+import RepeatPeriodAndCountPage from '../../pages/appointments/create/repeatPeriodAndCountPage'
+import CheckAnswersPage from '../../pages/appointments/create/checkAnswersPage'
+import ConfirmationPage from '../../pages/appointments/create/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
 import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
@@ -47,7 +47,7 @@ context('Create individual repeat appointment', () => {
     indexPage.appointmentsManagementCard().click()
 
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage.createSingleAppointmentCard().click()
+    appointmentsManagementPage.createIndividualAppointmentCard().click()
 
     const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')
