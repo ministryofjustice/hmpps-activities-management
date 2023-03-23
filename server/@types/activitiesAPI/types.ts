@@ -34,6 +34,7 @@ export type UncancelScheduledInstanceRequest = components['schemas']['UncancelSc
 export type ScheduleInstanceCancelRequest = components['schemas']['ScheduleInstanceCancelRequest']
 export type UserSummary = components['schemas']['UserSummary']
 export type PrisonerSummary = components['schemas']['PrisonerSummary']
+export type ActivityScheduleSlot = components['schemas']['ActivityScheduleSlot']
 
 export enum AppointmentRepeatPeriod {
   WEEKDAY = 'WEEKDAY',
