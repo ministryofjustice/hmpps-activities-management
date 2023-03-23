@@ -17,11 +17,11 @@ describe('Route Handlers - Create Appointment - Start', () => {
     } as unknown as Request
   })
 
-  describe('SINGLE', () => {
-    it('should populate the session with single appointment journey type and redirect to select prisoner page', async () => {
-      await handler.SINGLE(req, res)
+  describe('INDIVIDUAL', () => {
+    it('should populate the session with individual appointment journey type and redirect to select prisoner page', async () => {
+      await handler.INDIVIDUAL(req, res)
 
-      expect(req.session.createAppointmentJourney).toEqual({ type: AppointmentType.SINGLE })
+      expect(req.session.createAppointmentJourney).toEqual({ type: AppointmentType.INDIVIDUAL })
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
   })

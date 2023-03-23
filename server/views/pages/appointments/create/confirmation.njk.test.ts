@@ -14,7 +14,7 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
   const tomorrow = addDays(new Date(), 1)
   let viewContext = {
     session: {
-      createAppointmentJourney: { type: AppointmentType.SINGLE } as CreateAppointmentJourney,
+      createAppointmentJourney: { type: AppointmentType.INDIVIDUAL } as CreateAppointmentJourney,
     },
     startDate: tomorrow,
   }
@@ -25,7 +25,7 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
       session: {
-        createAppointmentJourney: { type: AppointmentType.SINGLE } as CreateAppointmentJourney,
+        createAppointmentJourney: { type: AppointmentType.INDIVIDUAL } as CreateAppointmentJourney,
       },
       startDate: tomorrow,
     }
@@ -33,7 +33,7 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
 
   it('should not display repeat frequency or occurrences when repeat = NO', () => {
     viewContext.session.createAppointmentJourney = {
-      type: AppointmentType.SINGLE,
+      type: AppointmentType.INDIVIDUAL,
       prisoners: [
         {
           name: 'TEST PRISONER',
@@ -61,7 +61,7 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
     'frequency $repeatPeriod should be displayed as $expectedText with occurrences when repeat = YES',
     ({ repeatPeriod, expectedText }) => {
       viewContext.session.createAppointmentJourney = {
-        type: AppointmentType.SINGLE,
+        type: AppointmentType.INDIVIDUAL,
         prisoners: [
           {
             name: 'TEST PRISONER',

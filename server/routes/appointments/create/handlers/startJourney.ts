@@ -2,8 +2,8 @@ import { Request, Response } from 'express'
 import { AppointmentType } from '../journey'
 
 export default class StartJourneyRoutes {
-  SINGLE = async (req: Request, res: Response): Promise<void> => {
-    req.session.createAppointmentJourney = { type: AppointmentType.SINGLE }
+  INDIVIDUAL = async (req: Request, res: Response): Promise<void> => {
+    req.session.createAppointmentJourney = { type: AppointmentType.INDIVIDUAL }
     res.redirect(`select-prisoner`)
   }
 

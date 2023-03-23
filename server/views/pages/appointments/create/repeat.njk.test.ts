@@ -11,7 +11,7 @@ describe('Views - Create Individual Appointment - Repeat', () => {
   let compiledTemplate: Template
   let viewContext = {
     session: {
-      createAppointmentJourney: { type: AppointmentType.SINGLE } as CreateAppointmentJourney,
+      createAppointmentJourney: { type: AppointmentType.INDIVIDUAL } as CreateAppointmentJourney,
     },
     formResponses: {},
   }
@@ -22,7 +22,7 @@ describe('Views - Create Individual Appointment - Repeat', () => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
       session: {
-        createAppointmentJourney: { type: AppointmentType.SINGLE } as CreateAppointmentJourney,
+        createAppointmentJourney: { type: AppointmentType.INDIVIDUAL } as CreateAppointmentJourney,
       },
       formResponses: {},
     }

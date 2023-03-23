@@ -33,7 +33,7 @@ context('Create individual appointment - check answers change links', () => {
     indexPage.appointmentsManagementCard().click()
 
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage.createSingleAppointmentCard().click()
+    appointmentsManagementPage.createIndividualAppointmentCard().click()
 
     const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')

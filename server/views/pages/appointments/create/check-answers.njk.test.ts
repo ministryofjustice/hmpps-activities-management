@@ -22,7 +22,7 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
   const tomorrow = addDays(new Date(), 1)
   let viewContext = {
     session: {
-      createAppointmentJourney: { type: AppointmentType.SINGLE } as CreateAppointmentJourney,
+      createAppointmentJourney: { type: AppointmentType.INDIVIDUAL } as CreateAppointmentJourney,
     },
     startDate: tomorrow,
     startTime: tomorrow.setHours(9, 30),
@@ -35,7 +35,7 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
       session: {
-        createAppointmentJourney: { type: AppointmentType.SINGLE } as CreateAppointmentJourney,
+        createAppointmentJourney: { type: AppointmentType.INDIVIDUAL } as CreateAppointmentJourney,
       },
       startDate: tomorrow,
       startTime: tomorrow.setHours(9, 30),

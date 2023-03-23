@@ -14,7 +14,7 @@
             {{ appointmentTypeCaption(session.createAppointmentJourney.type) }}
             <form method="POST">
                 {% set defaultPrisonerNumber = formResponses.number %}
-                {% if session.createAppointmentJourney.type == 'single' %}
+                {% if session.createAppointmentJourney.type == 'individual' %}
                     {% set defaultPrisonerNumber = defaultPrisonerNumber or session.createAppointmentJourney.prisoners[0].number %}
                 {% endif %}
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

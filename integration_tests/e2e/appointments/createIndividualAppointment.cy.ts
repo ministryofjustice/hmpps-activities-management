@@ -44,11 +44,11 @@ context('Create individual appointment', () => {
     indexPage.appointmentsManagementCard().click()
 
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage.createSingleAppointmentCard().should('contain.text', 'Create a single appointment')
+    appointmentsManagementPage.createIndividualAppointmentCard().should('contain.text', 'Create an appointment')
     appointmentsManagementPage
-      .createSingleAppointmentCard()
-      .should('contain.text', 'Create an appointment for a single prisoner in your prison.')
-    appointmentsManagementPage.createSingleAppointmentCard().click()
+      .createIndividualAppointmentCard()
+      .should('contain.text', 'Create an appointment for an individual prisoner in your prison.')
+    appointmentsManagementPage.createIndividualAppointmentCard().click()
 
     const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')

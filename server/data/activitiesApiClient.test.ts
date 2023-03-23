@@ -384,7 +384,7 @@ describe('activitiesApiClient', () => {
     const startDate = '2022-10-01'
     const endDate = '2022-10-02'
 
-    it('should return scheduled events for a single prisoner and a date range', async () => {
+    it('should return scheduled events for an individual prisoner and a date range', async () => {
       const response = {
         prisonCode,
         prisonerNumbers: [prisonerNumber],

@@ -10,7 +10,7 @@
 
 {% set summaryListRows = [] %}
 
-{% if session.createAppointmentJourney.type == 'single' %}
+{% if session.createAppointmentJourney.type == 'individual' %}
     {% set prisoner = session.createAppointmentJourney.prisoners[0] %}
     {% set summaryListRows = (summaryListRows.push(
         {

@@ -9,7 +9,7 @@ import attendanceRoutes from './record-attendance'
 import unlockListRoutes from './unlock-list'
 import spikeRoutes from './spikes'
 import appointmentsHomeRoutes from './appointments/home'
-import appointmentsCreateSingleRoutes from './appointments/create'
+import appointmentsCreateIndividualRoutes from './appointments/create'
 import appointmentDetailsRoutes from './appointments/details'
 import appointmentOccurrenceDetailsRoutes from './appointments/occurrence-details'
 import errorMessageMiddleware from '../middleware/errorMessageMiddleware'
@@ -36,7 +36,7 @@ export default function routes(services: Services): Router {
 
   // Appointments
   router.use('/appointments', appointmentsHomeRoutes())
-  router.use('/appointments/create', appointmentsCreateSingleRoutes(services))
+  router.use('/appointments/create', appointmentsCreateIndividualRoutes(services))
   router.use('/appointments', appointmentDetailsRoutes(services))
   router.use('/appointment/occurrence', appointmentOccurrenceDetailsRoutes(services))
 

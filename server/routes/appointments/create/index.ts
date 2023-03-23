@@ -31,7 +31,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
 
-  get('/start-single', startHandler.SINGLE)
+  get('/start-individual', startHandler.INDIVIDUAL)
   get('/start-group', startHandler.GROUP)
   get('/select-prisoner', selectPrisonerHandler.GET, true)
   post('/select-prisoner', selectPrisonerHandler.POST, PrisonerSearch)

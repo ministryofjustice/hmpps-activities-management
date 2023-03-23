@@ -13,7 +13,7 @@
                 titleText: "Appointment created"
             }) }}
             <p class="govuk-body" data-qa="message">
-                {% if session.createAppointmentJourney.type == 'single' %}
+                {% if session.createAppointmentJourney.type == 'individual' %}
                     You have successfully created an appointment for {{ session.createAppointmentJourney.prisoners[0].name | toTitleCase }}
                 {% elseif session.createAppointmentJourney.type == 'group' %}
                     You have successfully created an appointment for {{ session.createAppointmentJourney.prisoners | length }} prisoners
