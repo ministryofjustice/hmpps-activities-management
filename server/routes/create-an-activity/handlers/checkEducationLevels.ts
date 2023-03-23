@@ -18,6 +18,6 @@ export default class CheckPayRoutes {
       return res.redirect(`check-answers`)
     }
 
-    res.redirect(`start-date`)
+    return res.redirect(`start-date`)
   }
 }
