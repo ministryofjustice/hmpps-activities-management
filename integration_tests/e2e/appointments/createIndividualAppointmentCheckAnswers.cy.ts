@@ -2,20 +2,20 @@ import { getDate } from 'date-fns'
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
-import SelectPrisonerPage from '../../pages/appointments/createSingle/selectPrisonerPage'
-import CategoryPage from '../../pages/appointments/createSingle/categoryPage'
-import LocationPage from '../../pages/appointments/createSingle/locationPage'
+import SelectPrisonerPage from '../../pages/appointments/create/selectPrisonerPage'
+import CategoryPage from '../../pages/appointments/create/categoryPage'
+import LocationPage from '../../pages/appointments/create/locationPage'
 import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatchPrisonerA8644DY.json'
 import postMatchPrisonerA1350DZ from '../../fixtures/prisonerSearchApi/postMatchPrisonerA1350DZ.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
-import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
-import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
-import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
-import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
+import DateAndTimePage from '../../pages/appointments/create/dateAndTimePage'
+import RepeatPage from '../../pages/appointments/create/repeatPage'
+import CheckAnswersPage from '../../pages/appointments/create/checkAnswersPage'
+import ConfirmationPage from '../../pages/appointments/create/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
 
-context('Create single appointment - check answers change links', () => {
+context('Create individual appointment - check answers change links', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -27,7 +27,7 @@ context('Create single appointment - check answers change links', () => {
     cy.stubEndpoint('POST', '/appointments')
   })
 
-  it('Create single appointment - check answers change links', () => {
+  it('Create individual appointment - check answers change links', () => {
     // Move through the journey to check answers page
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()

@@ -2,23 +2,23 @@ import { addDays } from 'date-fns'
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
-import SelectPrisonerPage from '../../pages/appointments/createSingle/selectPrisonerPage'
-import CategoryPage from '../../pages/appointments/createSingle/categoryPage'
-import LocationPage from '../../pages/appointments/createSingle/locationPage'
+import SelectPrisonerPage from '../../pages/appointments/create/selectPrisonerPage'
+import CategoryPage from '../../pages/appointments/create/categoryPage'
+import LocationPage from '../../pages/appointments/create/locationPage'
 import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatchPrisonerA8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
-import DateAndTimePage from '../../pages/appointments/createSingle/dateAndTimePage'
-import RepeatPage from '../../pages/appointments/createSingle/repeatPage'
-import CheckAnswersPage from '../../pages/appointments/createSingle/checkAnswersPage'
-import ConfirmationPage from '../../pages/appointments/createSingle/confirmationPage'
+import DateAndTimePage from '../../pages/appointments/create/dateAndTimePage'
+import RepeatPage from '../../pages/appointments/create/repeatPage'
+import CheckAnswersPage from '../../pages/appointments/create/checkAnswersPage'
+import ConfirmationPage from '../../pages/appointments/create/confirmationPage'
 import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import IndividualMovementSlip from '../../pages/appointments/movementSlip/individualMovementSlip'
 import { formatDate } from '../../../server/utils/utils'
 
-context('Create single appointment', () => {
+context('Create individual appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   // To pass validation we must ensure the appointment details start date are set to tomorrow
   getAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
@@ -35,7 +35,7 @@ context('Create single appointment', () => {
     cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
   })
 
-  it('Should complete create single appointment journey', () => {
+  it('Should complete create individual appointment journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().should('contain.text', 'Appointments management')
     indexPage
