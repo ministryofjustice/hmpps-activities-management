@@ -2,9 +2,9 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays } from 'date-fns'
-import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
+import { associateErrorsWithProperty, formatDate } from '../../../utils/utils'
 import StartDateRoutes, { StartDate } from './startDate'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import { simpleDateFromDate } from '../../../commonValidationTypes/simpleDate'
 
 describe('Route Handlers - Create an activity schedule - Start date', () => {
   const handler = new StartDateRoutes()
@@ -24,7 +24,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
 
     req = {
       session: {
-        createScheduleJourney: {},
+        createJourney: {},
       },
     } as unknown as Request
   })
@@ -32,7 +32,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/create-schedule/start-date', {
+      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/start-date', {
         endDate: undefined,
       })
     })
@@ -49,7 +49,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createScheduleJourney.startDate).toEqual(startDate)
+      expect(req.session.createJourney.startDate).toEqual(startDate)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
     })
   })

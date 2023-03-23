@@ -4,7 +4,6 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
-{% from "components/activitySummary.njk" import activitySummary %}
 {% from "components/nestedTimeSlotCheckBoxes.njk" import nestedTimeSlotCheckBoxes %}
 
 {% set pageTitle = applicationName + " - Create a schedule - Days and times" %}
@@ -14,7 +13,8 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            {{ activitySummary(activity) }}
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -35,55 +35,55 @@
                         text: "Select each day that the activity will run, then select the times the activity will run on that day."
                     },
                     errorMessage: validationErrors | findError('days'),
-                    values: formResponses.days or session.createScheduleJourney.days,
+                    values: formResponses.days or session.createJourney.days,
                     items: [
                         {
                             value: "monday",
                             text: "Monday",
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Monday", validationErrors, formResponses, session.createScheduleJourney)
+                                html: nestedTimeSlotCheckBoxes("Monday", validationErrors, formResponses, session.createJourney)
                             }
                         },
                         {
                             value: "tuesday",
                             text: "Tuesday",
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Tuesday", validationErrors, formResponses, session.createScheduleJourney)
+                                html: nestedTimeSlotCheckBoxes("Tuesday", validationErrors, formResponses, session.createJourney)
                             }
                         },
                         {
                             value: "wednesday",
                             text: "Wednesday",
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Wednesday", validationErrors, formResponses, session.createScheduleJourney)
+                                html: nestedTimeSlotCheckBoxes("Wednesday", validationErrors, formResponses, session.createJourney)
                             }
                         },
                         {
                             value: "thursday",
                             text: "Thursday",
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Thursday", validationErrors, formResponses, session.createScheduleJourney)
+                                html: nestedTimeSlotCheckBoxes("Thursday", validationErrors, formResponses, session.createJourney)
                             }
                         },
                         {
                             value: "friday",
                             text: "Friday",
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Friday", validationErrors, formResponses, session.createScheduleJourney)
+                                html: nestedTimeSlotCheckBoxes("Friday", validationErrors, formResponses, session.createJourney)
                             }
                         },
                         {
                             value: "saturday",
                             text: "Saturday",
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Saturday", validationErrors, formResponses, session.createScheduleJourney)
+                                html: nestedTimeSlotCheckBoxes("Saturday", validationErrors, formResponses, session.createJourney)
                             }
                         },
                         {
                             value: "sunday",
                             text: "Sunday",
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Sunday", validationErrors, formResponses, session.createScheduleJourney)
+                                html: nestedTimeSlotCheckBoxes("Sunday", validationErrors, formResponses, session.createJourney)
                             }
                         }
                     ]

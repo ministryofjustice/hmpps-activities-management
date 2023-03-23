@@ -7,8 +7,6 @@ import NameRoutes, { Name } from './handlers/name'
 import StartJourneyRoutes from './handlers/startJourney'
 import { Services } from '../../services'
 import RiskLevelRoutes, { RiskLevel } from './handlers/riskLevel'
-import CheckAnswersRoutes from './handlers/checkAnswers'
-import ConfirmationRoutes from './handlers/confirmation'
 import PayRoutes, { Pay } from './handlers/pay'
 import CheckPayRoutes from './handlers/checkPay'
 import RemovePayRoutes, { ConfirmRemoveOptions } from './handlers/removePay'
@@ -16,6 +14,15 @@ import QualificationRoutes, { Qualification } from './handlers/qualifications'
 import EducationLevelRoutes, { EducationLevel } from './handlers/educationLevel'
 import RemoveEducationLevelRoutes from './handlers/removeEducationLevel'
 import CheckEducationLevelRoutes from './handlers/checkEducationLevels'
+import StartDateRoutes, { StartDate } from './handlers/startDate'
+import EndDateOptionRoutes, { EndDateOption } from './handlers/endDateOption'
+import EndDateRoutes, { EndDate } from './handlers/endDate'
+import DaysAndTimesRoutes, { DaysAndTimes } from './handlers/daysAndTimes'
+import BankHolidayOptionRoutes, { BankHolidayOption } from './handlers/bankHoliday'
+import LocationRoutes, { Location } from './handlers/location'
+import CapacityRoutes, { Capacity } from './handlers/capacity'
+import CheckAnswersRoutes from './handlers/checkAnswers'
+import ConfirmationRoutes from './handlers/confirmation'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -35,6 +42,13 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const educationLevelHandler = new EducationLevelRoutes(prisonService)
   const removeEducationLevelHandler = new RemoveEducationLevelRoutes()
   const checkEducationLevelHandler = new CheckEducationLevelRoutes()
+  const startDateHandler = new StartDateRoutes()
+  const endDateOptionHandler = new EndDateOptionRoutes()
+  const endDateHandler = new EndDateRoutes()
+  const daysAndTimesHandler = new DaysAndTimesRoutes()
+  const bankHolidayHandler = new BankHolidayOptionRoutes()
+  const locationHandler = new LocationRoutes(prisonService)
+  const capacityHandler = new CapacityRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, prisonService)
   const confirmationHandler = new ConfirmationRoutes()
 
@@ -58,6 +72,20 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/remove-education-level', removeEducationLevelHandler.GET, true)
   get('/check-education-level', checkEducationLevelHandler.GET, true)
   post('/check-education-level', checkEducationLevelHandler.POST)
+  get('/start-date', startDateHandler.GET, true)
+  post('/start-date', startDateHandler.POST, StartDate)
+  get('/end-date-option', endDateOptionHandler.GET, true)
+  post('/end-date-option', endDateOptionHandler.POST, EndDateOption)
+  get('/end-date', endDateHandler.GET, true)
+  post('/end-date', endDateHandler.POST, EndDate)
+  get('/days-and-times', daysAndTimesHandler.GET, true)
+  post('/days-and-times', daysAndTimesHandler.POST, DaysAndTimes)
+  get('/bank-holiday-option', bankHolidayHandler.GET, true)
+  post('/bank-holiday-option', bankHolidayHandler.POST, BankHolidayOption)
+  get('/location', locationHandler.GET, true)
+  post('/location', locationHandler.POST, Location)
+  get('/capacity', capacityHandler.GET, true)
+  post('/capacity', capacityHandler.POST, Capacity)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
   get('/confirmation/:id', confirmationHandler.GET, true)

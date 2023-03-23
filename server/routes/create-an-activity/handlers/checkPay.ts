@@ -41,6 +41,7 @@ export default class CheckPayRoutes {
     req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.iepDescription
 
     if (req.session.createJourney.fromReview) {
+      delete req.session.createJourney.fromReview
       return res.redirect(`check-answers`)
     }
     return res.redirectOrReturn(`qualification`)

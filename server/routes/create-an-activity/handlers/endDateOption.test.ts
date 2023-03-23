@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty } from '../../../utils/utils'
 import EndDateOptionRoutes, { EndDateOption } from './endDateOption'
 
 describe('Route Handlers - Create an activity schedule - End date option', () => {
@@ -22,7 +22,7 @@ describe('Route Handlers - Create an activity schedule - End date option', () =>
 
     req = {
       session: {
-        createScheduleJourney: {},
+        createJourney: {},
       },
     } as unknown as Request
   })
@@ -30,7 +30,7 @@ describe('Route Handlers - Create an activity schedule - End date option', () =>
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/create-schedule/end-date-option')
+      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/end-date-option')
     })
   })
 
@@ -42,7 +42,7 @@ describe('Route Handlers - Create an activity schedule - End date option', () =>
 
       await handler.POST(req, res)
 
-      expect(req.session.createScheduleJourney.endDateOption).toEqual('yes')
+      expect(req.session.createJourney.endDateOption).toEqual('yes')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date')
     })
   })

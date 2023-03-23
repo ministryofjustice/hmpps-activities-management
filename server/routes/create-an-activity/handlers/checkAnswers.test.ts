@@ -4,9 +4,10 @@ import { when } from 'jest-when'
 import ActivitiesService from '../../../services/activitiesService'
 import CheckAnswersRoutes from './checkAnswers'
 import activity from '../../../services/fixtures/activity_1.json'
+import createScheduleRequest from '../../../services/fixtures/create_schedule_request_1.json'
 import atLeast from '../../../../jest.setup'
 import PrisonService from '../../../services/prisonService'
-import { ActivityLite } from '../../../@types/activitiesAPI/types'
+import { ActivityLite, ActivityScheduleLite } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
@@ -55,6 +56,25 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           minimumIncentiveLevel: 'Standard',
           incentiveLevels: ['Standard', 'Enhanced'],
           educationLevels: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
+          startDate: {
+            day: 17,
+            month: 1,
+            year: 2023,
+          },
+          endDateOption: 'yes',
+          endDate: {
+            day: 18,
+            month: 1,
+            year: 2023,
+          },
+          days: ['tuesday', 'friday'],
+          timeSlotsTuesday: ['AM'],
+          timeSlotsFriday: ['PM', 'ED'],
+          location: {
+            id: 26149,
+            name: 'Gym',
+          },
+          capacity: 12,
         },
       },
     } as unknown as Request
@@ -74,6 +94,12 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             pays: [{ bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150' }],
           },
         ],
+        endDate: '18th January 2023',
+        startDate: '17th January 2023',
+        times: {
+          tuesday: ['AM'],
+          friday: ['PM', 'ED'],
+        },
       })
     })
   })
@@ -93,6 +119,10 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       when(activitiesService.createActivity)
         .calledWith(atLeast(expectedActivity))
         .mockResolvedValueOnce(activity as unknown as ActivityLite)
+
+      when(activitiesService.createScheduleActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce({ id: 1 } as ActivityScheduleLite)
 
       await handler.POST(req, res)
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
@@ -115,8 +145,14 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         .calledWith(atLeast(expectedActivity))
         .mockResolvedValueOnce(activity as unknown as ActivityLite)
 
+      when(activitiesService.createScheduleActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce({ id: 1 } as ActivityScheduleLite)
+
       await handler.POST(req, res)
+
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
+      expect(activitiesService.createScheduleActivity).toHaveBeenCalledWith(1, createScheduleRequest, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
     })
   })

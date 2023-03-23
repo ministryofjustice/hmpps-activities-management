@@ -2,13 +2,13 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty } from '../../../utils/utils'
 import LocationRoutes, { Location } from './location'
-import PrisonService from '../../../../services/prisonService'
-import eventLocations from '../../../../services/fixtures/event_locations_2.json'
-import eventLocationsFiltered from '../../../../services/fixtures/event_locations_filtered_2.json'
+import PrisonService from '../../../services/prisonService'
+import eventLocations from '../../../services/fixtures/event_locations_2.json'
+import eventLocationsFiltered from '../../../services/fixtures/event_locations_filtered_2.json'
 
-jest.mock('../../../../services/prisonService')
+jest.mock('../../../services/prisonService')
 
 const prisonService = new PrisonService(null, null, null)
 
@@ -28,7 +28,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
 
     req = {
       session: {
-        createScheduleJourney: {},
+        createJourney: {},
       },
     } as unknown as Request
   })
@@ -42,7 +42,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
       when(prisonService.getEventLocations).mockResolvedValue(eventLocations)
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/create-schedule/location', {
+      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/location', {
         locations: eventLocationsFiltered,
       })
     })
@@ -58,7 +58,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createScheduleJourney.location).toEqual({
+      expect(req.session.createJourney.location).toEqual({
         id: 27019,
         name: 'Workshop 9',
       })

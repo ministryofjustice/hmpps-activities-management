@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
 import BankHolidayOptionRoutes, { BankHolidayOption } from './bankHoliday'
+import { associateErrorsWithProperty } from '../../../utils/utils'
 
 describe('Route Handlers - Create an activity schedule - Bank Holiday option', () => {
   const handler = new BankHolidayOptionRoutes()
@@ -22,7 +22,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
 
     req = {
       session: {
-        createScheduleJourney: {},
+        createJourney: {},
       },
     } as unknown as Request
   })
@@ -30,7 +30,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/create-schedule/bank-holiday-option')
+      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/bank-holiday-option')
     })
   })
 
@@ -42,7 +42,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
 
       await handler.POST(req, res)
 
-      expect(req.session.createScheduleJourney.runsOnBankHoliday).toEqual(true)
+      expect(req.session.createJourney.runsOnBankHoliday).toEqual(true)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
   })

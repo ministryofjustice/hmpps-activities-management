@@ -1,3 +1,4 @@
+import { addMonths } from 'date-fns'
 import IndexPage from '../pages/index'
 import Page from '../pages/page'
 import CategoryPage from '../pages/createActivity/category'
@@ -14,6 +15,15 @@ import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncen
 import educationLevels from '../fixtures/prisonApi/educationLevels.json'
 import CheckAnswersPage from '../pages/createActivity/checkAnswers'
 import ConfirmationPage from '../pages/createActivity/confirmation'
+import getEventLocations from '../fixtures/prisonApi/getEventLocations.json'
+import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
+import StartDatePage from '../pages/createSchedule/startDate'
+import EndDateOptionPage from '../pages/createSchedule/endDateOption'
+import EndDatePage from '../pages/createSchedule/endDate'
+import DaysAndTimesPage from '../pages/createSchedule/daysAndTimes'
+import BankHolidayPage from '../pages/createSchedule/bankHoliday'
+import LocationPage from '../pages/createSchedule/location'
+import CapacityPage from '../pages/createSchedule/capacity'
 
 context('Change location', () => {
   beforeEach(() => {
@@ -25,7 +35,9 @@ context('Change location', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/EDU_LEVEL/codes', educationLevels)
-    cy.stubEndpoint('POST', '/activities')
+    cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
+    cy.stubEndpoint('POST', '/activities', JSON.parse('{"id": 2}'))
+    cy.stubEndpoint('POST', '/activities/2/schedules', getSchedule)
   })
 
   it('should click through create activity journey', () => {
@@ -76,6 +88,42 @@ context('Change location', () => {
     const checkEducationLevelPage = Page.verifyOnPage(CheckEducationLevelsPage)
     checkEducationLevelPage.educationLevelRows().should('have.length', 1)
     checkEducationLevelPage.confirmEducationLevels()
+
+    const startDatePage = Page.verifyOnPage(StartDatePage)
+    const startDatePicker = startDatePage.getDatePicker()
+    const startDate = addMonths(new Date(), 1)
+    startDatePicker.enterDate(startDate)
+    startDatePage.continue()
+
+    const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
+    endDateOptionPage.addEndDate('Yes')
+    endDateOptionPage.continue()
+
+    const endDatePage = Page.verifyOnPage(EndDatePage)
+    const endDatePicker = endDatePage.getDatePicker()
+    const endDate = addMonths(new Date(), 8)
+    endDatePicker.enterDate(endDate)
+    endDatePage.continue()
+
+    const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
+    daysAndTimesPage.selectDayTimeCheckboxes([
+      ['Monday', ['AM session']],
+      ['Wednesday', ['AM session', 'PM session']],
+      ['Thursday', ['AM session', 'PM session', 'ED session']],
+    ])
+    daysAndTimesPage.continue()
+
+    const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
+    bankHolidayPage.runOnBankHoliday('Yes')
+    bankHolidayPage.continue()
+
+    const locationPage = Page.verifyOnPage(LocationPage)
+    locationPage.selectLocation('HB2 Classroom 2')
+    locationPage.continue()
+
+    const capacityPage = Page.verifyOnPage(CapacityPage)
+    capacityPage.enterCapacity('6')
+    capacityPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.createActivity()

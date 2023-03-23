@@ -22,6 +22,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
     } as unknown as Response
 
     req = {
+      query: {},
       session: {
         createJourney: {
           name: 'Maths level 1',
@@ -70,7 +71,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
   describe('POST', () => {
     it('should add the minimum incentive level to the session and redirect', async () => {
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      expect(res.redirect).toHaveBeenCalledWith('start-date')
     })
   })
 })

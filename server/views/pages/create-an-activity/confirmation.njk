@@ -9,12 +9,21 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ govukPanel({
-                titleText: session.createJourney.name + " created"
+                titleText: "You've created a new activity for " + session.createJourney.name
             }) }}
-            <h2 class="govuk-heading-m">What you can do next</h2>
+            <h2 class="govuk-heading-l">What you can do next</h2>
             <p class="govuk-body">
-                Your activity has been created and you can <a href="/schedule/activities/{{ id }}/create-schedule/start" class="govuk-link">start building new schedules for it</a>
+                You can <a href="/allocate/{{ id }}/allocate" class="govuk-link govuk-link--no-visited-state">start allocating people to this activity</a>
             </p>
+            <p class='govuk-body'>You can also:</p>
+            <ul>
+                <li class='govuk-list govuk-list--bullet'>
+                    <a href='/create/category' class='govuk-link govuk-link--no-visited-state'>Create another activity</a>
+                </li>
+                <li class='govuk-list govuk-list--bullet'>
+                    Use activities dashboard to <a href='/schedule/activities' class='govuk-link govuk-link--no-visited-state'>edit an existing activity</a>
+                </li>
+            </ul>
         </div>
     </div>
 {% endblock %}
