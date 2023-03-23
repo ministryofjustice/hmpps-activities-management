@@ -1,0 +1,45 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+
+{% set pageTitle = "Appointments Management - Create Appointment - Category" %}
+{% set pageId = 'appointments-create-category-page' %}
+{% set backLinkHref = "/select-prisoner" %}
+
+{% set categoryOptions = [{ value: "-", text: "" }] %}
+{% for category in categories %}
+    {% set categoryOptions = (categoryOptions.push( { value: category.id, text: category.description } ), categoryOptions) %}
+{% endfor %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="categoryId"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.createAppointmentJourney.type) }}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukSelect({
+                    id: "categoryId",
+                    name: "categoryId",
+                    label: {
+                        text: "What is the appointment category?",
+                        classes: "govuk-label--l",
+                        isPageHeading: true
+                    },
+                    errorMessage: validationErrors | findError('categoryId'),
+                    items: categoryOptions,
+                    value: formResponses.categoryId or session.createAppointmentJourney.category.id
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

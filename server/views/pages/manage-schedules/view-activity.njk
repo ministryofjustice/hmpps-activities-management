@@ -14,12 +14,11 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
-            <h2 class="govuk-heading-m">Activity details</h2>
             {{ govukSummaryList({
                 rows: [
                     {
                         key: {
-                            text: "Category"
+                            text: "Activity category"
                         },
                         value: {
                             text: activity.category.name
@@ -27,18 +26,32 @@
                     },
                     {
                         key: {
-                            text: "Name"
+                            text: "Activity name"
                         },
                         value: {
                             text: activity.summary
                         }
+                    }
+                ]
+            }) }}
+
+            <h2 class="govuk-heading-m">Requirements and pay</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Risk assessment level"
+                        },
+                        value: {
+                            text: activity.riskLevel | capitalize
+                        }
                     },
                     {
                         key: {
-                            text: "Risk level"
+                            text: "Education requirements"
                         },
                         value: {
-                            text: activity.riskLevel
+                            html: educationRequirementsContent(activity.educationRequirements)
                         }
                     },
                     {
@@ -60,6 +73,72 @@
                 ]
             }) }}
 
+            <h2 class="govuk-heading-m">Dates and schedule</h2>
+            {% set dateAndScheduleRows = [{
+                key: {
+                    text: "Start date"
+                },
+                value: {
+                    text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+                }
+            }] %}
+
+            {% if schedule.endDate %}
+                {% set dateAndScheduleRows = (dateAndScheduleRows.push({
+                    key: {
+                        text: "End date"
+                    },
+                    value: {
+                        text: schedule.endDate | toDate | formatDate('EEEE d MMMM yyyy')
+                    }
+                }), dateAndScheduleRows) %}
+            {% endif %}
+
+            {% set dateAndScheduleRows = (dateAndScheduleRows.push(
+                {
+                    key: {
+                        text: "Days and times"
+                    },
+                    value: {
+                        html: daysAndTimes(schedule.dailySlots)
+                    }
+                },
+                {
+                    key: {
+                        text: "Runs on bank holidays"
+                    },
+                    value: {
+                        text: "Yes" if schedule.runsOnBankHoliday else "No"
+                    }
+                }
+            ), dateAndScheduleRows) %}
+
+            {{ govukSummaryList({
+                rows: dateAndScheduleRows
+            }) }}
+
+            <h2 class="govuk-heading-m">Location and capacity</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: schedule.internalLocation.description
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Capacity"
+                        },
+                        value: {
+                            text: schedule.capacity
+                        }
+                    }
+                ]
+            }) }}
+
             <div class="govuk-button-group">
                 <a href="/schedule/activities" class="govuk-link">Return to dashboard</a>
             </div>
@@ -68,6 +147,18 @@
     </div>
 {% endblock %}
 
+{% macro educationRequirementsContent(educationRequirements) %}
+    {% if educationRequirements | length > 0 %}
+        {% for educationRequirement in educationRequirements %}
+            <div class="govuk-!-margin-bottom-2">
+                <div class="govuk-!-font-weight-bold">{{ educationRequirement.educationLevelCode }} {{ educationRequirement.educationLevelDescription }}</div>
+            </div>
+        {% endfor %}
+    {% else %}
+        None
+    {% endif %}
+{% endmacro %}
+
 {% macro paySummary(incentiveLevelPays) %}
     {% for incentiveLevelPay in incentiveLevelPays %}
         <div class="govuk-!-margin-bottom-2">
@@ -75,6 +166,16 @@
             {% for pay in incentiveLevelPay.pays %}
                 <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
             {% endfor %}
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro daysAndTimes(dailySlots) %}
+    {% for day in dailySlots %}
+        <div class="govuk-!-margin-bottom-2">
+            {{ day.day }}
+            {% set comma = joiner(', ') %}
+            ({% for slot in day.slots %}{{ comma() }}{{ slot.startTime | getTimeSlotFromTime }}{% endfor %})
         </div>
     {% endfor %}
 {% endmacro %}

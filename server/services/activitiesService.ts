@@ -169,6 +169,10 @@ export default class ActivitiesService {
     )
   }
 
+  async getDefaultScheduleOfActivity(activity: Activity, user: ServiceUser): Promise<ActivityScheduleLite> {
+    return this.getActivitySchedule(activity.schedules[0].id, user)
+  }
+
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
     return this.activitiesApiClient.getActivitySchedule(id, user)
   }
