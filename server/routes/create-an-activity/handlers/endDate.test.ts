@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import { associateErrorsWithProperty, formatDate } from '../../../utils/utils'
+import { simpleDateFromDate } from '../../../commonValidationTypes/simpleDate'
 import EndDateRoutes, { EndDate } from './endDate'
 
 describe('Route Handlers - Create an activity schedule - End date', () => {
@@ -23,7 +23,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
     req = {
       session: {
-        createScheduleJourney: {},
+        createJourney: {},
       },
     } as unknown as Request
   })
@@ -31,7 +31,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/create-schedule/end-date', {
+      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/end-date', {
         endDate: undefined,
       })
     })
@@ -48,7 +48,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createScheduleJourney.endDate).toEqual(endDate)
+      expect(req.session.createJourney.endDate).toEqual(endDate)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('days-and-times')
     })
   })

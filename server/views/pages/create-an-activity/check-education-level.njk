@@ -10,7 +10,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
-            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }}</span>
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
             <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
         </div>
     </div>

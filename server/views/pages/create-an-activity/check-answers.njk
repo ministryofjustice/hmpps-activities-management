@@ -2,6 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/scheduleSummary.njk" import scheduleSummary %}
 
 {% set pageTitle = applicationName + " - Create an activity - Check answers" %}
 {% set pageId = 'check-answers-page' %}
@@ -19,7 +20,7 @@
                 rows: [
                     {
                         key: {
-                            text: "Category"
+                            text: "Activity category"
                         },
                         value: {
                             text: session.createJourney.category.name
@@ -36,7 +37,7 @@
                     },
                     {
                         key: {
-                            text: "Name"
+                            text: "Activity name"
                         },
                         value: {
                             text: session.createJourney.name
@@ -50,15 +51,21 @@
                                 }
                             ]
                         }
-                    },
+                    }
+                ]
+            }) }}
+
+            <h2 class="govuk-heading-m">Requirements and pay</h2>
+            {{ govukSummaryList({
+                rows: [
                     {
                         key: {
                             text: "Suitable workplace risk assessment levels"
                         },
                         value: {
                             text: ("Low" if session.createJourney.riskLevel == 'low') +
-                                  ("Low and Medium" if session.createJourney.riskLevel == 'medium') +
-                                  ("Low, Medium and High" if session.createJourney.riskLevel == 'high')
+                            ("Low and Medium" if session.createJourney.riskLevel == 'medium') +
+                            ("Low, Medium and High" if session.createJourney.riskLevel == 'high')
                         },
                         actions: {
                             items: [
@@ -66,6 +73,23 @@
                                     href: "risk-level?fromReview=true",
                                     text: "Change",
                                     visuallyHiddenText: "change risk level"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Education Levels"
+                        },
+                        value: {
+                            html: educationLevelSummary(session.createJourney.educationLevels)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "check-education-level?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change education levels"
                                 }
                             ]
                         }
@@ -86,28 +110,107 @@
                                 }
                             ]
                         }
-                    },
+                    }
+                ]
+            }) }}
+
+            <h2 class="govuk-heading-m">Dates and schedule</h2>
+            {{ govukSummaryList({
+                rows: [
                     {
                         key: {
-                            text: "Minimum incentive level"
+                            text: "Start date"
                         },
                         value: {
-                            text: session.createJourney.minimumIncentiveLevel
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Education Levels"
-                        },
-                        value: {
-                            html: educationLevelSummary(session.createJourney.educationLevels)
+                            text: startDate
                         },
                         actions: {
                             items: [
                                 {
-                                    href: "check-education-level?fromReview=true",
+                                    href: "start-date?fromReview=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change education levels"
+                                    visuallyHiddenText: "change start date"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "End date"
+                        },
+                        value: {
+                            text: endDate
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "end-date?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change end date"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Days and times"
+                        },
+                        value: { html: scheduleSummary(session.createJourney.days, times) },
+                        actions: {
+                            items: [{
+                                href: "days-and-times?fromReview=true",
+                                text: "Change",
+                                visuallyHiddenText: "Change schedule"
+                            }]
+                        }
+                    },
+                    {
+                        key: { text: "Runs on bank holidays" },
+                        value: { text: "Yes" if session.createJourney.runsOnBankHoliday else "No"},
+                        actions: {
+                            items: [{
+                                href: "bank-holiday-option?fromReview=true",
+                                text: "Change",
+                                visuallyHiddenText: "Change bank holiday option"
+                            }]
+                        }
+                    }
+                ]
+            }) }}
+
+            <h2 class="govuk-heading-m">Location and capacity</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: session.createJourney.location.name
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "location?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change location"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Capacity"
+                        },
+                        value: {
+                            text: session.createJourney.capacity
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "capacity?fromReview=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change capacity"
                                 }
                             ]
                         }

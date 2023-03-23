@@ -10,11 +10,11 @@ export class EndDateOption {
 
 export default class EndDateOptionRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/manage-schedules/create-schedule/end-date-option')
+    res.render('pages/create-an-activity/end-date-option')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createScheduleJourney.endDateOption = req.body.endDateOption
+    req.session.createJourney.endDateOption = req.body.endDateOption
     if (req.body.endDateOption && req.body.endDateOption === 'yes') {
       res.redirectOrReturn(`end-date`)
     } else {

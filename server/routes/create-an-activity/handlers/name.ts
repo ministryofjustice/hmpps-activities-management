@@ -4,8 +4,8 @@ import { IsNotEmpty, MaxLength } from 'class-validator'
 
 export class Name {
   @Expose()
-  @IsNotEmpty({ message: 'Enter a name for the activity' })
-  @MaxLength(40, { message: 'Enter a name for the activity that is 40 characters or less' })
+  @IsNotEmpty({ message: 'Enter the name of the activity' })
+  @MaxLength(40, { message: 'You must enter a name which has no more than 40 characters' })
   name: string
 }
 

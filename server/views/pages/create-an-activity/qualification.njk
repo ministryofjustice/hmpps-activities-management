@@ -10,7 +10,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
-            <span class="govuk-caption-m">{{ session.createJourney.category.name }}</span>
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
             <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
         </div>
     </div>
@@ -21,16 +21,14 @@
                 {{ govukRadios({
                     fieldset: {
                         legend: {
-                            text: "Do people need education levels?",
+                            text: "Do people allocated on this activity need certain education levels or other qualifications?",
                             isPageHeading: true,
-                            classes: "govuk-fieldset__legend--xl"
+                            classes: "govuk-fieldset__legend--l"
                         }
                     },
                     name: "qualificationOption",
                     errorMessage: validationErrors | findError('qualificationOption'),
-                    hint: {
-                        text: "Do people need education levels?"
-                    },
+                    classes: 'govuk-radios--inline',
                     items: [
                         {
                             value: "yes",

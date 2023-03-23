@@ -3,16 +3,15 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 
-{% from "components/activitySummary.njk" import activitySummary %}
-
-{% set pageTitle = applicationName + " - Create a schedule - Bank Holiday option" %}
-{% set pageId = 'create-schedule-bank-holiday-option-page' %}
+{% set pageTitle = applicationName + " - Create a schedule - End date option" %}
+{% set pageId = 'create-schedule-end-date-option-page' %}
 {% set backLinkHref = "/" %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            {{ activitySummary(activity) }}
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -22,10 +21,10 @@
 
                 {{ govukRadios({
                     classes: "govuk-radios--inline",
-                    name: "runsOnBankHoliday",
+                    name: "endDateOption",
                     fieldset: {
                         legend: {
-                            text: "Does this activity run on bank holidays?",
+                            text: "Do you want to enter an end date for this schedule?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
@@ -40,7 +39,7 @@
                             text: "No"
                         }
                     ],
-                    errorMessage: validationErrors | findError('runsOnBankHoliday')
+                    errorMessage: validationErrors | findError('endDateOption')
                 }) }}
 
                 {{ govukButton({
