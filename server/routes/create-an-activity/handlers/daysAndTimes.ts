@@ -45,7 +45,7 @@ export class DaysAndTimes {
 
 export default class DaysAndTimesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/manage-schedules/create-schedule/days-and-times')
+    res.render('pages/create-an-activity/days-and-times')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -60,20 +60,20 @@ export default class DaysAndTimesRoutes {
     }
 
     if (typeof req.body.days === 'string') {
-      req.session.createScheduleJourney.days = [req.body.days]
+      req.session.createJourney.days = [req.body.days]
     } else if (Array.isArray(req.body.days)) {
-      req.session.createScheduleJourney.days = [...req.body.days]
+      req.session.createJourney.days = [...req.body.days]
     } else {
-      req.session.createScheduleJourney.days = undefined
+      req.session.createJourney.days = undefined
     }
 
-    req.session.createScheduleJourney.timeSlotsMonday = sanitizeTimeSlots(req.body.timeSlotsMonday)
-    req.session.createScheduleJourney.timeSlotsTuesday = sanitizeTimeSlots(req.body.timeSlotsTuesday)
-    req.session.createScheduleJourney.timeSlotsWednesday = sanitizeTimeSlots(req.body.timeSlotsWednesday)
-    req.session.createScheduleJourney.timeSlotsThursday = sanitizeTimeSlots(req.body.timeSlotsThursday)
-    req.session.createScheduleJourney.timeSlotsFriday = sanitizeTimeSlots(req.body.timeSlotsFriday)
-    req.session.createScheduleJourney.timeSlotsSaturday = sanitizeTimeSlots(req.body.timeSlotsSaturday)
-    req.session.createScheduleJourney.timeSlotsSunday = sanitizeTimeSlots(req.body.timeSlotsSunday)
+    req.session.createJourney.timeSlotsMonday = sanitizeTimeSlots(req.body.timeSlotsMonday)
+    req.session.createJourney.timeSlotsTuesday = sanitizeTimeSlots(req.body.timeSlotsTuesday)
+    req.session.createJourney.timeSlotsWednesday = sanitizeTimeSlots(req.body.timeSlotsWednesday)
+    req.session.createJourney.timeSlotsThursday = sanitizeTimeSlots(req.body.timeSlotsThursday)
+    req.session.createJourney.timeSlotsFriday = sanitizeTimeSlots(req.body.timeSlotsFriday)
+    req.session.createJourney.timeSlotsSaturday = sanitizeTimeSlots(req.body.timeSlotsSaturday)
+    req.session.createJourney.timeSlotsSunday = sanitizeTimeSlots(req.body.timeSlotsSunday)
     res.redirectOrReturn('bank-holiday-option')
   }
 }

@@ -3,7 +3,6 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% from "components/datePicker.njk" import datePicker %}
-{% from "components/activitySummary.njk" import activitySummary %}
 
 {% set pageTitle = applicationName + " - Create a schedule - Start date" %}
 {% set pageId = 'create-schedule-start-date-page' %}
@@ -12,7 +11,8 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            {{ activitySummary(activity) }}
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -24,14 +24,15 @@
                     id: 'startDate',
                     label: {
                         text: "Enter the start date for this schedule",
-                        classes: "govuk-fieldset__legend--l"
+                        classes: "govuk-fieldset__legend--l",
+                        isPageHeading: true
                     },
                     hint: {
                         text: "For example, 29 12 2022"
                     },
                     renderedErrorMessage: validationErrors | findError('startDate'),
                     validationErrors: validationErrors,
-                    formResponses: formResponses.startDate or session.createScheduleJourney.startDate
+                    formResponses: formResponses.startDate or session.createJourney.startDate
                 }) }}
                 <input type="hidden" id="endDate" name="endDate" value="{{ endDate }}">
                 {{ govukButton({

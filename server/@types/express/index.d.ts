@@ -4,7 +4,6 @@ import { CaseLoadExtended } from '../dps'
 import { RoleDetail } from '../nomisUserApiImport/types'
 import { AllocateToActivityJourney } from '../../routes/allocate-to-activity/journey'
 import { CreateAnActivityJourney } from '../../routes/create-an-activity/journey'
-import { CreateScheduleJourney } from '../../routes/manage-schedules/create-schedule/journey'
 import { CreateAppointmentJourney } from '../../routes/appointments/create/journey'
 import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
 import { NotAttendedJourney } from '../../routes/record-attendance/journey'
@@ -25,7 +24,6 @@ declare module 'express-session' {
     data: any
     createJourney: CreateAnActivityJourney
     allocateJourney: AllocateToActivityJourney
-    createScheduleJourney: CreateScheduleJourney
     createAppointmentJourney: CreateAppointmentJourney
     calendarSpikeJourney: CalendarSpikeJourney
     unlockFilters: UnlockFilters

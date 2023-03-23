@@ -55,7 +55,7 @@ describe('Route Handlers - Create an activity - Name', () => {
 
       const requestObject = plainToInstance(Name, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-      expect(errors).toEqual([{ property: 'name', error: 'Enter a name for the activity' }])
+      expect(errors).toEqual([{ property: 'name', error: 'Enter the name of the activity' }])
     })
 
     it('validation fails if a bad value is entered', async () => {
@@ -66,7 +66,7 @@ describe('Route Handlers - Create an activity - Name', () => {
       const requestObject = plainToInstance(Name, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'name', error: 'Enter a name for the activity' }])
+      expect(errors).toEqual([{ property: 'name', error: 'Enter the name of the activity' }])
     })
 
     it('validation fails if name contains more than 40 characters', async () => {
@@ -78,7 +78,7 @@ describe('Route Handlers - Create an activity - Name', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'name', error: 'Enter a name for the activity that is 40 characters or less' },
+        { property: 'name', error: 'You must enter a name which has no more than 40 characters' },
       ])
     })
 

@@ -12,11 +12,11 @@ export class Capacity {
 
 export default class CapacityRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/manage-schedules/create-schedule/capacity')
+    res.render('pages/create-an-activity/capacity')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createScheduleJourney.capacity = req.body.capacity
+    req.session.createJourney.capacity = req.body.capacity
     res.redirectOrReturn('check-answers')
   }
 }

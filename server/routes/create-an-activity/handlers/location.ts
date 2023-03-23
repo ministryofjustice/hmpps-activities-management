@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import _ from 'lodash'
 import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
-import PrisonService from '../../../../services/prisonService'
+import PrisonService from '../../../services/prisonService'
 
 export class Location {
   @Expose()
@@ -20,7 +20,7 @@ export default class LocationRoutes {
     const locations = await this.prisonService.getEventLocations(user.activeCaseLoad.caseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'locationId')
 
-    res.render('pages/manage-schedules/create-schedule/location', {
+    res.render('pages/create-an-activity/location', {
       locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
     })
   }
@@ -31,7 +31,7 @@ export default class LocationRoutes {
       .getEventLocations(user.activeCaseLoad.caseLoadId, user)
       .then(locations => locations.find(l => l.locationId === req.body.location))
 
-    req.session.createScheduleJourney.location = {
+    req.session.createJourney.location = {
       id: location.locationId,
       name: location.userDescription,
     }

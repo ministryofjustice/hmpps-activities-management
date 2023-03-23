@@ -58,7 +58,7 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.qualificationOption).toEqual('no')
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('start-date')
     })
   })
 

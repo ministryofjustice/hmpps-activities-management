@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty } from '../../../utils/utils'
 import DaysAndTimesRoutes, { DaysAndTimes } from './daysAndTimes'
 
 describe('Route Handlers - Create an activity schedule - Days and times', () => {
@@ -22,7 +22,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
     req = {
       session: {
-        createScheduleJourney: {},
+        createJourney: {},
       },
     } as unknown as Request
   })
@@ -30,7 +30,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/create-schedule/days-and-times')
+      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/days-and-times')
     })
   })
 
@@ -44,9 +44,9 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
       await handler.POST(req, res)
 
-      expect(req.session.createScheduleJourney.days).toEqual(['tuesday', 'friday'])
-      expect(req.session.createScheduleJourney.timeSlotsTuesday).toEqual(['AM'])
-      expect(req.session.createScheduleJourney.timeSlotsFriday).toEqual(['PM', 'ED'])
+      expect(req.session.createJourney.days).toEqual(['tuesday', 'friday'])
+      expect(req.session.createJourney.timeSlotsTuesday).toEqual(['AM'])
+      expect(req.session.createJourney.timeSlotsFriday).toEqual(['PM', 'ED'])
       expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
     })
   })

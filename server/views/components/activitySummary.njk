@@ -1,4 +1,0 @@
-{% macro activitySummary(activity) %}
-    <span class="govuk-caption-m" data-qa="activity-info">{{ activity.category.name }}  | Risk level: {{ activity.riskLevel | capitalize }} | Minimum incentive: {{ activity.minimumIncentiveLevel }} </span>
-    <h1 class="govuk-heading-m" data-qa="activity-summary">{{ activity.summary }}</h1>
-{% endmacro %}
