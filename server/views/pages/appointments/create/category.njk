@@ -10,11 +10,11 @@
 
 {% set categoryOptions = [{ value: "-", text: "" }] %}
 {% for category in categories %}
-    {% set categoryOptions = (categoryOptions.push( { value: category.id, text: category.description } ), categoryOptions) %}
+    {% set categoryOptions = (categoryOptions.push( { value: category.code, text: category.description } ), categoryOptions) %}
 {% endfor %}
 
 {% block meta %}
-    <meta name="autocompleteElements" content="categoryId"/>
+    <meta name="autocompleteElements" content="categoryCode"/>
 {% endblock %}
 
 {% block content %}
@@ -33,7 +33,7 @@
                     },
                     errorMessage: validationErrors | findError('categoryCode'),
                     items: categoryOptions,
-                    value: formResponses.categoryCode or session.createAppointmentJourney.categoryCode
+                    value: formResponses.categoryCode or session.createAppointmentJourney.category.code
                 }) }}
 
                 {{ govukButton({
