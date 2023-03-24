@@ -4,6 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% set pageTitle = applicationName + " - Record attendance - Not Attended Reason" %}
 {% set pageId = 'not-attended-reason-page' %}
@@ -42,6 +43,10 @@
         }) }}
     {% endif %}
     {% if reason.captureCaseNote %}
+        {{ govukWarningText({
+          text: prisoner.prisonerName + " won't be paid because this is an unacceptable absence",
+          iconFallbackText: "Warning"
+        }) }}
         {{ govukTextarea({
             label: {
                 text: "Add a case note"
@@ -160,12 +165,15 @@
                             ), notAttendedReasonOptions) %}
                         {% endif %}
                     {% endfor %}
+                    <h2 class="govuk-fieldset__legend--xl">
+                        <span>Select a reason why {{ prisoner.prisonerName }} did not attend</span>
+                    </h2>
                     {{ govukRadios({
                         fieldset: {
                             legend: {
-                                text: "Select a reason why " + prisoner.prisonerName + " did not attend",
+                                text: "Why did " + prisoner.prisonerName + " not attend?",
                                 isPageHeading: true,
-                                classes: "govuk-fieldset__legend--xl"
+                                classes: "govuk-label"
                             }
                         },
                         name: "notAttendedData["  + prisoner.prisonerNumber + "][notAttendedReason]",

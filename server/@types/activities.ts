@@ -1,4 +1,4 @@
-import { Attendance, InternalLocation, ScheduledEvent } from './activitiesAPI/types'
+import { ActivityCategory, Attendance, InternalLocation, ScheduledEvent } from './activitiesAPI/types'
 import { Alert } from './prisonApiImport/types'
 
 export type PrisonerAlert = {
@@ -45,7 +45,7 @@ export type UnlockListItem = {
   status: string
 }
 
-export type UnlockFilterItem = {
+export type FilterItem = {
   value: string
   text: string
   checked: boolean
@@ -57,9 +57,17 @@ export type UnlockFilters = {
   unlockDate: Date
   timeSlot: string
   subLocations: string[]
-  locationFilters: UnlockFilterItem[]
-  activityFilters: UnlockFilterItem[]
-  stayingOrLeavingFilters: UnlockFilterItem[]
+  locationFilters: FilterItem[]
+  activityFilters: FilterItem[]
+  stayingOrLeavingFilters: FilterItem[]
+}
+
+export type ActivitiesFilters = {
+  activityDate: Date
+  searchTerm: string
+  categories: ActivityCategory[]
+  sessionFilters: FilterItem[]
+  categoryFilters: FilterItem[]
 }
 
 export type SubLocationCellPattern = {

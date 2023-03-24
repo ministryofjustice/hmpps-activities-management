@@ -9,8 +9,8 @@ import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
 import { NotAttendedJourney } from '../../routes/record-attendance/journey'
 import { RecordAttendanceRequests } from '../../routes/record-attendance/recordAttendanceRequests'
 
-// eslint-disable-next-line import/no-cycle
-import { UnlockFilters } from '../activities'
+// eslint-disable-next-line import/no-cycle,import/named
+import { ActivitiesFilters, UnlockFilters } from '../activities'
 
 export default {}
 
@@ -27,6 +27,7 @@ declare module 'express-session' {
     createAppointmentJourney: CreateAppointmentJourney
     calendarSpikeJourney: CalendarSpikeJourney
     unlockFilters: UnlockFilters
+    activitiesFilters: ActivitiesFilters
     notAttendedJourney: NotAttendedJourney
     recordAttendanceRequests: RecordAttendanceRequests
   }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { UnlockFilterItem, UnlockFilters } from '../../../@types/activities'
+import { FilterItem, UnlockFilters } from '../../../@types/activities'
 import { toDate, formatDate } from '../../../utils/utils'
 import PlannedEventRoutes from './plannedEvents'
 import ActivitiesService from '../../../services/activitiesService'
@@ -82,7 +82,7 @@ describe('Unlock list routes - planned events', () => {
     })
 
     it('should render the view from session filters - A-Wing selected', async () => {
-      const locationFilters = [{ value: 'A-Wing', text: 'A-Wing', checked: true }] as UnlockFilterItem[]
+      const locationFilters = [{ value: 'A-Wing', text: 'A-Wing', checked: true }] as FilterItem[]
       req = {
         query: {
           date: '2022-01-01',
@@ -275,7 +275,7 @@ describe('Unlock list routes - planned events', () => {
         { value: 'A-Wing', text: 'A-Wing', checked: true },
         { value: 'B-Wing', text: 'B-Wing', checked: false },
         { value: 'C-Wing', text: 'C-Wing', checked: false },
-      ] as UnlockFilterItem[]
+      ] as FilterItem[]
 
       req = {
         query: { clearFilters: true },
@@ -366,24 +366,24 @@ const locationFiltersDefault = [
   { value: 'A-Wing', text: 'A-Wing', checked: true },
   { value: 'B-Wing', text: 'B-Wing', checked: true },
   { value: 'C-Wing', text: 'C-Wing', checked: true },
-] as UnlockFilterItem[]
+] as FilterItem[]
 
 const activityFiltersDefault = [
   { value: 'Both', text: 'Both', checked: true },
   { value: 'With', text: 'With', checked: false },
   { value: 'Without', text: 'Without', checked: false },
-] as UnlockFilterItem[]
+] as FilterItem[]
 
 const stayingOrLeavingFiltersDefault = [
   { value: 'Both', text: 'Both', checked: true },
   { value: 'Staying', text: 'Staying', checked: false },
   { value: 'Leaving', text: 'Leaving', checked: false },
-] as UnlockFilterItem[]
+] as FilterItem[]
 
 const testUnlockFilters = (
-  locationFilters: UnlockFilterItem[] = locationFiltersDefault,
-  activityFilters: UnlockFilterItem[] = activityFiltersDefault,
-  stayingOrLeavingFilters: UnlockFilterItem[] = stayingOrLeavingFiltersDefault,
+  locationFilters: FilterItem[] = locationFiltersDefault,
+  activityFilters: FilterItem[] = activityFiltersDefault,
+  stayingOrLeavingFilters: FilterItem[] = stayingOrLeavingFiltersDefault,
 ): UnlockFilters => {
   return {
     location: 'Houseblock 1',
