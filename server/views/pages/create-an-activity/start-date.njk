@@ -6,7 +6,7 @@
 
 {% set pageTitle = applicationName + " - Create a schedule - Start date" %}
 {% set pageId = 'create-schedule-start-date-page' %}
-{% set backLinkHref = "name" %}
+{% set backLinkHref = "qualification" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -23,7 +23,7 @@
                 {{ datePicker({
                     id: 'startDate',
                     label: {
-                        text: "Enter the start date for this schedule",
+                        text: "Enter the start date for this activity",
                         classes: "govuk-fieldset__legend--l",
                         isPageHeading: true
                     },
