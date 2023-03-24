@@ -28,7 +28,6 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
 
   it('should display category and date in heading', () => {
     viewContext.occurrence.category = {
-      id: 1,
       code: 'TS1',
       description: 'Test Category',
     }

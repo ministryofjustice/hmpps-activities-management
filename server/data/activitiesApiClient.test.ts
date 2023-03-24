@@ -16,7 +16,7 @@ import {
   Appointment,
   AppointmentDetails,
   AppointmentOccurrenceDetails,
-  AppointmentCategory,
+  AppointmentCategorySummary,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 
@@ -450,11 +450,7 @@ describe('activitiesApiClient', () => {
     it('should return appointment from api when valid appointment id is used', async () => {
       const response = {
         id: 12345,
-        category: {
-          id: 51,
-          code: 'CHAP',
-          description: 'Chaplaincy',
-        },
+        categoryCode: 'CHAP',
         prisonCode: 'SKI',
         internalLocationId: 123,
         startDate: '2023-02-07',
@@ -531,21 +527,18 @@ describe('activitiesApiClient', () => {
     it('should return all categories from api', async () => {
       const response = [
         {
-          id: 51,
           code: 'CHAP',
           description: 'Chaplaincy',
         },
         {
-          id: 11,
           code: 'MEDO',
           description: 'Medical - Doctor',
         },
         {
-          id: 20,
           code: 'GYMW',
           description: 'Gym - Weights',
         },
-      ] as AppointmentCategory[]
+      ] as AppointmentCategorySummary[]
 
       fakeActivitiesApi.get('/appointment-categories').matchHeader('authorization', `Bearer token`).reply(200, response)
 
@@ -558,7 +551,7 @@ describe('activitiesApiClient', () => {
   describe('postCreateAppointment', () => {
     it('should return created appointment from api when valid request is sent', async () => {
       const request = {
-        categoryId: 51,
+        categoryCode: 'CHAP',
         prisonCode: 'SKI',
         internalLocationId: 123,
         inCell: false,
@@ -571,11 +564,7 @@ describe('activitiesApiClient', () => {
 
       const response = {
         id: 12345,
-        category: {
-          id: 51,
-          code: 'CHAP',
-          description: 'Chaplaincy',
-        },
+        categoryCode: 'CHAP',
         prisonCode: 'SKI',
         internalLocationId: 123,
         startDate: '2023-02-07',

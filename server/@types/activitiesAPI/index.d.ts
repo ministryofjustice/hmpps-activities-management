@@ -250,7 +250,7 @@ export interface paths {
     get: operations['getAppointmentDetailsById']
   }
   '/appointment-categories': {
-    /** Get the list of top-level appointment categories */
+    /** Get the list of appointment categories */
     get: operations['getAppointmentCategories']
   }
   '/allocations/id/{allocationId}': {
@@ -389,7 +389,7 @@ export interface components {
        */
       payBandId: number
     }
-    /** @description Describes a prisoners scheduled events */
+    /** @description Describes a prisons scheduled events */
     PrisonerScheduledEvents: {
       /**
        * @description The prison code for these scheduled events
@@ -421,6 +421,8 @@ export interface components {
       visits?: components['schemas']['ScheduledEvent'][]
       /** @description A list of scheduled activities for this prisoner in this date range */
       activities?: components['schemas']['ScheduledEvent'][]
+      /** @description A list of external transfers for this prisoner in this date range */
+      externalTransfers?: components['schemas']['ScheduledEvent'][]
     }
     /** @description Describes a scheduled event */
     ScheduledEvent: {
@@ -629,11 +631,10 @@ export interface components {
     /** @description The create request with the new appointment or series of appointment occurrences details */
     AppointmentCreateRequest: {
       /**
-       * Format: int64
-       * @description The category id for this appointment. Must exist and be active
-       * @example 21
+       * @description The NOMIS reference code for this appointment. Must exist and be active
+       * @example CHAP
        */
-      categoryId: number
+      categoryCode: string
       /**
        * @description The NOMIS prison code where this appointment takes place
        * @example PVI
@@ -729,12 +730,13 @@ export interface components {
        * @example 12345
        */
       id: number
-      category: components['schemas']['AppointmentCategory']
       /**
-       * @description
-       *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
-       *     Note, this property does not exist on the appointment occurrences and is therefore consistent across all occurrences
-       *
+       * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
+       * @example CHAP
+       */
+      categoryCode: string
+      /**
+       * @description The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS
        * @example SKI
        */
       prisonCode: string
@@ -824,47 +826,6 @@ export interface components {
     }
     /**
      * @description
-     *   Describes an appointment category. Categories can have a two level hierarchy, category and subcategory.
-     *   Subcategory level categories will have a parent.
-     *   Tables referencing appointment category should use the id primary key.
-     *   Mapping to NOMIS is via the code property.
-     *   The active property is a soft delete allowing categories that only exist in NOMIS to be maintained in the database
-     *   but not supported when creating or editing appointments.
-     *   Display order supports explicit ordering of categories and subcategories. Ordering will default to alphabetically
-     *   by description of display order is not specified.
-     */
-    AppointmentCategory: {
-      /**
-       * Format: int64
-       * @description The internally generated identifier for this appointment category
-       * @example 51
-       */
-      id: number
-      parent?: components['schemas']['AppointmentCategory']
-      /**
-       * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
-       * @example CHAP
-       */
-      code: string
-      /**
-       * @description The description of the appointment category
-       * @example Chaplaincy
-       */
-      description: string
-      /**
-       * @description Flag to indicate if this (sub)category) is active. Only active (sub)categories are valid for create and update requests
-       * @example true
-       */
-      active: boolean
-      /**
-       * Format: int32
-       * @description Override to the default of ordering alphabetically by description supporting explicit ordering
-       * @example 1
-       */
-      displayOrder?: number
-    }
-    /**
-     * @description
      *   Represents an appointment instance for a specific prisoner to attend at the specified location, date and time.
      *   The fully denormalised representation of the appointment occurrences and allocations.
      */
@@ -875,7 +836,11 @@ export interface components {
        * @example 123456
        */
       id: number
-      category: components['schemas']['AppointmentCategory']
+      /**
+       * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
+       * @example CHAP
+       */
+      categoryCode: string
       /**
        * @description The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS
        * @example SKI
@@ -2294,12 +2259,6 @@ export interface components {
      *   and to display.
      */
     AppointmentCategorySummary: {
-      /**
-       * Format: int64
-       * @description The internally generated identifier for this appointment category
-       * @example 51
-       */
-      id: number
       /**
        * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
        * @example CHAP
@@ -4037,19 +3996,13 @@ export interface operations {
       }
     }
   }
-  /** Get the list of top-level appointment categories */
+  /** Get the list of appointment categories */
   getAppointmentCategories: {
-    parameters: {
-      query: {
-        /** @description If true will return all appointment categories otherwise only active categories will be returned. Defaults to false. */
-        includeInactive?: boolean
-      }
-    }
     responses: {
       /** @description Appointment categories found */
       200: {
         content: {
-          'application/json': components['schemas']['AppointmentCategory'][]
+          'application/json': components['schemas']['AppointmentCategorySummary'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */

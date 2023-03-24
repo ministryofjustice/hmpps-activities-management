@@ -17,7 +17,6 @@ describe('Route Handlers - Movement Slip', () => {
   const appointmentDetails = {
     id: 10,
     category: {
-      id: 40,
       code: 'MEOT',
       description: 'Medical - Other',
     },

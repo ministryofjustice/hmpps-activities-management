@@ -5,7 +5,7 @@ import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import CategoryRoutes, { Category } from './category'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AppointmentCategory } from '../../../../@types/activitiesAPI/types'
+import { AppointmentCategorySummary } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -18,21 +18,18 @@ describe('Route Handlers - Create Appointment - Category', () => {
 
   const categories = [
     {
-      id: 51,
       code: 'CHAP',
       description: 'Chaplaincy',
     },
     {
-      id: 11,
       code: 'MEDO',
       description: 'Medical - Doctor',
     },
     {
-      id: 20,
       code: 'GYMW',
       description: 'Gym - Weights',
     },
-  ] as AppointmentCategory[]
+  ] as AppointmentCategorySummary[]
 
   beforeEach(() => {
     res = {
@@ -71,7 +68,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
   describe('POST', () => {
     it('should save selected category in session and redirect to location page', async () => {
       req.body = {
-        categoryId: 11,
+        categoryCode: 'MEDO',
       }
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -79,7 +76,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
       await handler.POST(req, res)
 
       expect(req.session.createAppointmentJourney.category).toEqual({
-        id: 11,
+        code: 'MEDO',
         description: 'Medical - Doctor',
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
@@ -87,7 +84,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
 
     it('validation fails when selected category is not found', async () => {
       req.body = {
-        categoryId: -1,
+        categoryCode: 'NOT_FOUND',
       }
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -96,36 +93,25 @@ describe('Route Handlers - Create Appointment - Category', () => {
 
       expect(req.flash).toHaveBeenCalledWith(
         'validationErrors',
-        JSON.stringify([{ field: 'categoryId', message: `Selected category not found` }]),
+        JSON.stringify([{ field: 'categoryCode', message: `Selected category not found` }]),
       )
       expect(res.redirect).toHaveBeenCalledWith('back')
     })
   })
 
   describe('Validation', () => {
-    it('validation fails when no category id is selected', async () => {
+    it('validation fails when no category code is selected', async () => {
       const body = {}
 
       const requestObject = plainToInstance(Category, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ property: 'categoryId', error: 'Select a category' }]))
+      expect(errors).toEqual(expect.arrayContaining([{ property: 'categoryCode', error: 'Select a category' }]))
     })
 
-    it('validation fails when selected category id is not a number', async () => {
+    it('passes validation when valid category code is selected', async () => {
       const body = {
-        categoryId: 'NaN',
-      }
-
-      const requestObject = plainToInstance(Category, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(expect.arrayContaining([{ property: 'categoryId', error: 'Select a category' }]))
-    })
-
-    it('passes validation when valid category id is selected', async () => {
-      const body = {
-        categoryId: '1',
+        categoryCode: 'GYMW',
       }
 
       const requestObject = plainToInstance(Category, body)

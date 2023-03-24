@@ -23,8 +23,8 @@ export default class CheckAnswersRoutes {
     const { user } = res.locals
     const { createAppointmentJourney } = req.session
 
-    const appointment = {
-      categoryId: createAppointmentJourney.category.id,
+    const request = {
+      categoryCode: createAppointmentJourney.category.code,
       prisonCode: user.activeCaseLoadId,
       internalLocationId: createAppointmentJourney.location.id,
       inCell: false,
@@ -35,13 +35,13 @@ export default class CheckAnswersRoutes {
     } as AppointmentCreateRequest
 
     if (createAppointmentJourney.repeat === YesNo.YES) {
-      appointment.repeat = {
+      request.repeat = {
         period: createAppointmentJourney.repeatPeriod,
         count: createAppointmentJourney.repeatCount,
       }
     }
 
-    const response = await this.activitiesService.createAppointment(appointment, user)
+    const response = await this.activitiesService.createAppointment(request, user)
 
     res.redirect(`confirmation/${response.id}`)
   }

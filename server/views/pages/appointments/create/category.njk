@@ -24,16 +24,16 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukSelect({
-                    id: "categoryId",
-                    name: "categoryId",
+                    id: "categoryCode",
+                    name: "categoryCode",
                     label: {
                         text: "What is the appointment category?",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
-                    errorMessage: validationErrors | findError('categoryId'),
+                    errorMessage: validationErrors | findError('categoryCode'),
                     items: categoryOptions,
-                    value: formResponses.categoryId or session.createAppointmentJourney.category.id
+                    value: formResponses.categoryCode or session.createAppointmentJourney.categoryCode
                 }) }}
 
                 {{ govukButton({

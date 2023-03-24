@@ -38,7 +38,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             },
           ],
           category: {
-            id: 11,
+            code: 'MEDO',
             description: 'Medical - Doctor',
           },
           location: {
@@ -88,7 +88,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
 
     beforeEach(() => {
       expectedRequest = {
-        categoryId: 11,
+        categoryCode: 'MEDO',
         prisonCode: 'TPR',
         internalLocationId: 32,
         inCell: false,
@@ -100,11 +100,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
 
       expectedResponse = {
         id: 15,
-        category: {
-          id: 11,
-          code: 'MEDO',
-          description: 'Medical - Doctor',
-        },
+        categoryCode: 'MEDO',
         prisonCode: 'TPR',
         internalLocationId: 32,
         startDate: '2023-04-23',
