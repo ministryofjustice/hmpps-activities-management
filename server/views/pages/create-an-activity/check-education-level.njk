@@ -5,7 +5,7 @@
 
 {% set pageTitle = applicationName + " - Create an activity - Check education levels" %}
 {% set pageId = 'check-education-levels-page' %}
-{% set backLinkHref = "education levels" %}
+{% set backLinkHref = "education-level" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -16,7 +16,7 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l">Review education levels for {{ session.createJourney.name }}</h1>
+            <h1 class="govuk-heading-l">Review education levels and qualifications for {{ session.createJourney.name }}</h1>
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -42,6 +42,7 @@
                         }
                     }
                     ), rows) %}
+                <h2 class='govuk-heading-m'>Level or qualification</h2>
                 {{ govukSummaryList({
                     rows: rows
                 }) }}
