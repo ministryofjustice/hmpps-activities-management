@@ -1,11 +1,10 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
+import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 
 export class PrisonerSearch {
   @Expose()
-  @Type(() => String)
   @IsNotEmpty({ message: 'Enter a prisoner number to search by' })
   number: string
 }

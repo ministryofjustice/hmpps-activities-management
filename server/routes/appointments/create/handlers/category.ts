@@ -1,11 +1,10 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
+import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 
 export class Category {
   @Expose()
-  @Type(() => String)
   @IsNotEmpty({ message: 'Select a category' })
   categoryCode: string
 }
