@@ -2,11 +2,13 @@ import { Request, Response } from 'express'
 import { format, addDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import SelectDateAndLocationRoutes, { DateAndLocation } from './selectDateAndLocation'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import ActivitiesService from '../../../services/activitiesService'
 import { LocationGroup } from '../../../@types/activitiesAPI/types'
 import SimpleDate from '../../../commonValidationTypes/simpleDate'
+import atLeast from '../../../../jest.setup'
 
 jest.mock('../../../services/activitiesService')
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
@@ -40,7 +42,9 @@ describe('Unlock list routes - select date and location', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      activitiesService.getLocationGroups.mockResolvedValue(mockedLocationGroups)
+      when(activitiesService.getLocationGroups)
+        .calledWith(atLeast(res.locals.user))
+        .mockResolvedValue(mockedLocationGroups)
 
       await handler.GET(req, res)
 
@@ -157,10 +161,15 @@ describe('Unlock list routes - select date and location', () => {
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
     })
 
-    it('passes validation', async () => {
+    it('passes validation if date under 60 days into the future', async () => {
+      const dateIn59Days = addDays(new Date(), 59)
       const body = {
         datePresetOption: 'other',
-        date: { day: 27, month: 2, year: 2022 },
+        date: {
+          day: dateIn59Days.getDate(),
+          month: dateIn59Days.getMonth() + 1,
+          year: dateIn59Days.getFullYear(),
+        },
         activitySlot: 'am',
         location: 'here',
       }
@@ -169,6 +178,25 @@ describe('Unlock list routes - select date and location', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
+    })
+
+    it('validation fails if date is more than 60 days into the future', async () => {
+      const dateIn61Days = addDays(new Date(), 61)
+      const body = {
+        datePresetOption: 'other',
+        date: {
+          day: dateIn61Days.getDate(),
+          month: dateIn61Days.getMonth() + 1,
+          year: dateIn61Days.getFullYear(),
+        },
+        activitySlot: 'am',
+        location: 'some location',
+      }
+
+      const requestObject = plainToInstance(DateAndLocation, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'date', error: 'Enter a date up to 60 days in the future' }])
     })
   })
 })
