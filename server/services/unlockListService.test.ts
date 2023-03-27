@@ -6,7 +6,7 @@ import { ServiceUser } from '../@types/express'
 import UnlockListService from './unlockListService'
 import { PagePrisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { PrisonerScheduledEvents } from '../@types/activitiesAPI/types'
-import { UnlockFilterItem, UnlockFilters } from '../@types/activities'
+import { FilterItem, UnlockFilters } from '../@types/activities'
 
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/activitiesApiClient')
@@ -143,24 +143,24 @@ const locationFiltersDefault = [
   { value: 'A-Wing', text: 'A-Wing', checked: true },
   { value: 'B-Wing', text: 'B-Wing', checked: true },
   { value: 'C-Wing', text: 'C-Wing', checked: true },
-] as UnlockFilterItem[]
+] as FilterItem[]
 
 const activityFiltersDefault = [
   { value: 'Both', text: 'Both', checked: true },
   { value: 'With', text: 'With', checked: false },
   { value: 'Without', text: 'Without', checked: false },
-] as UnlockFilterItem[]
+] as FilterItem[]
 
 const stayingOrLeavingFiltersDefault = [
   { value: 'Both', text: 'Both', checked: true },
   { value: 'Staying', text: 'Staying', checked: false },
   { value: 'Leaving', text: 'Leaving', checked: false },
-] as UnlockFilterItem[]
+] as FilterItem[]
 
 const testUnlockFilters = (
-  locationFilters: UnlockFilterItem[] = locationFiltersDefault,
-  activityFilters: UnlockFilterItem[] = activityFiltersDefault,
-  stayingOrLeavingFilters: UnlockFilterItem[] = stayingOrLeavingFiltersDefault,
+  locationFilters: FilterItem[] = locationFiltersDefault,
+  activityFilters: FilterItem[] = activityFiltersDefault,
+  stayingOrLeavingFilters: FilterItem[] = stayingOrLeavingFiltersDefault,
 ): UnlockFilters => {
   return {
     location: 'HB1',
@@ -231,7 +231,7 @@ describe('Unlock list service', () => {
         { value: 'A-Wing', text: 'A-Wing', checked: false },
         { value: 'B-Wing', text: 'B-Wing', checked: false },
         { value: 'C-Wing', text: 'C-Wing', checked: true },
-      ] as UnlockFilterItem[]
+      ] as FilterItem[]
 
       const unlockFilters = testUnlockFilters(locationFilters)
 
@@ -267,7 +267,7 @@ describe('Unlock list service', () => {
         { value: 'Both', text: 'Both', checked: false },
         { value: 'With', text: 'With', checked: true },
         { value: 'Without', text: 'Without', checked: false },
-      ] as UnlockFilterItem[]
+      ] as FilterItem[]
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithActivities)
@@ -284,7 +284,7 @@ describe('Unlock list service', () => {
         { value: 'Both', text: 'Both', checked: false },
         { value: 'Staying', text: 'Staying', checked: false },
         { value: 'Leaving', text: 'Leaving', checked: true },
-      ] as UnlockFilterItem[]
+      ] as FilterItem[]
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
@@ -301,7 +301,7 @@ describe('Unlock list service', () => {
         { value: 'Both', text: 'Both', checked: false },
         { value: 'Staying', text: 'Staying', checked: true },
         { value: 'Leaving', text: 'Leaving', checked: false },
-      ] as UnlockFilterItem[]
+      ] as FilterItem[]
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
@@ -318,7 +318,7 @@ describe('Unlock list service', () => {
         { value: 'A-Wing', text: 'A-Wing', checked: true },
         { value: 'B-Wing', text: 'B-Wing', checked: false },
         { value: 'C-Wing', text: 'C-Wing', checked: false },
-      ] as UnlockFilterItem[]
+      ] as FilterItem[]
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)

@@ -5,7 +5,7 @@
 
 {% set pageTitle = applicationName + " - Create a schedule - Capacity" %}
 {% set pageId = 'create-schedule-capacity-page' %}
-{% set backLinkHref = "/" %}
+{% set backLinkHref = "location" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -20,14 +20,14 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukInput({
                     label: {
-                        text: "How many people can be allocated to this schedule?",
+                        text: "How many people can be allocated to this activity?",
                         classes: "govuk-label--xl",
                         isPageHeading: true
                     },
                     hint: {
                         html: "
                             <p>Enter the maximum number (known as capacity) of people who can be allocated.</p>
-                            <p>You'll be able to allocate more people than the schedule's capacity to ensure the activity is not short-handed</p>
+                            <p>You’ll be able to overallocate to ensure the activity is not short-handed.</p>
                         "
                     },
                     id: "capacity",

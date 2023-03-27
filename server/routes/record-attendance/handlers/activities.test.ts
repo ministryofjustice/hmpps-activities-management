@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { parse } from 'date-fns'
+import { addDays, parse, subDays } from 'date-fns'
 import ActivitiesRoutes from './activities'
 import ActivitiesService from '../../../services/activitiesService'
-import { ScheduledActivity } from '../../../@types/activitiesAPI/types'
+import { ActivityCategory, ScheduledActivity } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
 
@@ -18,7 +18,9 @@ describe('Route Handlers - Activities', () => {
   beforeEach(() => {
     res = {
       locals: {
-        user: {},
+        user: {
+          username: 'joebloggs',
+        },
       },
       render: jest.fn(),
       redirect: jest.fn(),
@@ -26,6 +28,12 @@ describe('Route Handlers - Activities', () => {
 
     req = {
       query: {},
+      session: {
+        activitiesFilters: {
+          sessionFilters: ['am'],
+          categoryFilters: ['Maths'],
+        },
+      },
     } as unknown as Request
   })
 
@@ -36,7 +44,7 @@ describe('Route Handlers - Activities', () => {
         startTime: '10:00',
         endTime: '11:00',
         activitySchedule: {
-          activity: { summary: 'Maths level 1' },
+          activity: { summary: 'Maths level 1', category: { code: 'Maths' } },
           description: 'Houseblock 1',
           internalLocation: { description: 'Classroom' },
         },
@@ -52,7 +60,7 @@ describe('Route Handlers - Activities', () => {
         startTime: '13:00',
         endTime: '14:00',
         activitySchedule: {
-          activity: { summary: 'English level 1' },
+          activity: { summary: 'English level 1', category: { code: 'English' } },
           description: 'Houseblock 2',
           internalLocation: { description: 'Classroom 2' },
         },
@@ -64,6 +72,15 @@ describe('Route Handlers - Activities', () => {
         ],
       },
     ] as ScheduledActivity[]
+
+    const mockCategories = [
+      {
+        id: 1,
+        code: 'ALL',
+        name: 'ALL',
+        description: 'ALL',
+      },
+    ] as ActivityCategory[]
 
     it('should redirect to the select period page if date and slot are not provided', async () => {
       await handler.GET(req, res)
@@ -81,14 +98,31 @@ describe('Route Handlers - Activities', () => {
     it('should render with the expected view', async () => {
       const dateString = '2022-12-08'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      const previousDay = subDays(new Date(date), 1)
+      const nextDay = addDays(new Date(date), 1)
+
+      req = {
+        query: { date: dateString },
+        session: {
+          activitiesFilters: {
+            searchTerm: '',
+            categories: ['ALL'],
+            sessionFilters: [
+              { value: 'AM', text: 'Morning (AM)', checked: true },
+              { value: 'PM', text: 'Afternoon (PM)', checked: true },
+              { value: 'ED', text: 'Evening (ED)', checked: true },
+            ],
+            categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+          },
+        },
+      } as unknown as Request
 
       when(activitiesService.getScheduledActivitiesAtPrison)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockApiResponse)
 
-      req.query = {
-        date: dateString,
-      }
+      when(activitiesService.getActivityCategories).calledWith(res.locals.user).mockResolvedValue(mockCategories)
+
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
@@ -97,6 +131,7 @@ describe('Route Handlers - Activities', () => {
             {
               allocated: 3,
               attended: 1,
+              category: 'Maths',
               id: 1,
               location: 'Classroom',
               name: 'Maths level 1',
@@ -112,6 +147,7 @@ describe('Route Handlers - Activities', () => {
             {
               allocated: 3,
               attended: 1,
+              category: 'English',
               id: 2,
               location: 'Classroom 2',
               name: 'English level 1',
@@ -125,25 +161,50 @@ describe('Route Handlers - Activities', () => {
           ],
           length: 2,
         },
-        date,
-        searchString: undefined,
+        activitiesFilters: {
+          categories: ['ALL'],
+          categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+          searchTerm: '',
+          sessionFilters: [
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: true },
+            { value: 'ED', text: 'Evening (ED)', checked: true },
+          ],
+        },
+        activityDate: date,
+        previousDay,
+        nextDay,
       })
     })
 
-    it('should filter the activites based on the search term', async () => {
+    it('should filter the activities based on the search term', async () => {
       const dateString = '2022-12-08'
-      const searchTerm = 'math'
-
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      const previousDay = subDays(new Date(date), 1)
+      const nextDay = addDays(new Date(date), 1)
 
       when(activitiesService.getScheduledActivitiesAtPrison)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockApiResponse)
 
-      req.query = {
-        date: dateString,
-        searchTerm,
-      }
+      when(activitiesService.getActivityCategories).calledWith(res.locals.user).mockResolvedValue(mockCategories)
+
+      req = {
+        query: { date: dateString },
+        session: {
+          activitiesFilters: {
+            searchTerm: 'math',
+            categories: ['ALL'],
+            sessionFilters: [
+              { value: 'AM', text: 'Morning (AM)', checked: true },
+              { value: 'PM', text: 'Afternoon (PM)', checked: true },
+              { value: 'ED', text: 'Evening (ED)', checked: true },
+            ],
+            categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+          },
+        },
+      } as unknown as Request
+
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
@@ -152,6 +213,7 @@ describe('Route Handlers - Activities', () => {
             {
               allocated: 3,
               attended: 1,
+              category: 'Maths',
               id: 1,
               location: 'Classroom',
               name: 'Maths level 1',
@@ -165,8 +227,151 @@ describe('Route Handlers - Activities', () => {
           ],
           length: 1,
         },
-        date,
-        searchTerm: 'math',
+        activitiesFilters: {
+          categories: ['ALL'],
+          categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+          searchTerm: 'math',
+          sessionFilters: [
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: true },
+            { value: 'ED', text: 'Evening (ED)', checked: true },
+          ],
+        },
+        activityDate: date,
+        previousDay,
+        nextDay,
+      })
+    })
+
+    it('should filter the activities based on the time slot', async () => {
+      const dateString = '2022-12-08'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      const previousDay = subDays(new Date(date), 1)
+      const nextDay = addDays(new Date(date), 1)
+
+      when(activitiesService.getScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockApiResponse)
+
+      when(activitiesService.getActivityCategories).calledWith(res.locals.user).mockResolvedValue(mockCategories)
+
+      req = {
+        query: { date: dateString },
+        session: {
+          activitiesFilters: {
+            searchTerm: '',
+            categories: ['ALL'],
+            sessionFilters: [
+              { value: 'AM', text: 'Morning (AM)', checked: true },
+              { value: 'PM', text: 'Afternoon (PM)', checked: false },
+              { value: 'ED', text: 'Evening (ED)', checked: false },
+            ],
+            categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
+        activities: {
+          am: [
+            {
+              allocated: 3,
+              attended: 1,
+              cancelled: false,
+              category: 'Maths',
+              id: 1,
+              location: 'Classroom',
+              name: 'Maths level 1',
+              scheduleName: 'Houseblock 1',
+              notAttended: 1,
+              notRecorded: 1,
+              time: '10:00 - 11:00',
+              timeSlot: 'am',
+            },
+          ],
+          length: 1,
+        },
+        activitiesFilters: {
+          categories: ['ALL'],
+          categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+          searchTerm: '',
+          sessionFilters: [
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: false },
+            { value: 'ED', text: 'Evening (ED)', checked: false },
+          ],
+        },
+        activityDate: date,
+        previousDay,
+        nextDay,
+      })
+    })
+
+    it('should filter the activities based on the category', async () => {
+      const dateString = '2022-12-08'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      const previousDay = subDays(new Date(date), 1)
+      const nextDay = addDays(new Date(date), 1)
+
+      when(activitiesService.getScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockApiResponse)
+
+      when(activitiesService.getActivityCategories).calledWith(res.locals.user).mockResolvedValue(mockCategories)
+
+      req = {
+        query: { date: dateString },
+        session: {
+          activitiesFilters: {
+            searchTerm: '',
+            categories: ['English'],
+            sessionFilters: [
+              { value: 'AM', text: 'Morning (AM)', checked: true },
+              { value: 'PM', text: 'Afternoon (PM)', checked: true },
+              { value: 'ED', text: 'Evening (ED)', checked: true },
+            ],
+            categoryFilters: [{ value: 'English', text: 'English', checked: true }],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
+        activities: {
+          pm: [
+            {
+              allocated: 3,
+              attended: 1,
+              cancelled: false,
+              category: 'English',
+              id: 2,
+              location: 'Classroom 2',
+              name: 'English level 1',
+              scheduleName: 'Houseblock 2',
+              notAttended: 1,
+              notRecorded: 1,
+              time: '13:00 - 14:00',
+              timeSlot: 'pm',
+            },
+          ],
+          length: 1,
+        },
+        activitiesFilters: {
+          categories: ['English'],
+          categoryFilters: [{ value: 'English', text: 'English', checked: true }],
+          searchTerm: '',
+          sessionFilters: [
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: true },
+            { value: 'ED', text: 'Evening (ED)', checked: true },
+          ],
+        },
+        activityDate: date,
+        previousDay,
+        nextDay,
       })
     })
   })

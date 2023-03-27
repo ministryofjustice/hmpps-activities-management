@@ -12,6 +12,7 @@ import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance
 import getCancelledScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance-cancelled.json'
 import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForAttendance.json'
+import getCategories from '../fixtures/activitiesApi/getCategories.json'
 
 context('Record attendance', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -34,6 +35,7 @@ context('Record attendance', () => {
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('PUT', '/attendances')
+    cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('PUT', '/scheduled-instances/93/cancel')
     cy.stubEndpoint('PUT', '/scheduled-instances/93/uncancel')
   })

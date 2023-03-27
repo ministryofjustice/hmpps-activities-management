@@ -28,6 +28,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/select-period', selectPeriodHandler.GET)
   post('/select-period', selectPeriodHandler.POST, TimePeriod)
   get('/activities', activitiesHandler.GET)
+  post('/activities', activitiesHandler.POST)
+  get('/update-filters', activitiesHandler.FILTERS)
   get('/activities/:id/attendance-list', attendanceListHandler.GET)
   post('/activities/:id/attended', attendanceListHandler.ATTENDED, AttendanceList)
   post('/activities/:id/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)

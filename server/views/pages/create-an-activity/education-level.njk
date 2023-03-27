@@ -5,7 +5,7 @@
 
 {% set pageTitle = applicationName + " - Create an activity - education level" %}
 {% set pageId = 'create-activity-education-level-page' %}
-{% set backLinkHref = "/" %}
+{% set backLinkHref = "qualification" %}
 
 {% set options = [{ value: '', text: '' }] %}
 {% for referenceCode in referenceCodes %}
@@ -25,11 +25,12 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-xl">Enter an education level for {{ session.createJourney.name }}</h1>
+            <h1 class="govuk-heading-xl">Select education levels or other qualifications</h1>
         </div>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
+            <p>Choose the education level or qualification that participants need to be eligible for this activity.</p>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukSelect({
@@ -37,7 +38,7 @@
                     name: "referenceCode",
                     label: {
                         text: "Education Level",
-                        isPageHeading: false
+                        classes: 'govuk-visually-hidden'
                     },
                     hint: {
                         text: "Start typing an education level and select from the list of options."

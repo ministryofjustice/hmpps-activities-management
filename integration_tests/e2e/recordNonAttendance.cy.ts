@@ -10,6 +10,7 @@ import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance
 import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForNonAttendance.json'
 import NotAttendedReasonPage from '../pages/recordAttendance/notAttendedReason'
+import getCategories from '../fixtures/activitiesApi/getCategories.json'
 
 context('Record non attendance', () => {
   beforeEach(() => {
@@ -28,6 +29,7 @@ context('Record non attendance', () => {
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('PUT', '/attendances')
     cy.stubEndpoint('GET', '/attendance-reasons', getAttendanceReasons)
+    cy.stubEndpoint('GET', '/activity-categories', getCategories)
   })
 
   it('should click through record non attendance journey', () => {
