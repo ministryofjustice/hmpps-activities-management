@@ -1,0 +1,37 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+
+{% set pageTitle = "Appointments Management - Create Appointment - Upload Prisoner List" %}
+{% set pageId = 'appointments-create-upload-prisoner-list-page' %}
+{% set backLinkHref = "/appointments" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.createAppointmentJourney.type) }}
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukFileUpload({
+                    id: "file",
+                    name: "file",
+                    label: {
+                        text: "Upload a CSV file of prisoners' numbers",
+                        classes: "govuk-label--l",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "Upload a CSV file with the prisoner numbers of all prisoners attending this appointment"
+                    },
+                    errorMessage: validationErrors | findError('file')
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

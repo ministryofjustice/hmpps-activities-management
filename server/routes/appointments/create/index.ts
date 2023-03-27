@@ -4,6 +4,7 @@ import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import StartJourneyRoutes from './handlers/startJourney'
 import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/selectPrisoner'
+import UploadPrisonerListRoutes from './handlers/uploadPrisonerList'
 import CategoryRoutes, { Category } from './handlers/category'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
@@ -23,6 +24,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
 
   const startHandler = new StartJourneyRoutes()
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
+  const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(prisonService)
   const categoryHandler = new CategoryRoutes(activitiesService)
   const locationHandler = new LocationRoutes(prisonService)
   const dateAndTimeHandler = new DateAndTimeRoutes()
@@ -35,6 +37,8 @@ export default function Index({ prisonService, activitiesService }: Services): R
   get('/start-group', startHandler.GROUP)
   get('/select-prisoner', selectPrisonerHandler.GET, true)
   post('/select-prisoner', selectPrisonerHandler.POST, PrisonerSearch)
+  get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
+  post('/upload-prisoner-list', uploadPrisonerListRoutes.POST)
   get('/category', categoryHandler.GET, true)
   post('/category', categoryHandler.POST, Category)
   get('/location', locationHandler.GET, true)
