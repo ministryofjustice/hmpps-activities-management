@@ -50,7 +50,10 @@ export default class SelectPrisonerRoutes {
     }
 
     if (req.session.createAppointmentJourney.prisoners.find(p => p.number === prisoner.prisonerNumber)) {
-      throw new FormValidationError('query', `Prisoner ${prisoner.prisonerNumber} already added to appointment`)
+      throw new FormValidationError(
+        'query',
+        `${prisoner.firstName} ${prisoner.lastName} (${prisoner.prisonerNumber}) already added to appointment`,
+      )
     }
 
     req.session.createAppointmentJourney.prisoners.push({
