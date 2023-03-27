@@ -19,7 +19,7 @@ export default class CancelRoutes {
 
     if (choice === 'yes') {
       req.session.allocateJourney = null
-      res.redirect(`${activity.scheduleId}/identify-candidates`)
+      res.redirect(`${activity.scheduleId}/allocate`)
     } else {
       res.redirect(`check-answers`)
     }

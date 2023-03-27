@@ -6,10 +6,10 @@
     @include govuk-font($size: 19, $weight: bold);
     display: block;
     content: "Related tasks";
+    margin-bottom: 5px;
   }
 
   a {
     @include govuk-font($size: 19);
-    display: inline-block;
   }
 }

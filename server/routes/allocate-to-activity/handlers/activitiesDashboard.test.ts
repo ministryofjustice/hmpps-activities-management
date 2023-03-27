@@ -4,7 +4,7 @@ import { when } from 'jest-when'
 import ActivitiesService from '../../../services/activitiesService'
 import CapacitiesService from '../../../services/capacitiesService'
 import atLeast from '../../../../jest.setup'
-import ActivitiesRoutes from './activities'
+import ActivitiesRoutes from './activitiesDashboard'
 import { ActivityLite, ActivityScheduleLite } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
@@ -39,7 +39,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       summary: 'English level 1',
     } as ActivityLite
 
-    activitiesService.getActivitiesInCategory.mockResolvedValue([maths, english])
+    when(activitiesService.getActivities).mockResolvedValue([maths, english])
     when(capacitiesService.getActivityAllocationsSummary)
       .calledWith(atLeast(1))
       .mockResolvedValue({
@@ -56,7 +56,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         vacancies: 50,
       })
 
-    capacitiesService.getTotalAllocationSummary.mockReturnValue({
+    when(capacitiesService.getTotalAllocationSummary).mockReturnValue({
       capacity: 250,
       allocated: 155,
       percentageAllocated: 62,
@@ -85,7 +85,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
   describe('GET', () => {
     it('should render activities with their allocation summaries', async () => {
-      activitiesService.getSchedulesOfActivity.mockResolvedValue([scheduleAm, schedulePm])
+      when(activitiesService.getSchedulesOfActivity).mockResolvedValue([scheduleAm, schedulePm])
 
       await handler.GET(req, res)
 
