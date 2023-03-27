@@ -19,7 +19,7 @@ import {
   PrisonPayBand,
   PrisonerScheduledEvents,
   Appointment,
-  AppointmentCategory,
+  AppointmentCategorySummary,
   ActivitySchedule,
   AppointmentDetails,
   AppointmentOccurrenceDetails,
@@ -363,21 +363,18 @@ describe('Activities Service', () => {
     it('should return all categories from api', async () => {
       const expectedResult = [
         {
-          id: 51,
           code: 'CHAP',
           description: 'Chaplaincy',
         },
         {
-          id: 11,
           code: 'MEDO',
           description: 'Medical - Doctor',
         },
         {
-          id: 20,
           code: 'GYMW',
           description: 'Gym - Weights',
         },
-      ] as AppointmentCategory[]
+      ] as AppointmentCategorySummary[]
 
       when(activitiesApiClient.getAppointmentCategories).calledWith(user).mockResolvedValue(expectedResult)
 
@@ -390,7 +387,7 @@ describe('Activities Service', () => {
   describe('postCreateAppointment', () => {
     it('should return created appointment from api when valid request is sent', async () => {
       const request = {
-        categoryId: 51,
+        categoryCode: 'CHAP',
         prisonCode: 'SKI',
         internalLocationId: 123,
         inCell: false,
@@ -403,11 +400,7 @@ describe('Activities Service', () => {
 
       const expectedResponse = {
         id: 12345,
-        category: {
-          id: 51,
-          code: 'CHAP',
-          description: 'Chaplaincy',
-        },
+        categoryCode: 'CHAP',
         prisonCode: 'SKI',
         internalLocationId: 123,
         startDate: '2023-02-07',

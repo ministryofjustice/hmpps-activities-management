@@ -1,12 +1,6 @@
 {
   "id": 12345,
-  "category": {
-    "id": 51,
-    "code": "CHAP",
-    "description": "Chaplaincy",
-    "active": true,
-    "displayOrder": 1
-  },
+  "categoryCode": "CHAP",
   "prisonCode": "SKI",
   "internalLocationId": 26963,
   "inCell": false,

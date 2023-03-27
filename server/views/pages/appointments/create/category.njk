@@ -10,11 +10,11 @@
 
 {% set categoryOptions = [{ value: "-", text: "" }] %}
 {% for category in categories %}
-    {% set categoryOptions = (categoryOptions.push( { value: category.id, text: category.description } ), categoryOptions) %}
+    {% set categoryOptions = (categoryOptions.push( { value: category.code, text: category.description } ), categoryOptions) %}
 {% endfor %}
 
 {% block meta %}
-    <meta name="autocompleteElements" content="categoryId"/>
+    <meta name="autocompleteElements" content="categoryCode"/>
 {% endblock %}
 
 {% block content %}
@@ -24,16 +24,16 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukSelect({
-                    id: "categoryId",
-                    name: "categoryId",
+                    id: "categoryCode",
+                    name: "categoryCode",
                     label: {
                         text: "What is the appointment category?",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
-                    errorMessage: validationErrors | findError('categoryId'),
+                    errorMessage: validationErrors | findError('categoryCode'),
                     items: categoryOptions,
-                    value: formResponses.categoryId or session.createAppointmentJourney.category.id
+                    value: formResponses.categoryCode or session.createAppointmentJourney.category.code
                 }) }}
 
                 {{ govukButton({

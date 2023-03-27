@@ -16,7 +16,7 @@ export type CreateAppointmentJourney = {
     },
   ]
   category?: {
-    id: number
+    code: string
     description: string
   }
   location?: {

@@ -19,7 +19,6 @@ describe('Route Handlers - Movement Slip', () => {
     appointmentId: 5,
     sequenceNumber: 2,
     category: {
-      id: 40,
       code: 'MEOT',
       description: 'Medical - Other',
     },

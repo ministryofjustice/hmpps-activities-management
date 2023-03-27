@@ -5,7 +5,7 @@ export default class CategoryPage extends Page {
     super('appointments-create-category-page')
   }
 
-  selectCategory = (category: string) => this.getInputById('categoryId').clear().type(category)
+  selectCategory = (category: string) => this.getInputById('categoryCode').clear().type(category)
 
-  assertSelectedCategory = (category: string) => this.getInputById('categoryId').should('have.value', category)
+  assertSelectedCategory = (category: string) => this.getInputById('categoryCode').should('have.value', category)
 }
