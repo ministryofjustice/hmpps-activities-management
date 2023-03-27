@@ -13,7 +13,7 @@ export type CreateAppointmentJourney = {
       number: string
       name: string
       cellLocation: string
-    },
+    }?,
   ]
   category?: {
     code: string

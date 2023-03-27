@@ -2,11 +2,12 @@
 
 {% set pageTitle = applicationName + " - Error" %}
 {% set mainClasses = "govuk-body" %}
+{% set backLinkHref = "javascript: history.back()" %}
 
 {% block content %}
 
   <h1>{{ message }}</h1>
   <h2>{{ status }}</h2>
-  <pre>{{ stack }}</pre>
+  <pre class="stacktrace">{{ stack }}</pre>
 
 {% endblock %}

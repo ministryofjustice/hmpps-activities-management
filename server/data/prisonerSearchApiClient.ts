@@ -44,6 +44,16 @@ export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
     )
   }
 
+  async searchPrisonInmates(searchQuery: string, prisonCode: string, user: ServiceUser): Promise<PagePrisoner> {
+    return this.get(
+      {
+        path: `/prison/${prisonCode}/prisoners`,
+        query: { term: searchQuery },
+      },
+      user,
+    )
+  }
+
   async searchPrisonersByLocationPrefix(
     prisonCode: string,
     locationPrefix: string,
