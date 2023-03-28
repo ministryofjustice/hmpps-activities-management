@@ -20,6 +20,7 @@ import {
   toTimeItems,
   exampleDateOneWeekAhead,
   fullName,
+  prisonerName,
   toDate,
 } from '../utils/utils'
 import config from '../config'
@@ -90,6 +91,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   // Only register nunjucks helpers/filters here - they should be implemented and unit tested elsewhere
   njkEnv.addFilter('fullName', fullName)
   njkEnv.addFilter('initialiseName', initialiseName)
+  njkEnv.addFilter('prisonerName', str => njkEnv.getFilter('safe')(prisonerName(str)))
   njkEnv.addFilter('setSelected', setSelected)
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
   njkEnv.addFilter('toTimeItems', toTimeItems)
@@ -118,6 +120,7 @@ export function registerNunjucks(app?: express.Express): Environment {
 
   njkEnv.addGlobal('YesNo', YesNo)
   njkEnv.addGlobal('AppointmentRepeatPeriod', AppointmentRepeatPeriod)
+  njkEnv.addGlobal('dpsUrl', config.dpsUrl)
 
   return njkEnv
 }

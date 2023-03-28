@@ -59,6 +59,23 @@ describe('prisonerSearchApiClient', () => {
     })
   })
 
+  describe('searchPrisonInmates', () => {
+    it('should return data from api', async () => {
+      const query = 'G10'
+      const response = { data: 'data' }
+
+      fakePrisonerSearchApi
+        .get(`/prison/MDI/prisoners?term=${query}`)
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
+
+      const output = await prisonerSearchApiClient.searchPrisonInmates(query, 'MDI', user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('searchPrisoners', () => {
     it('should return data from api', async () => {
       const searchCriteria = { lastName: 'Smith' } as PrisonerSearchCriteria

@@ -1,0 +1,50 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+
+{% set pageTitle = "Appointments Management - Create Appointment - How to add prisoners" %}
+{% set pageId = 'appointments-create-how-to-add-prisoners' %}
+{% set backLinkHref = "/appointments" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.createAppointmentJourney.type) }}
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    name: "howToAdd",
+                    fieldset: {
+                        legend: {
+                            text: "How do you want to add prisoners to the appointment?",
+                            classes: "govuk-label--l",
+                            isPageHeading: true
+                        }
+                    },
+                    errorMessage: validationErrors | findError('howToAdd'),
+                    items: [
+                        {
+                            value: HowToAddOptions.SEARCH,
+                            text: "Search for a prison number to add to the appointment list",
+                            checked: formResponses.howToAdd == HowToAddOptions.SEARCH
+                        },
+                        {
+                            value: HowToAddOptions.CSV,
+                            text: "Upload a CSV file of prison numbers to add to the appointment list",
+                            checked: formResponses.howToAdd == HowToAddOptions.CSV
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

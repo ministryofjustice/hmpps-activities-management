@@ -5,7 +5,7 @@ import AppointmentsManagementPage from '../../pages/appointments/appointmentsMan
 import SelectPrisonerPage from '../../pages/appointments/create/selectPrisonerPage'
 import CategoryPage from '../../pages/appointments/create/categoryPage'
 import LocationPage from '../../pages/appointments/create/locationPage'
-import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatchPrisonerA8644DY.json'
+import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import DateAndTimePage from '../../pages/appointments/create/dateAndTimePage'
@@ -19,7 +19,7 @@ context('Create individual appointment - back links', () => {
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
     cy.signIn()
-    cy.stubEndpoint('POST', '/prisoner-search/match-prisoners', postMatchPrisonerA8644DY)
+    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY', getPrisonPrisoners)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments')
