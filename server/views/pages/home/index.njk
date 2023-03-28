@@ -26,7 +26,7 @@
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
                         "id": "allocateToActivitiesCard",
-                        "href": "/allocate/categories",
+                        "href": "/allocate/activities",
                         "clickable": "true",
                         "heading": "Allocate to activities",
                         "description": "Allocate an inmate to an activity schedule.",
@@ -77,15 +77,15 @@
                 </div>
 
                 {% if user.activeCaseLoad.isAppointmentsEnabled %}
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "href": "/appointments",
-                        "clickable": "true",
-                        "heading": "Appointments management",
-                        "description": "Create and manage appointments for individuals and groups.",
-                        "data-qa": "appointments-management-card"
-                    }) }}
-                </div>
+                    <div class="govuk-grid-column-one-third card-group__item">
+                        {{ card({
+                            "href": "/appointments",
+                            "clickable": "true",
+                            "heading": "Appointments management",
+                            "description": "Create and manage appointments for individuals and groups.",
+                            "data-qa": "appointments-management-card"
+                        }) }}
+                    </div>
                 {% endif %}
             </div>
         </div>

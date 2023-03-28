@@ -1,6 +1,4 @@
-import getCategories from '../fixtures/activitiesApi/getCategories.json'
-import getCategoryCapacity from '../fixtures/activitiesApi/getCategoryCapacity.json'
-import getActivitiesInCategory from '../fixtures/activitiesApi/getActivitiesInCategory.json'
+import getActivities from '../fixtures/activitiesApi/getActivities.json'
 import getActivityCapacity from '../fixtures/activitiesApi/getActivityCapacity.json'
 import getSchedulesInActivity from '../fixtures/activitiesApi/getSchedulesInActivity.json'
 import getScheduleCapacity from '../fixtures/activitiesApi/getScheduleCapacity.json'
@@ -19,9 +17,7 @@ import getMdiPrisonPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands
 
 import IndexPage from '../pages/index'
 import Page from '../pages/page'
-import CategoriesDashboardPage from '../pages/allocateToActivity/categoriesDashboard'
 import ActivitiesDashboardPage from '../pages/allocateToActivity/activitiesDashboard'
-import SchedulesDashboardPage from '../pages/allocateToActivity/schedulesDashboard'
 import PayBandPage from '../pages/allocateToActivity/payBand'
 import CheckAnswersPage from '../pages/allocateToActivity/checkAnswers'
 import CancelPage from '../pages/allocateToActivity/cancel'
@@ -33,10 +29,7 @@ context('Allocate to activity', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
-    cy.stubEndpoint('GET', '/activity-categories', getCategories)
-    cy.stubEndpoint('GET', '/prison/MDI/activity-categories/(\\d)*/capacity', getCategoryCapacity)
-    cy.stubEndpoint('GET', '/prison/MDI/activity-categories/(\\d)*/capacity', getCategoryCapacity)
-    cy.stubEndpoint('GET', '/prison/MDI/activity-categories/1/activities', getActivitiesInCategory)
+    cy.stubEndpoint('GET', '/prison/MDI/activities', getActivities)
     cy.stubEndpoint('GET', '/activities/(\\d)*/capacity', getActivityCapacity)
     cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/(\\d)*/capacity', getScheduleCapacity)
@@ -61,20 +54,9 @@ context('Allocate to activity', () => {
     indexPage.allocateToActivityCard().should('contain.text', 'Allocate an inmate to an activity schedule.')
     indexPage.allocateToActivityCard().click()
 
-    const categoriesPage = Page.verifyOnPage(CategoriesDashboardPage)
-    categoriesPage.categoryRows().should('have.length', 8)
-    categoriesPage.categoryRows().last().should('contain', 'Total')
-    categoriesPage.sortByTableHeader('Activity category')
-    categoriesPage.categoryRows().last().should('contain', 'Total')
-    categoriesPage.selectCategoryWithName('Education')
-
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
-
-    const schedulesPage = Page.verifyOnPage(SchedulesDashboardPage)
-    schedulesPage.scheduleRows().should('have.length', 5)
-    schedulesPage.selectScheduleWithName('Entry level English 1')
 
     const allocatePage = Page.verifyOnPage(AllocationDashboard)
     allocatePage.allocatedPeopleRows().should('have.length', 1)

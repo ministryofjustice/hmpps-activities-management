@@ -1,9 +1,7 @@
 import { RequestHandler, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
-import CategoriesRoutes from './handlers/categories'
 import { Services } from '../../services'
-import ActivitiesRoutes from './handlers/activities'
-import SchedulesRoutes from './handlers/schedules'
+import ActivitiesRoutes from './handlers/activitiesDashboard'
 import PayBandRoutes, { PayBand } from './handlers/payBand'
 import validationMiddleware from '../../middleware/validationMiddleware'
 import AllocationDashboardRoutes, { SelectedAllocation } from './handlers/allocationDashboard'
@@ -20,9 +18,7 @@ export default function Index({ activitiesService, prisonService, capacitiesServ
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const categoriesHandler = new CategoriesRoutes(activitiesService, capacitiesService)
   const activitiesHandler = new ActivitiesRoutes(activitiesService, capacitiesService)
-  const schedulesHandler = new SchedulesRoutes(activitiesService, capacitiesService)
   const allocationDashboardHandler = new AllocationDashboardRoutes(prisonService, capacitiesService, activitiesService)
   const startJourneyHandler = new StartJourneyRoutes(prisonService, activitiesService)
   const payBandHandler = new PayBandRoutes(activitiesService)
@@ -30,9 +26,7 @@ export default function Index({ activitiesService, prisonService, capacitiesServ
   const cancelHandler = new CancelRoutes()
   const confirmationHandler = new ConfirmationRoutes()
 
-  get('/categories', categoriesHandler.GET)
-  get('/categories/:categoryId/activities', activitiesHandler.GET)
-  get('/activities/:activityId/schedules', schedulesHandler.GET)
+  get('/activities', activitiesHandler.GET)
   get('/:scheduleId/allocate', allocationDashboardHandler.GET)
   post('/:scheduleId/allocate', allocationDashboardHandler.POST, SelectedAllocation)
   get('/:scheduleId/allocate/:prisonerNumber', startJourneyHandler.GET)

@@ -1,12 +1,10 @@
 import { registerDecorator, ValidationOptions } from 'class-validator'
-import { isValid } from 'date-fns'
+import { isValid, startOfDay } from 'date-fns'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 
 export default function DateIsSameOrAfter(dateToCompare: Date, validationOptions?: ValidationOptions) {
-  const dtc = new Date(dateToCompare.setUTCHours(0, 0, 0, 0))
-
   const dateIsSameOrAfter = (date: SimpleDate) =>
-    date !== undefined && isValid(date.toRichDate()) ? date.toRichDate() >= dtc : true
+    date !== undefined && isValid(date.toRichDate()) ? startOfDay(date.toRichDate()) >= startOfDay(dateToCompare) : true
 
   return (object: unknown, propertyName: string) => {
     registerDecorator({

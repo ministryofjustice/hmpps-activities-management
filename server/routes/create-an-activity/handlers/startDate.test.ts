@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../utils/utils'
 import StartDateRoutes, { StartDate } from './startDate'
 import { simpleDateFromDate } from '../../../commonValidationTypes/simpleDate'
@@ -103,13 +103,13 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       expect(errors).toEqual([{ property: 'startDate', error: "Enter a date on or after today's date" }])
     })
 
-    it('validation fails if start date is not before end date', async () => {
+    it('validation fails if start date is not before or same as end date', async () => {
       const today = new Date()
       const startDate = simpleDateFromDate(today)
 
       const body = {
         startDate,
-        endDate: formatDate(today, 'yyyy-MM-dd'),
+        endDate: formatDate(subDays(today, 1), 'yyyy-MM-dd'),
       }
 
       const requestObject = plainToInstance(StartDate, body)
