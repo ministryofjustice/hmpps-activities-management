@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
-import PrisonService from '../../../../services/prisonService'
 import { parse } from 'csv-parse'
+import PrisonService from '../../../../services/prisonService'
 
 export class PrisonerList {
   @Expose()
-  @IsNotEmpty({ message: 'Select a CSV file' })
+  @IsNotEmpty({ message: 'Select a file' })
   file: Express.Multer.File
 }
 
