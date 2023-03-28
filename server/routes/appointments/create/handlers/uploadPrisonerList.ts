@@ -6,7 +6,6 @@ import fs from 'fs'
 import PrisonService from '../../../../services/prisonService'
 import IsNotEmptyFile from '../../../../validators/isNotEmptyFile'
 import IsValidCsvFile from '../../../../validators/isValidCsvFile'
-import { FormValidationError } from '../../../../formValidationErrorHandler'
 
 export class PrisonerList {
   @Expose()
@@ -30,57 +29,73 @@ export default class UploadPrisonerListRoutes {
     const prisonerNumbers: string[] = []
     const errors: string[] = []
 
-    const parser = parse(prisonerListCsvFile.buffer || prisonerListCsvFile.path, { trim: true, skipEmptyLines: true })
-      .on('readable', () => {
-        let row
-        // eslint-disable-next-line no-cond-assign
-        while ((row = parser.read())) {
-          const prisonerNumber = row[0]
-          if (prisonerNumber !== 'Prison number' && !prisonerNumbers.includes(prisonerNumber)) {
-            prisonerNumbers.push(prisonerNumber)
+    fs.readFile(prisonerListCsvFile.path, (err, result) => {
+      if (err) {
+        req.flash(
+          'validationErrors',
+          JSON.stringify([{ field: 'file', message: 'The selected file could not be uploaded – try again' }]),
+        )
+        return res.redirect('back')
+      }
+
+      fs.unlinkSync(prisonerListCsvFile.path)
+
+      const parser = parse(result, { trim: true, skipEmptyLines: true })
+        .on('readable', () => {
+          let row
+          // eslint-disable-next-line no-cond-assign
+          while ((row = parser.read())) {
+            const prisonerNumber = row[0]
+            if (prisonerNumber !== 'Prison number' && !prisonerNumbers.includes(prisonerNumber)) {
+              prisonerNumbers.push(prisonerNumber)
+            }
           }
-        }
-      })
-      .on('error', error => {
-        errors.push(error.message)
-      })
-      .on('end', async () => {
-        if (prisonerListCsvFile.path) fs.unlinkSync(prisonerListCsvFile.path)
+        })
+        .on('error', error => {
+          errors.push(error.message)
+        })
+        .on('end', async () => {
+          if (errors.length > 0) {
+            req.flash(
+              'validationErrors',
+              JSON.stringify([{ field: 'file', message: 'The selected file must use the template' }]),
+            )
+            return res.redirect('back')
+          }
 
-        if (errors.length > 0) {
-          throw new FormValidationError('file', 'The selected file must use the template')
-        }
+          const prisoners = (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)).map(
+            prisoner => ({
+              number: prisoner.prisonerNumber,
+              name: `${prisoner.firstName} ${prisoner.lastName}`,
+              cellLocation: prisoner.cellLocation,
+            }),
+          )
 
-        const prisoners = (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)).map(
-          prisoner => ({
-            number: prisoner.prisonerNumber,
-            name: `${prisoner.firstName} ${prisoner.lastName}`,
-            cellLocation: prisoner.cellLocation,
-          }),
-        )
+          const prisonerNumbersFound = prisoners.map(prisoner => prisoner.number)
 
-        const prisonerNumbersFound = prisoners.map(prisoner => prisoner.number)
+          const prisonerNumbersNotFound = prisonerNumbers.filter(
+            prisonerNumber => !prisonerNumbersFound.includes(prisonerNumber),
+          )
 
-        const prisonerNumbersNotFound = prisonerNumbers.filter(
-          prisonerNumber => !prisonerNumbersFound.includes(prisonerNumber),
-        )
+          if (prisonerNumbersNotFound.length > 0) {
+            const message =
+              prisonerNumbersNotFound.length === 1
+                ? `Prisoner with number ${prisonerNumbersNotFound[0]} was not found`
+                : `Prisoners with numbers ${prisonerNumbersNotFound.join(', ')} were not found`
+            req.flash('validationErrors', JSON.stringify([{ field: 'file', message }]))
+            return res.redirect('back')
+          }
 
-        if (prisonerNumbersNotFound.length > 0) {
-          const message =
-            prisonerNumbersNotFound.length === 1
-              ? `Prisoner with number ${prisonerNumbersNotFound[0]} was not found`
-              : `Prisoners with numbers ${prisonerNumbersNotFound.join(', ')} were not found`
-          req.flash('validationErrors', JSON.stringify([{ field: 'file', message }]))
-          return res.redirect('back')
-        }
+          const existingPrisonersNotInUploadedList = (req.session.createAppointmentJourney.prisoners ?? []).filter(
+            prisoner => !prisonerNumbersFound.includes(prisoner.number),
+          )
 
-        const existingPrisonersNotInUploadedList = (req.session.createAppointmentJourney.prisoners ?? []).filter(
-          prisoner => !prisonerNumbersFound.includes(prisoner.number),
-        )
+          req.session.createAppointmentJourney.prisoners = existingPrisonersNotInUploadedList.concat(prisoners)
 
-        req.session.createAppointmentJourney.prisoners = existingPrisonersNotInUploadedList.concat(prisoners)
+          return res.redirect('review-prisoners')
+        })
 
-        return res.redirect('review-prisoners')
-      })
+      return parser
+    })
   }
 }

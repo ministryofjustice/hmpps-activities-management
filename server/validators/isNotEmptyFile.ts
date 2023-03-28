@@ -1,4 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator'
+import fs from 'fs'
 
 export default function IsNotEmptyFile(validationOptions?: ValidationOptions) {
   return (object: unknown, propertyName: string) => {
@@ -9,9 +10,17 @@ export default function IsNotEmptyFile(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: Express.Multer.File) {
-          if (value === undefined) return true
+          if (value === undefined || !fs.existsSync(value.path)) return true
 
-          return value.size > 0
+          let result = true
+
+          const { size } = fs.lstatSync(value.path)
+
+          if (size === 0) result = false
+
+          if (!result) fs.unlinkSync(value.path)
+
+          return result
         },
       },
     })

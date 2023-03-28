@@ -40,37 +40,6 @@
     ), summaryListRows) %}
 {% endif %}
 
-{% if session.createAppointmentJourney.type == 'group' %}
-    {% for prisoner in session.createAppointmentJourney.prisoners %}
-        {% set summaryListRows = (summaryListRows.push(
-            {
-                key: {
-                    text: "Prisoner"
-                },
-                value: {
-                    html: appointmentPrisonerSummary(
-                        prisoner.name,
-                        prisoner.number,
-                        prisoner.cellLocation,
-                        dpsUrl
-                    )
-                },
-                actions: {
-                    items: [
-                        {
-                            href: "select-prisoner?fromReview=true",
-                            text: "Change",
-                            visuallyHiddenText: "change prisoner",
-                            classes: "govuk-link--no-visited-state",
-                            attributes: { 'data-qa': 'change-prisoner' }
-                        }
-                    ]
-                }
-            }
-        ), summaryListRows) %}
-    {% endfor %}
-{% endif %}
-
 {% set summaryListRows = (summaryListRows.push(
     {
         key: {

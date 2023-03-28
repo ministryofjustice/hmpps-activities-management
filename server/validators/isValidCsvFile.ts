@@ -1,5 +1,6 @@
 import { registerDecorator, ValidationOptions } from 'class-validator'
 import { isBinaryFileSync } from 'isbinaryfile'
+import fs from 'fs'
 
 export default function IsValidCsvFile(validationOptions?: ValidationOptions) {
   return (object: unknown, propertyName: string) => {
@@ -10,13 +11,17 @@ export default function IsValidCsvFile(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: Express.Multer.File) {
-          if (value === undefined) return true
+          if (value === undefined || !fs.existsSync(value.path)) return true
 
-          if (value.mimetype !== 'text/csv') return false
+          let result = true
 
-          if (value.size === 0) return false
+          if (value.mimetype !== 'text/csv') result = false
 
-          return !isBinaryFileSync(value.buffer || value.path)
+          if (isBinaryFileSync(value.path)) result = false
+
+          if (!result) fs.unlinkSync(value.path)
+
+          return result
         },
       },
     })
