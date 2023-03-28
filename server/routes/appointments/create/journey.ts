@@ -8,13 +8,11 @@ export enum AppointmentType {
 
 export type CreateAppointmentJourney = {
   type: AppointmentType
-  prisoners?: [
-    {
-      number: string
-      name: string
-      cellLocation: string
-    },
-  ]
+  prisoners?: {
+    number: string
+    name: string
+    cellLocation: string
+  }[]
   category?: {
     code: string
     description: string

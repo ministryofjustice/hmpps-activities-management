@@ -1,5 +1,14 @@
 import { Request, Response } from 'express'
+import { Expose } from 'class-transformer'
+import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
+import { parse } from 'csv-parse'
+
+export class PrisonerList {
+  @Expose()
+  @IsNotEmpty({ message: 'Select a CSV file' })
+  file: Express.Multer.File
+}
 
 export default class UploadPrisonerListRoutes {
   constructor(private readonly prisonService: PrisonService) {}
@@ -9,7 +18,29 @@ export default class UploadPrisonerListRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { file } = req
+    const prisonerListCsvFile = req.file
     const { user } = res.locals
+
+    const prisonerNumbers: string[] = []
+
+    const parser = parse(prisonerListCsvFile.buffer, { trim: true, skip_empty_lines: true })
+      .on('readable', () => {
+        let row
+        // eslint-disable-next-line no-cond-assign
+        while ((row = parser.read())) {
+          prisonerNumbers.push(row[0])
+        }
+      })
+      .on('end', async () => {
+        const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
+
+        req.session.createAppointmentJourney.prisoners = prisoners.map(prisoner => ({
+          number: prisoner.prisonerNumber,
+          name: `${prisoner.firstName} ${prisoner.lastName}`,
+          cellLocation: prisoner.cellLocation,
+        }))
+
+        return res.redirectOrReturn('category')
+      })
   }
 }

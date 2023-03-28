@@ -14,6 +14,7 @@ import setUpCurrentUser from './middleware/setUpCurrentUser'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
 import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
+import setUpMultipartFormDataParsing from './middleware/setUpMultipartFormDataParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 
@@ -36,6 +37,7 @@ export default function createApp(services: Services): express.Application {
   app.use(nunjucksSetup(app, services))
   app.use(flash())
   app.use(setUpWebRequestParsing())
+  app.use(setUpMultipartFormDataParsing())
   app.use(setUpStaticResources())
   app.use(setUpAuthentication())
   app.use(authorisationMiddleware())

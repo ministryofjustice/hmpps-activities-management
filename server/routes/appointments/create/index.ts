@@ -4,7 +4,7 @@ import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import StartJourneyRoutes from './handlers/startJourney'
 import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/selectPrisoner'
-import UploadPrisonerListRoutes from './handlers/uploadPrisonerList'
+import UploadPrisonerListRoutes, { PrisonerList } from './handlers/uploadPrisonerList'
 import CategoryRoutes, { Category } from './handlers/category'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
@@ -38,7 +38,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
   get('/select-prisoner', selectPrisonerHandler.GET, true)
   post('/select-prisoner', selectPrisonerHandler.POST, PrisonerSearch)
   get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
-  post('/upload-prisoner-list', uploadPrisonerListRoutes.POST)
+  post('/upload-prisoner-list', uploadPrisonerListRoutes.POST, PrisonerList)
   get('/category', categoryHandler.GET, true)
   post('/category', categoryHandler.POST, Category)
   get('/location', locationHandler.GET, true)
