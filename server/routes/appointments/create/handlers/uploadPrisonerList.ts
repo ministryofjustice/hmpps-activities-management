@@ -2,11 +2,17 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import { parse } from 'csv-parse'
+import fs from 'fs'
 import PrisonService from '../../../../services/prisonService'
+import IsNotEmptyFile from '../../../../validators/isNotEmptyFile'
+import IsValidCsvFile from '../../../../validators/isValidCsvFile'
+import { FormValidationError } from '../../../../formValidationErrorHandler'
 
 export class PrisonerList {
   @Expose()
-  @IsNotEmpty({ message: 'Select a file' })
+  @IsNotEmpty({ message: "Select a CSV file of prisoners' numbers" })
+  @IsNotEmptyFile({ message: 'The selected file is empty' })
+  @IsValidCsvFile({ message: 'The selected file must be a CSV' })
   file: Express.Multer.File
 }
 
@@ -22,25 +28,59 @@ export default class UploadPrisonerListRoutes {
     const { user } = res.locals
 
     const prisonerNumbers: string[] = []
+    const errors: string[] = []
 
-    const parser = parse(prisonerListCsvFile.buffer, { trim: true, skip_empty_lines: true })
+    const parser = parse(prisonerListCsvFile.buffer || prisonerListCsvFile.path, { trim: true, skipEmptyLines: true })
       .on('readable', () => {
         let row
         // eslint-disable-next-line no-cond-assign
         while ((row = parser.read())) {
-          prisonerNumbers.push(row[0])
+          const prisonerNumber = row[0]
+          if (prisonerNumber !== 'Prison number' && !prisonerNumbers.includes(prisonerNumber)) {
+            prisonerNumbers.push(prisonerNumber)
+          }
         }
       })
+      .on('error', error => {
+        errors.push(error.message)
+      })
       .on('end', async () => {
-        const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
+        if (prisonerListCsvFile.path) fs.unlinkSync(prisonerListCsvFile.path)
 
-        req.session.createAppointmentJourney.prisoners = prisoners.map(prisoner => ({
-          number: prisoner.prisonerNumber,
-          name: `${prisoner.firstName} ${prisoner.lastName}`,
-          cellLocation: prisoner.cellLocation,
-        }))
+        if (errors.length > 0) {
+          throw new FormValidationError('file', 'The selected file must use the template')
+        }
 
-        return res.redirectOrReturn('category')
+        const prisoners = (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)).map(
+          prisoner => ({
+            number: prisoner.prisonerNumber,
+            name: `${prisoner.firstName} ${prisoner.lastName}`,
+            cellLocation: prisoner.cellLocation,
+          }),
+        )
+
+        const prisonerNumbersFound = prisoners.map(prisoner => prisoner.number)
+
+        const prisonerNumbersNotFound = prisonerNumbers.filter(
+          prisonerNumber => !prisonerNumbersFound.includes(prisonerNumber),
+        )
+
+        if (prisonerNumbersNotFound.length > 0) {
+          const message =
+            prisonerNumbersNotFound.length === 1
+              ? `Prisoner with number ${prisonerNumbersNotFound[0]} was not found`
+              : `Prisoners with numbers ${prisonerNumbersNotFound.join(', ')} were not found`
+          req.flash('validationErrors', JSON.stringify([{ field: 'file', message }]))
+          return res.redirect('back')
+        }
+
+        const existingPrisonersNotInUploadedList = (req.session.createAppointmentJourney.prisoners ?? []).filter(
+          prisoner => !prisonerNumbersFound.includes(prisoner.number),
+        )
+
+        req.session.createAppointmentJourney.prisoners = existingPrisonersNotInUploadedList.concat(prisoners)
+
+        return res.redirect('review-prisoners')
       })
   }
 }
