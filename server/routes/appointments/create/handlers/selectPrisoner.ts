@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
+import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import { AppointmentType } from '../journey'
@@ -8,7 +8,6 @@ import { FormValidationError } from '../../../../formValidationErrorHandler'
 
 export class PrisonerSearch {
   @Expose()
-  @Type(() => String)
   @IsNotEmpty({ message: 'Enter a name or prisoner number to search by' })
   query: string
 }
@@ -36,10 +35,10 @@ export default class SelectPrisonerRoutes {
     const prisoner = results.content[0]
     this.addPrisoner(prisoner, req)
 
-    if (req.session.createAppointmentJourney.type === AppointmentType.INDIVIDUAL) {
-      return res.redirectOrReturn('category')
+    if (req.session.createAppointmentJourney.type === AppointmentType.GROUP) {
+      return res.redirect('review-prisoners')
     }
-    return res.redirect('review-prisoners')
+    return res.redirectOrReturn('category')
   }
 
   private addPrisoner(prisoner: Prisoner, req: Request) {

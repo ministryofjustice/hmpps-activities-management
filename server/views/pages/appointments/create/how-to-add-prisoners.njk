@@ -17,15 +17,6 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% set radioOptions = [] %}
-                {% for howToAddOption, howToAddText in HowToAddOptions %}
-                    {% set radioOptions = (radioOptions.push({
-                        value: howToAddOption,
-                        text: howToAddText,
-                        checked: howToAdd == howToAddOption
-                    }), radioOptions) %}
-                {% endfor %}
-
                 {{ govukRadios({
                     name: "howToAdd",
                     fieldset: {
@@ -36,7 +27,18 @@
                         }
                     },
                     errorMessage: validationErrors | findError('howToAdd'),
-                    items: radioOptions
+                    items: [
+                        {
+                            value: HowToAddOptions.SEARCH,
+                            text: "Search for a prison number to add to the appointment list",
+                            checked: formResponses.howToAdd == HowToAddOptions.SEARCH
+                        },
+                        {
+                            value: HowToAddOptions.CSV,
+                            text: "Upload a CSV file of prison numbers to add to the appointment list",
+                            checked: formResponses.howToAdd == HowToAddOptions.CSV
+                        }
+                    ]
                 }) }}
 
                 {{ govukButton({

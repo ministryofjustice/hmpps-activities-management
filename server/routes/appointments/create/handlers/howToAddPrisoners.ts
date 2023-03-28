@@ -1,15 +1,14 @@
 import { Expose } from 'class-transformer'
-import { IsIn } from 'class-validator'
+import { IsEnum } from 'class-validator'
 import { Request, Response } from 'express'
 
 export enum HowToAddOptions {
-  SEARCH = 'Search for a prison number to add to the appointment list',
-  CSV = 'Upload a CSV file of prison numbers to add to the appointment list',
+  SEARCH = 'SEARCH',
+  CSV = 'CSV',
 }
-
 export class HowToAddPrisonersForm {
   @Expose()
-  @IsIn(Object.keys(HowToAddOptions), { message: 'Select how to add prisoners' })
+  @IsEnum(HowToAddOptions, { message: 'Select how to add prisoners' })
   howToAdd: HowToAddOptions
 }
 
