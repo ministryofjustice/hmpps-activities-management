@@ -1,13 +1,6 @@
 {
   "id": 10,
-  "category": {
-    "id": 40,
-    "parent": null,
-    "code": "CHAP",
-    "description": "Chaplaincy",
-    "active": true,
-    "displayOrder": null
-  },
+  "categoryCode": "CHAP",
   "prisonCode": "MDI",
   "internalLocationId": 26152,
   "inCell": false,

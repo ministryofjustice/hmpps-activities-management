@@ -5,7 +5,7 @@ import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import PrisonService from './prisonService'
 import { Education, InmateDetail, ReferenceCode } from '../@types/prisonApiImport/types'
-import { Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
+import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 import activityLocations from './fixtures/activity_locations_1.json'
 import IncentivesApiClient from '../data/incentivesApiClient'
@@ -23,7 +23,9 @@ describe('Prison Service', () => {
   const incentivesApiClient = new IncentivesApiClient()
   const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient)
 
-  const user = {} as ServiceUser
+  const user = {
+    activeCaseLoadId: 'MDI',
+  } as ServiceUser
 
   describe('getInmate', () => {
     it('should get inmate detail from prison API', async () => {
@@ -69,6 +71,20 @@ describe('Prison Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(prisonerSearchApiClient.searchInmates).toHaveBeenCalledWith(searchCriteria, user)
+    })
+  })
+
+  describe('searchPrisonInmates', () => {
+    it('should search inmates using prisoner search API', async () => {
+      const searchQuery = 'G10'
+      const expectedResult = { content: 'response' } as unknown as PagePrisoner
+      when(prisonerSearchApiClient.searchPrisonInmates)
+        .calledWith(searchQuery, 'MDI', user)
+        .mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.searchPrisonInmates(searchQuery, user)
+      expect(actualResult).toEqual(expectedResult)
+      expect(prisonerSearchApiClient.searchPrisonInmates).toHaveBeenCalledWith(searchQuery, 'MDI', user)
     })
   })
 

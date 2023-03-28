@@ -1,7 +1,6 @@
 {
   "id": 12345,
   "category": {
-    "id": 51,
     "code": "CHAP",
     "description": "Chaplaincy"
   },

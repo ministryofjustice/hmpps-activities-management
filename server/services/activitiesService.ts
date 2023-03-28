@@ -21,7 +21,7 @@ import {
   PrisonPayBand,
   PrisonerScheduledEvents,
   Appointment,
-  AppointmentCategory,
+  AppointmentCategorySummary,
   LocationPrefix,
   AppointmentCreateRequest,
   AttendanceReason,
@@ -268,7 +268,7 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAppointmentOccurrenceDetails(appointmentOccurrenceId, user)
   }
 
-  async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategory[]> {
+  async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategorySummary[]> {
     return this.activitiesApiClient.getAppointmentCategories(user)
   }
 

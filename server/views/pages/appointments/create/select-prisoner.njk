@@ -3,36 +3,44 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{%- from "moj/components/search/macro.njk" import mojSearch -%}
 
 {% set pageTitle = "Appointments Management - Create Appointment - Select Prisoner" %}
 {% set pageId = 'appointments-create-select-prisoner-page' %}
-{% set backLinkHref = "/appointments" %}
+{% set backLinkHref = "how-to-add-prisoners" %}
+
+{% set headingText = "Search and add prisoner to the appointment" %}
+{% if session.createAppointmentJourney.type == 'group' %}
+    {% set headingText = "Search and add prisoners to the appointment list" %}
+{% endif %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.createAppointmentJourney.type) }}
             <form method="POST">
-                {% set defaultPrisonerNumber = formResponses.number %}
+                {% set defaultPrisonerNumber = formResponses.query %}
                 {% if session.createAppointmentJourney.type == 'individual' %}
                     {% set defaultPrisonerNumber = defaultPrisonerNumber or session.createAppointmentJourney.prisoners[0].number %}
                 {% endif %}
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
                 {{ govukInput({
-                    id: "number",
-                    name: "number",
+                    id: "query",
+                    name: "query",
                     label: {
-                        text: "What is the prisoner's number?",
+                        text: headingText,
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
                     hint: {
-                        text: "Search by prison number"
+                        text: "Search by prison number or name"
                     },
                     classes: "govuk-input--width-20",
                     spellcheck: false,
-                    errorMessage: validationErrors | findError('number'),
-                    value: defaultPrisonerNumber
+                    errorMessage: validationErrors | findError('query'),
+                    value: defaultPrisonerNumber,
+                    type: 'search'
                 }) }}
 
                 {{ govukButton({

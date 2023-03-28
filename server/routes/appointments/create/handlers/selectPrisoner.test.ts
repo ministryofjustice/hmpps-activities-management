@@ -6,6 +6,8 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import SelectPrisonerRoutes, { PrisonerSearch } from './selectPrisoner'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import { FormValidationError } from '../../../../formValidationErrorHandler'
+import { AppointmentType } from '../journey'
 
 jest.mock('../../../../services/prisonService')
 
@@ -52,14 +54,18 @@ describe('Route Handlers - Create Appointment - Select Prisoner', () => {
   describe('POST', () => {
     it('should save found prisoner in session and redirect to category page', async () => {
       req.body = {
-        number: 'A1234BC',
+        query: 'A1234BC',
+      }
+      req.session.createAppointmentJourney = {
+        type: AppointmentType.INDIVIDUAL,
       }
 
-      when(prisonService.searchInmates)
-        .calledWith({ prisonIds: ['TPR'], prisonerIdentifier: 'A1234BC', includeAliases: false }, res.locals.user)
-        .mockResolvedValue([
+      prisonService.searchPrisonInmates.mockResolvedValue({
+        content: [
           { prisonerNumber: 'A1234BC', firstName: 'Test', lastName: 'Prisoner', cellLocation: '1-1-1' } as Prisoner,
-        ])
+        ],
+        empty: false,
+      })
 
       await handler.POST(req, res)
 
@@ -75,21 +81,23 @@ describe('Route Handlers - Create Appointment - Select Prisoner', () => {
 
     it('validation fails when prisoner is not found', async () => {
       req.body = {
-        number: 'A1234BC',
+        query: 'A1234BC',
       }
 
-      when(prisonService.searchInmates)
-        .calledWith({ prisonIds: ['TPR'], prisonerIdentifier: 'A1234BC', includeAliases: false }, res.locals.user)
-        .mockResolvedValue([])
+      when(prisonService.searchPrisonInmates)
+        .calledWith('A1234BC', res.locals.user)
+        .mockResolvedValue({ content: [], empty: true })
 
-      await handler.POST(req, res)
+      let error = null
+      try {
+        await handler.POST(req, res)
+      } catch (e) {
+        error = e
+      }
 
-      expect(req.flash).toHaveBeenCalledWith(
-        'validationErrors',
-        JSON.stringify([{ field: 'number', message: `Prisoner with number A1234BC was not found` }]),
-      )
-      expect(req.flash).toHaveBeenCalledWith('formResponses', JSON.stringify({ number: 'A1234BC' }))
-      expect(res.redirect).toHaveBeenCalledWith('back')
+      expect(error).toBeInstanceOf(FormValidationError)
+      expect(error.field).toEqual('query')
+      expect(error.message).toEqual('No prisoners found for query "A1234BC"')
     })
   })
 
@@ -101,26 +109,26 @@ describe('Route Handlers - Create Appointment - Select Prisoner', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'number', error: 'Enter a prisoner number to search by' }]),
+        expect.arrayContaining([{ property: 'query', error: 'Enter a name or prisoner number to search by' }]),
       )
     })
 
     it('validation fails when number is an empty string', async () => {
       const body = {
-        number: '',
+        query: '',
       }
 
       const requestObject = plainToInstance(PrisonerSearch, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'number', error: 'Enter a prisoner number to search by' }]),
+        expect.arrayContaining([{ property: 'query', error: 'Enter a name or prisoner number to search by' }]),
       )
     })
 
     it('passes validation when valid number is entered', async () => {
       const body = {
-        number: 'A1234BC',
+        query: 'A1234BC',
       }
 
       const requestObject = plainToInstance(PrisonerSearch, body)

@@ -26,7 +26,6 @@ describe('Views - Appointments Management - Individual Movement Slip', () => {
     viewContext.movementSlip = {
       id: 10,
       category: {
-        id: 40,
         code: 'MEOT',
         description: 'Medical - Other',
       },
@@ -80,7 +79,6 @@ describe('Views - Appointments Management - Individual Movement Slip', () => {
       appointmentId: 5,
       sequenceNumber: 2,
       category: {
-        id: 40,
         code: 'MEOT',
         description: 'Medical - Other',
       },

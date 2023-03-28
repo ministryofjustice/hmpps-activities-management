@@ -8,7 +8,7 @@
 {% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
 {% from "components/alertsList.njk" import alertsList %}
 {% from "partials/showUnlockEvents.njk" import showUnlockEvents %}
-{% from "partials/showUnlockProfileLink.njk" import showUnlockProfileLink %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% set pageTitle = applicationName + " - Planned events" %}
 {% set pageId = "planned-events-page" %}
@@ -161,7 +161,7 @@
                     {% set rows = (rows.push([
                         {
                             attributes: { id: 'activity-' + loop.index, "data-sort-value": item.displayName },
-                            html: showUnlockProfileLink(item.prisonerNumber, item.displayName, item.alerts, dpsUrl),
+                            html: showProfileLink(item.prisonerNumber, item.displayName),
                             classes: 'govuk-table_cell'
                         },
                         {

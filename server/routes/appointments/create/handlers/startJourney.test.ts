@@ -25,4 +25,13 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
   })
+
+  describe('GROUP', () => {
+    it('should populate the session with group appointment journey type and redirect to how to add prisoners page', async () => {
+      await handler.GROUP(req, res)
+
+      expect(req.session.createAppointmentJourney).toEqual({ type: AppointmentType.GROUP })
+      expect(res.redirect).toHaveBeenCalledWith('how-to-add-prisoners')
+    })
+  })
 })

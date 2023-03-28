@@ -21,7 +21,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
             cellLocation: '1-1-1',
           },
           category: {
-            id: 11,
+            id: 'MEDO',
             description: 'Medical - Doctor',
           },
           location: {

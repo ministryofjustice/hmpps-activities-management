@@ -22,7 +22,7 @@ import {
   ActivityScheduleCreateRequest,
   PrisonPayBand,
   Appointment,
-  AppointmentCategory,
+  AppointmentCategorySummary,
   AppointmentCreateRequest,
   AttendanceReason,
   AppointmentDetails,
@@ -302,7 +302,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategory[]> {
+  async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategorySummary[]> {
     return this.get({
       path: `/appointment-categories`,
       authToken: user.token,

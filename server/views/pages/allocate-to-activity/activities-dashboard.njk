@@ -8,12 +8,22 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-xl">Allocation dashboard: activities view</h1>
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Find activities with vacancies</h1>
+        </div>
+        <div class="govuk-grid-column-one-third">
+            <div class='related-tasks'>
+                <ul class='govuk-list'>
+                    <li><a href="/create/category" class="govuk-link govuk-link--no-visited-state">Create an activity</a></li>
+                    <li><a href="/schedule/activities" class="govuk-link govuk-link--no-visited-state">Edit activities</a></li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
+            <p>Select the relevant activity and start allocating people to them.</p>
+
             {% set rows = [
                 [
                     {
@@ -21,6 +31,13 @@
                         attributes: {
                             "data-sort-fixed": "bottom"
                         }
+                    },
+                    {
+                        attributes: {
+                            id: 'category-total',
+                            "data-sort-fixed": "bottom"
+                        },
+                        text: ''
                     },
                     {
                         attributes: {
@@ -66,9 +83,16 @@
                         },
                         html: '
                                 <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
-                                    <a href="/allocate/activities/' + activity.id + '/schedules" class="govuk-link govuk-link--no-visited-state">' + activity.summary + '</a>
+                                    <a href="/allocate/' + activity.schedules[0].id + '/allocate" class="govuk-link govuk-link--no-visited-state">' + activity.summary + '</a>
                                 </h2>
                               '
+                    },
+                    {
+                        attributes: {
+                            id: 'category-' + loop.index,
+                            "data-sort-value": activity.category.name
+                        },
+                        text: activity.category.name
                     },
                     {
                         attributes: {
@@ -119,6 +143,12 @@
                         text: "Activity name",
                         attributes: {
                             "aria-sort": "ascending"
+                        }
+                    },
+                    {
+                        text: "Category",
+                        attributes: {
+                            "aria-sort": "none"
                         }
                     },
                     {
