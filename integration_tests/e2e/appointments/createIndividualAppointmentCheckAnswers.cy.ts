@@ -5,8 +5,8 @@ import AppointmentsManagementPage from '../../pages/appointments/appointmentsMan
 import SelectPrisonerPage from '../../pages/appointments/create/selectPrisonerPage'
 import CategoryPage from '../../pages/appointments/create/categoryPage'
 import LocationPage from '../../pages/appointments/create/locationPage'
-import postMatchPrisonerA8644DY from '../../fixtures/prisonerSearchApi/postMatchPrisonerA8644DY.json'
-import postMatchPrisonerA1350DZ from '../../fixtures/prisonerSearchApi/postMatchPrisonerA1350DZ.json'
+import getPrisonPrisonersA8644DY from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A8644DY.json'
+import getPrisonPrisonersA1350DZ from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import DateAndTimePage from '../../pages/appointments/create/dateAndTimePage'
@@ -21,7 +21,8 @@ context('Create individual appointment - check answers change links', () => {
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
     cy.signIn()
-    cy.stubEndpoint('POST', '/prisoner-search/match-prisoners', postMatchPrisonerA8644DY)
+    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY', getPrisonPrisonersA8644DY)
+    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A1350DZ', getPrisonPrisonersA1350DZ)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments')
@@ -73,7 +74,7 @@ context('Create individual appointment - check answers change links', () => {
     checkAnswersPage.changePrisoner()
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
-    cy.stubEndpoint('POST', '/prisoner-search/match-prisoners', postMatchPrisonerA1350DZ)
+    selectPrisonerPage.enterPrisonerNumber('A1350DZ')
     selectPrisonerPage.continue()
     checkAnswersPage.assertPrisonerSummary('David Winchurch', 'A1350DZ', '2-2-024')
 

@@ -5,8 +5,8 @@ export default class SelectPrisonerPage extends Page {
     super('appointments-create-select-prisoner-page')
   }
 
-  enterPrisonerNumber = (prisonerNumber: string) => this.getInputByName('number').clear().type(prisonerNumber)
+  enterPrisonerNumber = (prisonerNumber: string) => this.getInputByName('query').clear().type(prisonerNumber)
 
   assertEnteredPrisonerNumber = (prisonerNumber: string) =>
-    this.getInputByName('number').should('have.value', prisonerNumber)
+    this.getInputByName('query').should('have.value', prisonerNumber)
 }

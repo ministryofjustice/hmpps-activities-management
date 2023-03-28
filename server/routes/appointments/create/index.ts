@@ -12,6 +12,8 @@ import RepeatRoutes, { Repeat } from './handlers/repeat'
 import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './handlers/repeatPeriodAndCount'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
+import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
+import ReviewPrisoners, { AddAnotherForm } from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
 
 export default function Index({ prisonService, activitiesService }: Services): Router {
@@ -32,6 +34,8 @@ export default function Index({ prisonService, activitiesService }: Services): R
   const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
+  const howToAddPrisoners = new HowToAddPrisoners()
+  const reviewPrisoners = new ReviewPrisoners()
 
   get('/start-individual', startHandler.INDIVIDUAL)
   get('/start-group', startHandler.GROUP)
@@ -52,6 +56,10 @@ export default function Index({ prisonService, activitiesService }: Services): R
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
   get('/confirmation/:id', confirmationHandler.GET, true)
+  get('/how-to-add-prisoners', howToAddPrisoners.GET, true)
+  post('/how-to-add-prisoners', howToAddPrisoners.POST, HowToAddPrisonersForm)
+  get('/review-prisoners', reviewPrisoners.GET, true)
+  post('/review-prisoners', reviewPrisoners.POST, AddAnotherForm)
 
   return router
 }
