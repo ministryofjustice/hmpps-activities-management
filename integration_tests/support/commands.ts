@@ -1,4 +1,5 @@
 import stubEndpoint from '../mockApis/generic'
+import 'cypress-file-upload'
 
 Cypress.Commands.add('signIn', (options = { failOnStatusCode: true }) => {
   cy.request('/')

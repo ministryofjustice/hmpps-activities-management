@@ -3,7 +3,7 @@ import multer, { MulterError } from 'multer'
 
 export default function setUpMultipartFormDataParsing(): Router {
   const router = Router({ mergeParams: true })
-  const maxUploadSize = 10 * 1000 // 10kb
+  const maxUploadSize = 10 * 10000 // 100kb
   const upload = multer({ dest: 'uploads/', limits: { fileSize: maxUploadSize } })
 
   router.use(upload.single('file'))
@@ -17,7 +17,7 @@ const uploadedFileTooLargeHandler: ErrorRequestHandler = (err: Error, req, res, 
 
   req.flash(
     'validationErrors',
-    JSON.stringify([{ field: 'file', message: 'The selected file must be smaller than 10kb' }]),
+    JSON.stringify([{ field: 'file', message: 'The selected file must be smaller than 100kb' }]),
   )
   req.flash('formResponses', JSON.stringify(req.body))
 
