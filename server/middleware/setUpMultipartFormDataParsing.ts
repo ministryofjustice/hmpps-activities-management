@@ -15,11 +15,5 @@ export default function setUpMultipartFormDataParsing(): Router {
 const uploadedFileTooLargeHandler: ErrorRequestHandler = (err: Error, req, res, next): void => {
   if (!(err instanceof MulterError) && (err as MulterError).code !== 'LIMIT_FILE_SIZE') return next(err)
 
-  req.flash(
-    'validationErrors',
-    JSON.stringify([{ field: 'file', message: 'The selected file must be smaller than 100kb' }]),
-  )
-  req.flash('formResponses', JSON.stringify(req.body))
-
-  return res.redirect('back')
+  return res.validationFailed('file', 'The selected file must be smaller than 100kb')
 }

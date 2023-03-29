@@ -20,8 +20,7 @@ export default function createErrorHandler(production: boolean) {
       const badRequest = JSON.parse(error.text) as BadRequest
 
       // TODO: Get the offending field name from the API message
-      req.flash('validationErrors', JSON.stringify([{ field: '', message: badRequest.developerMessage }]))
-      return res.redirect('back')
+      return res.validationFailed('', badRequest.developerMessage)
     }
 
     res.status(error.status || 500)
