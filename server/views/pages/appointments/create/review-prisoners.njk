@@ -30,6 +30,9 @@
                 ]), prisonersList) %}
             {% endfor %}
             {{ govukTable({
+                attributes: {
+                    'data-qa': 'prisoners-list-table'
+                },
                 head: [
                     {
                         text: "Name",
