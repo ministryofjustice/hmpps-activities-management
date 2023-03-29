@@ -16,8 +16,7 @@ export default function IsValidCsvFile(validationOptions?: ValidationOptions) {
           let result = true
 
           if (value.mimetype !== 'text/csv') result = false
-
-          if (isBinaryFileSync(value.path)) result = false
+          else if (isBinaryFileSync(value.path)) result = false
 
           if (!result) fs.unlinkSync(value.path)
 
