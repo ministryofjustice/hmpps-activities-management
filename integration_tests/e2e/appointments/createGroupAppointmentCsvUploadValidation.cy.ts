@@ -1,5 +1,6 @@
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
+import postPrisonerNumbers from '../../fixtures/prisonerSearchApi/postPrisonerNumbers-A1350DZ-A8644DY.json'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
 import HowToAddPrisonersPage from '../../pages/appointments/create/howToAddPrisonersPage'
 import UploadPrisonerListPage from '../../pages/appointments/create/uploadPrisonerListPage'
@@ -9,6 +10,7 @@ context('Create group appointment - CSV upload validation', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
+    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', postPrisonerNumbers)
     cy.signIn()
   })
 
@@ -99,5 +101,41 @@ context('Create group appointment - CSV upload validation', () => {
     uploadPrisonerListPage.continue()
 
     uploadPrisonerListPage.assertValidationError('file', 'The selected file must be a CSV')
+  })
+
+  it('Should fail validation when one prisoner not found', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.createGroupAppointmentCard().click()
+
+    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.continue()
+
+    const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
+    uploadPrisonerListPage.attatchFile('upload-prisoner-list-one-not-found.csv')
+    uploadPrisonerListPage.continue()
+
+    uploadPrisonerListPage.assertValidationError('file', 'Prisoner with number NOTFOUND was not found')
+  })
+
+  it('Should fail validation when two prisoners not found', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.createGroupAppointmentCard().click()
+
+    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.continue()
+
+    const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
+    uploadPrisonerListPage.attatchFile('upload-prisoner-list-two-not-found.csv')
+    uploadPrisonerListPage.continue()
+
+    uploadPrisonerListPage.assertValidationError('file', 'Prisoners with numbers NOTFOUND1, NOTFOUND2 were not found')
   })
 })
