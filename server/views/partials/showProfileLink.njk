@@ -1,11 +1,15 @@
-{% macro showProfileLink(prisonerNumber, displayName) %}
+{% macro showProfileLink(prisonerNumber, displayName, link = true) %}
     <div class="hmpps-inline-block">
       <div>
-        <a href="{{ dpsUrl }}/prisoner/{{ prisonerNumber }}"
-          target="_blank"
-          class="govuk-link govuk-link--no-visited-state">
-          {{ displayName | toTitleCase | prisonerName }}
-        </a>
+        {% if link %}
+          <a href="{{ dpsUrl }}/prisoner/{{ prisonerNumber }}"
+            target="_blank"
+            class="govuk-link govuk-link--no-visited-state">
+            {{ displayName | toTitleCase | prisonerName }}
+          </a>
+        {% else %}
+          {{ displayName | toTitleCase | prisonerName(false) }}
+        {% endif %}
       </div>
       <div class="govuk-!-font-size-14">{{ prisonerNumber }}</div>
     </div>

@@ -44,7 +44,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         addAnother: 'NO',
       }
       await handler.POST(req, res)
-      expect(res.redirect).toBeCalledWith('category')
+      expect(res.redirectOrReturn).toBeCalledWith('category')
     })
   })
 })
