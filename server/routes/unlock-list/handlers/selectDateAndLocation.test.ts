@@ -180,6 +180,25 @@ describe('Unlock list routes - select date and location', () => {
       expect(errors).toHaveLength(0)
     })
 
+    it('passes validation if date equal to 60 days in the future', async () => {
+      const dateIn60Days = addDays(new Date(), 60)
+      const body = {
+        datePresetOption: 'other',
+        date: {
+          day: dateIn60Days.getDate(),
+          month: dateIn60Days.getMonth() + 1,
+          year: dateIn60Days.getFullYear(),
+        },
+        activitySlot: 'am',
+        location: 'here',
+      }
+
+      const requestObject = plainToInstance(DateAndLocation, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
+
     it('validation fails if date is more than 60 days into the future', async () => {
       const dateIn61Days = addDays(new Date(), 61)
       const body = {
