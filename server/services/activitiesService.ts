@@ -17,7 +17,6 @@ import {
   PrisonerAllocations,
   Activity,
   ActivityCreateRequest,
-  ActivityScheduleCreateRequest,
   PrisonPayBand,
   PrisonerScheduledEvents,
   Appointment,
@@ -79,16 +78,8 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getScheduledActivity(id, user)
   }
 
-  createActivity(createBody: ActivityCreateRequest, user: ServiceUser): Promise<ActivityLite> {
+  createActivity(createBody: ActivityCreateRequest, user: ServiceUser): Promise<Activity> {
     return this.activitiesApiClient.postActivityCreation(createBody, user)
-  }
-
-  createScheduleActivity(
-    activityId: number,
-    createBody: ActivityScheduleCreateRequest,
-    user: ServiceUser,
-  ): Promise<ActivityScheduleLite> {
-    return this.activitiesApiClient.postActivityScheduleCreation(activityId, createBody, user)
   }
 
   allocateToSchedule(scheduleId: number, prisonerNumber: string, payBandId: number, user: ServiceUser): Promise<void> {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../services/activitiesService'
-import { ActivityCreateRequest, ActivityScheduleCreateRequest, Slot } from '../../../@types/activitiesAPI/types'
+import { ActivityCreateRequest, Slot } from '../../../@types/activitiesAPI/types'
 import PrisonService from '../../../services/prisonService'
 import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 import { CreateAnActivityJourney } from '../journey'
@@ -44,6 +44,8 @@ export default class CheckAnswersRoutes {
     const { user } = res.locals
     const { createJourney } = req.session
 
+    const slots = this.mapSlots(createJourney)
+
     const activity = {
       prisonCode: user.activeCaseLoadId,
       summary: createJourney.name,
@@ -61,13 +63,6 @@ export default class CheckAnswersRoutes {
         educationLevelCode: educationLevel.educationLevelCode,
         educationLevelDescription: educationLevel.educationLevelDescription,
       })),
-    } as ActivityCreateRequest
-
-    const createActivityResponse = await this.activitiesService.createActivity(activity, user)
-
-    const slots = this.mapSlots(createJourney)
-
-    const activitySchedule = {
       description: createJourney.name,
       startDate: formatDate(plainToInstance(SimpleDate, createJourney.startDate).toRichDate(), 'yyyy-MM-dd'),
       endDate: createJourney.endDate
@@ -77,14 +72,11 @@ export default class CheckAnswersRoutes {
       capacity: createJourney.capacity,
       slots,
       runsOnBankHoliday: createJourney.runsOnBankHoliday,
-    } as ActivityScheduleCreateRequest
+    } as ActivityCreateRequest
 
-    const response = await this.activitiesService.createScheduleActivity(
-      createActivityResponse.id,
-      activitySchedule,
-      user,
-    )
-    res.redirect(`confirmation/${response.id}`)
+    const response = await this.activitiesService.createActivity(activity, user)
+
+    res.redirect(`confirmation/${response.schedules[0].id}`)
   }
 
   private mapSlots = (createJourney: CreateAnActivityJourney) => {

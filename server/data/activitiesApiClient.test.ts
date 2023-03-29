@@ -7,7 +7,6 @@ import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
 import {
   ActivityCreateRequest,
-  ActivityScheduleCreateRequest,
   Allocation,
   LocationGroup,
   LocationPrefix,
@@ -182,26 +181,6 @@ describe('activitiesApiClient', () => {
 
       await activitiesApiClient.postActivityCreation(
         { prisonCode: 'MDI', summary: 'Maths level 1' } as ActivityCreateRequest,
-        user,
-      )
-
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
-  describe('postActivityScheduleCreation', () => {
-    it('should post data to api', async () => {
-      fakeActivitiesApi
-        .post('/activities/1/schedules', {
-          description: 'Activity schedule',
-          startDate: '2023-08-01',
-        })
-        .matchHeader('authorization', `Bearer token`)
-        .reply(200)
-
-      await activitiesApiClient.postActivityScheduleCreation(
-        1,
-        { description: 'Activity schedule', startDate: '2023-08-01' } as ActivityScheduleCreateRequest,
         user,
       )
 
