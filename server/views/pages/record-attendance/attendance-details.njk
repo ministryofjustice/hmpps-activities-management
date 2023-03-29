@@ -1,0 +1,139 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Activities Management - Record Attendance" %}
+{% set pageId = 'attendance-view-details-page' %}
+
+{% set summaryListRows = [
+    {
+        key: {
+            text: "Attendance"
+        },
+        value: {
+            text: attendance.attendanceReason.description
+        },
+        actions: {
+            items: [{
+                href: "edit-attendance",
+                text: "Change",
+                visuallyHiddenText: "Change attendance option"
+            }]
+        }
+    },
+    {
+        key: {
+            text: "Pay"
+        },
+        value: { text: "Yes" if attendance.issuePayment else "No"}
+    },
+    {
+        key: {
+            text: "Incentive Level Warning"
+        },
+        value: { text: "Yes" if attendance.incentiveLevelWarningIssued else "No"}
+    },
+    {
+        key: {
+            text: "Case Note"
+        },
+        value: {
+            text: attendance.caseNoteId
+        },
+        actions: {
+         items: [{
+             href: "view-case-note",
+             text: "View",
+             visuallyHiddenText: "View case note"
+         }]
+        }
+    },
+    {
+     key: {
+         text: "Recorded by"
+     },
+     value: {
+         text: attendance.recordedBy
+     }
+    }
+] %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">Attendance details for {{ attendee.name }}</h1>
+            <div class="govuk-inset-text">
+                <a href="/attendance/activities/{{ instance.activitySchedule.activity.id }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}
+           </div>
+            {% set recordedTime = attendance.recordedTime.split('T') %}
+            <h2 class="govuk-heading-m">Recorded on {{ recordedTime[0] | toDate | formatDate('d MMMM yyyy') }} at {{ recordedTime[1] }}</h2>
+            {{ govukSummaryList({
+                rows: summaryListRows,
+                classes: "govuk-!-margin-bottom-9",
+                attributes: { 'data-qa': 'appointment-details' }
+            }) }}
+
+            {% if attendance.attendanceHistory | length %}
+                {% if attendance.attendanceHistory | length > 1 %}
+                    <h2 class="govuk-heading-m" data-qa="history-heading">{{ attendance.attendanceHistory | length }} changes has been made to this attendance record</h2>
+                {% else %}
+                    <h2 class="govuk-heading-m" data-qa="history-heading">{{ attendance.attendanceHistory | length }} change has been made to this attendance record</h2>
+                {% endif %}
+                {% for attendanceHistory in attendance.attendanceHistory %}
+                    {% set recordedTime = attendanceHistory.recordedTime.split('T') %}
+                    <h3 class="govuk-heading-s" data-qa="history-heading">Recorded on {{ recordedTime[0] | toDate | formatDate('d MMMM yyyy') }} at {{ recordedTime[1] }}</h3>
+                    {% set historyListRows = [
+                        {
+                            key: {
+                                text: "Attendance"
+                            },
+                            value: {
+                                text: attendanceHistory.attendanceReason.description
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Pay"
+                            },
+                            value: { text: "Yes" if attendanceHistory.issuePayment else "No"}
+                        },
+                        {
+                            key: {
+                                text: "Incentive Level Warning"
+                            },
+                            value: { text: "Yes" if attendanceHistory.incentiveLevelWarningIssued else "No"}
+                        },
+                        {
+                            key: {
+                                text: "Case Note"
+                            },
+                            value: {
+                                text: attendanceHistory.caseNoteId
+                            }
+                        },
+                        {
+                         key: {
+                             text: "Recorded by"
+                         },
+                         value: {
+                             text: attendanceHistory.recordedBy
+                         }
+                        }
+                    ] %}
+                    {{ govukSummaryList({
+                        rows: historyListRows,
+                        classes: "history-list-row-count govuk-!-margin-bottom-9",
+                        attributes: { 'data-qa': 'attendance-history' }
+                    }) }}
+                {% endfor %}
+            {% endif %}
+
+            <p class="govuk-body govuk-!-display-none-print no-js-hidden">
+                <a href="{{ dpsUrl }}/prisoner/{{ attendance.prisonerNumber }}"
+                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the prisoner's profile
+                </a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

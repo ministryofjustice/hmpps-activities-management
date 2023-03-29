@@ -133,6 +133,9 @@
                 {
                     classes: 'print-only',
                     html: ''
+                },
+                {
+                    html: renderViewLink(attendee.attendance)
                 }
             ]
         }), rows) %}
@@ -210,5 +213,11 @@
             classes: "govuk-tag--green"
            })
         }}
+    {% endif %}
+{% endmacro %}
+
+{% macro renderViewLink(attendance) %}
+    {% if attendance.status ===  'COMPLETED' %}
+        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">View or change</a>
     {% endif %}
 {% endmacro %}
