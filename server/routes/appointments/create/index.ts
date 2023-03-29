@@ -15,6 +15,7 @@ import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
 import ReviewPrisoners, { AddAnotherForm } from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
+import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 
 export default function Index({ prisonService, activitiesService }: Services): Router {
   const router = Router()
@@ -42,7 +43,12 @@ export default function Index({ prisonService, activitiesService }: Services): R
   get('/select-prisoner', selectPrisonerHandler.GET, true)
   post('/select-prisoner', selectPrisonerHandler.POST, PrisonerSearch)
   get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
-  post('/upload-prisoner-list', uploadPrisonerListRoutes.POST, PrisonerList)
+  router.post(
+    '/upload-prisoner-list',
+    setUpMultipartFormDataParsing(),
+    validationMiddleware(PrisonerList),
+    asyncMiddleware(uploadPrisonerListRoutes.POST),
+  )
   get('/category', categoryHandler.GET, true)
   post('/category', categoryHandler.POST, Category)
   get('/location', locationHandler.GET, true)

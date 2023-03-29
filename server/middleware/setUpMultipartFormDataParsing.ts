@@ -3,7 +3,7 @@ import multer, { MulterError } from 'multer'
 
 export default function setUpMultipartFormDataParsing(): Router {
   const router = Router({ mergeParams: true })
-  const maxUploadSize = 10 * 10000 // 100kb
+  const maxUploadSize = 100 * 1000 // 100kb
   const upload = multer({ dest: 'uploads/', limits: { fileSize: maxUploadSize } })
 
   router.use(upload.single('file'))
