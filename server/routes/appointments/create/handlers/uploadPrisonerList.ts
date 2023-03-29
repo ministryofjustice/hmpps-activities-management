@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
+import fsPromises from 'fs/promises'
 import { parse } from 'csv-parse'
-import fs from 'fs'
 import PrisonService from '../../../../services/prisonService'
 import IsNotEmptyFile from '../../../../validators/isNotEmptyFile'
 import IsValidCsvFile from '../../../../validators/isValidCsvFile'
@@ -27,16 +27,18 @@ export default class UploadPrisonerListRoutes {
     const prisonerListCsvFile = req.file
     const { user } = res.locals
 
-    fs.promises
-      .readFile(prisonerListCsvFile.path)
-      .then(result => {
-        fs.promises.unlink(prisonerListCsvFile.path)
-        this.parsePrisonerList(result, req, res, user)
-      })
-      .catch(() => {
-        fs.promises.unlink(prisonerListCsvFile.path)
-        return res.validationFailed('file', 'The selected file could not be uploaded – try again')
-      })
+    try {
+      const data = await fsPromises.readFile(prisonerListCsvFile.path)
+      await fsPromises.unlink(prisonerListCsvFile.path)
+      return await this.parsePrisonerList(data, req, res, user)
+    } catch (err) {
+      try {
+        await fsPromises.unlink(prisonerListCsvFile.path)
+      } catch {
+        /* empty */
+      }
+      return res.validationFailed('file', 'The selected file could not be uploaded – try again')
+    }
   }
 
   private async parsePrisonerList(result: Buffer, req: Request, res: Response, user: ServiceUser) {
