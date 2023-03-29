@@ -36,6 +36,7 @@ declare module 'express-session' {
 declare module 'express-serve-static-core' {
   interface Response {
     redirectOrReturn?(path: string, returnTo?: string, flag?: string): void
+    validationFailed?(field: string, message: string): void
   }
 }
 

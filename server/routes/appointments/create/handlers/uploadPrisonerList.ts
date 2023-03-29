@@ -31,11 +31,7 @@ export default class UploadPrisonerListRoutes {
 
     fs.readFile(prisonerListCsvFile.path, (err, result) => {
       if (err) {
-        req.flash(
-          'validationErrors',
-          JSON.stringify([{ field: 'file', message: 'The selected file could not be uploaded – try again' }]),
-        )
-        return res.redirect('back')
+        return res.validationFailed('file', 'The selected file could not be uploaded – try again')
       }
 
       fs.unlinkSync(prisonerListCsvFile.path)
@@ -56,11 +52,7 @@ export default class UploadPrisonerListRoutes {
         })
         .on('end', async () => {
           if (errors.length > 0) {
-            req.flash(
-              'validationErrors',
-              JSON.stringify([{ field: 'file', message: 'The selected file must use the template' }]),
-            )
-            return res.redirect('back')
+            return res.validationFailed('file', 'The selected file must use the template')
           }
 
           const prisoners = (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user))
@@ -82,8 +74,7 @@ export default class UploadPrisonerListRoutes {
               prisonerNumbersNotFound.length === 1
                 ? `Prisoner with number ${prisonerNumbersNotFound[0]} was not found`
                 : `Prisoners with numbers ${prisonerNumbersNotFound.join(', ')} were not found`
-            req.flash('validationErrors', JSON.stringify([{ field: 'file', message }]))
-            return res.redirect('back')
+            return res.validationFailed('file', message)
           }
 
           const existingPrisonersNotInUploadedList = (req.session.createAppointmentJourney.prisoners ?? []).filter(
