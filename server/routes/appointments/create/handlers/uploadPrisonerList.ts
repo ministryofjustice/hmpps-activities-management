@@ -63,13 +63,13 @@ export default class UploadPrisonerListRoutes {
             return res.redirect('back')
           }
 
-          const prisoners = (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)).map(
-            prisoner => ({
+          const prisoners = (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user))
+            .filter(prisoner => prisoner.prisonId === user.activeCaseLoadId)
+            .map(prisoner => ({
               number: prisoner.prisonerNumber,
               name: `${prisoner.firstName} ${prisoner.lastName}`,
               cellLocation: prisoner.cellLocation,
-            }),
-          )
+            }))
 
           const prisonerNumbersFound = prisoners.map(prisoner => prisoner.number)
 
