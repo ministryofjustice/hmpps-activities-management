@@ -21,6 +21,7 @@ import routes from './routes'
 import type { Services } from './services'
 import setUpChangeLinks from './middleware/setUpChangeLinks'
 import trimRequestBody from './middleware/trimBodyMiddleware'
+import formValidationErrorHandler from './formValidationErrorHandler'
 
 export default function createApp(services: Services): express.Application {
   const app = express()
@@ -44,6 +45,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services))
   app.use(trimRequestBody())
   app.use(routes(services))
+  app.use(formValidationErrorHandler)
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
 

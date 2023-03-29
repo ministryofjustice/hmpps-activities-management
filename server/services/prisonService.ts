@@ -41,6 +41,10 @@ export default class PrisonService {
     return this.prisonerSearchApiClient.searchInmates(prisonerSearchCriteria, user)
   }
 
+  async searchPrisonInmates(term: string, user: ServiceUser): Promise<PagePrisoner> {
+    return this.prisonerSearchApiClient.searchPrisonInmates(term, user.activeCaseLoadId, user)
+  }
+
   async searchInmatesByPrisonerNumbers(prisonerNumbers: string[], user: ServiceUser): Promise<Prisoner[]> {
     if (prisonerNumbers.length < 1) {
       return []
