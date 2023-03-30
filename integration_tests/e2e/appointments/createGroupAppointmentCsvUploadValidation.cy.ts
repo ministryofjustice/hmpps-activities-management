@@ -42,9 +42,18 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
     howToAddPrisonersPage.continue()
 
+    const largerThan100kbData = ['Prison number']
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < 10000; i++) {
+      largerThan100kbData.push('TESTDATA')
+    }
+    cy.writeFile('integration_tests/fixtures/fileUpload/larger-than-100kb.csv', largerThan100kbData.join('\r\n'))
+
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('larger-than-100kb.csv')
     uploadPrisonerListPage.continue()
+
+    cy.writeFile('integration_tests/fixtures/fileUpload/larger-than-100kb.csv', '')
 
     uploadPrisonerListPage.assertValidationError('file', 'The selected file must be smaller than 100kb')
   })
