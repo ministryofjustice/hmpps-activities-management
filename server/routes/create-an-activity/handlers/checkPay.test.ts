@@ -38,6 +38,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirect: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -81,11 +82,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('back')
-      expect(req.flash).toHaveBeenCalledWith(
-        'validationErrors',
-        JSON.stringify([{ field: '', message: 'Add at least one pay rate' }]),
-      )
+      expect(res.validationFailed).toHaveBeenCalledWith('', 'Add at least one pay rate')
     })
 
     it('should add the minimum incentive level to the session and redirect', async () => {

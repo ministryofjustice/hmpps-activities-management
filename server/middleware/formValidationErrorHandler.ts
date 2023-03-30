@@ -16,9 +16,7 @@ export class FormValidationError extends Error {
 const formValidationErrorHandler: ErrorRequestHandler = (err: Error, req, res, next): void => {
   if (!(err instanceof FormValidationError)) return next(err)
 
-  req.flash('validationErrors', JSON.stringify([{ field: err.field, message: err.message }]))
-  req.flash('formResponses', JSON.stringify(req.body))
-  return res.redirect('back')
+  return res.validationFailed(err.field, err.message)
 }
 
 export default formValidationErrorHandler

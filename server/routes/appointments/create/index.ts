@@ -4,6 +4,7 @@ import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import StartJourneyRoutes from './handlers/startJourney'
 import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/selectPrisoner'
+import UploadPrisonerListRoutes, { PrisonerList } from './handlers/uploadPrisonerList'
 import CategoryRoutes, { Category } from './handlers/category'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
@@ -14,6 +15,8 @@ import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
 import ReviewPrisoners, { AddAnotherForm } from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
+import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
+import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 
 export default function Index({ prisonService, activitiesService }: Services): Router {
   const router = Router()
@@ -25,6 +28,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
 
   const startHandler = new StartJourneyRoutes()
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
+  const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const categoryHandler = new CategoryRoutes(activitiesService)
   const locationHandler = new LocationRoutes(prisonService)
   const dateAndTimeHandler = new DateAndTimeRoutes()
@@ -39,6 +43,13 @@ export default function Index({ prisonService, activitiesService }: Services): R
   get('/start-group', startHandler.GROUP)
   get('/select-prisoner', selectPrisonerHandler.GET, true)
   post('/select-prisoner', selectPrisonerHandler.POST, PrisonerSearch)
+  get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
+  router.post(
+    '/upload-prisoner-list',
+    setUpMultipartFormDataParsing(),
+    validationMiddleware(PrisonerList),
+    asyncMiddleware(uploadPrisonerListRoutes.POST),
+  )
   get('/category', categoryHandler.GET, true)
   post('/category', categoryHandler.POST, Category)
   get('/location', locationHandler.GET, true)
