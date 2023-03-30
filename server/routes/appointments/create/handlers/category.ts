@@ -29,8 +29,7 @@ export default class CategoryRoutes {
       .then(categories => categories.find(c => c.code === categoryCode))
 
     if (!category) {
-      req.flash('validationErrors', JSON.stringify([{ field: 'categoryCode', message: `Selected category not found` }]))
-      return res.redirect('back')
+      return res.validationFailed('categoryCode', `Selected category not found`)
     }
 
     req.session.createAppointmentJourney.category = {

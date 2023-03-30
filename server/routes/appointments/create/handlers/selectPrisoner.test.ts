@@ -6,7 +6,6 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import SelectPrisonerRoutes, { PrisonerSearch } from './selectPrisoner'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { FormValidationError } from '../../../../formValidationErrorHandler'
 import { AppointmentType } from '../journey'
 
 jest.mock('../../../../services/prisonService')
@@ -29,6 +28,7 @@ describe('Route Handlers - Create Appointment - Select Prisoner', () => {
       render: jest.fn(),
       redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -88,16 +88,9 @@ describe('Route Handlers - Create Appointment - Select Prisoner', () => {
         .calledWith('A1234BC', res.locals.user)
         .mockResolvedValue({ content: [], empty: true })
 
-      let error = null
-      try {
-        await handler.POST(req, res)
-      } catch (e) {
-        error = e
-      }
+      await handler.POST(req, res)
 
-      expect(error).toBeInstanceOf(FormValidationError)
-      expect(error.field).toEqual('query')
-      expect(error.message).toEqual('No prisoners found for query "A1234BC"')
+      expect(res.validationFailed).toHaveBeenCalledWith('query', 'No prisoners found for query "A1234BC"')
     })
   })
 

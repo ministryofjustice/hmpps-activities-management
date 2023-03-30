@@ -42,6 +42,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
       render: jest.fn(),
       redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -92,11 +93,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.POST(req, res)
 
-      expect(req.flash).toHaveBeenCalledWith(
-        'validationErrors',
-        JSON.stringify([{ field: 'locationId', message: `Selected location not found` }]),
-      )
-      expect(res.redirect).toHaveBeenCalledWith('back')
+      expect(res.validationFailed).toHaveBeenCalledWith('locationId', `Selected location not found`)
     })
   })
 

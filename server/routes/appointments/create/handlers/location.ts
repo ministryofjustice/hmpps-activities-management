@@ -32,8 +32,7 @@ export default class LocationRoutes {
       .then(locations => locations.find(l => l.locationId === locationId))
 
     if (!location) {
-      req.flash('validationErrors', JSON.stringify([{ field: 'locationId', message: `Selected location not found` }]))
-      return res.redirect('back')
+      return res.validationFailed('locationId', `Selected location not found`)
     }
 
     req.session.createAppointmentJourney.location = {

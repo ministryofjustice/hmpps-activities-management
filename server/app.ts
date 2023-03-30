@@ -21,7 +21,8 @@ import routes from './routes'
 import type { Services } from './services'
 import setUpChangeLinks from './middleware/setUpChangeLinks'
 import trimRequestBody from './middleware/trimBodyMiddleware'
-import formValidationErrorHandler from './formValidationErrorHandler'
+import setUpValidationExtensions from './middleware/setUpValidationExtensions'
+import formValidationErrorHandler from './middleware/formValidationErrorHandler'
 
 export default function createApp(services: Services): express.Application {
   const app = express()
@@ -44,6 +45,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCsrf())
   app.use(setUpCurrentUser(services))
   app.use(trimRequestBody())
+  app.use(setUpValidationExtensions())
   app.use(routes(services))
   app.use(formValidationErrorHandler)
   app.use((req, res, next) => next(createError(404, 'Not found')))

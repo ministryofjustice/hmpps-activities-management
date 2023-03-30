@@ -27,13 +27,7 @@ export default class CalendarSpikeRoutes {
 
       res.render('pages/spikes/calendarSpike', { referenceDate, activities })
     } catch (e) {
-      req.flash(
-        'validationErrors',
-        JSON.stringify([
-          { field: 'string', message: `Calendar for prisoner with number ${prisonerNumber} was not found` },
-        ]),
-      )
-      res.redirect('/spikes/calendar-spike/search')
+      res.validationFailed('string', `Calendar for prisoner with number ${prisonerNumber} was not found`)
     }
   }
 
