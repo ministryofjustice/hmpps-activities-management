@@ -1,6 +1,7 @@
 import fs, { Stats } from 'fs'
 import { Expose, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../utils/utils'
 import IsNotEmptyFile from './isNotEmptyFile'
 
@@ -39,7 +40,7 @@ describe('isNotEmptyFile', () => {
 
     const requestObject = plainToInstance(DummyForm, body)
 
-    fsMock.existsSync.mockReturnValue(false)
+    when(fsMock.existsSync).calledWith('uploads/not-found.csv').mockReturnValue(false)
 
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
@@ -56,8 +57,10 @@ describe('isNotEmptyFile', () => {
 
     const requestObject = plainToInstance(DummyForm, body)
 
-    fsMock.existsSync.mockReturnValue(true)
-    fsMock.lstatSync.mockReturnValue(plainToInstance(Stats, { size: 0 }))
+    when(fsMock.existsSync).calledWith('uploads/empty.csv').mockReturnValue(true)
+    when(fsMock.lstatSync)
+      .calledWith('uploads/empty.csv')
+      .mockReturnValue(plainToInstance(Stats, { size: 0 }))
 
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
@@ -74,8 +77,10 @@ describe('isNotEmptyFile', () => {
 
     const requestObject = plainToInstance(DummyForm, body)
 
-    fsMock.existsSync.mockReturnValue(true)
-    fsMock.lstatSync.mockReturnValue(plainToInstance(Stats, { size: 1 }))
+    when(fsMock.existsSync).calledWith('uploads/not-empty.csv').mockReturnValue(true)
+    when(fsMock.lstatSync)
+      .calledWith('uploads/not-empty.csv')
+      .mockReturnValue(plainToInstance(Stats, { size: 1 }))
 
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 

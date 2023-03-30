@@ -15,7 +15,7 @@ import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
 import ReviewPrisoners, { AddAnotherForm } from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
-import PrisonerListCsvParser from '../../../utils/PrisonerListCsvParser'
+import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 
 export default function Index({ prisonService, activitiesService }: Services): Router {

@@ -2,10 +2,12 @@ import fs, { Stats } from 'fs'
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import UploadPrisonerListRoutes, { PrisonerList } from './uploadPrisonerList'
-import PrisonerListCsvParser from '../../../../utils/PrisonerListCsvParser'
+import PrisonerListCsvParser from '../../../../utils/prisonerListCsvParser'
 import PrisonService from '../../../../services/prisonService'
+import { FormValidationError } from '../../../../middleware/formValidationErrorHandler'
 
 jest.mock('fs')
 jest.mock('isbinaryfile', () => ({
@@ -57,6 +59,52 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
     })
   })
 
+  describe('POST', () => {
+    it('validation fails when uploaded file could not be read', async () => {
+      req.file = {
+        path: 'uploads/unknown.csv',
+      } as unknown as Express.Multer.File
+
+      prisonerListCsvParser.getPrisonerNumbers.mockImplementation(() => {
+        throw new FormValidationError('file', 'The selected file could not be uploaded – try again')
+      })
+
+      let exception
+      try {
+        await handler.POST(req, res)
+      } catch (e) {
+        exception = e
+      }
+
+      expect(exception).toBeInstanceOf(FormValidationError)
+      expect((exception as FormValidationError).field).toEqual('file')
+      expect((exception as FormValidationError).message).toEqual('The selected file could not be uploaded – try again')
+    })
+  })
+
+  describe('POST', () => {
+    it('validation fails when uploaded file could not be parsed', async () => {
+      req.file = {
+        path: 'uploads/unknown.csv',
+      } as unknown as Express.Multer.File
+
+      prisonerListCsvParser.getPrisonerNumbers.mockImplementation(() => {
+        throw new FormValidationError('file', 'The selected file must use the template')
+      })
+
+      let exception
+      try {
+        await handler.POST(req, res)
+      } catch (e) {
+        exception = e
+      }
+
+      expect(exception).toBeInstanceOf(FormValidationError)
+      expect((exception as FormValidationError).field).toEqual('file')
+      expect((exception as FormValidationError).message).toEqual('The selected file must use the template')
+    })
+  })
+
   describe('Validation', () => {
     it('validation fails when no file is uploaded', async () => {
       const body = {}
@@ -78,8 +126,10 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       const requestObject = plainToInstance(PrisonerList, body)
 
-      fsMock.existsSync.mockReturnValue(true)
-      fsMock.lstatSync.mockReturnValue(plainToInstance(Stats, { size: 0 }))
+      when(fsMock.existsSync).calledWith('uploads/empty.csv').mockReturnValue(true)
+      when(fsMock.lstatSync)
+        .calledWith('uploads/empty.csv')
+        .mockReturnValue(plainToInstance(Stats, { size: 0 }))
 
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
@@ -96,8 +146,10 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       const requestObject = plainToInstance(PrisonerList, body)
 
-      fsMock.existsSync.mockReturnValue(true)
-      fsMock.lstatSync.mockReturnValue(plainToInstance(Stats, { size: 1 }))
+      when(fsMock.existsSync).calledWith('uploads/non-csv.xlsx').mockReturnValue(true)
+      when(fsMock.lstatSync)
+        .calledWith('uploads/non-csv.xlsx')
+        .mockReturnValue(plainToInstance(Stats, { size: 1 }))
 
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
@@ -114,8 +166,10 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       const requestObject = plainToInstance(PrisonerList, body)
 
-      fsMock.existsSync.mockReturnValue(true)
-      fsMock.lstatSync.mockReturnValue(plainToInstance(Stats, { size: 1 }))
+      when(fsMock.existsSync).calledWith('uploads/valid.csv').mockReturnValue(true)
+      when(fsMock.lstatSync)
+        .calledWith('uploads/valid.csv')
+        .mockReturnValue(plainToInstance(Stats, { size: 1 }))
 
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 

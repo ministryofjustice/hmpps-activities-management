@@ -1,6 +1,7 @@
 import fs from 'fs'
 import { Expose, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../utils/utils'
 import IsValidCsvFile from './isValidCsvFile'
 
@@ -43,7 +44,7 @@ describe('isValidCsvFile', () => {
 
     const requestObject = plainToInstance(DummyForm, body)
 
-    fsMock.existsSync.mockReturnValue(false)
+    when(fsMock.existsSync).calledWith('uploads/not-found.csv').mockReturnValue(false)
 
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
@@ -61,7 +62,7 @@ describe('isValidCsvFile', () => {
 
     const requestObject = plainToInstance(DummyForm, body)
 
-    fsMock.existsSync.mockReturnValue(true)
+    when(fsMock.existsSync).calledWith('uploads/non-csv.xlsx').mockReturnValue(true)
 
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
@@ -79,7 +80,7 @@ describe('isValidCsvFile', () => {
 
     const requestObject = plainToInstance(DummyForm, body)
 
-    fsMock.existsSync.mockReturnValue(true)
+    when(fsMock.existsSync).calledWith('uploads/non-csv.csv').mockReturnValue(true)
 
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
@@ -97,7 +98,7 @@ describe('isValidCsvFile', () => {
 
     const requestObject = plainToInstance(DummyForm, body)
 
-    fsMock.existsSync.mockReturnValue(true)
+    when(fsMock.existsSync).calledWith('uploads/valid.csv').mockReturnValue(true)
 
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 

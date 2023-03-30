@@ -4,7 +4,7 @@ import { finished } from 'stream/promises'
 import { FormValidationError } from '../middleware/formValidationErrorHandler'
 
 export default class PrisonerListCsvParser {
-  getPrisonerNumbers = async (file: Express.Multer.File): Promise<string[]> => {
+  async getPrisonerNumbers(file: Express.Multer.File): Promise<string[]> {
     const prisonerNumbers: string[] = []
     const streamErrors: string[] = []
     const parserErrors: string[] = []

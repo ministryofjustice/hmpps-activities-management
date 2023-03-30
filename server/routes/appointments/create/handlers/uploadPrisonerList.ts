@@ -4,7 +4,7 @@ import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import IsNotEmptyFile from '../../../../validators/isNotEmptyFile'
 import IsValidCsvFile from '../../../../validators/isValidCsvFile'
-import PrisonerListCsvParser from '../../../../utils/PrisonerListCsvParser'
+import PrisonerListCsvParser from '../../../../utils/prisonerListCsvParser'
 
 export class PrisonerList {
   @Expose()
