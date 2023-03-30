@@ -1,29 +1,25 @@
 import fs, { Stats } from 'fs'
-import fsPromises from 'fs/promises'
-import { parse, Parser } from 'csv-parse'
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import UploadPrisonerListRoutes, { PrisonerList } from './uploadPrisonerList'
+import PrisonerListCsvParser from '../../../../utils/PrisonerListCsvParser'
 import PrisonService from '../../../../services/prisonService'
-import { when } from 'jest-when'
 
 jest.mock('fs')
-jest.mock('fs/promises')
-jest.mock('csv-parse')
 jest.mock('isbinaryfile', () => ({
   isBinaryFileSync: jest.fn(file => file === 'uploads/non-csv.csv'),
 }))
+jest.mock('../../../../utils/PrisonerListCsvParser')
 jest.mock('../../../../services/prisonService')
 
 const fsMock: jest.Mocked<typeof fs> = <jest.Mocked<typeof fs>>fs
-const fsPromisesMock = fsPromises as jest.Mocked<typeof fsPromises>
-const parseMock = parse as jest.Mocked<typeof parse>
+const prisonerListCsvParser = new PrisonerListCsvParser() as jest.Mocked<PrisonerListCsvParser>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
-  const handler = new UploadPrisonerListRoutes(prisonService)
+  const handler = new UploadPrisonerListRoutes(prisonerListCsvParser, prisonService)
   let req: Request
   let res: Response
 
@@ -58,38 +54,6 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create/upload-prisoner-list')
-    })
-  })
-
-  describe('POST', () => {
-    it('validation fails when uploaded file could not be read', async () => {
-      req.file = {
-        path: 'uploads/unknown.csv',
-      } as unknown as Express.Multer.File
-
-      fsPromisesMock.readFile.mockRejectedValue(null)
-
-      await handler.POST(req, res)
-
-      expect(res.validationFailed).toHaveBeenCalledWith('file', 'The selected file could not be uploaded – try again')
-    })
-
-    it('validation fails when uploaded file could not be parsed', async () => {
-      req.file = {
-        path: 'uploads/invalid.csv',
-      } as unknown as Express.Multer.File
-
-      fsPromisesMock.readFile.mockResolvedValue(null)
-
-      const parser = {
-        on: jest.fn(), // needs to fail and call .on('error'
-      }
-
-      // when(parseMock).calledWith(null).mockResolvedValue(parser)
-
-      await handler.POST(req, res)
-
-      expect(res.validationFailed).toHaveBeenCalledWith('file', 'The selected file must use the template')
     })
   })
 

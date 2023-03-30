@@ -15,6 +15,7 @@ import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
 import ReviewPrisoners, { AddAnotherForm } from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
+import PrisonerListCsvParser from '../../../utils/PrisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 
 export default function Index({ prisonService, activitiesService }: Services): Router {
@@ -27,7 +28,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
 
   const startHandler = new StartJourneyRoutes()
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
-  const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(prisonService)
+  const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const categoryHandler = new CategoryRoutes(activitiesService)
   const locationHandler = new LocationRoutes(prisonService)
   const dateAndTimeHandler = new DateAndTimeRoutes()
