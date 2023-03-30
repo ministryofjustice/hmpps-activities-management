@@ -103,6 +103,24 @@ context('Create group appointment - CSV upload validation', () => {
     uploadPrisonerListPage.assertValidationError('file', 'The selected file must be a CSV')
   })
 
+  it('Should fail validation when CSV file does not contain any prisoner numbers', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.createGroupAppointmentCard().click()
+
+    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.continue()
+
+    const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
+    uploadPrisonerListPage.attatchFile('upload-prisoner-list-no-numbers.csv')
+    uploadPrisonerListPage.continue()
+
+    uploadPrisonerListPage.assertValidationError('file', 'The selected file does not contain any prisoner numbers')
+  })
+
   it('Should fail validation when one prisoner not found', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()

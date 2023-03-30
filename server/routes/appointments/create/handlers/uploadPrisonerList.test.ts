@@ -13,7 +13,7 @@ jest.mock('fs')
 jest.mock('isbinaryfile', () => ({
   isBinaryFileSync: jest.fn(file => file === 'uploads/non-csv.csv'),
 }))
-jest.mock('../../../../utils/PrisonerListCsvParser')
+jest.mock('../../../../utils/prisonerListCsvParser')
 jest.mock('../../../../services/prisonService')
 
 const fsMock: jest.Mocked<typeof fs> = <jest.Mocked<typeof fs>>fs
@@ -80,9 +80,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       expect((exception as FormValidationError).field).toEqual('file')
       expect((exception as FormValidationError).message).toEqual('The selected file could not be uploaded – try again')
     })
-  })
 
-  describe('POST', () => {
     it('validation fails when uploaded file could not be parsed', async () => {
       req.file = {
         path: 'uploads/unknown.csv',
@@ -102,6 +100,21 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       expect(exception).toBeInstanceOf(FormValidationError)
       expect((exception as FormValidationError).field).toEqual('file')
       expect((exception as FormValidationError).message).toEqual('The selected file must use the template')
+    })
+
+    it('validation fails when uploaded file does not contain any prisoner numbers', async () => {
+      req.file = {
+        path: 'uploads/unknown.csv',
+      } as unknown as Express.Multer.File
+
+      prisonerListCsvParser.getPrisonerNumbers.mockReturnValue(Promise.resolve([]))
+
+      await handler.POST(req, res)
+
+      expect(res.validationFailed).toHaveBeenCalledWith(
+        'file',
+        'The selected file does not contain any prisoner numbers',
+      )
     })
   })
 

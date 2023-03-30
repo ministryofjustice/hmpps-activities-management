@@ -30,6 +30,10 @@ export default class UploadPrisonerListRoutes {
 
     const prisonerNumbers = await this.prisonerListCsvParser.getPrisonerNumbers(prisonerListCsvFile)
 
+    if (prisonerNumbers.length === 0) {
+      return res.validationFailed('file', 'The selected file does not contain any prisoner numbers')
+    }
+
     const prisoners = (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user))
       .filter(prisoner => prisoner.prisonId === user.activeCaseLoadId)
       .map(prisoner => ({
