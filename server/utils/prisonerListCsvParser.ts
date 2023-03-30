@@ -1,26 +1,22 @@
-import fs, { promises as fsPromises } from 'fs'
+import { promises as fsPromises } from 'fs'
 import { parse } from 'csv-parse'
 import { finished } from 'stream/promises'
 import { FormValidationError } from '../middleware/formValidationErrorHandler'
 
 export default class PrisonerListCsvParser {
   async getPrisonerNumbers(file: Express.Multer.File): Promise<string[]> {
+    let data
+    try {
+      data = await fsPromises.readFile(file.path)
+    } catch {
+      throw new FormValidationError('file', 'The selected file could not be uploaded – try again')
+    } finally {
+      await fsPromises.unlink(file.path).catch(_ => true)
+    }
+
     const prisonerNumbers: string[] = []
-    const streamErrors: string[] = []
-    const parserErrors: string[] = []
 
-    const stream = fs.createReadStream(file.path)
-    stream.on('error', error => {
-      streamErrors.push(error.message)
-    })
-
-    const parser = stream.pipe(parse({ trim: true, skipEmptyLines: true }))
-
-    parser.on('error', error => {
-      parserErrors.push(error.message)
-    })
-
-    parser.on('readable', () => {
+    const parser = parse(data, { trim: true, skipEmptyLines: true }).on('readable', () => {
       let row
       // eslint-disable-next-line no-cond-assign
       while ((row = parser.read())) {
@@ -31,19 +27,9 @@ export default class PrisonerListCsvParser {
       }
     })
 
-    await finished(parser)
-
     try {
-      await fsPromises.unlink(file.path)
+      await finished(parser)
     } catch {
-      /* empty */
-    }
-
-    if (streamErrors.length > 0) {
-      throw new FormValidationError('file', 'The selected file could not be uploaded – try again')
-    }
-
-    if (parserErrors.length > 0) {
       throw new FormValidationError('file', 'The selected file must use the template')
     }
 
