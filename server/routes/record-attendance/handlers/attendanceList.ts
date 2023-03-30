@@ -75,7 +75,9 @@ export default class AttendanceListRoutes {
       if (selectedAttendanceIds) {
         const attendances = selectedAttendanceIds.map(attendance => ({
           id: +attendance,
+          status: 'COMPLETED',
           attendanceReason: 'ATTENDED',
+          issuePayment: true,
         }))
         await this.activitiesService.updateAttendances(attendances, user)
       }

@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../services/activitiesService'
 import PrisonService from '../../../services/prisonService'
 
-export default class AttendanceDetailsRoutes {
+export default class RemovePayRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -26,13 +26,25 @@ export default class AttendanceDetailsRoutes {
 
     const attendee = attendees[0]
 
-    res.render('pages/record-attendance/attendance-details', { instance, attendance, attendee })
+    res.render('pages/record-attendance/remove-pay', { instance, attendance, attendee })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
     const { id } = req.params
     const { attendanceId } = req.params
-    return res.redirect(`/attendance/activities/${id}/attendance-details/${attendanceId}/remove-pay`)
+    if (req.body.removePayOption === 'yes') {
+      const attendances = [
+        {
+          id: +attendanceId,
+          status: 'COMPLETED',
+          attendanceReason: 'ATTENDED',
+          issuePayment: false,
+        },
+      ]
+      await this.activitiesService.updateAttendances(attendances, user)
+    }
+    return res.redirect(`/attendance/activities/${id}/attendance-details/${attendanceId}`)
   }
 
   private capitalize(s: string) {

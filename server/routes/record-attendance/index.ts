@@ -10,6 +10,8 @@ import CancelSessionReasonRoutes, { CancelReasonForm } from './handlers/cancel-s
 import CancelSessionConfirmationRoutes, { CancelConfirmForm } from './handlers/cancel-session/confirmation'
 import UncancelSessionConfirmationRoutes, { UncancelConfirmForm } from './handlers/uncancel-session/confirmation'
 import AttendanceDetailsRoutes from './handlers/attendanceDetails'
+import EditAttendanceRoutes, { EditAttendance } from './handlers/editAttendance'
+import RemovePayRoutes from './handlers/removePay'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -26,6 +28,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService)
   const uncancelSessionConfirmationRoutes = new UncancelSessionConfirmationRoutes(activitiesService)
   const attendanceDetailsHandler = new AttendanceDetailsRoutes(activitiesService, prisonService)
+  const editAttendanceHandler = new EditAttendanceRoutes(activitiesService, prisonService)
+  const removePayHandler = new RemovePayRoutes(activitiesService, prisonService)
 
   get('/select-period', selectPeriodHandler.GET)
   post('/select-period', selectPeriodHandler.POST, TimePeriod)
@@ -44,6 +48,11 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/activities/:id/uncancel', uncancelSessionConfirmationRoutes.GET)
   post('/activities/:id/uncancel', uncancelSessionConfirmationRoutes.POST, UncancelConfirmForm)
   get('/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.GET)
+  post('/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.POST)
+  get('/activities/:id/attendance-details/:attendanceId/edit-attendance', editAttendanceHandler.GET)
+  post('/activities/:id/attendance-details/:attendanceId/edit-attendance', editAttendanceHandler.POST, EditAttendance)
+  get('/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.GET)
+  post('/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.POST)
 
   return router
 }

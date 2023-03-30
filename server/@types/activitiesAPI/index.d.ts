@@ -345,10 +345,15 @@ export interface components {
        */
       id: number
       /**
+       * @description The status - WAITING, COMPLETED, LOCKED
+       * @example WAITING
+       */
+      status?: string
+      /**
        * @description The reason codes- SICK, REFUSED, NOT_REQUIRED, REST, CLASH, OTHER, SUSPENDED, CANCELLED, ATTENDED
        * @example ATTENDED
        */
-      attendanceReason: string
+      attendanceReason?: string
       /**
        * @description Comments such as more detail for SICK
        * @example Prisoner has COVID-19
