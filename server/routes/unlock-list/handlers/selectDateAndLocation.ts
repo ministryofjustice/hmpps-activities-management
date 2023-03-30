@@ -5,6 +5,7 @@ import { format, addDays } from 'date-fns'
 import SimpleDate from '../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../validators/isValidDate'
 import ActivitiesService from '../../../services/activitiesService'
+import DateIsSameOrBefore from '../../../validators/dateIsSameOrBefore'
 
 enum PresetDateOptions {
   TODAY = 'today',
@@ -27,6 +28,7 @@ export class DateAndLocation {
   @ValidateIf(o => o.datePresetOption === PresetDateOptions.OTHER)
   @Type(() => SimpleDate)
   @ValidateNested()
+  @DateIsSameOrBefore(addDays(new Date(), 60), { message: 'Enter a date up to 60 days in the future' })
   @IsValidDate({ message: 'Enter a valid date' })
   date: SimpleDate
 

@@ -15,11 +15,16 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
+                {% set otherDateHintHtml %}
+                  <div>For example, {{ now | formatDate('dd MM yyyy') }}</div>
+                  <div>You can get unlock lists for up to 60 days from today.</div>
+                {% endset %}
+
                 {{ govukRadios({
                     name: "datePresetOption",
                     fieldset: {
                         legend: {
-                            text: "Date",
+                            text: "Unlock date",
                             classes: "govuk-fieldset__legend--m"
                         }
                     },
@@ -38,14 +43,12 @@
                         {
                             value: "other",
                             text: "A different date",
+                            label: { text: "Unlock date "},
                             checked: formResponses.datePresetOption == 'other',
                             conditional: { html:
-                            datePicker({
+                              datePicker({
                                 id: 'date',
-                                hint: {
-                                    text: "Enter a date, for example, " + now | formatDate('dd MM yyyy') +
-                                          ". You can get unlock lists up to 2 weeks from today."
-                                },
+                                hint: { html: otherDateHintHtml },
                                 renderedErrorMessage: validationErrors | findError('date'),
                                 validationErrors: validationErrors,
                                 formResponses: formResponses.date
