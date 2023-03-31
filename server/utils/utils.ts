@@ -7,6 +7,7 @@ import {
   parseISO,
   endOfDay,
   format,
+  isBefore,
   isSameDay,
   isToday,
   isTomorrow,
@@ -116,6 +117,13 @@ export const isAfterToday = (date: string): boolean => {
   const dateMidnight = parse(date, 'yyyy-MM-dd', new Date())
   const endOfToday = endOfDay(new Date())
   return isAfter(dateMidnight, endOfToday)
+}
+
+// Assumes date is iso format yyyy-MM-dd (no time element)
+export const isTodayOrBefore = (date: string): boolean => {
+  const dateMidnight = parse(date, 'yyyy-MM-dd', new Date())
+  const endOfToday = endOfDay(new Date())
+  return isBefore(dateMidnight, endOfToday)
 }
 
 export const sortByDateTime = (t1: string, t2: string): number => {
