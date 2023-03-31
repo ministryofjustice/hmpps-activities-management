@@ -16,7 +16,6 @@
   },
   "tier": null,
   "eligibilityRules": [],
-  "schedules": [],
   "waitingList": [],
   "pay": [
     {
@@ -117,5 +116,59 @@
   "minimumIncentiveLevel": "Basic",
   "createdTime": "14/01/2023 10:55",
   "createdBy": "SCH_ACTIVITY",
-  "minimumEducationLevel": [{ "educationLevelCode": "1", "educationLevelDescription": "" }]
+  "minimumEducationLevel": [{ "educationLevelCode": "1", "educationLevelDescription": "" }],
+  "schedules": [
+    {
+      "id": 1,
+      "instances": [],
+      "allocations": [],
+      "description": "Maths level 1",
+      "suspensions": [],
+      "internalLocation": {
+        "id": 721771,
+        "code": "ACTIVITYHUB",
+        "description": "ACTIVITY HUB LIST"
+      },
+      "capacity": 20,
+      "activity": {
+        "id": 1,
+        "prisonCode": "MDI",
+        "attendanceRequired": true,
+        "inCell": false,
+        "pieceWork": false,
+        "outsideWork": false,
+        "payPerSession": "H",
+        "summary": "Maths level 1",
+        "description": "Maths level 1",
+        "category": {
+          "id": 1,
+          "code": "SAA_EDUCATION",
+          "name": "Education",
+          "description": "Such as classes in English, maths, construction or barbering"
+        },
+        "riskLevel": "low",
+        "minimumIncentiveNomisCode": "BAS",
+        "minimumIncentiveLevel": "Basic",
+        "minimumEducationLevel": []
+      },
+      "slots": [
+        {
+          "id": 1,
+          "startTime": "09:00",
+          "endTime": "12:00",
+          "daysOfWeek": ["Mon"],
+          "mondayFlag": true,
+          "tuesdayFlag": false,
+          "wednesdayFlag": false,
+          "thursdayFlag": false,
+          "fridayFlag": false,
+          "saturdayFlag": false,
+          "sundayFlag": false
+        }
+      ],
+      "startDate": "2024-03-25",
+      "endDate": null,
+      "runsOnBankHoliday": false
+    }
+  ]
 }

@@ -16,7 +16,6 @@ import educationLevels from '../fixtures/prisonApi/educationLevels.json'
 import CheckAnswersPage from '../pages/createActivity/checkAnswers'
 import ConfirmationPage from '../pages/createActivity/confirmation'
 import getEventLocations from '../fixtures/prisonApi/getEventLocations.json'
-import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
 import StartDatePage from '../pages/createSchedule/startDate'
 import EndDateOptionPage from '../pages/createSchedule/endDateOption'
 import EndDatePage from '../pages/createSchedule/endDate'
@@ -36,8 +35,7 @@ context('Change location', () => {
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/EDU_LEVEL/codes', educationLevels)
     cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
-    cy.stubEndpoint('POST', '/activities', JSON.parse('{"id": 2}'))
-    cy.stubEndpoint('POST', '/activities/2/schedules', getSchedule)
+    cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
   })
 
   it('should click through create activity journey', () => {
