@@ -20,7 +20,7 @@ export default class ReviewPrisonerRoutes {
     if (YesNo[addAnother] === YesNo.YES) {
       res.redirect('how-to-add-prisoners')
     } else {
-      res.redirect('category')
+      res.redirectOrReturn('category')
     }
   }
 }

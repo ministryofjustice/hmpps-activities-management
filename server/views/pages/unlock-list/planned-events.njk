@@ -17,13 +17,25 @@
 {% block content %}
     <div class="govuk-grid-row govuk-!-margin-bottom-2">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-1">{{ unlockFilters.location }} Unlock list</h1>
-            <span class="govuk-body ">{{ unlockFilters.unlockDate|formatDate('cccc do LLLL y') }} - {{ unlockFilters.timeSlot | upper }}</span>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2"> Unlock list - {{ unlockFilters.location }}</h1>
+            <div class="govuk-body govuk-!-margin-top-1">{{ unlockFilters.timeSlot | upper }} session</div>
+            <div class="govuk-body govuk-!-margin-top-1">{{ unlockFilters.unlockDate|formatDate('cccc do LLLL y') }}</div>
+
             <div class="govuk-body govuk-!-display-none-print govuk-!-margin-top-2">
                 <a href="/unlock-list/select-date-and-location" class="govuk-link--no-visited-state">
                     Choose a different unlock list
                 </a>
             </div>
+
+            {% set todayOrBefore = unlockFilters.unlockDate | formatDate('yyyy-MM-dd') | todayOrBefore %}
+
+            {% if todayOrBefore %}
+                <div class="govuk-body govuk-!-display-none-print govuk-!-margin-top-2">
+                    <a href="#" class="govuk-link--no-visited-state">
+                        Record refusals and absences
+                    </a>
+                </div>
+            {% endif %}
 
             <div class="govuk-grid-row govuk-!-margin-top-4">
                 <div class="govuk-grid-column-full govuk-body govuk-!-font-weight-bold">
@@ -35,8 +47,8 @@
             <div class="govuk-button-group float-right govuk-!-display-none-print">
                 {{ govukButton({
                     attributes: { id: 'print-unlock' },
-                    text: "Print list",
-                    classes: "govuk-button--secondary js-print no-js-hidden",
+                    text: "Print PDF unlock list",
+                    classes: "govuk-button--blue js-print no-js-hidden",
                     preventDoubleClick: true
                 }) }}
             </div>
@@ -48,8 +60,9 @@
             </div>
         </div>
     </div>
+
     {% set filterOptionsHtml %}
-    {{ govukCheckboxes({
+        {{ govukCheckboxes({
             idPrefix: 'locationFilters',
             name: 'locationFilters',
             classes: "govuk-checkboxes--small",
@@ -61,7 +74,8 @@
             },
             items: unlockFilters.locationFilters
         }) }}
-    {{ govukRadios({
+
+        {{ govukRadios({
             idPrefix: 'activityFilters',
             name: 'activityFilters',
             classes: "govuk-radios--small",
@@ -73,7 +87,8 @@
             },
             items: unlockFilters.activityFilters
         }) }}
-    {{ govukRadios({
+
+        {{ govukRadios({
             idPrefix: 'stayingOrLeavingFilters',
             name: 'stayingOrLeavingFilters',
             classes: "govuk-radios--small",
@@ -85,7 +100,12 @@
             },
             items: unlockFilters.stayingOrLeavingFilters
         }) }}
+
+        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
+            Apply filters
+        </button>
     {% endset %}
+
     <div class="moj-filter-layout" data-module="activities-list-filter">
         <form id="filter-form" method="POST" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
@@ -207,7 +227,7 @@
                     head: [
                         {
                             text: "Name",
-                            attributes: { "aria-sort": "ascending" },
+                            attributes: { "aria-sort": "none" },
                             classes: 'govuk-table__header'
                         },
                         {
@@ -220,7 +240,7 @@
                             classes: 'govuk-table__header'
                         },
                         {
-                            html: "Events",
+                            html: "Activity",
                             attributes: { "aria-sort": "none" },
                             classes: 'govuk-table__header'
                         },
