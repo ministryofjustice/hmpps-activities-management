@@ -21,7 +21,8 @@
       "status": "COMPLETED",
       "payAmount": null,
       "bonusAmount": null,
-      "pieces": null
+      "pieces": null,
+      "issuePayment": true
     },
     {
       "id": 3,
@@ -37,7 +38,8 @@
       "status": "COMPLETED",
       "payAmount": null,
       "bonusAmount": null,
-      "pieces": null
+      "pieces": null,
+      "issuePayment": true
     },
     {
       "id": 2,
@@ -50,7 +52,8 @@
       "status": "WAITING",
       "payAmount": null,
       "bonusAmount": null,
-      "pieces": null
+      "pieces": null,
+      "issuePayment": true
     },
     {
       "id": 5,
@@ -63,7 +66,8 @@
       "status": "WAITING",
       "payAmount": null,
       "bonusAmount": null,
-      "pieces": null
+      "pieces": null,
+      "issuePayment": true
     }
   ],
   "activitySchedule": {
