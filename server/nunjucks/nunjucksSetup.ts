@@ -22,6 +22,7 @@ import {
   fullName,
   prisonerName,
   toDate,
+  isTodayOrBefore,
   sliceArray,
 } from '../utils/utils'
 import config from '../config'
@@ -115,6 +116,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
   njkEnv.addFilter('toDate', toDate)
+  njkEnv.addFilter('todayOrBefore', isTodayOrBefore)
   njkEnv.addFilter('sliceArray', sliceArray)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
