@@ -22,6 +22,7 @@ import {
   fullName,
   prisonerName,
   toDate,
+  sliceArray,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -114,6 +115,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
   njkEnv.addFilter('toDate', toDate)
+  njkEnv.addFilter('sliceArray', sliceArray)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

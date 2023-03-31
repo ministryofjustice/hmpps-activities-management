@@ -11,10 +11,10 @@ export default class AttendanceListPage extends Page {
   checkAttendanceStatus = (name, status) =>
     cy
       .get('#attendanceList')
-      .find('td:nth-child(3)')
+      .find('td[data-qa="prisoner-details"]')
       .contains(name)
       .parents('tr')
-      .find('td:nth-child(7)')
+      .find('td[data-qa="attendance"]')
       .contains(status)
 
   markAsAttended = () => cy.get('button').contains('Mark as attended').click()
