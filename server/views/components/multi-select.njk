@@ -16,9 +16,11 @@
         {% set head = (head.push(column), head) %}
     {% endfor %}
 
+    {% set selectable = false %}
     {% set rows = [] %}
     {% for row in params.rows %}
         {% if row.selectable %}
+            {% set selectable = true %}
             {% set r = [
                 {
                     html: '
@@ -42,7 +44,16 @@
         {% set rows = (rows.push(r), rows) %}
     {% endfor %}
 
-    <div class='multi-select' data-module='activities-multi-select' {% if params.id %} id={{params.id}} {% endif %}>
+    {% if not selectable %}
+        {% set head = head | sliceArray(1) %}
+        {% set unselectableRows = [] %}
+        {% for row in rows %}
+            {% set unselectableRows = (unselectableRows.push(row | sliceArray(1)), unselectableRows) %}
+        {% endfor %}
+        {% set rows = unselectableRows %}
+    {% endif %}
+
+    <div class='multi-select' {% if selectable %} data-module='activities-multi-select' {% endif %} {% if params.id %} id={{params.id}} {% endif %}>
         {{ govukTable({
             attributes: {
                 'data-module': 'moj-multi-select',
