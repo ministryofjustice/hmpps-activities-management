@@ -77,4 +77,8 @@ export default abstract class Page {
       cy.get('.govuk-notification-banner .govuk-notification-banner__content').contains(notificationText)
     }
   }
+
+  assertValidationError = (forName, errorText) => {
+    cy.get(`.govuk-error-summary__list a[href="#${forName}"]`).contains(errorText)
+  }
 }

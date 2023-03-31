@@ -12,6 +12,7 @@ function validationMiddleware(type: new () => object): RequestHandler {
     // Build an object which is used by validators to check things against
     const requestObject = plainToInstance(type, {
       ...req.body,
+      file: req.file,
       createJourney: req.session.createJourney,
       notAttendedJourney: req.session.notAttendedJourney,
     })

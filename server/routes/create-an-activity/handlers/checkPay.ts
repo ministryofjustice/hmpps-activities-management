@@ -28,8 +28,7 @@ export default class CheckPayRoutes {
     const { pay } = req.session.createJourney
 
     if (pay.length === 0) {
-      req.flash('validationErrors', JSON.stringify([{ field: '', message: `Add at least one pay rate` }]))
-      return res.redirect('back')
+      return res.validationFailed('', `Add at least one pay rate`)
     }
 
     const minimumIncentiveLevel = await this.prisonService

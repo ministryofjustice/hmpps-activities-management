@@ -22,6 +22,7 @@ describe('Error Handler', () => {
           username: 'user',
         },
       },
+      validationFailed: jest.fn(),
     } as unknown as Response
   })
 
@@ -67,11 +68,7 @@ describe('Error Handler', () => {
 
     handler(error, req, res, jest.fn)
 
-    expect(req.flash).toHaveBeenCalledWith(
-      'validationErrors',
-      JSON.stringify([{ field: '', message: 'User friendly message' }]),
-    )
-    expect(res.redirect).toHaveBeenCalledWith('back')
+    expect(res.validationFailed).toHaveBeenCalledWith('', 'User friendly message')
   })
 
   it('should render error page with stacktrace if not in production', () => {

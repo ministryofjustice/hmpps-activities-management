@@ -272,6 +272,8 @@ export const toDateString = (date: Date) => format(date, 'yyyy-MM-dd')
 
 export const toDate = (date: string) => parse(date, 'yyyy-MM-dd', new Date())
 
+export const sliceArray = (arr: Array<unknown>, start: number, end: number) => arr?.slice(start, end)
+
 export const existsInStringArray = (key: string, arr: string[]): boolean => {
   return arr?.find(item => item === key) !== undefined
 }

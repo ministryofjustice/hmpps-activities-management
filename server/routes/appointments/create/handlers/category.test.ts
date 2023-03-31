@@ -41,6 +41,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
       render: jest.fn(),
       redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -91,11 +92,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
 
       await handler.POST(req, res)
 
-      expect(req.flash).toHaveBeenCalledWith(
-        'validationErrors',
-        JSON.stringify([{ field: 'categoryCode', message: `Selected category not found` }]),
-      )
-      expect(res.redirect).toHaveBeenCalledWith('back')
+      expect(res.validationFailed).toHaveBeenCalledWith('categoryCode', `Selected category not found`)
     })
   })
 
