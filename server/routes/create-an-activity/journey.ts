@@ -37,5 +37,4 @@ export type CreateAnActivityJourney = {
   }
   capacity?: number
   runsOnBankHoliday?: boolean
-  fromReview?: boolean
 }

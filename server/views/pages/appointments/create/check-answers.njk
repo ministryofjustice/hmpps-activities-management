@@ -4,6 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% set pageTitle = "Appointments Management - Create Appointment - Check Answers" %}
 {% set pageId = 'appointments-create-check-answers-page' %}
@@ -212,6 +213,8 @@
                 attributes: { 'data-qa': 'appointment-details' }
             }) }}
 
+            {{ prisonersList() if session.createAppointmentJourney.type == 'group' }}
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
@@ -225,3 +228,42 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro prisonersList() %}
+    {% set prisonerListRows = [{
+        key: {
+            text: "Prisoners"
+        },
+        value: {
+            text: session.createAppointmentJourney.prisoners | length
+        },
+        actions: {
+            items: [
+                {
+                    href: "review-prisoners?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change prisoners",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-prisoners' }
+                }
+            ]
+        }
+    }] %}
+
+    {% for prisoner in session.createAppointmentJourney.prisoners %}
+        {% set prisonerListRows = (prisonerListRows.push({
+            key: {
+                text: "Prisoner"
+            },
+            value: {
+                text: showProfileLink(prisoner.number, prisoner.name, false)
+            }
+        }), prisonerListRows) %}
+    {% endfor %}
+
+    <h2 class="govuk-heading-m">Prisoner details</h2>
+    {{ govukSummaryList({
+        rows: prisonerListRows,
+        attributes: { 'data-qa': 'prisoner-details' }
+    }) }}
+{% endmacro %}
