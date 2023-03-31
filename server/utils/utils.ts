@@ -121,7 +121,7 @@ export const isAfterToday = (date: string): boolean => {
 
 // Assumes date is iso format yyyy-MM-dd (no time element)
 export const isTodayOrBefore = (date: string): boolean => {
-  const dateMidnight = parse(date, 'yyyy-MM-dd', new Date())
+  const dateMidnight = parseDate(date)
   const endOfToday = endOfDay(new Date())
   return isBefore(dateMidnight, endOfToday)
 }
