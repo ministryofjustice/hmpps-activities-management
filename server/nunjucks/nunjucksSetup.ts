@@ -93,7 +93,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   // Only register nunjucks helpers/filters here - they should be implemented and unit tested elsewhere
   njkEnv.addFilter('fullName', fullName)
   njkEnv.addFilter('initialiseName', initialiseName)
-  njkEnv.addFilter('prisonerName', str => njkEnv.getFilter('safe')(prisonerName(str)))
+  njkEnv.addFilter('prisonerName', (str, bold) => njkEnv.getFilter('safe')(prisonerName(str, bold)))
   njkEnv.addFilter('setSelected', setSelected)
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
   njkEnv.addFilter('toTimeItems', toTimeItems)

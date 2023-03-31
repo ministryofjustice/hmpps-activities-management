@@ -7,7 +7,7 @@ import { AppointmentType, CreateAppointmentJourney } from '../../../../routes/ap
 
 const view = fs.readFileSync('server/views/pages/appointments/create/repeat-period-and-count.njk')
 
-describe('Views - Create Individual Appointment - Repeat Period and Count', () => {
+describe('Views - Create Appointment - Repeat Period and Count', () => {
   let compiledTemplate: Template
   let viewContext = {
     session: {
@@ -26,12 +26,6 @@ describe('Views - Create Individual Appointment - Repeat Period and Count', () =
       },
       formResponses: {},
     }
-  })
-
-  it('should display journey title', () => {
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=caption]').text()).toBe('Individual appointment')
   })
 
   it('should contain enum WEEKDAY, DAILY, WEEKLY, FORTNIGHTLY and MONTHLY inputs', () => {
@@ -99,5 +93,25 @@ describe('Views - Create Individual Appointment - Repeat Period and Count', () =
     const checked = $("[name='repeatPeriod']:checked")
     expect(checked.length).toEqual(1)
     expect(checked.val()).toEqual(AppointmentRepeatPeriod.WEEKLY.toString())
+  })
+
+  describe('Individual Appointment', () => {
+    it('should display journey title', () => {
+      const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('[data-qa=caption]').text()).toBe('Individual appointment')
+    })
+  })
+
+  describe('Group Appointment', () => {
+    beforeEach(() => {
+      viewContext.session.createAppointmentJourney.type = AppointmentType.GROUP
+    })
+
+    it('should display journey title', () => {
+      const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('[data-qa=caption]').text()).toBe('Group appointment')
+    })
   })
 })
