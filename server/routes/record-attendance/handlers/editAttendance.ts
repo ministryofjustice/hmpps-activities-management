@@ -63,7 +63,7 @@ export default class EditAttendanceRoutes {
       return res.redirect(`/attendance/activities/${id}/attendance-details/${attendanceId}`)
     }
 
-    if (req.body.attendanceOption === 'no') {
+    if (req.body.attendanceOption === EditAttendanceOptions.NO) {
       const [attendance, instance] = await Promise.all([
           this.activitiesService.getAttendanceDetails(+attendanceId, user),
           this.activitiesService.getScheduledActivity(+id, user),
