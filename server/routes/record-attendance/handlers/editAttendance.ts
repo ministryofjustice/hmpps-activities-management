@@ -50,7 +50,7 @@ export default class EditAttendanceRoutes {
     const { user } = res.locals
     const { id } = req.params
     const { attendanceId } = req.params
-    if (req.body.attendanceOption === 'yes') {
+    if (req.body.attendanceOption === EditAttendanceOptions.YES) {
       const attendances = [
         {
           id: +attendanceId,
