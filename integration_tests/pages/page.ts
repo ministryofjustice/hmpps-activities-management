@@ -63,7 +63,7 @@ export default abstract class Page {
       .get(`[data-qa=${listIdentifier}] > .govuk-summary-list__row > .govuk-summary-list__key`)
       .contains(heading)
       .parent()
-      .get('.govuk-summary-list__value')
+      .find('.govuk-summary-list__value')
       .should('contain.text', expectedValue)
 
   protected getDatePickerById = (id: string) => new DatePicker(id)
@@ -76,5 +76,9 @@ export default abstract class Page {
     if (notificationText) {
       cy.get('.govuk-notification-banner .govuk-notification-banner__content').contains(notificationText)
     }
+  }
+
+  assertValidationError = (forName, errorText) => {
+    cy.get(`.govuk-error-summary__list a[href="#${forName}"]`).contains(errorText)
   }
 }

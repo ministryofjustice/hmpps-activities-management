@@ -20,6 +20,7 @@ describe('Form Validation Handler', () => {
           username: 'user',
         },
       },
+      validationFailed: jest.fn(),
     } as unknown as Response
   })
 
@@ -32,11 +33,7 @@ describe('Form Validation Handler', () => {
     const error = new FormValidationError('inputField', 'Input error message')
     formValidationErrorHandler(error, req, res, jest.fn)
 
-    expect(req.flash).toHaveBeenCalledWith(
-      'validationErrors',
-      JSON.stringify([{ field: 'inputField', message: 'Input error message' }]),
-    )
-    expect(req.flash).toHaveBeenCalledWith('formResponses', JSON.stringify(req.body))
+    expect(res.validationFailed).toHaveBeenCalledWith('inputField', 'Input error message')
   })
 
   it("shouldn't set validationErrors and formResponses if another error is throw", () => {
@@ -48,6 +45,6 @@ describe('Form Validation Handler', () => {
     const error = new Error('Some other error')
     formValidationErrorHandler(error, req, res, jest.fn)
 
-    expect(req.flash).toHaveBeenCalledTimes(0)
+    expect(res.validationFailed).toHaveBeenCalledTimes(0)
   })
 })

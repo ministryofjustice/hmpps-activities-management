@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-duplicates
-import { addDays, format, parseISO, subDays } from 'date-fns'
+import { addDays, format, formatISO, parseISO, subDays } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
 import {
@@ -11,6 +11,8 @@ import {
   getAttendanceSummary,
   getCurrentPeriod,
   initialiseName,
+  isAfterToday,
+  isTodayOrBefore,
   fullName,
   prisonerName,
   toDate,
@@ -218,6 +220,30 @@ describe('utils', () => {
       ['Empty list', 'a', [], false],
     ])('%s existsInStringArray(%s, %s) == %s', (desc: string, key: string, list: string[], expected: boolean) => {
       expect(existsInStringArray(key, list)).toEqual(expected)
+    })
+  })
+
+  describe('isAfterToday', () => {
+    it.each([
+      ['Is tomorrow', formatISO(addDays(new Date(), 1), { representation: 'date' }), true],
+      ['Is today', formatISO(new Date(), { representation: 'date' }), false],
+      ['Is yesterday', formatISO(addDays(new Date(), -1), { representation: 'date' }), false],
+      ['Is a week ago', formatISO(addDays(new Date(), -7), { representation: 'date' }), false],
+      ['Is next week', formatISO(addDays(new Date(), 7), { representation: 'date' }), true],
+    ])('%s isAfterToday(%s) == %s', (desc: string, dateString: string, expected: boolean) => {
+      expect(isAfterToday(dateString)).toEqual(expected)
+    })
+  })
+
+  describe('isTodayOrBefore', () => {
+    it.each([
+      ['Is yesterday', formatISO(addDays(new Date(), -1), { representation: 'date' }), true],
+      ['Is today', formatISO(new Date(), { representation: 'date' }), true],
+      ['Is a week ago', formatISO(addDays(new Date(), -7), { representation: 'date' }), true],
+      ['Is tomorrow', formatISO(addDays(new Date(), 1), { representation: 'date' }), false],
+      ['Is next week', formatISO(addDays(new Date(), 7), { representation: 'date' }), false],
+    ])('%s isTodayOrBefore(%s) == %s', (desc: string, dateString: string, expected: boolean) => {
+      expect(isTodayOrBefore(dateString)).toEqual(expected)
     })
   })
 

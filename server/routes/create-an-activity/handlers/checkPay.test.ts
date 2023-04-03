@@ -38,6 +38,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirect: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -81,11 +82,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('back')
-      expect(req.flash).toHaveBeenCalledWith(
-        'validationErrors',
-        JSON.stringify([{ field: '', message: 'Add at least one pay rate' }]),
-      )
+      expect(res.validationFailed).toHaveBeenCalledWith('', 'Add at least one pay rate')
     })
 
     it('should add the minimum incentive level to the session and redirect', async () => {
@@ -100,21 +97,6 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       await handler.POST(req, res)
       expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Standard')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
-    })
-
-    it('should redirect to check answers page if fromCreateActivityReview set', async () => {
-      req.session.createJourney.fromReview = true
-
-      when(prisonService.getIncentiveLevels)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValueOnce([
-          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
-          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
-          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
-        ] as IepLevel[])
-
-      await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })
 })

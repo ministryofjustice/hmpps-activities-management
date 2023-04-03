@@ -9,7 +9,7 @@ import { AppointmentType, CreateAppointmentJourney } from '../../../../routes/ap
 
 const view = fs.readFileSync('server/views/pages/appointments/create/confirmation.njk')
 
-describe('Views - Create Individual Appointment - Check Answers', () => {
+describe('Views - Create Appointment - Check Answers', () => {
   let compiledTemplate: Template
   const tomorrow = addDays(new Date(), 1)
   let viewContext = {
@@ -84,4 +84,36 @@ describe('Views - Create Individual Appointment - Check Answers', () => {
       )
     },
   )
+
+  describe('Group Appointment', () => {
+    it('should display number of prisoners added to appointment', () => {
+      viewContext.session.createAppointmentJourney = {
+        type: AppointmentType.GROUP,
+        prisoners: [
+          {
+            name: 'TEST PRISONER',
+            number: 'A1234BC',
+            cellLocation: '1-2-3',
+          },
+          {
+            name: 'SECOND PRISONER',
+            number: 'A1234BD',
+            cellLocation: '3-2-1',
+          },
+          {
+            name: 'THIRD PRISONER',
+            number: 'A1234BE',
+            cellLocation: '3-3-3',
+          },
+        ],
+        repeat: YesNo.NO,
+      } as CreateAppointmentJourney
+
+      const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
+        `You have successfully created an appointment for 3 prisoners on ${format(tomorrow, 'EEEE d MMMM yyyy')}.`,
+      )
+    })
+  })
 })

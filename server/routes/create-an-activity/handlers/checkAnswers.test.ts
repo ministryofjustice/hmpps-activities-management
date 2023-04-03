@@ -4,10 +4,9 @@ import { when } from 'jest-when'
 import ActivitiesService from '../../../services/activitiesService'
 import CheckAnswersRoutes from './checkAnswers'
 import activity from '../../../services/fixtures/activity_1.json'
-import createScheduleRequest from '../../../services/fixtures/create_schedule_request_1.json'
 import atLeast from '../../../../jest.setup'
 import PrisonService from '../../../services/prisonService'
-import { ActivityLite, ActivityScheduleLite } from '../../../@types/activitiesAPI/types'
+import { Activity } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
@@ -114,15 +113,21 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         minimumIncentiveLevel: 'Standard',
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
         minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
+        description: 'Maths level 1',
+        startDate: '2023-01-17',
+        endDate: '2023-01-18',
+        locationId: 26149,
+        capacity: 12,
+        slots: [
+          { timeSlot: 'AM', tuesday: true },
+          { timeSlot: 'PM', friday: true },
+          { timeSlot: 'ED', friday: true },
+        ],
       }
 
       when(activitiesService.createActivity)
         .calledWith(atLeast(expectedActivity))
-        .mockResolvedValueOnce(activity as unknown as ActivityLite)
-
-      when(activitiesService.createScheduleActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValueOnce({ id: 1 } as ActivityScheduleLite)
+        .mockResolvedValueOnce(activity as unknown as Activity)
 
       await handler.POST(req, res)
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
@@ -137,22 +142,27 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         riskLevel: 'High',
         minimumIncentiveLevel: 'Standard',
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+        description: 'Maths level 1',
+        startDate: '2023-01-17',
+        endDate: '2023-01-18',
+        locationId: 26149,
+        capacity: 12,
+        slots: [
+          { timeSlot: 'AM', tuesday: true },
+          { timeSlot: 'PM', friday: true },
+          { timeSlot: 'ED', friday: true },
+        ],
       }
 
       req.session.createJourney.educationLevels = undefined
 
       when(activitiesService.createActivity)
         .calledWith(atLeast(expectedActivity))
-        .mockResolvedValueOnce(activity as unknown as ActivityLite)
-
-      when(activitiesService.createScheduleActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValueOnce({ id: 1 } as ActivityScheduleLite)
+        .mockResolvedValueOnce(activity as unknown as Activity)
 
       await handler.POST(req, res)
 
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
-      expect(activitiesService.createScheduleActivity).toHaveBeenCalledWith(1, createScheduleRequest, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
     })
   })

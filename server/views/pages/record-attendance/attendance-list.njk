@@ -114,21 +114,36 @@
                                 </a>
                             </h2>
                             <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + attendee.prisonerNumber + '</div>
-                          '
+                          ',
+                    attributes: {
+                        "data-qa": "prisoner-details"
+                    }
                 },
                 {
-                    text: attendee.location
+                    text: attendee.location,
+                    attributes: {
+                        "data-qa": "location"
+                    }
                 },
                 {
                     html: alertsList({ alerts: attendee.alerts, category: attendee.category }),
-                    classes: 'hmpps-max-width-240'
+                    classes: 'hmpps-max-width-240',
+                    attributes: {
+                        "data-qa": "alert-list"
+                    }
                 },
                 {
-                    html: renderOtherEvents(attendee.otherEvents)
+                    html: renderOtherEvents(attendee.otherEvents),
+                    attributes: {
+                        "data-qa": "other-events"
+                    }
                 },
                 {
                     html: attendanceTag(attendee.attendance) + ' ' + renderPayStatus(attendee.attendance),
-                    classes: 'govuk-!-display-none-print'
+                    classes: 'govuk-!-display-none-print',
+                    attributes: {
+                        "data-qa": "attendance"
+                    }
                 },
                 {
                     classes: 'print-only',

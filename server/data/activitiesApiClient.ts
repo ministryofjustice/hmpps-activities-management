@@ -19,7 +19,6 @@ import {
   PrisonerAllocations,
   Activity,
   ActivityCreateRequest,
-  ActivityScheduleCreateRequest,
   PrisonPayBand,
   Appointment,
   AppointmentCategorySummary,
@@ -128,14 +127,6 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
 
   postActivityCreation(createBody: ActivityCreateRequest, user: ServiceUser): Promise<ActivityLite> {
     return this.post({ path: `/activities`, authToken: user.token, data: createBody })
-  }
-
-  postActivityScheduleCreation(
-    activityId: number,
-    createBody: ActivityScheduleCreateRequest,
-    user: ServiceUser,
-  ): Promise<ActivityScheduleLite> {
-    return this.post({ path: `/activities/${activityId}/schedules`, authToken: user.token, data: createBody })
   }
 
   postAllocation(scheduleId: number, prisonerNumber: string, payBandId: number, user: ServiceUser): Promise<void> {

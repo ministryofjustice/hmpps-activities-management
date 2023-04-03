@@ -4,12 +4,14 @@ export default function setUpChangeLinks(): Router {
   const router = Router({ mergeParams: true })
 
   router.use((req, res, next) => {
-    res.redirectOrReturn = (path: string, returnTo = 'check-answers', flag = 'fromReview'): void => {
-      if (req.query[flag]) {
-        res.redirect(returnTo)
-      } else {
-        res.redirect(path)
-      }
+    if (req.query.fromReview) {
+      req.session.returnTo = 'check-answers'
+    }
+
+    res.redirectOrReturn = (path: string): void => {
+      const { returnTo } = req.session
+      req.session.returnTo = null
+      res.redirect(returnTo || path)
     }
 
     next()

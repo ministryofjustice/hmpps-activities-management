@@ -7,7 +7,7 @@ import { AppointmentType, CreateAppointmentJourney } from '../../../../routes/ap
 
 const view = fs.readFileSync('server/views/pages/appointments/create/repeat.njk')
 
-describe('Views - Create Individual Appointment - Repeat', () => {
+describe('Views - Create Appointment - Repeat', () => {
   let compiledTemplate: Template
   let viewContext = {
     session: {
@@ -26,12 +26,6 @@ describe('Views - Create Individual Appointment - Repeat', () => {
       },
       formResponses: {},
     }
-  })
-
-  it('should display journey title', () => {
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=caption]').text()).toBe('Individual appointment')
   })
 
   it('should contain enum YES and NO inputs', () => {
@@ -77,5 +71,25 @@ describe('Views - Create Individual Appointment - Repeat', () => {
     const checked = $("[name='repeat']:checked")
     expect(checked.length).toEqual(1)
     expect(checked.val()).toEqual(YesNo.NO.toString())
+  })
+
+  describe('Individual Appointment', () => {
+    it('should display journey title', () => {
+      const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('[data-qa=caption]').text()).toBe('Individual appointment')
+    })
+  })
+
+  describe('Group Appointment', () => {
+    beforeEach(() => {
+      viewContext.session.createAppointmentJourney.type = AppointmentType.GROUP
+    })
+
+    it('should display journey title', () => {
+      const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('[data-qa=caption]').text()).toBe('Group appointment')
+    })
   })
 })

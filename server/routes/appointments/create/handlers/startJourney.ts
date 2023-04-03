@@ -8,7 +8,7 @@ export default class StartJourneyRoutes {
   }
 
   GROUP = async (req: Request, res: Response): Promise<void> => {
-    req.session.createAppointmentJourney = { type: AppointmentType.GROUP }
+    req.session.createAppointmentJourney = { type: AppointmentType.GROUP, prisoners: [] }
     res.redirect('how-to-add-prisoners')
   }
 }

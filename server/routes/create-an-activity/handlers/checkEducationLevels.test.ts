@@ -19,6 +19,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectOrReturn: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -71,7 +72,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
   describe('POST', () => {
     it('should add the minimum incentive level to the session and redirect', async () => {
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('start-date')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('start-date')
     })
   })
 })

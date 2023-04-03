@@ -13,17 +13,15 @@ export default class PlannedEventsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { date, slot, location } = req.query
-    const unlockDate = toDate(date.toString())
+    const unlockDate = toDate(date as string)
     const locationName: string = (location as string) || undefined
     let { unlockFilters } = req.session
 
     if (!unlockFilters) {
-      const [prefix, locationsAtPrison] = await Promise.all([
-        this.activitiesService.getLocationPrefix(locationName, user),
-        this.activitiesService.getLocationGroups(user),
-      ])
+      const prefix = await this.activitiesService.getLocationPrefix(locationName, user)
+      const locationsAtPrison = await this.activitiesService.getLocationGroups(user)
       const subLocations = locationsAtPrison.filter(loc => loc.name === locationName)[0].children.map(loc => loc.name)
-      unlockFilters = defaultFilters(locationName, prefix.locationPrefix, unlockDate, slot.toString(), subLocations)
+      unlockFilters = defaultFilters(locationName, prefix.locationPrefix, unlockDate, slot as string, subLocations)
       req.session.unlockFilters = unlockFilters
     } else {
       // Important - during serialization to/from session storage the date object is altered to a string
