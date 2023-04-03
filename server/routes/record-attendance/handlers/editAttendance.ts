@@ -64,9 +64,10 @@ export default class EditAttendanceRoutes {
     }
 
     if (req.body.attendanceOption === 'no') {
-      const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId, user)
-
-      const instance = await this.activitiesService.getScheduledActivity(+id, user)
+      const [attendance, instance] = await Promise.all([
+          this.activitiesService.getAttendanceDetails(+attendanceId, user),
+          this.activitiesService.getScheduledActivity(+id, user),
+      ])
 
       const otherScheduledEvents = await this.activitiesService
         .getScheduledEventsForPrisoners(toDate(instance.date), [attendance.prisonerNumber], user)
