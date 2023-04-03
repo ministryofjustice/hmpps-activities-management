@@ -52,6 +52,10 @@ export default class PrisonService {
     return this.prisonerSearchApiClient.searchByPrisonerNumbers({ prisonerNumbers }, user)
   }
 
+  async getInmateByPrisonerNumber(prisonerNumber: string, user: ServiceUser): Promise<Prisoner> {
+    return this.prisonerSearchApiClient.getByPrisonerNumber(prisonerNumber, user)
+  }
+
   async getEventLocations(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
     return this.prisonApiClient.getEventLocations(prisonCode, user)
   }

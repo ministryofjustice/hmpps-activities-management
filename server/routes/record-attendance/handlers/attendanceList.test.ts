@@ -236,11 +236,15 @@ describe('Route Handlers - Attendance List', () => {
         [
           {
             id: 1,
+            status: 'COMPLETED',
             attendanceReason: 'ATTENDED',
+            issuePayment: true,
           },
           {
             id: 2,
+            status: 'COMPLETED',
             attendanceReason: 'ATTENDED',
+            issuePayment: true,
           },
         ],
         { username: 'joebloggs' },
