@@ -91,8 +91,8 @@ export default class EditAttendanceRoutes {
     const attendances = [
       {
         id: +attendanceId,
-        status: 'WAITING',
-        attendanceReason: 'ATTENDED',
+        status: AttendanceStatus.WAITING,
+        attendanceReason: AttendanceReason.ATTENDED,
         issuePayment: false,
       },
     ]
