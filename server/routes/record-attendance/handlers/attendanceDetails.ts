@@ -14,15 +14,9 @@ export default class AttendanceDetailsRoutes {
 
     const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId, user)
 
-    const prisonerNumbers = [attendance.prisonerNumber]
-
-    const attendees = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
-      inmates.map(i => ({
-        name: `${i.firstName} ${i.lastName}`,
-      })),
-    )
-
-    const attendee = attendees[0]
+    const attendee = await this.prisonService
+      .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
+      .then(i => ({ name: `${i.firstName} ${i.lastName}` }))
 
     res.render('pages/record-attendance/attendance-details', { instance, attendance, attendee })
   }

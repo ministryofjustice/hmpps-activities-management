@@ -71,18 +71,16 @@ describe('Route Handlers - Edit Attendance', () => {
           attendanceReason: { code: 'ATTENDED' },
         } as Attendance)
 
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['ABC321'], res.locals.user)
-        .mockResolvedValue([
-          {
-            prisonerNumber: 'ABC321',
-            firstName: 'Alan',
-            lastName: 'Key',
-            cellLocation: 'MDI-1-002',
-            alerts: [],
-            category: 'A',
-          },
-        ] as Prisoner[])
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('ABC321', res.locals.user)
+        .mockResolvedValue({
+          prisonerNumber: 'ABC321',
+          firstName: 'Alan',
+          lastName: 'Key',
+          cellLocation: 'MDI-1-002',
+          alerts: [],
+          category: 'A',
+        } as Prisoner)
 
       await handler.GET(req, res)
 
@@ -178,18 +176,16 @@ describe('Route Handlers - Edit Attendance', () => {
           visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC321' }],
         } as PrisonerScheduledEvents)
 
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['ABC321'], res.locals.user)
-        .mockResolvedValue([
-          {
-            prisonerNumber: 'ABC321',
-            firstName: 'Alan',
-            lastName: 'Key',
-            cellLocation: 'MDI-1-002',
-            alerts: [],
-            category: 'A',
-          },
-        ] as Prisoner[])
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('ABC321', res.locals.user)
+        .mockResolvedValue({
+          prisonerNumber: 'ABC321',
+          firstName: 'Alan',
+          lastName: 'Key',
+          cellLocation: 'MDI-1-002',
+          alerts: [],
+          category: 'A',
+        } as Prisoner)
 
       await handler.POST(req, res)
 

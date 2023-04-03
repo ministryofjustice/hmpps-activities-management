@@ -33,15 +33,9 @@ export default class EditAttendanceRoutes {
 
     const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId, user)
 
-    const prisonerNumbers = [attendance.prisonerNumber]
-
-    const attendees = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
-      inmates.map(i => ({
-        name: `${i.firstName} ${i.lastName}`,
-      })),
-    )
-
-    const attendee = attendees[0]
+    const attendee = await this.prisonService
+      .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
+      .then(i => ({ name: `${i.firstName} ${i.lastName}` }))
 
     res.render('pages/record-attendance/edit-attendance', { instance, attendance, attendee })
   }
@@ -80,15 +74,10 @@ export default class EditAttendanceRoutes {
         .then(events => events.filter(e => e.eventId !== +id))
         .then(events => events.filter(e => this.eventClashes(e, instance)))
 
-      const attendees = await this.prisonService
-        .searchInmatesByPrisonerNumbers([attendance.prisonerNumber], user)
-        .then(inmates =>
-          inmates.map(i => ({
-            name: `${i.firstName} ${i.lastName}`,
-            otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
-          })),
-        )
-      const attendee = attendees[0]
+      const attendee = await this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user).then(i => ({
+        name: `${i.firstName} ${i.lastName}`,
+        otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
+      }))
       req.session.notAttendedJourney = {}
       req.session.notAttendedJourney.selectedPrisoners = [
         {

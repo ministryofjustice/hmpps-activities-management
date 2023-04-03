@@ -71,18 +71,16 @@ describe('Route Handlers - Remove Pay', () => {
           attendanceReason: { code: 'ATTENDED' },
         } as Attendance)
 
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['ABC321'], res.locals.user)
-        .mockResolvedValue([
-          {
-            prisonerNumber: 'ABC321',
-            firstName: 'Alan',
-            lastName: 'Key',
-            cellLocation: 'MDI-1-002',
-            alerts: [],
-            category: 'A',
-          },
-        ] as Prisoner[])
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('ABC321', res.locals.user)
+        .mockResolvedValue({
+          prisonerNumber: 'ABC321',
+          firstName: 'Alan',
+          lastName: 'Key',
+          cellLocation: 'MDI-1-002',
+          alerts: [],
+          category: 'A',
+        } as Prisoner)
 
       await handler.GET(req, res)
 
