@@ -1,11 +1,9 @@
 import { Request, Response } from 'express'
-import { areIntervalsOverlapping, parse } from 'date-fns'
 import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../services/activitiesService'
 import PrisonService from '../../../services/prisonService'
-import { toDate } from '../../../utils/utils'
-import { ScheduledActivity, ScheduledEvent } from '../../../@types/activitiesAPI/types'
+import { eventClashes, toDate } from '../../../utils/utils'
 import AttendanceReason from '../../../enum/attendanceReason'
 import AttendanceStatus from '../../../enum/attendanceStatus'
 
@@ -72,7 +70,7 @@ export default class EditAttendanceRoutes {
           ...response.visits,
         ])
         .then(events => events.filter(e => e.eventId !== +id))
-        .then(events => events.filter(e => this.eventClashes(e, instance)))
+        .then(events => events.filter(e => eventClashes(e, instance)))
 
       const attendee = await this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user).then(i => ({
         name: `${i.firstName} ${i.lastName}`,
@@ -100,18 +98,5 @@ export default class EditAttendanceRoutes {
     ]
     await this.activitiesService.updateAttendances(attendances, user)
     return res.redirect(`/attendance/activities/${id}/attendance-list`)
-  }
-
-  private eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity): boolean => {
-    const timeToDate = (time: string) => parse(time, 'HH:mm', new Date())
-    const toInterval = (start: Date, end: Date) => ({ start, end })
-
-    const re = areIntervalsOverlapping(
-      // TODO: Events from prison API may not have an endtime, so default the endtime to equal the start time. May need to handle this better
-      toInterval(timeToDate(event.startTime), timeToDate(event.endTime || event.startTime)),
-      toInterval(timeToDate(thisActivity.startTime), timeToDate(thisActivity.endTime)),
-    )
-
-    return re
   }
 }

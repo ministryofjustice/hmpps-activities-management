@@ -12,7 +12,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <h1 class="govuk-heading-l">Are you sure you want to remove pay for {{ attendee.name }}?</h1>
+                <h1 class="govuk-heading-l">Are you sure you want to remove pay for {{ attendee.name | toTitleCase }}?</h1>
                 {{ govukRadios({
                   name: "removePayOption",
                   errorMessage: validationErrors | findError('removePayOption'),
