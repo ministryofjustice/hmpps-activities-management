@@ -1,7 +1,21 @@
 import { Request, Response } from 'express'
+import { Expose } from 'class-transformer'
+import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../services/activitiesService'
 import PrisonService from '../../../services/prisonService'
+import AttendanceReason from '../../../enum/attendanceReason'
+import AttendanceStatus from '../../../enum/attendanceStatus'
 
+enum RemovePayOptions {
+  YES = 'yes',
+  NO = 'no',
+}
+
+export class RemovePay {
+  @Expose()
+  @IsIn(Object.values(RemovePayOptions), { message: 'Select a remove pay option' })
+  removePayOption: string
+}
 export default class RemovePayRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
 
@@ -37,8 +51,8 @@ export default class RemovePayRoutes {
       const attendances = [
         {
           id: +attendanceId,
-          status: 'COMPLETED',
-          attendanceReason: 'ATTENDED',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReason: AttendanceReason.ATTENDED,
           issuePayment: false,
         },
       ]

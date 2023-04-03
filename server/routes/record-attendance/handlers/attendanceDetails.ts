@@ -10,9 +10,7 @@ export default class AttendanceDetailsRoutes {
     const { id } = req.params
     const { attendanceId } = req.params
 
-    const instance = await this.activitiesService.getScheduledActivity(+id, user).then(i => ({
-      ...i,
-    }))
+    const instance = await this.activitiesService.getScheduledActivity(+id, user)
 
     const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId, user)
 
@@ -20,7 +18,7 @@ export default class AttendanceDetailsRoutes {
 
     const attendees = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
       inmates.map(i => ({
-        name: `${this.capitalize(i.firstName)} ${this.capitalize(i.lastName)}`,
+        name: `${i.firstName} ${i.lastName}`,
       })),
     )
 
@@ -33,9 +31,5 @@ export default class AttendanceDetailsRoutes {
     const { id } = req.params
     const { attendanceId } = req.params
     return res.redirect(`/attendance/activities/${id}/attendance-details/${attendanceId}/remove-pay`)
-  }
-
-  private capitalize(s: string) {
-    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
   }
 }

@@ -6,6 +6,8 @@ import ActivitiesService from '../../../services/activitiesService'
 import PrisonService from '../../../services/prisonService'
 import { toDate } from '../../../utils/utils'
 import { ScheduledActivity, ScheduledEvent } from '../../../@types/activitiesAPI/types'
+import AttendanceReason from '../../../enum/attendanceReason'
+import AttendanceStatus from '../../../enum/attendanceStatus'
 
 enum EditAttendanceOptions {
   YES = 'yes',
@@ -27,9 +29,7 @@ export default class EditAttendanceRoutes {
     const { id } = req.params
     const { attendanceId } = req.params
 
-    const instance = await this.activitiesService.getScheduledActivity(+id, user).then(i => ({
-      ...i,
-    }))
+    const instance = await this.activitiesService.getScheduledActivity(+id, user)
 
     const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId, user)
 
@@ -37,7 +37,7 @@ export default class EditAttendanceRoutes {
 
     const attendees = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
       inmates.map(i => ({
-        name: `${this.capitalize(i.firstName)} ${this.capitalize(i.lastName)}`,
+        name: `${i.firstName} ${i.lastName}`,
       })),
     )
 
@@ -54,8 +54,8 @@ export default class EditAttendanceRoutes {
       const attendances = [
         {
           id: +attendanceId,
-          status: 'COMPLETED',
-          attendanceReason: 'ATTENDED',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReason: AttendanceReason.ATTENDED,
           issuePayment: true,
         },
       ]
@@ -65,8 +65,8 @@ export default class EditAttendanceRoutes {
 
     if (req.body.attendanceOption === EditAttendanceOptions.NO) {
       const [attendance, instance] = await Promise.all([
-          this.activitiesService.getAttendanceDetails(+attendanceId, user),
-          this.activitiesService.getScheduledActivity(+id, user),
+        this.activitiesService.getAttendanceDetails(+attendanceId, user),
+        this.activitiesService.getScheduledActivity(+id, user),
       ])
 
       const otherScheduledEvents = await this.activitiesService
@@ -84,11 +84,12 @@ export default class EditAttendanceRoutes {
         .searchInmatesByPrisonerNumbers([attendance.prisonerNumber], user)
         .then(inmates =>
           inmates.map(i => ({
-            name: `${this.capitalize(i.firstName)} ${this.capitalize(i.lastName)}`,
+            name: `${i.firstName} ${i.lastName}`,
             otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
           })),
         )
       const attendee = attendees[0]
+      req.session.notAttendedJourney = {}
       req.session.notAttendedJourney.selectedPrisoners = [
         {
           attendanceId: +attendanceId,
@@ -110,10 +111,6 @@ export default class EditAttendanceRoutes {
     ]
     await this.activitiesService.updateAttendances(attendances, user)
     return res.redirect(`/attendance/activities/${id}/attendance-list`)
-  }
-
-  private capitalize(s: string) {
-    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
   }
 
   private eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity): boolean => {

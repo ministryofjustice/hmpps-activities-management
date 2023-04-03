@@ -6,6 +6,8 @@ import { getAttendanceSummary, toDate } from '../../../utils/utils'
 import PrisonService from '../../../services/prisonService'
 import { Attendance, ScheduledActivity, ScheduledEvent } from '../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../validators/hasAtLeastOne'
+import AttendanceReason from '../../../enum/attendanceReason'
+import AttendanceStatus from '../../../enum/attendanceStatus'
 
 export class AttendanceList {
   @Expose()
@@ -75,8 +77,8 @@ export default class AttendanceListRoutes {
       if (selectedAttendanceIds) {
         const attendances = selectedAttendanceIds.map(attendance => ({
           id: +attendance,
-          status: 'COMPLETED',
-          attendanceReason: 'ATTENDED',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReason: AttendanceReason.ATTENDED,
           issuePayment: true,
         }))
         await this.activitiesService.updateAttendances(attendances, user)
@@ -116,7 +118,7 @@ export default class AttendanceListRoutes {
       .searchInmatesByPrisonerNumbers(selectedPrisoners, user)
       .then(inmates =>
         inmates.map(i => ({
-          name: `${this.capitalize(i.firstName)} ${this.capitalize(i.lastName)}`,
+          name: `${i.firstName} ${i.lastName}`,
           prisonerNumber: i.prisonerNumber,
           location: i.cellLocation,
           otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
@@ -139,7 +141,7 @@ export default class AttendanceListRoutes {
 
   private getAttendanceLabel = (prisonerNumber: string, attendances: Attendance[]) => {
     const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
-    if (attendance.status === 'WAITING') {
+    if (attendance.status === AttendanceStatus.WAITING) {
       return 'Not recorded yet'
     }
     return attendance.attendanceReason.description === 'ATTENDED' ? 'Attended' : 'Absent'
@@ -161,9 +163,5 @@ export default class AttendanceListRoutes {
     )
 
     return re
-  }
-
-  private capitalize(s: string) {
-    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
   }
 }

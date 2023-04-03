@@ -11,11 +11,11 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <h1 class="govuk-heading-l">Change attendance details for {{ attendee.name }}</h1>
+                <h1 class="govuk-heading-l">Change attendance details for {{ attendee.name | toTitleCase }}</h1>
                 <div class="govuk-inset-text">
                     <a href="/attendance/activities/{{ instance.activitySchedule.activity.id }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}
                </div>
-                <h2 class="govuk-heading-m">Did {{ attendee.name }} attend the {{ instance.activitySchedule.activity.summary }} on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}?</h2>
+                <h2 class="govuk-heading-m">Did {{ attendee.name | toTitleCase }} attend the {{ instance.activitySchedule.activity.summary }} on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}?</h2>
 
                 {{ govukRadios({
                   name: "attendanceOption",

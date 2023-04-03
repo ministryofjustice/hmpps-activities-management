@@ -89,7 +89,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <h1 class="govuk-heading-l">Attendance details for {{ attendee.name }}</h1>
+                <h1 class="govuk-heading-l">Attendance details for {{ attendee.name | toTitleCase }}</h1>
                 <div class="govuk-inset-text">
                     <a href="/attendance/activities/{{ instance.activitySchedule.activity.id }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}
                </div>

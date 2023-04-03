@@ -11,7 +11,7 @@ import CancelSessionConfirmationRoutes, { CancelConfirmForm } from './handlers/c
 import UncancelSessionConfirmationRoutes, { UncancelConfirmForm } from './handlers/uncancel-session/confirmation'
 import AttendanceDetailsRoutes from './handlers/attendanceDetails'
 import EditAttendanceRoutes, { EditAttendance } from './handlers/editAttendance'
-import RemovePayRoutes from './handlers/removePay'
+import RemovePayRoutes, { RemovePay } from './handlers/removePay'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -52,7 +52,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/activities/:id/attendance-details/:attendanceId/edit-attendance', editAttendanceHandler.GET)
   post('/activities/:id/attendance-details/:attendanceId/edit-attendance', editAttendanceHandler.POST, EditAttendance)
   get('/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.GET)
-  post('/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.POST)
+  post('/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.POST, RemovePay)
 
   return router
 }
