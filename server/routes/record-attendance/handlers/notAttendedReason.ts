@@ -47,7 +47,7 @@ export default class NotAttendedReasonRoutes {
     req.session.notAttendedJourney.selectedPrisoners.forEach(selectedPrisoner => {
       attendanceUpdates.push({
         id: selectedPrisoner.attendanceId,
-        status: 'COMPLETED',
+        status: AttendanceStatus.COMPLETED,
         attendanceReason: notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason,
         comment: notAttendedData[selectedPrisoner.prisonerNumber].moreDetail,
         issuePayment:
