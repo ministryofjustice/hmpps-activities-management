@@ -10,6 +10,7 @@ import NotAttendedData, {
   PayRequired,
   ReasonEnteredForAllPrisoners,
 } from '../../../validators/validateNotAttendedData'
+import AttendanceStatus from '../../../enum/attendanceStatus'
 
 export class NotAttendedReason {
   @Expose()
