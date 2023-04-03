@@ -46,6 +46,7 @@ export default class RemovePayRoutes {
           status: AttendanceStatus.COMPLETED,
           attendanceReason: AttendanceReason.ATTENDED,
           issuePayment: false,
+          caseNote: req.body.caseNote,
         },
       ]
       await this.activitiesService.updateAttendances(attendances, user)
