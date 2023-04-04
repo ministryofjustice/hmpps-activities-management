@@ -50,13 +50,13 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
   describe('type validation', () => {
     it('validation fails if a value is not entered', async () => {
       const body = {
-        capacity: '',
+        capacity: ' ',
       }
 
       const requestObject = plainToInstance(Capacity, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'capacity', error: 'Enter a capacity for the schedule more than 0' }])
+      expect(errors).toEqual([{ property: 'capacity', error: 'Enter a capacity for the activity more than 0' }])
     })
 
     it('validation fails if a bad value is entered', async () => {
@@ -67,7 +67,31 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       const requestObject = plainToInstance(Capacity, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'capacity', error: 'Enter a capacity for the schedule more than 0' }])
+      expect(errors).toEqual(
+        expect.arrayContaining([{ property: 'capacity', error: 'Enter a capacity for the activity' }]),
+      )
+    })
+
+    it('validation fails if a value too small is entered', async () => {
+      const body = {
+        capacity: '0',
+      }
+
+      const requestObject = plainToInstance(Capacity, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'capacity', error: 'Enter a capacity for the activity more than 0' }])
+    })
+
+    it('validation fails if a value too large is entered', async () => {
+      const body = {
+        capacity: '1000',
+      }
+
+      const requestObject = plainToInstance(Capacity, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'capacity', error: 'Enter a capacity for the activity less than 1000' }])
     })
   })
 })
