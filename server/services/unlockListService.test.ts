@@ -76,6 +76,8 @@ const scheduledEvents = {
   appointments: [],
   visits: [],
   courtHearings: [],
+  externalTransfers: [],
+  adjudications: [],
   activities: [],
 } as PrisonerScheduledEvents
 
@@ -86,6 +88,8 @@ const scheduledEventsWithActivities = {
   appointments: [],
   visits: [],
   courtHearings: [],
+  adjudications: [],
+  externalTransfers: [],
   activities: [
     {
       prisonCode: 'MDI',
@@ -115,6 +119,8 @@ const scheduledEventsWithCourt = {
   endDate: '',
   appointments: [],
   visits: [],
+  adjudications: [],
+  externalTransfers: [],
   courtHearings: [
     {
       prisonCode: 'MDI',

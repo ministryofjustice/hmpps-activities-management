@@ -3,8 +3,10 @@
         {% for e in events %}
             {% if not loop.first %}<hr class="mid-grey-tint-20-hr" />{% endif %}
             <div class="govuk-!-font-weight-bold">{{ e.event }}</div>
-            <div>{{ e.startTime }}{% if e.endTime %} - {{ e.endTime }}{% endif %}<div>
-            <div>{{ e.location | title }}</div>
+            {% if e.eventType != 'EXTERNAL_TRANSFER' %}
+                <div>{{ e.startTime }}{% if e.endTime %} - {{ e.endTime }}{% endif %}<div>
+                <div>{{ e.location | title }}</div>
+            {% endif %}
         {% endfor %}
     </div>
 {% endmacro %}
