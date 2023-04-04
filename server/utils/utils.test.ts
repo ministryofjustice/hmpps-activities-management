@@ -258,8 +258,11 @@ describe('utils', () => {
       expect(getAttendanceSummary(attendance)).toEqual({
         allocated: 3,
         attended: 1,
+        attendedPercentage: '33',
         notAttended: 1,
+        notAttendedPercentage: '33',
         notRecorded: 1,
+        notRecordedPercentage: '33',
       })
     })
   })
@@ -365,10 +368,10 @@ describe('utils', () => {
       expect(fixedPointString).toEqual('1234.50')
     })
 
-    it('should return null if number not provided', () => {
+    it('should return 0 if number not provided', () => {
       const number: number = null
       const fixedPointString = toFixed(number, 2)
-      expect(fixedPointString).toEqual(null)
+      expect(fixedPointString).toEqual('0.00')
     })
   })
 })

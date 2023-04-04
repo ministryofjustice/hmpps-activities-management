@@ -284,12 +284,26 @@ export const getAttendanceSummary = (attendance: Attendance[]) => {
   const attended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason.code === 'ATTENDED').length
   const notAttended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason.code !== 'ATTENDED').length
   const notRecorded = allocated - attended - notAttended
+  const attendedPercentage = toFixed((attended / allocated) * 100, 0)
+  const notAttendedPercentage = toFixed((notAttended / allocated) * 100, 0)
+  const notRecordedPercentage = toFixed((notRecorded / allocated) * 100, 0)
 
-  return { allocated, attended, notAttended, notRecorded }
+  return {
+    allocated,
+    attended,
+    notAttended,
+    notRecorded,
+    attendedPercentage,
+    notAttendedPercentage,
+    notRecordedPercentage,
+  }
 }
 
 export const toFixed = (num: number, decimals = 2) => {
-  if (!num) return null
+  if (!num) {
+    // eslint-disable-next-line no-param-reassign
+    num = 0
+  }
   return num.toFixed(decimals)
 }
 
