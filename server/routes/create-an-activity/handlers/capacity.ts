@@ -1,12 +1,13 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
-import { IsNotEmpty, Min } from 'class-validator'
+import { IsNumber, Max, Min } from 'class-validator'
 
 export class Capacity {
   @Expose()
   @Type(() => Number)
-  @IsNotEmpty({ message: 'Enter a capacity for the schedule' })
-  @Min(1, { message: 'Enter a capacity for the schedule more than 0' })
+  @IsNumber({}, { message: 'Enter a capacity for the activity' })
+  @Min(1, { message: 'Enter a capacity for the activity more than 0' })
+  @Max(999, { message: 'Enter a capacity for the activity less than 1000' })
   capacity: number
 }
 
