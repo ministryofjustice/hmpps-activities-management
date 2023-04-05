@@ -300,10 +300,7 @@ export const getAttendanceSummary = (attendance: Attendance[]) => {
 }
 
 export const toFixed = (num: number, decimals = 2) => {
-  if (!num) {
-    // eslint-disable-next-line no-param-reassign
-    num = 0
-  }
+  if (!num) return null
   return num.toFixed(decimals)
 }
 

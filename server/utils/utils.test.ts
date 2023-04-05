@@ -371,7 +371,7 @@ describe('utils', () => {
     it('should return 0 if number not provided', () => {
       const number: number = null
       const fixedPointString = toFixed(number, 2)
-      expect(fixedPointString).toEqual('0.00')
+      expect(fixedPointString).toEqual(null)
     })
   })
 })
