@@ -5,6 +5,7 @@ import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
+import { AppointmentType } from '../../../../routes/appointments/create/journey'
 
 const view = fs.readFileSync('server/views/pages/appointments/occurrence-details/occurrence.njk')
 
@@ -22,6 +23,7 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     viewContext = {
       occurrence: {
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
+        appointmentType: AppointmentType.INDIVIDUAL,
       } as AppointmentOccurrenceDetails,
     }
   })
@@ -37,5 +39,18 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     expect($('[data-qa=heading]').text().trim()).toBe(
       `Test Category appointment - ${formatDate(tomorrow, 'EEEE d MMMM yyyy')}`,
     )
+  })
+
+  it('should display prisoner summary if individual appointment', () => {
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    expect($('[data-qa=prisoner-summary]').length).toBe(1)
+    expect($('[data-qa=prisoner-list]').length).toBe(0)
+  })
+
+  it('should display prisoner list if group appointment', () => {
+    viewContext.occurrence.appointmentType = AppointmentType.GROUP
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    expect($('[data-qa=prisoner-list]').length).toBe(1)
+    expect($('[data-qa=prisoner-summary]').length).toBe(0)
   })
 })

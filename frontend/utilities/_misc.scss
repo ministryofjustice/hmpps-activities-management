@@ -90,3 +90,10 @@ body {
 .stacktrace {
   overflow: auto;
 }
+
+.govuk-summary-list--vertical-align-top {
+  dt {
+    vertical-align: top;
+  }
+}
+

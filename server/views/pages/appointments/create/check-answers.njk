@@ -11,7 +11,7 @@
 
 {% set summaryListRows = [] %}
 
-{% if session.createAppointmentJourney.type == 'individual' %}
+{% if session.createAppointmentJourney.type == AppointmentType.INDIVIDUAL %}
     {% set prisoner = session.createAppointmentJourney.prisoners[0] %}
     {% set summaryListRows = (summaryListRows.push(
         {
@@ -213,7 +213,7 @@
                 attributes: { 'data-qa': 'appointment-details' }
             }) }}
 
-            {{ prisonersList() if session.createAppointmentJourney.type == 'group' }}
+            {{ prisonersList() if session.createAppointmentJourney.type == AppointmentType.GROUP }}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -256,7 +256,10 @@
                 text: "Prisoner"
             },
             value: {
-                text: showProfileLink(prisoner.number, prisoner.name, false)
+                html: showProfileLink({
+                    name: prisoner.name,
+                    prisonerNumber: prisoner.number
+                })
             }
         }), prisonerListRows) %}
     {% endfor %}

@@ -2,8 +2,8 @@ import { YesNo } from '../../../@types/activities'
 import { AppointmentRepeatPeriod } from '../../../@types/activitiesAPI/types'
 
 export enum AppointmentType {
-  INDIVIDUAL = 'individual',
-  GROUP = 'group',
+  INDIVIDUAL = 'INDIVIDUAL',
+  GROUP = 'GROUP',
 }
 
 export type CreateAppointmentJourney = {

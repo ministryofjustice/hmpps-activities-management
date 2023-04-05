@@ -1,16 +1,21 @@
-{% macro showProfileLink(prisonerNumber, displayName, link = true) %}
-    <div class="hmpps-inline-block">
+{% macro showProfileLink(options = {}) %}
+    <div class="hmpps-inline-block" data-qa="prisoner-summary">
       <div data-qa="prisoner-name">
-        {% if link %}
-          <a href="{{ dpsUrl }}/prisoner/{{ prisonerNumber }}"
+        {% if options.link %}
+          <a href="{{ dpsUrl }}/prisoner/{{ options.prisonerNumber }}"
             target="_blank"
             class="govuk-link govuk-link--no-visited-state">
-            {{ displayName | toTitleCase | prisonerName }}
+            {{ options.name | toTitleCase | prisonerName }}
           </a>
         {% else %}
-          {{ displayName | toTitleCase | prisonerName(false) }}
+          {{ options.name | toTitleCase | prisonerName(false) }}
         {% endif %}
       </div>
-      <div class="govuk-!-font-size-14" data-qa="prisoner-number">{{ prisonerNumber }}</div>
+      {% if options.prisonerNumber %}
+        <div class="govuk-!-font-size-14" data-qa="prisoner-number">{{ options.prisonerNumber }}</div>
+      {% endif %}
+      {% if options.cellLocation %}
+        <div class="govuk-!-font-size-14" data-qa="prisoner-cell-location">{{ options.cellLocation }}</div>
+      {% endif %}
     </div>
 {% endmacro %}

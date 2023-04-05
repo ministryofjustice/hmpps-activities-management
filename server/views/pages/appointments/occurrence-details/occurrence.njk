@@ -4,20 +4,22 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
+{% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
 
 {% set pageTitle = "Appointments Management - Appointment Occurrence Details" %}
 {% set pageId = 'appointment-occurrence-view-details-page' %}
 {% set backLinkHref = "/appointments/" + occurrence.appointmentId %}
 
-{% set summaryListRows = [
-    {
-        key: {
-            text: "Prisoner"
-        },
-        value: {
-            html: appointmentPrisonerSummary(occurrence.prisoners[0].firstName + ' ' + occurrence.prisoners[0].lastName, occurrence.prisoners[0].prisonerNumber, occurrence.prisoners[0].cellLocation, dpsUrl)
-        }
+{% set summaryListRows = [] if occurrence.appointmentType == AppointmentType.GROUP else [{
+    key: {
+        text: "Prisoner"
     },
+    value: {
+        html: appointmentPrisonerSummary(occurrence.prisoners[0].firstName + ' ' + occurrence.prisoners[0].lastName, occurrence.prisoners[0].prisonerNumber, occurrence.prisoners[0].cellLocation, dpsUrl)
+    }
+}] %}
+
+{% set summaryListRows = (summaryListRows.push(
     {
         key: {
             text: "Category"
@@ -58,19 +60,21 @@
             text: occurrence.endTime
         }
     }
-] %}
+), summaryListRows) %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa='caption'>View and edit appointment occurrence</span>
             <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}</h1>
-            <h2 class="govuk-heading-m">Appointment details</h2>
+            <h2 class="govuk-heading-m">Appointment occurrence details</h2>
             {{ govukSummaryList({
                 rows: summaryListRows,
                 classes: "govuk-!-margin-bottom-9",
                 attributes: { 'data-qa': 'appointment-details' }
             }) }}
+
+            {{ prisonerList(occurrence.prisoners) if occurrence.appointmentType == AppointmentType.GROUP }}
 
             {{ govukSummaryList({
                 rows: [
@@ -87,8 +91,18 @@
                 attributes: { 'data-qa': 'user-details' }
             }) }}
 
-            <p class="govuk-body govuk-!-display-none-print no-js-hidden">
-                <a href="movement-slip/{{ occurrence.id }}" target="_blank" class="govuk-link govuk-link--no-visited-state" data-qa="print-movement-slip-link">Print movement slip</a>
+            <p class="govuk-body govuk-!-display-none-print">
+                {{ govukButton({
+                    text: "Print movement slip",
+                    href: 'movement-slip/' + occurrence.id,
+                    attributes: {
+                        'data-qa': 'print-movement-slip-link'
+                    }
+                }) }}
+            </p>
+
+            <p class="govuk-body govuk-!-display-none-print">
+                <a href="/appointments/{{ occurrence.appointmentId }}" class="govuk-link govuk-link--no-visited-state">Back to appointment details</a>
             </p>
         </div>
     </div>
