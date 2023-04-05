@@ -43,11 +43,11 @@
                                      id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
                                     {{ activity.description }}
                                 </div>
-                                <div class="govuk-body govuk-!-display-block"
-                                     id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
-                                    {{ activity.start | formatDate('h:mm aaa') }}
-                                    to {{ activity.end | formatDate('h:mm aaa') }}
-                                </div>
+                                {% if activity.description != 'EXTERNAL_TRANSFER' %}
+                                    <div class="govuk-body govuk-!-display-block" id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
+                                        {{ activity.start | formatDate('h:mm aaa') }} to {{ activity.end | formatDate('h:mm aaa') }}
+                                    </div>
+                                {% endif %}
                             </div>
                         {% else %}
                             <p class='govuk-body'
@@ -139,11 +139,11 @@
                                                  id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
                                                 {{ activity.description }}
                                             </div>
-                                            <div class="govuk-body govuk-!-display-block"
-                                                 id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
-                                                {{ activity.start | formatDate('h:mm aaa') }}
-                                                to {{ activity.end | formatDate('h:mm aaa') }}
-                                            </div>
+                                            {% if activity.description != 'EXTERNAL_TRANSFER' %}
+                                                <div class="govuk-body govuk-!-display-block" id="{{ params.id }}-mobile-calendar-day-activity-description-{{ dayLoop.index }}-{{ loop.index }}">
+                                                    {{ activity.start | formatDate('h:mm aaa') }} to {{ activity.end | formatDate('h:mm aaa') }}
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     {% else %}
                                         <p class='govuk-body'
