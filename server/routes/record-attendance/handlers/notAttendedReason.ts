@@ -10,6 +10,7 @@ import NotAttendedData, {
   PayRequired,
   ReasonEnteredForAllPrisoners,
 } from '../../../validators/validateNotAttendedData'
+import AttendanceStatus from '../../../enum/attendanceStatus'
 
 export class NotAttendedReason {
   @Expose()
@@ -47,6 +48,7 @@ export default class NotAttendedReasonRoutes {
     req.session.notAttendedJourney.selectedPrisoners.forEach(selectedPrisoner => {
       attendanceUpdates.push({
         id: selectedPrisoner.attendanceId,
+        status: AttendanceStatus.COMPLETED,
         attendanceReason: notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason,
         comment: notAttendedData[selectedPrisoner.prisonerNumber].moreDetail,
         issuePayment:

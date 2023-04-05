@@ -58,7 +58,6 @@ export default class UnlockListService {
     const locationFilters = unlockFilters.locationFilters.filter(loc => loc.checked === true).map(loc => loc.value)
     const filteredPrisoners = prisoners.filter(prisoner => locationFilters.includes(prisoner.locationSubGroup) === true)
 
-    // Get the scheduled events from their master source for these prisoners (activities, court, visits, appointments)
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       prison,
       toDateString(unlockFilters.unlockDate),
@@ -67,16 +66,26 @@ export default class UnlockListService {
       unlockFilters.timeSlot,
     )
 
-    // TODO: Adjudication hearings (Check with Adjudications team for rolled-out prisons and API options)
-    // TODO: Transfers - already have endpoint in prisonAPI for these
-
     // Match the prisoners with their events by prisonerNumber
     const unlockListItems = filteredPrisoners.map(prisoner => {
       const appointments = scheduledEvents?.appointments.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
       const courtHearings = scheduledEvents?.courtHearings.filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
       const visits = scheduledEvents?.visits.filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
+      const adjudications = scheduledEvents?.adjudications
+        .filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
+        .map(adj => ({ ...adj, event: 'Adjudication hearing' }))
+      const transfers = scheduledEvents?.externalTransfers
+        .filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
+        .map(tra => ({ ...tra, event: 'External transfer' }))
       const activities = scheduledEvents?.activities.filter(act => act.prisonerNumber === prisoner.prisonerNumber)
-      const allEventsForPrisoner = [...appointments, ...courtHearings, ...visits, ...activities]
+      const allEventsForPrisoner = [
+        ...appointments,
+        ...courtHearings,
+        ...visits,
+        ...adjudications,
+        ...transfers,
+        ...activities,
+      ]
 
       return {
         ...prisoner,
@@ -116,7 +125,7 @@ export default class UnlockListService {
     }
 
     // TODO: Check rules - event types which are always off-wing?
-    const leavingEventTypes = ['COURT_HEARING', 'TRANSFER', 'ADJUDICATION_HEARING', 'VISIT']
+    const leavingEventTypes = ['COURT_HEARING', 'EXTERNAL_TRANSFER', 'ADJUDICATION_HEARING', 'VISIT']
     const eventsOffWing = item.events.filter(ev => leavingEventTypes.includes(ev.eventType))
     if (eventsOffWing.length > 0) {
       return true

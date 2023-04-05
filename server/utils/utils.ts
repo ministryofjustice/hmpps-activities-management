@@ -12,13 +12,14 @@ import {
   isToday,
   isTomorrow,
   isYesterday,
+  areIntervalsOverlapping,
 } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
-import { Attendance } from '../@types/activitiesAPI/types'
+import { Attendance, ScheduledActivity, ScheduledEvent } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 
 const properCase = (word: string): string =>
@@ -302,4 +303,17 @@ export const exampleDateOneWeekAhead = (message: string) => {
   const nextWeek = new Date()
   nextWeek.setDate(nextWeek.getDate() + 7)
   return message + formatDate(nextWeek, 'dd MM yyyy')
+}
+
+export const eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity) => {
+  const timeToDate = (time: string) => parse(time, 'HH:mm', new Date())
+  const toInterval = (start: Date, end: Date) => ({ start, end })
+
+  const re = areIntervalsOverlapping(
+    // TODO: Events from prison API may not have an endtime, so default the endtime to equal the start time. May need to handle this better
+    toInterval(timeToDate(event.startTime), timeToDate(event.endTime || event.startTime)),
+    toInterval(timeToDate(thisActivity.startTime), timeToDate(thisActivity.endTime)),
+  )
+
+  return re
 }

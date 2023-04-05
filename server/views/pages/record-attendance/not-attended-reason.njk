@@ -166,12 +166,12 @@
                         {% endif %}
                     {% endfor %}
                     <h2 class="govuk-fieldset__legend--xl">
-                        <span>Select a reason why {{ prisoner.prisonerName }} did not attend</span>
+                        <span>Select a reason why {{ prisoner.prisonerName | toTitleCase }} did not attend</span>
                     </h2>
                     {{ govukRadios({
                         fieldset: {
                             legend: {
-                                text: "Why did " + prisoner.prisonerName + " not attend?",
+                                text: "Why did " + prisoner.prisonerName | toTitleCase + " not attend?",
                                 isPageHeading: true,
                                 classes: "govuk-label"
                             }
