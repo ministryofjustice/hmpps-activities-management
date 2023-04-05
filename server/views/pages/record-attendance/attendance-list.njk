@@ -11,29 +11,8 @@
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
-
-{% block beforeContent %}
-    {{ govukPhaseBanner({
-    attributes: {
-      role: "complementary"
-    },
-    tag: {
-      text: "beta"
-    },
-    classes: 'govuk-!-display-none-print',
-    html: 'This is a new service – your feedback will help us to improve it.'
-    }) }}
-
-    <nav class="govuk-!-display-none-print">
-      {{ govukBackLink({
-        text: "Back to all activities on " + instance.date | toDate | formatDate('dd MMMM yyyy'),
-        href: backLinkHref,
-        classes: 'js-backlink' if not noJsBackLink
-      }) }}
-    </nav>
-    {% include 'partials/formErrorSummary.njk' %}
-    <span class="govuk-visually-hidden" id="{{ pageId }}"></span>
-{% endblock %}
+{% set backLinkHref = "/attendance/select-period" %}
+{% set backLinkText = "Back to all activities on " + instance.date | toDate | formatDate('dd MMMM yyyy') %}
 
 {% block content %}
     <div class="govuk-grid-row">
