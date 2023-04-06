@@ -121,10 +121,13 @@ describe('Route Handlers - Attendance List', () => {
         activity: {
           allocated: 3,
           attended: 1,
+          attendedPercentage: '33',
           location: 'Houseblock 1',
           name: 'Maths level 1',
           notAttended: 1,
+          notAttendedPercentage: '33',
           notRecorded: 1,
+          notRecordedPercentage: '33',
         },
         instance: {
           id: 1,

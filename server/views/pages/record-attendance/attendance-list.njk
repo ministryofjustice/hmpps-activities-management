@@ -12,6 +12,7 @@
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
 {% set backLinkHref = "/attendance/select-period" %}
+{% set backLinkText = "Back to all activities on " + instance.date | toDate | formatDate('dd MMMM yyyy') %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -36,14 +37,18 @@
             {% endif %}
 
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
-                <span class="govuk-caption-l govuk-!-display-none-print">Record attendance</span>
-                {{ activity.name }}: {{ activity.location }}
-                <span class="govuk-caption-l">{{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('EEEE, do MMMM yyyy') }}</span>
+                {{ activity.name }} - record attendance
+                <span class="govuk-caption-l">
+                    Time: {{ instance.startTime }} - {{ instance.endTime }}
+                </span>
+                <span class="govuk-caption-l">
+                    Date: {{ instance.date | toDate | formatDate('EEEE, dd MMMM yyyy') }}
+                </span>
+                <span class="govuk-caption-l">
+                    Location: {{ activity.location }}
+                </span>
             </h1>
-            <ul class="govuk-list govuk-!-display-none-print">
-                <li><a href="/attendance/select-period" class="govuk-link govuk-!-font-size-19 js-backlink">Choose a different activity</a></li>
-                <li><a href="/attendance/select-period" class="govuk-link govuk-!-font-size-19">View the schedule for a different day</a></li>
-            </ul>
+
             <div class="govuk-button-group govuk-!-display-none-print">
                 {{ govukButton({
                     text: "Print attendance list",
@@ -70,15 +75,15 @@
             <ul class="govuk-list">
                 <li>
                     <span>Attended:</span>
-                    <span class="govuk-!-font-weight-bold">{{ activity.attended }}</span>
+                    <span class="govuk-!-font-weight-bold">{{ activity.attended }}</span> ({{ activity.attendedPercentage }}%)
                 </li>
                 <li>
                     <span>Absent:</span>
-                    <span class="govuk-!-font-weight-bold">{{ activity.notAttended }}</span>
+                    <span class="govuk-!-font-weight-bold">{{ activity.notAttended }}</span> ({{ activity.notAttendedPercentage }}%)
                 </li>
                 <li>
                     <span>Not recorded:</span>
-                    <span class="govuk-!-font-weight-bold">{{ activity.notRecorded }}</span>
+                    <span class="govuk-!-font-weight-bold">{{ activity.notRecorded }}</span> ({{ activity.notRecordedPercentage }}%)
                 </li>
             </ul>
         </div>
@@ -202,6 +207,28 @@
             ]
         }) }}
     </form>
+    <nav class="govuk-pagination govuk-pagination--block" role="navigation" aria-label="results">
+        {% if instance.previousScheduledInstanceId %}
+            <div class="govuk-pagination__prev">
+              <a class="govuk-link govuk-pagination__link" href="/attendance/activities/{{ instance.previousScheduledInstanceId }}/attendance-list" rel="prev">
+                <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                  <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                </svg>
+                <span class="govuk-pagination__link-title">Previous session</span><span class="govuk-visually-hidden">:</span>
+                  <span class="govuk-pagination__link-label">{{ instance.previousScheduledInstanceDate | toDate | formatDate('dd MMMM yyyy') }}</span></a>
+            </div>
+        {% endif %}
+        {% if instance.nextScheduledInstanceId %}
+            <div class="govuk-pagination__next">
+              <a class="govuk-link govuk-pagination__link" href="/attendance/activities/{{ instance.nextScheduledInstanceId }}/attendance-list" rel="next">
+              <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+              </svg>
+                <span class="govuk-pagination__link-title">Next session</span><span class="govuk-visually-hidden">:</span>
+                  <span class="govuk-pagination__link-label">{{ instance.nextScheduledInstanceDate | toDate | formatDate('dd MMMM yyyy') }}</span></a>
+            </div>
+        {% endif %}
+    </nav>
 {% endblock %}
 
 {% macro renderOtherEvents(otherEvents) %}
