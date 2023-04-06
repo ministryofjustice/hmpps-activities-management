@@ -247,14 +247,21 @@
     {% endfor %}
 {% endmacro %}
 
-{# TODO – Render recorded pay status for attended activities #}
 {% macro renderPayStatus(attendance) %}
     {% if attendance.issuePayment or attendance.payAmount > 0 %}
         {{ govukTag({
-            text: "Pay",
+            text: "pay",
             classes: "govuk-tag--green"
            })
         }}
+    {% else %}
+        {% if attendance.status !=  'WAITING' %}
+            {{ govukTag({
+                text: "no pay",
+                classes: "govuk-tag--red"
+               })
+            }}
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
