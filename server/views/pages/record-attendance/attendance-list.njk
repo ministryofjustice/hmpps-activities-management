@@ -250,14 +250,14 @@
 {% macro renderPayStatus(attendance) %}
     {% if attendance.issuePayment or attendance.payAmount > 0 %}
         {{ govukTag({
-            text: "pay",
+            text: "Pay",
             classes: "govuk-tag--green"
            })
         }}
     {% else %}
         {% if attendance.status !=  'WAITING' %}
             {{ govukTag({
-                text: "no pay",
+                text: "No pay",
                 classes: "govuk-tag--red"
                })
             }}
