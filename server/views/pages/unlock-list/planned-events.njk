@@ -181,7 +181,11 @@
                     {% set rows = (rows.push([
                         {
                             attributes: { id: 'activity-' + loop.index, "data-sort-value": item.displayName },
-                            html: showProfileLink(item.prisonerNumber, item.displayName),
+                            html: showProfileLink({
+                                name: item.displayName,
+                                prisonerNumber: item.prisonerNumber,
+                                link: true
+                            }),
                             classes: 'govuk-table_cell'
                         },
                         {

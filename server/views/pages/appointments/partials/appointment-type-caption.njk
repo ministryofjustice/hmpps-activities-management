@@ -1,7 +1,7 @@
 {% macro appointmentTypeCaption(appointmentType) %}
-  {% if appointmentType == 'individual' %}
+  {% if appointmentType == AppointmentType.INDIVIDUAL %}
     <span class="govuk-caption-l" data-qa="caption">Individual appointment</span>
-  {% elseif appointmentType == 'group' %}
+  {% elseif appointmentType == AppointmentType.GROUP %}
     <span class="govuk-caption-l" data-qa="caption">Group appointment</span>
   {% endif %}
 {% endmacro %}

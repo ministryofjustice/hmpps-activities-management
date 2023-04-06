@@ -10,7 +10,7 @@
 {% set backLinkHref = "how-to-add-prisoners" %}
 
 {% set headingText = "Search and add prisoner to the appointment" %}
-{% if session.createAppointmentJourney.type == 'group' %}
+{% if session.createAppointmentJourney.type == AppointmentType.GROUP %}
     {% set headingText = "Search and add prisoners to the appointment list" %}
 {% endif %}
 
@@ -20,7 +20,7 @@
             {{ appointmentTypeCaption(session.createAppointmentJourney.type) }}
             <form method="POST">
                 {% set defaultPrisonerNumber = formResponses.query %}
-                {% if session.createAppointmentJourney.type == 'individual' %}
+                {% if session.createAppointmentJourney.type == AppointmentType.INDIVIDUAL %}
                     {% set defaultPrisonerNumber = defaultPrisonerNumber or session.createAppointmentJourney.prisoners[0].number %}
                 {% endif %}
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

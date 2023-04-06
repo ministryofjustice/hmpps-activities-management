@@ -23,7 +23,11 @@
             {% for prisoner in session.createAppointmentJourney.prisoners %}
                 {% set prisonersList = (prisonersList.push([
                     {
-                        html: showProfileLink(prisoner.number, prisoner.name)
+                        html: showProfileLink({
+                            name: prisoner.name,
+                            prisonerNumber: prisoner.number,
+                            link: true
+                        })
                     }, {
                         text: prisoner.cellLocation
                     }

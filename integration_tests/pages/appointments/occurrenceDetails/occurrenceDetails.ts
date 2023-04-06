@@ -12,9 +12,14 @@ export default class OccurrenceDetailsPage extends Page {
     this.assertSummaryListValue('appointment-details', header, value)
 
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {
-    cy.get('[data-qa=prisoner-name]').contains(name)
-    cy.get('[data-qa=prisoner-number]').contains(number)
-    cy.get('[data-qa=prisoner-cell-location]').contains(cellLocation)
+    cy.get('[data-qa=prisoner-name]')
+      .contains(name)
+      .parents('[data-qa=prisoner-summary]')
+      .find('[data-qa=prisoner-number]')
+      .contains(number)
+      .parents('[data-qa=prisoner-summary]')
+      .find('[data-qa=prisoner-cell-location]')
+      .contains(cellLocation)
   }
 
   assertCategory = (category: string) => this.assertAppointmentDetail('Category', category)

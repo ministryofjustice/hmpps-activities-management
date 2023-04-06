@@ -18,6 +18,7 @@ import {
   AppointmentCategorySummary,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
+import { AppointmentType } from '../routes/appointments/create/journey'
 
 const user = { token: 'token' } as ServiceUser
 
@@ -539,6 +540,7 @@ describe('activitiesApiClient', () => {
         endTime: '10:30',
         comment: 'This appointment will help adjusting to life outside of prison',
         prisonerNumbers: ['A1234BC'],
+        appointmentType: AppointmentType.INDIVIDUAL,
       }
 
       const response = {

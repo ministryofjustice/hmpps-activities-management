@@ -32,6 +32,7 @@ export default class CheckAnswersRoutes {
       startTime: plainToInstance(SimpleTime, createAppointmentJourney.startTime).toIsoString(),
       endTime: plainToInstance(SimpleTime, createAppointmentJourney.endTime).toIsoString(),
       prisonerNumbers: createAppointmentJourney.prisoners.map(p => p.number),
+      appointmentType: createAppointmentJourney.type,
     } as AppointmentCreateRequest
 
     if (createAppointmentJourney.repeat === YesNo.YES) {

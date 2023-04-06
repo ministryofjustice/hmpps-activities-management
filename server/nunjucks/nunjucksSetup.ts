@@ -35,6 +35,7 @@ import {
 import { Services } from '../services'
 import { AppointmentRepeatPeriod } from '../@types/activitiesAPI/types'
 import { YesNo } from '../@types/activities'
+import { AppointmentType } from '../routes/appointments/create/journey'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -124,6 +125,7 @@ export function registerNunjucks(app?: express.Express): Environment {
 
   njkEnv.addGlobal('YesNo', YesNo)
   njkEnv.addGlobal('AppointmentRepeatPeriod', AppointmentRepeatPeriod)
+  njkEnv.addGlobal('AppointmentType', AppointmentType)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)
 
   return njkEnv

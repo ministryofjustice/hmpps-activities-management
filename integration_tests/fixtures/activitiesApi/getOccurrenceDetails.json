@@ -16,6 +16,7 @@
   "startDate": "2023-02-29",
   "startTime": "14:00",
   "endTime": "15:30",
+  "appointmentType": "INDIVIDUAL",
   "comment": "Appointment occurrence level comment",
   "isEdited": false,
   "isCancelled": false,
