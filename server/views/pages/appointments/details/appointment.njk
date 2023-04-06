@@ -4,19 +4,22 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
+{% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
 
 {% set pageTitle = "Appointments Management - Appointment Details" %}
 {% set pageId = 'appointments-view-details-page' %}
+{% set backLinkHref = "/appointments" %}
 
-{% set summaryListRows = [
-    {
-        key: {
-            text: "Prisoner"
-        },
-        value: {
-            html: appointmentPrisonerSummary(appointment.prisoners[0].firstName + ' ' + appointment.prisoners[0].lastName, appointment.prisoners[0].prisonerNumber, appointment.prisoners[0].cellLocation, dpsUrl)
-        }
+{% set summaryListRows = [] if appointment.appointmentType == AppointmentType.GROUP else [{
+    key: {
+        text: "Prisoner"
     },
+    value: {
+        html: appointmentPrisonerSummary(appointment.prisoners[0].firstName + ' ' + appointment.prisoners[0].lastName, appointment.prisoners[0].prisonerNumber, appointment.prisoners[0].cellLocation, dpsUrl)
+    }
+}] %}
+
+{% set summaryListRows = (summaryListRows.push(
     {
         key: {
             text: "Category"
@@ -66,7 +69,7 @@
                   ("No" if appointment.repeat == null)
         }
     }
-] %}
+), summaryListRows) %}
 {% if appointment.repeat != null %}
     {% set summaryListRows = (summaryListRows.push({
         key: {
@@ -90,6 +93,17 @@
     }), summaryListRows) %}
 {% endif %}
 
+{% if appointment.appointmentType == AppointmentType.GROUP and appointment.repeat != null %}
+    {% set summaryListRows = (summaryListRows.push({
+        key: {
+            text: "Prisoners"
+        },
+        value: {
+            text: appointment.prisoners | length
+        }
+    }), summaryListRows) %}
+{% endif %}
+
 {% set occurrenceSummaryListRows = [
     {
         key: {
@@ -101,6 +115,7 @@
         }
     }
 ] %}
+
 {% for occurrence in appointment.occurrences %}
     {% set occurrenceDate = occurrence.startDate | toDate %}
     {% set occurrenceSummaryListRows = (occurrenceSummaryListRows.push({
@@ -143,6 +158,8 @@
                     classes: "summary-list-row-count govuk-!-margin-bottom-9",
                     attributes: { 'data-qa': 'appointment-occurrences' }
                 }) }}
+            {% elseif appointment.appointmentType == AppointmentType.GROUP %}
+                {{ prisonerList(appointment.prisoners) }}
             {% endif %}
 
             {{ govukSummaryList({
@@ -160,8 +177,14 @@
                 attributes: { 'data-qa': 'user-details' }
             }) }}
 
-            <p class="govuk-body govuk-!-display-none-print no-js-hidden">
-                <a href="movement-slip/{{ appointment.id }}" target="_blank" class="govuk-link govuk-link--no-visited-state" data-qa="print-movement-slip-link">Print movement slip</a>
+            <p class="govuk-body govuk-!-display-none-print">
+                {{ govukButton({
+                    text: "Print movement slip",
+                    href: 'movement-slip/' + appointment.id,
+                    attributes: {
+                        'data-qa': 'print-movement-slip-link'
+                    }
+                }) }}
             </p>
         </div>
     </div>

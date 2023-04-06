@@ -6,6 +6,7 @@ import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentDetails, AppointmentRepeatPeriod } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
+import { AppointmentType } from '../../../../routes/appointments/create/journey'
 
 const view = fs.readFileSync('server/views/pages/appointments/details/appointment.njk')
 
@@ -88,5 +89,32 @@ describe('Views - Appointments Management - Appointment Details', () => {
 
     expect($('[data-qa=occurrences-heading]').length).toBe(1)
     expect($('[data-qa=appointment-occurrences]').length).toBe(1)
+  })
+
+  it('should display prisoner list if single group appointment', () => {
+    viewContext.appointment.appointmentType = AppointmentType.GROUP
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    expect($('[data-qa=prisoner-list]').length).toBe(1)
+    expect($('[data-qa=appointment-details] .govuk-summary-list__key:contains("Prisoners")').length).toBe(0)
+  })
+
+  it('should display prisoner count if repeat group appointment', () => {
+    viewContext.appointment.appointmentType = AppointmentType.GROUP
+    viewContext.appointment.repeat = {
+      period: AppointmentRepeatPeriod.WEEKLY,
+      count: 6,
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    expect($('[data-qa=appointment-details] .govuk-summary-list__key:contains("Prisoners")').length).toBe(1)
+    expect($('[data-qa=prisoner-list]').length).toBe(0)
+  })
+
+  it('should not display prisoner summary if group appointment', () => {
+    viewContext.appointment.appointmentType = AppointmentType.GROUP
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    expect($('[data-qa=prisoner-summary]').length).toBe(0)
   })
 })

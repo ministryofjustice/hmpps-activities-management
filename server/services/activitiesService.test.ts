@@ -31,6 +31,7 @@ import appointmentDetails from './fixtures/appointment_details_1.json'
 import appointmentOccurrenceDetails from './fixtures/appointment_occurrence_details_1.json'
 import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
+import { AppointmentType } from '../routes/appointments/create/journey'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -380,6 +381,7 @@ describe('Activities Service', () => {
         endTime: '10:30',
         comment: 'This appointment will help adjusting to life outside of prison',
         prisonerNumbers: ['A1234BC'],
+        appointmentType: AppointmentType.INDIVIDUAL,
       }
 
       const expectedResponse = {

@@ -1,0 +1,35 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+
+{% macro prisonerList(prisoners) %}
+   {% set prisonerListRows = [{
+        key: {
+            text: "Prisoners"
+        },
+        value: {
+            text: prisoners | length
+        }
+    }] %}
+    {% for prisoner in prisoners %}
+        {% set prisonerListRows = (prisonerListRows.push({
+            key: {
+                text: "Prisoner"
+            },
+            value: {
+                html: showProfileLink({
+                    name: prisoner | fullName,
+                    prisonerNumber: prisoner.prisonerNumber,
+                    cellLocation: prisoner.cellLocation,
+                    link: true
+                })
+            }
+        }), prisonerListRows) %}
+    {% endfor %}
+
+    <h2 class="govuk-heading-m">Prisoner details</h2>
+    {{ govukSummaryList({
+        rows: prisonerListRows,
+        attributes: { 'data-qa': 'prisoner-list' },
+        classes: "govuk-!-margin-bottom-9 govuk-summary-list--vertical-align-top"
+    }) }}
+{% endmacro %}

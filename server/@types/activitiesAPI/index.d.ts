@@ -672,7 +672,7 @@ export interface components {
        *
        * @example false
        */
-      inCell?: boolean
+      inCell: boolean
       /**
        * Format: date
        * @description The date of the appointment or first appointment occurrence in the series
@@ -690,6 +690,12 @@ export interface components {
        * @example 10:30
        */
       endTime: string
+      /**
+       * @description The appointment type (INDIVIDUAL or GROUP)
+       * @example INDIVIDUAL
+       * @enum {string}
+       */
+      appointmentType: 'INDIVIDUAL' | 'GROUP'
       repeat?: components['schemas']['AppointmentRepeat']
       /**
        * @description
@@ -698,7 +704,7 @@ export interface components {
        *
        * @example This appointment will help adjusting to life outside of prison
        */
-      comment?: string
+      comment: string
       /**
        * @description The prisoner or prisoners to allocate to the created appointment or series of appointment occurrences
        * @example [
@@ -745,17 +751,17 @@ export interface components {
        * @description The internally generated identifier for this appointment
        * @example 12345
        */
-      id?: number
+      id: number
       /**
        * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
        * @example CHAP
        */
-      categoryCode?: string
+      categoryCode: string
       /**
        * @description The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS
        * @example SKI
        */
-      prisonCode?: string
+      prisonCode: string
       /**
        * Format: int64
        * @description
@@ -772,18 +778,18 @@ export interface components {
        *
        * @example false
        */
-      inCell?: boolean
+      inCell: boolean
       /**
        * Format: date
        * @description The date of the appointment or first appointment occurrence in the series
        */
-      startDate?: string
+      startDate: string
       /**
        * Format: partial-time
        * @description The starting time of the appointment or first appointment occurrence in the series
        * @example 09:00
        */
-      startTime?: string
+      startTime: string
       /**
        * Format: partial-time
        * @description The end time of the appointment or first appointment occurrence in the series
@@ -791,18 +797,24 @@ export interface components {
        */
       endTime?: string
       /**
+       * @description The appointment type (INDIVIDUAL or GROUP)
+       * @example INDIVIDUAL
+       * @enum {string}
+       */
+      appointmentType: 'INDIVIDUAL' | 'GROUP'
+      /**
        * @description
        *     Notes relating to the appointment.
        *     The default value if no notes are specified at the occurrence or instance levels
        *
        * @example This appointment will help adjusting to life outside of prison
        */
-      comment?: string
+      comment: string
       /**
        * Format: date-time
        * @description The date and time this appointment was created. Will not change
        */
-      created?: string
+      created: string
       /**
        * @description
        *     The username of the user authenticated via HMPPS auth that created the appointment.
@@ -810,7 +822,7 @@ export interface components {
        *
        * @example AAA01U
        */
-      createdBy?: string
+      createdBy: string
       /**
        * Format: date-time
        * @description
@@ -838,7 +850,7 @@ export interface components {
        *     with a null coalesce back to the parent for nullable properties. The full series of occurrences specified by the
        *     schedule will be created in advance.
        */
-      occurrences?: components['schemas']['AppointmentOccurrence'][]
+      occurrences: components['schemas']['AppointmentOccurrence'][]
     }
     /**
      * @description
@@ -856,7 +868,7 @@ export interface components {
        * @description The internally generated identifier for this appointment occurrence
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * Format: int64
        * @description
@@ -873,18 +885,18 @@ export interface components {
        *
        * @example false
        */
-      inCell?: boolean
+      inCell: boolean
       /**
        * Format: date
        * @description The date this appointment occurrence is taking place on
        */
-      startDate?: string
+      startDate: string
       /**
        * Format: partial-time
        * @description The starting time of this appointment occurrence
        * @example 13:00
        */
-      startTime?: string
+      startTime: string
       /**
        * Format: partial-time
        * @description The end time of this appointment occurrence
@@ -906,7 +918,7 @@ export interface components {
        *
        * @example false
        */
-      cancelled?: boolean
+      cancelled: boolean
       /**
        * Format: date-time
        * @description
@@ -932,7 +944,7 @@ export interface components {
        *     When viewing or editing a recurring appointment, the allocations from the next appointment occurrence in the series
        *     will be used.
        */
-      allocations?: components['schemas']['AppointmentOccurrenceAllocation'][]
+      allocations: components['schemas']['AppointmentOccurrenceAllocation'][]
     }
     /**
      * @description
@@ -946,18 +958,18 @@ export interface components {
        * @description The internally generated identifier for this appointment occurrence allocation
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * @description The NOMIS OFFENDERS.OFFENDER_ID_DISPLAY value for mapping to a prisoner record in NOMIS
        * @example A1234BC
        */
-      prisonerNumber?: string
+      prisonerNumber: string
       /**
        * Format: int64
        * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
        * @example 456
        */
-      bookingId?: number
+      bookingId: number
     }
     /**
      * @description
@@ -970,49 +982,49 @@ export interface components {
        * @description The internally generated identifier for this appointment schedule
        * @example 12345
        */
-      id?: number
+      id: number
       /**
        * Format: date
        * @description
        *     The date the series of appointment occurrences should end. The UI will provide options to specify an end date or
        *     a number of occurrences. The later case should be used to calculate the end date internally
        */
-      endDate?: string
+      endDate: string
       /**
        * @description Indicates the appointment reoccurs every Monday
        * @example false
        */
-      mondayFlag?: boolean
+      mondayFlag: boolean
       /**
        * @description Indicates the appointment reoccurs every Tuesday
        * @example true
        */
-      tuesdayFlag?: boolean
+      tuesdayFlag: boolean
       /**
        * @description Indicates the appointment reoccurs every Wednesday
        * @example false
        */
-      wednesdayFlag?: boolean
+      wednesdayFlag: boolean
       /**
        * @description Indicates the appointment reoccurs every Thursday
        * @example false
        */
-      thursdayFlag?: boolean
+      thursdayFlag: boolean
       /**
        * @description Indicates the appointment reoccurs every Friday
        * @example false
        */
-      fridayFlag?: boolean
+      fridayFlag: boolean
       /**
        * @description Indicates the appointment reoccurs every Saturday
        * @example false
        */
-      saturdayFlag?: boolean
+      saturdayFlag: boolean
       /**
        * @description Indicates the appointment reoccurs every Sunday
        * @example false
        */
-      sundayFlag?: boolean
+      sundayFlag: boolean
     }
     /** @description The create request with the new activity details */
     ActivityCreateRequest: {
@@ -1126,7 +1138,7 @@ export interface components {
        * @description Whether the schedule runs on bank holidays
        * @example true
        */
-      runsOnBankHoliday?: boolean
+      runsOnBankHoliday: boolean
     }
     /** @description Describes the minimum education levels to be created for an activity */
     ActivityMinimumEducationLevelCreateRequest: {
@@ -2211,12 +2223,12 @@ export interface components {
        * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
        * @example CHAP
        */
-      code?: string
+      code: string
       /**
        * @description The description of the appointment category
        * @example Chaplaincy
        */
-      description?: string
+      description: string
     }
     /**
      * @description
@@ -2229,19 +2241,19 @@ export interface components {
        * @description The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
        * @example 27
        */
-      id?: number
+      id: number
       /**
        * @description
        *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
        *
        * @example SKI
        */
-      prisonCode?: string
+      prisonCode: string
       /**
        * @description The description of the appointment location. Mapped from AGENCY_INTERNAL_LOCATIONS.USER_DESC
        * @example Chapel
        */
-      description?: string
+      description: string
     }
     /**
      * @description
@@ -2255,20 +2267,20 @@ export interface components {
        * @description The internally generated identifier for this appointment occurrence
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * Format: int64
        * @description The internally generated identifier for the parent appointment
        * @example 12345
        */
-      appointmentId?: number
+      appointmentId: number
       /**
        * Format: int32
        * @description The sequence number of this appointment occurrence within the recurring appointment series
        * @example 3
        */
-      sequenceNumber?: number
-      category?: components['schemas']['AppointmentCategorySummary']
+      sequenceNumber: number
+      category: components['schemas']['AppointmentCategorySummary']
       /**
        * @description
        *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
@@ -2276,7 +2288,7 @@ export interface components {
        *
        * @example SKI
        */
-      prisonCode?: string
+      prisonCode: string
       internalLocation?: components['schemas']['AppointmentLocationSummary']
       /**
        * @description
@@ -2285,18 +2297,18 @@ export interface components {
        *
        * @example false
        */
-      inCell?: boolean
+      inCell: boolean
       /**
        * Format: date
        * @description The date this appointment occurrence is taking place on
        */
-      startDate?: string
+      startDate: string
       /**
        * Format: partial-time
        * @description The starting time of this appointment occurrence
        * @example 13:00
        */
-      startTime?: string
+      startTime: string
       /**
        * Format: partial-time
        * @description The end time of this appointment occurrence
@@ -2304,13 +2316,19 @@ export interface components {
        */
       endTime?: string
       /**
+       * @description The appointment type (INDIVIDUAL or GROUP)
+       * @example INDIVIDUAL
+       * @enum {string}
+       */
+      appointmentType: 'INDIVIDUAL' | 'GROUP'
+      /**
        * @description
        *     Notes relating to this appointment occurrence. Can be different to the parent appointment if this occurrence has
        *     been edited.
        *
        * @example This appointment occurrence has been rescheduled due to staff availability
        */
-      comment?: string
+      comment: string
       /**
        * @description
        *     Indicates that this appointment occurrence has been independently changed from the original state it was in when
@@ -2318,20 +2336,20 @@ export interface components {
        *
        * @example false
        */
-      isEdited?: boolean
+      isEdited: boolean
       /**
        * @description
        *     Indicates that this appointment occurrence has been cancelled
        *
        * @example false
        */
-      isCancelled?: boolean
+      isCancelled: boolean
       /**
        * Format: date-time
        * @description The date and time the parent appointment was created. Will not change
        */
-      created?: string
-      createdBy?: components['schemas']['UserSummary']
+      created: string
+      createdBy: components['schemas']['UserSummary']
       /**
        * Format: date-time
        * @description
@@ -2346,7 +2364,7 @@ export interface components {
        *     Summary of the prisoner or prisoners allocated to this appointment occurrence. Prisoners are allocated at the
        *     occurrence level to allow for per occurrence allocation changes.
        */
-      prisoners?: components['schemas']['PrisonerSummary'][]
+      prisoners: components['schemas']['PrisonerSummary'][]
     }
     /**
      * @description
@@ -2431,35 +2449,35 @@ export interface components {
        * @description The internally generated identifier for this appointment instance
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * Format: int64
        * @description The internally generated identifier for the parent appointment
        * @example 1234
        */
-      appointmentId?: number
+      appointmentId: number
       /**
        * Format: int64
        * @description The internally generated identifier for the parent appointment occurrence
        * @example 12345
        */
-      appointmentOccurrenceId?: number
+      appointmentOccurrenceId: number
       /**
        * Format: int64
        * @description The internally generated identifier for the parent appointment occurrence allocation
        * @example 123456
        */
-      appointmentOccurrenceAllocationId?: number
+      appointmentOccurrenceAllocationId: number
       /**
        * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
        * @example CHAP
        */
-      categoryCode?: string
+      categoryCode: string
       /**
        * @description The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS
        * @example SKI
        */
-      prisonCode?: string
+      prisonCode: string
       /**
        * Format: int64
        * @description
@@ -2476,29 +2494,29 @@ export interface components {
        *
        * @example false
        */
-      inCell?: boolean
+      inCell: boolean
       /**
        * @description The NOMIS OFFENDERS.OFFENDER_ID_DISPLAY value for mapping to a prisoner record in NOMIS
        * @example A1234BC
        */
-      prisonerNumber?: string
+      prisonerNumber: string
       /**
        * Format: int64
        * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
        * @example 456
        */
-      bookingId?: number
+      bookingId: number
       /**
        * Format: date
        * @description The date of the appointment instance
        */
-      appointmentDate?: string
+      appointmentDate: string
       /**
        * Format: partial-time
        * @description The starting time of the appointment instance
        * @example 09:00
        */
-      startTime?: string
+      startTime: string
       /**
        * Format: partial-time
        * @description The end time of the appointment instance
@@ -2518,7 +2536,7 @@ export interface components {
        * Format: date-time
        * @description The date and time this appointment instance was created. Will not change
        */
-      created?: string
+      created: string
       /**
        * @description
        *     The username of the user authenticated via HMPPS auth that created the appointment instance.
@@ -2526,7 +2544,7 @@ export interface components {
        *
        * @example AAA01U
        */
-      createdBy?: string
+      createdBy: string
       /**
        * Format: date-time
        * @description
@@ -2554,8 +2572,8 @@ export interface components {
        * @description The internally generated identifier for this appointment
        * @example 12345
        */
-      id?: number
-      category?: components['schemas']['AppointmentCategorySummary']
+      id: number
+      category: components['schemas']['AppointmentCategorySummary']
       /**
        * @description
        *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
@@ -2563,7 +2581,7 @@ export interface components {
        *
        * @example SKI
        */
-      prisonCode?: string
+      prisonCode: string
       internalLocation?: components['schemas']['AppointmentLocationSummary']
       /**
        * @description
@@ -2572,18 +2590,18 @@ export interface components {
        *
        * @example false
        */
-      inCell?: boolean
+      inCell: boolean
       /**
        * Format: date
        * @description The date of the appointment or first appointment occurrence in the series
        */
-      startDate?: string
+      startDate: string
       /**
        * Format: partial-time
        * @description The starting time of the appointment or first appointment occurrence in the series
        * @example 09:00
        */
-      startTime?: string
+      startTime: string
       /**
        * Format: partial-time
        * @description The end time of the appointment or first appointment occurrence in the series
@@ -2592,18 +2610,24 @@ export interface components {
       endTime?: string
       repeat?: components['schemas']['AppointmentRepeat']
       /**
+       * @description The appointment type (INDIVIDUAL or GROUP)
+       * @example INDIVIDUAL
+       * @enum {string}
+       */
+      appointmentType: 'INDIVIDUAL' | 'GROUP'
+      /**
        * @description
        *     Notes relating to the appointment
        *
        * @example This appointment will help adjusting to life outside of prison
        */
-      comment?: string
+      comment: string
       /**
        * Format: date-time
        * @description The date and time this appointment was created. Will not change
        */
-      created?: string
-      createdBy?: components['schemas']['UserSummary']
+      created: string
+      createdBy: components['schemas']['UserSummary']
       /**
        * Format: date-time
        * @description
@@ -2623,7 +2647,7 @@ export interface components {
        *     with a null coalesce back to the parent for nullable properties. The full series of occurrences specified by the
        *     schedule will be created in advance.
        */
-      occurrences?: components['schemas']['AppointmentOccurrenceSummary'][]
+      occurrences: components['schemas']['AppointmentOccurrenceSummary'][]
       /**
        * @description
        *     Summary of the prisoner or prisoners allocated to the first future occurrence (or most recent past occurrence if all
@@ -2631,7 +2655,7 @@ export interface components {
        *     occurrence allocation changes. The occurrence summary contains a count of allocated prisoners rather than the full
        *     list as the expected usage is to show a summary of the occurrences then a link to display the full occurrence details.
        */
-      prisoners?: components['schemas']['PrisonerSummary'][]
+      prisoners: components['schemas']['PrisonerSummary'][]
     }
     /**
      * @description
@@ -2644,13 +2668,13 @@ export interface components {
        * @description The internally generated identifier for this appointment occurrence
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * Format: int32
        * @description The sequence number of this appointment occurrence within the recurring appointment series
        * @example 3
        */
-      sequenceNumber?: number
+      sequenceNumber: number
       internalLocation?: components['schemas']['AppointmentLocationSummary']
       /**
        * @description
@@ -2659,18 +2683,18 @@ export interface components {
        *
        * @example false
        */
-      inCell?: boolean
+      inCell: boolean
       /**
        * Format: date
        * @description The date this appointment occurrence is taking place on
        */
-      startDate?: string
+      startDate: string
       /**
        * Format: partial-time
        * @description The starting time of this appointment occurrence
        * @example 13:00
        */
-      startTime?: string
+      startTime: string
       /**
        * Format: partial-time
        * @description The end time of this appointment occurrence
@@ -2684,7 +2708,7 @@ export interface components {
        *
        * @example This appointment occurrence has been rescheduled due to staff availability
        */
-      comment?: string
+      comment: string
       /**
        * @description
        *     Indicates that this appointment occurrence has been independently changed from the original state it was in when
@@ -2692,14 +2716,14 @@ export interface components {
        *
        * @example false
        */
-      isEdited?: boolean
+      isEdited: boolean
       /**
        * @description
        *     Indicates that this appointment occurrence has been cancelled
        *
        * @example false
        */
-      isCancelled?: boolean
+      isCancelled: boolean
       /**
        * Format: date-time
        * @description
@@ -2716,7 +2740,7 @@ export interface components {
        *
        * @example 3
        */
-      prisonerCount?: number
+      prisonerCount: number
     }
   }
   responses: never
