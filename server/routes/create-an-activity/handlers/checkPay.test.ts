@@ -79,6 +79,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
   describe('POST', () => {
     it('should add a validation message to flash if no pay bands are added', async () => {
       req.session.createJourney.pay = []
+      req.session.createJourney.flat = []
 
       await handler.POST(req, res)
 

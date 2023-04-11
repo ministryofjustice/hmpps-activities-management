@@ -5,9 +5,16 @@ export type CreateAnActivityJourney = {
   }
   name?: string
   riskLevel?: string
+  payRateTypeOption?: string
   pay?: Array<{
     incentiveNomisCode: string
     incentiveLevel: string
+    bandId: number
+    bandAlias: string
+    displaySequence: number
+    rate: number
+  }>
+  flat?: Array<{
     bandId: number
     bandAlias: string
     displaySequence: number

@@ -23,7 +23,7 @@ export default class CheckAnswersRoutes {
     const endDate = createJourney.endDate
       ? formatDate(plainToInstance(SimpleDate, createJourney.endDate).toRichDate(), 'do MMMM yyyy')
       : 'Not set'
-
+    const flatPay = req.session.createJourney.flat
     res.render(`pages/create-an-activity/check-answers`, {
       incentiveLevelPays,
       times: {
@@ -37,6 +37,7 @@ export default class CheckAnswersRoutes {
       },
       startDate,
       endDate,
+      flatPay,
     })
   }
 
@@ -73,6 +74,21 @@ export default class CheckAnswersRoutes {
       slots,
       runsOnBankHoliday: createJourney.runsOnBankHoliday,
     } as ActivityCreateRequest
+
+    if (createJourney.flat && createJourney.flat.length > 0) {
+      const incentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
+
+      createJourney.flat.forEach(flatRate => {
+        incentiveLevels.forEach(iep =>
+          activity.pay.push({
+            incentiveNomisCode: iep.iepLevel,
+            incentiveLevel: iep.iepDescription,
+            payBandId: flatRate.bandId,
+            rate: flatRate.rate,
+          }),
+        )
+      })
+    }
 
     const response = await this.activitiesService.createActivity(activity, user)
 
