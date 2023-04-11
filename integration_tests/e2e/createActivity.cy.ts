@@ -4,6 +4,7 @@ import Page from '../pages/page'
 import CategoryPage from '../pages/createActivity/category'
 import ActivityNamePage from '../pages/createActivity/name'
 import RiskLevelPage from '../pages/createActivity/riskLevel'
+import PayRateTypePage from '../pages/createActivity/payRateType'
 import PayPage from '../pages/createActivity/pay'
 import CheckPayPage from '../pages/createActivity/checkPay'
 import QualificationPage from '../pages/createActivity/qualification'
@@ -54,6 +55,10 @@ context('Change location', () => {
     const riskLevelPage = Page.verifyOnPage(RiskLevelPage)
     riskLevelPage.selectRiskLevel('Only low workplace risk assessment is suitable')
     riskLevelPage.continue()
+
+    const payRateTypePage = Page.verifyOnPage(PayRateTypePage)
+    payRateTypePage.payRateType('A single pay rate for one incentive level')
+    payRateTypePage.continue()
 
     const payPage = Page.verifyOnPage(PayPage)
     payPage.enterPayAmount('1.00')
