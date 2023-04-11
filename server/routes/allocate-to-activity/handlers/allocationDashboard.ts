@@ -146,7 +146,7 @@ export default class AllocationDashboardRoutes {
           i =>
             filters.incentiveLevelFilter === 'All Incentive Levels' ||
             !suitableIeps ||
-            suitableIeps.includes(i.currentIncentive.level.description),
+            suitableIeps.includes(i.currentIncentive?.level.description),
         ),
       )
       .then(inmates => this.filterByWra(inmates, filters, suitableWpas))
