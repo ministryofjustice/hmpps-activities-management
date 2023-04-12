@@ -71,12 +71,8 @@ export default class UnlockListService {
       const appointments = scheduledEvents?.appointments.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
       const courtHearings = scheduledEvents?.courtHearings.filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
       const visits = scheduledEvents?.visits.filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
-      const adjudications = scheduledEvents?.adjudications
-        .filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
-        .map(adj => ({ ...adj, event: 'Adjudication hearing' }))
-      const transfers = scheduledEvents?.externalTransfers
-        .filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
-        .map(tra => ({ ...tra, event: 'External transfer' }))
+      const adjudications = scheduledEvents?.adjudications.filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
+      const transfers = scheduledEvents?.externalTransfers.filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
       const activities = scheduledEvents?.activities.filter(act => act.prisonerNumber === prisoner.prisonerNumber)
       const allEventsForPrisoner = [
         ...appointments,
@@ -134,7 +130,7 @@ export default class UnlockListService {
     // TODO: Check rules. In-cell activities / appointments do not have a prison location id?
     // Probably need to get and check the in-cell marker for both of these - when they are included
     const activitiesAndAppointments = item.events.filter(ev => ['ACTIVITY', 'APPOINTMENT'].includes(ev.eventType))
-    const activitiesOffWing = activitiesAndAppointments.filter(aa => !aa.locationId)
+    const activitiesOffWing = activitiesAndAppointments.filter(aa => !aa.internalLocationId)
     return activitiesOffWing.length > 0
   }
 

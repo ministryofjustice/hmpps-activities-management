@@ -40,7 +40,7 @@ export default class AttendanceListRoutes {
         ...response.courtHearings,
         ...response.visits,
       ])
-      .then(events => events.filter(e => e.eventId !== +instanceId))
+      .then(events => events.filter(e => e.scheduledInstanceId !== +instanceId))
       .then(events => events.filter(e => eventClashes(e, instance)))
 
     const attendees = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
@@ -111,7 +111,7 @@ export default class AttendanceListRoutes {
         ...response.courtHearings,
         ...response.visits,
       ])
-      .then(events => events.filter(e => e.eventId !== +instanceId))
+      .then(events => events.filter(e => e.scheduledInstanceId !== +instanceId))
       .then(events => events.filter(e => eventClashes(e, instance)))
 
     const nonAttendees = await this.prisonService
