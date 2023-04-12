@@ -81,6 +81,4 @@ export default class CalendarSpikeRoutes {
     }
     return description
   }
-
-
-  }
+}

@@ -1,5 +1,3 @@
-import { when } from 'jest-when'
-import atLeast from '../../jest.setup'
 import { formatDate, toDate } from '../utils/utils'
 import PrisonApiClient from '../data/prisonApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
@@ -163,18 +161,16 @@ const testUnlockFilters = (
   locationFilters: FilterItem[],
   activityFilters: FilterItem[],
   stayingOrLeavingFilters: FilterItem[],
-): UnlockFilters => {
-  return {
-    location: 'HB1',
-    cellPrefix: 'MDI-1-',
-    unlockDate: toDate('2022-01-01'),
-    timeSlot: 'am',
-    subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
-    locationFilters,
-    activityFilters,
-    stayingOrLeavingFilters,
-  } as UnlockFilters
-}
+): UnlockFilters => ({
+  location: 'HB1',
+  cellPrefix: 'MDI-1-',
+  unlockDate: toDate('2022-01-01'),
+  timeSlot: 'am',
+  subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
+  locationFilters,
+  activityFilters,
+  stayingOrLeavingFilters,
+})
 
 const unlockListService = new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient)
 
@@ -193,19 +189,14 @@ describe('Unlock list service', () => {
       )
 
       // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
-      when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-        .calledWith(atLeast('MDI'))
+      activitiesApiClient.getPrisonLocationPrefixByGroup
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
 
-      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(prisoners)
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(scheduledEvents)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
@@ -246,19 +237,14 @@ describe('Unlock list service', () => {
       const unlockFilters = testUnlockFilters(locationFilters, defaultActivityFilters, defaultStayingOrLeavingFilters)
 
       // These do not match any cell patterns for prisoners in the mocked list
-      when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-        .calledWith(atLeast('MDI'))
+      activitiesApiClient.getPrisonLocationPrefixByGroup
         .mockResolvedValueOnce({ locationPrefix: 'MDI-3-1-0(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-3-2-0(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-3-3-0(0[1-9]|1[0-2])' })
 
-      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(prisoners)
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(scheduledEvents)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
@@ -287,19 +273,14 @@ describe('Unlock list service', () => {
       const unlockFilters = testUnlockFilters(defaultLocationFilters, activityFilters, defaultStayingOrLeavingFilters)
 
       // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
-      when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-        .calledWith(atLeast('MDI'))
+      activitiesApiClient.getPrisonLocationPrefixByGroup
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
 
-      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(prisoners)
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(scheduledEventsWithActivities)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithActivities)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
@@ -317,19 +298,14 @@ describe('Unlock list service', () => {
       const unlockFilters = testUnlockFilters(defaultLocationFilters, defaultActivityFilters, stayingOrLeavingFilters)
 
       // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
-      when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-        .calledWith(atLeast('MDI'))
+      activitiesApiClient.getPrisonLocationPrefixByGroup
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
 
-      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(prisoners)
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(scheduledEventsWithCourt)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
@@ -347,19 +323,14 @@ describe('Unlock list service', () => {
       const unlockFilters = testUnlockFilters(defaultLocationFilters, defaultActivityFilters, stayingOrLeavingFilters)
 
       // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
-      when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-        .calledWith(atLeast('MDI'))
+      activitiesApiClient.getPrisonLocationPrefixByGroup
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
 
-      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(prisoners)
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(scheduledEventsWithCourt)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
@@ -377,19 +348,14 @@ describe('Unlock list service', () => {
       const unlockFilters = testUnlockFilters(locationFilters, defaultActivityFilters, defaultStayingOrLeavingFilters)
 
       // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
-      when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-        .calledWith(atLeast('MDI'))
+      activitiesApiClient.getPrisonLocationPrefixByGroup
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
         .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
 
-      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(prisoners)
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue(scheduledEventsWithCourt)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
