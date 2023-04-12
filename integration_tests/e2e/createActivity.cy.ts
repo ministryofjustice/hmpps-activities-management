@@ -25,7 +25,7 @@ import BankHolidayPage from '../pages/createSchedule/bankHoliday'
 import LocationPage from '../pages/createSchedule/location'
 import CapacityPage from '../pages/createSchedule/capacity'
 
-context('Change location', () => {
+context('Create activity', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -63,21 +63,25 @@ context('Change location', () => {
     const payPage = Page.verifyOnPage(PayPage)
     payPage.enterPayAmount('1.00')
     payPage.selectPayBand('Low')
-    payPage.selectCheckboxes(['Basic', 'Standard', 'Enhanced'])
+    payPage.incentiveLevel('Basic')
     payPage.reviewAndAddMoreRates()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
-    checkPayPage.payRows().should('have.length', 3)
+    checkPayPage.payRows().should('have.length', 1)
     checkPayPage.addAnother()
+
+    const payRateTypePage2 = Page.verifyOnPage(PayRateTypePage)
+    payRateTypePage2.payRateType('A single pay rate for one incentive level')
+    payRateTypePage2.continue()
 
     const payPage2 = Page.verifyOnPage(PayPage)
     payPage2.enterPayAmount('1.50')
     payPage2.selectPayBand('Medium')
-    payPage2.selectCheckboxes(['Basic'])
+    payPage2.incentiveLevel('Basic')
     payPage2.reviewAndAddMoreRates()
 
     const checkPayPage2 = Page.verifyOnPage(CheckPayPage)
-    checkPayPage2.payRows().should('have.length', 4)
+    checkPayPage2.payRows().should('have.length', 2)
     checkPayPage2.confirmPayRates()
 
     const qualificationPage = Page.verifyOnPage(QualificationPage)
