@@ -2,7 +2,7 @@
 
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
-{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Create an activity - Pay" %}
@@ -77,30 +77,32 @@
                     items: payBandOptions
                 }) }}
 
-                {% set incentiveLevelOptions = [] %}
-                {% for incentiveLevel in incentiveLevels %}
-                    {% set incentiveLevelOptions = (incentiveLevelOptions.push(
-                        {
-                            value: incentiveLevel.iepDescription,
-                            text: incentiveLevel.iepDescription,
-                            checked: incentiveLevel.iepDescription in (formResponses.incentiveLevels if formResponses.incentiveLevels) or incentiveLevel.iepDescription == pay.incentiveLevel
-                        }
-                    ), incentiveLevelOptions) %}
-                {% endfor %}
-                {{ govukCheckboxes({
-                    name: "incentiveLevels",
-                    fieldset: {
-                        legend: {
-                            text: "3. Select the incentive level or levels for this rate",
-                            classes: "govuk-fieldset__legend--s"
-                        }
-                    },
-                    hint: {
-                      text: 'If pay for this activity is the same for everyone, select all relevant levels.'
-                    },
-                    items: incentiveLevelOptions,
-                    errorMessage: validationErrors | findError('incentiveLevels')
-                }) }}
+                {% if payRateType === "single" %}
+                    {% set incentiveLevelOptions = [] %}
+                    {% for incentiveLevel in incentiveLevels %}
+                        {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                            {
+                                value: incentiveLevel.iepDescription,
+                                text: incentiveLevel.iepDescription,
+                                checked: incentiveLevel.iepDescription in (formResponses.incentiveLevels if formResponses.incentiveLevels) or incentiveLevel.iepDescription == pay.incentiveLevel
+                            }
+                        ), incentiveLevelOptions) %}
+                    {% endfor %}
+                    {{ govukRadios({
+                        name: "incentiveLevel",
+                        fieldset: {
+                            legend: {
+                                text: "3. Select the incentive level",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        hint: {
+                          text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
+                        },
+                        items: incentiveLevelOptions,
+                        errorMessage: validationErrors | findError('incentiveLevels')
+                    }) }}
+                {% endif %}
 
                 {{ govukButton({
                     text: "Review and add more rates"

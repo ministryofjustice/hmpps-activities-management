@@ -33,7 +33,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
             {% for incentiveLevelPay in incentiveLevelPays %}
-                <h2 class="govuk-heading-m">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</h2>
+                <h2 class="govuk-heading-m">Pay rates for {{ incentiveLevelPay.incentiveLevel }} incentive level</h2>
                 {% set rows = [] %}
                 {% for pay in incentiveLevelPay.pays %}
                     {% set rows = (rows.push(
@@ -66,15 +66,47 @@
                 }) }}
             {% endfor %}
 
+            <h2 class="govuk-heading-m">Flat rate (applies to all incentive levels)</h2>
+            {% set rows = [] %}
+            {% for flatRate in flatPay %}
+                {% set rows = (rows.push(
+                    {
+                        key: {
+                            text: flatRate.bandAlias
+                        },
+                        value: {
+                            text: flatRate.rate | toMoney
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "pay?bandId=" + flatRate.bandId,
+                                    text: "Change",
+                                    visuallyHiddenText: "change pay rate"
+                                },
+                                {
+                                    href: "remove-flat-rate?bandId=" + flatRate.bandId,
+                                    text: "Remove",
+                                    visuallyHiddenText: "remove flat rate"
+                                }
+                            ]
+                        }
+                    }
+                ), rows) %}
+            {% endfor %}
+            {{ govukSummaryList({
+                rows: rows
+            }) }}
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Confirm pay rates"
+                        text: "Confirm"
                     }) }}
                     {{ govukButton({
                         text: "Add another pay rate",
-                        href: 'pay',
+                        href: 'pay-rate-type',
                         classes: "govuk-button--secondary"
                     }) }}
                 </div>

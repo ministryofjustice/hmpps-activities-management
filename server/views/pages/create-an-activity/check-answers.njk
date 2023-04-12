@@ -99,7 +99,7 @@
                             text: "Pay rates"
                         },
                         value: {
-                            html: paySummary(incentiveLevelPays)
+                            html: paySummary(incentiveLevelPays, flatPay)
                         },
                         actions: {
                             items: [
@@ -240,6 +240,12 @@
             {% endfor %}
         </div>
     {% endfor %}
+    <div class="govuk-!-margin-bottom-2">
+        <div class="govuk-!-font-weight-bold">Flat rate pay</div>
+        {% for flatRate in flatPay %}
+            <div>{{ flatRate.bandAlias }}: {{ flatRate.rate | toMoney }}</div>
+        {% endfor %}
+    </div>
 {% endmacro %}
 
 {% macro educationLevelSummary(educationLevels) %}

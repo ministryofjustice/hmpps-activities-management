@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import { IsNumber, Min } from 'class-validator'
 import PrisonService from '../../../services/prisonService'
-import HasAtLeastOne from '../../../validators/hasAtLeastOne'
 import ActivitiesService from '../../../services/activitiesService'
 import IsNotDuplicatedForIep from '../../../validators/bandNotDuplicatedForIep'
 
@@ -22,7 +21,6 @@ export class Pay {
 
   @Expose()
   @Transform(({ value }) => [value].flat()) // Transform to an array if only one value is provided
-  @HasAtLeastOne({ message: 'Select at least one incentive level' })
   incentiveLevels: string[]
 }
 
@@ -35,23 +33,27 @@ export default class PayRoutes {
     const bandId = +req.query.bandId
 
     const pay = req.session.createJourney?.pay?.find(p => p.bandId === bandId && p.incentiveLevel === iep)
+    const payRateType = req.session.createJourney.payRateTypeOption
 
     const [incentiveLevels, payBands] = await Promise.all([
       this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user).then(levels => levels.filter(l => l.active)),
       this.activitiesService.getPayBandsForPrison(user),
     ])
 
-    res.render(`pages/create-an-activity/pay`, { incentiveLevels, payBands, pay })
+    res.render(`pages/create-an-activity/pay`, { incentiveLevels, payBands, pay, payRateType })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { rate, incentiveLevels, currentIncentiveLevel } = req.body
+    const { rate, incentiveLevel, currentIncentiveLevel } = req.body
     const bandId = +req.body.bandId
     const currentPayBand = +req.body.currentPayBand
 
     if (!req.session.createJourney.pay) {
       req.session.createJourney.pay = []
+    }
+    if (!req.session.createJourney.flat) {
+      req.session.createJourney.flat = []
     }
 
     // Remove the current pay rate to prevent duplicate pay rates
@@ -67,16 +69,23 @@ export default class PayRoutes {
 
     const allIncentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
 
-    req.session.createJourney.pay.push(
-      ...incentiveLevels.map((incentiveLevel: string) => ({
+    if (req.session.createJourney.payRateTypeOption === 'single') {
+      req.session.createJourney.pay.push({
         incentiveNomisCode: allIncentiveLevels.find(s2 => s2.iepDescription === incentiveLevel).iepLevel,
         incentiveLevel,
-        rate,
+        rate: +rate,
         bandId,
-        bandAlias,
-        displaySequence,
-      })),
-    )
+        bandAlias: String(bandAlias),
+        displaySequence: +displaySequence,
+      })
+    } else {
+      req.session.createJourney.flat.push({
+        rate: +rate,
+        bandId,
+        bandAlias: String(bandAlias),
+        displaySequence: +displaySequence,
+      })
+    }
 
     res.redirect('check-pay')
   }

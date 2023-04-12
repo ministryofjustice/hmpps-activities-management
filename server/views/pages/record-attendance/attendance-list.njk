@@ -244,14 +244,12 @@
             classes: "govuk-tag--green"
            })
         }}
-    {% else %}
-        {% if attendance.status !=  'WAITING' %}
-            {{ govukTag({
-                text: "No pay",
-                classes: "govuk-tag--red"
-               })
-            }}
-        {% endif %}
+    {% elseif attendance.status !=  'WAITING' %}
+        {{ govukTag({
+            text: "No pay",
+            classes: "govuk-tag--red"
+           })
+        }}
     {% endif %}
 {% endmacro %}
 
