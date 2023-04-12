@@ -29,8 +29,9 @@ export default class CalendarSpikeRoutes {
             locationCode: e.internalLocationCode,
             locationDescription: e.internalLocationDescription,
             categoryDescription: e.categoryDescription,
-            appointmentOccurrenceId: e.eventType === 'APPOINTMENT' ? e.appointmentOccurrenceId : null,
-            scheduledInstanceId: e.eventType === 'ACTIVITY' ? e.scheduledInstanceId : null,
+            appointmentOccurrenceId:
+              e.eventType === 'APPOINTMENT' && e.eventSource === 'SAA' ? e.appointmentOccurrenceId : null,
+            scheduledInstanceId: e.eventType === 'ACTIVITY' && e.eventSource === 'SAA' ? e.scheduledInstanceId : null,
           })),
         )
 
@@ -64,10 +65,11 @@ export default class CalendarSpikeRoutes {
         description = `Visit ${event.categoryDescription}`
         break
       case 'APPOINTMENT':
-        description = event.eventSource === 'NOMIS' ? `${event.summary}` : `${event.summary}`
+        description =
+          event.eventSource === 'NOMIS' ? `${event.summary}` : `${event.summary} ${event.categoryDescription}`
         break
       case 'ACTIVITY':
-        description = event.eventSource === 'NOMIS' ? `${event.summary}` : `${event.summary}`
+        description = event.eventSource === 'NOMIS' ? `${event.summary}` : `${event.summary} (link?)`
         break
       case 'EXTERNAL_TRANSFER':
         description = 'External transfer'
