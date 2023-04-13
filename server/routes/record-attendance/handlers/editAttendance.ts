@@ -92,8 +92,8 @@ export default class EditAttendanceRoutes {
       {
         id: +attendanceId,
         status: AttendanceStatus.WAITING,
-        attendanceReason: AttendanceReason.ATTENDED,
-        issuePayment: false,
+        attendanceReason: null as AttendanceReason,
+        issuePayment: null as boolean,
       },
     ]
     await this.activitiesService.updateAttendances(attendances, user)
