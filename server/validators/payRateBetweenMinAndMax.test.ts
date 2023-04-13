@@ -3,7 +3,7 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../utils/utils'
 import PayRateBetweenMinAndMax from './payRateBetweenMinAndMax'
 
-describe('educationLevelNotDuplicated', () => {
+describe('payRateBetweenMinAndMax', () => {
   class DummyForm {
     @Expose()
     @Transform(({ value }) => value * 100) // Transform to pence
