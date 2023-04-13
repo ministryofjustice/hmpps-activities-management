@@ -77,6 +77,8 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { id: 2, alias: 'High', displaySequence: 2 },
         ],
         payRateType: 'single',
+        minimumPayRate: 60,
+        maximumPayRate: 275,
       })
     })
 
@@ -86,7 +88,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
           bandId: 1,
-          rate: 100,
+          rate: 1,
           bandAlias: 'High',
           displaySequence: 2,
         },
@@ -112,11 +114,13 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { id: 2, alias: 'High', displaySequence: 2 },
         ],
         payRateType: 'single',
+        minimumPayRate: 60,
+        maximumPayRate: 275,
         pay: {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
           bandId: 1,
-          rate: 100,
+          rate: 1,
           bandAlias: 'High',
           displaySequence: 2,
         },
@@ -127,7 +131,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
   describe('POST', () => {
     it('should add the selected pay to the session', async () => {
       req.body = {
-        rate: 100,
+        rate: 1,
         bandId: 2,
         incentiveLevel: 'Basic',
       }
@@ -147,7 +151,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
           bandId: 2,
-          rate: 100,
+          rate: 1,
           bandAlias: 'High',
           displaySequence: 2,
         },
@@ -168,14 +172,14 @@ describe('Route Handlers - Create an activity - Pay', () => {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
           bandId: 2,
-          rate: 100,
+          rate: 1,
           bandAlias: 'High',
           displaySequence: 2,
         },
       ]
 
       req.body = {
-        rate: 100,
+        rate: 1,
         bandId: 2,
         incentiveLevel: 'Standard',
       }
@@ -187,7 +191,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
           bandId: 2,
-          rate: 100,
+          rate: 1,
           bandAlias: 'High',
           displaySequence: 2,
         },
@@ -195,7 +199,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
           bandId: 2,
-          rate: 100,
+          rate: 1,
           bandAlias: 'High',
           displaySequence: 2,
         },
@@ -205,7 +209,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
     it('should allow existing pay rate to be modified', async () => {
       req.body = {
-        rate: 200,
+        rate: 2,
         bandId: 2,
         incentiveLevel: 'Basic',
         currentPayBand: 1,
@@ -216,7 +220,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
           bandId: 1,
-          rate: 100,
+          rate: 1,
           bandAlias: 'High',
           displaySequence: 2,
         },
@@ -233,7 +237,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
           bandId: 2,
-          rate: 200,
+          rate: 2,
           bandAlias: 'High',
           displaySequence: 2,
         },
@@ -264,7 +268,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
     it('validation fails if iep and band combo is selected which already exists in session', async () => {
       const body = {
-        rate: 100,
+        rate: 1,
         bandId: 1,
         incentiveLevels: ['Basic'],
       }
@@ -273,6 +277,8 @@ describe('Route Handlers - Create an activity - Pay', () => {
         ...body,
         ...{
           createJourney: {
+            minimumPayRate: 60,
+            maximumPayRate: 275,
             pay: [{ incentiveLevel: 'Basic', bandId: 1 }],
           },
         },
@@ -286,12 +292,15 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
     it('passes validation', async () => {
       const body = {
-        rate: 100,
+        rate: 1,
         bandId: 1,
         incentiveLevels: ['Basic'],
       }
 
-      const requestObject = plainToInstance(Pay, { ...body, ...{ createJourney: {} } })
+      const requestObject = plainToInstance(Pay, {
+        ...body,
+        ...{ createJourney: { minimumPayRate: 60, maximumPayRate: 275 } },
+      })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)

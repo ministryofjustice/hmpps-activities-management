@@ -36,18 +36,18 @@
                     id: "rate",
                     name: "rate",
                     label: {
-                        text: "1. How much will someone be paid for a session",
+                        text: "1. How much will someone be paid for a session?",
                         classes: "govuk-label--s"
                     },
                     hint: {
-                        text: 'For example, 1.50'
+                        text: 'Minimum pay for people in your prison is £' + (minimumPayRate / 100) | toFixed + ' and maximum pay is £' + (maximumPayRate / 100) | toFixed + ' per session.'
                     },
                     prefix: {
                         text: "£"
                     },
                     classes: "govuk-input--width-5",
                     errorMessage: validationErrors | findError('rate'),
-                    value: formResponses.rate or (pay.rate / 100) | toFixed or ''
+                    value: formResponses.rate or pay.rate / 100 | toFixed or flat.rate / 100 | toFixed or ''
                 }) }}
 
                 {% set payBandOptions = [
@@ -61,7 +61,7 @@
                         {
                             value: payBand.id,
                             text: payBand.alias,
-                            selected: payBand.id == (formResponses.bandId or pay.bandId)
+                            selected: payBand.id == (formResponses.bandId or pay.bandId or flat.bandId)
                         }
                     ), payBandOptions) %}
                 {% endfor %}
