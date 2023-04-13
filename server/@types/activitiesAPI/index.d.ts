@@ -51,22 +51,22 @@ export interface paths {
      * Get a list of scheduled events for a prison, prisoner, date range (max 3 months) and optional time slot.
      * @description
      *       Returns scheduled events for the prison, prisoner, date range (max 3 months) and optional time slot.
-     *       Court hearings, appointments and visits always come from NOMIS (via prison API).
-     *       Activities come from either NOMIS or the new Activities database, depending on whether the prison is
-     *       marked as rolled-out in the activities database.
-     *       (Intended usage: Prisoner calendar)
+     *       Court hearings, adjudication hearings, transfers and visits come from NOMIS (via prison API).
+     *       Activities and appointments come from either NOMIS or the local database depending on whether the prison is
+     *       marked as active for appointments and/or activities.
+     *       (Intended usage: Prisoner calendar / schedule)
      */
-    get: operations['getScheduledEventsByPrisonAndPrisonerAndDateRange']
+    get: operations['getScheduledEventsForSinglePrisoner']
     /**
      * Get a list of scheduled events for a prison and list of prisoner numbers for a date and time slot
      * @description
      *       Returns scheduled events for the prison, prisoner numbers, single date and an optional time slot.
-     *       Court hearings, appointments and visits always come from NOMIS (via prison API).
-     *       Activities come from either NOMIS or the new activities database, depending on whether the prison is
-     *       marked as rolled-out in the activities database.
+     *       Court hearings, adjudication hearings, transfers and visits come from NOMIS (via prison API).
+     *       Activities and appointments come from either NOMIS or the local database depending on whether the prison is
+     *       marked as rolled-out for activities and/or appointments.
      *       (Intended usage: Unlock list)
      */
-    post: operations['getScheduledEventsByPrisonAndPrisonersAndDateRange']
+    post: operations['getScheduledEventsForMultiplePrisoners']
   }
   '/prisons/{prisonCode}/prisoner-allocations': {
     /**
@@ -96,6 +96,13 @@ export interface paths {
      */
     post: operations['triggerCreateAttendanceRecordsJob']
   }
+  '/audit/search': {
+    /**
+     * Search for audit records
+     * @description Returns all records that match the search criteria.
+     */
+    post: operations['getAuditRecords']
+  }
   '/appointments': {
     /**
      * Create an appointment or series of appointment occurrences
@@ -111,6 +118,13 @@ export interface paths {
      * @description Create an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
      */
     post: operations['create']
+  }
+  '/synchronisation/attendance/{attendanceId}': {
+    /**
+     * Retrieves Nomis synchronisation details
+     * @description Retrieves all details required in order to synchronise an attendance with the Nomis database. Requires role NOMIS_ACTIVITIES
+     */
+    get: operations['getAttendanceSync']
   }
   '/schedules/{scheduleId}': {
     /**
@@ -356,13 +370,14 @@ export interface components {
       /**
        * @description The status - WAITING, COMPLETED, LOCKED
        * @example WAITING
+       * @enum {string}
        */
       status?: string
       /**
        * @description The reason codes- SICK, REFUSED, NOT_REQUIRED, REST, CLASH, OTHER, SUSPENDED, CANCELLED, ATTENDED
        * @example ATTENDED
        */
-      attendanceReason?: string
+      attendanceReason: string
       /**
        * @description Comments such as more detail for SICK
        * @example Prisoner has COVID-19
@@ -448,63 +463,107 @@ export interface components {
        */
       prisonCode?: string
       /**
+       * @description The source of this event - valid values are NOMIS or SAA (scheduling activities and appointments)
+       * @example NOMIS
+       */
+      eventSource?: string
+      /**
+       * @description The event type (APPOINTMENT, ACTIVITY, COURT, TRANSFER, ADJUDICATION, VISIT)
+       * @example APPOINTMENT
+       */
+      eventType?: string
+      /**
        * Format: int64
-       * @description The event id for this scheduled event
+       * @description For activities from SAA the ID for the activity scheduled instance, or null when from NOMIS
+       * @example 9999
+       */
+      scheduledInstanceId?: number
+      /**
+       * Format: int64
+       * @description For appointments from SAA the ID for the appointment instance, or null when from NOMIS
+       * @example 9999
+       */
+      appointmentInstanceId?: number
+      /**
+       * Format: int64
+       * @description For appointments from SAA the ID for the appointment occurrence, or null when from NOMIS
+       * @example 9999
+       */
+      appointmentOccurrenceId?: number
+      /**
+       * Format: int64
+       * @description For adjudication hearings from NOMIS the ID for the OIC hearing, or null for other types
+       * @example 9999
+       */
+      oicHearingId?: number
+      /**
+       * Format: int64
+       * @description The event ID for events from NOMIS, otherwise null if from SAA
        * @example 10001
        */
       eventId?: number
       /**
        * Format: int64
-       * @description The booking id for this scheduled event
+       * @description The booking id of the prisoner this event relates to.
        * @example 10001
        */
       bookingId?: number
       /**
-       * @description The location of this scheduled event
-       * @example INDUCTION CLASSROOM
-       */
-      location?: string
-      /**
        * Format: int64
-       * @description The location id of this scheduled event
+       * @description The NOMIS internal location id where this event takes place
        * @example 10001
        */
-      locationId?: number
+      internalLocationId?: number
       /**
-       * @description Scheduled event class
-       * @example INT_MOV
+       * @description The NOMIS location code for this event
+       * @example MDI-HB1-EDUCATION-RM1
        */
-      eventClass?: string
+      internalLocationCode?: string
       /**
-       * @description Scheduled event status
-       * @example SCH
+       * @description The NOMIS location description for this event
+       * @example Room One
        */
-      eventStatus?: string
+      internalLocationDescription?: string
       /**
-       * @description Scheduled event type
-       * @example APP
-       */
-      eventType?: string
-      /**
-       * @description Scheduled event type description
-       * @example Appointment
-       */
-      eventTypeDesc?: string
-      /**
-       * @description Scheduled event
+       * @description Event category code (e.g appointment category code, activity category code)
        * @example GOVE
        */
-      event?: string
+      categoryCode?: string
       /**
-       * @description Scheduled event description
+       * @description Event category description.
        * @example Governor
        */
-      eventDesc?: string
+      categoryDescription?: string
       /**
-       * @description Details of this scheduled event
-       * @example Dont be late
+       * @description The event summary to show on unlock lists, schedules and calendars
+       * @example Court hearing
        */
-      details?: string
+      summary?: string
+      /**
+       * @description Any comments supplied that relate to this event
+       * @example Reception for 8am please.
+       */
+      comments?: string
+      /**
+       * @description Set to true if this event will take place in the prisoner's cell
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * @description Set to true if this event takes place outside the prison
+       * @example false
+       */
+      outsidePrison: boolean
+      /**
+       * @description Set to true if this event has been cancelled
+       * @example false
+       */
+      cancelled: boolean
+      /**
+       * @description Set to true if this prisoner is suspended for this event (only applies to activities)
+       * @example false
+       */
+      suspended: boolean
       /**
        * @description The prisoner number
        * @example GF10101
@@ -512,16 +571,16 @@ export interface components {
       prisonerNumber?: string
       /**
        * Format: date
-       * @description The specific date for this scheduled instance
+       * @description The specific date for this event
        * @example 2022-09-30
        */
       date?: string
       /**
        * Format: partial-time
        * @description The start time for this scheduled instance
-       * @example 9:00
+       * @example 09:00
        */
-      startTime?: string
+      startTime: string
       /**
        * Format: partial-time
        * @description The end time for this scheduled instance
@@ -530,9 +589,9 @@ export interface components {
       endTime?: string
       /**
        * Format: int32
-       * @description The event priority
+       * @description The event priority - configurable by prison, or via defaults.
        */
-      priority?: number
+      priority: number
     }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
@@ -541,12 +600,12 @@ export interface components {
        * @description The internally-generated ID for this allocation
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * @description The prisoner number (Nomis ID)
        * @example A1234AA
        */
-      prisonerNumber?: string
+      prisonerNumber: string
       /**
        * Format: int64
        * @description The offender booking id
@@ -558,14 +617,14 @@ export interface components {
       scheduleId: number
       scheduleDescription: string
       /** @description Indicates whether this allocation is to an activity within the 'Not in work' category */
-      isUnemployment?: boolean
-      prisonPayBand?: components['schemas']['PrisonPayBand']
+      isUnemployment: boolean
+      prisonPayBand: components['schemas']['PrisonPayBand']
       /**
        * Format: date
        * @description The date when the prisoner will start the activity
        * @example 2022-09-10
        */
-      startDate?: string
+      startDate: string
       /**
        * Format: date
        * @description The date when the prisoner will stop attending the activity
@@ -605,34 +664,34 @@ export interface components {
        * @description The internally-generated ID for this prison pay band
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * Format: int32
        * @description The order in which the pay band should be presented within a list e.g. dropdown
        * @example 1
        */
-      displaySequence?: number
+      displaySequence: number
       /**
        * @description The alternative text to use in place of the description e.g. Low, Medium, High
        * @example Low
        */
-      alias?: string
+      alias: string
       /**
        * @description The description of pay band in this prison
        * @example Pay band 1
        */
-      description?: string
+      description: string
       /**
        * Format: int32
        * @description The pay band number this is associated with in NOMIS (1-10)
        * @example 1
        */
-      nomisPayBand?: number
+      nomisPayBand: number
       /**
        * @description The prison code for the pay band. Can also be 'DEFAULT' if none set up for prison
        * @example MDI
        */
-      prisonCode?: string
+      prisonCode: string
     }
     /** @description Describes a prisoners allocations */
     PrisonerAllocations: {
@@ -640,9 +699,783 @@ export interface components {
        * @description The prisoner number
        * @example GF10101
        */
-      prisonerNumber?: string
+      prisonerNumber: string
       /** @description The list of allocations for the prisoner */
-      allocations?: components['schemas']['Allocation'][]
+      allocations: components['schemas']['Allocation'][]
+    }
+    /** @description Set of search filters for searching audit records */
+    AuditRecordSearchFilters: {
+      /**
+       * @description The code of the prison
+       * @example PVI
+       */
+      prisonCode?: string
+      /**
+       * @description The prisoner number
+       * @example A1234AA
+       */
+      prisonerNumber?: string
+      /**
+       * @description The username of the logged-in user
+       * @example JONESA
+       */
+      username?: string
+      /**
+       * @description The top-level audit category
+       * @example ACTIVITY
+       * @enum {string}
+       */
+      auditType?: 'PRISONER' | 'ACTIVITY'
+      /**
+       * @description The specific event type
+       * @example ACTIVITY_CREATED
+       * @enum {string}
+       */
+      auditEventType?:
+        | 'ACTIVITY_CREATED'
+        | 'ACTIVITY_UPDATED'
+        | 'BONUS_PAYMENT_MADE_FOR_ACTIVITY_ATTENDANCE'
+        | 'INCENTIVE_LEVEL_WARNING_GIVEN_FOR_ACTIVITY_ATTENDANCE'
+        | 'PRISONER_ACCEPTED_FROM_WAITING_LIST'
+        | 'PRISONER_ADDED_TO_WAITING_LIST'
+        | 'PRISONER_ALLOCATED'
+        | 'PRISONER_DEALLOCATED'
+        | 'PRISONER_REJECTED_FROM_WAITING_LIST'
+        | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
+        | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
+      /**
+       * Format: date-time
+       * @description The date and time on or after which to search for events
+       */
+      startTime?: string
+      /**
+       * Format: date-time
+       * @description The date and time on or before which to search for events
+       */
+      endTime?: string
+      /**
+       * Format: int64
+       * @description The ID of the activity
+       * @example 123456
+       */
+      activityId?: number
+      /**
+       * Format: int64
+       * @description The ID of the activity schedule
+       * @example 123456
+       */
+      scheduleId?: number
+    }
+    /** @description Describes a top-level activity */
+    Activity: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
+       * @example false
+       */
+      attendanceRequired: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is in cell
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * @description Flag to indicate if the activity is piece work
+       * @example false
+       */
+      pieceWork: boolean
+      /**
+       * @description Flag to indicate if the activity carried out outside of the prison
+       * @example false
+       */
+      outsideWork: boolean
+      /**
+       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
+       * @example H
+       * @enum {string}
+       */
+      payPerSession: string
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary: string
+      /**
+       * @description A detailed description for this activity
+       * @example A basic maths course suitable for introduction to the subject
+       */
+      description?: string
+      category: components['schemas']['ActivityCategory']
+      tier?: components['schemas']['ActivityTier']
+      /**
+       * @description A list of eligibility rules which apply to this activity. These can be positive (include) and negative (exclude)
+       * @example [FEMALE_ONLY,AGED_18-25]
+       */
+      eligibilityRules: components['schemas']['ActivityEligibility'][]
+      /** @description A list of schedules for this activity. These contain the time slots / recurrence settings for instances of this activity. */
+      schedules: components['schemas']['ActivitySchedule'][]
+      /** @description A list of prisoners who are waiting for allocation to this activity. This list is held against the activity, though allocation is against particular schedules of the activity */
+      waitingList: components['schemas']['PrisonerWaiting'][]
+      /** @description The list of pay rates by incentive level and pay band that can apply to this activity */
+      pay: components['schemas']['ActivityPay'][]
+      /**
+       * Format: date
+       * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
+       * @example 2022-09-21
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
+       * @example 2022-12-21
+       */
+      endDate?: string
+      /**
+       * @description The most recent risk assessment level for this activity
+       * @example high
+       */
+      riskLevel: string
+      /**
+       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
+       * @example BAS
+       */
+      minimumIncentiveNomisCode: string
+      /**
+       * @description The minimum incentive/earned privilege level for this activity
+       * @example Basic
+       */
+      minimumIncentiveLevel: string
+      /**
+       * Format: date-time
+       * @description The date and time when this activity was created
+       */
+      createdTime: string
+      /**
+       * @description The person who created this activity
+       * @example Adam Smith
+       */
+      createdBy: string
+      /** @description The list of minimum education levels that can apply to this activity */
+      minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevel'][]
+    }
+    /** @description Describes a top-level activity category */
+    ActivityCategory: {
+      /**
+       * Format: int64
+       * @description The internally-generated identifier for this activity category
+       * @example 1
+       */
+      id: number
+      /**
+       * @description The activity category code
+       * @example LEISURE_SOCIAL
+       */
+      code: string
+      /**
+       * @description The name of the activity category
+       * @example Leisure and social
+       */
+      name: string
+      /**
+       * @description The description of the activity category
+       * @example Such as association, library time and social clubs, like music or art
+       */
+      description?: string
+    }
+    /**
+     * @description Describes an eligibility rule as applied to an activity
+     * @example [FEMALE_ONLY,AGED_18-25]
+     */
+    ActivityEligibility: {
+      /**
+       * Format: int64
+       * @description The internal ID of the activity that these rules apply to
+       * @example 123456
+       */
+      id: number
+      eligibility: components['schemas']['EligibilityRule']
+    }
+    /** @description Describes a top-level activity */
+    ActivityLite: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
+       * @example false
+       */
+      attendanceRequired: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is in cell
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * @description Flag to indicate if the activity is piece work
+       * @example false
+       */
+      pieceWork: boolean
+      /**
+       * @description Flag to indicate if the activity carried out outside of the prison
+       * @example false
+       */
+      outsideWork: boolean
+      /**
+       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
+       * @example H
+       * @enum {string}
+       */
+      payPerSession: string
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary: string
+      /**
+       * @description A detailed description for this activity
+       * @example A basic maths course suitable for introduction to the subject
+       */
+      description?: string
+      category: components['schemas']['ActivityCategory']
+      /**
+       * @description The most recent risk assessment level for this activity
+       * @example high
+       */
+      riskLevel: string
+      /**
+       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
+       * @example BAS
+       */
+      minimumIncentiveNomisCode: string
+      /**
+       * @description The minimum incentive/earned privilege level for this activity
+       * @example Basic
+       */
+      minimumIncentiveLevel: string
+      /** @description The list of minimum education levels that can apply to this activity */
+      minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevel'][]
+    }
+    /** @description Describes the minimum education levels which apply to an activity */
+    ActivityMinimumEducationLevel: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity minimum education level
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The education level code
+       * @example Basic
+       */
+      educationLevelCode: string
+      /**
+       * @description The education level description
+       * @example Basic
+       */
+      educationLevelDescription: string
+    }
+    /** @description Describes the pay rates and bands which apply to an activity */
+    ActivityPay: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity pay
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The NOMIS code for the incentive/earned privilege level
+       * @example BAS
+       */
+      incentiveNomisCode: string
+      /**
+       * @description The incentive/earned privilege level
+       * @example Basic
+       */
+      incentiveLevel: string
+      prisonPayBand: components['schemas']['PrisonPayBand']
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
+       * @example 150
+       */
+      pieceRate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
+       * @example 10
+       */
+      pieceRateItems?: number
+    }
+    /**
+     * @description
+     *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
+     *   An activity schedule describes when, during the week, an activity will be run and where.
+     *   e.g. Tuesday PM and Thursday AM - suitable for Houseblock 2 to attend.
+     *   e.g. Monday AM and Thursday PM - suitable for Houseblock 3 to attend.
+     */
+    ActivitySchedule: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity schedule
+       * @example 123456
+       */
+      id: number
+      /** @description The planned instances associated with this activity schedule */
+      instances: components['schemas']['ScheduledInstance'][]
+      /** @description The list of allocated prisoners who are allocated to this schedule, at this time and location */
+      allocations: components['schemas']['Allocation'][]
+      /**
+       * @description The description of this activity schedule
+       * @example Entry level Maths 1
+       */
+      description: string
+      /** @description Indicates the dates between which the schedule has been suspended */
+      suspensions: components['schemas']['Suspension'][]
+      internalLocation?: components['schemas']['InternalLocation']
+      /**
+       * Format: int32
+       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
+       * @example 10
+       */
+      capacity: number
+      activity: components['schemas']['ActivityLite']
+      /** @description The slots associated with this activity schedule */
+      slots: components['schemas']['ActivityScheduleSlot'][]
+      /**
+       * Format: date
+       * @description The date on which this schedule will start. From this date, any schedules will be created as real, planned instances
+       * @example 2022-09-21
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description The date on which this schedule will end. From this date, any schedules will be created as real, planned instances
+       * @example 2022-10-21
+       */
+      endDate?: string
+      /**
+       * @description Whether the schedule runs on bank holidays
+       * @example true
+       */
+      runsOnBankHoliday: boolean
+    }
+    /**
+     * @description
+     *   Describes a slot for an activity schedule. There can be several of these defined for one activity schedule.
+     *   An activity schedule slot describes when, during the week, an activity will be run.
+     *   e.g. Tuesday PM on a Monday and Thursday.
+     */
+    ActivityScheduleSlot: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity schedule slot
+       * @example 123456
+       */
+      id: number
+      /**
+       * Format: partial-time
+       * @description The time that any instances of this schedule slot will start
+       * @example 9:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The time that any instances of this schedule slot will finish
+       * @example 11:30
+       */
+      endTime: string
+      /**
+       * @description The days of the week on which the schedule slot takes place
+       * @example [Mon,Tue,Wed]
+       */
+      daysOfWeek: string[]
+      /**
+       * @description Indicates whether the schedule slot takes place on a Monday
+       * @example true
+       */
+      mondayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Tuesday
+       * @example true
+       */
+      tuesdayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Wednesday
+       * @example true
+       */
+      wednesdayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Thursday
+       * @example false
+       */
+      thursdayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Friday
+       * @example false
+       */
+      fridayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Saturday
+       * @example false
+       */
+      saturdayFlag: boolean
+      /**
+       * @description Indicates whether the schedule slot takes place on a Sunday
+       * @example false
+       */
+      sundayFlag: boolean
+    }
+    /**
+     * @description An activity tier
+     * @example Tier 1, Tier 2, Foundation
+     */
+    ActivityTier: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity tier
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The code for this activity tier
+       * @example Tier1
+       */
+      code: string
+      /**
+       * @description The detailed description for this activity tier
+       * @example Work, education and maintenance
+       */
+      description: string
+    }
+    /** @description An attendance record for a prisoner, can be marked or unmarked */
+    Attendance: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this attendance
+       * @example 123456
+       */
+      id: number
+      /**
+       * Format: int64
+       * @description The ID for scheduled instance for this attendance
+       * @example 123456
+       */
+      scheduleInstanceId: number
+      /**
+       * @description The prison number this attendance record is for
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      attendanceReason?: components['schemas']['AttendanceReason']
+      /**
+       * @description Free text to allow comments to be put against the attendance
+       * @example Prisoner was too unwell to attend the activity.
+       */
+      comment?: string
+      /**
+       * Format: date-time
+       * @description The date and time the attendance was updated
+       */
+      recordedTime?: string
+      /**
+       * @description The person who updated the attendance
+       * @example A.JONES
+       */
+      recordedBy?: string
+      /**
+       * @description WAITING, COMPLETED, LOCKED.
+       * @example WAITING
+       */
+      status: string
+      /**
+       * Format: int32
+       * @description The amount in pence to pay the prisoner for the activity
+       * @example 100
+       */
+      payAmount?: number
+      /**
+       * Format: int32
+       * @description The bonus amount in pence to pay the prisoner for the activity
+       * @example 50
+       */
+      bonusAmount?: number
+      /** Format: int32 */
+      pieces?: number
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description Was an incentive level warning issued for REFUSED
+       * @example true
+       */
+      incentiveLevelWarningIssued?: boolean
+      /**
+       * @description Free text to allow other reasons for non attendance against the attendance
+       * @example Prisoner has a valid reason to miss the activity.
+       */
+      otherAbsenceReason?: string
+      /** @description The attendance history records for this attendance */
+      attendanceHistory: components['schemas']['AttendanceHistory'][]
+    }
+    /** @description An attendance record for a prisoner, can be marked or unmarked */
+    AttendanceHistory: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this attendance
+       * @example 123456
+       */
+      id: number
+      attendanceReason?: components['schemas']['AttendanceReason']
+      /**
+       * @description Free text to allow comments to be put against the attendance
+       * @example Prisoner was too unwell to attend the activity.
+       */
+      comment?: string
+      /**
+       * Format: date-time
+       * @description The date and time the attendance was updated
+       */
+      recordedTime: string
+      /**
+       * @description The person who updated the attendance
+       * @example A.JONES
+       */
+      recordedBy: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description Was an incentive level warning issued for REFUSED
+       * @example true
+       */
+      incentiveLevelWarningIssued?: boolean
+      /**
+       * @description Free text to allow other reasons for non attendance against the attendance
+       * @example Prisoner has a valid reason to miss the activity.
+       */
+      otherAbsenceReason?: string
+    }
+    /** @description The reason for attending or not */
+    AttendanceReason: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this (non) attendance reason
+       * @example 1
+       */
+      id: number
+      /**
+       * @description The code for the (non) attendance reason
+       * @example SICK
+       */
+      code: string
+      /**
+       * @description The description of the (non) attendance reason
+       * @example Sick
+       */
+      description: string
+      /**
+       * @description A flag to show whether the reason is Attended (true) or Not Attended (false)
+       * @example true
+       */
+      attended: boolean
+      /**
+       * @description A flag to show whether or not to capture whether the prisoner should still be paid
+       * @example true
+       */
+      capturePay: boolean
+      /**
+       * @description A flag to show whether or not to capture more detail
+       * @example true
+       */
+      captureMoreDetail: boolean
+      /**
+       * @description A flag to show whether or not to capture a case note
+       * @example true
+       */
+      captureCaseNote: boolean
+      /**
+       * @description A flag to show whether or not to capture whether an incentive level warning has been issued due to non attendance
+       * @example false
+       */
+      captureIncentiveLevelWarning: boolean
+      /**
+       * @description A flag to show whether or not to capture other text
+       * @example false
+       */
+      captureOtherText: boolean
+      /**
+       * @description A flag to show whether or not the reason should be displayed in the UI as an option for non attendance
+       * @example false
+       */
+      displayInAbsence: boolean
+      /**
+       * @description The sequence in which the reason should be displayed in the UI
+       * @example 1
+       */
+      displaySequence?: number
+      /**
+       * @description Any internal notes to explain the use of the reason
+       * @example Maps to ACCAB in NOMIS
+       */
+      notes: string
+    }
+    /** @description Defines one eligibility rule */
+    EligibilityRule: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this eligibility rule
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The code for this eligibility rule
+       * @example OVER_21
+       */
+      code: string
+      /**
+       * @description The description for this eligibility rule
+       * @example The prisoner must be over 21 to attend
+       */
+      description: string
+    }
+    /**
+     * @description An internal NOMIS location for an activity to take place
+     * @example 98877667
+     */
+    InternalLocation: {
+      /**
+       * Format: int32
+       * @description The NOMIS internal location id for this schedule
+       * @example 98877667
+       */
+      id: number
+      /**
+       * @description The NOMIS internal location code for this schedule
+       * @example EDU-ROOM-1
+       */
+      code: string
+      /**
+       * @description The NOMIS internal location description for this schedule
+       * @example Education - R1
+       */
+      description: string
+    }
+    /** @description Describes a person who is on a waiting list for an activity */
+    PrisonerWaiting: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this prisoner waiting
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prisoner number (NomisId) of the person on the waiting list
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * Format: int32
+       * @description The priority of this person in the waiting list. The lower the number, the higher the priority
+       * @example 1
+       */
+      priority: number
+      /**
+       * Format: date-time
+       * @description The date and time when this person was added to the waiting list
+       */
+      createdTime: string
+      /**
+       * @description The staff members name who added this person to the waiting list
+       * @example Adam Smith
+       */
+      createdBy: string
+    }
+    /** @description Describes one instance of an activity schedule */
+    ScheduledInstance: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this scheduled instance
+       * @example 123456
+       */
+      id: number
+      /**
+       * Format: date
+       * @description The specific date for this scheduled instance
+       * @example 2022-09-30
+       */
+      date: string
+      /**
+       * Format: partial-time
+       * @description The start time for this scheduled instance
+       * @example 09:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time for this scheduled instance
+       * @example 10:00
+       */
+      endTime: string
+      /**
+       * @description Flag to indicate if this scheduled instance has been cancelled since being scheduled
+       * @example false
+       */
+      cancelled: boolean
+      /**
+       * Format: date-time
+       * @description Date and time this scheduled instance was cancelled (or null if not cancelled)
+       */
+      cancelledTime?: string
+      /**
+       * @description The person who cancelled this scheduled instance (or null if not cancelled)
+       * @example Adam Smith
+       */
+      cancelledBy?: string
+      /** @description The attendance records for this scheduled instance */
+      attendances: components['schemas']['Attendance'][]
+    }
+    /** @description Describes the period of time an activity schedule has been suspended */
+    Suspension: {
+      /**
+       * Format: date
+       * @description The date from which the activity schedule was suspended
+       * @example 2022-09-02
+       */
+      suspendedFrom: string
+      /**
+       * Format: date
+       * @description The date until which the activity schedule was suspended. If null, the schedule is suspended indefinitely
+       * @example 2022-09-02
+       */
+      suspendedUntil?: string
     }
     /** @description The create request with the new appointment or series of appointment occurrences details */
     AppointmentCreateRequest: {
@@ -708,7 +1541,7 @@ export interface components {
       /**
        * @description The prisoner or prisoners to allocate to the created appointment or series of appointment occurrences
        * @example [
-       *   "A1234BC"
+       *   'A1234BC'
        * ]
        */
       prisonerNumbers: string[]
@@ -1037,28 +1870,28 @@ export interface components {
        * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
        * @example false
        */
-      attendanceRequired?: boolean
+      attendanceRequired: boolean
       /**
        * @description Flag to indicate if the location of the activity is in cell
        * @example false
        */
-      inCell?: boolean
+      inCell: boolean
       /**
        * @description Flag to indicate if the activity is piece work
        * @example false
        */
-      pieceWork?: boolean
+      pieceWork: boolean
       /**
        * @description Flag to indicate if the activity carried out outside of the prison
        * @example false
        */
-      outsideWork?: boolean
+      outsideWork: boolean
       /**
        * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
        * @example H
        * @enum {string}
        */
-      payPerSession?: 'H' | 'F'
+      payPerSession?: string
       /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
@@ -1088,9 +1921,9 @@ export interface components {
        *   3
        * ]
        */
-      eligibilityRuleIds?: number[]
+      eligibilityRuleIds: number[]
       /** @description The list of pay rates that can apply to this activity */
-      pay?: components['schemas']['ActivityPayCreateRequest'][]
+      pay: components['schemas']['ActivityPayCreateRequest'][]
       /**
        * @description The most recent risk assessment level for this activity
        * @example high
@@ -1119,7 +1952,7 @@ export interface components {
        */
       endDate?: string
       /** @description The list of minimum education levels that apply to this activity */
-      minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
+      minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
       /**
        * Format: int64
        * @description The optional NOMIS internal location id for this schedule
@@ -1210,451 +2043,70 @@ export interface components {
       saturday: boolean
       sunday: boolean
     }
-    /** @description Describes a top-level activity */
-    Activity: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity
-       * @example 123456
-       */
-      id?: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode?: string
-      /**
-       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
-       * @example false
-       */
-      attendanceRequired?: boolean
-      /**
-       * @description Flag to indicate if the location of the activity is in cell
-       * @example false
-       */
-      inCell?: boolean
-      /**
-       * @description Flag to indicate if the activity is piece work
-       * @example false
-       */
-      pieceWork?: boolean
-      /**
-       * @description Flag to indicate if the activity carried out outside of the prison
-       * @example false
-       */
-      outsideWork?: boolean
-      /**
-       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
-       * @example H
-       * @enum {string}
-       */
-      payPerSession?: 'H' | 'F'
-      /**
-       * @description A brief summary description of this activity for use in forms and lists
-       * @example Maths level 1
-       */
-      summary?: string
-      /**
-       * @description A detailed description for this activity
-       * @example A basic maths course suitable for introduction to the subject
-       */
-      description?: string
-      category?: components['schemas']['ActivityCategory']
-      tier?: components['schemas']['ActivityTier']
-      /**
-       * @description A list of eligibility rules which apply to this activity. These can be positive (include) and negative (exclude)
-       * @example [FEMALE_ONLY,AGED_18-25]
-       */
-      eligibilityRules?: components['schemas']['ActivityEligibility'][]
-      /** @description A list of schedules for this activity. These contain the time slots / recurrence settings for instances of this activity. */
-      schedules?: components['schemas']['ActivitySchedule'][]
-      /** @description A list of prisoners who are waiting for allocation to this activity. This list is held against the activity, though allocation is against particular schedules of the activity */
-      waitingList?: components['schemas']['PrisonerWaiting'][]
-      /** @description The list of pay rates by incentive level and pay band that can apply to this activity */
-      pay?: components['schemas']['ActivityPay'][]
-      /**
-       * Format: date
-       * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
-       * @example 2022-09-21
-       */
-      startDate?: string
-      /**
-       * Format: date
-       * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
-       * @example 2022-12-21
-       */
-      endDate?: string
-      /**
-       * @description The most recent risk assessment level for this activity
-       * @example high
-       */
-      riskLevel?: string
-      /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode?: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel?: string
-      /**
-       * Format: date-time
-       * @description The date and time when this activity was created
-       */
-      createdTime?: string
-      /**
-       * @description The person who created this activity
-       * @example Adam Smith
-       */
-      createdBy?: string
-      /** @description The list of minimum education levels that can apply to this activity */
-      minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevel'][]
-    }
-    /** @description Describes a top-level activity category */
-    ActivityCategory: {
-      /**
-       * Format: int64
-       * @description The internally-generated identifier for this activity category
-       * @example 1
-       */
-      id?: number
-      /**
-       * @description The activity category code
-       * @example LEISURE_SOCIAL
-       */
-      code?: string
-      /**
-       * @description The name of the activity category
-       * @example Leisure and social
-       */
-      name?: string
-      /**
-       * @description The description of the activity category
-       * @example Such as association, library time and social clubs, like music or art
-       */
-      description?: string
-    }
-    /**
-     * @description Describes an eligibility rule as applied to an activity
-     * @example [FEMALE_ONLY,AGED_18-25]
-     */
-    ActivityEligibility: {
-      /**
-       * Format: int64
-       * @description The internal ID of the activity that these rules apply to
-       * @example 123456
-       */
-      id?: number
-      eligibility?: components['schemas']['EligibilityRule']
-    }
-    /** @description Describes a top-level activity */
-    ActivityLite: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity
-       * @example 123456
-       */
-      id?: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode?: string
-      /**
-       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
-       * @example false
-       */
-      attendanceRequired?: boolean
-      /**
-       * @description Flag to indicate if the location of the activity is in cell
-       * @example false
-       */
-      inCell?: boolean
-      /**
-       * @description Flag to indicate if the activity is piece work
-       * @example false
-       */
-      pieceWork?: boolean
-      /**
-       * @description Flag to indicate if the activity carried out outside of the prison
-       * @example false
-       */
-      outsideWork?: boolean
-      /**
-       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
-       * @example H
-       * @enum {string}
-       */
-      payPerSession?: 'H' | 'F'
-      /**
-       * @description A brief summary description of this activity for use in forms and lists
-       * @example Maths level 1
-       */
-      summary?: string
-      /**
-       * @description A detailed description for this activity
-       * @example A basic maths course suitable for introduction to the subject
-       */
-      description?: string
-      category?: components['schemas']['ActivityCategory']
-      /**
-       * @description The most recent risk assessment level for this activity
-       * @example high
-       */
-      riskLevel?: string
-      /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode?: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel?: string
-      /** @description The list of minimum education levels that can apply to this activity */
-      minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevel'][]
-    }
-    /** @description Describes the minimum education levels which apply to an activity */
-    ActivityMinimumEducationLevel: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity minimum education level
-       * @example 123456
-       */
-      id?: number
-      /**
-       * @description The education level code
-       * @example Basic
-       */
-      educationLevelCode?: string
-      /**
-       * @description The education level description
-       * @example Basic
-       */
-      educationLevelDescription?: string
-    }
-    /** @description Describes the pay rates and bands which apply to an activity */
-    ActivityPay: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity pay
-       * @example 123456
-       */
-      id?: number
-      /**
-       * @description The NOMIS code for the incentive/earned privilege level
-       * @example BAS
-       */
-      incentiveNomisCode?: string
-      /**
-       * @description The incentive/earned privilege level
-       * @example Basic
-       */
-      incentiveLevel?: string
-      prisonPayBand?: components['schemas']['PrisonPayBand']
-      /**
-       * Format: int32
-       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
-       * @example 150
-       */
-      rate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
-       * @example 150
-       */
-      pieceRate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
-       * @example 10
-       */
-      pieceRateItems?: number
-    }
     /**
      * @description
-     *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
-     *   An activity schedule describes when, during the week, an activity will be run and where.
-     *   e.g. Tuesday PM and Thursday AM - suitable for Houseblock 2 to attend.
-     *   e.g. Monday AM and Thursday PM - suitable for Houseblock 3 to attend.
+     *   Represents the key data required to synchronise an attendance with Nomis
      */
-    ActivitySchedule: {
+    AttendanceSync: {
       /**
        * Format: int64
-       * @description The internally-generated ID for this activity schedule
+       * @description The attendance primary key
        * @example 123456
        */
-      id?: number
-      /** @description The planned instances associated with this activity schedule */
-      instances?: components['schemas']['ScheduledInstance'][]
-      /** @description The list of allocated prisoners who are allocated to this schedule, at this time and location */
-      allocations?: components['schemas']['Allocation'][]
+      attendanceId: number
       /**
-       * @description The description of this activity schedule
-       * @example Entry level Maths 1
+       * Format: int64
+       * @description The scheduled instance primary key
+       * @example 123456
        */
-      description?: string
-      /** @description Indicates the dates between which the schedule has been suspended */
-      suspensions?: components['schemas']['Suspension'][]
-      internalLocation?: components['schemas']['InternalLocation']
+      scheduledInstanceId: number
       /**
-       * Format: int32
-       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
-       * @example 10
+       * Format: int64
+       * @description The activity schedule primary key
+       * @example 123456
        */
-      capacity?: number
-      activity?: components['schemas']['ActivityLite']
-      /** @description The slots associated with this activity schedule */
-      slots?: components['schemas']['ActivityScheduleSlot'][]
+      activityScheduleId: number
       /**
        * Format: date
-       * @description The date on which this schedule will start. From this date, any schedules will be created as real, planned instances
-       * @example 2022-09-21
+       * @description The scheduled instance date
+       * @example 2023-03-30
        */
-      startDate?: string
-      /**
-       * Format: date
-       * @description The date on which this schedule will end. From this date, any schedules will be created as real, planned instances
-       * @example 2022-10-21
-       */
-      endDate?: string
-      /**
-       * @description Whether the schedule runs on bank holidays
-       * @example true
-       */
-      runsOnBankHoliday?: boolean
-    }
-    /**
-     * @description
-     *   Describes a slot for an activity schedule. There can be several of these defined for one activity schedule.
-     *   An activity schedule slot describes when, during the week, an activity will be run.
-     *   e.g. Tuesday PM on a Monday and Thursday.
-     */
-    ActivityScheduleSlot: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity schedule slot
-       * @example 123456
-       */
-      id?: number
+      sessionDate: string
       /**
        * Format: partial-time
-       * @description The time that any instances of this schedule slot will start
-       * @example 9:00
+       * @description The scheduled instance start time
+       * @example 10:00
        */
-      startTime?: string
+      sessionStartTime: string
       /**
        * Format: partial-time
-       * @description The time that any instances of this schedule slot will finish
-       * @example 11:30
+       * @description The scheduled instance end time
+       * @example 11:00
        */
-      endTime?: string
+      sessionEndTime: string
       /**
-       * @description The days of the week on which the schedule slot takes place
-       * @example [Mon,Tue,Wed]
+       * @description The offender's unique identifier
+       * @example A1234BC
        */
-      daysOfWeek?: string[]
-      /**
-       * @description Indicates whether the schedule slot takes place on a Monday
-       * @example true
-       */
-      mondayFlag?: boolean
-      /**
-       * @description Indicates whether the schedule slot takes place on a Tuesday
-       * @example true
-       */
-      tuesdayFlag?: boolean
-      /**
-       * @description Indicates whether the schedule slot takes place on a Wednesday
-       * @example true
-       */
-      wednesdayFlag?: boolean
-      /**
-       * @description Indicates whether the schedule slot takes place on a Thursday
-       * @example false
-       */
-      thursdayFlag?: boolean
-      /**
-       * @description Indicates whether the schedule slot takes place on a Friday
-       * @example false
-       */
-      fridayFlag?: boolean
-      /**
-       * @description Indicates whether the schedule slot takes place on a Saturday
-       * @example false
-       */
-      saturdayFlag?: boolean
-      /**
-       * @description Indicates whether the schedule slot takes place on a Sunday
-       * @example false
-       */
-      sundayFlag?: boolean
-    }
-    /**
-     * @description An activity tier
-     * @example Tier 1, Tier 2, Foundation
-     */
-    ActivityTier: {
+      prisonerNumber: string
       /**
        * Format: int64
-       * @description The internally-generated ID for this activity tier
+       * @description The offender booking primary key
        * @example 123456
        */
-      id?: number
-      /**
-       * @description The code for this activity tier
-       * @example Tier1
-       */
-      code?: string
-      /**
-       * @description The detailed description for this activity tier
-       * @example Work, education and maintenance
-       */
-      description?: string
-    }
-    /** @description An attendance record for a prisoner, can be marked or unmarked */
-    Attendance: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this attendance
-       * @example 123456
-       */
-      id?: number
-      /**
-       * Format: int64
-       * @description The ID for scheduled instance for this attendance
-       * @example 123456
-       */
-      scheduleInstanceId?: number
-      /**
-       * @description The prison number this attendance record is for
-       * @example A1234AA
-       */
-      prisonerNumber?: string
-      attendanceReason?: components['schemas']['AttendanceReason']
+      bookingId: number
+      /** @description The reason for attending or not */
+      attendanceReasonCode?: string
       /**
        * @description Free text to allow comments to be put against the attendance
        * @example Prisoner was too unwell to attend the activity.
        */
       comment?: string
       /**
-       * Format: date-time
-       * @description The date and time the attendance was updated
-       */
-      recordedTime?: string
-      /**
-       * @description The person who updated the attendance
-       * @example A.JONES
-       */
-      recordedBy?: string
-      /**
        * @description WAITING, COMPLETED, LOCKED.
        * @example WAITING
        */
-      status?: string
+      status: string
       /**
        * Format: int32
        * @description The amount in pence to pay the prisoner for the activity
@@ -1667,259 +2119,11 @@ export interface components {
        * @example 50
        */
       bonusAmount?: number
-      /** Format: int32 */
-      pieces?: number
       /**
        * @description Should payment be issued for SICK, REST or OTHER
        * @example true
        */
       issuePayment?: boolean
-      /**
-       * @description Was an incentive level warning issued for REFUSED
-       * @example true
-       */
-      incentiveLevelWarningIssued?: boolean
-      /**
-       * @description Free text to allow other reasons for non attendance against the attendance
-       * @example Prisoner has a valid reason to miss the activity.
-       */
-      otherAbsenceReason?: string
-      /** @description The attendance history records for this attendance */
-      attendanceHistory?: components['schemas']['AttendanceHistory'][]
-    }
-    /** @description An attendance record for a prisoner, can be marked or unmarked */
-    AttendanceHistory: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this attendance
-       * @example 123456
-       */
-      id?: number
-      attendanceReason?: components['schemas']['AttendanceReason']
-      /**
-       * @description Free text to allow comments to be put against the attendance
-       * @example Prisoner was too unwell to attend the activity.
-       */
-      comment?: string
-      /**
-       * Format: date-time
-       * @description The date and time the attendance was updated
-       */
-      recordedTime?: string
-      /**
-       * @description The person who updated the attendance
-       * @example A.JONES
-       */
-      recordedBy?: string
-      /**
-       * @description Should payment be issued for SICK, REST or OTHER
-       * @example true
-       */
-      issuePayment?: boolean
-      /**
-       * @description Was an incentive level warning issued for REFUSED
-       * @example true
-       */
-      incentiveLevelWarningIssued?: boolean
-      /**
-       * @description Free text to allow other reasons for non attendance against the attendance
-       * @example Prisoner has a valid reason to miss the activity.
-       */
-      otherAbsenceReason?: string
-    }
-    /** @description The reason for attending or not */
-    AttendanceReason: {
-      /**
-       * Format: int64
-       * @description The internally generated identifier for this (non) attendance reason
-       * @example 1
-       */
-      id?: number
-      /**
-       * @description The code for the (non) attendance reason
-       * @example SICK
-       */
-      code?: string
-      /**
-       * @description The description of the (non) attendance reason
-       * @example Sick
-       */
-      description?: string
-      /**
-       * @description A flag to show whether the reason is Attended (true) or Not Attended (false)
-       * @example true
-       */
-      attended?: boolean
-      /**
-       * @description A flag to show whether or not to capture whether the prisoner should still be paid
-       * @example true
-       */
-      capturePay?: boolean
-      /**
-       * @description A flag to show whether or not to capture more detail
-       * @example true
-       */
-      captureMoreDetail?: boolean
-      /**
-       * @description A flag to show whether or not to capture a case note
-       * @example true
-       */
-      captureCaseNote?: boolean
-      /**
-       * @description A flag to show whether or not to capture whether an incentive level warning has been issued due to non attendance
-       * @example false
-       */
-      captureIncentiveLevelWarning?: boolean
-      /**
-       * @description A flag to show whether or not to capture other text
-       * @example false
-       */
-      captureOtherText?: boolean
-      /**
-       * @description A flag to show whether or not the reason should be displayed in the UI as an option for non attendance
-       * @example false
-       */
-      displayInAbsence?: boolean
-      /**
-       * @description The sequence in which the reason should be displayed in the UI
-       * @example 1
-       */
-      displaySequence?: number
-      /**
-       * @description Any internal notes to explain the use of the reason
-       * @example Maps to ACCAB in NOMIS
-       */
-      notes?: string
-    }
-    /** @description Defines one eligibility rule */
-    EligibilityRule: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this eligibility rule
-       * @example 123456
-       */
-      id?: number
-      /**
-       * @description The code for this eligibility rule
-       * @example OVER_21
-       */
-      code?: string
-      /**
-       * @description The description for this eligibility rule
-       * @example The prisoner must be over 21 to attend
-       */
-      description?: string
-    }
-    /**
-     * @description An internal NOMIS location for an activity to take place
-     * @example 98877667
-     */
-    InternalLocation: {
-      /**
-       * Format: int32
-       * @description The NOMIS internal location id for this schedule
-       * @example 98877667
-       */
-      id?: number
-      /**
-       * @description The NOMIS internal location code for this schedule
-       * @example EDU-ROOM-1
-       */
-      code?: string
-      /**
-       * @description The NOMIS internal location description for this schedule
-       * @example Education - R1
-       */
-      description?: string
-    }
-    /** @description Describes a person who is on a waiting list for an activity */
-    PrisonerWaiting: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this prisoner waiting
-       * @example 123456
-       */
-      id?: number
-      /**
-       * @description The prisoner number (NomisId) of the person on the waiting list
-       * @example A1234AA
-       */
-      prisonerNumber?: string
-      /**
-       * Format: int32
-       * @description The priority of this person in the waiting list. The lower the number, the higher the priority
-       * @example 1
-       */
-      priority?: number
-      /**
-       * Format: date-time
-       * @description The date and time when this person was added to the waiting list
-       */
-      createdTime?: string
-      /**
-       * @description The staff members name who added this person to the waiting list
-       * @example Adam Smith
-       */
-      createdBy?: string
-    }
-    /** @description Describes one instance of an activity schedule */
-    ScheduledInstance: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this scheduled instance
-       * @example 123456
-       */
-      id?: number
-      /**
-       * Format: date
-       * @description The specific date for this scheduled instance
-       * @example 2022-09-30
-       */
-      date?: string
-      /**
-       * Format: partial-time
-       * @description The start time for this scheduled instance
-       * @example 09:00
-       */
-      startTime?: string
-      /**
-       * Format: partial-time
-       * @description The end time for this scheduled instance
-       * @example 10:00
-       */
-      endTime?: string
-      /**
-       * @description Flag to indicate if this scheduled instance has been cancelled since being scheduled
-       * @example false
-       */
-      cancelled?: boolean
-      /**
-       * Format: date-time
-       * @description Date and time this scheduled instance was cancelled (or null if not cancelled)
-       */
-      cancelledTime?: string
-      /**
-       * @description The person who cancelled this scheduled instance (or null if not cancelled)
-       * @example Adam Smith
-       */
-      cancelledBy?: string
-      /** @description The attendance records for this scheduled instance */
-      attendances?: components['schemas']['Attendance'][]
-    }
-    /** @description Describes the period of time an activity schedule has been suspended */
-    Suspension: {
-      /**
-       * Format: date
-       * @description The date from which the activity schedule was suspended
-       * @example 2022-09-02
-       */
-      suspendedFrom?: string
-      /**
-       * Format: date
-       * @description The date until which the activity schedule was suspended. If null, the schedule is suspended indefinitely
-       * @example 2022-09-02
-       */
-      suspendedUntil?: string
     }
     /** @description Describes the capacity and allocated slots of an activity or category */
     CapacityAndAllocated: {
@@ -1928,13 +2132,13 @@ export interface components {
        * @description The maximum number of people who can attend the category or activity
        * @example 30
        */
-      capacity?: number
+      capacity: number
       /**
        * Format: int32
        * @description The number of slots currently filled in the activity or category
        * @example 27
        */
-      allocated?: number
+      allocated: number
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -1943,30 +2147,30 @@ export interface components {
        * @description The internally-generated ID for this scheduled instance
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * Format: date
        * @description The specific date for this scheduled instance
        * @example 2022-09-30
        */
-      date?: string
+      date: string
       /**
        * Format: partial-time
        * @description The start time for this scheduled instance
        * @example 09:00
        */
-      startTime?: string
+      startTime: string
       /**
        * Format: partial-time
        * @description The end time for this scheduled instance
        * @example 10:00
        */
-      endTime?: string
+      endTime: string
       /**
        * @description Flag to indicate if this scheduled instance has been cancelled since being scheduled
        * @example false
        */
-      cancelled?: boolean
+      cancelled: boolean
       /**
        * Format: date-time
        * @description Date and time this scheduled instance was cancelled (or null if not cancelled)
@@ -1982,9 +2186,33 @@ export interface components {
        * @example Staff unavailable
        */
       cancelledReason?: string
+      /**
+       * Format: int64
+       * @description The id for the previous scheduled instance
+       * @example 123456
+       */
+      previousScheduledInstanceId?: number
+      /**
+       * Format: date
+       * @description The date for the previous scheduled instance
+       * @example 2022-09-30
+       */
+      previousScheduledInstanceDate?: string
+      /**
+       * Format: int64
+       * @description The id for the next scheduled instance
+       * @example 123456
+       */
+      nextScheduledInstanceId?: number
+      /**
+       * Format: date
+       * @description The date for the next scheduled instance
+       * @example 2022-09-30
+       */
+      nextScheduledInstanceDate?: string
       /** @description The list of attendees */
-      attendances?: components['schemas']['Attendance'][]
-      activitySchedule?: components['schemas']['ActivityScheduleLite']
+      attendances: components['schemas']['Attendance'][]
+      activitySchedule: components['schemas']['ActivityScheduleLite']
     }
     /**
      * @description
@@ -2000,28 +2228,28 @@ export interface components {
        * @description The internally-generated ID for this activity schedule
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * @description The description of this activity schedule
        * @example Monday AM Houseblock 3
        */
-      description?: string
+      description: string
       internalLocation?: components['schemas']['InternalLocation']
       /**
        * Format: int32
        * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
        * @example 10
        */
-      capacity?: number
-      activity?: components['schemas']['ActivityLite']
+      capacity: number
+      activity: components['schemas']['ActivityLite']
       /** @description The slots associated with this activity schedule */
-      slots?: components['schemas']['ActivityScheduleSlot'][]
+      slots: components['schemas']['ActivityScheduleSlot'][]
       /**
        * Format: date
        * @description The date on which this schedule will start. From this date, any schedules will be created as real, planned instances
        * @example 2022-09-21
        */
-      startDate?: string
+      startDate: string
       /**
        * Format: date
        * @description The date on which this schedule will end. From this date, any schedules will be created as real, planned instances
@@ -2036,22 +2264,22 @@ export interface components {
        * @description The internally-generated ID for this prison
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * @description The code for this prison
        * @example PVI
        */
-      code?: string
+      code: string
       /**
        * @description The description for this prison
        * @example HMP Pentonville
        */
-      description?: string
+      description: string
       /**
        * @description Flag to indicate if this prison is presently active
        * @example true
        */
-      active?: boolean
+      active: boolean
       /**
        * Format: date
        * @description The date rolled out
@@ -2062,7 +2290,7 @@ export interface components {
        * @description Whether appointments are being fetched from the activities service (as opposed to the Prison API)
        * @example true
        */
-      isAppointmentsEnabled?: boolean
+      isAppointmentsEnabled: boolean
     }
     GetDlqResult: {
       /** Format: int32 */
@@ -2078,48 +2306,48 @@ export interface components {
        * @description The internally-generated ID for this prison regime
        * @example 123456
        */
-      id?: number
+      id: number
       /**
        * @description The prison code where this activity takes place
        * @example MDI
        */
-      prisonCode?: string
+      prisonCode: string
       /**
        * Format: partial-time
        * @description The start time for the am slot
        * @example 09:00
        */
-      amStart?: string
+      amStart: string
       /**
        * Format: partial-time
        * @description The end time for the am slot
        * @example 12:00
        */
-      amFinish?: string
+      amFinish: string
       /**
        * Format: partial-time
        * @description The start time for the pm slot
        * @example 13:00
        */
-      pmStart?: string
+      pmStart: string
       /**
        * Format: partial-time
        * @description The end time for the pm slot
        * @example 16:30
        */
-      pmFinish?: string
+      pmFinish: string
       /**
        * Format: partial-time
        * @description The start time for the ed slot
        * @example 18:00
        */
-      edStart?: string
+      edStart: string
       /**
        * Format: partial-time
        * @description The end time for the ed slot
        * @example 20:00
        */
-      edFinish?: string
+      edFinish: string
     }
     Location: {
       /**
@@ -2185,7 +2413,7 @@ export interface components {
        * @description Location prefix translated from group name
        * @example MDI-1-
        */
-      locationPrefix?: string
+      locationPrefix: string
     }
     LocationGroup: {
       /**
@@ -2202,12 +2430,12 @@ export interface components {
        * @description The child groups of this group
        * @example [
        *   {
-       *     "name": "Landing A/1",
-       *     "key": "1"
+       *     'name': 'Landing A/1',
+       *     'key': '1'
        *   },
        *   {
-       *     "name": "Landing A/2",
-       *     "key": "2"
+       *     'name': 'Landing A/2',
+       *     'key': '2'
        *   }
        * ]
        */
@@ -2378,37 +2606,37 @@ export interface components {
        * @description The NOMIS OFFENDERS.OFFENDER_ID_DISPLAY value for mapping to a prisoner record in NOMIS
        * @example A1234BC
        */
-      prisonerNumber?: string
+      prisonerNumber: string
       /**
        * Format: int64
        * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
        * @example 456
        */
-      bookingId?: number
+      bookingId: number
       /**
        * @description The prisoner's first name
        * @example Albert
        */
-      firstName?: string
+      firstName: string
       /**
        * @description The prisoner's first name
        * @example Abbot
        */
-      lastName?: string
+      lastName: string
       /**
        * @description
        *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
        *
        * @example SKI
        */
-      prisonCode?: string
+      prisonCode: string
       /**
        * @description
        *     The prisoner's residential cell location when inside the prison.
        *
        * @example A-1-002
        */
-      cellLocation?: string
+      cellLocation: string
     }
     /**
      * @description
@@ -2421,22 +2649,22 @@ export interface components {
        * @description The NOMIS STAFF_MEMBERS.STAFF_ID value for mapping to NOMIS.
        * @example 36
        */
-      id?: number
+      id: number
       /**
        * @description The NOMIS STAFF_USER_ACCOUNTS.USERNAME value for mapping to NOMIS
        * @example AAA01U
        */
-      username?: string
+      username: string
       /**
        * @description The user's first name
        * @example Alice
        */
-      firstName?: string
+      firstName: string
       /**
        * @description The user's last name
        * @example Akbar
        */
-      lastName?: string
+      lastName: string
     }
     /**
      * @description
@@ -3009,12 +3237,12 @@ export interface operations {
    * Get a list of scheduled events for a prison, prisoner, date range (max 3 months) and optional time slot.
    * @description
    *       Returns scheduled events for the prison, prisoner, date range (max 3 months) and optional time slot.
-   *       Court hearings, appointments and visits always come from NOMIS (via prison API).
-   *       Activities come from either NOMIS or the new Activities database, depending on whether the prison is
-   *       marked as rolled-out in the activities database.
-   *       (Intended usage: Prisoner calendar)
+   *       Court hearings, adjudication hearings, transfers and visits come from NOMIS (via prison API).
+   *       Activities and appointments come from either NOMIS or the local database depending on whether the prison is
+   *       marked as active for appointments and/or activities.
+   *       (Intended usage: Prisoner calendar / schedule)
    */
-  getScheduledEventsByPrisonAndPrisonerAndDateRange: {
+  getScheduledEventsForSinglePrisoner: {
     parameters: {
       query: {
         /** @description Prisoner number (required). Format A9999AA. */
@@ -3068,12 +3296,12 @@ export interface operations {
    * Get a list of scheduled events for a prison and list of prisoner numbers for a date and time slot
    * @description
    *       Returns scheduled events for the prison, prisoner numbers, single date and an optional time slot.
-   *       Court hearings, appointments and visits always come from NOMIS (via prison API).
-   *       Activities come from either NOMIS or the new activities database, depending on whether the prison is
-   *       marked as rolled-out in the activities database.
+   *       Court hearings, adjudication hearings, transfers and visits come from NOMIS (via prison API).
+   *       Activities and appointments come from either NOMIS or the local database depending on whether the prison is
+   *       marked as rolled-out for activities and/or appointments.
    *       (Intended usage: Unlock list)
    */
-  getScheduledEventsByPrisonAndPrisonersAndDateRange: {
+  getScheduledEventsForMultiplePrisoners: {
     parameters: {
       query: {
         /** @description The exact date to return events for (required) in format YYYY-MM-DD */
@@ -3207,6 +3435,44 @@ export interface operations {
     }
   }
   /**
+   * Search for audit records
+   * @description Returns all records that match the search criteria.
+   */
+  getAuditRecords: {
+    parameters: {
+      query: {
+        page?: number
+        size?: number
+        sortDirection?: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditRecordSearchFilters']
+      }
+    }
+    responses: {
+      /** @description Search performed successfully */
+      200: {
+        content: {
+          'application/json': components['schemas']['Activity']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Create an appointment or series of appointment occurrences
    * @description
    *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
@@ -3270,6 +3536,50 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Retrieves Nomis synchronisation details
+   * @description Retrieves all details required in order to synchronise an attendance with the Nomis database. Requires role NOMIS_ACTIVITIES
+   */
+  getAttendanceSync: {
+    parameters: {
+      path: {
+        /** @description Attendance id */
+        attendanceId: string
+      }
+    }
+    responses: {
+      /** @description Attendance retrieved */
+      200: {
+        content: {
+          'application/json': components['schemas']['AttendanceSync']
+        }
+      }
+      /** @description There was an error with the request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires role NOMIS_ACTIVITIES */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Attendance not found */
+      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
@@ -3461,7 +3771,7 @@ export interface operations {
   getDlqMessages: {
     parameters: {
       query: {
-        maxMessages: number
+        maxMessages?: number
       }
       path: {
         dlqName: string

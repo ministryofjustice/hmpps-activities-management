@@ -6,6 +6,7 @@ import PrisonService from '../../../services/prisonService'
 import { eventClashes, toDate } from '../../../utils/utils'
 import AttendanceReason from '../../../enum/attendanceReason'
 import AttendanceStatus from '../../../enum/attendanceStatus'
+import { Attendance, ScheduledActivity } from '../../../@types/activitiesAPI/types'
 
 enum EditAttendanceOptions {
   YES = 'yes',
@@ -27,9 +28,10 @@ export default class EditAttendanceRoutes {
     const { id } = req.params
     const { attendanceId } = req.params
 
-    const instance = await this.activitiesService.getScheduledActivity(+id, user)
-
-    const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId, user)
+    const [instance, attendance]: [ScheduledActivity, Attendance] = await Promise.all([
+      this.activitiesService.getScheduledActivity(+id, user),
+      this.activitiesService.getAttendanceDetails(+attendanceId, user),
+    ])
 
     const attendee = await this.prisonService
       .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
@@ -56,10 +58,8 @@ export default class EditAttendanceRoutes {
     }
 
     if (req.body.attendanceOption === EditAttendanceOptions.NO) {
-      const [attendance, instance] = await Promise.all([
-        this.activitiesService.getAttendanceDetails(+attendanceId, user),
-        this.activitiesService.getScheduledActivity(+id, user),
-      ])
+      const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId, user)
+      const instance = await this.activitiesService.getScheduledActivity(+id, user)
 
       const otherScheduledEvents = await this.activitiesService
         .getScheduledEventsForPrisoners(toDate(instance.date), [attendance.prisonerNumber], user)
@@ -69,7 +69,7 @@ export default class EditAttendanceRoutes {
           ...response.courtHearings,
           ...response.visits,
         ])
-        .then(events => events.filter(e => e.eventId !== +id))
+        .then(events => events.filter(e => e.scheduledInstanceId !== +id))
         .then(events => events.filter(e => eventClashes(e, instance)))
 
       const attendee = await this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user).then(i => ({

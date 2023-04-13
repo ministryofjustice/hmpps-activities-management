@@ -158,22 +158,59 @@ describe('Route Handlers - Edit Attendance', () => {
         .calledWith(expect.any(Date), ['ABC321'], res.locals.user)
         .mockResolvedValue({
           activities: [
-            { eventId: 1, eventDesc: 'Maths', startTime: '10:00', endTime: '11:00', prisonerNumber: 'ABC321' },
+            {
+              eventSource: 'SAA',
+              eventType: 'ACTIVITY',
+              scheduledInstanceId: 1,
+              summary: 'Maths',
+              startTime: '10:00',
+              endTime: '11:00',
+              prisonerNumber: 'ABC321',
+            },
           ],
           appointments: [
             {
-              eventId: 2,
-              eventDesc: 'Appointment with the guv',
+              eventSource: 'SAA',
+              eventType: 'ACTIVITY',
+              appointmentInstanceId: 2,
+              appointmentOccurrenceId: 2,
+              summary: 'Appointment with the guv',
               startTime: '15:00',
               endTime: '16:00',
               prisonerNumber: 'ABC321',
             },
           ],
           courtHearings: [
-            { eventId: 3, eventDesc: 'Video link', startTime: '09:00', endTime: '10:00', prisonerNumber: 'ABC321' },
-            { eventId: 4, eventDesc: 'Video link', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC321' },
+            {
+              eventId: 3,
+              eventSource: 'NOMIS',
+              eventType: 'COURT_HEARING',
+              summary: 'Court hearing',
+              startTime: '09:00',
+              endTime: '10:00',
+              prisonerNumber: 'ABC321',
+            },
+            {
+              eventId: 4,
+              eventSource: 'NOMIS',
+              eventType: 'COURT_HEARING',
+              summary: 'Court hearing',
+              startTime: '10:30',
+              endTime: '11:00',
+              prisonerNumber: 'ABC321',
+            },
           ],
-          visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC321' }],
+          visits: [
+            {
+              eventId: 5,
+              eventSource: 'NOMIS',
+              eventType: 'VISIT',
+              summary: 'Visit',
+              startTime: '10:30',
+              endTime: '11:00',
+              prisonerNumber: 'ABC321',
+            },
+          ],
         } as PrisonerScheduledEvents)
 
       when(prisonService.getInmateByPrisonerNumber)
