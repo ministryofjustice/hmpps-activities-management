@@ -125,7 +125,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  postActivityCreation(createBody: ActivityCreateRequest, user: ServiceUser): Promise<ActivityLite> {
+  postActivityCreation(createBody: ActivityCreateRequest, user: ServiceUser): Promise<Activity> {
     return this.post({ path: `/activities`, authToken: user.token, data: createBody })
   }
 

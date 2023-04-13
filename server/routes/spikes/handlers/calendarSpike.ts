@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { format, lastDayOfMonth } from 'date-fns'
 import ActivitiesService from '../../../services/activitiesService'
+import { ScheduledEvent } from '../../../@types/activitiesAPI/types'
 
 export default class CalendarSpikeRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -20,10 +21,17 @@ export default class CalendarSpikeRoutes {
           events.map(e => ({
             start: new Date(`${e.date} ${e.startTime}`),
             end: new Date(`${e.date} ${e.endTime ? e.endTime : e.startTime}`),
-            description: `${e.eventTypeDesc ? e.eventTypeDesc : 'Court hearing'} ${
-              e.details ? `- ${e.details}` : ''
-            }`.trim(),
+            description: this.setDescriptionForEventType(e),
+            comments: e.comments && e.eventType === 'APPOINTMENT' ? e.comments : '',
             priority: e.priority,
+            eventSource: e.eventSource,
+            eventType: e.eventType,
+            locationCode: e.internalLocationCode,
+            locationDescription: e.internalLocationDescription,
+            categoryDescription: e.categoryDescription,
+            appointmentOccurrenceId:
+              e.eventType === 'APPOINTMENT' && e.eventSource === 'SAA' ? e.appointmentOccurrenceId : null,
+            scheduledInstanceId: e.eventType === 'ACTIVITY' && e.eventSource === 'SAA' ? e.scheduledInstanceId : null,
           })),
         )
 
@@ -45,5 +53,34 @@ export default class CalendarSpikeRoutes {
       req.session.calendarSpikeJourney = { prisonerNumber }
     }
     return prisonerNumber
+  }
+
+  private setDescriptionForEventType = (event: ScheduledEvent): string => {
+    let description = ''
+    switch (event.eventType) {
+      case 'COURT_HEARING':
+        description = 'Court hearing'
+        break
+      case 'VISIT':
+        description = `Visit ${event.categoryDescription}`
+        break
+      case 'APPOINTMENT':
+        description =
+          event.eventSource === 'NOMIS' ? `${event.summary}` : `${event.summary} ${event.categoryDescription}`
+        break
+      case 'ACTIVITY':
+        description = event.eventSource === 'NOMIS' ? `${event.summary}` : `${event.summary} (link?)`
+        break
+      case 'EXTERNAL_TRANSFER':
+        description = 'External transfer'
+        break
+      case 'ADJUDICATION_HEARING':
+        description = `Adjudication hearing ${event.categoryDescription}`
+        break
+      default:
+        description = 'Unknown'
+        break
+    }
+    return description
   }
 }

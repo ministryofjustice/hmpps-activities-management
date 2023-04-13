@@ -2,10 +2,27 @@
     <div class="govuk-body govuk-!-margin-0 govuk-!-font-size-14">
         {% for e in events %}
             {% if not loop.first %}<hr class="mid-grey-tint-20-hr" />{% endif %}
-            <div class="govuk-!-font-weight-bold">{{ e.event }}</div>
-            {% if e.eventType != 'EXTERNAL_TRANSFER' %}
-                <div>{{ e.startTime }}{% if e.endTime %} - {{ e.endTime }}{% endif %}<div>
-                <div>{{ e.location | title }}</div>
+
+            {% if e.eventType === 'ACTIVITY' and e.eventSource === 'SAA' %}
+                <div class="govuk-!-font-weight-bold">
+                    <a href="/attendance/activities/{{ e.scheduledInstanceId }}/attendance-list"
+                       class="govuk-link govuk-link--no-visited-state">
+                        {{ e.summary | trim }}
+                    </a>
+                </div>
+            {% elseif e.eventType === 'APPOINTMENT }}' and e.eventSource === 'SAA'%}
+                <div class="govuk-!-font-weight-bold">{{ e.summary | trim }} {{ e.categoryDescription }}</div>
+            {% else %}
+                <div class="govuk-!-font-weight-bold">{{ e.summary | trim }}</div>
+            {% endif %}
+
+            {% if e.eventType != 'EXTERNAL_TRANSFER' and e.eventType != 'COURT_HEARING' %}
+                <div>{{ e.startTime }}{% if e.endTime %} - {{ e.endTime }}{% endif %}</div>
+                <div>{{ e.internalLocationDescription | trim }}</div>
+            {% endif %}
+
+            {% if e.eventType === 'APPOINTMENT' and e.comments %}
+                <div>{{ e.comments | trim | truncate(40) }}</div>
             {% endif %}
         {% endfor %}
     </div>

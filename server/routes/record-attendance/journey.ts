@@ -4,8 +4,8 @@ export type NotAttendedJourney = {
     prisonerNumber?: string
     prisonerName?: string
     otherEvents: {
-      location?: string
-      event?: string
+      internalLocationDescription?: string
+      summary?: string
     }[]
   }>
 }

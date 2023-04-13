@@ -60,22 +60,59 @@ describe('Route Handlers - Attendance List', () => {
       .calledWith(expect.any(Date), ['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
       .mockResolvedValue({
         activities: [
-          { eventId: 1, eventDesc: 'Maths', startTime: '10:00', endTime: '11:00', prisonerNumber: 'ABC123' },
+          {
+            scheduledInstanceId: 1,
+            eventType: 'ACTIVITY',
+            eventSource: 'SAA',
+            summary: 'Maths',
+            startTime: '10:00',
+            endTime: '11:00',
+            prisonerNumber: 'ABC123',
+          },
         ],
         appointments: [
           {
-            eventId: 2,
-            eventDesc: 'Appointment with the guv',
+            appointmentOccurrenceId: 2,
+            appointmentInstanceId: 2,
+            eventType: 'APPOINTMENT',
+            eventSource: 'SAA',
+            summary: 'Appointment with the guv',
             startTime: '15:00',
             endTime: '16:00',
             prisonerNumber: 'ABC123',
           },
         ],
         courtHearings: [
-          { eventId: 3, eventDesc: 'Video link', startTime: '09:00', endTime: '10:00', prisonerNumber: 'ABC123' },
-          { eventId: 4, eventDesc: 'Video link', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC321' },
+          {
+            eventId: 3,
+            eventType: 'COURT_HEARING',
+            eventSource: 'NOMIS',
+            summary: 'Court hearing',
+            startTime: '09:00',
+            endTime: '10:00',
+            prisonerNumber: 'ABC123',
+          },
+          {
+            eventId: 4,
+            eventType: 'COURT_HEARING',
+            eventSource: 'NOMIS',
+            summary: 'Court hearing',
+            startTime: '10:30',
+            endTime: '11:00',
+            prisonerNumber: 'ABC321',
+          },
         ],
-        visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC123' }],
+        visits: [
+          {
+            eventId: 5,
+            eventType: 'VISIT',
+            eventSource: 'NOMIS',
+            summary: 'Visit',
+            startTime: '10:30',
+            endTime: '11:00',
+            prisonerNumber: 'ABC123',
+          },
+        ],
       } as PrisonerScheduledEvents)
 
     when(prisonService.searchInmatesByPrisonerNumbers)
@@ -153,11 +190,13 @@ describe('Route Handlers - Attendance List', () => {
             name: 'Joe Bloggs',
             otherEvents: [
               {
-                endTime: '11:00',
-                eventDesc: 'Visit',
+                eventSource: 'NOMIS',
+                eventType: 'VISIT',
                 eventId: 5,
+                summary: 'Visit',
                 prisonerNumber: 'ABC123',
                 startTime: '10:30',
+                endTime: '11:00',
               },
             ],
             prisonerNumber: 'ABC123',
@@ -170,11 +209,13 @@ describe('Route Handlers - Attendance List', () => {
             name: 'Alan Key',
             otherEvents: [
               {
+                eventId: 4,
+                eventSource: 'NOMIS',
+                eventType: 'COURT_HEARING',
+                summary: 'Court hearing',
+                prisonerNumber: 'ABC321',
                 startTime: '10:30',
                 endTime: '11:00',
-                eventDesc: 'Video link',
-                eventId: 4,
-                prisonerNumber: 'ABC321',
               },
             ],
             prisonerNumber: 'ABC321',
@@ -278,22 +319,59 @@ describe('Route Handlers - Attendance List', () => {
         .calledWith(expect.any(Date), ['ABC123'], res.locals.user)
         .mockResolvedValue({
           activities: [
-            { eventId: 1, eventDesc: 'Maths', startTime: '10:00', endTime: '11:00', prisonerNumber: 'ABC123' },
+            {
+              scheduledInstanceId: 1,
+              eventSource: 'SAA',
+              eventType: 'ACTIVITY',
+              summary: 'Maths',
+              startTime: '10:00',
+              endTime: '11:00',
+              prisonerNumber: 'ABC123',
+            },
           ],
           appointments: [
             {
-              eventId: 2,
-              eventDesc: 'Appointment with the guv',
+              appointmentInstanceId: 2,
+              appointmentOccurrenceId: 2,
+              eventSource: 'SAA',
+              eventType: 'APPOINTMENT',
+              summary: 'Appointment with the guv',
               startTime: '15:00',
               endTime: '16:00',
               prisonerNumber: 'ABC123',
             },
           ],
           courtHearings: [
-            { eventId: 3, eventDesc: 'Video link', startTime: '09:00', endTime: '10:00', prisonerNumber: 'ABC123' },
-            { eventId: 4, eventDesc: 'Video link', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC321' },
+            {
+              eventId: 3,
+              eventSource: 'NOMIS',
+              eventType: 'COURT_HEARING',
+              summary: 'Court hearing',
+              startTime: '09:00',
+              endTime: '10:00',
+              prisonerNumber: 'ABC123',
+            },
+            {
+              eventId: 4,
+              eventSource: 'NOMIS',
+              eventType: 'COURT_HEARING',
+              summary: 'Court hearing',
+              startTime: '10:30',
+              endTime: '11:00',
+              prisonerNumber: 'ABC321',
+            },
           ],
-          visits: [{ eventId: 5, eventDesc: 'Visit', startTime: '10:30', endTime: '11:00', prisonerNumber: 'ABC123' }],
+          visits: [
+            {
+              eventId: 5,
+              eventSource: 'NOMIS',
+              eventType: 'VISIT',
+              summary: 'Visit',
+              startTime: '10:30',
+              endTime: '11:00',
+              prisonerNumber: 'ABC123',
+            },
+          ],
         } as PrisonerScheduledEvents)
 
       when(prisonService.searchInmatesByPrisonerNumbers)

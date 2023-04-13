@@ -225,14 +225,19 @@
     {% for event in otherEvents %}
         <div>
             <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                {% if event.eventType == 'PRISON_ACT' %}
-                    <a href="/attendance/activities/{{ event.eventId }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ event.event }}</a>
+                {% if event.eventType == 'ACTIVITY' and event.eventSource == 'SAA' %}
+                    <a href="/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ event.summary }}</a>
+                {% elseif event.eventType == 'APPOINTMENT' and event.eventSource == 'SAA' %}
+                    <span>{{ event.summary }} {{ event.categoryDescription }}</span>
                 {% else %}
-                    <span>{{ event.event }}</span>
+                    <span>{{ event.summary }}</span>
                 {% endif %}
             </h2>
-            <div class="govuk-hint govuk-!-font-size-14 govuk-!-margin-0">{{ event.startTime }} - {{ event.endTime }}</div>
-            <div class="govuk-hint govuk-!-font-size-14 govuk-!-margin-0">{{ event.location }}</div>
+
+            {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
+               <div class="govuk-hint govuk-!-font-size-14 govuk-!-margin-0">{{ event.startTime }} - {{ event.endTime }}</div>
+               <div class="govuk-hint govuk-!-font-size-14 govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
+            {% endif %}
         </div>
     {% endfor %}
 {% endmacro %}
