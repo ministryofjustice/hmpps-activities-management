@@ -43,7 +43,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.riskLevel).toEqual('high')
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('pay')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-rate-type')
     })
   })
 

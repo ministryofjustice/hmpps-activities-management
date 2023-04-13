@@ -10,6 +10,7 @@ import RiskLevelRoutes, { RiskLevel } from './handlers/riskLevel'
 import PayRoutes, { Pay } from './handlers/pay'
 import CheckPayRoutes from './handlers/checkPay'
 import RemovePayRoutes, { ConfirmRemoveOptions } from './handlers/removePay'
+import RemoveFlatRateRoutes from './handlers/removeFlatRate'
 import QualificationRoutes, { Qualification } from './handlers/qualifications'
 import EducationLevelRoutes, { EducationLevel } from './handlers/educationLevel'
 import RemoveEducationLevelRoutes from './handlers/removeEducationLevel'
@@ -23,6 +24,7 @@ import LocationRoutes, { Location } from './handlers/location'
 import CapacityRoutes, { Capacity } from './handlers/capacity'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
+import PayRateTypeRoutes, { PayRateType } from './handlers/payRateType'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -35,8 +37,10 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const categoryHandler = new CategoryRoutes(activitiesService)
   const nameHandler = new NameRoutes()
   const riskLevelHandler = new RiskLevelRoutes()
+  const payRateTypeHandler = new PayRateTypeRoutes()
   const payHandler = new PayRoutes(prisonService, activitiesService)
   const removePayHandler = new RemovePayRoutes()
+  const removeFlatRateHandler = new RemoveFlatRateRoutes()
   const checkPayHandler = new CheckPayRoutes(prisonService)
   const qualificationHandler = new QualificationRoutes()
   const educationLevelHandler = new EducationLevelRoutes(prisonService)
@@ -59,10 +63,14 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/name', nameHandler.POST, Name)
   get('/risk-level', riskLevelHandler.GET, true)
   post('/risk-level', riskLevelHandler.POST, RiskLevel)
+  get('/pay-rate-type', payRateTypeHandler.GET, true)
+  post('/pay-rate-type', payRateTypeHandler.POST, PayRateType)
   get('/pay', payHandler.GET, true)
   post('/pay', payHandler.POST, Pay)
   get('/remove-pay', removePayHandler.GET, true)
   post('/remove-pay', removePayHandler.POST, ConfirmRemoveOptions)
+  get('/remove-flat-rate', removeFlatRateHandler.GET, true)
+  post('/remove-flat-rate', removeFlatRateHandler.POST, ConfirmRemoveOptions)
   get('/check-pay', checkPayHandler.GET, true)
   post('/check-pay', checkPayHandler.POST)
   get('/qualification', qualificationHandler.GET, true)

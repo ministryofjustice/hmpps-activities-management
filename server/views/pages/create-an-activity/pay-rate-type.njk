@@ -1,0 +1,52 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = applicationName + " - Create an activity - Pay Rate option" %}
+{% set pageId = 'create-activity-pay-rate-type-page' %}
+{% set backLinkHref = "risk-level" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    name: "payRateTypeOption",
+                    fieldset: {
+                        legend: {
+                            text: "What type of rate do you want to create?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "single",
+                            text: "A single pay rate for one incentive level",
+                            checked: session.createJourney.payRateTypeOption == "single"
+                        },
+                        {
+                            value: "flat",
+                            text: "A flat rate that applies to all incentive levels",
+                            checked: session.createJourney.payRateTypeOption == "flat"
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('payRateTypeOption')
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

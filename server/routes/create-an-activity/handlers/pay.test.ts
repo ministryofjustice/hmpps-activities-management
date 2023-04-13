@@ -43,6 +43,8 @@ describe('Route Handlers - Create an activity - Pay', () => {
           },
           riskLevel: 'High',
           incentiveLevels: ['Basic', 'Standard'],
+          payRateTypeOption: 'single',
+          pay: [],
         },
       },
       query: {},
@@ -74,6 +76,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { id: 1, alias: 'Low', displaySequence: 1 },
           { id: 2, alias: 'High', displaySequence: 2 },
         ],
+        payRateType: 'single',
       })
     })
 
@@ -108,6 +111,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { id: 1, alias: 'Low', displaySequence: 1 },
           { id: 2, alias: 'High', displaySequence: 2 },
         ],
+        payRateType: 'single',
         pay: {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
@@ -125,7 +129,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
       req.body = {
         rate: 100,
         bandId: 2,
-        incentiveLevels: ['Basic', 'Standard'],
+        incentiveLevel: 'Basic',
       }
 
       when(prisonService.getIncentiveLevels)
@@ -142,14 +146,6 @@ describe('Route Handlers - Create an activity - Pay', () => {
         {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
-          bandId: 2,
-          rate: 100,
-          bandAlias: 'High',
-          displaySequence: 2,
-        },
-        {
-          incentiveNomisCode: 'STD',
-          incentiveLevel: 'Standard',
           bandId: 2,
           rate: 100,
           bandAlias: 'High',
@@ -181,7 +177,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
       req.body = {
         rate: 100,
         bandId: 2,
-        incentiveLevels: ['Standard'],
+        incentiveLevel: 'Standard',
       }
 
       await handler.POST(req, res)
@@ -211,7 +207,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
       req.body = {
         rate: 200,
         bandId: 2,
-        incentiveLevels: ['Basic'],
+        incentiveLevel: 'Basic',
         currentPayBand: 1,
         currentIncentiveLevel: 'Basic',
       }
@@ -261,10 +257,6 @@ describe('Route Handlers - Create an activity - Pay', () => {
           {
             error: 'Select a pay band',
             property: 'bandId',
-          },
-          {
-            error: 'Select at least one incentive level',
-            property: 'incentiveLevels',
           },
         ]),
       )
