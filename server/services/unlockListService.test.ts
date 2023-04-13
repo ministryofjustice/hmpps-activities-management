@@ -93,17 +93,16 @@ const scheduledEventsWithActivities = {
   activities: [
     {
       prisonCode: 'MDI',
-      eventId: 10001,
-      bookingId: 10001,
-      location: 'WORKSHOP 1',
-      locationId: 10001,
-      eventClass: 'INT_MOV',
-      eventStatus: 'SCH',
+      eventSource: 'SAA',
       eventType: 'ACTIVITY',
-      eventTypeDesc: 'Activity',
-      event: 'ACT',
-      eventDesc: 'Metalwork',
-      details: 'Metalwork level 1',
+      bookingId: 10001,
+      internalLocationId: 10001,
+      internalLocationCode: 'MDI-WORKSHOP-1',
+      internalLocationDescription: 'WORKSHOP 1',
+      scheduledInstanceId: 1001,
+      categoryCode: 'SAA-PRISON_INDUSTRIES',
+      categoryDescription: 'Prison industries',
+      summary: 'Metalwork',
       prisonerNumber: 'A1111AA',
       date: '2022-01-01',
       startTime: '9:00',
@@ -124,17 +123,12 @@ const scheduledEventsWithCourt = {
   courtHearings: [
     {
       prisonCode: 'MDI',
+      eventSource: 'NOMIS',
+      eventType: 'COURT_HEARING',
       eventId: 10001,
       bookingId: 10001,
-      location: 'EXTERNAL',
-      locationId: 10001,
-      eventClass: 'INT_MOV',
-      eventStatus: 'SCH',
-      eventType: 'COURT_HEARING',
-      eventTypeDesc: 'Court hearing',
-      event: 'CRT',
-      eventDesc: 'Court hearing today',
-      details: 'Bradford Crown Court appeal hearing',
+      internalLocationDescription: 'Bradford County Court',
+      summary: 'Court hearing',
       prisonerNumber: 'A1111AA',
       date: '2022-01-01',
       startTime: '9:00',
@@ -145,62 +139,63 @@ const scheduledEventsWithCourt = {
   activities: [],
 } as PrisonerScheduledEvents
 
-const locationFiltersDefault = [
+const defaultLocationFilters = [
   { value: 'A-Wing', text: 'A-Wing', checked: true },
   { value: 'B-Wing', text: 'B-Wing', checked: true },
   { value: 'C-Wing', text: 'C-Wing', checked: true },
 ] as FilterItem[]
 
-const activityFiltersDefault = [
+const defaultActivityFilters = [
   { value: 'Both', text: 'Both', checked: true },
   { value: 'With', text: 'With', checked: false },
   { value: 'Without', text: 'Without', checked: false },
 ] as FilterItem[]
 
-const stayingOrLeavingFiltersDefault = [
+const defaultStayingOrLeavingFilters = [
   { value: 'Both', text: 'Both', checked: true },
   { value: 'Staying', text: 'Staying', checked: false },
   { value: 'Leaving', text: 'Leaving', checked: false },
 ] as FilterItem[]
 
 const testUnlockFilters = (
-  locationFilters: FilterItem[] = locationFiltersDefault,
-  activityFilters: FilterItem[] = activityFiltersDefault,
-  stayingOrLeavingFilters: FilterItem[] = stayingOrLeavingFiltersDefault,
-): UnlockFilters => {
-  return {
-    location: 'HB1',
-    cellPrefix: 'MDI-1-',
-    unlockDate: toDate('2022-01-01'),
-    timeSlot: 'am',
-    subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
-    locationFilters,
-    activityFilters,
-    stayingOrLeavingFilters,
-  } as UnlockFilters
-}
-
-afterEach(() => {
-  jest.resetAllMocks()
+  locationFilters: FilterItem[],
+  activityFilters: FilterItem[],
+  stayingOrLeavingFilters: FilterItem[],
+): UnlockFilters => ({
+  location: 'HB1',
+  cellPrefix: 'MDI-1-',
+  unlockDate: toDate('2022-01-01'),
+  timeSlot: 'am',
+  subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
+  locationFilters,
+  activityFilters,
+  stayingOrLeavingFilters,
 })
 
-beforeEach(() => {
-  // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
-  activitiesApiClient.getPrisonLocationPrefixByGroup
-    .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
-    .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
-    .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
-})
+const unlockListService = new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient)
 
 describe('Unlock list service', () => {
-  const unlockListService = new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient)
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
 
   describe('getUnlockListForLocationGroups', () => {
     it('should get the unlock list items for three sub-locations', async () => {
       const prisonerNumbers = ['A1111AA', 'A2222AA']
-      const unlockFilters = testUnlockFilters()
+      const unlockFilters = testUnlockFilters(
+        defaultLocationFilters,
+        defaultActivityFilters,
+        defaultStayingOrLeavingFilters,
+      )
+
+      // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
+      activitiesApiClient.getPrisonLocationPrefixByGroup
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
@@ -239,7 +234,7 @@ describe('Unlock list service', () => {
         { value: 'C-Wing', text: 'C-Wing', checked: true },
       ] as FilterItem[]
 
-      const unlockFilters = testUnlockFilters(locationFilters)
+      const unlockFilters = testUnlockFilters(locationFilters, defaultActivityFilters, defaultStayingOrLeavingFilters)
 
       // These do not match any cell patterns for prisoners in the mocked list
       activitiesApiClient.getPrisonLocationPrefixByGroup
@@ -248,6 +243,7 @@ describe('Unlock list service', () => {
         .mockResolvedValueOnce({ locationPrefix: 'MDI-3-3-0(0[1-9]|1[0-2])' })
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
@@ -268,70 +264,102 @@ describe('Unlock list service', () => {
 
   describe('unlock list filters', () => {
     it('filter by activities', async () => {
-      const unlockFilters = testUnlockFilters()
-      unlockFilters.activityFilters = [
+      const activityFilters = [
         { value: 'Both', text: 'Both', checked: false },
         { value: 'With', text: 'With', checked: true },
         { value: 'Without', text: 'Without', checked: false },
       ] as FilterItem[]
 
+      const unlockFilters = testUnlockFilters(defaultLocationFilters, activityFilters, defaultStayingOrLeavingFilters)
+
+      // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
+      activitiesApiClient.getPrisonLocationPrefixByGroup
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
+
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithActivities)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems.length).toBe(1)
+      expect(unlockListItems).toHaveLength(1)
       expect(unlockListItems[0].prisonerNumber).toEqual('A1111AA')
     })
 
     it('filter by leaving', async () => {
-      const unlockFilters = testUnlockFilters()
-      unlockFilters.stayingOrLeavingFilters = [
+      const stayingOrLeavingFilters = [
         { value: 'Both', text: 'Both', checked: false },
         { value: 'Staying', text: 'Staying', checked: false },
         { value: 'Leaving', text: 'Leaving', checked: true },
       ] as FilterItem[]
 
+      const unlockFilters = testUnlockFilters(defaultLocationFilters, defaultActivityFilters, stayingOrLeavingFilters)
+
+      // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
+      activitiesApiClient.getPrisonLocationPrefixByGroup
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
+
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems.length).toBe(1)
+      expect(unlockListItems).toHaveLength(1)
       expect(unlockListItems[0].prisonerNumber).toEqual('A1111AA')
     })
 
     it('filter by staying', async () => {
-      const unlockFilters = testUnlockFilters()
-      unlockFilters.stayingOrLeavingFilters = [
+      const stayingOrLeavingFilters = [
         { value: 'Both', text: 'Both', checked: false },
         { value: 'Staying', text: 'Staying', checked: true },
         { value: 'Leaving', text: 'Leaving', checked: false },
       ] as FilterItem[]
 
+      const unlockFilters = testUnlockFilters(defaultLocationFilters, defaultActivityFilters, stayingOrLeavingFilters)
+
+      // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
+      activitiesApiClient.getPrisonLocationPrefixByGroup
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
+
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems.length).toBe(1)
+      expect(unlockListItems).toHaveLength(1)
       expect(unlockListItems[0].prisonerNumber).toEqual('A2222AA')
     })
 
     it('filter by sub-location', async () => {
-      const unlockFilters = testUnlockFilters()
-      unlockFilters.locationFilters = [
+      const locationFilters = [
         { value: 'A-Wing', text: 'A-Wing', checked: true },
         { value: 'B-Wing', text: 'B-Wing', checked: false },
         { value: 'C-Wing', text: 'C-Wing', checked: false },
       ] as FilterItem[]
 
+      const unlockFilters = testUnlockFilters(locationFilters, defaultActivityFilters, defaultStayingOrLeavingFilters)
+
+      // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
+      activitiesApiClient.getPrisonLocationPrefixByGroup
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
+        .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
+
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+
       activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems.length).toBe(1)
+      expect(unlockListItems).toHaveLength(1)
       expect(unlockListItems[0].prisonerNumber).toEqual('A1111AA')
     })
   })
