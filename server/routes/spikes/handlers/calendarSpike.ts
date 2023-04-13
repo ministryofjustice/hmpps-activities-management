@@ -69,7 +69,7 @@ export default class CalendarSpikeRoutes {
           event.eventSource === 'NOMIS' ? `${event.summary}` : `${event.summary} ${event.categoryDescription}`
         break
       case 'ACTIVITY':
-        description = event.eventSource === 'NOMIS' ? `${event.summary}` : `${event.summary} (link?)`
+        description = event.eventSource === 'NOMIS' ? `${event.summary}` : `${event.summary}`
         break
       case 'EXTERNAL_TRANSFER':
         description = 'External transfer'
