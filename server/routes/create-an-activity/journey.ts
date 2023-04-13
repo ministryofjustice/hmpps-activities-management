@@ -6,6 +6,8 @@ export type CreateAnActivityJourney = {
   name?: string
   riskLevel?: string
   payRateTypeOption?: string
+  minimumPayRate?: number
+  maximumPayRate?: number
   pay?: Array<{
     incentiveNomisCode: string
     incentiveLevel: string

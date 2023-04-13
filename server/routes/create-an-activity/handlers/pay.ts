@@ -4,6 +4,7 @@ import { IsNumber, Min } from 'class-validator'
 import PrisonService from '../../../services/prisonService'
 import ActivitiesService from '../../../services/activitiesService'
 import IsNotDuplicatedForIep from '../../../validators/bandNotDuplicatedForIep'
+import PayRateBetweenMinAndMax from '../../../validators/payRateBetweenMinAndMax'
 
 export class Pay {
   @Expose()
@@ -11,6 +12,9 @@ export class Pay {
   @Transform(({ value }) => value * 100) // Transform to pence
   @IsNumber({ allowNaN: false }, { message: 'Pay rate must be a number' })
   @Min(1, { message: 'Enter a pay rate' })
+  @PayRateBetweenMinAndMax({
+    message: `Enter a pay amount that is at least the minimum pay and no more than maximum pay`,
+  })
   rate: number
 
   @Expose()
@@ -33,6 +37,7 @@ export default class PayRoutes {
     const bandId = +req.query.bandId
 
     const pay = req.session.createJourney?.pay?.find(p => p.bandId === bandId && p.incentiveLevel === iep)
+    const flat = req.session.createJourney?.flat
     const payRateType = req.session.createJourney.payRateTypeOption
 
     const [incentiveLevels, payBands] = await Promise.all([
@@ -40,7 +45,24 @@ export default class PayRoutes {
       this.activitiesService.getPayBandsForPrison(user),
     ])
 
-    res.render(`pages/create-an-activity/pay`, { incentiveLevels, payBands, pay, payRateType })
+    // Minimum and maximum pay rates will be retrieved from  a new Prison API endpoint.
+    // Default values are set here until this endpoint is available
+
+    const minimumPayRate = 60
+    const maximumPayRate = 275
+
+    req.session.createJourney.minimumPayRate = minimumPayRate
+    req.session.createJourney.maximumPayRate = maximumPayRate
+
+    res.render(`pages/create-an-activity/pay`, {
+      incentiveLevels,
+      payBands,
+      pay,
+      flat,
+      payRateType,
+      minimumPayRate,
+      maximumPayRate,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
