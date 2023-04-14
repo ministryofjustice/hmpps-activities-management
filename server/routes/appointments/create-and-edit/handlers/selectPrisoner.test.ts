@@ -6,7 +6,7 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import SelectPrisonerRoutes, { PrisonerSearch } from './selectPrisoner'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { AppointmentType } from '../appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 
 jest.mock('../../../../services/prisonService')
 
@@ -57,6 +57,7 @@ describe('Route Handlers - Create Appointment - Select Prisoner', () => {
         query: 'A1234BC',
       }
       req.session.appointmentJourney = {
+        mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.INDIVIDUAL,
       }
 

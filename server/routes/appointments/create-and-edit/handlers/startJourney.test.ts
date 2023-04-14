@@ -111,10 +111,21 @@ describe('Route Handlers - Create Appointment - Start', () => {
           minute: 0,
         },
       } as AppointmentJourney
+
       await handler.EDIT_OCCURRENCE(req, res)
 
       expect(req.session.appointmentJourney).toEqual(appointmentJourneySession)
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/location`)
+    })
+
+    it('should redirect back if property not specified', async () => {
+      req.params = {
+        property: '',
+      }
+
+      await handler.EDIT_OCCURRENCE(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('back')
     })
   })
 })

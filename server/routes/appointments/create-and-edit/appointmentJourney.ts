@@ -12,7 +12,7 @@ export enum AppointmentJourneyMode {
 }
 
 export type AppointmentJourney = {
-  mode?: AppointmentJourneyMode
+  mode: AppointmentJourneyMode
   type: AppointmentType
   prisoners?: {
     number: string

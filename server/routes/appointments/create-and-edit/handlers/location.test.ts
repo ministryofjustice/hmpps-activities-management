@@ -103,14 +103,16 @@ describe('Route Handlers - Create Appointment - Location', () => {
   })
 
   describe('EDIT', () => {
-    it('should update the occurrence and redirect back to the occurrence details page', async () => {
-      req.body = {
-        locationId: 26152,
-      }
-
+    beforeEach(() => {
       req.params = {
         appointmentId: '2',
         occurrenceId: '12',
+      }
+    })
+
+    it('should update the occurrence and redirect back to the occurrence details page', async () => {
+      req.body = {
+        locationId: 26152,
       }
 
       req.session.appointmentJourney = {
@@ -135,6 +137,18 @@ describe('Route Handlers - Create Appointment - Location', () => {
       )
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('/appointments/2/occurrence/12')
+    })
+
+    it('validation fails when selected location is not found', async () => {
+      req.body = {
+        locationId: -1,
+      }
+
+      when(prisonService.getLocationsForAppointments).mockResolvedValue(locations)
+
+      await handler.EDIT(req, res)
+
+      expect(res.validationFailed).toHaveBeenCalledWith('locationId', `Selected location not found`)
     })
   })
 
