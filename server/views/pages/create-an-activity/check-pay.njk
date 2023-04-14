@@ -1,6 +1,5 @@
 {% extends "layout.njk" %}
 
-{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
@@ -9,16 +8,6 @@
 {% set backLinkHref = "pay" %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            {% if successMessage|length %}
-                {{ govukNotificationBanner({
-                    type: 'success',
-                    text: successMessage.message
-                }) }}
-            {% endif %}
-        </div>
-    </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
             <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }}</span>

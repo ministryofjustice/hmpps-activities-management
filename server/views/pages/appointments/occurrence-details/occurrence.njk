@@ -10,6 +10,8 @@
 {% set pageId = 'appointment-occurrence-view-details-page' %}
 {% set backLinkHref = "/appointments/" + occurrence.appointmentId %}
 
+{% set occurenceLink = '/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.id  %}
+
 {% set summaryListRows = [] if occurrence.appointmentType == AppointmentType.GROUP else [{
     key: {
         text: "Prisoner"
@@ -34,6 +36,16 @@
         },
         value: {
             text: occurrence.internalLocation.description
+        },
+        actions: {
+            items: [
+                {
+                    href: occurenceLink + "/edit/start/location",
+                    text: "Change",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-location' }
+                }
+            ]
         }
     },
     {
@@ -94,7 +106,7 @@
             <p class="govuk-body govuk-!-display-none-print">
                 {{ govukButton({
                     text: "Print movement slip",
-                    href: 'movement-slip/' + occurrence.id,
+                    href: occurenceLink + '/movement-slip',
                     attributes: {
                         'data-qa': 'print-movement-slip-link'
                     }

@@ -31,7 +31,8 @@ import appointmentDetails from './fixtures/appointment_details_1.json'
 import appointmentOccurrenceDetails from './fixtures/appointment_occurrence_details_1.json'
 import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
-import { AppointmentType } from '../routes/appointments/create/journey'
+import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { EditApplyTo } from '../@types/appointments'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -454,6 +455,19 @@ describe('Activities Service', () => {
       await activitiesService.uncancelScheduledActivity(1, user)
 
       expect(activitiesApiClient.putUncancelScheduledActivity).toHaveBeenCalledWith(1, apiRequest, user)
+    })
+  })
+
+  describe('editAppointmentOccurrence', () => {
+    it('should edit appointment occurrence', async () => {
+      const apiRequest = {
+        internalLocationId: 123,
+        applyTo: EditApplyTo.THIS_OCCURRENCE,
+      }
+
+      await activitiesService.editAppointmentOccurrence(1, apiRequest, user)
+
+      expect(activitiesApiClient.editAppointmentOccurrence).toHaveBeenCalledWith(1, apiRequest, user)
     })
   })
 })

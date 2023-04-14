@@ -119,6 +119,15 @@ export interface paths {
      */
     post: operations['create']
   }
+  '/appointment-occurrences/{appointmentOccurrenceId}': {
+    /**
+     * Update an appointment occurrence or series of appointment occurrences
+     * @description
+     *     Update an appointment occurrence or series of appointment occurrences based on the applyTo property.
+     *     Does not require any specific roles
+     */
+    patch: operations['updateAppointmentOccurrence']
+  }
   '/synchronisation/attendance/{attendanceId}': {
     /**
      * Retrieves Nomis synchronisation details
@@ -2043,6 +2052,341 @@ export interface components {
       saturday: boolean
       sunday: boolean
     }
+    /** @description The update request with the new appointment occurrence details and how to apply the update */
+    AppointmentOccurrenceUpdateRequest: {
+      /**
+       * @description
+       *     The updated NOMIS reference code for the parent appointment. Must exist and be active.
+       *     NOTE: updating the category will apply to all appointment occurrences as the category is associated with the
+       *     parent appointment only. The value for applyTo will be ignored.
+       *
+       * @example GYMW
+       */
+      categoryCode?: string
+      /**
+       * Format: int64
+       * @description
+       *     The updated NOMIS internal location id within the specified prison. This must be supplied if inCell is false.
+       *     The internal location id must exist, must be within the prison specified by the prisonCode property on the
+       *     parent appointment and be active.
+       *
+       * @example 123
+       */
+      internalLocationId?: number
+      /**
+       * @description
+       *     Flag to indicate if the location of the appointment occurrence is in cell rather than an internal prison location.
+       *     Internal location id will be ignored if inCell is true
+       *
+       * @example false
+       */
+      inCell?: boolean
+      /**
+       * Format: date
+       * @description
+       *     The updated date of the appointment occurrence. NOTE: this property specifies the day or date of all or all future
+       *     occurrences when used in conjunction with the applyTo property
+       */
+      startDate?: string
+      /**
+       * Format: partial-time
+       * @description The updated starting time of the appointment occurrence
+       * @example 09:00
+       */
+      startTime?: string
+      /**
+       * Format: partial-time
+       * @description The updated end time of the appointment occurrence
+       * @example 10:30
+       */
+      endTime?: string
+      /**
+       * @description Updated notes relating to the appointment occurrence
+       * @example This appointment occurrence has been rescheduled due to staff availability
+       */
+      comment?: string
+      /**
+       * @description The replacement prisoner or prisoners to allocate to the appointment occurrence
+       * @example [
+       *   "A1234BC"
+       * ]
+       */
+      prisonerNumbers?: string[]
+      /**
+       * @description
+       *     Specifies which appointment occurrence or occurrences this update should apply to.
+       *     Defaults to THIS_OCCURRENCE meaning the update will be applied to the appointment occurrence specified by the
+       *     supplied id only.
+       *
+       * @example THIS_OCCURRENCE
+       * @enum {string}
+       */
+      applyTo: 'THIS_OCCURRENCE' | 'THIS_AND_ALL_FUTURE_OCCURRENCES' | 'ALL_FUTURE_OCCURRENCES'
+    }
+    /** @description Describes a top-level activity */
+    Activity: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      id?: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode?: string
+      /**
+       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
+       * @example false
+       */
+      attendanceRequired?: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is in cell
+       * @example false
+       */
+      inCell?: boolean
+      /**
+       * @description Flag to indicate if the activity is piece work
+       * @example false
+       */
+      pieceWork?: boolean
+      /**
+       * @description Flag to indicate if the activity carried out outside of the prison
+       * @example false
+       */
+      outsideWork?: boolean
+      /**
+       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
+       * @example H
+       * @enum {string}
+       */
+      payPerSession?: 'H' | 'F'
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary?: string
+      /**
+       * @description A detailed description for this activity
+       * @example A basic maths course suitable for introduction to the subject
+       */
+      description?: string
+      category?: components['schemas']['ActivityCategory']
+      tier?: components['schemas']['ActivityTier']
+      /**
+       * @description A list of eligibility rules which apply to this activity. These can be positive (include) and negative (exclude)
+       * @example [FEMALE_ONLY,AGED_18-25]
+       */
+      eligibilityRules?: components['schemas']['ActivityEligibility'][]
+      /** @description A list of schedules for this activity. These contain the time slots / recurrence settings for instances of this activity. */
+      schedules?: components['schemas']['ActivitySchedule'][]
+      /** @description A list of prisoners who are waiting for allocation to this activity. This list is held against the activity, though allocation is against particular schedules of the activity */
+      waitingList?: components['schemas']['PrisonerWaiting'][]
+      /** @description The list of pay rates by incentive level and pay band that can apply to this activity */
+      pay?: components['schemas']['ActivityPay'][]
+      /**
+       * Format: date
+       * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
+       * @example 2022-09-21
+       */
+      startDate?: string
+      /**
+       * Format: date
+       * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
+       * @example 2022-12-21
+       */
+      endDate?: string
+      /**
+       * @description The most recent risk assessment level for this activity
+       * @example high
+       */
+      riskLevel?: string
+      /**
+       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
+       * @example BAS
+       */
+      minimumIncentiveNomisCode?: string
+      /**
+       * @description The minimum incentive/earned privilege level for this activity
+       * @example Basic
+       */
+      minimumIncentiveLevel?: string
+      /**
+       * Format: date-time
+       * @description The date and time when this activity was created
+       */
+      createdTime?: string
+      /**
+       * @description The person who created this activity
+       * @example Adam Smith
+       */
+      createdBy?: string
+      /** @description The list of minimum education levels that can apply to this activity */
+      minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevel'][]
+    }
+    /** @description Describes a top-level activity category */
+    ActivityCategory: {
+      /**
+       * Format: int64
+       * @description The internally-generated identifier for this activity category
+       * @example 1
+       */
+      id?: number
+      /**
+       * @description The activity category code
+       * @example LEISURE_SOCIAL
+       */
+      code?: string
+      /**
+       * @description The name of the activity category
+       * @example Leisure and social
+       */
+      name?: string
+      /**
+       * @description The description of the activity category
+       * @example Such as association, library time and social clubs, like music or art
+       */
+      description?: string
+    }
+    /**
+     * @description Describes an eligibility rule as applied to an activity
+     * @example [FEMALE_ONLY,AGED_18-25]
+     */
+    ActivityEligibility: {
+      /**
+       * Format: int64
+       * @description The internal ID of the activity that these rules apply to
+       * @example 123456
+       */
+      id?: number
+      eligibility?: components['schemas']['EligibilityRule']
+    }
+    /** @description Describes a top-level activity */
+    ActivityLite: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      id?: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode?: string
+      /**
+       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
+       * @example false
+       */
+      attendanceRequired?: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is in cell
+       * @example false
+       */
+      inCell?: boolean
+      /**
+       * @description Flag to indicate if the activity is piece work
+       * @example false
+       */
+      pieceWork?: boolean
+      /**
+       * @description Flag to indicate if the activity carried out outside of the prison
+       * @example false
+       */
+      outsideWork?: boolean
+      /**
+       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
+       * @example H
+       * @enum {string}
+       */
+      payPerSession?: 'H' | 'F'
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary?: string
+      /**
+       * @description A detailed description for this activity
+       * @example A basic maths course suitable for introduction to the subject
+       */
+      description?: string
+      category?: components['schemas']['ActivityCategory']
+      /**
+       * @description The most recent risk assessment level for this activity
+       * @example high
+       */
+      riskLevel?: string
+      /**
+       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
+       * @example BAS
+       */
+      minimumIncentiveNomisCode?: string
+      /**
+       * @description The minimum incentive/earned privilege level for this activity
+       * @example Basic
+       */
+      minimumIncentiveLevel?: string
+      /** @description The list of minimum education levels that can apply to this activity */
+      minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevel'][]
+    }
+    /** @description Describes the minimum education levels which apply to an activity */
+    ActivityMinimumEducationLevel: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity minimum education level
+       * @example 123456
+       */
+      id?: number
+      /**
+       * @description The education level code
+       * @example Basic
+       */
+      educationLevelCode?: string
+      /**
+       * @description The education level description
+       * @example Basic
+       */
+      educationLevelDescription?: string
+    }
+    /** @description Describes the pay rates and bands which apply to an activity */
+    ActivityPay: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity pay
+       * @example 123456
+       */
+      id?: number
+      /**
+       * @description The NOMIS code for the incentive/earned privilege level
+       * @example BAS
+       */
+      incentiveNomisCode?: string
+      /**
+       * @description The incentive/earned privilege level
+       * @example Basic
+       */
+      incentiveLevel?: string
+      prisonPayBand?: components['schemas']['PrisonPayBand']
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
+       * @example 150
+       */
+      pieceRate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
+       * @example 10
+       */
+      pieceRateItems?: number
+    }
     /**
      * @description
      *   Represents the key data required to synchronise an attendance with Nomis
@@ -3536,6 +3880,50 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Update an appointment occurrence or series of appointment occurrences
+   * @description
+   *     Update an appointment occurrence or series of appointment occurrences based on the applyTo property.
+   *     Does not require any specific roles
+   */
+  updateAppointmentOccurrence: {
+    parameters: {
+      path: {
+        appointmentOccurrenceId: number
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppointmentOccurrenceUpdateRequest']
+      }
+    }
+    responses: {
+      /** @description The appointment occurrence or series of appointment occurrences was updated. */
+      202: {
+        content: {
+          'application/json': components['schemas']['AppointmentOccurrence']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The appointment occurrence for this ID was not found. */
+      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }

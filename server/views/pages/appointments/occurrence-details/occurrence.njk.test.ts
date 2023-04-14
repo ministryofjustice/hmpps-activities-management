@@ -5,7 +5,7 @@ import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
-import { AppointmentType } from '../../../../routes/appointments/create/journey'
+import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 
 const view = fs.readFileSync('server/views/pages/appointments/occurrence-details/occurrence.njk')
 

@@ -33,11 +33,4 @@ export type ScheduleInstanceCancelRequest = components['schemas']['ScheduleInsta
 export type UserSummary = components['schemas']['UserSummary']
 export type PrisonerSummary = components['schemas']['PrisonerSummary']
 export type ActivityScheduleSlot = components['schemas']['ActivityScheduleSlot']
-
-export enum AppointmentRepeatPeriod {
-  WEEKDAY = 'WEEKDAY',
-  DAILY = 'DAILY',
-  WEEKLY = 'WEEKLY',
-  FORTNIGHTLY = 'FORTNIGHTLY',
-  MONTHLY = 'MONTHLY',
-}
+export type AppointmentOccurrenceUpdateRequest = components['schemas']['AppointmentOccurrenceUpdateRequest']

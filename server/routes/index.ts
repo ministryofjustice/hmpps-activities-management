@@ -8,13 +8,10 @@ import allocateRoutes from './allocate-to-activity'
 import attendanceRoutes from './record-attendance'
 import unlockListRoutes from './unlock-list'
 import spikeRoutes from './spikes'
-import appointmentsHomeRoutes from './appointments/home'
-import appointmentsCreateIndividualRoutes from './appointments/create'
-import appointmentDetailsRoutes from './appointments/details'
-import appointmentOccurrenceDetailsRoutes from './appointments/occurrence-details'
 import errorMessageMiddleware from '../middleware/errorMessageMiddleware'
 import successMessageMiddleware from '../middleware/successMessageMiddleware'
 import timeNowMiddleware from '../middleware/timeNowMiddleware'
+import appointmentRoutes from './appointments'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -29,16 +26,11 @@ export default function routes(services: Services): Router {
   router.use('/schedule', scheduleRoutes(services))
   router.use('/attendance', attendanceRoutes(services))
   router.use('/unlock-list', unlockListRoutes(services))
+  router.use('/appointments', appointmentRoutes(services))
   // Add more beta build routes here
 
   // Spikes under here spikes
   router.use('/spikes', spikeRoutes(services))
-
-  // Appointments
-  router.use('/appointments', appointmentsHomeRoutes())
-  router.use('/appointments/create', appointmentsCreateIndividualRoutes(services))
-  router.use('/appointments', appointmentDetailsRoutes(services))
-  router.use('/appointment/occurrence', appointmentOccurrenceDetailsRoutes(services))
 
   return router
 }

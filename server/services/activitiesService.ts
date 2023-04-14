@@ -29,6 +29,7 @@ import {
   ScheduleInstanceCancelRequest,
   UncancelScheduledInstanceRequest,
   Attendance,
+  AppointmentOccurrenceUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -301,5 +302,13 @@ export default class ActivitiesService {
 
   async getAttendanceDetails(attendanceId: number, user: ServiceUser): Promise<Attendance> {
     return this.activitiesApiClient.getAttendanceDetails(attendanceId, user)
+  }
+
+  async editAppointmentOccurrence(
+    occurrenceId: number,
+    occurrenceUpdates: AppointmentOccurrenceUpdateRequest,
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.editAppointmentOccurrence(occurrenceId, occurrenceUpdates, user)
   }
 }

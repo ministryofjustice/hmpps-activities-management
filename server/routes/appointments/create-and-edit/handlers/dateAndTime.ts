@@ -1,0 +1,67 @@
+import { Request, Response } from 'express'
+import { Expose, Type } from 'class-transformer'
+import { IsNotEmpty, ValidateNested } from 'class-validator'
+import SimpleDate from '../../../../commonValidationTypes/simpleDate'
+import SimpleTime from '../../../../commonValidationTypes/simpleTime'
+import IsValidDate from '../../../../validators/isValidDate'
+import IsValidTime from '../../../../validators/isValidTime'
+import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
+import TimeIsAfter from '../../../../validators/timeIsAfter'
+import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
+
+export class DateAndTime {
+  @Expose()
+  @Type(() => SimpleDate)
+  @ValidateNested()
+  @IsNotEmpty({ message: 'Enter a date for the appointment' })
+  @IsValidDate({ message: 'Enter a valid date for the appointment' })
+  @DateIsSameOrAfter(new Date(), { message: "Enter a date on or after today's date" })
+  startDate: SimpleDate
+
+  @Expose()
+  @Type(() => SimpleTime)
+  @ValidateNested()
+  @IsNotEmpty({ message: 'Select a start time for the appointment' })
+  @IsValidTime({ message: 'Select a valid start time for the appointment' })
+  @TimeAndDateIsAfterNow('startDate', { message: 'Select a start time that is in the future' })
+  startTime: SimpleTime
+
+  @Expose()
+  @Type(() => SimpleTime)
+  @ValidateNested()
+  @IsNotEmpty({ message: 'Select an end time for the appointment' })
+  @IsValidTime({ message: 'Select a valid end time for the appointment' })
+  @TimeIsAfter('startTime', { message: 'Select an end time after the start time' })
+  endTime: SimpleTime
+}
+
+export default class DateAndTimeRoutes {
+  GET = async (req: Request, res: Response): Promise<void> => {
+    res.render('pages/appointments/create-and-edit/date-and-time')
+  }
+
+  POST = async (req: Request, res: Response): Promise<void> => {
+    const { startDate, startTime, endTime } = req.body
+
+    req.session.appointmentJourney.startDate = {
+      day: startDate.day,
+      month: startDate.month,
+      year: startDate.year,
+      date: startDate.toRichDate(),
+    }
+
+    req.session.appointmentJourney.startTime = {
+      hour: startTime.hour,
+      minute: startTime.minute,
+      date: startTime.toDate(req.session.appointmentJourney.startDate.date),
+    }
+
+    req.session.appointmentJourney.endTime = {
+      hour: endTime.hour,
+      minute: endTime.minute,
+      date: endTime.toDate(req.session.appointmentJourney.startDate.date),
+    }
+
+    res.redirectOrReturn(`repeat`)
+  }
+}

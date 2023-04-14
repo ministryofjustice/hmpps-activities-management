@@ -1,15 +1,9 @@
 import { Request, Response } from 'express'
-import { when } from 'jest-when'
 import OccurrenceDetailsRoutes from './occurrenceDetails'
-import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
 
-jest.mock('../../../../services/activitiesService')
-
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
-
 describe('Route Handlers - Appointment Occurrence Details', () => {
-  const handler = new OccurrenceDetailsRoutes(activitiesService)
+  const handler = new OccurrenceDetailsRoutes()
   let req: Request
   let res: Response
 
@@ -33,6 +27,7 @@ describe('Route Handlers - Appointment Occurrence Details', () => {
       params: {
         id: '10',
       },
+      appointmentOccurrence: occurrenceDetails,
     } as unknown as Request
   })
 
@@ -42,10 +37,6 @@ describe('Route Handlers - Appointment Occurrence Details', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      when(activitiesService.getAppointmentOccurrenceDetails)
-        .calledWith(10, res.locals.user)
-        .mockResolvedValue(occurrenceDetails)
-
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/occurrence-details/occurrence', {
