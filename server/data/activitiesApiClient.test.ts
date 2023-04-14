@@ -18,7 +18,8 @@ import {
   AppointmentCategorySummary,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
-import { AppointmentType } from '../routes/appointments/create/journey'
+import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { EditApplyTo } from '../@types/appointments'
 
 const user = { token: 'token' } as ServiceUser
 
@@ -608,6 +609,22 @@ describe('activitiesApiClient', () => {
       }
 
       await activitiesApiClient.putUncancelScheduledActivity(1, body, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('patchAppointmentOccurrence', () => {
+    it('should update an appointment occurrence', async () => {
+      fakeActivitiesApi.patch('/appointment-occurrences/1').matchHeader('authorization', `Bearer token`).reply(200)
+
+      const body = {
+        startDate: '2023-02-07',
+        startTime: '13:00',
+        endTime: '13:30',
+        applyTo: EditApplyTo.THIS_OCCURRENCE,
+      }
+
+      await activitiesApiClient.editAppointmentOccurrence(1, body, user)
       expect(nock.isDone()).toBe(true)
     })
   })

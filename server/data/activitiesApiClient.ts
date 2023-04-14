@@ -28,6 +28,7 @@ import {
   AppointmentOccurrenceDetails,
   ScheduleInstanceCancelRequest,
   UncancelScheduledInstanceRequest,
+  AppointmentOccurrenceUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -336,6 +337,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/attendances/${attendanceId}`,
       authToken: user.token,
+    })
+  }
+
+  async editAppointmentOccurrence(
+    occurrenceId: number,
+    occurrenceDetails: AppointmentOccurrenceUpdateRequest,
+    user: ServiceUser,
+  ): Promise<void> {
+    return this.patch({
+      path: `/appointment-occurrences/${occurrenceId}`,
+      authToken: user.token,
+      data: occurrenceDetails,
     })
   }
 }

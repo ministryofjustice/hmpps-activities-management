@@ -2,8 +2,8 @@ import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import postPrisonerNumbers from '../../fixtures/prisonerSearchApi/postPrisonerNumbers-A1350DZ-A8644DY.json'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
-import HowToAddPrisonersPage from '../../pages/appointments/create/howToAddPrisonersPage'
-import UploadPrisonerListPage from '../../pages/appointments/create/uploadPrisonerListPage'
+import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
+import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/uploadPrisonerListPage'
 
 context('Create group appointment - CSV upload validation', () => {
   beforeEach(() => {

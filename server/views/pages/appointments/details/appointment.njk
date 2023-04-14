@@ -129,7 +129,7 @@
         actions: {
             items: [
                 {
-                    href: "/appointment/occurrence/" + occurrence.id,
+                    href: "/appointments/" + appointment.id + "/occurrence/" + occurrence.id,
                     text: "View and edit",
                     visuallyHiddenText: "view and edit occurrence " + occurrence.sequenceNumber,
                     classes: "govuk-link--no-visited-state",
@@ -180,7 +180,7 @@
             <p class="govuk-body govuk-!-display-none-print">
                 {{ govukButton({
                     text: "Print movement slip",
-                    href: 'movement-slip/' + appointment.id,
+                    href: '/appointments/' + appointment.id + '/movement-slip',
                     attributes: {
                         'data-qa': 'print-movement-slip-link'
                     }

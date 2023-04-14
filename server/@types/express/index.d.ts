@@ -4,13 +4,14 @@ import { CaseLoadExtended } from '../dps'
 import { RoleDetail } from '../nomisUserApiImport/types'
 import { AllocateToActivityJourney } from '../../routes/allocate-to-activity/journey'
 import { CreateAnActivityJourney } from '../../routes/create-an-activity/journey'
-import { CreateAppointmentJourney } from '../../routes/appointments/create/journey'
+import { AppointmentJourney } from '../../routes/appointments/create-and-edit/appointmentJourney'
 import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
 import { NotAttendedJourney } from '../../routes/record-attendance/journey'
 import { RecordAttendanceRequests } from '../../routes/record-attendance/recordAttendanceRequests'
 
 // eslint-disable-next-line import/no-cycle,import/named
 import { ActivitiesFilters, UnlockFilters } from '../activities'
+import { AppointmentDetails, AppointmentOccurrenceDetails } from '../activitiesAPI/types'
 
 export default {}
 
@@ -24,7 +25,7 @@ declare module 'express-session' {
     data: any
     createJourney: CreateAnActivityJourney
     allocateJourney: AllocateToActivityJourney
-    createAppointmentJourney: CreateAppointmentJourney
+    appointmentJourney: AppointmentJourney
     calendarSpikeJourney: CalendarSpikeJourney
     unlockFilters: UnlockFilters
     activitiesFilters: ActivitiesFilters
@@ -52,6 +53,8 @@ export declare global {
       verified?: boolean
       id: string
       logout(done: (err: unknown) => void): void
+      appointment?: AppointmentDetails
+      appointmentOccurrence?: AppointmentOccurrenceDetails
     }
   }
 }

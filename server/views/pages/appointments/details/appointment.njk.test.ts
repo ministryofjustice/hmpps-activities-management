@@ -4,9 +4,10 @@ import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
-import { AppointmentDetails, AppointmentRepeatPeriod } from '../../../../@types/activitiesAPI/types'
+import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
-import { AppointmentType } from '../../../../routes/appointments/create/journey'
+import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
+import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
 
 const view = fs.readFileSync('server/views/pages/appointments/details/appointment.njk')
 
