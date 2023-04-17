@@ -1,0 +1,13 @@
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% if successMessage|length %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukNotificationBanner({
+                type: 'success',
+                text: successMessage.message,
+                classes: 'govuk-!-margin-top-3 govuk-!-margin-bottom-0'
+            }) }}
+        </div>
+    </div>
+{% endif %}

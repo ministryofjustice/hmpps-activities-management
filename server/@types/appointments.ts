@@ -17,3 +17,17 @@ export type MovementSlip = {
   createdBy: UserSummary
   prisoners: PrisonerSummary[]
 }
+
+export enum AppointmentRepeatPeriod {
+  WEEKDAY = 'WEEKDAY',
+  DAILY = 'DAILY',
+  WEEKLY = 'WEEKLY',
+  FORTNIGHTLY = 'FORTNIGHTLY',
+  MONTHLY = 'MONTHLY',
+}
+
+export enum EditApplyTo {
+  THIS_OCCURRENCE = 'THIS_OCCURRENCE',
+  THIS_AND_ALL_FUTURE_OCCURRENCES = 'THIS_AND_ALL_FUTURE_OCCURRENCES',
+  ALL_FUTURE_OCCURRENCES = 'ALL_FUTURE_OCCURRENCES',
+}

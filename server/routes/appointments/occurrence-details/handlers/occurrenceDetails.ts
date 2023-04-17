@@ -1,15 +1,9 @@
 import { Request, Response } from 'express'
-import ActivitiesService from '../../../../services/activitiesService'
 
 export default class OccurrenceDetailsRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
-
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const { id } = req.params
+    const { appointmentOccurrence } = req
 
-    const occurrence = await this.activitiesService.getAppointmentOccurrenceDetails(+id, user)
-
-    res.render('pages/appointments/occurrence-details/occurrence', { occurrence })
+    res.render('pages/appointments/occurrence-details/occurrence', { occurrence: appointmentOccurrence })
   }
 }

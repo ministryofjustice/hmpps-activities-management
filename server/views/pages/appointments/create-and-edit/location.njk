@@ -1,0 +1,50 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+
+{% set pageTitle = "Appointments Management - Create Appointment - Location" %}
+{% set pageId = 'appointments-create-location-page' %}
+{% set backLinkHref = "/category" %}
+
+{% set options = [{ value: "-", text: "" }] %}
+{% for location in locations %}
+    {% set options = (options.push( { value: location.locationId, text: location.userDescription }), options) %}
+{% endfor %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="locationId"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukSelect({
+                    id: "locationId",
+                    name: "locationId",
+                    label: {
+                        text: "Where is the appointment?",
+                        classes: "govuk-label--l",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "Start typing a location and select from the list of options"
+                    },
+                    formGroup: {
+                        classes: "location-autocomplete-formgroup"
+                    },
+                    errorMessage: validationErrors | findError('locationId'),
+                    value: formResponses.locationId or session.appointmentJourney.location.id,
+                    items: options
+                }) }}
+                {{ govukButton({
+                    text: "Save" if session.appointmentJourney.mode == "EDIT" else "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

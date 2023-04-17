@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import { when } from 'jest-when'
 
 import AppointmentMovementSlipRoutes from './appointmentMovementSlip'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -57,6 +56,7 @@ describe('Route Handlers - Movement Slip', () => {
       params: {
         id: '10',
       },
+      appointment: appointmentDetails,
     } as unknown as Request
   })
 
@@ -66,10 +66,6 @@ describe('Route Handlers - Movement Slip', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      when(activitiesService.getAppointmentDetails)
-        .calledWith(10, res.locals.user)
-        .mockResolvedValue(appointmentDetails)
-
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/individual', {

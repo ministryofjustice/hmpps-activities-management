@@ -1,16 +1,12 @@
 import { Request, Response } from 'express'
-import { when } from 'jest-when'
 
 import OccurrenceMovementSlipRoutes from './occurrenceMovementSlip'
-import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
-
 describe('Route Handlers - Movement Slip', () => {
-  const handler = new OccurrenceMovementSlipRoutes(activitiesService)
+  const handler = new OccurrenceMovementSlipRoutes()
   let req: Request
   let res: Response
 
@@ -60,6 +56,7 @@ describe('Route Handlers - Movement Slip', () => {
       params: {
         id: '10',
       },
+      appointmentOccurrence: occurrenceDetails,
     } as unknown as Request
   })
 
@@ -69,10 +66,6 @@ describe('Route Handlers - Movement Slip', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      when(activitiesService.getAppointmentOccurrenceDetails)
-        .calledWith(10, res.locals.user)
-        .mockResolvedValue(occurrenceDetails)
-
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/individual', {

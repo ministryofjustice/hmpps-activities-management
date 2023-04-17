@@ -1,0 +1,48 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+
+{% set pageTitle = "Appointments Management - Create Appointment - Repeat" %}
+{% set pageId = 'appointments-create-repeat-page' %}
+{% set backLinkHref = "/date-and-time" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% set repeat = formResponses.repeat or session.appointmentJourney.repeat %}
+                {{ govukRadios({
+                    name: "repeat",
+                    fieldset: {
+                        legend: {
+                            text: "Will the appointment repeat?",
+                            classes: "govuk-label--l",
+                            isPageHeading: true
+                        }
+                    },
+                    errorMessage: validationErrors | findError('repeat'),
+                    items: [
+                        {
+                            value: YesNo.YES,
+                            text: "Yes",
+                            checked: repeat == YesNo.YES
+                        },
+                        {
+                            value: YesNo.NO,
+                            text: "No",
+                            checked: repeat == YesNo.NO
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
