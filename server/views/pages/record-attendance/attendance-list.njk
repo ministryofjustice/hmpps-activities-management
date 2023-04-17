@@ -190,6 +190,10 @@
                     classes: 'govuk-!-display-none-print'
                 },
                 {
+                    text: "",
+                    classes: 'govuk-!-display-none-print'
+                    },
+                {
                     text: "Notes",
                     classes: 'govuk-table__header print-only hmpps-width-20-percent'
                 }
@@ -259,7 +263,7 @@
 {% endmacro %}
 
 {% macro renderViewLink(attendance) %}
-    {% if attendance.status ===  'COMPLETED' %}
+    {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory|length %}
         <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">View or change</a>
     {% endif %}
 {% endmacro %}
