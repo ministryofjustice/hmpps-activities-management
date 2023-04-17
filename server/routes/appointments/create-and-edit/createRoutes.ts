@@ -17,6 +17,7 @@ import ReviewPrisoners, { AddAnotherForm } from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
+import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
 
 export default function Create({ prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -62,7 +63,12 @@ export default function Create({ prisonService, activitiesService }: Services): 
   post('/repeat-period-and-count', repeatPeriodAndCountHandler.POST, RepeatPeriodAndCount)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
-  get('/confirmation/:id', confirmationHandler.GET, true)
+  router.get(
+    '/confirmation/:appointmentId',
+    fetchAppointment(activitiesService),
+    emptyJourneyHandler('appointmentJourney', true),
+    asyncMiddleware(confirmationHandler.GET),
+  )
   get('/how-to-add-prisoners', howToAddPrisoners.GET, true)
   post('/how-to-add-prisoners', howToAddPrisoners.POST, HowToAddPrisonersForm)
   get('/review-prisoners', reviewPrisoners.GET, true)

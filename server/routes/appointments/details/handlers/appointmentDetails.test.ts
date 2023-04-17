@@ -1,16 +1,11 @@
 import { Request, Response } from 'express'
 import { addHours, subMinutes } from 'date-fns'
 import AppointmentDetailsRoutes from './appointmentDetails'
-import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 
-jest.mock('../../../../services/activitiesService')
-
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
-
 describe('Route Handlers - Appointment Details', () => {
-  const handler = new AppointmentDetailsRoutes(activitiesService)
+  const handler = new AppointmentDetailsRoutes()
   let req: Request
   let res: Response
 
