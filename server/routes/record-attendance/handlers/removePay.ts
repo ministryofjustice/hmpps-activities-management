@@ -46,6 +46,7 @@ export default class RemovePayRoutes {
           status: AttendanceStatus.COMPLETED,
           attendanceReason: AttendanceReason.ATTENDED,
           issuePayment: false,
+          payAmount: null as number,
           caseNote: req.body.caseNote,
         },
       ]
