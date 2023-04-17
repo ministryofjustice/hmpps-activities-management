@@ -14,8 +14,11 @@ export default class AppointmentDetailsPage extends Page {
   assertAppointmentDetail = (header: string, value: string) =>
     this.assertSummaryListValue('appointment-details', header, value)
 
-  assertAppointmentOccurrence = (header: string, value: string) =>
-    this.assertSummaryListValue('appointment-occurrences', header, value)
+  assertAppointmentOccurrenceSummary = (sequenceNumber: string, column: string, value: string) =>
+    cy
+      .get(`[data-qa=occurrence-sequence-no-${sequenceNumber}]`)
+      .siblings(`[data-qa=occurrence-${column}-${sequenceNumber}]`)
+      .contains(value)
 
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {
     cy.get('[data-qa=prisoner-name]')
@@ -48,8 +51,14 @@ export default class AppointmentDetailsPage extends Page {
 
   assertRepeatCount = (option: string) => this.assertAppointmentDetail('Occurrences', option)
 
-  assertOccurrences = (occurrenceMap: Map<number, string>) =>
-    occurrenceMap.forEach((date, sequenceNumber) => this.assertAppointmentOccurrence(sequenceNumber.toString(), date))
+  assertOccurrences = (occurrenceMap: Map<number, { date: string; edited: boolean }>) => {
+    occurrenceMap.forEach((details, sequenceNumber) => {
+      this.assertAppointmentOccurrenceSummary(sequenceNumber.toString(), 'date', details.date)
+      if (details.edited) {
+        this.assertAppointmentOccurrenceSummary(sequenceNumber.toString(), 'edited', 'Edited')
+      }
+    })
+  }
 
   assertCreatedBy = (createdBy: string) => this.assertSummaryListValue('user-details', 'Created by', createdBy)
 

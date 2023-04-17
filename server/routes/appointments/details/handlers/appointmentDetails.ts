@@ -1,10 +1,7 @@
 import { Request, Response } from 'express'
-import ActivitiesService from '../../../../services/activitiesService'
 import { parseDate } from '../../../../utils/utils'
 
 export default class AppointmentDetailsRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
-
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointment } = req
 
