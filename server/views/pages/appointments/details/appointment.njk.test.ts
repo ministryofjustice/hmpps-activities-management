@@ -118,4 +118,36 @@ describe('Views - Appointments Management - Appointment Details', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
     expect($('[data-qa=prisoner-summary]').length).toBe(0)
   })
+
+  it('should show updated occurrences as edited', () => {
+    const tomorrow = addDays(new Date(), 1)
+    const nextWeek = addDays(new Date(), 8)
+    viewContext.appointment.repeat = {
+      period: AppointmentRepeatPeriod.WEEKLY,
+      count: 2,
+    }
+    viewContext.appointment.occurrences = [
+      {
+        id: 100,
+        sequenceNumber: 1,
+        startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
+      },
+      {
+        id: 101,
+        sequenceNumber: 2,
+        startDate: formatDate(nextWeek, 'yyyy-MM-dd'),
+        updated: '2023-02-20T10:00:00',
+        updatedBy: {
+          id: 231232,
+          username: 'USER1',
+          firstName: 'john',
+          lastName: 'smith',
+        },
+      },
+    ] as unknown as AppointmentDetails['occurrences']
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    expect($('[data-qa=occurrence-edited-1]').text()).not.toContain('Edited')
+    expect($('[data-qa=occurrence-edited-2]').text()).toContain('Edited')
+  })
 })

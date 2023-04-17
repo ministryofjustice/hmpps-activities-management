@@ -132,7 +132,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
       expect(req.flash).toHaveBeenCalledWith(
         'successMessage',
         JSON.stringify({
-          message: `Appointment location changed successfully`,
+          message: `Appointment location for this occurrence changed successfully`,
         }),
       )
 

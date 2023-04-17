@@ -2887,6 +2887,7 @@ export interface components {
        * @example 13:30
        */
       endTime?: string
+      repeat?: components['schemas']['AppointmentRepeat']
       /**
        * @description The appointment type (INDIVIDUAL or GROUP)
        * @example INDIVIDUAL
