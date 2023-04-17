@@ -6,9 +6,8 @@
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
 
-{% set pageTitle = "Appointments Management - Appointment Occurrence Details" %}
-{% set pageId = 'appointment-occurrence-view-details-page' %}
-{% set backLinkHref = "/appointments/" + occurrence.appointmentId %}
+{% set pageTitle = "Appointments Management - Appointment Details" %}
+{% set pageId = 'appointment-view-details-page' %}
 
 {% set occurenceLink = '/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.id  %}
 
@@ -74,12 +73,32 @@
     }
 ), summaryListRows) %}
 
+{% if occurrence.isRepeat %}
+    {% set summaryListRows = (summaryListRows.push({
+        key: {
+            text: "Repeat"
+        },
+        value: {
+            text: "Yes"
+        },
+        actions: {
+            items: [
+                {
+                    href: "/appointments/" + occurrence.appointmentId,
+                    text: "View series",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'view-appointment-series' }
+                }
+            ]
+        }
+    }), summaryListRows) %}
+{% endif %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l" data-qa='caption'>View and edit appointment occurrence</span>
-            <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}</h1>
-            <h2 class="govuk-heading-m">Appointment occurrence details</h2>
+            <h1 class="govuk-heading-l" data-qa='heading'>View and edit appointment details</h1>
+            <h2 class="govuk-heading-m">Appointment details</h2>
             {{ govukSummaryList({
                 rows: summaryListRows,
                 classes: "govuk-!-margin-bottom-9",

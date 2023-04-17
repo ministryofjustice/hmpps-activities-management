@@ -6,36 +6,10 @@
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
 
-{% set pageTitle = "Appointments Management - Appointment Details" %}
-{% set pageId = 'appointments-view-details-page' %}
-{% set backLinkHref = "/appointments" %}
+{% set pageTitle = "Appointments Management - Appointment Series Details" %}
+{% set pageId = 'appointment-series-view-details-page' %}
 
-{% set summaryListRows = [] if appointment.appointmentType == AppointmentType.GROUP else [{
-    key: {
-        text: "Prisoner"
-    },
-    value: {
-        html: appointmentPrisonerSummary(appointment.prisoners[0].firstName + ' ' + appointment.prisoners[0].lastName, appointment.prisoners[0].prisonerNumber, appointment.prisoners[0].cellLocation, dpsUrl)
-    }
-}] %}
-
-{% set summaryListRows = (summaryListRows.push(
-    {
-        key: {
-            text: "Category"
-        },
-        value: {
-            text: appointment.category.description
-        }
-    },
-    {
-        key: {
-            text: "Location"
-        },
-        value: {
-            text: appointment.internalLocation.description
-        }
-    },
+{% set summaryListRows = [
     {
         key: {
             text: "Date"
@@ -43,33 +17,8 @@
         value: {
             text: appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy')
         }
-    },
-    {
-        key: {
-            text: "Start time"
-        },
-        value: {
-            text: appointment.startTime
-        }
-    },
-    {
-        key: {
-            text: "End time"
-        },
-        value: {
-            text: appointment.endTime
-        }
-    },
-    {
-        key: {
-            text: "Repeat"
-        },
-        value: {
-            text: ("Yes" if appointment.repeat != null) +
-                  ("No" if appointment.repeat == null)
-        }
     }
-), summaryListRows) %}
+] %}
 {% if appointment.repeat != null %}
     {% set summaryListRows = (summaryListRows.push({
         key: {
@@ -107,7 +56,7 @@
 {% set occurrenceSummaryListRows = [
     {
         key: {
-            text: "Occurrence"
+            text: "Sequence number"
         },
         value: {
             text: "Date",
@@ -131,9 +80,9 @@
                 {
                     href: "/appointments/" + appointment.id + "/occurrence/" + occurrence.id,
                     text: "View and edit",
-                    visuallyHiddenText: "view and edit occurrence " + occurrence.sequenceNumber,
+                    visuallyHiddenText: "view and edit appointment " + occurrence.sequenceNumber,
                     classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'view-and-edit-occurrence-' + occurrence.sequenceNumber }
+                    attributes: { 'data-qa': 'view-and-edit-appointment-' + occurrence.sequenceNumber }
                 }
             ]
         }
@@ -143,16 +92,15 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l">View and edit appointment details</h1>
-            <h2 class="govuk-heading-m">Appointment details</h2>
+            <h1 class="govuk-heading-l">View appointment series details</h1>
             {{ govukSummaryList({
                 rows: summaryListRows,
                 classes: "govuk-!-margin-bottom-9",
-                attributes: { 'data-qa': 'appointment-details' }
+                attributes: { 'data-qa': 'appointment-series-details' }
             }) }}
 
             {% if appointment.repeat != null %}
-                <h2 class="govuk-heading-m" data-qa="occurrences-heading">Appointment occurrences</h2>
+                <h2 class="govuk-heading-m" data-qa="occurrences-heading">Appointments</h2>
                 {{ govukSummaryList({
                     rows: occurrenceSummaryListRows,
                     classes: "summary-list-row-count govuk-!-margin-bottom-9",
