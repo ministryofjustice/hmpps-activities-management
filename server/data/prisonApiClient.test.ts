@@ -124,21 +124,6 @@ describe('prisonApiClient', () => {
     })
   })
 
-  describe('getEducations', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-
-      fakePrisonApi
-        .post('/api/education/prisoners', ['G10001', 'G10002'])
-        .matchHeader('authorization', `Bearer token`)
-        .reply(200, response)
-
-      const output = await prisonApiClient.getEducations(['G10001', 'G10002'], user)
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
   describe('getEventLocations', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }

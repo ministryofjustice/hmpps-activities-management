@@ -540,6 +540,7 @@ describe('activitiesApiClient', () => {
         startTime: '09:00',
         endTime: '10:30',
         comment: 'This appointment will help adjusting to life outside of prison',
+        appointmentDescription: 'Appointment description',
         prisonerNumbers: ['A1234BC'],
         appointmentType: AppointmentType.INDIVIDUAL,
       }
@@ -553,6 +554,7 @@ describe('activitiesApiClient', () => {
         startTime: '09:00',
         endTime: '10:30',
         comment: 'This appointment will help adjusting to life outside of prison',
+        appointmentDescription: 'Appointment description',
         created: '2023-02-07T15:37:59.266Z',
         createdBy: 'AAA01U',
         occurrences: [
@@ -625,6 +627,27 @@ describe('activitiesApiClient', () => {
       }
 
       await activitiesApiClient.editAppointmentOccurrence(1, body, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getActivityCandidates', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/schedules/1/candidates')
+        .query({
+          suitableIncentiveLevel: 'Basic',
+          suitableRiskLevel: 'RHI',
+          suitableForEmployed: true,
+          search: 'test',
+        })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getActivityCandidates(1, user, ['Basic'], ['RHI'], true, 'test')
+
+      expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
   })

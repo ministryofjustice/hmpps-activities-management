@@ -7,7 +7,6 @@ import {
   CaseLoad,
   InmateBasicDetails,
   ReferenceCode,
-  Education,
 } from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
@@ -80,14 +79,6 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
   async getReferenceCodes(domain: string, user: ServiceUser): Promise<ReferenceCode[]> {
     return this.get({
       path: `/api/reference-domains/domains/${domain}/codes`,
-      authToken: user.token,
-    })
-  }
-
-  async getEducations(prisonerNumbers: string[], user: ServiceUser): Promise<Education[]> {
-    return this.post({
-      path: `/api/education/prisoners`,
-      data: prisonerNumbers,
       authToken: user.token,
     })
   }

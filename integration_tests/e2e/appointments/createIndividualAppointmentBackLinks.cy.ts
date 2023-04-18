@@ -4,6 +4,7 @@ import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
 import SelectPrisonerPage from '../../pages/appointments/create-and-edit/selectPrisonerPage'
 import CategoryPage from '../../pages/appointments/create-and-edit/categoryPage'
+import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
@@ -41,6 +42,10 @@ context('Create individual appointment - back links', () => {
     categoryPage.selectCategory('Chaplaincy')
     categoryPage.continue()
 
+    const descriptionPage = Page.verifyOnPage(DescriptionPage)
+    descriptionPage.descriptionOption('Yes')
+    descriptionPage.continue()
+
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')
     locationPage.continue()
@@ -67,6 +72,9 @@ context('Create individual appointment - back links', () => {
     locationPage.assertSelectedLocation('Chapel')
 
     locationPage.back()
+    Page.verifyOnPage(DescriptionPage)
+
+    descriptionPage.back()
     Page.verifyOnPage(CategoryPage)
     categoryPage.assertSelectedCategory('Chaplaincy')
 
@@ -77,6 +85,7 @@ context('Create individual appointment - back links', () => {
     // Continue to repeat page
     selectPrisonerPage.continue()
     categoryPage.continue()
+    descriptionPage.continue()
     locationPage.continue()
     dateAndTimePage.continue()
 

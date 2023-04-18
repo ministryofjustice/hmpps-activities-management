@@ -20,6 +20,7 @@ import { formatDate } from '../../../server/utils/utils'
 import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 import IndividualMovementSlip from '../../pages/appointments/movementSlip/individualMovementSlip'
+import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 
 context('Create individual repeat appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -56,6 +57,10 @@ context('Create individual repeat appointment', () => {
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.selectCategory('Chaplaincy')
     categoryPage.continue()
+
+    const descriptionPage = Page.verifyOnPage(DescriptionPage)
+    descriptionPage.descriptionOption('Yes')
+    descriptionPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')

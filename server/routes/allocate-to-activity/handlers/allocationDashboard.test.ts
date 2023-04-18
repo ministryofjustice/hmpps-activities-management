@@ -8,12 +8,16 @@ import CapacitiesService from '../../../services/capacitiesService'
 import PrisonService from '../../../services/prisonService'
 import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashboard'
 import atLeast from '../../../../jest.setup'
-import { ActivitySchedule, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
+import {
+  ActivityCandidate,
+  ActivitySchedule,
+  Allocation,
+  PrisonerAllocations,
+} from '../../../@types/activitiesAPI/types'
 import { AllocationsSummary } from '../../../@types/activities'
-import { PagePrisoner, Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
+import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import { IepLevel } from '../../../@types/incentivesApi/types'
-import { Education } from '../../../@types/prisonApiImport/types'
 
 jest.mock('../../../services/prisonService')
 jest.mock('../../../services/capacitiesService')
@@ -28,15 +32,17 @@ describe('Route Handlers - Allocation dashboard', () => {
   let req: Request
   let res: Response
 
+  const user = {
+    username: 'joebloggs',
+    activeCaseLoad: {
+      caseLoadId: 'MDI',
+    },
+  }
+
   beforeEach(() => {
     res = {
       locals: {
-        user: {
-          username: 'joebloggs',
-          activeCaseLoad: {
-            caseLoadId: 'MDI',
-          },
-        },
+        user,
       },
       render: jest.fn(),
       redirect: jest.fn(),
@@ -119,114 +125,18 @@ describe('Route Handlers - Allocation dashboard', () => {
             ],
           },
         ] as PrisonerAllocations[])
-      when(activitiesService.getPrisonerAllocations)
-        .calledWith(atLeast('MDI', ['G3439UH']))
+      when(activitiesService.getActivityCandidates)
+        .calledWith(atLeast(1))
         .mockResolvedValue([
           {
-            prisonerNumber: 'G3439UH',
-            allocations: [
-              { scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
-              { scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
-            ],
+            name: 'RODNEY REINDEER',
+            prisonerNumber: 'A0013DZ',
+            cellLocation: '4-2-009',
+            otherAllocations: [],
+            releaseDate: null,
+            educationLevels: [],
           },
-        ] as PrisonerAllocations[])
-      when(prisonService.getEducations)
-        .calledWith(atLeast(['G3439UH']))
-        .mockResolvedValue([
-          {
-            bookingId: 100001,
-            studyArea: 'Mathematics',
-            educationLevel: 'Level 1',
-          },
-          {
-            bookingId: 100002,
-            studyArea: 'Spanish',
-            educationLevel: 'Level 1',
-          },
-        ] as Education[])
-      when(prisonService.getInmates)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue({
-          content: [
-            {
-              prisonerNumber: 'ABC123',
-              status: 'ACTIVE IN',
-              legalStatus: 'OTHER',
-              firstName: 'Joe',
-              lastName: 'Bloggs',
-              cellLocation: 'MDI-1-1-101',
-              releaseDate: '2023-12-25',
-              alerts: [],
-            },
-            {
-              prisonerNumber: '321CBA',
-              status: 'ACTIVE IN',
-              legalStatus: 'OTHER',
-              firstName: 'John',
-              lastName: 'Smith',
-              cellLocation: 'MDI-1-1-103',
-              releaseDate: '2023-12-26',
-              alerts: [],
-            },
-            {
-              prisonerNumber: 'TEST123',
-              status: 'INACTIVE OUT',
-              legalStatus: 'OTHER',
-              firstName: 'Jim',
-              lastName: 'Hamilton',
-              cellLocation: 'MDI-1-1-104',
-              releaseDate: '2023-12-26',
-              alerts: [],
-            },
-            {
-              prisonerNumber: 'XYZ123',
-              status: 'ACTIVE IN',
-              legalStatus: 'DEAD',
-              firstName: 'John',
-              lastName: 'West',
-              cellLocation: 'MDI-1-1-105',
-              conditionalReleaseDate: '2023-12-26',
-              alerts: [],
-            },
-            {
-              prisonerNumber: 'QWERTY',
-              status: 'ACTIVE IN',
-              legalStatus: 'OTHER',
-              firstName: 'Bill',
-              lastName: 'Wilkins',
-              cellLocation: 'MDI-1-1-106',
-              releaseDate: '2024-01-26',
-              alerts: [
-                {
-                  alertType: 'R',
-                  alertCode: 'RLO',
-                },
-              ],
-              currentIncentive: {
-                level: { description: 'Basic' },
-              },
-            },
-            {
-              prisonerNumber: 'G3439UH',
-              bookingId: '100001',
-              status: 'ACTIVE IN',
-              legalStatus: 'OTHER',
-              firstName: 'Jack',
-              lastName: 'Daniels',
-              cellLocation: 'MDI-1-1-107',
-              releaseDate: '2023-12-26',
-              alerts: [
-                {
-                  alertType: 'R',
-                  alertCode: 'RLO',
-                },
-              ],
-              currentIncentive: {
-                level: { description: 'Standard' },
-              },
-            },
-          ],
-        } as PagePrisoner)
+        ] as ActivityCandidate[])
     })
 
     it('should render the correct view', async () => {
@@ -268,30 +178,12 @@ describe('Route Handlers - Allocation dashboard', () => {
         ],
         candidates: [
           {
-            cellLocation: 'MDI-1-1-107',
-            inWork: true,
-            name: 'Jack Daniels',
-            otherAllocations: [
-              {
-                id: 1,
-                scheduleName: 'this schedule',
-                isUnemployment: false,
-              },
-              {
-                id: 2,
-                scheduleName: 'other schedule',
-                isUnemployment: false,
-              },
-            ],
-            prisonerNumber: 'G3439UH',
-            releaseDate: new Date(2023, 11, 26),
-            educationLevels: [
-              {
-                bookingId: 100001,
-                educationLevel: 'Level 1',
-                studyArea: 'Mathematics',
-              },
-            ],
+            cellLocation: '4-2-009',
+            educationLevels: [],
+            name: 'RODNEY REINDEER',
+            otherAllocations: [],
+            prisonerNumber: 'A0013DZ',
+            releaseDate: null,
           },
         ],
         incentiveLevels: [
@@ -322,12 +214,19 @@ describe('Route Handlers - Allocation dashboard', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/allocate-to-activity/allocation-dashboard',
         expect.objectContaining({
-          candidates: [],
           filters: expect.objectContaining({
             incentiveLevelFilter: 'Standard or Enhanced',
           }),
           suitableForIep: 'Standard or Enhanced',
         }),
+      )
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        ['Standard', 'Enhanced'],
+        expect.anything(),
+        expect.anything(),
+        undefined,
       )
     })
 
@@ -352,6 +251,14 @@ describe('Route Handlers - Allocation dashboard', () => {
           suitableForWra: 'Low',
         }),
       )
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        expect.anything(),
+        ['RLO'],
+        expect.anything(),
+        undefined,
+      )
     })
 
     it('should calculate suitable workplace risk assessment correctly - MEDIUM', async () => {
@@ -374,6 +281,14 @@ describe('Route Handlers - Allocation dashboard', () => {
           }),
           suitableForWra: 'Low or Medium',
         }),
+      )
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        expect.anything(),
+        ['RLO', 'RME'],
+        expect.anything(),
+        undefined,
       )
     })
 
@@ -398,102 +313,149 @@ describe('Route Handlers - Allocation dashboard', () => {
           suitableForWra: 'Low or Medium or High',
         }),
       )
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        expect.anything(),
+        ['RLO', 'RME', 'RHI'],
+        expect.anything(),
+        undefined,
+      )
     })
 
     it('should return correct candidates with risk level filter set to any', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { candidateQuery: 'jack', riskLevelFilter: 'Any Workplace Risk Assessment' }
+      req.query = { riskLevelFilter: 'Any Workplace Risk Assessment' }
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/allocate-to-activity/allocation-dashboard',
         expect.objectContaining({
-          candidates: [
-            expect.objectContaining({
-              prisonerNumber: 'G3439UH',
-            }),
-          ],
           filters: expect.objectContaining({
             riskLevelFilter: 'Any Workplace Risk Assessment',
           }),
         }),
       )
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      )
     })
 
     it('should return correct candidates with risk level filter set to none', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { candidateQuery: 'jack', riskLevelFilter: 'No Workplace Risk Assessment' }
+      req.query = { riskLevelFilter: 'No Workplace Risk Assessment' }
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/allocate-to-activity/allocation-dashboard',
         expect.objectContaining({
-          candidates: [],
           filters: expect.objectContaining({
             riskLevelFilter: 'No Workplace Risk Assessment',
           }),
         }),
       )
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        undefined,
+        ['NONE'],
+        undefined,
+        undefined,
+      )
     })
 
-    it('should return correct candidates with employlent filter set to In work', async () => {
+    it('should return correct candidates with employment filter set to In work', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { candidateQuery: 'jack', employmentFilter: 'In work' }
+      req.query = { employmentFilter: 'In work' }
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/allocate-to-activity/allocation-dashboard',
         expect.objectContaining({
-          candidates: [
-            expect.objectContaining({
-              prisonerNumber: 'G3439UH',
-            }),
-          ],
           filters: expect.objectContaining({
             employmentFilter: 'In work',
           }),
         }),
       )
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        undefined,
+        undefined,
+        true,
+        undefined,
+      )
     })
 
-    it('should return correct candidates with employlent filter set to Everyone', async () => {
+    it('should return correct candidates with employment filter set to Everyone', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { candidateQuery: 'jack', employmentFilter: 'Everyone' }
+      req.query = { employmentFilter: 'Everyone' }
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/allocate-to-activity/allocation-dashboard',
         expect.objectContaining({
-          candidates: [
-            expect.objectContaining({
-              prisonerNumber: 'G3439UH',
-            }),
-          ],
           filters: expect.objectContaining({
             employmentFilter: 'Everyone',
           }),
         }),
       )
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      )
     })
 
-    it('should return correct candidates with employlent filter set to Not in work', async () => {
+    it('should return correct candidates with employment filter set to Not in work', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { candidateQuery: 'jack', employmentFilter: 'Not in work' }
+      req.query = { employmentFilter: 'Not in work' }
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/allocate-to-activity/allocation-dashboard',
         expect.objectContaining({
-          candidates: [],
           filters: expect.objectContaining({
             employmentFilter: 'Not in work',
           }),
         }),
+      )
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        undefined,
+        undefined,
+        false,
+        undefined,
+      )
+    })
+
+    it('should return correct candidates with search string given', async () => {
+      req.params = { scheduleId: '1' }
+      req.query = { candidateQuery: 'joe' }
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        undefined,
+        undefined,
+        undefined,
+        'joe',
       )
     })
   })
