@@ -30,7 +30,7 @@
         key: {
             text: "Pay"
         },
-        value: { text: "Yes" if attendance.issuePayment else "No"}
+        value: { text: attendance.payAmount / 100 | toFixed or "none"}
     }
 ), summaryListRows) %}
 
@@ -50,13 +50,6 @@
             },
             value: {
                 text: attendance.caseNoteId
-            },
-            actions: {
-             items: [{
-                 href: "view-case-note",
-                 text: "View",
-                 visuallyHiddenText: "View case note"
-             }]
             }
         }
     ), summaryListRows) %}
@@ -91,7 +84,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <h1 class="govuk-heading-l">Attendance details for {{ attendee.name | toTitleCase }}</h1>
                 <div class="govuk-inset-text">
-                    <a href="/attendance/activities/{{ instance.activitySchedule.activity.id }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> {{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}
+                    <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> {{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}
                </div>
                 {% set recordedTime = attendance.recordedTime.split('T') %}
                 <h2 class="govuk-heading-m">Recorded on {{ recordedTime[0] | toDate | formatDate('d MMMM yyyy') }} at {{ recordedTime[1] }}</h2>
@@ -118,13 +111,6 @@
                                 },
                                 value: {
                                     text: attendanceHistory.attendanceReason.description
-                                },
-                                actions: {
-                                    items: [{
-                                        href: attendance.id + "/edit-attendance",
-                                        text: "Change",
-                                        visuallyHiddenText: "Change attendance option"
-                                    }]
                                 }
                              }
                         ), historyListRows) %}
@@ -134,7 +120,7 @@
                                 key: {
                                     text: "Pay"
                                 },
-                                value: { text: "Yes" if attendanceHistory.issuePayment else "No"}
+                                value: { text: attendanceHistory.payAmount / 100 | toFixed or "none"}
                             }
                         ), historyListRows) %}
 
@@ -154,13 +140,6 @@
                                     },
                                     value: {
                                         text: attendanceHistory.caseNoteId
-                                    },
-                                    actions: {
-                                     items: [{
-                                         href: "view-case-note",
-                                         text: "View",
-                                         visuallyHiddenText: "View case note"
-                                     }]
                                     }
                                 }
                             ), historyListRows) %}
@@ -195,7 +174,7 @@
                     {% endfor %}
                 {% endif %}
 
-                {% if attendance.issuePayment %}
+                {% if attendance.issuePayment and now | formatDate('yyyy MM dd') <= instance.date | toDate | formatDate('yyyy MM dd') %}
                     {{ govukButton({
                         text: "Remove pay and add case note",
                         classes: "govuk-button--warning"
