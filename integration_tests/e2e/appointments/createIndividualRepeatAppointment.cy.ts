@@ -111,8 +111,8 @@ context('Create individual repeat appointment', () => {
     appointmentDetailsPage.assertRepeatCount('2')
     appointmentDetailsPage.assertOccurrences(
       new Map([
-        [1, { date: formatDate(tomorrow, 'd MMM yyyy'), edited: false }],
-        [2, { date: formatDate(weekTomorrow, 'd MMM yyyy'), edited: true }],
+        [1, formatDate(tomorrow, 'd MMM yyyy')],
+        [2, formatDate(weekTomorrow, 'd MMM yyyy')],
       ]),
     )
     appointmentDetailsPage.assertCreatedBy('J. Smith')
