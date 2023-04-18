@@ -365,7 +365,7 @@
         {% set currentAllocationsHtml %}
             <div>
                 {% for allocation in row.otherAllocations %}
-                    <div>{{ allocation.scheduleName }}</div>
+                    <div>{{ allocation.activitySummary }}</div>
                 {% endfor %}
             </div>
         {% endset %}

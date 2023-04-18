@@ -28,6 +28,7 @@ import {
   AppointmentOccurrenceDetails,
   ScheduleInstanceCancelRequest,
   UncancelScheduledInstanceRequest,
+  PageActivityCandidate,
   AppointmentOccurrenceUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
@@ -349,6 +350,26 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/appointment-occurrences/${occurrenceId}`,
       authToken: user.token,
       data: occurrenceDetails,
+    })
+  }
+
+  getActivityCandidates(
+    scheduleId: number,
+    user: ServiceUser,
+    suitableIncentiveLevel?: string[],
+    suitableRiskLevel?: string[],
+    suitableForEmployed?: boolean,
+    search?: string,
+  ): Promise<PageActivityCandidate> {
+    return this.get({
+      path: `/schedules/${scheduleId}/candidates`,
+      query: {
+        suitableIncentiveLevel,
+        suitableRiskLevel,
+        suitableForEmployed,
+        search,
+      },
+      authToken: user.token,
     })
   }
 }

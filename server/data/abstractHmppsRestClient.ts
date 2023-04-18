@@ -11,7 +11,7 @@ import { ServiceUser } from '../@types/express'
 
 interface Request {
   path: string
-  query?: string[][] | Record<string, string> | string | URLSearchParams
+  query?: string[][] | Record<string, unknown> | string | URLSearchParams
   headers?: Record<string, string>
   responseType?: string
   authToken?: string
@@ -71,7 +71,7 @@ export default abstract class AbstractHmppsRestClient {
     logger.info(
       `${request.method.toUpperCase()} using ${authToken ? 'service' : 'admin'} client credentials: calling ${
         this.name
-      }: ${path}?${new URLSearchParams(query).toString()}`,
+      }: ${path}?${new URLSearchParams(query as Record<string, string>).toString()}`,
     )
 
     const token = authToken || (await this.getSystemToken(user?.username))
