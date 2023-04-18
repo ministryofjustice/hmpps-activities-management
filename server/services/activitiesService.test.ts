@@ -476,8 +476,9 @@ describe('Activities Service', () => {
         undefined,
         undefined,
         undefined,
+        undefined,
       )
-      expect(result).toEqual([{ name: 'Joe Bloggs' }])
+      expect(result).toEqual({ content: [{ name: 'Joe Bloggs' }] })
     })
   })
 

@@ -204,6 +204,10 @@ describe('utils', () => {
     it('formats tomorrows date as "tomorrow"', () => {
       expect(formatDate(addDays(new Date(), 1), '', true)).toEqual('tomorrow')
     })
+
+    it('formats a date in string format', () => {
+      expect(formatDate('2022-01-01', 'cccc do LLLL y')).toEqual('Saturday 1st January 2022')
+    })
   })
 
   describe('toDate', () => {

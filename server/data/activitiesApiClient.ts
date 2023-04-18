@@ -360,6 +360,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     suitableRiskLevel?: string[],
     suitableForEmployed?: boolean,
     search?: string,
+    page?: number,
   ): Promise<PageActivityCandidate> {
     return this.get({
       path: `/schedules/${scheduleId}/candidates`,
@@ -368,6 +369,8 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
         suitableRiskLevel,
         suitableForEmployed,
         search,
+        page,
+        size: 5,
       },
       authToken: user.token,
     })

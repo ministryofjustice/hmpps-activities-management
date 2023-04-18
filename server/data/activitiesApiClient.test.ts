@@ -641,11 +641,13 @@ describe('activitiesApiClient', () => {
           suitableRiskLevel: 'RHI',
           suitableForEmployed: true,
           search: 'test',
+          page: 2,
+          size: 5,
         })
         .matchHeader('authorization', `Bearer token`)
         .reply(200, response)
 
-      const output = await activitiesApiClient.getActivityCandidates(1, user, ['Basic'], ['RHI'], true, 'test')
+      const output = await activitiesApiClient.getActivityCandidates(1, user, ['Basic'], ['RHI'], true, 'test', 2)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

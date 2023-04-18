@@ -8,12 +8,7 @@ import CapacitiesService from '../../../services/capacitiesService'
 import PrisonService from '../../../services/prisonService'
 import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashboard'
 import atLeast from '../../../../jest.setup'
-import {
-  ActivityCandidate,
-  ActivitySchedule,
-  Allocation,
-  PrisonerAllocations,
-} from '../../../@types/activitiesAPI/types'
+import { ActivitySchedule, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 import { AllocationsSummary } from '../../../@types/activities'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../utils/utils'
@@ -49,7 +44,9 @@ describe('Route Handlers - Allocation dashboard', () => {
     } as unknown as Response
 
     req = {
-      query: {},
+      query: {
+        page: 0,
+      },
     } as unknown as Request
   })
 
@@ -127,16 +124,18 @@ describe('Route Handlers - Allocation dashboard', () => {
         ] as PrisonerAllocations[])
       when(activitiesService.getActivityCandidates)
         .calledWith(atLeast(1))
-        .mockResolvedValue([
-          {
-            name: 'RODNEY REINDEER',
-            prisonerNumber: 'A0013DZ',
-            cellLocation: '4-2-009',
-            otherAllocations: [],
-            releaseDate: null,
-            educationLevels: [],
-          },
-        ] as ActivityCandidate[])
+        .mockResolvedValue({
+          content: [
+            {
+              name: 'RODNEY REINDEER',
+              prisonerNumber: 'A0013DZ',
+              cellLocation: '4-2-009',
+              otherAllocations: [],
+              releaseDate: null,
+              educationLevels: [],
+            },
+          ],
+        })
     })
 
     it('should render the correct view', async () => {
@@ -176,16 +175,18 @@ describe('Route Handlers - Allocation dashboard', () => {
             releaseDate: new Date(2023, 11, 26),
           },
         ],
-        candidates: [
-          {
-            cellLocation: '4-2-009',
-            educationLevels: [],
-            name: 'RODNEY REINDEER',
-            otherAllocations: [],
-            prisonerNumber: 'A0013DZ',
-            releaseDate: null,
-          },
-        ],
+        pagedCandidates: {
+          content: [
+            {
+              cellLocation: '4-2-009',
+              educationLevels: [],
+              name: 'RODNEY REINDEER',
+              otherAllocations: [],
+              prisonerNumber: 'A0013DZ',
+              releaseDate: null,
+            },
+          ],
+        },
         incentiveLevels: [
           { sequence: 0, iepDescription: 'Basic' },
           { sequence: 1, iepDescription: 'Standard' },
@@ -227,6 +228,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         expect.anything(),
         expect.anything(),
         undefined,
+        0,
       )
     })
 
@@ -258,6 +260,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         ['RLO'],
         expect.anything(),
         undefined,
+        0,
       )
     })
 
@@ -289,6 +292,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         ['RLO', 'RME'],
         expect.anything(),
         undefined,
+        0,
       )
     })
 
@@ -320,12 +324,13 @@ describe('Route Handlers - Allocation dashboard', () => {
         ['RLO', 'RME', 'RHI'],
         expect.anything(),
         undefined,
+        0,
       )
     })
 
     it('should return correct candidates with risk level filter set to any', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { riskLevelFilter: 'Any Workplace Risk Assessment' }
+      req.query.riskLevelFilter = 'Any Workplace Risk Assessment'
 
       await handler.GET(req, res)
 
@@ -344,12 +349,13 @@ describe('Route Handlers - Allocation dashboard', () => {
         undefined,
         undefined,
         undefined,
+        0,
       )
     })
 
     it('should return correct candidates with risk level filter set to none', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { riskLevelFilter: 'No Workplace Risk Assessment' }
+      req.query.riskLevelFilter = 'No Workplace Risk Assessment'
 
       await handler.GET(req, res)
 
@@ -368,12 +374,13 @@ describe('Route Handlers - Allocation dashboard', () => {
         ['NONE'],
         undefined,
         undefined,
+        0,
       )
     })
 
     it('should return correct candidates with employment filter set to In work', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { employmentFilter: 'In work' }
+      req.query.employmentFilter = 'In work'
 
       await handler.GET(req, res)
 
@@ -392,12 +399,13 @@ describe('Route Handlers - Allocation dashboard', () => {
         undefined,
         true,
         undefined,
+        0,
       )
     })
 
     it('should return correct candidates with employment filter set to Everyone', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { employmentFilter: 'Everyone' }
+      req.query.employmentFilter = 'Everyone'
 
       await handler.GET(req, res)
 
@@ -416,12 +424,13 @@ describe('Route Handlers - Allocation dashboard', () => {
         undefined,
         undefined,
         undefined,
+        0,
       )
     })
 
     it('should return correct candidates with employment filter set to Not in work', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { employmentFilter: 'Not in work' }
+      req.query.employmentFilter = 'Not in work'
 
       await handler.GET(req, res)
 
@@ -440,12 +449,13 @@ describe('Route Handlers - Allocation dashboard', () => {
         undefined,
         false,
         undefined,
+        0,
       )
     })
 
     it('should return correct candidates with search string given', async () => {
       req.params = { scheduleId: '1' }
-      req.query = { candidateQuery: 'joe' }
+      req.query.candidateQuery = 'joe'
 
       await handler.GET(req, res)
 
@@ -456,6 +466,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         undefined,
         undefined,
         'joe',
+        0,
       )
     })
   })
