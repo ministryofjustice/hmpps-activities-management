@@ -14,6 +14,7 @@ import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
+import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 
 context('Create individual appointment - check answers change links', () => {
   beforeEach(() => {
@@ -43,6 +44,10 @@ context('Create individual appointment - check answers change links', () => {
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.selectCategory('Chaplaincy')
     categoryPage.continue()
+
+    const descriptionPage = Page.verifyOnPage(DescriptionPage)
+    descriptionPage.descriptionOption('Yes')
+    descriptionPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')

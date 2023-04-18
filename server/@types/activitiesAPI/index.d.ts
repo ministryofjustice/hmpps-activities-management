@@ -1494,6 +1494,11 @@ export interface components {
        */
       categoryCode: string
       /**
+       * @description Free text description for an appointment.  This is used to add more context to the appointment category.
+       * @example Meeting with the governor
+       */
+      appointmentDescription: string
+      /**
        * @description The NOMIS prison code where this appointment takes place
        * @example PVI
        */
@@ -1652,6 +1657,11 @@ export interface components {
        * @example This appointment will help adjusting to life outside of prison
        */
       comment: string
+      /**
+       * @description Free text description for an appointment.  This is used to add more context to the appointment category.
+       * @example Meeting with the governor
+       */
+      appointmentDescription: string
       /**
        * Format: date-time
        * @description The date and time this appointment was created. Will not change

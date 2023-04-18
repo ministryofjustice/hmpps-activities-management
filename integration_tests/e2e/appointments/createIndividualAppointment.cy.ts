@@ -4,6 +4,7 @@ import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
 import SelectPrisonerPage from '../../pages/appointments/create-and-edit/selectPrisonerPage'
 import CategoryPage from '../../pages/appointments/create-and-edit/categoryPage'
+import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
@@ -57,6 +58,10 @@ context('Create individual appointment', () => {
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.selectCategory('Chaplaincy')
     categoryPage.continue()
+
+    const descriptionPage = Page.verifyOnPage(DescriptionPage)
+    descriptionPage.descriptionOption('Yes')
+    descriptionPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')
