@@ -54,7 +54,7 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     expect($('[data-qa=prisoner-summary]').length).toBe(0)
   })
 
-  it('should updated by if occurrence has been updated', () => {
+  it('should show updated by if occurrence has been updated', () => {
     viewContext.occurrence.updatedBy = {
       id: 123,
       username: 'joebloggs',

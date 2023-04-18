@@ -51,12 +51,9 @@ export default class AppointmentDetailsPage extends Page {
 
   assertRepeatCount = (option: string) => this.assertAppointmentDetail('Occurrences', option)
 
-  assertOccurrences = (occurrenceMap: Map<number, { date: string; edited: boolean }>) => {
-    occurrenceMap.forEach((details, sequenceNumber) => {
-      this.assertAppointmentOccurrenceSummary(sequenceNumber.toString(), 'date', details.date)
-      if (details.edited) {
-        this.assertAppointmentOccurrenceSummary(sequenceNumber.toString(), 'edited', 'Edited')
-      }
+  assertOccurrences = (occurrenceMap: Map<number, string>) => {
+    occurrenceMap.forEach((date, sequenceNumber) => {
+      this.assertAppointmentOccurrenceSummary(sequenceNumber.toString(), 'date', date)
     })
   }
 
