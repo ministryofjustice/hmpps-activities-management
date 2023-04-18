@@ -1,14 +1,22 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import { addDays, addHours, getHours, getMinutes, subDays, subMinutes } from 'date-fns'
 import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime, { simpleTimeFromDate } from '../../../../commonValidationTypes/simpleTime'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import ActivitiesService from '../../../../services/activitiesService'
+import atLeast from '../../../../../jest.setup'
+import { AppointmentJourney } from '../appointmentJourney'
+
+jest.mock('../../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Create Appointment - Date and Time', () => {
-  const handler = new DateAndTimeRoutes()
+  const handler = new DateAndTimeRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -16,6 +24,7 @@ describe('Route Handlers - Create Appointment - Date and Time', () => {
     res = {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      validationFailed: jest.fn(),
       locals: {},
     } as unknown as Response
 
@@ -23,6 +32,7 @@ describe('Route Handlers - Create Appointment - Date and Time', () => {
       session: {
         appointmentJourney: {},
       },
+      flash: jest.fn(),
     } as unknown as Request
   })
 
@@ -34,7 +44,7 @@ describe('Route Handlers - Create Appointment - Date and Time', () => {
     })
   })
 
-  describe('POST', () => {
+  describe('CREATE', () => {
     it('should save start date, start time and end time in session and redirect to repeat page', async () => {
       const tomorrow = addDays(new Date(), 1)
       const startDate = simpleDateFromDate(tomorrow)
@@ -51,7 +61,7 @@ describe('Route Handlers - Create Appointment - Date and Time', () => {
         }),
       }
 
-      await handler.POST(req, res)
+      await handler.CREATE(req, res)
 
       expect(req.session.appointmentJourney.startDate).toEqual({
         day: startDate.day,
@@ -70,6 +80,64 @@ describe('Route Handlers - Create Appointment - Date and Time', () => {
         date: req.body.endTime.toDate(tomorrow),
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('repeat')
+    })
+  })
+
+  describe('EDIT', () => {
+    beforeEach(() => {
+      req.params = {
+        appointmentId: '2',
+        occurrenceId: '12',
+      }
+
+      req.session.appointmentJourney = {
+        startDate: {
+          day: 23,
+          month: 4,
+          year: 2023,
+          date: '2023-04-23T00:00:00.000+0100',
+        },
+        startTime: {
+          hour: 9,
+          minute: 30,
+          date: '2023-04-23T09:30:00.000+0100',
+        },
+        endTime: {
+          hour: 13,
+          minute: 0,
+          date: '2023-04-23T13:00:00.000+0100',
+        },
+      } as unknown as AppointmentJourney
+    })
+
+    it('should update the date and time then redirect back to the occurrence details page', async () => {
+      const tomorrow = addDays(new Date(), 1)
+      const startDate = simpleDateFromDate(tomorrow)
+
+      req.body = {
+        startDate,
+        startTime: plainToInstance(SimpleTime, {
+          hour: 11,
+          minute: 30,
+        }),
+        endTime: plainToInstance(SimpleTime, {
+          hour: 13,
+          minute: 0,
+        }),
+      }
+
+      when(activitiesService.editAppointmentOccurrence).calledWith(atLeast(12))
+
+      await handler.EDIT(req, res)
+
+      expect(req.flash).toHaveBeenCalledWith(
+        'successMessage',
+        JSON.stringify({
+          message: `Appointment date and start time for this occurrence changed successfully`,
+        }),
+      )
+
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('/appointments/2/occurrence/12')
     })
   })
 
