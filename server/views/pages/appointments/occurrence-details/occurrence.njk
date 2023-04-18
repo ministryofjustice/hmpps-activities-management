@@ -54,6 +54,16 @@
         },
         value: {
             text: occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+        },
+        actions: {
+            items: [
+                {
+                    href: occurenceLink + "/edit/start/date-and-time",
+                    text: "Change",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-date' }
+                }
+            ]
         }
     },
     {
@@ -62,6 +72,16 @@
         },
         value: {
             text: occurrence.startTime
+        },
+        actions: {
+            items: [
+                {
+                    href: occurenceLink + "/edit/start/date-and-time",
+                    text: "Change",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-start-time' }
+                }
+            ]
         }
     },
     {
@@ -70,6 +90,16 @@
         },
         value: {
             text: occurrence.endTime
+        },
+        actions: {
+            items: [
+                {
+                    href: occurenceLink + "/edit/start/date-and-time",
+                    text: "Change",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-end-time' }
+                }
+            ]
         }
     }
 ), summaryListRows) %}

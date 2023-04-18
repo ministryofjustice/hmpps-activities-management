@@ -55,7 +55,7 @@
                     formResponses: formResponses.endTime or session.appointmentJourney.endTime
                 }) }}
                 {{ govukButton({
-                    text: "Continue"
+                    text: "Accept and save" if session.appointmentJourney.mode == "EDIT" else "Continue"
                 }) }}
             </form>
         </div>

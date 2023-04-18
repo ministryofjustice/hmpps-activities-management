@@ -6,9 +6,19 @@ import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime, { simpleTimeFromDate } from '../../../../commonValidationTypes/simpleTime'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import ActivitiesService from '../../../../services/activitiesService'
+import { AppointmentJourney } from '../appointmentJourney'
+import { ServiceUser } from '../../../../@types/express'
 
-describe('Route Handlers - Create Appointment - Date and Time', () => {
-  const handler = new DateAndTimeRoutes()
+jest.mock('../../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+
+const tomorrow = addDays(new Date(), 1)
+const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
+
+describe('Route Handlers - Appointment Journey - Date and Time', () => {
+  const handler = new DateAndTimeRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -16,14 +26,20 @@ describe('Route Handlers - Create Appointment - Date and Time', () => {
     res = {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
-      locals: {},
+      validationFailed: jest.fn(),
+      locals: {
+        user,
+      },
     } as unknown as Response
 
     req = {
       session: {
         appointmentJourney: {},
       },
+      flash: jest.fn(),
     } as unknown as Request
+
+    jest.resetAllMocks()
   })
 
   describe('GET', () => {
@@ -34,9 +50,8 @@ describe('Route Handlers - Create Appointment - Date and Time', () => {
     })
   })
 
-  describe('POST', () => {
+  describe('CREATE', () => {
     it('should save start date, start time and end time in session and redirect to repeat page', async () => {
-      const tomorrow = addDays(new Date(), 1)
       const startDate = simpleDateFromDate(tomorrow)
 
       req.body = {
@@ -51,7 +66,7 @@ describe('Route Handlers - Create Appointment - Date and Time', () => {
         }),
       }
 
-      await handler.POST(req, res)
+      await handler.CREATE(req, res)
 
       expect(req.session.appointmentJourney.startDate).toEqual({
         day: startDate.day,
@@ -70,6 +85,128 @@ describe('Route Handlers - Create Appointment - Date and Time', () => {
         date: req.body.endTime.toDate(tomorrow),
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('repeat')
+    })
+  })
+
+  describe('EDIT', () => {
+    beforeEach(() => {
+      req.params = {
+        appointmentId: '2',
+        occurrenceId: '12',
+      }
+
+      req.session.appointmentJourney = {
+        startDate: simpleDateFromDate(tomorrow),
+        startTime: plainToInstance(SimpleTime, {
+          hour: 9,
+          minute: 30,
+        }),
+        endTime: plainToInstance(SimpleTime, {
+          hour: 13,
+          minute: 0,
+        }),
+      } as unknown as AppointmentJourney
+
+      req.body = {
+        startDate: simpleDateFromDate(tomorrow),
+        startTime: plainToInstance(SimpleTime, {
+          hour: 9,
+          minute: 30,
+        }),
+        endTime: plainToInstance(SimpleTime, {
+          hour: 13,
+          minute: 0,
+        }),
+      } as unknown as AppointmentJourney
+    })
+
+    it('should update the occurrence date then redirect back to the occurrence details page', async () => {
+      const nextWeek = simpleDateFromDate(addDays(new Date(), 7))
+      req.body.startDate = nextWeek
+
+      await handler.EDIT(req, res)
+
+      expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
+        12,
+        expect.objectContaining({
+          startDate: nextWeek.toIsoString(),
+        }),
+        user,
+      )
+      expect(req.flash).toHaveBeenCalledWith(
+        'successMessage',
+        JSON.stringify({
+          message: `Appointment date for this occurrence changed successfully`,
+        }),
+      )
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('/appointments/2/occurrence/12')
+    })
+
+    it('should update the occurrence start time and end time then redirect back to the occurrence details page', async () => {
+      const startTime = plainToInstance(SimpleTime, {
+        hour: 10,
+        minute: 30,
+      })
+      const endTime = plainToInstance(SimpleTime, {
+        hour: 14,
+        minute: 0,
+      })
+
+      req.body.startTime = startTime
+      req.body.endTime = endTime
+
+      await handler.EDIT(req, res)
+
+      expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
+        12,
+        expect.objectContaining({
+          startTime: startTime.toIsoString(),
+          endTime: endTime.toIsoString(),
+        }),
+        user,
+      )
+      expect(req.flash).toHaveBeenCalledWith(
+        'successMessage',
+        JSON.stringify({
+          message: `Appointment start time and end time for this occurrence changed successfully`,
+        }),
+      )
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('/appointments/2/occurrence/12')
+    })
+
+    it('should update the occurrence date, start time and end time then redirect back to the occurrence details page', async () => {
+      const nextWeek = simpleDateFromDate(addDays(new Date(), 7))
+      const startTime = plainToInstance(SimpleTime, {
+        hour: 10,
+        minute: 30,
+      })
+      const endTime = plainToInstance(SimpleTime, {
+        hour: 14,
+        minute: 0,
+      })
+
+      req.body.startDate = nextWeek
+      req.body.startTime = startTime
+      req.body.endTime = endTime
+
+      await handler.EDIT(req, res)
+
+      expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
+        12,
+        expect.objectContaining({
+          startDate: nextWeek.toIsoString(),
+          startTime: startTime.toIsoString(),
+          endTime: endTime.toIsoString(),
+        }),
+        user,
+      )
+      expect(req.flash).toHaveBeenCalledWith(
+        'successMessage',
+        JSON.stringify({
+          message: `Appointment date, start time and end time for this occurrence changed successfully`,
+        }),
+      )
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('/appointments/2/occurrence/12')
     })
   })
 

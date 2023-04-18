@@ -1,6 +1,7 @@
 import { RequestHandler, Router } from 'express'
 import { Services } from '../../../services'
 import LocationRoutes, { Location } from './handlers/location'
+import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
@@ -17,11 +18,14 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
 
   const startHandler = new StartJourneyRoutes()
   const locationRoutes = new LocationRoutes(prisonService, activitiesService)
+  const dateAndTimeRoutes = new DateAndTimeRoutes(activitiesService)
 
   router.get('/start/:property', fetchAppointmentOccurrence(activitiesService), startHandler.EDIT_OCCURRENCE)
 
   get('/location', locationRoutes.GET)
   post('/location', locationRoutes.EDIT, Location)
+  get('/date-and-time', dateAndTimeRoutes.GET)
+  post('/date-and-time', dateAndTimeRoutes.EDIT, DateAndTime)
 
   return router
 }
