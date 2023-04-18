@@ -63,6 +63,52 @@
     },
     {
         key: {
+            text: "Show category on unlock list"
+        },
+        value: {
+            text: session.appointmentJourney.descriptionOption
+        },
+        actions: {
+            items: [
+                {
+                    href: "description?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change description option",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-description-option' }
+                }
+            ]
+        }
+    }
+), summaryListRows) %}
+
+{% if session.appointmentJourney.descriptionOption == 'no' %}
+    {% set summaryListRows = (summaryListRows.push(
+        {
+            key: {
+                text: "Appointment description"
+            },
+            value: {
+                text: session.appointmentJourney.description
+            },
+            actions: {
+                items: [
+                    {
+                        href: "description?fromReview=true",
+                        text: "Change",
+                        visuallyHiddenText: "change description",
+                        classes: "govuk-link--no-visited-state",
+                        attributes: { 'data-qa': 'change-description' }
+                    }
+                ]
+            }
+        }
+    ), summaryListRows) %}
+{% endif %}
+
+{% set summaryListRows = (summaryListRows.push(
+    {
+        key: {
             text: "Location"
         },
         value: {

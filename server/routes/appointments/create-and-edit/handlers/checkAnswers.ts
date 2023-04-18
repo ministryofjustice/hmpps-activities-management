@@ -25,6 +25,7 @@ export default class CheckAnswersRoutes {
 
     const request = {
       categoryCode: appointmentJourney.category.code,
+      appointmentDescription: appointmentJourney.description,
       prisonCode: user.activeCaseLoadId,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
