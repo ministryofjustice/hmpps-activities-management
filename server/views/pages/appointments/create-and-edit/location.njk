@@ -43,7 +43,7 @@
                     items: options
                 }) }}
 
-                {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+                {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT and session.appointmentJourney.repeat == YesNo.YES %}
                     {% set applyTo = formResponses.applyTo or session.appointmentJourney.applyTo %}
                     {{ govukRadios({
                         name: "applyTo",
