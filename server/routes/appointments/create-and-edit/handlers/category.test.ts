@@ -80,7 +80,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
         code: 'MEDO',
         description: 'Medical - Doctor',
       })
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('description')
     })
 
     it('validation fails when selected category is not found', async () => {
