@@ -22,6 +22,7 @@ import {
   ActivitySchedule,
   AppointmentDetails,
   AppointmentOccurrenceDetails,
+  ActivityCandidate,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -455,6 +456,26 @@ describe('Activities Service', () => {
       await activitiesService.uncancelScheduledActivity(1, user)
 
       expect(activitiesApiClient.putUncancelScheduledActivity).toHaveBeenCalledWith(1, apiRequest, user)
+    })
+  })
+
+  describe('getActivityCandidates', () => {
+    it('should return content of pageable candidates', async () => {
+      when(activitiesApiClient.getActivityCandidates).mockResolvedValue({
+        content: [{ name: 'Joe Bloggs' }] as ActivityCandidate[],
+      })
+
+      const result = await activitiesService.getActivityCandidates(1, user)
+
+      expect(activitiesApiClient.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      )
+      expect(result).toEqual([{ name: 'Joe Bloggs' }])
     })
   })
 

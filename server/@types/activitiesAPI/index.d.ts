@@ -142,6 +142,13 @@ export interface paths {
      */
     get: operations['getScheduleId']
   }
+  '/schedules/{scheduleId}/candidates': {
+    /**
+     * Get the suitable candidates for an activity
+     * @description Returns a paginated view of the list of candidates suitable for a given activity schedule. Filterable by employment status, workplace risk assessment, and incentive level. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     */
+    get: operations['candidates']
+  }
   '/schedules/{activityScheduleId}/capacity': {
     /** Get the capacity and number of allocated slots in an activity schedule */
     get: operations['getActivityScheduleCapacity']
@@ -386,7 +393,7 @@ export interface components {
        * @description The reason codes- SICK, REFUSED, NOT_REQUIRED, REST, CLASH, OTHER, SUSPENDED, CANCELLED, ATTENDED
        * @example ATTENDED
        */
-      attendanceReason: string
+      attendanceReason?: string
       /**
        * @description Comments such as more detail for SICK
        * @example Prisoner has COVID-19
@@ -477,7 +484,7 @@ export interface components {
        */
       eventSource?: string
       /**
-       * @description The event type (APPOINTMENT, ACTIVITY, COURT, TRANSFER, ADJUDICATION, VISIT)
+       * @description The event type (APPOINTMENT, ACTIVITY, COURT_HEARING, EXTERNAL_TRANSFER, ADJUDICATION_HEARING, VISIT)
        * @example APPOINTMENT
        */
       eventType?: string
@@ -530,7 +537,7 @@ export interface components {
       internalLocationCode?: string
       /**
        * @description The NOMIS location description for this event
-       * @example Room One
+       * @example Education Room One
        */
       internalLocationDescription?: string
       /**
@@ -1550,7 +1557,7 @@ export interface components {
       /**
        * @description The prisoner or prisoners to allocate to the created appointment or series of appointment occurrences
        * @example [
-       *   'A1234BC'
+       *   "A1234BC"
        * ]
        */
       prisonerNumbers: string[]
@@ -2123,270 +2130,6 @@ export interface components {
        */
       applyTo: 'THIS_OCCURRENCE' | 'THIS_AND_ALL_FUTURE_OCCURRENCES' | 'ALL_FUTURE_OCCURRENCES'
     }
-    /** @description Describes a top-level activity */
-    Activity: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity
-       * @example 123456
-       */
-      id?: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode?: string
-      /**
-       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
-       * @example false
-       */
-      attendanceRequired?: boolean
-      /**
-       * @description Flag to indicate if the location of the activity is in cell
-       * @example false
-       */
-      inCell?: boolean
-      /**
-       * @description Flag to indicate if the activity is piece work
-       * @example false
-       */
-      pieceWork?: boolean
-      /**
-       * @description Flag to indicate if the activity carried out outside of the prison
-       * @example false
-       */
-      outsideWork?: boolean
-      /**
-       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
-       * @example H
-       * @enum {string}
-       */
-      payPerSession?: 'H' | 'F'
-      /**
-       * @description A brief summary description of this activity for use in forms and lists
-       * @example Maths level 1
-       */
-      summary?: string
-      /**
-       * @description A detailed description for this activity
-       * @example A basic maths course suitable for introduction to the subject
-       */
-      description?: string
-      category?: components['schemas']['ActivityCategory']
-      tier?: components['schemas']['ActivityTier']
-      /**
-       * @description A list of eligibility rules which apply to this activity. These can be positive (include) and negative (exclude)
-       * @example [FEMALE_ONLY,AGED_18-25]
-       */
-      eligibilityRules?: components['schemas']['ActivityEligibility'][]
-      /** @description A list of schedules for this activity. These contain the time slots / recurrence settings for instances of this activity. */
-      schedules?: components['schemas']['ActivitySchedule'][]
-      /** @description A list of prisoners who are waiting for allocation to this activity. This list is held against the activity, though allocation is against particular schedules of the activity */
-      waitingList?: components['schemas']['PrisonerWaiting'][]
-      /** @description The list of pay rates by incentive level and pay band that can apply to this activity */
-      pay?: components['schemas']['ActivityPay'][]
-      /**
-       * Format: date
-       * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
-       * @example 2022-09-21
-       */
-      startDate?: string
-      /**
-       * Format: date
-       * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
-       * @example 2022-12-21
-       */
-      endDate?: string
-      /**
-       * @description The most recent risk assessment level for this activity
-       * @example high
-       */
-      riskLevel?: string
-      /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode?: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel?: string
-      /**
-       * Format: date-time
-       * @description The date and time when this activity was created
-       */
-      createdTime?: string
-      /**
-       * @description The person who created this activity
-       * @example Adam Smith
-       */
-      createdBy?: string
-      /** @description The list of minimum education levels that can apply to this activity */
-      minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevel'][]
-    }
-    /** @description Describes a top-level activity category */
-    ActivityCategory: {
-      /**
-       * Format: int64
-       * @description The internally-generated identifier for this activity category
-       * @example 1
-       */
-      id?: number
-      /**
-       * @description The activity category code
-       * @example LEISURE_SOCIAL
-       */
-      code?: string
-      /**
-       * @description The name of the activity category
-       * @example Leisure and social
-       */
-      name?: string
-      /**
-       * @description The description of the activity category
-       * @example Such as association, library time and social clubs, like music or art
-       */
-      description?: string
-    }
-    /**
-     * @description Describes an eligibility rule as applied to an activity
-     * @example [FEMALE_ONLY,AGED_18-25]
-     */
-    ActivityEligibility: {
-      /**
-       * Format: int64
-       * @description The internal ID of the activity that these rules apply to
-       * @example 123456
-       */
-      id?: number
-      eligibility?: components['schemas']['EligibilityRule']
-    }
-    /** @description Describes a top-level activity */
-    ActivityLite: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity
-       * @example 123456
-       */
-      id?: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode?: string
-      /**
-       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
-       * @example false
-       */
-      attendanceRequired?: boolean
-      /**
-       * @description Flag to indicate if the location of the activity is in cell
-       * @example false
-       */
-      inCell?: boolean
-      /**
-       * @description Flag to indicate if the activity is piece work
-       * @example false
-       */
-      pieceWork?: boolean
-      /**
-       * @description Flag to indicate if the activity carried out outside of the prison
-       * @example false
-       */
-      outsideWork?: boolean
-      /**
-       * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
-       * @example H
-       * @enum {string}
-       */
-      payPerSession?: 'H' | 'F'
-      /**
-       * @description A brief summary description of this activity for use in forms and lists
-       * @example Maths level 1
-       */
-      summary?: string
-      /**
-       * @description A detailed description for this activity
-       * @example A basic maths course suitable for introduction to the subject
-       */
-      description?: string
-      category?: components['schemas']['ActivityCategory']
-      /**
-       * @description The most recent risk assessment level for this activity
-       * @example high
-       */
-      riskLevel?: string
-      /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode?: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel?: string
-      /** @description The list of minimum education levels that can apply to this activity */
-      minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevel'][]
-    }
-    /** @description Describes the minimum education levels which apply to an activity */
-    ActivityMinimumEducationLevel: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity minimum education level
-       * @example 123456
-       */
-      id?: number
-      /**
-       * @description The education level code
-       * @example Basic
-       */
-      educationLevelCode?: string
-      /**
-       * @description The education level description
-       * @example Basic
-       */
-      educationLevelDescription?: string
-    }
-    /** @description Describes the pay rates and bands which apply to an activity */
-    ActivityPay: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity pay
-       * @example 123456
-       */
-      id?: number
-      /**
-       * @description The NOMIS code for the incentive/earned privilege level
-       * @example BAS
-       */
-      incentiveNomisCode?: string
-      /**
-       * @description The incentive/earned privilege level
-       * @example Basic
-       */
-      incentiveLevel?: string
-      prisonPayBand?: components['schemas']['PrisonPayBand']
-      /**
-       * Format: int32
-       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
-       * @example 150
-       */
-      rate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
-       * @example 150
-       */
-      pieceRate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
-       * @example 10
-       */
-      pieceRateItems?: number
-    }
     /**
      * @description
      *   Represents the key data required to synchronise an attendance with Nomis
@@ -2468,6 +2211,229 @@ export interface components {
        * @example true
        */
       issuePayment?: boolean
+    }
+    /** @description Describes a candidate for allocation to an activity */
+    ActivityCandidate: {
+      /**
+       * @description The candidate's name
+       * @example Joe Bloggs
+       */
+      name: string
+      /**
+       * @description The candidate's prisoner number
+       * @example GF10101
+       */
+      prisonerNumber: string
+      /**
+       * @description The candidate's cell location
+       * @example MDI-1-1-101
+       */
+      cellLocation?: string
+      /** @description Any activities the candidate is currently allocated to */
+      otherAllocations: components['schemas']['Allocation'][]
+      /**
+       * Format: date
+       * @description The candidate's earliest release date
+       * @example 2027-01-24
+       */
+      releaseDate?: string
+      /** @description The qualifications this candidate holds */
+      educationLevels: components['schemas']['Education'][]
+    }
+    AddressDto: {
+      /**
+       * @description Primary Address
+       * @example false
+       */
+      primary: boolean
+      /**
+       * @description No Fixed Address
+       * @example false
+       */
+      noFixedAddress: boolean
+      /**
+       * Format: int64
+       * @description Address Id
+       * @example 543524
+       */
+      addressId?: number
+      /**
+       * @description Address Type. Note: Reference domain is ADDR_TYPE
+       * @example BUS
+       */
+      addressType?: string
+      /**
+       * @description Flat
+       * @example 3B
+       */
+      flat?: string
+      /**
+       * @description Premise
+       * @example Liverpool Prison
+       */
+      premise?: string
+      /**
+       * @description Street
+       * @example Slinn Street
+       */
+      street?: string
+      /**
+       * @description Locality
+       * @example Brincliffe
+       */
+      locality?: string
+      /**
+       * @description Town/City. Note: Reference domain is CITY
+       * @example Liverpool
+       */
+      town?: string
+      /**
+       * @description Postal Code
+       * @example LI1 5TH
+       */
+      postalCode?: string
+      /**
+       * @description County. Note: Reference domain is COUNTY
+       * @example HEREFORD
+       */
+      county?: string
+      /**
+       * @description Country. Note: Reference domain is COUNTRY
+       * @example ENG
+       */
+      country?: string
+      /**
+       * @description Comment
+       * @example This is a comment text
+       */
+      comment?: string
+      /**
+       * Format: date
+       * @description Date Added
+       */
+      startDate?: string
+      /**
+       * Format: date
+       * @description Date ended
+       */
+      endDate?: string
+      /**
+       * @description The phone number associated with the address
+       * @example null
+       */
+      phones?: components['schemas']['Telephone'][]
+      /**
+       * @description The address usages/types
+       * @example null
+       */
+      addressUsages?: components['schemas']['AddressUsageDto'][]
+    }
+    /**
+     * @description The address usages/types
+     * @example null
+     */
+    AddressUsageDto: {
+      /**
+       * Format: int64
+       * @description Address ID of the associated address
+       * @example 23422313
+       */
+      addressId?: number
+      /**
+       * @description The address usages
+       * @example HDC
+       */
+      addressUsage?: string
+      /**
+       * @description The address usages description
+       * @example HDC Address
+       */
+      addressUsageDescription?: string
+      /**
+       * @description Active Flag
+       * @example true
+       */
+      activeFlag?: boolean
+    }
+    /** @description The qualifications this candidate holds */
+    Education: {
+      /** Format: int64 */
+      bookingId: number
+      /** Format: date */
+      startDate: string
+      /** Format: date */
+      endDate: string
+      studyArea: string
+      educationLevel: string
+      /** Format: int32 */
+      numberOfYears: number
+      graduationYear: string
+      comment: string
+      school: string
+      isSpecialEducation: boolean
+      schedule: string
+      addresses: components['schemas']['AddressDto'][]
+    }
+    PageActivityCandidate: {
+      /** Format: int64 */
+      totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
+      /** Format: int32 */
+      size?: number
+      content?: components['schemas']['ActivityCandidate'][]
+      /** Format: int32 */
+      number?: number
+      sort?: components['schemas']['SortObject']
+      first?: boolean
+      last?: boolean
+      /** Format: int32 */
+      numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
+      empty?: boolean
+    }
+    PageableObject: {
+      /** Format: int64 */
+      offset?: number
+      sort?: components['schemas']['SortObject']
+      paged?: boolean
+      unpaged?: boolean
+      /** Format: int32 */
+      pageSize?: number
+      /** Format: int32 */
+      pageNumber?: number
+    }
+    SortObject: {
+      empty?: boolean
+      unsorted?: boolean
+      sorted?: boolean
+    }
+    /**
+     * @description The phone number associated with the address
+     * @example null
+     */
+    Telephone: {
+      /**
+       * @description Telephone number
+       * @example 0114 2345678
+       */
+      number: string
+      /**
+       * @description Telephone type
+       * @example TEL
+       */
+      type: string
+      /**
+       * Format: int64
+       * @description Phone Id
+       * @example 2234232
+       */
+      phoneId?: number
+      /**
+       * @description Telephone extension number
+       * @example 123
+       */
+      ext?: string
     }
     /** @description Describes the capacity and allocated slots of an activity or category */
     CapacityAndAllocated: {
@@ -2774,12 +2740,12 @@ export interface components {
        * @description The child groups of this group
        * @example [
        *   {
-       *     'name': 'Landing A/1',
-       *     'key': '1'
+       *     "name": "Landing A/1",
+       *     "key": "1"
        *   },
        *   {
-       *     'name': 'Landing A/2',
-       *     'key': '2'
+       *     "name": "Landing A/2",
+       *     "key": "2"
        *   }
        * ]
        */
@@ -4004,6 +3970,61 @@ export interface operations {
         }
       }
       /** @description The activity for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Get the suitable candidates for an activity
+   * @description Returns a paginated view of the list of candidates suitable for a given activity schedule. Filterable by employment status, workplace risk assessment, and incentive level. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   */
+  candidates: {
+    parameters: {
+      query: {
+        suitableIncentiveLevel?: string[]
+        suitableRiskLevel?: string[]
+        suitableForEmployed?: boolean
+        search?: string
+        /** @description Zero-based page index (0..N) */
+        page?: number
+        /** @description The size of the page to be returned */
+        size?: number
+        /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+        sort?: string[]
+      }
+      path: {
+        scheduleId: number
+      }
+    }
+    responses: {
+      /** @description A paginated list of candidates was returned. */
+      200: {
+        content: {
+          'application/json': components['schemas']['PageActivityCandidate']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The activity schedule for this ID was not found. */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']

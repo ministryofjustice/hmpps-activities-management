@@ -628,4 +628,25 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('getActivityCandidates', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/schedules/1/candidates')
+        .query({
+          suitableIncentiveLevel: 'Basic',
+          suitableRiskLevel: 'RHI',
+          suitableForEmployed: true,
+          search: 'test',
+        })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getActivityCandidates(1, user, ['Basic'], ['RHI'], true, 'test')
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })
