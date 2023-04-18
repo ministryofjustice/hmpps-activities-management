@@ -1,5 +1,5 @@
 import { YesNo } from '../../../@types/activities'
-import { AppointmentRepeatPeriod } from '../../../@types/appointments'
+import { AppointmentRepeatPeriod, EditApplyTo } from '../../../@types/appointments'
 
 export enum AppointmentType {
   INDIVIDUAL = 'INDIVIDUAL',
@@ -46,4 +46,5 @@ export type AppointmentJourney = {
   repeat?: YesNo
   repeatPeriod?: AppointmentRepeatPeriod
   repeatCount?: number
+  applyTo?: EditApplyTo
 }

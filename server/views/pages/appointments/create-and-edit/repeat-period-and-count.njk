@@ -19,9 +19,11 @@
                 {% set repeatPeriod = formResponses.repeatPeriod or session.appointmentJourney.repeatPeriod %}
                 {{ govukRadios({
                     name: "repeatPeriod",
-                    label: {
-                        text: "How often will the appointment repeat?",
-                        classes: "govuk-fieldset__legend--m"
+                    fieldset: {
+                        legend: {
+                            text: "How often will the appointment repeat?",
+                            classes: "govuk-fieldset__legend--m"
+                        }
                     },
                     errorMessage: validationErrors | findError('repeatPeriod'),
                     items: [

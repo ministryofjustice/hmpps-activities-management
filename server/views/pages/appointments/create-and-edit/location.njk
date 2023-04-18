@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
@@ -41,6 +42,40 @@
                     value: formResponses.locationId or session.appointmentJourney.location.id,
                     items: options
                 }) }}
+
+                {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+                    {% set applyTo = formResponses.applyTo or session.appointmentJourney.applyTo %}
+                    {{ govukRadios({
+                        name: "applyTo",
+                        fieldset: {
+                            legend: {
+                                text: "How should this change be applied?",
+                                classes: "govuk-fieldset__legend--m"
+                            }
+                        },
+                        errorMessage: validationErrors | findError('applyTo'),
+                        items: [
+                            {
+                                value: EditApplyTo.THIS_OCCURRENCE,
+                                text: "This appointment only",
+                                checked: applyTo == EditApplyTo.THIS_OCCURRENCE
+                            },
+                            {
+                                value: EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+                                text: "This appointment and all appointments after this one in the series",
+                                checked: applyTo == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES
+                            },
+                            {
+                                value: EditApplyTo.ALL_FUTURE_OCCURRENCES,
+                                text: "All appointments in this series that have not taken place yet",
+                                checked: applyTo == EditApplyTo.ALL_FUTURE_OCCURRENCES
+                            }
+                        ]
+                    }) }}
+                {% else %}
+                    <input type="hidden" name="applyTo" value="{{ EditApplyTo.THIS_OCCURRENCE }}" />
+                {% endif %}
+
                 {{ govukButton({
                     text: "Save" if session.appointmentJourney.mode == "EDIT" else "Continue"
                 }) }}
