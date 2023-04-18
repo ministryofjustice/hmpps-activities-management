@@ -2,6 +2,8 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
@@ -116,28 +118,29 @@
     }
 ] %}
 
+{% set occurrenceTableRows = [] %}
 {% for occurrence in appointment.occurrences %}
     {% set occurrenceDate = occurrence.startDate | toDate %}
-    {% set occurrenceSummaryListRows = (occurrenceSummaryListRows.push({
-        key: {
+    {% set occurrenceTableRows = (occurrenceTableRows.push([
+        {
             text: occurrence.sequenceNumber,
-            classes: "govuk-!-font-weight-regular govuk-!-text-align-right"
-        },
-        value: {
-            text: occurrenceDate | formatDate('d MMM yyyy')
-        },
-        actions: {
-            items: [
-                {
-                    href: "/appointments/" + appointment.id + "/occurrence/" + occurrence.id,
-                    text: "View and edit",
-                    visuallyHiddenText: "view and edit occurrence " + occurrence.sequenceNumber,
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'view-and-edit-occurrence-' + occurrence.sequenceNumber }
-                }
-            ]
+            classes: "govuk-!-font-weight-regular govuk-!-text-align-right",
+            attributes: { 'data-qa': 'occurrence-sequence-no-' + occurrence.sequenceNumber }
+        }, {
+            text: occurrenceDate | formatDate('d MMM yyyy'),
+            attributes: { 'data-qa': 'occurrence-date-' + occurrence.sequenceNumber }
+        }, {
+            html: govukTag({ text: "Edited" }) if occurrence.updated,
+            attributes: { 'data-qa': 'occurrence-edited-' + occurrence.sequenceNumber }
+        }, {
+            html: '<a href="/appointments/' + appointment.id + '/occurrence/' + occurrence.id + '"
+                class="govuk-link--no-visited-state">
+                View and edit<span class="govuk-visually-hidden"> occurrence ' + occurrence.sequenceNumber + '</span>
+            </a>',
+            classes: 'govuk-!-text-align-right',
+            attributes: { 'data-qa': 'view-and-edit-occurrence-' + occurrence.sequenceNumber }
         }
-    }), occurrenceSummaryListRows) %}
+    ]), occurrenceTableRows) %}
 {% endfor %}
 
 {% block content %}
@@ -153,11 +156,27 @@
 
             {% if appointment.repeat != null %}
                 <h2 class="govuk-heading-m" data-qa="occurrences-heading">Appointment occurrences</h2>
-                {{ govukSummaryList({
-                    rows: occurrenceSummaryListRows,
-                    classes: "summary-list-row-count govuk-!-margin-bottom-9",
+
+                {{ govukTable({
+                    head: [{
+                        text: "Occurrence",
+                        classes: 'govuk-table__header govuk-table__header--occurrence-count'
+                    },
+                    {
+                        text: "Date",
+                        classes: 'govuk-table__header'
+                    },
+                    {
+                        html: '<span class="govuk-visually-hidden">Notes</span>'
+                    },
+                    {
+                        html: '<span class="govuk-visually-hidden">Actions</span>'
+                    }],
+                    rows: occurrenceTableRows,
+                    classes: "govuk-!-margin-bottom-9",
                     attributes: { 'data-qa': 'appointment-occurrences' }
                 }) }}
+
             {% elseif appointment.appointmentType == AppointmentType.GROUP %}
                 {{ prisonerList(appointment.prisoners) }}
             {% endif %}

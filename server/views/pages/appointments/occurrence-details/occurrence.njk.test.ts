@@ -53,4 +53,18 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     expect($('[data-qa=prisoner-list]').length).toBe(1)
     expect($('[data-qa=prisoner-summary]').length).toBe(0)
   })
+
+  it('should show updated by if occurrence has been updated', () => {
+    viewContext.occurrence.updatedBy = {
+      id: 123,
+      username: 'joebloggs',
+      firstName: 'Joe',
+      lastName: 'Bloggs',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    expect($('[data-qa=user-details] .govuk-summary-list__key:contains("Updated by")').next().text().trim()).toBe(
+      'J. Bloggs',
+    )
+  })
 })

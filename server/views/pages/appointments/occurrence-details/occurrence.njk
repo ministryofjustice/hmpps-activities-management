@@ -97,7 +97,14 @@
                         value: {
                             text: occurrence.createdBy | fullName | toTitleCase | initialiseName
                         }
-                    }
+                    }, {
+                        key: {
+                            text: "Updated by"
+                        },
+                        value: {
+                            text: occurrence.updatedBy | fullName | toTitleCase | initialiseName
+                        }
+                    } if occurrence.updatedBy
                 ],
                 classes: "govuk-!-margin-bottom-9",
                 attributes: { 'data-qa': 'user-details' }

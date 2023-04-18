@@ -44,7 +44,7 @@ export default class LocationRoutes {
     const result = await this.getLocation(req, res)
     if (!result) return
 
-    this.activitiesService.editAppointmentOccurrence(
+    await this.activitiesService.editAppointmentOccurrence(
       +occurrenceId,
       {
         internalLocationId: result.locationId,
@@ -56,7 +56,7 @@ export default class LocationRoutes {
     req.flash(
       'successMessage',
       JSON.stringify({
-        message: `Appointment location changed successfully`,
+        message: `Appointment location for this occurrence changed successfully`,
       }),
     )
 
