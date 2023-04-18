@@ -11,14 +11,18 @@
 
 {% set occurenceLink = '/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.id  %}
 
-{% set summaryListRows = [] if occurrence.appointmentType == AppointmentType.GROUP else [{
-    key: {
-        text: "Prisoner"
-    },
-    value: {
-        html: appointmentPrisonerSummary(occurrence.prisoners[0].firstName + ' ' + occurrence.prisoners[0].lastName, occurrence.prisoners[0].prisonerNumber, occurrence.prisoners[0].cellLocation, dpsUrl)
-    }
-}] %}
+{% set summaryListRows = [] %}
+
+{% if occurrence.appointmentType == AppointmentType.INDIVIDUAL %}
+    {% set summaryListRows = (summaryListRows.push({
+        key: {
+            text: "Prisoner"
+        },
+        value: {
+            html: appointmentPrisonerSummary(occurrence.prisoners[0].firstName + ' ' + occurrence.prisoners[0].lastName, occurrence.prisoners[0].prisonerNumber, occurrence.prisoners[0].cellLocation, dpsUrl)
+        }
+    }), summaryListRows) %}
+{% endif %}
 
 {% set summaryListRows = (summaryListRows.push(
     {
@@ -73,13 +77,13 @@
     }
 ), summaryListRows) %}
 
-{% if occurrence.isRepeat %}
+{% if occurrence.repeat != null %}
     {% set summaryListRows = (summaryListRows.push({
         key: {
-            text: "Repeat"
+            text: "Occurrence"
         },
         value: {
-            text: "Yes"
+            text: occurrence.sequenceNumber + " of " + occurrence.repeat.count
         },
         actions: {
             items: [

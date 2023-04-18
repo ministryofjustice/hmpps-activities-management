@@ -12,7 +12,7 @@
 {% set summaryListRows = [
     {
         key: {
-            text: "Date"
+            text: "Start date"
         },
         value: {
             text: appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy')
@@ -56,7 +56,7 @@
 {% set occurrenceSummaryListRows = [
     {
         key: {
-            text: "Sequence number"
+            text: "Occurrence"
         },
         value: {
             text: "Date",

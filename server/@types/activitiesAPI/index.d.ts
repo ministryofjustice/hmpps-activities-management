@@ -502,16 +502,22 @@ export interface components {
       scheduledInstanceId?: number
       /**
        * Format: int64
-       * @description For appointments from SAA the ID for the appointment instance, or null when from NOMIS
+       * @description For appointments from SAA the ID for the appointment, or null when from NOMIS
        * @example 9999
        */
-      appointmentInstanceId?: number
+      appointmentId?: number
       /**
        * Format: int64
        * @description For appointments from SAA the ID for the appointment occurrence, or null when from NOMIS
        * @example 9999
        */
       appointmentOccurrenceId?: number
+      /**
+       * Format: int64
+       * @description For appointments from SAA the ID for the appointment instance, or null when from NOMIS
+       * @example 9999
+       */
+      appointmentInstanceId?: number
       /**
        * Format: int64
        * @description For adjudication hearings from NOMIS the ID for the OIC hearing, or null for other types
@@ -2381,19 +2387,19 @@ export interface components {
       addresses: components['schemas']['AddressDto'][]
     }
     PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       first?: boolean
       last?: boolean
       empty?: boolean
@@ -2402,17 +2408,17 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      paged?: boolean
-      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
+      paged?: boolean
+      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /**
      * @description The phone number associated with the address
@@ -2873,8 +2879,7 @@ export interface components {
        * @example This appointment occurrence has been rescheduled due to staff availability
        */
       comment: string
-      /** @description Flag to indicate that the parent appointment was originally specified to repeat */
-      isRepeat: boolean
+      repeat?: components['schemas']['AppointmentRepeat']
       /**
        * @description
        *     Indicates that this appointment occurrence has been independently changed from the original state it was in when
