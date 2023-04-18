@@ -32,5 +32,12 @@ export default function routes(services: Services): Router {
   // Spikes under here spikes
   router.use('/spikes', spikeRoutes(services))
 
+  router.use('/page/:page', (req, res) => {
+    const referrer = new URL(req.get('Referrer'))
+    const targetId = req.query.id
+    referrer.searchParams.set('page', req.params.page)
+    res.redirect(referrer.toString() + (targetId ? `#${targetId}` : ''))
+  })
+
   return router
 }

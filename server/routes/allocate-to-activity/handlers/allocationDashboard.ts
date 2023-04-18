@@ -43,23 +43,25 @@ export default class AllocationDashboardRoutes {
     const suitableForIep = this.getSuitableForIep(schedule.activity.minimumIncentiveLevel, incentiveLevels)
     const suitableForWra = this.getSuitableForWra(schedule.activity.riskLevel)
 
-    if (Object.values(filters).length === 0) {
+    if (
+      !(filters.incentiveLevelFilter || filters.riskLevelFilter || filters.employmentFilter || filters.candidateQuery)
+    ) {
       filters.incentiveLevelFilter = suitableForIep
       filters.riskLevelFilter = suitableForWra
       filters.employmentFilter = 'Not in work'
     }
 
-    const [allocationSummaryView, currentlyAllocated, candidates] = await Promise.all([
+    const [allocationSummaryView, currentlyAllocated, pagedCandidates] = await Promise.all([
       this.capacitiesService.getScheduleAllocationsSummary(+scheduleId, user),
       this.getCurrentlyAllocated(+scheduleId, user),
-      this.getCandidates(+scheduleId, filters, user),
+      this.getCandidates(+scheduleId, filters, +req.query.page, user),
     ])
 
     res.render('pages/allocate-to-activity/allocation-dashboard', {
       allocationSummaryView,
       schedule,
       currentlyAllocated,
-      candidates,
+      pagedCandidates,
       incentiveLevels,
       filters,
       suitableForIep,
@@ -126,15 +128,21 @@ export default class AllocationDashboardRoutes {
     })
   }
 
-  private getCandidates = async (scheduleId: number, filters: Filters, user: ServiceUser) => {
+  private getCandidates = async (scheduleId: number, filters: Filters, pageNumber: number, user: ServiceUser) => {
     const candidateQueryLower = filters.candidateQuery?.toLowerCase()
     const suitableIeps = this.getSuitableIepLevels(filters)
     const suitableWpas = this.getSuitableRiskLevelCodes(filters)
     const suitableForEmployed = this.getSuitableForEmployed(filters)
 
-    return this.activitiesService
-      .getActivityCandidates(scheduleId, user, suitableIeps, suitableWpas, suitableForEmployed, candidateQueryLower)
-      .then(candidates => candidates.map(c => ({ ...c, releaseDate: c.releaseDate ? parseDate(c.releaseDate) : null })))
+    return this.activitiesService.getActivityCandidates(
+      scheduleId,
+      user,
+      suitableIeps,
+      suitableWpas,
+      suitableForEmployed,
+      candidateQueryLower,
+      pageNumber,
+    )
   }
 
   private getSuitableIepLevels = (filters: Filters): string[] => {

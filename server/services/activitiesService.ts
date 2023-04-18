@@ -29,8 +29,8 @@ import {
   ScheduleInstanceCancelRequest,
   UncancelScheduledInstanceRequest,
   Attendance,
-  ActivityCandidate,
   AppointmentOccurrenceUpdateRequest,
+  PageActivityCandidate,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -312,17 +312,17 @@ export default class ActivitiesService {
     suitableRiskLevels?: string[],
     suitableForEmployed?: boolean,
     searchQuery?: string,
-  ): Promise<ActivityCandidate[]> {
-    return this.activitiesApiClient
-      .getActivityCandidates(
-        scheduleInstanceId,
-        user,
-        suitableIeps,
-        suitableRiskLevels,
-        suitableForEmployed,
-        searchQuery,
-      )
-      .then(res => res.content)
+    page?: number,
+  ): Promise<PageActivityCandidate> {
+    return this.activitiesApiClient.getActivityCandidates(
+      scheduleInstanceId,
+      user,
+      suitableIeps,
+      suitableRiskLevels,
+      suitableForEmployed,
+      searchQuery,
+      page,
+    )
   }
 
   async editAppointmentOccurrence(
