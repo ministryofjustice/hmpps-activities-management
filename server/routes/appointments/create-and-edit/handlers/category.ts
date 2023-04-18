@@ -37,6 +37,6 @@ export default class CategoryRoutes {
       description: category.description,
     }
 
-    return res.redirectOrReturn('location')
+    return res.redirectOrReturn('description')
   }
 }

@@ -382,6 +382,7 @@ describe('Activities Service', () => {
         startTime: '09:00',
         endTime: '10:30',
         comment: 'This appointment will help adjusting to life outside of prison',
+        appointmentDescription: 'Appointment description',
         prisonerNumbers: ['A1234BC'],
         appointmentType: AppointmentType.INDIVIDUAL,
       }
@@ -395,6 +396,7 @@ describe('Activities Service', () => {
         startTime: '09:00',
         endTime: '10:30',
         comment: 'This appointment will help adjusting to life outside of prison',
+        appointmentDescription: 'Appointment description',
         created: '2023-02-07T15:37:59.266Z',
         createdBy: 'AAA01U',
         occurrences: [
