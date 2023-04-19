@@ -30,6 +30,7 @@ import {
   UncancelScheduledInstanceRequest,
   PageActivityCandidate,
   AppointmentOccurrenceUpdateRequest,
+  AppointmentLocationSummary,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -298,6 +299,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategorySummary[]> {
     return this.get({
       path: `/appointment-categories`,
+      authToken: user.token,
+    })
+  }
+
+  async getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<AppointmentLocationSummary[]> {
+    return this.get({
+      path: `/appointment-locations/${prisonCode}`,
       authToken: user.token,
     })
   }

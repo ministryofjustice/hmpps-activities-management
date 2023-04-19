@@ -32,7 +32,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const categoryHandler = new CategoryRoutes(activitiesService)
   const descriptionHandler = new DescriptionRoutes()
-  const locationHandler = new LocationRoutes(prisonService, activitiesService)
+  const locationHandler = new LocationRoutes(activitiesService)
   const dateAndTimeHandler = new DateAndTimeRoutes(activitiesService)
   const repeatHandler = new RepeatRoutes()
   const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
