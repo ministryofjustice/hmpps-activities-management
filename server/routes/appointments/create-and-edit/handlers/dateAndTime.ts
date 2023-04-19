@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
+import { Expose, Type, plainToInstance } from 'class-transformer'
 import { IsNotEmpty, ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
@@ -8,6 +8,8 @@ import IsValidTime from '../../../../validators/isValidTime'
 import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
+import ActivitiesService from '../../../../services/activitiesService'
+import { EditApplyTo } from '../../../../@types/appointments'
 
 export class DateAndTime {
   @Expose()
@@ -36,11 +38,63 @@ export class DateAndTime {
 }
 
 export default class DateAndTimeRoutes {
+  constructor(private readonly activitiesService: ActivitiesService) {}
+
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/date-and-time')
   }
 
-  POST = async (req: Request, res: Response): Promise<void> => {
+  CREATE = async (req: Request, res: Response): Promise<void> => {
+    this.setTimeAndDate(req)
+
+    res.redirectOrReturn(`repeat`)
+  }
+
+  EDIT = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
+    const { appointmentId, occurrenceId } = req.params
+
+    const startDate = plainToInstance(SimpleDate, req.session.appointmentJourney.startDate)
+    const startTime = plainToInstance(SimpleTime, req.session.appointmentJourney.startTime)
+    const endTime = plainToInstance(SimpleTime, req.session.appointmentJourney.endTime)
+
+    this.setTimeAndDate(req)
+
+    const updatedStartDate = plainToInstance(SimpleDate, req.session.appointmentJourney.startDate)
+    const updatedStartTime = plainToInstance(SimpleTime, req.session.appointmentJourney.startTime)
+    const updatedEndTime = plainToInstance(SimpleTime, req.session.appointmentJourney.endTime)
+
+    await this.activitiesService.editAppointmentOccurrence(
+      +occurrenceId,
+      {
+        startDate: updatedStartDate.toIsoString(),
+        startTime: updatedStartTime.toIsoString(),
+        endTime: updatedEndTime.toIsoString(),
+        applyTo: EditApplyTo.THIS_OCCURRENCE,
+      },
+      user,
+    )
+
+    const updatedProperties = []
+    if (startDate.toIsoString() !== updatedStartDate.toIsoString()) updatedProperties.push('date')
+    if (startTime.toIsoString() !== updatedStartTime.toIsoString()) updatedProperties.push('start time')
+    if (endTime.toIsoString() !== updatedEndTime.toIsoString()) updatedProperties.push('end time')
+
+    if (updatedProperties.length > 0) {
+      req.flash(
+        'successMessage',
+        JSON.stringify({
+          message: `Appointment ${updatedProperties
+            .join(', ')
+            .replace(/(,)(?!.*\1)/, ' and')} for this occurrence changed successfully`,
+        }),
+      )
+    }
+
+    res.redirectOrReturn(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+  }
+
+  private setTimeAndDate(req: Request) {
     const { startDate, startTime, endTime } = req.body
 
     req.session.appointmentJourney.startDate = {
@@ -61,7 +115,5 @@ export default class DateAndTimeRoutes {
       minute: endTime.minute,
       date: endTime.toDate(req.session.appointmentJourney.startDate.date),
     }
-
-    res.redirectOrReturn(`repeat`)
   }
 }

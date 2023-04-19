@@ -6,10 +6,13 @@ import Page from '../../pages/page'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 import { formatDate } from '../../../server/utils/utils'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
+import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
+
+const tomorrow = addDays(new Date(), 1)
+const nextWeek = addDays(new Date(), 7)
 
 context('Edit appointment', () => {
   beforeEach(() => {
-    const nextWeek = addDays(new Date(), 7)
     getGroupOccurrenceDetails.startDate = formatDate(nextWeek, 'yyyy-MM-dd')
 
     cy.task('reset')
@@ -25,22 +28,107 @@ context('Edit appointment', () => {
   })
 
   context('Edit appointment occurrence', () => {
-    it('Should update the location of appointment occurrence', () => {
-      let occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-      occurrenceDetailsPage.getChangeLink('Location').click()
+    context('Location', () => {
+      it('Should update the location of appointment occurrence', () => {
+        let occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.getChangeLink('Location').click()
 
-      let locationPage = Page.verifyOnPage(LocationPage)
-      locationPage.assertSelectedLocation('Chapel')
-      locationPage.selectLocation('Classroom')
-      locationPage.getButton('Accept and save').click()
+        const locationPage = Page.verifyOnPage(LocationPage)
+        locationPage.assertSelectedLocation('Chapel')
+        locationPage.selectLocation('Classroom')
+        locationPage.getButton('Accept and save').click()
 
-      occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-      occurrenceDetailsPage.assertNotificationContents('Appointment location for this occurrence changed successfully')
-      occurrenceDetailsPage.getChangeLink('Location').click()
+        occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.assertNotificationContents(
+          'Appointment location for this occurrence changed successfully',
+        )
+      })
 
-      locationPage = Page.verifyOnPage(LocationPage)
-      locationPage.back()
-      Page.verifyOnPage(OccurrenceDetailsPage)
+      it('Returns to occurrence details page if back link clicked', () => {
+        const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.getChangeLink('Location').click()
+
+        const locationPage = Page.verifyOnPage(LocationPage)
+        locationPage.back()
+        Page.verifyOnPage(OccurrenceDetailsPage)
+      })
+    })
+
+    context('Date', () => {
+      it('Should update the date of appointment occurrence', () => {
+        let occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.getChangeLink('Date').click()
+
+        const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
+        dateAndTimePage.assertStartDate(nextWeek)
+        dateAndTimePage.enterStartDate(tomorrow)
+        dateAndTimePage.getButton('Accept and save').click()
+
+        occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.assertNotificationContents('Appointment date for this occurrence changed successfully')
+      })
+    })
+
+    context('Start time', () => {
+      it('Should update the start time of appointment occurrence', () => {
+        let occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.getChangeLink('Start time').click()
+
+        const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
+        dateAndTimePage.assertStartTime(14, 0)
+        dateAndTimePage.selectStartTime(14, 30)
+        dateAndTimePage.getButton('Accept and save').click()
+
+        occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.assertNotificationContents(
+          'Appointment start time for this occurrence changed successfully',
+        )
+      })
+    })
+
+    context('End time', () => {
+      it('Should update the end time of appointment occurrence', () => {
+        let occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.getChangeLink('End time').click()
+
+        const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
+        dateAndTimePage.assertEndTime(15, 30)
+        dateAndTimePage.selectEndTime(17, 30)
+        dateAndTimePage.getButton('Accept and save').click()
+
+        occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.assertNotificationContents(
+          'Appointment end time for this occurrence changed successfully',
+        )
+      })
+    })
+
+    context('Date and time', () => {
+      it('Should update the date, start time and end time of appointment occurrence', () => {
+        let occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.getChangeLink('Date').click()
+
+        const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
+        dateAndTimePage.enterStartDate(tomorrow)
+        dateAndTimePage.selectStartTime(16, 0)
+        dateAndTimePage.selectEndTime(17, 30)
+        dateAndTimePage.getButton('Accept and save').click()
+
+        occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.assertNotificationContents(
+          'Appointment date, start time and end time for this occurrence changed successfully',
+        )
+      })
+
+      it('Returns to occurrence details page if back link clicked', () => {
+        const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.getChangeLink('Date').click()
+
+        const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
+        dateAndTimePage.back()
+        Page.verifyOnPage(OccurrenceDetailsPage)
+      })
     })
   })
 })
