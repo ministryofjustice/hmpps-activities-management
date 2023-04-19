@@ -4,8 +4,9 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Description" %}
+{% set pageTitle = appointmentJourneyTitle("Description", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-description-page' %}
 {% set backLinkHref = "category" %}
 

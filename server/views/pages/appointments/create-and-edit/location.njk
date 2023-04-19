@@ -2,9 +2,10 @@
 
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Location" %}
+{% set pageTitle = appointmentJourneyTitle("Location", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-location-page' %}
 {% set backLinkHref = "/category" %}
 

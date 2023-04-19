@@ -4,8 +4,9 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Repeat Period and Count" %}
+{% set pageTitle = appointmentJourneyTitle("Repeat Period and Count", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-repeat-period-and-count-page' %}
 {% set backLinkHref = "/date-and-time" %}
 
