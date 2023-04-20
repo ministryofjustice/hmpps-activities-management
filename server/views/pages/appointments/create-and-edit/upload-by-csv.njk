@@ -1,0 +1,35 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+
+{% set pageTitle = "Appointments Management - Create Appointment - Upload by CSV" %}
+{% set pageId = 'appointments-upload-by-csv-page' %}
+{% set backLinkHref = "/appointments" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            <h1 class="govuk-heading-l">Use a CSV file to create a group appointment</h1>
+
+            <div class="govuk-!-margin-bottom-6">
+                <p class="govuk-body">You can use a CSV file to create a one-off or repeat appointment for a group of people.</p>
+
+                <p class="govuk-body">You must include a prison number for each individual.</p>
+
+                <a href="/assets/downloads/prisoner-list.csv" download>Download CSV file template</a>
+            </div>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

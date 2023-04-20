@@ -21,7 +21,7 @@ export default class HowToAddPrisonerRoutes {
     const { howToAdd } = req.body
 
     if (HowToAddOptions[howToAdd] === HowToAddOptions.CSV) {
-      res.redirect('upload-prisoner-list')
+      res.redirect('upload-by-csv')
     } else {
       res.redirect('select-prisoner')
     }
