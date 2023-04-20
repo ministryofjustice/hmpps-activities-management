@@ -11,7 +11,7 @@
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for location in locations %}
-    {% set options = (options.push( { value: location.locationId, text: location.userDescription }), options) %}
+    {% set options = (options.push( { value: location.id, text: location.description }), options) %}
 {% endfor %}
 
 {% block meta %}

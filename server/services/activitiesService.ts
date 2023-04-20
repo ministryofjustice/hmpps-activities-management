@@ -31,6 +31,7 @@ import {
   Attendance,
   AppointmentOccurrenceUpdateRequest,
   PageActivityCandidate,
+  AppointmentLocationSummary,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -271,6 +272,10 @@ export default class ActivitiesService {
 
   async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategorySummary[]> {
     return this.activitiesApiClient.getAppointmentCategories(user)
+  }
+
+  async getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<AppointmentLocationSummary[]> {
+    return this.activitiesApiClient.getAppointmentLocations(prisonCode, user)
   }
 
   createAppointment(appointment: AppointmentCreateRequest, user: ServiceUser): Promise<Appointment> {

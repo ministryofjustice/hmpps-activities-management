@@ -16,14 +16,14 @@ export default function routes(services: Services): Router {
   router.use('/', appointmentsHomeRoutes())
   router.use('/create', appointmentsCreateRoutes(services))
 
-  router.use('/:appointmentId', fetchAppointment(activitiesService), appointmentDetailsRoutes(services))
+  router.use('/:appointmentId(\\d+)', fetchAppointment(activitiesService), appointmentDetailsRoutes(services))
 
   router.use(
-    '/:appointmentId/occurrence/:occurrenceId',
+    '/:appointmentId(\\d+)/occurrence/:occurrenceId(\\d+)',
     fetchAppointmentOccurrence(activitiesService),
     appointmentOccurrenceDetailsRoutes(),
   )
-  router.use('/:appointmentId/occurrence/:occurrenceId/edit', appointmentsEditRoutes(services))
+  router.use('/:appointmentId(\\d+)/occurrence/:occurrenceId(\\d+)/edit', appointmentsEditRoutes(services))
 
   return router
 }

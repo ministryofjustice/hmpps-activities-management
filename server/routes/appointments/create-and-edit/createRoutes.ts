@@ -14,6 +14,7 @@ import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './handlers/rep
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
+import UploadByCSV from './handlers/uploadByCsv'
 import ReviewPrisoners, { AddAnotherForm } from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
@@ -32,13 +33,14 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const categoryHandler = new CategoryRoutes(activitiesService)
   const descriptionHandler = new DescriptionRoutes()
-  const locationHandler = new LocationRoutes(prisonService, activitiesService)
+  const locationHandler = new LocationRoutes(activitiesService)
   const dateAndTimeHandler = new DateAndTimeRoutes(activitiesService)
   const repeatHandler = new RepeatRoutes()
   const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
   const howToAddPrisoners = new HowToAddPrisoners()
+  const uploadByCsv = new UploadByCSV()
   const reviewPrisoners = new ReviewPrisoners()
 
   get('/start-individual', startHandler.INDIVIDUAL)
@@ -69,6 +71,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/confirmation/:id', confirmationHandler.GET, true)
   get('/how-to-add-prisoners', howToAddPrisoners.GET, true)
   post('/how-to-add-prisoners', howToAddPrisoners.POST, HowToAddPrisonersForm)
+  get('/upload-by-csv', uploadByCsv.GET, true)
+  post('/upload-by-csv', uploadByCsv.POST)
   get('/review-prisoners', reviewPrisoners.GET, true)
   post('/review-prisoners', reviewPrisoners.POST, AddAnotherForm)
 

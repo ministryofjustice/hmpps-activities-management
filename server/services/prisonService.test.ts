@@ -99,19 +99,6 @@ describe('Prison Service', () => {
     })
   })
 
-  describe('getLocationsForAppointments', () => {
-    it('should get the prisons event locations from the prisons API', async () => {
-      const expectedResult = [{ data: 'response' }] as unknown as LocationLenient[]
-
-      when(prisonApiClient.getLocationsForEventType).calledWith(atLeast('MDI', 'APP')).mockResolvedValue(expectedResult)
-
-      const actualResult = await prisonService.getLocationsForAppointments('MDI', user)
-
-      expect(actualResult).toEqual(expectedResult)
-      expect(prisonApiClient.getLocationsForEventType).toHaveBeenCalledWith('MDI', 'APP', user)
-    })
-  })
-
   describe('searchActivityLocations', () => {
     it('should search activity locations using prisoner search API', async () => {
       when(prisonApiClient.searchActivityLocations).calledWith(atLeast('10001')).mockResolvedValue(activityLocations)
