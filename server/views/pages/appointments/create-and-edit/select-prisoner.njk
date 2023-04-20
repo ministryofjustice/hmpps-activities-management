@@ -2,10 +2,11 @@
 
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {%- from "moj/components/search/macro.njk" import mojSearch -%}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Select Prisoner" %}
+{% set pageTitle = appointmentJourneyTitle("Select Prisoner", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-select-prisoner-page' %}
 {% set backLinkHref = "how-to-add-prisoners" %}
 

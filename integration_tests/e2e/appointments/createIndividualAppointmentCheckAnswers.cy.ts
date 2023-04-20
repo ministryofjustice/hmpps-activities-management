@@ -25,7 +25,7 @@ context('Create individual appointment - check answers change links', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY', getPrisonPrisonersA8644DY)
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A1350DZ', getPrisonPrisonersA1350DZ)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
+    cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments')
   })
 

@@ -38,7 +38,7 @@ context('Create individual repeat appointment', () => {
     cy.signIn()
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY', getPrisonPrisoners)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
+    cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatAppointmentDetails)
     cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getOccurrenceDetails)

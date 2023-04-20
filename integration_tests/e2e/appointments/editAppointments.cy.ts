@@ -21,7 +21,7 @@ context('Edit appointment', () => {
     cy.signIn()
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatGroupAppointmentDetails)
     cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getGroupOccurrenceDetails)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
+    cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('PATCH', '/appointment-occurrences/12')
 
     cy.visit('/appointments/10/occurrence/12')

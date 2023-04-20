@@ -3,8 +3,9 @@
 {% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Upload Prisoner List" %}
+{% set pageTitle = appointmentJourneyTitle("Upload Prisoner List", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-upload-prisoner-list-page' %}
 {% set backLinkHref = "/appointments" %}
 
