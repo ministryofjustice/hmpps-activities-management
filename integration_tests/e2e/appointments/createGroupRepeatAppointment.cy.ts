@@ -43,7 +43,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=lee', getPrisonPrisonersA1351DZ)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getPrisonPrisonersA8644DYA1351DZ)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
+    cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatGroupAppointmentDetails)
     cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getGroupOccurrenceDetails)
