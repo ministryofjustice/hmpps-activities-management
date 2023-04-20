@@ -16,6 +16,7 @@ import {
   AppointmentDetails,
   AppointmentOccurrenceDetails,
   AppointmentCategorySummary,
+  AppointmentLocationSummary,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -524,6 +525,37 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi.get('/appointment-categories').matchHeader('authorization', `Bearer token`).reply(200, response)
 
       const output = await activitiesApiClient.getAppointmentCategories(user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getAppointmentLocations', () => {
+    it('should return all locations from api', async () => {
+      const response = [
+        {
+          id: 1,
+          prisonCode: 'MDI',
+          description: 'Appointment Location 1',
+        },
+        {
+          id: 2,
+          prisonCode: 'MDI',
+          description: 'Appointment Location 2',
+        },
+        {
+          id: 3,
+          prisonCode: 'MDI',
+          description: 'Appointment Location 3',
+        },
+      ] as AppointmentLocationSummary[]
+
+      fakeActivitiesApi
+        .get('/appointment-locations/MDI')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getAppointmentLocations('MDI', user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
