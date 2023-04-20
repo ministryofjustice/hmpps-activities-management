@@ -1,0 +1,3 @@
+{% macro appointmentJourneyTitle(pageName, appointmentJourney) -%}
+  {{ "Appointments Management - " + appointmentJourney.mode | capitalize + " " + appointmentJourney.type | capitalize + " Appointment - " + pageName }}
+{%- endmacro %}

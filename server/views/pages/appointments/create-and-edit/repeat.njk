@@ -3,8 +3,9 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Repeat" %}
+{% set pageTitle = appointmentJourneyTitle("Repeat", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-repeat-page' %}
 {% set backLinkHref = "/date-and-time" %}
 

@@ -2,8 +2,9 @@
 
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Confirmation" %}
+{% set pageTitle = appointmentJourneyTitle("Confirmation", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-confirmation-page' %}
 
 {% block content %}
