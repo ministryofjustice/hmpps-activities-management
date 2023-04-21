@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import { PathParams } from 'express-serve-static-core'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -29,6 +30,11 @@ export interface ApiConfig {
     deadline: number
   }
   agent: AgentConfig
+}
+
+interface RouteAuth {
+  route: PathParams
+  roles: string[]
 }
 
 export default {
@@ -126,4 +132,14 @@ export default {
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
+  routeAuth: [
+    {
+      route: '/allocate/activities',
+      roles: ['ACTIVITY_HUB'],
+    },
+    {
+      route: '/create',
+      roles: ['ACTIVITY_HUB'],
+    },
+  ] as RouteAuth[],
 }

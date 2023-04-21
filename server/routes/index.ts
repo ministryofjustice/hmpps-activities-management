@@ -11,10 +11,14 @@ import spikeRoutes from './spikes'
 import errorMessageMiddleware from '../middleware/errorMessageMiddleware'
 import successMessageMiddleware from '../middleware/successMessageMiddleware'
 import timeNowMiddleware from '../middleware/timeNowMiddleware'
+import routeAuthMiddleware from '../middleware/routeAuthMiddleware'
 import appointmentRoutes from './appointments'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
+
+  router.use(routeAuthMiddleware())
+
   router.use(errorMessageMiddleware())
   router.use(successMessageMiddleware())
   router.use(timeNowMiddleware())
