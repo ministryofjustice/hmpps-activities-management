@@ -30,7 +30,7 @@
         key: {
             text: "Pay"
         },
-        value: { text: attendance.payAmount / 100 | toFixed or "none"}
+        value: { text: attendance.payAmount / 100 | toFixed or "None"}
     }
 ), summaryListRows) %}
 
@@ -63,10 +63,7 @@
         value: {
             text: attendance.comment
         }
-    }
-), summaryListRows) %}
-
-{% set summaryListRows = (summaryListRows.push(
+    } if attendance.comment,
     {
         key: {
          text: "Recorded by"
@@ -74,7 +71,7 @@
         value: {
          text: attendance.recordedBy
         }
-    }
+    } if attendance.recordedBy
 ), summaryListRows) %}
 
 {% block content %}
