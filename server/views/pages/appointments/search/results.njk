@@ -1,0 +1,75 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
+{% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
+
+{% set pageTitle = "Appointments Management - Appointment Search Results" %}
+{% set pageId = 'appointments-search-results-page' %}
+{% set backLinkHref = "/" %}
+
+{% set resultsTableRows = [] %}
+{% set index = 0 %}
+{% for result in results %}
+    {% set resultsTableRows = (resultsTableRows.push([
+        {
+            text: result.startDate | toDate | formatDate('d MMM yyyy'),
+            attributes: { 'data-qa': 'result-date-' + index }
+        }, {
+            text: result.startTime + " to " + result.endTime,
+            attributes: { 'data-qa': 'result-time-' + index }
+        }, {
+            text: result.category.description,
+            attributes: { 'data-qa': 'result-category-' + index }
+        }, {
+            text: result.internalLocation.description,
+            attributes: { 'data-qa': 'result-location-' + index }
+        }, {
+            text: (result.sequenceNumber + " of " + result.maxSequenceNumber if result.isRepeat),
+            attributes: { 'data-qa': 'result-sequence-number-' + index }
+        }, {
+            html: '<a href="/appointments/' + result.appointmentId + '/occurrence/' + result.appointmentOccurrenceId + '"
+                class="govuk-link--no-visited-state">
+                View and edit<span class="govuk-visually-hidden"> occurrence</span>
+            </a>',
+            classes: 'govuk-!-text-align-right',
+            attributes: { 'data-qa': 'view-and-edit-result-' + index }
+        }
+    ]), resultsTableRows) %}
+    {% set index = index + 1 %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l">Appointment management</span>
+            <h1 class="govuk-heading-l">View and edit an appointment</h1>
+
+            {{ govukTable({
+                head: [{
+                    text: "Date"
+                },
+                {
+                    text: "Time"
+                },
+                {
+                    text: "Category"
+                },
+                {
+                    text: "Location"
+                },
+                {
+                    text: "Occurrence"
+                },
+                {
+                    html: '<span class="govuk-visually-hidden">Actions</span>'
+                }],
+                rows: resultsTableRows,
+                attributes: { 'data-qa': 'search-results' }
+            }) }}
+        </div>
+    </div>
+{% endblock %}
