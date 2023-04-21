@@ -76,7 +76,8 @@
                 classes: "govuk-label--m"
             },
             renderedErrorMessage: validationErrors | findError('startDate'),
-            validationErrors: validationErrors
+            validationErrors: validationErrors,
+            formResponses: formResponses.startDate or startDate
         }) }}
 
         {{ govukRadios({
@@ -112,7 +113,8 @@
                 classes: "govuk-label--m"
             },
             errorMessage: validationErrors | findError('categoryCode'),
-            items: categoryOptions
+            items: categoryOptions,
+            value: formResponses.categoryCode or categoryCode
         }) }}
 
         {{ govukSelect({
@@ -123,7 +125,8 @@
                 classes: "govuk-label--m"
             },
             errorMessage: validationErrors | findError('locationId'),
-            items: locationOptions
+            items: locationOptions,
+            value: formResponses.locationId or locationId
         }) }}
     {% endset %}
 
