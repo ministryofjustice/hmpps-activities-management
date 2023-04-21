@@ -19,7 +19,7 @@
     {% set categoryOptions = (categoryOptions.push( { value: category.code, text: category.description } ), categoryOptions) %}
 {% endfor %}
 
-{% set locationOptions = [{ value: "-", text: "" }] %}
+{% set locationOptions = [{ value: "", text: "" }] %}
 {% for location in locations %}
     {% set locationOptions = (locationOptions.push( { value: location.id, text: location.description }), locationOptions) %}
 {% endfor %}
@@ -92,15 +92,18 @@
             items: [
                 {
                     value: TimeSlot.AM,
-                    text: "Morning (AM)"
+                    text: "Morning (AM)",
+                    checked: (formResponses.timeSlot or timeSlot) == TimeSlot.AM
                 },
                 {
                     value: TimeSlot.PM,
-                    text: "Afternoon (PM)"
+                    text: "Afternoon (PM)",
+                    checked: (formResponses.timeSlot or timeSlot) == TimeSlot.PM
                 },
                 {
                     value: TimeSlot.ED,
-                    text: "Evening (ED)"
+                    text: "Evening (ED)",
+                    checked: (formResponses.timeSlot or timeSlot) == TimeSlot.ED
                 }
             ]
         }) }}
@@ -132,12 +135,15 @@
 
     <div class="moj-filter-layout" data-module="activities-list-filter">
         <div class="moj-filter-layout__filter govuk-!-display-none-print">
-            {{ mojFilter({
-                heading: {
-                    text: 'Filter'
-                },
-                optionsHtml: filterOptionsHtml
-            }) }}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ mojFilter({
+                    heading: {
+                        text: 'Filter'
+                    },
+                    optionsHtml: filterOptionsHtml
+                }) }}
+            </form>
         </div>
         <div class="moj-filter-layout__content">
             <div class="moj-action-bar govuk-!-display-none-print">

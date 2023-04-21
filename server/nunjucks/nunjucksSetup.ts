@@ -33,9 +33,10 @@ import {
   sortActivitiesByStartTime,
 } from '../utils/calendarUtilities'
 import { Services } from '../services'
-import { TimeSlot, YesNo } from '../@types/activities'
+import { YesNo } from '../@types/activities'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentRepeatPeriod } from '../@types/appointments'
+import TimeSlot from '../enum/timeSlot'
 
 const production = process.env.NODE_ENV === 'production'
 

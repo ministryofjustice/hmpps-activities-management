@@ -1,10 +1,22 @@
 import { Request, Response } from 'express'
+import { Expose, Type } from 'class-transformer'
+import { IsNotEmpty, ValidateNested } from 'class-validator'
 import { isValid } from 'date-fns'
+import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import IsValidDate from '../../../../validators/isValidDate'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { AppointmentOccurrenceSearchRequest } from '../../../../@types/activitiesAPI/types'
 import { toDate, toDateString } from '../../../../utils/utils'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+
+export class Search {
+  @Expose()
+  @Type(() => SimpleDate)
+  @ValidateNested()
+  @IsNotEmpty({ message: 'Enter a start date' })
+  @IsValidDate({ message: 'Enter a valid start date' })
+  startDate: SimpleDate
+}
 
 export default class SearchRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
@@ -24,20 +36,31 @@ export default class SearchRoutes {
 
     const request = {
       startDate: simpleStartDate.toIsoString(),
-      timeSlot,
-      categoryCode,
-      locationId,
+      timeSlot: timeSlot ?? null,
+      categoryCode: categoryCode ?? null,
+      locationId: locationId ?? null,
     } as AppointmentOccurrenceSearchRequest
 
     const results = await this.activitiesService.searchAppointmentOccurrences(user.activeCaseLoadId, request, user)
 
     return res.render('pages/appointments/search/results', {
       startDate: simpleStartDate,
+      timeSlot,
       categories,
       categoryCode,
       locations,
       locationId,
       results,
     })
+  }
+
+  POST = async (req: Request, res: Response): Promise<void> => {
+    const { startDate, timeSlot, categoryCode, locationId } = req.body
+
+    return res.redirect(
+      `?startDate=${startDate.toIsoString()}&timeSlot=${
+        timeSlot ?? ''
+      }&categoryCode=${categoryCode}&locationId=${locationId}`,
+    )
   }
 }
