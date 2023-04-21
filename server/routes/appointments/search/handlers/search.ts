@@ -9,10 +9,13 @@ export default class SearchRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
 
+    const categories = await this.activitiesService.getAppointmentCategories(user)
+    const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
+
     const request = {} as AppointmentOccurrenceSearchRequest
 
     const results = await this.activitiesService.searchAppointmentOccurrences(user.activeCaseLoadId, request, user)
 
-    res.render('pages/appointments/search/results', { results })
+    res.render('pages/appointments/search/results', { categories, locations, results })
   }
 }
