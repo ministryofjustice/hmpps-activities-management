@@ -1950,6 +1950,16 @@ export interface components {
       startDate?: string
       /**
        * @description
+       *     The time slot to match with the appointment occurrences. Will restrict the search results to appointment occurrences
+       *     that have a start time between the times defined by the prison for that time slot when this search parameter is
+       *     supplied.
+       *
+       * @example PM
+       * @enum {string}
+       */
+      timeSlot?: 'AM' | 'PM' | 'ED'
+      /**
+       * @description
        *     The allocated prisoner or prisoners to match with the appointment occurrences. Will restrict the search results to
        *     appointment occurrences that have the at least one of the supplied prisoner numbers allocated to them when this
        *     search parameter is supplied.
@@ -2615,12 +2625,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      paged?: boolean
-      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
+      paged?: boolean
+      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean

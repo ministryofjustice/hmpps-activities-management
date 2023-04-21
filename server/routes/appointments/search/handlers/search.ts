@@ -36,9 +36,9 @@ export default class SearchRoutes {
 
     const request = {
       startDate: simpleStartDate.toIsoString(),
-      timeSlot: timeSlot ?? null,
-      categoryCode: categoryCode ?? null,
-      locationId: locationId ?? null,
+      timeSlot: timeSlot === '' ? null : timeSlot,
+      categoryCode: categoryCode === '' ? null : categoryCode,
+      internalLocationId: locationId === '' ? null : +locationId,
     } as AppointmentOccurrenceSearchRequest
 
     const results = await this.activitiesService.searchAppointmentOccurrences(user.activeCaseLoadId, request, user)
