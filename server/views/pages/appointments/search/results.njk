@@ -15,13 +15,27 @@
 {% set backLinkHref = "/" %}
 
 {% set categoryOptions = [{ value: "", text: "" }] %}
+{% set selectedCategory = [] %}
 {% for category in categories %}
     {% set categoryOptions = (categoryOptions.push( { value: category.code, text: category.description } ), categoryOptions) %}
+    {% if (category.code == categoryCode) %}
+        {% set selectedCategory = (selectedCategory.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId,
+            text: category.description
+        }), selectedCategory) %}
+    {% endif %}
 {% endfor %}
 
 {% set locationOptions = [{ value: "", text: "" }] %}
+{% set selectedLocation = [] %}
 {% for location in locations %}
     {% set locationOptions = (locationOptions.push( { value: location.id, text: location.description }), locationOptions) %}
+    {% if (location.id == locationId) %}
+        {% set selectedLocation = (selectedLocation.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=',
+            text: location.description
+        }), selectedLocation) %}
+    {% endif %}
 {% endfor %}
 
 {% block meta %}
@@ -131,7 +145,21 @@
             items: locationOptions,
             value: formResponses.locationId or locationId
         }) }}
+
+        <button class="govuk-button govuk-!-margin-top-7" data-module="govuk-button">
+            Apply filters
+        </button>
     {% endset %}
+
+    {% set selectedTimeSlot = [] %}
+    {% if (timeSlot) %}
+        {% set selectedTimeSlot = (selectedTimeSlot.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + '&categoryCode=' + categoryCode + '&locationId=' + locationId,
+            text: ("Morning (AM)" if timeSlot == TimeSlot.AM) +
+                  ("Afternoon (PM)" if timeSlot == TimeSlot.PM)  +
+                  ("Evening (ED)" if timeSlot == TimeSlot.ED)
+        }), selectedTimeSlot) %}
+    {% endif %}
 
     <div class="moj-filter-layout" data-module="activities-list-filter">
         <div class="moj-filter-layout__filter govuk-!-display-none-print">
@@ -140,6 +168,35 @@
                 {{ mojFilter({
                     heading: {
                         text: 'Filter'
+                    },
+                    selectedFilters: {
+                        heading: {
+                            text: 'Selected filters'
+                        },
+                        clearLink: {
+                            text: 'Clear filters',
+                            href: '?startDate=' + now | toDateString
+                        },
+                        categories: [
+                            {
+                                heading: {
+                                    text: 'Time period'
+                                },
+                                items: selectedTimeSlot
+                            },
+                            {
+                                heading: {
+                                    text: 'Category'
+                                },
+                                items: selectedCategory
+                            },
+                            {
+                                heading: {
+                                    text: 'Location'
+                                },
+                                items: selectedLocation
+                            }
+                        ]
                     },
                     optionsHtml: filterOptionsHtml
                 }) }}
