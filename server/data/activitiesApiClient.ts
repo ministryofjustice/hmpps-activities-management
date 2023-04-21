@@ -31,6 +31,8 @@ import {
   PageActivityCandidate,
   AppointmentOccurrenceUpdateRequest,
   AppointmentLocationSummary,
+  AppointmentOccurrenceSearchRequest,
+  AppointmentOccurrenceSearchResult,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -381,6 +383,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
         size: 5,
       },
       authToken: user.token,
+    })
+  }
+
+  async searchAppointmentOccurrences(
+    prisonCode: string,
+    searchRequest: AppointmentOccurrenceSearchRequest,
+    user: ServiceUser,
+  ): Promise<AppointmentOccurrenceSearchResult[]> {
+    return this.post({
+      path: `/appointment-occurrences/${prisonCode}/search`,
+      authToken: user.token,
+      data: searchRequest,
     })
   }
 }

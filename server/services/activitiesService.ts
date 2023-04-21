@@ -32,6 +32,7 @@ import {
   AppointmentOccurrenceUpdateRequest,
   PageActivityCandidate,
   AppointmentLocationSummary,
+  AppointmentOccurrenceSearchRequest,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -336,5 +337,13 @@ export default class ActivitiesService {
     user: ServiceUser,
   ) {
     return this.activitiesApiClient.editAppointmentOccurrence(occurrenceId, occurrenceUpdates, user)
+  }
+
+  async searchAppointmentOccurrences(
+    prisonCode: string,
+    searchRequest: AppointmentOccurrenceSearchRequest,
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.searchAppointmentOccurrences(prisonCode, searchRequest, user)
   }
 }
