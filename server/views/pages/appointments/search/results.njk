@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
 
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
@@ -47,28 +47,52 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l">Appointment management</span>
             <h1 class="govuk-heading-l">View and edit an appointment</h1>
+        </div>
+    </div>
+
+    <div class="moj-filter-layout" data-module="activities-list-filter">
+        <div class="moj-filter-layout__filter govuk-!-display-none-print">
+            {{ mojFilter({
+                heading: {
+                    text: 'Filter'
+                }
+            }) }}
+        </div>
+        <div class="moj-filter-layout__content">
+            <div class="moj-action-bar govuk-!-display-none-print">
+                <div class="moj-action-bar__filter"></div>
+            </div>
 
             {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-qa': 'search-results'
+                },
+                caption: "Appointments",
                 head: [{
-                    text: "Date"
+                    text: "Date",
+                    attributes: { "aria-sort": "ascending" }
                 },
                 {
-                    text: "Time"
+                    text: "Time",
+                    attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Category"
+                    text: "Category",
+                    attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Location"
+                    text: "Location",
+                    attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Occurrence"
+                    text: "Occurrence",
+                    attributes: { "aria-sort": "none" }
                 },
                 {
                     html: '<span class="govuk-visually-hidden">Actions</span>'
                 }],
-                rows: resultsTableRows,
-                attributes: { 'data-qa': 'search-results' }
+                rows: resultsTableRows
             }) }}
         </div>
     </div>
