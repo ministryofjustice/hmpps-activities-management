@@ -1,9 +1,11 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "components/datePicker.njk" import datePicker %}
 
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
@@ -66,6 +68,42 @@
     </div>
 
     {% set filterOptionsHtml %}
+        {{ datePicker({
+            id: 'startDate',
+            name: 'startDate',
+            label: {
+                text: "Start date",
+                classes: "govuk-label--m"
+            },
+            renderedErrorMessage: validationErrors | findError('startDate'),
+            validationErrors: validationErrors
+        }) }}
+
+        {{ govukRadios({
+            name: "timeSlot",
+            fieldset: {
+                legend: {
+                    text: "Time period",
+                    classes: "govuk-fieldset__legend--m"
+                }
+            },
+            errorMessage: validationErrors | findError('timeSlot'),
+            items: [
+                {
+                    value: TimeSlot.AM,
+                    text: "Morning (AM)"
+                },
+                {
+                    value: TimeSlot.PM,
+                    text: "Afternoon (PM)"
+                },
+                {
+                    value: TimeSlot.ED,
+                    text: "Evening (ED)"
+                }
+            ]
+        }) }}
+
         {{ govukSelect({
             id: "categoryCode",
             name: "categoryCode",

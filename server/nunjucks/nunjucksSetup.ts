@@ -33,7 +33,7 @@ import {
   sortActivitiesByStartTime,
 } from '../utils/calendarUtilities'
 import { Services } from '../services'
-import { YesNo } from '../@types/activities'
+import { TimeSlot, YesNo } from '../@types/activities'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentRepeatPeriod } from '../@types/appointments'
 
@@ -124,6 +124,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
 
   njkEnv.addGlobal('YesNo', YesNo)
+  njkEnv.addGlobal('TimeSlot', TimeSlot)
   njkEnv.addGlobal('AppointmentRepeatPeriod', AppointmentRepeatPeriod)
   njkEnv.addGlobal('AppointmentType', AppointmentType)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)

@@ -79,3 +79,9 @@ export enum YesNo {
   YES = 'YES',
   NO = 'NO',
 }
+
+export enum TimeSlot {
+  AM = 'AM',
+  PM = 'PM',
+  ED = 'ED',
+}
