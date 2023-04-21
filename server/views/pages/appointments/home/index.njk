@@ -31,6 +31,16 @@
                         "data-qa": "create-group-appointment-card"
                     }) }}
                 </div>
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "searchAppointmentsCard",
+                        "href": "appointments/search?startDate=" + now | toDateString,
+                        "clickable": "true",
+                        "heading": "Find appointments",
+                        "description": "Find and edit appointments.",
+                        "data-qa": "search-appointments-card"
+                    }) }}
+                </div>
             </div>
         </div>
     </div>
