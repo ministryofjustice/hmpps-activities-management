@@ -90,6 +90,7 @@
   "dependencies": {
     "@hmcts/uk-bank-holidays": "^1.0.2",
     "@ministryofjustice/frontend": "^1.6.6",
+    "@types/express-serve-static-core": "^4.17.33",
     "@types/lodash": "^4.14.191",
     "accessible-autocomplete": "^2.0.4",
     "agentkeepalive": "^4.3.0",
