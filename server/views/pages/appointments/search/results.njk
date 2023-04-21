@@ -56,6 +56,9 @@
             text: result.category.description,
             attributes: { 'data-qa': 'result-category-' + index }
         }, {
+            text: result.prisonerCount,
+            attributes: { 'data-qa': 'result-prisoner-count-' + index }
+        }, {
             text: result.internalLocation.description,
             attributes: { 'data-qa': 'result-location-' + index }
         }, {
@@ -215,14 +218,18 @@
                 caption: "Appointments",
                 head: [{
                     text: "Date",
-                    attributes: { "aria-sort": "ascending" }
-                },
-                {
-                    text: "Time",
                     attributes: { "aria-sort": "none" }
                 },
                 {
+                    text: "Time",
+                    attributes: { "aria-sort": "ascending" }
+                },
+                {
                     text: "Category",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Prisoners",
                     attributes: { "aria-sort": "none" }
                 },
                 {
