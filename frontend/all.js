@@ -40,6 +40,7 @@ ActivitiesFrontend.initAll = function () {
 
   var $filters = document.querySelectorAll('[data-module="activities-list-filter"]')
   ActivitiesFrontend.nodeListForEach($filters, function ($filter) {
-    new ActivitiesFrontend.ListFilter($filter)
+    const startShown = $filter.getAttribute('data-filter-start-shown') === 'true'
+    new ActivitiesFrontend.ListFilter($filter, startShown)
   })
 }

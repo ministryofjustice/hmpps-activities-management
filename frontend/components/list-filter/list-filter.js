@@ -1,8 +1,9 @@
-ActivitiesFrontend.ListFilter = function (container) {
+ActivitiesFrontend.ListFilter = function (container, startShown = false) {
   this.container = container
 
   new MOJFrontend.FilterToggleButton({
-    startHidden: true,
+    bigModeMediaQuery: '(min-width: 40.0625em)',
+    startHidden: !startShown,
     toggleButton: {
       container: $('.moj-action-bar__filter'),
       showText: 'Show filter',
