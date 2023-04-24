@@ -4,6 +4,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "components/datePicker.njk" import datePicker %}
 
@@ -52,6 +53,13 @@
         }, {
             text: result.startTime + " to " + result.endTime,
             attributes: { 'data-qa': 'result-time-' + index }
+        }, {
+            html: govukTag({
+                text: ("Individual" if result.appointmentType == AppointmentType.INDIVIDUAL) +
+                ("Group" if result.appointmentType == AppointmentType.GROUP),
+                classes: "govuk-tag--green"
+            }) + (govukTag({ text: "Repeat" }) if result.isRepeat),
+            attributes: { 'data-qa': 'result-type-' + index }
         }, {
             text: result.category.description,
             attributes: { 'data-qa': 'result-category-' + index }
@@ -223,6 +231,9 @@
                 {
                     text: "Time",
                     attributes: { "aria-sort": "ascending" }
+                },
+                {
+                    text: "Type"
                 },
                 {
                     text: "Category",
