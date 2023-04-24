@@ -26,7 +26,7 @@ export default class RemovePayRoutes {
 
     const instance = await this.activitiesService.getScheduledActivity(+id, user)
 
-    const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId, user)
+    const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId)
 
     const attendee = await this.prisonService
       .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
@@ -43,6 +43,7 @@ export default class RemovePayRoutes {
       const attendances = [
         {
           id: +attendanceId,
+          prisonCode: user.activeCaseLoadId,
           status: AttendanceStatus.COMPLETED,
           attendanceReason: AttendanceReason.ATTENDED,
           issuePayment: false,

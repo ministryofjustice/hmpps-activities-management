@@ -384,6 +384,11 @@ export interface components {
        */
       id: number
       /**
+       * @description The prison code
+       * @example MDI
+       */
+      prisonCode: string
+      /**
        * @description The status - WAITING, COMPLETED, LOCKED
        * @example WAITING
        * @enum {string}
