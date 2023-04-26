@@ -306,8 +306,8 @@ export default class ActivitiesService {
     )
   }
 
-  async getAttendanceDetails(attendanceId: number, user: ServiceUser): Promise<Attendance> {
-    return this.activitiesApiClient.getAttendanceDetails(attendanceId, user)
+  async getAttendanceDetails(attendanceId: number): Promise<Attendance> {
+    return this.activitiesApiClient.getAttendanceDetails(attendanceId)
   }
 
   getActivityCandidates(

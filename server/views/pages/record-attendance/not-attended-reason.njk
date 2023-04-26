@@ -44,7 +44,7 @@
     {% endif %}
     {% if reason.captureCaseNote %}
         {{ govukWarningText({
-          text: prisoner.prisonerName + " won't be paid because this is an unacceptable absence",
+          text: prisoner.prisonerName | toTitleCase + " won't be paid because this is an unacceptable absence",
           iconFallbackText: "Warning"
         }) }}
         {{ govukTextarea({
