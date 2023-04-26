@@ -42,4 +42,9 @@ ActivitiesFrontend.initAll = function () {
   ActivitiesFrontend.nodeListForEach($filters, function ($filter) {
     new ActivitiesFrontend.ListFilter($filter)
   })
+
+  var $appointmentStartDate = document.querySelectorAll('[data-module="appointment-end-date"]')
+  ActivitiesFrontend.nodeListForEach($appointmentStartDate, function ($appointmentStartDate) {
+    new ActivitiesFrontend.AppointmentEndDate($appointmentStartDate)
+  })
 }
