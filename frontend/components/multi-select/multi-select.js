@@ -1,4 +1,4 @@
-ActivitiesFrontend.MultiSelect = function (container) {
+function MultiSelect(container) {
   this.container = container
 
   this.toggleAllButton = this.container.querySelector('#checkboxes-all')
@@ -20,7 +20,7 @@ ActivitiesFrontend.MultiSelect = function (container) {
   )
 }
 
-ActivitiesFrontend.MultiSelect.prototype.handleCheckboxChanged = function () {
+MultiSelect.prototype.handleCheckboxChanged = function () {
   var count = 0
   ActivitiesFrontend.nodeListForEach(
     this.checkboxes,
@@ -40,7 +40,7 @@ ActivitiesFrontend.MultiSelect.prototype.handleCheckboxChanged = function () {
   }
 }
 
-ActivitiesFrontend.MultiSelect.prototype.handleToggleAllButtonChanged = function () {
+MultiSelect.prototype.handleToggleAllButtonChanged = function () {
   ActivitiesFrontend.nodeListForEach(
     this.checkboxes,
     function ($el) {
@@ -50,3 +50,5 @@ ActivitiesFrontend.MultiSelect.prototype.handleToggleAllButtonChanged = function
     }.bind(this)
   )
 }
+
+export default MultiSelect

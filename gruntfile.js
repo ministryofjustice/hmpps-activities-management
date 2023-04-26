@@ -1,3 +1,7 @@
+/* eslint-disable import/no-extraneous-dependencies */
+const { nodeResolve } = require('@rollup/plugin-node-resolve')
+const commonjs = require('@rollup/plugin-commonjs')
+
 module.exports = grunt => {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -15,6 +19,18 @@ module.exports = grunt => {
         },
       },
     },
+    rollup: {
+      options: {
+        format: 'umd',
+        name: 'ActiviesFrontend',
+        plugins: [nodeResolve(), commonjs()],
+      },
+      main: {
+        files: {
+          'assets/javascript/activities.js': 'frontend/index.js',
+        },
+      },
+    },
     concat: {
       css: {
         src: [
@@ -29,20 +45,6 @@ module.exports = grunt => {
           'node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css',
         ],
         dest: 'assets/stylesheets/application-ie8.css',
-      },
-      js: {
-        src: ['frontend/namespace.js', 'frontend/**/*.js', '!frontend/vendor/**/*.js', '!frontend/init.js'],
-        dest: 'assets/javascript/activities.js',
-      },
-      jsDist: {
-        src: [
-          'node_modules/govuk-frontend/govuk/all.js',
-          'node_modules/@ministryofjustice/frontend/moj/all.js',
-          'node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.js',
-          'assets/javascript/activities.js',
-          'frontend/init.js',
-        ],
-        dest: 'assets/javascript/activities.js',
       },
     },
     umd: {
@@ -81,6 +83,12 @@ module.exports = grunt => {
             src: ['./**/*'],
             dest: 'assets/images/',
           },
+          {
+            expand: true,
+            cwd: 'frontend/vendor',
+            src: ['./**/*'],
+            dest: 'assets/vendor/',
+          },
         ],
       },
     },
@@ -94,19 +102,10 @@ module.exports = grunt => {
 
   grunt.loadNpmTasks('grunt-contrib-sass')
   grunt.loadNpmTasks('grunt-contrib-concat')
-  grunt.loadNpmTasks('grunt-umd')
   grunt.loadNpmTasks('grunt-contrib-uglify')
   grunt.loadNpmTasks('grunt-contrib-copy')
   grunt.loadNpmTasks('grunt-contrib-watch')
+  grunt.loadNpmTasks('grunt-rollup')
 
-  grunt.registerTask('default', [
-    'sass',
-    'concat:css',
-    'concat:cssIe8',
-    'concat:js',
-    'umd',
-    'concat:jsDist',
-    'uglify',
-    'copy',
-  ])
+  grunt.registerTask('default', ['sass', 'concat:css', 'concat:cssIe8', 'rollup', 'uglify', 'copy'])
 }

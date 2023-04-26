@@ -1,4 +1,4 @@
-ActivitiesFrontend.ListFilter = function (container) {
+function ListFilter(container) {
   this.container = container
 
   new MOJFrontend.FilterToggleButton({
@@ -18,3 +18,5 @@ ActivitiesFrontend.ListFilter = function (container) {
     },
   })
 }
+
+export default ListFilter
