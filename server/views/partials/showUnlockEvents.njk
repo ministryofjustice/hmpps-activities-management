@@ -1,5 +1,5 @@
 {% macro showUnlockEvents(events) %}
-    <div class="govuk-body govuk-!-margin-0 govuk-!-font-size-14">
+    <div class="govuk-body govuk-!-margin-0 govuk-!-font-size-16">
         {% for e in events %}
             {% if not loop.first %}<hr class="mid-grey-tint-20-hr" />{% endif %}
 
@@ -14,6 +14,10 @@
                 <div class="govuk-!-font-weight-bold">{{ e.summary | trim }} {{ e.categoryDescription | trim }}</div>
             {% else %}
                 <div class="govuk-!-font-weight-bold">{{ e.summary | trim }}</div>
+            {% endif %}
+
+            {% if e.suspended %}
+                <strong class="govuk-tag govuk-tag--red-border govuk-!-font-size-14">Prisoner suspended</strong>
             {% endif %}
 
             {% if e.eventType != 'EXTERNAL_TRANSFER' and e.eventType != 'COURT_HEARING' %}
