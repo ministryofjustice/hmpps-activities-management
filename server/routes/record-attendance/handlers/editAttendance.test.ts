@@ -63,7 +63,7 @@ describe('Route Handlers - Edit Attendance', () => {
         } as ScheduledActivity)
 
       when(activitiesService.getAttendanceDetails)
-        .calledWith(1, res.locals.user)
+        .calledWith(1)
         .mockResolvedValue({
           id: 1,
           prisonerNumber: 'ABC321',
@@ -128,7 +128,7 @@ describe('Route Handlers - Edit Attendance', () => {
         attendanceOption: 'no',
       }
       when(activitiesService.getAttendanceDetails)
-        .calledWith(1, res.locals.user)
+        .calledWith(1)
         .mockResolvedValue({
           id: 1,
           prisonerNumber: 'ABC321',
