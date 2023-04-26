@@ -43,27 +43,33 @@
             value: { text: "Yes" if attendance.incentiveLevelWarningIssued else "No"}
         }
     ), summaryListRows) %}
+{% endif %}
+{% if attendance.caseNoteText %}
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
                 text: "Case Note"
             },
             value: {
-                text: attendance.caseNoteId
+                text: attendance.caseNoteText
+            }
+        }
+    ), summaryListRows) %}
+{% endif %}
+{% if attendance.comment %}
+    {% set summaryListRows = (summaryListRows.push(
+        {
+            key: {
+                text: "Comment"
+            },
+            value: {
+                text: attendance.comment
             }
         }
     ), summaryListRows) %}
 {% endif %}
 
 {% set summaryListRows = (summaryListRows.push(
-    {
-        key: {
-            text: "Comment"
-        },
-        value: {
-            text: attendance.comment
-        }
-    },
     {
         key: {
          text: "Recorded by"

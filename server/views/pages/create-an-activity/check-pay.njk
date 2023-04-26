@@ -55,7 +55,9 @@
                 }) }}
             {% endfor %}
 
-            <h2 class="govuk-heading-m">Flat rate (applies to all incentive levels)</h2>
+            {% if flatPay | length %}
+                <h2 class="govuk-heading-m">Flat rate (applies to all incentive levels)</h2>
+            {% endif %}
             {% set rows = [] %}
             {% for flatRate in flatPay %}
                 {% set rows = (rows.push(

@@ -30,7 +30,7 @@ export default class EditAttendanceRoutes {
 
     const [instance, attendance]: [ScheduledActivity, Attendance] = await Promise.all([
       this.activitiesService.getScheduledActivity(+id, user),
-      this.activitiesService.getAttendanceDetails(+attendanceId, user),
+      this.activitiesService.getAttendanceDetails(+attendanceId),
     ])
 
     const attendee = await this.prisonService
@@ -48,6 +48,7 @@ export default class EditAttendanceRoutes {
       const attendances = [
         {
           id: +attendanceId,
+          prisonCode: user.activeCaseLoadId,
           status: AttendanceStatus.COMPLETED,
           attendanceReason: AttendanceReason.ATTENDED,
           issuePayment: true,
@@ -58,7 +59,7 @@ export default class EditAttendanceRoutes {
     }
 
     if (req.body.attendanceOption === EditAttendanceOptions.NO) {
-      const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId, user)
+      const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId)
       const instance = await this.activitiesService.getScheduledActivity(+id, user)
 
       const otherScheduledEvents = await this.activitiesService
@@ -91,6 +92,7 @@ export default class EditAttendanceRoutes {
     const attendances = [
       {
         id: +attendanceId,
+        prisonCode: user.activeCaseLoadId,
         status: AttendanceStatus.WAITING,
         attendanceReason: null as AttendanceReason,
         issuePayment: null as boolean,
