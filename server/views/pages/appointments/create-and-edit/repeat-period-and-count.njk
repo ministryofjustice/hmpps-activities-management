@@ -17,59 +17,64 @@
             <h1 class="govuk-heading-l">Add repeat appointment details</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% set repeatPeriod = formResponses.repeatPeriod or session.appointmentJourney.repeatPeriod %}
-                {{ govukRadios({
-                    name: "repeatPeriod",
-                    label: {
-                        text: "How often will the appointment repeat?",
-                        classes: "govuk-fieldset__legend--m"
-                    },
-                    errorMessage: validationErrors | findError('repeatPeriod'),
-                    items: [
-                        {
-                            value: AppointmentRepeatPeriod.WEEKDAY,
-                            text: "Every weekday (Monday to Friday)",
-                            checked: repeatPeriod == AppointmentRepeatPeriod.WEEKDAY
-                        },
-                        {
-                            value: AppointmentRepeatPeriod.DAILY,
-                            text: "Daily (includes weekends)",
-                            checked: repeatPeriod == AppointmentRepeatPeriod.DAILY
-                        },
-                        {
-                            value: AppointmentRepeatPeriod.WEEKLY,
-                            text: "Weekly",
-                            checked: repeatPeriod == AppointmentRepeatPeriod.WEEKLY
-                        },
-                        {
-                            value: AppointmentRepeatPeriod.FORTNIGHTLY,
-                            text: "Fortnightly",
-                            checked: repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY
-                        },
-                        {
-                            value: AppointmentRepeatPeriod.MONTHLY,
-                            text: "Monthly",
-                            checked: repeatPeriod == AppointmentRepeatPeriod.MONTHLY
-                        }
-                    ]
-                }) }}
 
-                {{ govukInput({
-                    id: "repeatCount",
-                    name: "repeatCount",
-                    label: {
-                        text: "How many times will the appointment repeat?",
-                        classes: "govuk-fieldset__legend--m"
-                    },
-                    hint: {
-                        text: "Enter the number of times the appointment will repeat up to a maximum of one year"
-                    },
-                    classes: "govuk-input--width-3",
-                    inputmode: "numeric",
-                    spellcheck: false,
-                    errorMessage: validationErrors | findError('repeatCount'),
-                    value: formResponses.repeatCount or session.appointmentJourney.repeatCount
-                }) }}
+                <div data-module="appointment-end-date" data-start-date="{{ session.appointmentJourney.startDate.date }}">
+                    {% set repeatPeriod = formResponses.repeatPeriod or session.appointmentJourney.repeatPeriod %}
+                    {{ govukRadios({
+                        name: "repeatPeriod",
+                        label: {
+                            text: "How often will the appointment repeat?",
+                            classes: "govuk-fieldset__legend--m"
+                        },
+                        errorMessage: validationErrors | findError('repeatPeriod'),
+                        items: [
+                            {
+                                value: AppointmentRepeatPeriod.WEEKDAY,
+                                text: "Every weekday (Monday to Friday)",
+                                checked: repeatPeriod == AppointmentRepeatPeriod.WEEKDAY
+                            },
+                            {
+                                value: AppointmentRepeatPeriod.DAILY,
+                                text: "Daily (includes weekends)",
+                                checked: repeatPeriod == AppointmentRepeatPeriod.DAILY
+                            },
+                            {
+                                value: AppointmentRepeatPeriod.WEEKLY,
+                                text: "Weekly",
+                                checked: repeatPeriod == AppointmentRepeatPeriod.WEEKLY
+                            },
+                            {
+                                value: AppointmentRepeatPeriod.FORTNIGHTLY,
+                                text: "Fortnightly",
+                                checked: repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY
+                            },
+                            {
+                                value: AppointmentRepeatPeriod.MONTHLY,
+                                text: "Monthly",
+                                checked: repeatPeriod == AppointmentRepeatPeriod.MONTHLY
+                            }
+                        ]
+                    }) }}
+
+                    {{ govukInput({
+                        id: "repeatCount",
+                        name: "repeatCount",
+                        label: {
+                            text: "How many times will the appointment repeat?",
+                            classes: "govuk-fieldset__legend--m"
+                        },
+                        hint: {
+                            text: "Enter the total number of appointments, including the first appointment, up to a maximum of one year."
+                        },
+                        classes: "govuk-input--width-3",
+                        inputmode: "numeric",
+                        spellcheck: false,
+                        errorMessage: validationErrors | findError('repeatCount'),
+                        value: formResponses.repeatCount or session.appointmentJourney.repeatCount
+                    }) }}
+
+                    <div data-qa='end-date' class="js-appointment-end-date govuk-body"></div>
+                </div>
 
                 {{ govukButton({
                     text: "Continue"
