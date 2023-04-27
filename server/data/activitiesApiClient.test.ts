@@ -252,7 +252,7 @@ describe('activitiesApiClient', () => {
   describe('getRolloutPrison', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/rollout/MDI').matchHeader('authorization', `Bearer token`).reply(200, response)
+      fakeActivitiesApi.get('/rollout/MDI').matchHeader('authorization', `Bearer accessToken`).reply(200, response)
       const output = await activitiesApiClient.getPrisonRolloutPlan('MDI')
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

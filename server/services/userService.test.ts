@@ -39,6 +39,11 @@ describe('User service', () => {
       { caseLoadId: 'MDI', currentlyActive: true },
       { caseLoadId: 'LEI', currentlyActive: false },
     ] as CaseLoad[])
+    activitiesApiClient.getPrisonRolloutPlan.mockResolvedValue({
+      prisonCode: 'MDI',
+      activitiesRolledOut: true,
+      appointmentsRolledOut: true,
+    })
   })
 
   afterEach(() => {

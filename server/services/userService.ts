@@ -27,7 +27,7 @@ export default class UserService {
     const rolesInActiveCaseLoad = userRoles?.nomisRoles.find(r => r.caseload.id === activeCaseLoad?.caseLoadId)?.roles
 
     const rolloutPlans: RolloutPrisonPlan[] = await Promise.all(
-      userCaseLoads.map(cl => this.activitiesApiClient.getPrisonRolloutPlan(cl.caseLoadId)),
+      userCaseLoads?.map(cl => this.activitiesApiClient.getPrisonRolloutPlan(cl.caseLoadId)) || [],
     )
 
     const currentRolloutPlan = rolloutPlans.find(r => r.prisonCode === activeCaseLoad.caseLoadId)
@@ -40,8 +40,8 @@ export default class UserService {
       allCaseLoads: userCaseLoads,
       activeCaseLoad,
       roles: [userRoles?.dpsRoles, rolesInActiveCaseLoad].flat(),
-      isActivitiesRolledOut: currentRolloutPlan.activitiesRolledOut,
-      isAppointmentsRolledOut: currentRolloutPlan.appointmentsRolledOut,
+      isActivitiesRolledOut: currentRolloutPlan?.activitiesRolledOut || false,
+      isAppointmentsRolledOut: currentRolloutPlan?.appointmentsRolledOut || false,
     }
   }
 
