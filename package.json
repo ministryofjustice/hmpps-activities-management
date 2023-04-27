@@ -22,7 +22,7 @@
     "lint": "eslint . --cache --max-warnings 0",
     "lint:fix": "eslint . --cache --max-warnings 0 --fix",
     "typecheck": "tsc && tsc -p integration_tests",
-    "test": "NODE_ENV=unit-test jest --runInBand --detectOpenHandles --collectCoverage=true --testPathPattern=server/.*",
+    "test": "NODE_ENV=unit-test NODE_OPTIONS=--experimental-vm-modules jest --runInBand --detectOpenHandles --collectCoverage=true --testPathPattern='(server|frontend)/.*'",
     "security_audit": "better-npm-audit audit",
     "int-test": "cypress run --config video=false",
     "int-test-ui": "cypress open",
@@ -38,7 +38,7 @@
       "server/**/*.{ts,js,jsx,mjs}"
     ],
     "testMatch": [
-      "<rootDir>/(server|job)/**/?(*.)(cy|test).{ts,js,jsx,mjs}"
+      "<rootDir>/(server|frontend|job)/**/?(*.)(cy|test).{ts,js,jsx,mjs}"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>jest.setup.ts"
@@ -61,6 +61,7 @@
     ],
     "moduleFileExtensions": [
       "web.js",
+      "mjs",
       "js",
       "json",
       "node",

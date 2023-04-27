@@ -6,6 +6,7 @@ import MultiSelect from './components/multi-select/multi-select'
 import AutoComplete from './components/autocomplete/autocomplete'
 import Calendar from './spikes/calendar'
 import ListFilter from './components/list-filter/list-filter'
+import AppointmentEndDate from './components/appointment-end-date/end-date'
 
 function initAll() {
   var $backLinks = document.querySelectorAll('[class*=js-backlink]')
@@ -44,9 +45,9 @@ function initAll() {
   })
 
   var $appointmentStartDate = document.querySelectorAll('[data-module="appointment-end-date"]')
-  ActivitiesFrontend.nodeListForEach($appointmentStartDate, function ($appointmentStartDate) {
-    new ActivitiesFrontend.AppointmentEndDate($appointmentStartDate)
+  nodeListForEach($appointmentStartDate, function ($appointmentStartDate) {
+    new AppointmentEndDate($appointmentStartDate)
   })
 }
 
-export { initAll, BackLink, PrintButton, Card, MultiSelect, AutoComplete, Calendar, ListFilter }
+export { initAll, BackLink, PrintButton, Card, MultiSelect, AutoComplete, Calendar, ListFilter, AppointmentEndDate }
