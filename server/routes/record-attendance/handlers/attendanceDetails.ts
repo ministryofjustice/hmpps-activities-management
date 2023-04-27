@@ -12,7 +12,7 @@ export default class AttendanceDetailsRoutes {
 
     const instance = await this.activitiesService.getScheduledActivity(+id, user)
 
-    const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId, user)
+    const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId)
 
     const attendee = await this.prisonService
       .getInmateByPrisonerNumber(attendance.prisonerNumber, user)

@@ -1,4 +1,4 @@
-ActivitiesFrontend.BackLink = function (backLink) {
+export default function BackLink(backLink) {
   this.backLink = backLink
 
   this.backLink.addEventListener('click', e => {

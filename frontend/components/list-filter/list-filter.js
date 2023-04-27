@@ -1,7 +1,9 @@
+import { FilterToggleButton } from '@ministryofjustice/frontend'
+
 ActivitiesFrontend.ListFilter = function (container, startShown = false) {
   this.container = container
 
-  new MOJFrontend.FilterToggleButton({
+  new FilterToggleButton({
     bigModeMediaQuery: '(min-width: 40.0625em)',
     startHidden: !startShown,
     toggleButton: {
@@ -19,3 +21,5 @@ ActivitiesFrontend.ListFilter = function (container, startShown = false) {
     },
   })
 }
+
+export default ListFilter

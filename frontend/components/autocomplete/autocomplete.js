@@ -1,4 +1,6 @@
-ActivitiesFrontend.AutoComplete = function (meta) {
+import accessibleAutocomplete from 'accessible-autocomplete'
+
+function AutoComplete(meta) {
   this.meta = meta
 
   var autocompleteElements = this.meta.content.split(',')
@@ -10,3 +12,5 @@ ActivitiesFrontend.AutoComplete = function (meta) {
     })
   })
 }
+
+export default AutoComplete

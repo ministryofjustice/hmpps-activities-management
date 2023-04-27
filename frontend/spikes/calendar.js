@@ -1,4 +1,6 @@
-ActivitiesFrontend.Calendar = function Calendar($module) {
+import { nodeListForEach } from '../utils'
+
+function Calendar($module) {
   this.$module = $module
   this.moduleId = $module.getAttribute('id')
   this.$mobileView = $module.querySelector('.calendar__mobile')
@@ -29,7 +31,7 @@ ActivitiesFrontend.Calendar = function Calendar($module) {
 }
 
 // Initialize component
-ActivitiesFrontend.Calendar.prototype.init = function () {
+Calendar.prototype.init = function () {
   // Check for module
   if (!this.$module) {
     return
@@ -45,7 +47,7 @@ ActivitiesFrontend.Calendar.prototype.init = function () {
 }
 
 // Initialise controls and set attributes
-ActivitiesFrontend.Calendar.prototype.initControls = function () {
+Calendar.prototype.initControls = function () {
   // Create "Show all" button and set attributes
   this.$showAllButton = document.createElement('button')
   this.$showAllButton.setAttribute('type', 'button')
@@ -73,9 +75,9 @@ ActivitiesFrontend.Calendar.prototype.initControls = function () {
 }
 
 // Initialise section headers
-ActivitiesFrontend.Calendar.prototype.initSectionHeaders = function () {
+Calendar.prototype.initSectionHeaders = function () {
   // Loop through section headers
-  ActivitiesFrontend.nodeListForEach(
+  nodeListForEach(
     this.$sections,
     function ($section, i) {
       // Set header attributes
@@ -94,10 +96,10 @@ ActivitiesFrontend.Calendar.prototype.initSectionHeaders = function () {
 }
 
 // Initialise days
-ActivitiesFrontend.Calendar.prototype.initCalendarGrid = function () {
+Calendar.prototype.initCalendarGrid = function () {
   const onDayClick = $day => {
     const allDayContainers = document.querySelectorAll('.calendar__desktop--date-container')
-    ActivitiesFrontend.nodeListForEach(
+    nodeListForEach(
       allDayContainers,
       function ($container) {
         $container.classList.remove('calendar__desktop--date-container--expanded')
@@ -114,7 +116,7 @@ ActivitiesFrontend.Calendar.prototype.initCalendarGrid = function () {
     $header.parentNode.parentNode.classList.remove('calendar__desktop--date-container--expanded')
   }
 
-  ActivitiesFrontend.nodeListForEach(
+  nodeListForEach(
     this.$gridDays,
     function ($day) {
       if ($day.classList.contains('calendar__desktop--item--weekend')) return
@@ -123,7 +125,7 @@ ActivitiesFrontend.Calendar.prototype.initCalendarGrid = function () {
     }.bind(this)
   )
 
-  ActivitiesFrontend.nodeListForEach(
+  nodeListForEach(
     document.querySelectorAll('.calendar__desktop--date-container--heading'),
     function ($heading) {
       $heading.addEventListener('click', onHeaderClick.bind(this, $heading))
@@ -131,7 +133,7 @@ ActivitiesFrontend.Calendar.prototype.initCalendarGrid = function () {
   )
 }
 
-ActivitiesFrontend.Calendar.prototype.constructHeaderMarkup = function ($headerWrapper, index) {
+Calendar.prototype.constructHeaderMarkup = function ($headerWrapper, index) {
   var $span = $headerWrapper.querySelector('.' + this.sectionButtonClass)
   var $heading = $headerWrapper.querySelector('.' + this.sectionHeadingClass)
   var $summary = $headerWrapper.querySelector('.' + this.sectionSummaryClass)
@@ -228,7 +230,7 @@ ActivitiesFrontend.Calendar.prototype.constructHeaderMarkup = function ($headerW
 }
 
 // When section toggled, set and store state
-ActivitiesFrontend.Calendar.prototype.onSectionToggle = function ($section) {
+Calendar.prototype.onSectionToggle = function ($section) {
   var expanded = this.isExpanded($section)
   this.setExpanded(!expanded, $section)
 
@@ -237,12 +239,12 @@ ActivitiesFrontend.Calendar.prototype.onSectionToggle = function ($section) {
 }
 
 // When Open/Close All toggled, set and store state
-ActivitiesFrontend.Calendar.prototype.onShowOrHideAllToggle = function () {
+Calendar.prototype.onShowOrHideAllToggle = function () {
   var $module = this
   var $sections = this.$sections
   var nowExpanded = !this.checkIfAllSectionsOpen()
 
-  ActivitiesFrontend.nodeListForEach($sections, function ($section) {
+  nodeListForEach($sections, function ($section) {
     $module.setExpanded(nowExpanded, $section)
     // Store the state in sessionStorage when a change is triggered
     $module.storeState($section)
@@ -252,7 +254,7 @@ ActivitiesFrontend.Calendar.prototype.onShowOrHideAllToggle = function () {
 }
 
 // Set section attributes when opened/closed
-ActivitiesFrontend.Calendar.prototype.setExpanded = function (expanded, $section) {
+Calendar.prototype.setExpanded = function (expanded, $section) {
   var $icon = $section.querySelector('.' + this.upChevronIconClass)
   var $showHideText = $section.querySelector('.' + this.sectionShowHideTextClass)
   var $button = $section.querySelector('.' + this.sectionButtonClass)
@@ -282,12 +284,12 @@ ActivitiesFrontend.Calendar.prototype.setExpanded = function (expanded, $section
 }
 
 // Get state of section
-ActivitiesFrontend.Calendar.prototype.isExpanded = function ($section) {
+Calendar.prototype.isExpanded = function ($section) {
   return $section.classList.contains(this.sectionExpandedClass)
 }
 
 // Check if all sections are open
-ActivitiesFrontend.Calendar.prototype.checkIfAllSectionsOpen = function () {
+Calendar.prototype.checkIfAllSectionsOpen = function () {
   // Get a count of all the Calendar sections
   var sectionsCount = this.$sections.length
   // Get a count of all Calendar sections that are expanded
@@ -296,7 +298,7 @@ ActivitiesFrontend.Calendar.prototype.checkIfAllSectionsOpen = function () {
 }
 
 // Update "Show all days" button
-ActivitiesFrontend.Calendar.prototype.updateShowAllButton = function (expanded) {
+Calendar.prototype.updateShowAllButton = function (expanded) {
   var $showAllIcon = this.$showAllButton.querySelector('.' + this.upChevronIconClass)
   var $showAllText = this.$showAllButton.querySelector('.' + this.showAllTextClass)
   var newButtonText = expanded ? 'Hide all days' : 'Show all days'
@@ -328,7 +330,7 @@ var helper = {
 }
 
 // Set the state of the accordions in sessionStorage
-ActivitiesFrontend.Calendar.prototype.storeState = function ($section) {
+Calendar.prototype.storeState = function ($section) {
   if (this.browserSupportsSessionStorage) {
     // We need a unique way of identifying each content in the Calendar. Since
     // an `#id` should be unique and an `id` is required for `aria-` attributes
@@ -348,7 +350,7 @@ ActivitiesFrontend.Calendar.prototype.storeState = function ($section) {
 }
 
 // Read the state of the accordions from sessionStorage
-ActivitiesFrontend.Calendar.prototype.setInitialState = function ($section) {
+Calendar.prototype.setInitialState = function ($section) {
   if (this.browserSupportsSessionStorage) {
     var $button = $section.querySelector('.' + this.sectionButtonClass)
 
@@ -375,9 +377,11 @@ ActivitiesFrontend.Calendar.prototype.setInitialState = function ($section) {
  * into thematic chunks.
  * See https://github.com/alphagov/govuk-frontend/issues/2327#issuecomment-922957442
  */
-ActivitiesFrontend.Calendar.prototype.getButtonPunctuationEl = function () {
+Calendar.prototype.getButtonPunctuationEl = function () {
   var $punctuationEl = document.createElement('span')
   $punctuationEl.classList.add('govuk-visually-hidden', 'calendar__section-heading-divider')
   $punctuationEl.innerHTML = ', '
   return $punctuationEl
 }
+
+export default Calendar

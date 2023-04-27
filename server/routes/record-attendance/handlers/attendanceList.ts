@@ -77,6 +77,7 @@ export default class AttendanceListRoutes {
       if (selectedAttendanceIds) {
         const attendances = selectedAttendanceIds.map(attendance => ({
           id: +attendance,
+          prisonCode: user.activeCaseLoadId,
           status: AttendanceStatus.COMPLETED,
           attendanceReason: AttendanceReason.ATTENDED,
           issuePayment: true,
