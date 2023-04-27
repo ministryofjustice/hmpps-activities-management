@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { Session } from 'express-session'
 import populateCurrentUser from './populateCurrentUser'
 import UserService from '../services/userService'
-import ActivitiesService from '../services/activitiesService'
 
 jest.mock('../services/userService')
 
@@ -10,10 +9,9 @@ let res = {} as Response
 let req = {} as Request
 const next = jest.fn()
 
-const userServiceMock = new UserService(null, null, null) as jest.Mocked<UserService>
-const activitiesServiceMock = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const userServiceMock = new UserService(null, null, null, null) as jest.Mocked<UserService>
 
-const middleware = populateCurrentUser(userServiceMock, activitiesServiceMock)
+const middleware = populateCurrentUser(userServiceMock)
 
 beforeEach(() => {
   jest.resetAllMocks()

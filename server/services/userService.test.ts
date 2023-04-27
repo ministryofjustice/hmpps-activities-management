@@ -6,10 +6,12 @@ import NomisUserApiClient from '../data/nomisUserApiClient'
 import { HmppsAuthUser } from '../@types/hmppsAuth'
 import { CaseLoad, PrisonApiUserDetail } from '../@types/prisonApiImport/types'
 import { UserRoleDetail } from '../@types/nomisUserApiImport/types'
+import ActivitiesApiClient from '../data/activitiesApiClient'
 
 jest.mock('../data/hmppsAuthClient')
 jest.mock('../data/nomisUserApiClient')
 jest.mock('../data/prisonApiClient')
+jest.mock('../data/activitiesApiClient')
 
 let user = {} as ServiceUser
 
@@ -17,13 +19,15 @@ describe('User service', () => {
   let hmppsAuthClient: jest.Mocked<HmppsAuthClient>
   let nomisUserApiClient: jest.Mocked<NomisUserApiClient>
   let prisonApiClient: jest.Mocked<PrisonApiClient>
+  let activitiesApiClient: jest.Mocked<ActivitiesApiClient>
   let userService: UserService
 
   beforeEach(() => {
     hmppsAuthClient = new HmppsAuthClient() as jest.Mocked<HmppsAuthClient>
     nomisUserApiClient = new NomisUserApiClient() as jest.Mocked<NomisUserApiClient>
     prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
-    userService = new UserService(hmppsAuthClient, nomisUserApiClient, prisonApiClient)
+    activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
+    userService = new UserService(hmppsAuthClient, nomisUserApiClient, prisonApiClient, activitiesApiClient)
 
     hmppsAuthClient.getUser.mockResolvedValue({ name: 'john smith' } as HmppsAuthUser)
     nomisUserApiClient.getUserRoles.mockResolvedValue({

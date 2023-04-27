@@ -1,7 +1,7 @@
 import { components } from '.'
 
 export type Activity = components['schemas']['Activity']
-export type RolloutPrison = components['schemas']['RolloutPrison']
+export type RolloutPrisonPlan = components['schemas']['RolloutPrisonPlan']
 export type InternalLocation = components['schemas']['InternalLocation']
 export type ActivitySchedule = components['schemas']['ActivitySchedule']
 export type ActivityScheduleLite = components['schemas']['ActivityScheduleLite']
