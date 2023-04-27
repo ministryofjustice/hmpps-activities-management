@@ -1995,7 +1995,7 @@ export interface components {
        *     When an end date is also supplied, the search uses a date range and will restrict the search results to appointment
        *     occurrences that have a start date within the date range.
        */
-      startDate?: string
+      startDate: string
       /**
        * Format: date
        * @description
@@ -2703,19 +2703,19 @@ export interface components {
       addresses: components['schemas']['AddressDto'][]
     }
     PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       first?: boolean
       last?: boolean
       empty?: boolean
@@ -2733,8 +2733,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /**
      * @description The phone number associated with the address

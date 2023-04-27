@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
@@ -21,7 +22,7 @@
     {% set categoryOptions = (categoryOptions.push( { value: category.code, text: category.description } ), categoryOptions) %}
     {% if (category.code == categoryCode) %}
         {% set selectedCategory = (selectedCategory.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId,
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
             text: category.description
         }), selectedCategory) %}
     {% endif %}
@@ -33,7 +34,7 @@
     {% set locationOptions = (locationOptions.push( { value: location.id, text: location.description }), locationOptions) %}
     {% if (location.id == locationId) %}
         {% set selectedLocation = (selectedLocation.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=',
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
             text: location.description
         }), selectedLocation) %}
     {% endif %}
@@ -64,7 +65,7 @@
             text: result.category.description,
             attributes: { 'data-qa': 'result-category-' + index }
         }, {
-            text: result.prisonerCount,
+            text: result.allocations.length,
             attributes: { 'data-qa': 'result-prisoner-count-' + index }
         }, {
             text: result.internalLocation.description,
@@ -103,6 +104,18 @@
             renderedErrorMessage: validationErrors | findError('startDate'),
             validationErrors: validationErrors,
             formResponses: formResponses.startDate or startDate
+        }) }}
+
+        {{ datePicker({
+            id: 'endDate',
+            name: 'endDate',
+            label: {
+                text: "End date",
+                classes: "govuk-label--m"
+            },
+            renderedErrorMessage: validationErrors | findError('endDate'),
+            validationErrors: validationErrors,
+            formResponses: formResponses.endDate or endDate
         }) }}
 
         {{ govukRadios({
@@ -157,19 +170,112 @@
             value: formResponses.locationId or locationId
         }) }}
 
+        {{ govukInput({
+            id: "prisonerNumber",
+            name: "prisonerNumber",
+            label: {
+                text: "Prisoner number",
+                classes: "govuk-label--m"
+            },
+            spellcheck: false,
+            errorMessage: validationErrors | findError('prisonerNumber'),
+            value: formResponses.prisonerNumber or prisonerNumber,
+            type: 'search'
+        }) }}
+
+        {{ govukRadios({
+            name: "createdBy",
+            fieldset: {
+                legend: {
+                    text: "Created by",
+                    classes: "govuk-fieldset__legend--m"
+                }
+            },
+            errorMessage: validationErrors | findError('createdBy'),
+            items: [
+                {
+                    value: user.username,
+                    text: "Myself",
+                    checked: (formResponses.createdBy or createdBy) == user.username
+                },
+                {
+                    value: "all",
+                    text: "All appointment creators",
+                    checked: (formResponses.timeSlot or timeSlot) == "all"
+                }
+            ]
+        }) }}
+
+        {{ govukRadios({
+            name: "type",
+            fieldset: {
+                legend: {
+                    text: "Type",
+                    classes: "govuk-fieldset__legend--m"
+                }
+            },
+            errorMessage: validationErrors | findError('type'),
+            items: [
+                {
+                    value: AppointmentType.INDIVIDUAL,
+                    text: "Individual appointment",
+                    checked: (formResponses.type or type) == AppointmentType.INDIVIDUAL
+                },
+                {
+                    value: AppointmentType.GROUP,
+                    text: "Group appointment",
+                    checked: (formResponses.type or type) == AppointmentType.GROUP
+                }
+            ]
+        }) }}
+
         <button class="govuk-button govuk-!-margin-top-7" data-module="govuk-button">
             Apply filters
         </button>
     {% endset %}
 
+    {% set selectedEndDate = [] %}
+    {% if (endDate) %}
+        {% set selectedEndDate = (selectedEndDate.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+            text: endDate | toDate | formatDate('d MMM yyyy')
+        }), selectedEndDate) %}
+    {% endif %}
+
     {% set selectedTimeSlot = [] %}
     {% if (timeSlot) %}
         {% set selectedTimeSlot = (selectedTimeSlot.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + '&categoryCode=' + categoryCode + '&locationId=' + locationId,
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
             text: ("Morning (AM)" if timeSlot == TimeSlot.AM) +
-                  ("Afternoon (PM)" if timeSlot == TimeSlot.PM)  +
+                  ("Afternoon (PM)" if timeSlot == TimeSlot.PM) +
                   ("Evening (ED)" if timeSlot == TimeSlot.ED)
         }), selectedTimeSlot) %}
+    {% endif %}
+
+    {% set selectedPrisonerNumber = [] %}
+    {% if (prisonerNumber) %}
+        {% set selectedPrisonerNumber = (selectedPrisonerNumber.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy + '&type=' + type,
+            text: prisonerNumber
+        }), selectedTimeSlot) %}
+    {% endif %}
+
+    {% set selectedCreatedBy = [] %}
+    {% if (createdBy) %}
+        {% set selectedCreatedBy = (selectedCreatedBy.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + '&type=' + type,
+            text: ("Myself" if createdBy == user.username) +
+                  ("All appointment creators" if createdBy == "all")
+        }), selectedCreatedBy) %}
+    {% endif %}
+
+    {% set selectedType = [] %}
+    {% if (type) %}
+        {% set selectedType = (selectedType.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=',
+            text: ("Individual appointment" if type == AppointmentType.INDIVIDUAL) +
+                  ("Group appointment" if type == AppointmentType.GROUP)
+        }), selectedType) %}
     {% endif %}
 
     <div class="moj-filter-layout" data-module="activities-list-filter" data-filter-start-shown="true">
@@ -191,6 +297,12 @@
                         categories: [
                             {
                                 heading: {
+                                    text: 'End date'
+                                },
+                                items: selectedEndDate
+                            },
+                            {
+                                heading: {
                                     text: 'Time period'
                                 },
                                 items: selectedTimeSlot
@@ -206,6 +318,24 @@
                                     text: 'Location'
                                 },
                                 items: selectedLocation
+                            },
+                            {
+                                heading: {
+                                    text: 'Prisoner number'
+                                },
+                                items: selectedPrisonerNumber
+                            },
+                            {
+                                heading: {
+                                    text: 'Created by'
+                                },
+                                items: selectedCreatedBy
+                            },
+                            {
+                                heading: {
+                                    text: 'Type'
+                                },
+                                items: selectedType
                             }
                         ]
                     },

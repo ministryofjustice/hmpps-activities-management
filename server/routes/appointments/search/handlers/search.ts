@@ -16,6 +16,10 @@ export class Search {
   @IsNotEmpty({ message: 'Enter a start date' })
   @IsValidDate({ message: 'Enter a valid start date' })
   startDate: SimpleDate
+
+  @Expose()
+  @Type(() => SimpleDate)
+  endDate: SimpleDate
 }
 
 export default class SearchRoutes {
@@ -23,44 +27,58 @@ export default class SearchRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { startDate, timeSlot, categoryCode, locationId } = req.query
+    const { startDate, endDate, timeSlot, categoryCode, locationId, prisonerNumber, createdBy, type } = req.query
 
     if (!isValid(toDate(startDate as string))) {
       return res.redirect(`?startDate=${toDateString(new Date())}`)
     }
 
     const simpleStartDate = simpleDateFromDate(toDate(startDate as string))
+    const simpleEndDate =
+      endDate && isValid(toDate(endDate as string)) ? simpleDateFromDate(toDate(endDate as string)) : null
 
     const categories = await this.activitiesService.getAppointmentCategories(user)
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     const request = {
+      appointmentType: type === '' ? null : type,
       startDate: simpleStartDate.toIsoString(),
+      endDate: simpleEndDate?.toIsoString(),
       timeSlot: timeSlot === '' ? null : timeSlot,
       categoryCode: categoryCode === '' ? null : categoryCode,
       internalLocationId: locationId === '' ? null : +locationId,
+      prisonerNumbers: prisonerNumber === '' ? null : [prisonerNumber],
+      createdBy: createdBy === '' || createdBy === 'all' ? null : createdBy,
     } as AppointmentOccurrenceSearchRequest
 
     const results = await this.activitiesService.searchAppointmentOccurrences(user.activeCaseLoadId, request, user)
 
     return res.render('pages/appointments/search/results', {
       startDate: simpleStartDate,
+      endDate: simpleEndDate,
       timeSlot,
       categories,
       categoryCode,
       locations,
       locationId,
+      prisonerNumber,
+      createdBy,
+      type,
       results,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { startDate, timeSlot, categoryCode, locationId } = req.body
+    const { startDate, endDate, timeSlot, categoryCode, locationId, prisonerNumber, createdBy, type } = req.body
 
     return res.redirect(
-      `?startDate=${startDate.toIsoString()}&timeSlot=${
+      `?startDate=${startDate.toIsoString()}&endDate=${
+        isValid(endDate.toRichDate()) ? endDate.toIsoString() : ''
+      }&timeSlot=${
         timeSlot ?? ''
-      }&categoryCode=${categoryCode}&locationId=${locationId}`,
+      }&categoryCode=${categoryCode}&locationId=${locationId}&prisonerNumber=${prisonerNumber}&createdBy=${
+        createdBy ?? ''
+      }&type=${type ?? ''}`,
     )
   }
 }
