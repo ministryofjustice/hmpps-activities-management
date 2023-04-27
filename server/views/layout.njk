@@ -8,6 +8,7 @@
   <!--<![endif]-->
 
   <!--[if lt IE 9]>
+  <script src="/assets/vendor/html5shiv-3.7.3.min.js"></script>
   <link href="/assets/stylesheets/application-ie8.css?{{ version }}" rel="stylesheet"/>
   <![endif]-->
 {% endblock %}
@@ -54,6 +55,5 @@
 {% block bodyEnd %}
   {# Run JavaScript at end of the
   <body>, to avoid blocking the initial render. #}
-  <script src="/assets/jquery.min.js"></script>
   <script src="/assets/javascript/activities.min.js"></script>
 {% endblock %}
