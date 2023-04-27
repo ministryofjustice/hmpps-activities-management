@@ -1,6 +1,6 @@
 import { FilterToggleButton } from '@ministryofjustice/frontend'
 
-ActivitiesFrontend.ListFilter = function (container, startShown = false) {
+function ListFilter(container, startShown = false) {
   this.container = container
 
   new FilterToggleButton({

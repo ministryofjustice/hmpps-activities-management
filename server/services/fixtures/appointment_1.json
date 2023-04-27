@@ -1,7 +1,8 @@
 {
   "id": 12345,
-  "categoryCode": "CHAP",
   "prisonCode": "SKI",
+  "appointmentType": "INDIVIDUAL",
+  "categoryCode": "CHAP",
   "internalLocationId": 26963,
   "inCell": false,
   "startDate": "2023-02-17",
@@ -32,7 +33,6 @@
       "startTime": "13:00",
       "endTime": "13:30",
       "comment": "This appointment occurrence has been rescheduled due to staff availability",
-      "cancelled": false,
       "updated": "2023-02-17T17:34:03.061Z",
       "updatedBy": "AAA01U",
       "allocations": [

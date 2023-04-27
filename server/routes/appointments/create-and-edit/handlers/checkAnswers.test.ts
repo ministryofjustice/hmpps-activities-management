@@ -31,6 +31,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     req = {
       session: {
         appointmentJourney: {
+          type: 'INDIVIDUAL',
           prisoners: [
             {
               number: 'A1234BC',
@@ -89,6 +90,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
 
     beforeEach(() => {
       expectedRequest = {
+        appointmentType: 'INDIVIDUAL',
         categoryCode: 'MEDO',
         prisonCode: 'TPR',
         internalLocationId: 32,
@@ -101,8 +103,9 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
 
       expectedResponse = {
         id: 15,
-        categoryCode: 'MEDO',
+        appointmentType: 'INDIVIDUAL',
         prisonCode: 'TPR',
+        categoryCode: 'MEDO',
         internalLocationId: 32,
         startDate: '2023-04-23',
         startTime: '09:30',
@@ -118,7 +121,6 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             startTime: '09:30',
             endTime: '13:00',
             comment: null,
-            cancelled: false,
             allocations: [
               {
                 id: 17,

@@ -389,8 +389,9 @@ describe('Activities Service', () => {
 
       const expectedResponse = {
         id: 12345,
-        categoryCode: 'CHAP',
+        appointmentType: 'INDIVIDUAL',
         prisonCode: 'SKI',
+        categoryCode: 'CHAP',
         internalLocationId: 123,
         startDate: '2023-02-07',
         startTime: '09:00',
@@ -407,7 +408,6 @@ describe('Activities Service', () => {
             startTime: '13:00',
             endTime: '13:30',
             comment: 'This appointment occurrence has been rescheduled due to staff availability',
-            cancelled: false,
             updated: '2023-02-07T15:37:59.266Z',
             updatedBy: 'AAA01U',
             allocations: [
