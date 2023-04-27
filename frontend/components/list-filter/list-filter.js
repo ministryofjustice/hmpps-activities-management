@@ -1,7 +1,9 @@
+import { FilterToggleButton } from '@ministryofjustice/frontend'
+
 function ListFilter(container) {
   this.container = container
 
-  new MOJFrontend.FilterToggleButton({
+  new FilterToggleButton({
     startHidden: true,
     toggleButton: {
       container: $('.moj-action-bar__filter'),

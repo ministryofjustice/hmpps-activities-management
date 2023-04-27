@@ -22,7 +22,7 @@ module.exports = grunt => {
     rollup: {
       options: {
         format: 'umd',
-        name: 'ActiviesFrontend',
+        name: 'ActivitiesFrontend',
         plugins: [nodeResolve(), commonjs()],
       },
       main: {
@@ -45,14 +45,6 @@ module.exports = grunt => {
           'node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css',
         ],
         dest: 'assets/stylesheets/application-ie8.css',
-      },
-    },
-    umd: {
-      all: {
-        options: {
-          src: 'assets/javascript/activities.js',
-          objectToExport: 'ActivitiesFrontend',
-        },
       },
     },
     uglify: {
@@ -94,7 +86,7 @@ module.exports = grunt => {
     },
     watch: {
       scripts: {
-        files: ['frontend/**/*.js', 'frontend/**/*.scss'],
+        files: ['frontend/**/*.{mjs,js}', 'frontend/**/*.scss'],
         tasks: ['default'],
       },
     },

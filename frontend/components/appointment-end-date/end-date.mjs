@@ -16,7 +16,7 @@ function AppointmentEndDate(container) {
       return
     }
 
-    var startDate = new Date(`${container.dataset.startDate} 00:00:00`)
+    var startDate = new Date(container.dataset.startDate)
     var repeatPeriod = repeatPeriodSelectedInput.value
 
     var endDate = calculateEndDate(startDate, repeatPeriod, occurrences)
