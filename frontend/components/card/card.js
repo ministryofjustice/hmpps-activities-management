@@ -1,4 +1,4 @@
-ActivitiesFrontend.Card = function (container) {
+function Card(container) {
   this.container = container
 
   if (this.container.querySelector('a') !== null) {
@@ -7,3 +7,5 @@ ActivitiesFrontend.Card = function (container) {
     })
   }
 }
+
+export default Card

@@ -13,19 +13,25 @@ export default class DailySummaryRoutes {
       return res.redirect('select-period')
     }
 
-    const attendanceSummary = await this.activitiesService.getAllAttendanceSummary(activityDate, user)
-    const categories = attendanceSummary.map(a => ({ categoryName: a.categoryName }))
-    const uniqueCategories = categories.filter((value, key) => {
-      return categories.indexOf(value) === key
-    })
     let { attendanceSummaryFilters } = req.session
+
+    const categoryFilters = attendanceSummaryFilters.categoryFilters
+      .filter((category: FilterItem) => category.checked === true)
+      .map((category: FilterItem) => category.value)
+
+    const attendanceSummary = await this.activitiesService.getAllAttendanceSummary(activityDate, user)
+    const uniqueCategories = attendanceSummary.map(c => c.categoryName).filter((v, k, arr) => arr.indexOf(v) === k)
+
     if (!attendanceSummaryFilters) {
       attendanceSummaryFilters = defaultFilters(activityDate, uniqueCategories)
       req.session.attendanceSummaryFilters = attendanceSummaryFilters
     }
+
     return res.render('pages/daily-attendance-summary/daily-summary', {
       activityDate,
-      ...getDailyAttendanceSummary(attendanceSummary),
+      ...getDailyAttendanceSummary(
+        attendanceSummary.filter(a => categoryFilters.includes(a.categoryName) || categoryFilters.includes('ALL')),
+      ),
       attendanceSummaryFilters,
     })
   }
@@ -59,11 +65,9 @@ export default class DailySummaryRoutes {
   }
 }
 
-const defaultFilters = (activityDate: Date, categories: { categoryName: string }[]): AttendanceSummaryFilters => {
+const defaultFilters = (activityDate: Date, categories: string[]): AttendanceSummaryFilters => {
   const categoryFilters: FilterItem[] = [{ value: 'ALL', text: 'All Categories', checked: true }]
-  categories.forEach(category =>
-    categoryFilters.push({ value: category.categoryName, text: category.categoryName, checked: false }),
-  )
+  categories.forEach(category => categoryFilters.push({ value: category, text: category, checked: false }))
   return {
     activityDate,
     categoryFilters,

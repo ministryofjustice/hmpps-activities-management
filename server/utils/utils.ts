@@ -449,22 +449,13 @@ export const getDailyAttendanceSummary = (attendanceSummary: AllAttendanceSummar
     ED: 0,
   }
 
-  const activities = attendanceSummary.map(a => ({ activityId: a.activityId }))
-  totalActivities['DAY'] = activities.filter((value, key) => {
-    return activities.indexOf(value) === key
-  }).length
+  totalActivities['DAY'] = attendanceSummary.map(c => c.categoryName).filter((v, k, arr) => arr.indexOf(v) === k).length
   const amActivities = attendanceSummary.filter(a => a.timeSlot === 'AM').map(a => ({ activityId: a.activityId }))
-  totalActivities['AM'] = amActivities.filter((value, key) => {
-    return amActivities.indexOf(value) === key
-  }).length
+  totalActivities['AM'] = amActivities.map(a => a.activityId).filter((v, k, arr) => arr.indexOf(v) === k).length
   const pmActivities = attendanceSummary.filter(a => a.timeSlot === 'PM').map(a => ({ activityId: a.activityId }))
-  totalActivities['PM'] = pmActivities.filter((value, key) => {
-    return pmActivities.indexOf(value) === key
-  }).length
+  totalActivities['PM'] = pmActivities.map(a => a.activityId).filter((v, k, arr) => arr.indexOf(v) === k).length
   const edActivities = attendanceSummary.filter(a => a.timeSlot === 'ED').map(a => ({ activityId: a.activityId }))
-  totalActivities['ED'] = edActivities.filter((value, key) => {
-    return edActivities.indexOf(value) === key
-  }).length
+  totalActivities['ED'] = edActivities.map(a => a.activityId).filter((v, k, arr) => arr.indexOf(v) === k).length
 
   attendanceSummary.forEach(attendance => {
     totalAllocated['DAY'] += attendance.attendanceCount

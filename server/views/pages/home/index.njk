@@ -87,7 +87,7 @@
                     }) }}
                 </div>
 
-                {% if user.activeCaseLoad.isAppointmentsEnabled %}
+                {% if user.isAppointmentsRolledOut %}
                     <div class="govuk-grid-column-one-third card-group__item">
                         {{ card({
                             "href": "/appointments",

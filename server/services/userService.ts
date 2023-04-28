@@ -4,12 +4,15 @@ import { ServiceUser } from '../@types/express'
 import PrisonApiClient from '../data/prisonApiClient'
 import AuthSource from '../enum/authSource'
 import NomisUserApiClient from '../data/nomisUserApiClient'
+import { RolloutPrisonPlan } from '../@types/activitiesAPI/types'
+import ActivitiesApiClient from '../data/activitiesApiClient'
 
 export default class UserService {
   constructor(
     private readonly hmppsAuthClient: HmppsAuthClient,
     private readonly nomisUserRolesApiClient: NomisUserApiClient,
     private readonly prisonApiClient: PrisonApiClient,
+    private readonly activitiesApiClient: ActivitiesApiClient,
   ) {}
 
   async getUser(user: ServiceUser): Promise<ServiceUser> {
@@ -23,6 +26,12 @@ export default class UserService {
     const activeCaseLoad = userCaseLoads?.find(c => c.currentlyActive)
     const rolesInActiveCaseLoad = userRoles?.nomisRoles.find(r => r.caseload.id === activeCaseLoad?.caseLoadId)?.roles
 
+    const rolloutPlans: RolloutPrisonPlan[] = await Promise.all(
+      userCaseLoads?.map(cl => this.activitiesApiClient.getPrisonRolloutPlan(cl.caseLoadId)) || [],
+    )
+
+    const currentRolloutPlan = rolloutPlans.find(r => r.prisonCode === activeCaseLoad.caseLoadId)
+
     return {
       ...user,
       ...hmppsAuthUser,
@@ -31,6 +40,8 @@ export default class UserService {
       allCaseLoads: userCaseLoads,
       activeCaseLoad,
       roles: [userRoles?.dpsRoles, rolesInActiveCaseLoad].flat(),
+      isActivitiesRolledOut: currentRolloutPlan?.activitiesRolledOut || false,
+      isAppointmentsRolledOut: currentRolloutPlan?.appointmentsRolledOut || false,
     }
   }
 

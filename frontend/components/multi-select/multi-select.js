@@ -1,4 +1,6 @@
-ActivitiesFrontend.MultiSelect = function (container) {
+import { nodeListForEach } from '../../utils'
+
+function MultiSelect(container) {
   this.container = container
 
   this.toggleAllButton = this.container.querySelector('#checkboxes-all')
@@ -11,7 +13,7 @@ ActivitiesFrontend.MultiSelect = function (container) {
   this.toggleAllButton.addEventListener('change', this.handleToggleAllButtonChanged.bind(this))
   this.toggleAllButton.setAttribute('autocomplete', 'off')
 
-  ActivitiesFrontend.nodeListForEach(
+  nodeListForEach(
     this.checkboxes,
     function ($cb) {
       $cb.addEventListener('change', this.handleCheckboxChanged.bind(this))
@@ -20,9 +22,9 @@ ActivitiesFrontend.MultiSelect = function (container) {
   )
 }
 
-ActivitiesFrontend.MultiSelect.prototype.handleCheckboxChanged = function () {
+MultiSelect.prototype.handleCheckboxChanged = function () {
   var count = 0
-  ActivitiesFrontend.nodeListForEach(
+  nodeListForEach(
     this.checkboxes,
     function ($cb) {
       if ($cb.checked) count++
@@ -40,8 +42,8 @@ ActivitiesFrontend.MultiSelect.prototype.handleCheckboxChanged = function () {
   }
 }
 
-ActivitiesFrontend.MultiSelect.prototype.handleToggleAllButtonChanged = function () {
-  ActivitiesFrontend.nodeListForEach(
+MultiSelect.prototype.handleToggleAllButtonChanged = function () {
+  nodeListForEach(
     this.checkboxes,
     function ($el) {
       var event = document.createEvent('HTMLEvents')
@@ -50,3 +52,5 @@ ActivitiesFrontend.MultiSelect.prototype.handleToggleAllButtonChanged = function
     }.bind(this)
   )
 }
+
+export default MultiSelect

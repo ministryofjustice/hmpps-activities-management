@@ -13,7 +13,6 @@ import {
   ActivityScheduleLite,
   LocationGroup,
   LocationPrefix,
-  RolloutPrison,
   ScheduledActivity,
   PrisonPayBand,
   PrisonerScheduledEvents,
@@ -165,52 +164,6 @@ describe('Activities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(activitiesApiClient.getScheduledActivity).toHaveBeenCalledWith(1, user)
-    })
-  })
-
-  describe('getPrison', () => {
-    it('should get rollout prison information from activities API', async () => {
-      const expectedResult = { id: 1, code: 'MDI', description: 'Moorlands', active: true } as RolloutPrison
-      when(activitiesApiClient.getRolloutPrison).calledWith(atLeast('MDI')).mockResolvedValue(expectedResult)
-      const actualResult = await activitiesService.getPrison('MDI', user)
-      expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getRolloutPrison).toHaveBeenCalledWith('MDI', user)
-    })
-  })
-
-  describe('populateUserPrisonInfo', () => {
-    it('should add the prisons rollout status to the users caseload info API', async () => {
-      const rolloutPrisonResult = { id: 1, code: 'MDI', description: 'Moorlands', active: true } as RolloutPrison
-      when(activitiesApiClient.getRolloutPrison).calledWith(atLeast('MDI')).mockResolvedValue(rolloutPrisonResult)
-
-      const testUser = {
-        allCaseLoads: [
-          {
-            caseLoadId: 'MDI',
-            caseloadFunction: 'ADMIN',
-            currentlyActive: true,
-            description: 'Moorlands',
-            type: 'APP',
-          },
-        ],
-      } as ServiceUser
-
-      const actualResult = await activitiesService.populateUserPrisonInfo(testUser)
-
-      const expectedResult = {
-        allCaseLoads: [
-          {
-            caseLoadId: 'MDI',
-            caseloadFunction: 'ADMIN',
-            currentlyActive: true,
-            description: 'Moorlands',
-            type: 'APP',
-            isRolledOut: true,
-          },
-        ],
-      } as ServiceUser
-      expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getRolloutPrison).toHaveBeenCalledWith('MDI', testUser)
     })
   })
 

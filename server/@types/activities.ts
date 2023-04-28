@@ -72,7 +72,7 @@ export type ActivitiesFilters = {
 
 export type AttendanceSummaryFilters = {
   activityDate: Date
-  categories: { categoryName: string }[]
+  categories: string[]
   categoryFilters: FilterItem[]
 }
 

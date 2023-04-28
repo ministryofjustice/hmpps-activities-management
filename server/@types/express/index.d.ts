@@ -1,6 +1,5 @@
 import { HmppsAuthUser } from '../hmppsAuth'
-import { PrisonApiUserDetail } from '../prisonApiImport/types'
-import { CaseLoadExtended } from '../dps'
+import { CaseLoad, PrisonApiUserDetail } from '../prisonApiImport/types'
 import { RoleDetail } from '../nomisUserApiImport/types'
 import { AllocateToActivityJourney } from '../../routes/allocate-to-activity/journey'
 import { CreateAnActivityJourney } from '../../routes/create-an-activity/journey'
@@ -64,7 +63,9 @@ export type ServiceUser = Express.User &
   HmppsAuthUser &
   PrisonApiUserDetail & {
     displayName: string
-    allCaseLoads: CaseLoadExtended[]
-    activeCaseLoad?: CaseLoadExtended
+    allCaseLoads: CaseLoad[]
+    activeCaseLoad?: CaseLoad
+    isActivitiesRolledOut: boolean
+    isAppointmentsRolledOut: boolean
     roles: RoleDetail[]
   }

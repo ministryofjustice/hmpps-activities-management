@@ -2,3 +2,9 @@
   background: govuk-colour("green");
   color: govuk-colour("white");
 }
+
+.govuk-tag--red-border {
+  border: 3px solid #d34700;
+  color: #d34700;
+  background-color: white;
+}
