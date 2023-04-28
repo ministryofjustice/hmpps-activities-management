@@ -186,7 +186,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: session.createJourney.location.name
+                            text: "In cell" if session.createJourney.inCell else session.createJourney.location.name
                         },
                         actions: {
                             items: [
