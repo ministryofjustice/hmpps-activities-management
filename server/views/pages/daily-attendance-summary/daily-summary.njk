@@ -1,0 +1,156 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
+
+{% set pageTitle = applicationName + " - Daily attendance summary" %}
+{% set pageId = 'daily-attendance-summary-page' %}
+{% set backLinkHref = "/attendance-summary/select-period" %}
+
+{% block content %}
+    {% set filterOptionsHtml %}
+    {{ govukRadios({
+            idPrefix: 'categoryFilters',
+            name: 'categoryFilters',
+            classes: "govuk-radios--small",
+            fieldset: {
+                legend: {
+                    text: 'Categories',
+                    classes: 'govuk-fieldset__legend--m'
+                }
+            },
+            items: attendanceSummaryFilters.categoryFilters
+        }) }}
+    {% endset %}
+    <div class="moj-filter-layout" data-module="activities-list-filter">
+        <form id="filter-form" method="POST" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <input type="hidden" name="activityDate" value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
+            <div class="moj-filter-layout__filter govuk-!-display-none-print">
+                {% set selectedCategories = [] %}
+                {% for category in attendanceSummaryFilters.categoryFilters %}
+                    {% if (category.checked === true) %}
+                        {% set selectedCategories = (selectedCategories.push({
+                           href: 'update-filters?clearCategory=' + category.value, text: category.value
+                       }), selectedCategories) %}
+                    {% endif %}
+                {% endfor %}
+                {{ mojFilter({
+                    heading: {
+                        text: 'Filter'
+                    },
+                    optionsHtml: filterOptionsHtml
+                }) }}
+            </div>
+            <hr class="print-only"/>
+            <div class="moj-filter-layout__content">
+                <div class="moj-action-bar govuk-!-display-none-print">
+                    <div class="moj-action-bar__filter"></div>
+                </div>
+                {{ govukTabs({
+                    items: [
+                        {
+                            label: "Daily summary",
+                            id: "day-tab",
+                            panel: {
+                                html: summaryHtml("DAY", "Daily")
+                            }
+                        },
+                        {
+                            label: "AM session",
+                            id: "am-tab",
+                            panel: {
+                                html: summaryHtml("AM", "AM session")
+                            }
+                        },
+                        {
+                            label: "PM session",
+                            id: "pm-tab",
+                            panel: {
+                                html: summaryHtml("PM", "PM session")
+                            }
+                        },
+                        {
+                            label: "ED session",
+                            id: "ed-tab",
+                            panel: {
+                                html: summaryHtml("ED", "ED session")
+                            }
+                        }
+                    ]
+                }) }}
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% macro summaryHtml(timeSlot, timeSlotDescription) %}
+    <div class="govuk-grid-column-one-half govuk-!-text-align-left">{{ now | formatDate('EEEE, dd MMMM yyyy') }}</div>
+    <div class="govuk-grid-column-one-half govuk-!-text-align-right"><p>Updated at {{ now | formatDate('HH:MM') }} on {{ now | formatDate('dd MMMM yyyy') }} </p></div>
+    <div><h1 class="class="govuk-heading-xl">{{ timeSlotDescription }} attendance summary</h1></div>
+    <div><h2 class="class="govuk-heading-s">{{ totalAllocated[timeSlot] }} total allocations for {{ totalActivities[timeSlot] }} activities.</h2></div>
+    <div class="govuk-grid-row govuk-!-margin-bottom-1">
+        <div class="govuk-grid-column-one-quarter">
+            Not yet attended
+            <h3 class="govuk-heading-xl">{{ totalNotAttended[timeSlot] }}</h3>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            Absences
+            <h3 class="govuk-heading-xl">{{ totalAbsences[timeSlot] }}</h3>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            Attended
+            <h3 class="govuk-heading-xl">{{ totalAttended[timeSlot] }}</h3>
+        </div>
+    </div>
+    <h3 class="govuk-heading-s">Absences</h3>
+    <h3 class="govuk-heading-xs">{{ totalPaidAbsences[timeSlot] }} paid absences</h3>
+    <div class="govuk-grid-row govuk-!-margin-bottom-1">
+        <div class="govuk-grid-column-one-quarter">
+            People with cancelled sessions
+            <h3 class="govuk-heading-m">{{ totalCancelled[timeSlot]  }}</h3>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            Sick
+            <h3 class="govuk-heading-m">{{ totalPaidSick[timeSlot] }}</h3>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            Not required
+            <h3 class="govuk-heading-m">{{ totalNotRequired[timeSlot] }}</h3>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+          Rest day
+          <h3 class="govuk-heading-m">{{ totalPaidRest[timeSlot] }}</h3>
+        </div>
+    </div>
+    <div class="govuk-grid-row govuk-!-margin-bottom-1">
+        <div class="govuk-grid-column-one-quarter">
+            Clash
+            <h3 class="govuk-heading-m">{{ totalClash[timeSlot] }}</h3>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            Other
+            <h3 class="govuk-heading-m">{{ totalPaidOther[timeSlot] }}</h3>
+        </div>
+    </div>
+    <h3 class="govuk-heading-xs">{{ totalUnPaidAbsences[timeSlot] }} unpaid absences</h3>
+    <div class="govuk-grid-row govuk-!-margin-bottom-1">
+        <div class="govuk-grid-column-one-quarter">
+            Sick
+            <h3 class="govuk-heading-m">{{ totalUnpaidSick[timeSlot] }}</h3>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            Refused
+            <h3 class="govuk-heading-m">{{ totalRefused[timeSlot] }}</h3>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            Rest day
+            <h3 class="govuk-heading-m">{{ totalUnpaidRest[timeSlot] }}</h3>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            Other
+            <h3 class="govuk-heading-m">{{ totalUnpaidOther[timeSlot] }}</h3>
+        </div>
+    </div>
+{% endmacro %}

@@ -31,6 +31,7 @@ import {
   PageActivityCandidate,
   AppointmentOccurrenceUpdateRequest,
   AppointmentLocationSummary,
+  AllAttendanceSummary,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -380,6 +381,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
         page,
         size: 5,
       },
+      authToken: user.token,
+    })
+  }
+
+  getAllAttendanceSummary(sessionDate: Date, user: ServiceUser): Promise<AllAttendanceSummary[]> {
+    return this.get({
+      path: `/attendances/summary/${user.activeCaseLoadId}/${toDateString(sessionDate)}`,
       authToken: user.token,
     })
   }

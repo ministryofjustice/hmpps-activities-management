@@ -58,6 +58,17 @@
 
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
+                        "id": "dailyAttendanceSummaryCard",
+                        "href": "/attendance-summary/select-period",
+                        "clickable": "true",
+                        "heading": "Daily attendance summary",
+                        "description": "Daily attendance summary.",
+                        "data-qa": "daily-attendance-summary-card"
+                    }) }}
+                </div>
+
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
                         "id": "unlockListCard",
                         "href": "/unlock-list/select-date-and-location",
                         "clickable": "true",

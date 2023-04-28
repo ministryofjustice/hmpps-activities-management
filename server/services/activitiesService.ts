@@ -32,6 +32,7 @@ import {
   AppointmentOccurrenceUpdateRequest,
   PageActivityCandidate,
   AppointmentLocationSummary,
+  AllAttendanceSummary,
 } from '../@types/activitiesAPI/types'
 import { SanitisedError } from '../sanitisedError'
 import { CaseLoadExtended } from '../@types/dps'
@@ -336,5 +337,9 @@ export default class ActivitiesService {
     user: ServiceUser,
   ) {
     return this.activitiesApiClient.editAppointmentOccurrence(occurrenceId, occurrenceUpdates, user)
+  }
+
+  async getAllAttendanceSummary(sessionDate: Date, user: ServiceUser): Promise<AllAttendanceSummary[]> {
+    return this.activitiesApiClient.getAllAttendanceSummary(sessionDate, user)
   }
 }

@@ -6,6 +6,7 @@ import createRoutes from './create-an-activity'
 import scheduleRoutes from './manage-schedules'
 import allocateRoutes from './allocate-to-activity'
 import attendanceRoutes from './record-attendance'
+import attendanceSummaryRoutes from './daily-attendance-summary'
 import unlockListRoutes from './unlock-list'
 import spikeRoutes from './spikes'
 import errorMessageMiddleware from '../middleware/errorMessageMiddleware'
@@ -29,6 +30,7 @@ export default function routes(services: Services): Router {
   router.use('/allocate', allocateRoutes(services))
   router.use('/schedule', scheduleRoutes(services))
   router.use('/attendance', attendanceRoutes(services))
+  router.use('/attendance-summary', attendanceSummaryRoutes(services))
   router.use('/unlock-list', unlockListRoutes(services))
   router.use('/appointments', appointmentRoutes(services))
   // Add more beta build routes here

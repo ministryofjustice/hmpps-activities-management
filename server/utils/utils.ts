@@ -1,26 +1,29 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any,dot-notation */
 /* eslint-disable import/no-duplicates */
 import {
-  parse,
-  formatISO,
-  isAfter,
-  parseISO,
+  areIntervalsOverlapping,
   endOfDay,
   format,
+  formatISO,
+  isAfter,
   isBefore,
   isSameDay,
   isToday,
   isTomorrow,
   isYesterday,
-  areIntervalsOverlapping,
+  parse,
+  parseISO,
 } from 'date-fns'
 // eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
-import { Attendance, ScheduledActivity, ScheduledEvent } from '../@types/activitiesAPI/types'
+import { AllAttendanceSummary, Attendance, ScheduledActivity, ScheduledEvent } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
+import AttendanceStatus from '../enum/attendanceStatus'
+import attendanceReason from '../enum/attendanceReason'
+import AttendanceReason from '../enum/attendanceReason'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -337,4 +340,210 @@ export const eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActiv
   )
 
   return re
+}
+
+export const getDailyAttendanceSummary = (attendanceSummary: AllAttendanceSummary[]) => {
+  interface DailySummary<Type> {
+    [key: string]: Type
+  }
+  const totalAllocated: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalActivities: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalNotAttended: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalAbsences: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalAttended: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalPaidAbsences: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalUnPaidAbsences: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalCancelled: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalPaidSick: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalNotRequired: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalPaidRest: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalClash: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalPaidOther: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalUnpaidSick: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalRefused: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalUnpaidRest: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalUnpaidOther: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+
+  const activities = attendanceSummary.map(a => ({ activityId: a.activityId }))
+  totalActivities['DAY'] = activities.filter((value, key) => {
+    return activities.indexOf(value) === key
+  }).length
+  const amActivities = attendanceSummary.filter(a => a.timeSlot === 'AM').map(a => ({ activityId: a.activityId }))
+  totalActivities['AM'] = amActivities.filter((value, key) => {
+    return amActivities.indexOf(value) === key
+  }).length
+  const pmActivities = attendanceSummary.filter(a => a.timeSlot === 'PM').map(a => ({ activityId: a.activityId }))
+  totalActivities['PM'] = pmActivities.filter((value, key) => {
+    return pmActivities.indexOf(value) === key
+  }).length
+  const edActivities = attendanceSummary.filter(a => a.timeSlot === 'ED').map(a => ({ activityId: a.activityId }))
+  totalActivities['ED'] = edActivities.filter((value, key) => {
+    return edActivities.indexOf(value) === key
+  }).length
+
+  attendanceSummary.forEach(attendance => {
+    totalAllocated['DAY'] += attendance.attendanceCount
+    totalAllocated[attendance.timeSlot] += attendance.attendanceCount
+    if (attendance.status === AttendanceStatus.WAITING) {
+      totalNotAttended['DAY'] += attendance.attendanceCount
+      totalNotAttended[attendance.timeSlot] += attendance.attendanceCount
+    } else if (attendance.attendanceReasonCode !== AttendanceReason.ATTENDED) {
+      totalAbsences['DAY'] += attendance.attendanceCount
+      if (attendance.issuePayment) {
+        totalPaidAbsences['DAY'] += attendance.attendanceCount
+        totalPaidAbsences[attendance.timeSlot] += attendance.attendanceCount
+        if (attendance.attendanceReasonCode === attendanceReason.CANCELLED) {
+          totalCancelled['DAY'] += attendance.attendanceCount
+          totalCancelled[attendance.timeSlot] += attendance.attendanceCount
+        }
+        if (attendance.attendanceReasonCode === attendanceReason.SICK) {
+          totalPaidSick['DAY'] += attendance.attendanceCount
+          totalPaidSick[attendance.timeSlot] += attendance.attendanceCount
+        }
+        if (attendance.attendanceReasonCode === attendanceReason.NOT_REQUIRED) {
+          totalNotRequired['DAY'] += attendance.attendanceCount
+          totalNotRequired[attendance.timeSlot] += attendance.attendanceCount
+        }
+        if (attendance.attendanceReasonCode === attendanceReason.REST) {
+          totalPaidRest['DAY'] += attendance.attendanceCount
+          totalPaidRest[attendance.timeSlot] += attendance.attendanceCount
+        }
+        if (attendance.attendanceReasonCode === attendanceReason.CLASH) {
+          totalClash['DAY'] += attendance.attendanceCount
+          totalClash[attendance.timeSlot] += attendance.attendanceCount
+        }
+        if (attendance.attendanceReasonCode === attendanceReason.OTHER) {
+          totalPaidOther['DAY'] += attendance.attendanceCount
+          totalPaidOther[attendance.timeSlot] += attendance.attendanceCount
+        }
+      } else {
+        totalUnPaidAbsences['DAY'] += attendance.attendanceCount
+        totalUnPaidAbsences[attendance.timeSlot] += attendance.attendanceCount
+        if (attendance.attendanceReasonCode === attendanceReason.SICK) {
+          totalUnpaidSick['DAY'] += attendance.attendanceCount
+          totalUnpaidSick[attendance.timeSlot] += attendance.attendanceCount
+        }
+        if (attendance.attendanceReasonCode === attendanceReason.REFUSED) {
+          totalRefused['DAY'] += attendance.attendanceCount
+          totalRefused[attendance.timeSlot] += attendance.attendanceCount
+        }
+        if (attendance.attendanceReasonCode === attendanceReason.REST) {
+          totalUnpaidRest['DAY'] += attendance.attendanceCount
+          totalUnpaidRest[attendance.timeSlot] += attendance.attendanceCount
+        }
+        if (attendance.attendanceReasonCode === attendanceReason.OTHER) {
+          totalUnpaidOther['DAY'] += attendance.attendanceCount
+          totalUnpaidOther[attendance.timeSlot] += attendance.attendanceCount
+        }
+      }
+    } else {
+      totalAttended['DAY'] += attendance.attendanceCount
+      totalAttended[attendance.timeSlot] += attendance.attendanceCount
+    }
+  })
+
+  return {
+    totalActivities,
+    totalAllocated,
+    totalNotAttended,
+    totalAbsences,
+    totalAttended,
+    totalPaidAbsences,
+    totalUnPaidAbsences,
+    totalCancelled,
+    totalPaidSick,
+    totalNotRequired,
+    totalPaidRest,
+    totalClash,
+    totalPaidOther,
+    totalUnpaidSick,
+    totalRefused,
+    totalUnpaidRest,
+    totalUnpaidOther,
+  }
 }
