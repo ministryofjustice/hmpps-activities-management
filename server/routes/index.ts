@@ -13,6 +13,7 @@ import successMessageMiddleware from '../middleware/successMessageMiddleware'
 import timeNowMiddleware from '../middleware/timeNowMiddleware'
 import routeAuthMiddleware from '../middleware/routeAuthMiddleware'
 import appointmentRoutes from './appointments'
+import rolloutMiddleware from '../middleware/rolloutMiddleware'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -23,8 +24,11 @@ export default function routes(services: Services): Router {
   router.use(successMessageMiddleware())
   router.use(timeNowMiddleware())
 
-  router.use('/', homeRoutes())
   router.use('/change-location', changeLocationRoutes(services))
+
+  router.use(rolloutMiddleware(services))
+
+  router.use('/', homeRoutes())
   router.use('/create', createRoutes(services))
   router.use('/allocate', allocateRoutes(services))
   router.use('/schedule', scheduleRoutes(services))
