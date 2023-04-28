@@ -187,8 +187,8 @@ export interface paths {
   }
   '/rollout/{prisonCode}': {
     /**
-     * Get a prison by its code
-     * @description Returns a single prison and its details by its unique code.
+     * Get a prison's rollout plan by prison code
+     * @description Returns a single prison and it's activities management service rollout plan by its unique code.
      */
     get: operations['getPrisonByCode']
   }
@@ -2895,40 +2895,35 @@ export interface components {
        */
       endDate?: string
     }
-    /** @description Describes one instance of a prison which may or may not be active (rolled out) */
-    RolloutPrison: {
+    /** @description Describes the rollout plan of a prison which may or may not be rolled out */
+    RolloutPrisonPlan: {
       /**
-       * Format: int64
-       * @description The internally-generated ID for this prison
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The code for this prison
+       * @description The prison code of the requested prison
        * @example PVI
        */
-      code: string
+      prisonCode: string
       /**
-       * @description The description for this prison
-       * @example HMP Pentonville
-       */
-      description: string
-      /**
-       * @description Flag to indicate if this prison is presently active
+       * @description Flag to indicate if this prison is presently rolled out for activities
        * @example true
        */
-      active: boolean
+      activitiesRolledOut: boolean
       /**
        * Format: date
-       * @description The date rolled out
+       * @description The date activities rolled out
        * @example 2022-09-30
        */
-      rolloutDate?: string
+      activitiesRolloutDate?: string
       /**
-       * @description Whether appointments are being fetched from the activities service (as opposed to the Prison API)
+       * @description Flag to indicate if this prison is presently rolled out for appointments
        * @example true
        */
-      isAppointmentsEnabled: boolean
+      appointmentsRolledOut: boolean
+      /**
+       * Format: date
+       * @description The date activities rolled out
+       * @example 2022-09-30
+       */
+      appointmentsRolloutDate?: string
     }
     GetDlqResult: {
       /** Format: int32 */
@@ -4537,8 +4532,8 @@ export interface operations {
     }
   }
   /**
-   * Get a prison by its code
-   * @description Returns a single prison and its details by its unique code.
+   * Get a prison's rollout plan by prison code
+   * @description Returns a single prison and it's activities management service rollout plan by its unique code.
    */
   getPrisonByCode: {
     parameters: {
@@ -4547,10 +4542,10 @@ export interface operations {
       }
     }
     responses: {
-      /** @description Prison found */
+      /** @description Prison rollout plan found */
       200: {
         content: {
-          'application/json': components['schemas']['RolloutPrison']
+          'application/json': components['schemas']['RolloutPrisonPlan']
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */

@@ -11,7 +11,6 @@ import {
   CapacityAndAllocated,
   InternalLocation,
   PrisonerScheduledEvents,
-  RolloutPrison,
   ScheduledActivity,
   LocationGroup,
   LocationPrefix,
@@ -31,6 +30,7 @@ import {
   PageActivityCandidate,
   AppointmentOccurrenceUpdateRequest,
   AppointmentLocationSummary,
+  RolloutPrisonPlan,
   AppointmentOccurrenceSearchRequest,
   AppointmentOccurrenceSearchResult,
 } from '../@types/activitiesAPI/types'
@@ -178,11 +178,21 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getRolloutPrison(prisonCode: string, user: ServiceUser): Promise<RolloutPrison> {
+  async getPrisonRolloutPlan(prisonCode: string): Promise<RolloutPrisonPlan> {
     return this.get({
       path: `/rollout/${prisonCode}`,
-      authToken: user.token,
     })
+      .then(res => res as RolloutPrisonPlan)
+      .catch(err => {
+        if (err.status === 404) {
+          return {
+            prisonCode,
+            activitiesRolledOut: false,
+            appointmentsRolledOut: false,
+          }
+        }
+        throw err
+      })
   }
 
   getScheduledPrisonLocations(

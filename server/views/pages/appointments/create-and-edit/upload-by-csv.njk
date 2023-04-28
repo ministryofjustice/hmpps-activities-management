@@ -4,8 +4,9 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Upload by CSV" %}
+{% set pageTitle = appointmentJourneyTitle("Upload by CSV", session.appointmentJourney) %}
 {% set pageId = 'appointments-upload-by-csv-page' %}
 {% set backLinkHref = "/appointments" %}
 

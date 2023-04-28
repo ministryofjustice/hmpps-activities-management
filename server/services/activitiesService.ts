@@ -11,7 +11,6 @@ import {
   AttendanceUpdateRequest,
   InternalLocation,
   LocationGroup,
-  RolloutPrison,
   ScheduledActivity,
   ScheduledEvent,
   PrisonerAllocations,
@@ -34,16 +33,8 @@ import {
   AppointmentLocationSummary,
   AppointmentOccurrenceSearchRequest,
 } from '../@types/activitiesAPI/types'
-import { SanitisedError } from '../sanitisedError'
-import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
-
-const processError = (error: SanitisedError): undefined => {
-  if (!error.status) throw error
-  if (error.status !== 404) throw error // Not Found
-  return undefined
-}
 
 export default class ActivitiesService {
   constructor(
@@ -130,37 +121,6 @@ export default class ActivitiesService {
       prisonerNumbers,
       user,
     )
-  }
-
-  async populateUserPrisonInfo(user: ServiceUser) {
-    const prisonInfoCalls: Promise<RolloutPrison | undefined>[] = []
-    user.allCaseLoads.forEach(cl => {
-      prisonInfoCalls.push(this.getPrison(cl.caseLoadId, user))
-    })
-    const responses: RolloutPrison[] = await Promise.all(prisonInfoCalls)
-    const results = responses.filter(elem => elem !== undefined)
-    const userCaseLoads: CaseLoadExtended[] = []
-    const newUser = { ...user }
-    user.allCaseLoads.forEach(cl => {
-      const match = results.find(r => r.code === cl.caseLoadId)
-      if (match) {
-        const cle = cl as CaseLoadExtended
-        cle.isRolledOut = match.active
-        cle.isAppointmentsEnabled = match.isAppointmentsEnabled
-        userCaseLoads.push(cle)
-        if (cle.caseLoadId === user.activeCaseLoadId) {
-          newUser.activeCaseLoad = cle
-        }
-      } else {
-        userCaseLoads.push(cl)
-      }
-    })
-    newUser.allCaseLoads = userCaseLoads
-    return newUser
-  }
-
-  async getPrison(prisonCode: string, user: ServiceUser): Promise<RolloutPrison | undefined> {
-    return this.activitiesApiClient.getRolloutPrison(prisonCode, user).catch(processError)
   }
 
   async getScheduledPrisonLocations(
@@ -337,6 +297,10 @@ export default class ActivitiesService {
     user: ServiceUser,
   ) {
     return this.activitiesApiClient.editAppointmentOccurrence(occurrenceId, occurrenceUpdates, user)
+  }
+
+  getPrisonRolloutPlan(prisonCode: string) {
+    return this.activitiesApiClient.getPrisonRolloutPlan(prisonCode)
   }
 
   async searchAppointmentOccurrences(
