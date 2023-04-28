@@ -2,7 +2,7 @@
 import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
-import { addMonths, addWeeks, subMonths, subWeeks } from 'date-fns'
+import { addDays, addMonths, addWeeks, subMonths, subWeeks } from 'date-fns'
 import {
   addDefaultSelectedValue,
   buildErrorSummaryList,
@@ -122,6 +122,8 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toDateString', toDateString)
   njkEnv.addFilter('todayOrBefore', isTodayOrBefore)
   njkEnv.addFilter('sliceArray', sliceArray)
+  njkEnv.addFilter('addDays', addDays)
+  njkEnv.addFilter('addWeeks', addWeeks)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

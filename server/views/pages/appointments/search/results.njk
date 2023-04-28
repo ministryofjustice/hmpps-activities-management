@@ -22,32 +22,25 @@
     {% set resultsTableRows = (resultsTableRows.push([
         {
             text: result.startDate | toDate | formatDate('d MMM yyyy'),
-            attributes: { 'data-qa': 'result-date-' + index }
+            attributes: { 'data-sort-value': result.startDate + result.startTime, 'data-qa': 'result-date-' + index }
         }, {
             text: result.startTime + " to " + result.endTime,
             attributes: { 'data-qa': 'result-time-' + index }
         }, {
-            html: govukTag({
-                text: ("Individual" if result.appointmentType == AppointmentType.INDIVIDUAL) +
-                ("Group" if result.appointmentType == AppointmentType.GROUP),
-                classes: "govuk-tag--green"
-            }) + (govukTag({ text: "Repeat" }) if result.isRepeat),
+            html:
+                ("<div>" + govukTag({ text: "Individual", classes: "govuk-tag--grey" }) + "</div>" if result.appointmentType == AppointmentType.INDIVIDUAL) +
+                ("<div>" + govukTag({ text: "Group", classes: "govuk-tag--grey" }) + result.allocations.length + (" prisoner" if result.allocations.length == 1) + (" prisoners" if result.allocations.length > 1) + "</div>" if result.appointmentType == AppointmentType.GROUP) +
+                ("<div>" + govukTag({ text: "Repeat", classes: "govuk-tag--grey" }) + " appointment " + result.sequenceNumber + " of " + result.maxSequenceNumber + "</div>" if result.isRepeat),
             attributes: { 'data-qa': 'result-type-' + index }
         }, {
-            text: result.category.description + (" (displayed as '" + result.appointmentDescription + "' on unlock list)" if (result.appointmentDescription) ),
+            text: result.category.description + (" ('" + result.appointmentDescription + "')" if (result.appointmentDescription) ),
             attributes: { 'data-qa': 'result-category-' + index }
-        }, {
-            text: result.allocations.length,
-            attributes: { 'data-qa': 'result-prisoner-count-' + index }
         }, {
             text: result.internalLocation.description,
             attributes: { 'data-qa': 'result-location-' + index }
         }, {
-            text: (result.sequenceNumber + " of " + result.maxSequenceNumber if result.isRepeat),
-            attributes: { 'data-qa': 'result-sequence-number-' + index }
-        }, {
             html: (govukTag({ text: "Edited" }) if result.isEdited) +
-                  (govukTag({ text: "Cancelled", classes: "govuk-tag--red" }) if result.isCancelled),
+                  (govukTag({ text: "Cancelled", classes: "govuk-tag--grey" }) if result.isCancelled),
             attributes: { 'data-qa': 'result-status-' + index }
         }, {
             html: '<a href="/appointments/' + result.appointmentId + '/occurrence/' + result.appointmentOccurrenceId + '"
@@ -186,7 +179,7 @@
             name: 'startDate',
             label: {
                 text: "Start date",
-                classes: "govuk-label--m"
+                classes: "govuk-label--s"
             },
             renderedErrorMessage: validationErrors | findError('startDate'),
             validationErrors: validationErrors,
@@ -198,7 +191,7 @@
             name: 'endDate',
             label: {
                 text: "End date",
-                classes: "govuk-label--m"
+                classes: "govuk-label--s"
             },
             renderedErrorMessage: validationErrors | findError('endDate'),
             validationErrors: validationErrors,
@@ -207,10 +200,11 @@
 
         {{ govukRadios({
             name: "timeSlot",
+            classes: "govuk-radios--small",
             fieldset: {
                 legend: {
                     text: "Time period",
-                    classes: "govuk-fieldset__legend--m"
+                    classes: "govuk-fieldset__legend--s"
                 }
             },
             errorMessage: validationErrors | findError('timeSlot'),
@@ -238,7 +232,7 @@
             name: "categoryCode",
             label: {
                 text: "Category",
-                classes: "govuk-label--m"
+                classes: "govuk-label--s"
             },
             errorMessage: validationErrors | findError('categoryCode'),
             items: categoryOptions,
@@ -250,7 +244,7 @@
             name: "locationId",
             label: {
                 text: "Location",
-                classes: "govuk-label--m"
+                classes: "govuk-label--s"
             },
             errorMessage: validationErrors | findError('locationId'),
             items: locationOptions,
@@ -262,7 +256,7 @@
             name: "prisonerNumber",
             label: {
                 text: "Prisoner number",
-                classes: "govuk-label--m"
+                classes: "govuk-label--s"
             },
             spellcheck: false,
             errorMessage: validationErrors | findError('prisonerNumber'),
@@ -272,10 +266,11 @@
 
         {{ govukRadios({
             name: "createdBy",
+            classes: "govuk-radios--small",
             fieldset: {
                 legend: {
                     text: "Created by",
-                    classes: "govuk-fieldset__legend--m"
+                    classes: "govuk-fieldset__legend--s"
                 }
             },
             errorMessage: validationErrors | findError('createdBy'),
@@ -295,10 +290,11 @@
 
         {{ govukRadios({
             name: "type",
+            classes: "govuk-radios--small",
             fieldset: {
                 legend: {
                     text: "Type",
-                    classes: "govuk-fieldset__legend--m"
+                    classes: "govuk-fieldset__legend--s"
                 }
             },
             errorMessage: validationErrors | findError('type'),
@@ -347,11 +343,11 @@
                 caption: "Appointments",
                 head: [{
                     text: "Date",
-                    attributes: { "aria-sort": "none" }
+                    attributes: { "aria-sort": "ascending" }
                 },
                 {
                     text: "Time",
-                    attributes: { "aria-sort": "ascending" }
+                    attributes: { "aria-sort": "none" }
                 },
                 {
                     text: "Type"
@@ -361,15 +357,7 @@
                     attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Prisoners",
-                    attributes: { "aria-sort": "none" }
-                },
-                {
                     text: "Location",
-                    attributes: { "aria-sort": "none" }
-                },
-                {
-                    text: "Occurrence",
                     attributes: { "aria-sort": "none" }
                 },
                 {

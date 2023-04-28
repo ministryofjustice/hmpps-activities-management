@@ -34,7 +34,7 @@
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
                         "id": "searchAppointmentsCard",
-                        "href": "appointments/search?startDate=" + now | toDateString,
+                        "href": "appointments/search?startDate=" + now | toDateString + "&endDate=" + now | addWeeks(1) | toDateString,
                         "clickable": "true",
                         "heading": "View and manage an appointment",
                         "description": "Find and edit an existing appointment.",
