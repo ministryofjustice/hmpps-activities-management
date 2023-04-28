@@ -41,8 +41,7 @@ function initAll() {
 
   var $filters = document.querySelectorAll('[data-module="activities-list-filter"]')
   nodeListForEach($filters, function ($filter) {
-    const startShown = $filter.getAttribute('data-filter-start-shown') === 'true'
-    new ListFilter($filter, startShown)
+    new ListFilter($filter)
   })
 
   var $appointmentStartDate = document.querySelectorAll('[data-module="appointment-end-date"]')

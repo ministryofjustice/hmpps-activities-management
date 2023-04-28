@@ -41,14 +41,14 @@ export default class SearchRoutes {
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     const request = {
-      appointmentType: !type || type === '' ? null : type,
+      appointmentType: type && type !== '' ? type : null,
       startDate: simpleStartDate.toIsoString(),
-      endDate: !simpleEndDate ? null : simpleEndDate?.toIsoString(),
-      timeSlot: !timeSlot || timeSlot === '' ? null : timeSlot,
-      categoryCode: !categoryCode || categoryCode === '' ? null : categoryCode,
-      internalLocationId: !locationId || locationId === '' ? null : +locationId,
-      prisonerNumbers: !prisonerNumber || prisonerNumber === '' ? null : [prisonerNumber],
-      createdBy: !createdBy || createdBy === '' || createdBy === 'all' ? null : createdBy,
+      endDate: simpleEndDate ? simpleEndDate?.toIsoString() : null,
+      timeSlot: timeSlot && timeSlot !== '' ? timeSlot : null,
+      categoryCode: categoryCode && categoryCode !== '' ? categoryCode : null,
+      internalLocationId: locationId && locationId !== '' ? +locationId : null,
+      prisonerNumbers: prisonerNumber && prisonerNumber !== '' ? [prisonerNumber] : null,
+      createdBy: createdBy && createdBy !== '' && createdBy !== 'all' ? createdBy : null,
     } as AppointmentOccurrenceSearchRequest
 
     const results = await this.activitiesService.searchAppointmentOccurrences(user.activeCaseLoadId, request, user)
@@ -56,14 +56,14 @@ export default class SearchRoutes {
     return res.render('pages/appointments/search/results', {
       startDate: simpleStartDate,
       endDate: simpleEndDate,
-      timeSlot,
+      timeSlot: timeSlot ?? '',
       categories,
-      categoryCode,
+      categoryCode: categoryCode ?? '',
       locations,
-      locationId,
-      prisonerNumber,
-      createdBy,
-      type,
+      locationId: locationId ?? '',
+      prisonerNumber: prisonerNumber ?? '',
+      createdBy: createdBy ?? '',
+      type: type ?? '',
       results,
     })
   }

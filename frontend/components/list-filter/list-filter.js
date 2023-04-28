@@ -1,11 +1,11 @@
 import { FilterToggleButton } from '@ministryofjustice/frontend'
 
-function ListFilter(container, startShown = false) {
+function ListFilter(container) {
   this.container = container
 
   new FilterToggleButton({
     bigModeMediaQuery: '(min-width: 40.0625em)',
-    startHidden: !startShown,
+    startHidden: this.container.dataset.filterStartShown !== 'true',
     toggleButton: {
       container: $('.moj-action-bar__filter'),
       showText: 'Show filter',
