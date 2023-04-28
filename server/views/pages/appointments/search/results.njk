@@ -34,7 +34,7 @@
             }) + (govukTag({ text: "Repeat" }) if result.isRepeat),
             attributes: { 'data-qa': 'result-type-' + index }
         }, {
-            text: result.category.description,
+            text: result.category.description + (" (displayed as '" + result.appointmentDescription + "' on unlock list)" if (result.appointmentDescription) ),
             attributes: { 'data-qa': 'result-category-' + index }
         }, {
             text: result.allocations.length,
@@ -48,7 +48,7 @@
         }, {
             html: (govukTag({ text: "Edited" }) if result.isEdited) +
                   (govukTag({ text: "Cancelled", classes: "govuk-tag--red" }) if result.isCancelled),
-            attributes: { 'data-qa': 'result-sequence-number-' + index }
+            attributes: { 'data-qa': 'result-status-' + index }
         }, {
             html: '<a href="/appointments/' + result.appointmentId + '/occurrence/' + result.appointmentOccurrenceId + '"
                 class="govuk-link--no-visited-state">
