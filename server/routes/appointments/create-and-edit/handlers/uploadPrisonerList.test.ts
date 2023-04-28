@@ -92,7 +92,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       when(prisonerListCsvParser.getPrisonerNumbers)
         .calledWith(req.file)
         .mockImplementation(() => {
-          throw new FormValidationError('file', 'The selected file must use the template')
+          throw new FormValidationError('file', 'The selected file must use the CSV template')
         })
 
       let exception
@@ -104,7 +104,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       expect(exception).toBeInstanceOf(FormValidationError)
       expect((exception as FormValidationError).field).toEqual('file')
-      expect((exception as FormValidationError).message).toEqual('The selected file must use the template')
+      expect((exception as FormValidationError).message).toEqual('The selected file must use the CSV template')
     })
 
     it('validation fails when uploaded file does not contain any prisoner numbers', async () => {

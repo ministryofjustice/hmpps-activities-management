@@ -41,14 +41,14 @@ export default class SearchRoutes {
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     const request = {
-      appointmentType: type === '' ? null : type,
+      appointmentType: !type || type === '' ? null : type,
       startDate: simpleStartDate.toIsoString(),
-      endDate: simpleEndDate?.toIsoString(),
-      timeSlot: timeSlot === '' ? null : timeSlot,
-      categoryCode: categoryCode === '' ? null : categoryCode,
-      internalLocationId: locationId === '' ? null : +locationId,
-      prisonerNumbers: prisonerNumber === '' ? null : [prisonerNumber],
-      createdBy: createdBy === '' || createdBy === 'all' ? null : createdBy,
+      endDate: !simpleEndDate ? null : simpleEndDate?.toIsoString(),
+      timeSlot: !timeSlot || timeSlot === '' ? null : timeSlot,
+      categoryCode: !categoryCode || categoryCode === '' ? null : categoryCode,
+      internalLocationId: !locationId || locationId === '' ? null : +locationId,
+      prisonerNumbers: !prisonerNumber || prisonerNumber === '' ? null : [prisonerNumber],
+      createdBy: !createdBy || createdBy === '' || createdBy === 'all' ? null : createdBy,
     } as AppointmentOccurrenceSearchRequest
 
     const results = await this.activitiesService.searchAppointmentOccurrences(user.activeCaseLoadId, request, user)
@@ -74,11 +74,9 @@ export default class SearchRoutes {
     return res.redirect(
       `?startDate=${startDate.toIsoString()}&endDate=${
         isValid(endDate.toRichDate()) ? endDate.toIsoString() : ''
-      }&timeSlot=${
-        timeSlot ?? ''
-      }&categoryCode=${categoryCode}&locationId=${locationId}&prisonerNumber=${prisonerNumber}&createdBy=${
-        createdBy ?? ''
-      }&type=${type ?? ''}`,
+      }&timeSlot=${timeSlot ?? ''}&categoryCode=${categoryCode ?? ''}&locationId=${
+        locationId ?? ''
+      }&prisonerNumber=${prisonerNumber}&createdBy=${createdBy ?? ''}&type=${type ?? ''}`,
     )
   }
 }

@@ -16,34 +16,6 @@
 {% set pageId = 'appointments-search-results-page' %}
 {% set backLinkHref = "/" %}
 
-{% set categoryOptions = [{ value: "", text: "" }] %}
-{% set selectedCategory = [] %}
-{% for category in categories %}
-    {% set categoryOptions = (categoryOptions.push( { value: category.code, text: category.description } ), categoryOptions) %}
-    {% if (category.code == categoryCode) %}
-        {% set selectedCategory = (selectedCategory.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
-            text: category.description
-        }), selectedCategory) %}
-    {% endif %}
-{% endfor %}
-
-{% set locationOptions = [{ value: "", text: "" }] %}
-{% set selectedLocation = [] %}
-{% for location in locations %}
-    {% set locationOptions = (locationOptions.push( { value: location.id, text: location.description }), locationOptions) %}
-    {% if (location.id == locationId) %}
-        {% set selectedLocation = (selectedLocation.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
-            text: location.description
-        }), selectedLocation) %}
-    {% endif %}
-{% endfor %}
-
-{% block meta %}
-    <meta name="autocompleteElements" content="categoryCode,locationId"/>
-{% endblock %}
-
 {% set resultsTableRows = [] %}
 {% set index = 0 %}
 {% for result in results %}
@@ -74,6 +46,10 @@
             text: (result.sequenceNumber + " of " + result.maxSequenceNumber if result.isRepeat),
             attributes: { 'data-qa': 'result-sequence-number-' + index }
         }, {
+            html: (govukTag({ text: "Edited" }) if result.isEdited) +
+                  (govukTag({ text: "Cancelled", classes: "govuk-tag--red" }) if result.isCancelled),
+            attributes: { 'data-qa': 'result-sequence-number-' + index }
+        }, {
             html: '<a href="/appointments/' + result.appointmentId + '/occurrence/' + result.appointmentOccurrenceId + '"
                 class="govuk-link--no-visited-state">
                 View and edit<span class="govuk-visually-hidden"> occurrence</span>
@@ -92,6 +68,117 @@
             <h1 class="govuk-heading-l">View and edit an appointment</h1>
         </div>
     </div>
+
+    {% set selectedFilterCategories = [] %}
+
+    {% set selectedDateAndTime = [] %}
+    {% if (endDate) %}
+        {% set selectedDateAndTime = (selectedDateAndTime.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+            text: endDate | toDate | formatDate('d MMM yyyy')
+        }), selectedDateAndTime) %}
+    {% endif %}
+
+    {% if (timeSlot) %}
+        {% set selectedDateAndTime = (selectedDateAndTime.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+            text: ("Morning (AM)" if timeSlot == TimeSlot.AM) +
+                  ("Afternoon (PM)" if timeSlot == TimeSlot.PM) +
+                  ("Evening (ED)" if timeSlot == TimeSlot.ED)
+        }), selectedDateAndTime) %}
+    {% endif %}
+
+    {% if (selectedDateAndTime.length > 0) %}
+        {% set selectedFilterCategories = (selectedFilterCategories.push({
+            heading: {
+                text: 'End date and time period'
+            },
+            items: selectedDateAndTime
+        }), selectedFilterCategories) %}
+    {% endif %}
+
+    {% set categoryOptions = [{ value: "", text: "" }] %}
+    {% for category in categories %}
+        {% set categoryOptions = (categoryOptions.push( { value: category.code, text: category.description } ), categoryOptions) %}
+        {% if (category.code == categoryCode) %}
+            {% set selectedFilterCategories = (selectedFilterCategories.push({
+                heading: {
+                    text: 'Category'
+                },
+                items: [{
+                    href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+                    text: category.description
+                }]
+            }), selectedFilterCategories) %}
+        {% endif %}
+    {% endfor %}
+
+    {% set locationOptions = [{ value: "", text: "" }] %}
+    {% for location in locations %}
+        {% set locationOptions = (locationOptions.push( { value: location.id, text: location.description }), locationOptions) %}
+        {% if (location.id == locationId) %}
+            {% set selectedFilterCategories = (selectedFilterCategories.push({
+                heading: {
+                    text: 'Location'
+                },
+                items: [{
+                    href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+                    text: location.description
+                }]
+            }), selectedFilterCategories) %}
+        {% endif %}
+    {% endfor %}
+
+    {% if (prisonerNumber) %}
+        {% set selectedFilterCategories = (selectedFilterCategories.push({
+            heading: {
+                text: 'Prisoner number'
+            },
+            items: [{
+                href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy + '&type=' + type,
+                text: prisonerNumber
+            }]
+        }), selectedFilterCategories) %}
+    {% endif %}
+
+    {% if (createdBy) %}
+        {% set selectedFilterCategories = (selectedFilterCategories.push({
+            heading: {
+                text: 'Created by'
+            },
+            items: [{
+                href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + '&type=' + type,
+                text: ("Myself" if createdBy == user.username) +
+                ("All appointment creators" if createdBy == "all")
+            }]
+        }), selectedFilterCategories) %}
+    {% endif %}
+
+    {% if (type) %}
+        {% set selectedFilterCategories = (selectedFilterCategories.push({
+            heading: {
+                text: 'Type'
+            },
+            items: [{
+                href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=',
+                text: ("Individual appointment" if type == AppointmentType.INDIVIDUAL) +
+                ("Group appointment" if type == AppointmentType.GROUP)
+            }]
+        }), selectedFilterCategories) %}
+    {% endif %}
+
+    {% if (selectedFilterCategories.length > 0) %}
+        {% set selectedFilters = {
+            heading: {
+                text: 'Selected filters'
+            },
+            clearLink: {
+                text: 'Clear filters',
+                href: '?startDate=' + now | toDateString
+            },
+            categories: selectedFilterCategories
+        } %}
+    {% endif %}
 
     {% set filterOptionsHtml %}
         {{ datePicker({
@@ -234,50 +321,6 @@
         </button>
     {% endset %}
 
-    {% set selectedEndDate = [] %}
-    {% if (endDate) %}
-        {% set selectedEndDate = (selectedEndDate.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
-            text: endDate | toDate | formatDate('d MMM yyyy')
-        }), selectedEndDate) %}
-    {% endif %}
-
-    {% set selectedTimeSlot = [] %}
-    {% if (timeSlot) %}
-        {% set selectedTimeSlot = (selectedTimeSlot.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
-            text: ("Morning (AM)" if timeSlot == TimeSlot.AM) +
-                  ("Afternoon (PM)" if timeSlot == TimeSlot.PM) +
-                  ("Evening (ED)" if timeSlot == TimeSlot.ED)
-        }), selectedTimeSlot) %}
-    {% endif %}
-
-    {% set selectedPrisonerNumber = [] %}
-    {% if (prisonerNumber) %}
-        {% set selectedPrisonerNumber = (selectedPrisonerNumber.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy + '&type=' + type,
-            text: prisonerNumber
-        }), selectedTimeSlot) %}
-    {% endif %}
-
-    {% set selectedCreatedBy = [] %}
-    {% if (createdBy) %}
-        {% set selectedCreatedBy = (selectedCreatedBy.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + '&type=' + type,
-            text: ("Myself" if createdBy == user.username) +
-                  ("All appointment creators" if createdBy == "all")
-        }), selectedCreatedBy) %}
-    {% endif %}
-
-    {% set selectedType = [] %}
-    {% if (type) %}
-        {% set selectedType = (selectedType.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=',
-            text: ("Individual appointment" if type == AppointmentType.INDIVIDUAL) +
-                  ("Group appointment" if type == AppointmentType.GROUP)
-        }), selectedType) %}
-    {% endif %}
-
     <div class="moj-filter-layout" data-module="activities-list-filter" data-filter-start-shown="true">
         <div class="moj-filter-layout__filter govuk-!-display-none-print">
             <form method="POST">
@@ -286,59 +329,7 @@
                     heading: {
                         text: 'Filter'
                     },
-                    selectedFilters: {
-                        heading: {
-                            text: 'Selected filters'
-                        },
-                        clearLink: {
-                            text: 'Clear filters',
-                            href: '?startDate=' + now | toDateString
-                        },
-                        categories: [
-                            {
-                                heading: {
-                                    text: 'End date'
-                                },
-                                items: selectedEndDate
-                            },
-                            {
-                                heading: {
-                                    text: 'Time period'
-                                },
-                                items: selectedTimeSlot
-                            },
-                            {
-                                heading: {
-                                    text: 'Category'
-                                },
-                                items: selectedCategory
-                            },
-                            {
-                                heading: {
-                                    text: 'Location'
-                                },
-                                items: selectedLocation
-                            },
-                            {
-                                heading: {
-                                    text: 'Prisoner number'
-                                },
-                                items: selectedPrisonerNumber
-                            },
-                            {
-                                heading: {
-                                    text: 'Created by'
-                                },
-                                items: selectedCreatedBy
-                            },
-                            {
-                                heading: {
-                                    text: 'Type'
-                                },
-                                items: selectedType
-                            }
-                        ]
-                    },
+                    selectedFilters: selectedFilters,
                     optionsHtml: filterOptionsHtml
                 }) }}
             </form>
@@ -382,10 +373,17 @@
                     attributes: { "aria-sort": "none" }
                 },
                 {
+                    text: "Status"
+                },
+                {
                     html: '<span class="govuk-visually-hidden">Actions</span>'
                 }],
                 rows: resultsTableRows
             }) }}
         </div>
     </div>
+{% endblock %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="categoryCode,locationId"/>
 {% endblock %}
