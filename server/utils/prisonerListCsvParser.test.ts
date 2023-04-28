@@ -36,7 +36,7 @@ describe('getPrisonerNumbers', () => {
 
     expect(exception).toBeInstanceOf(FormValidationError)
     expect((exception as FormValidationError).field).toEqual('file')
-    expect((exception as FormValidationError).message).toEqual('The selected file must use the template')
+    expect((exception as FormValidationError).message).toEqual('The selected file must use the CSV template')
     expect(fsPromises.unlink).toHaveBeenCalled()
   })
 

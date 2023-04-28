@@ -440,8 +440,9 @@ describe('activitiesApiClient', () => {
     it('should return appointment from api when valid appointment id is used', async () => {
       const response = {
         id: 12345,
-        categoryCode: 'CHAP',
+        appointmentType: 'INDIVIDUAL',
         prisonCode: 'SKI',
+        categoryCode: 'CHAP',
         internalLocationId: 123,
         startDate: '2023-02-07',
         startTime: '09:00',
@@ -452,12 +453,12 @@ describe('activitiesApiClient', () => {
         occurrences: [
           {
             id: 123456,
+            sequenceNumber: 1,
             internalLocationId: 123,
             startDate: '2023-02-07',
             startTime: '13:00',
             endTime: '13:30',
             comment: 'This appointment occurrence has been rescheduled due to staff availability',
-            cancelled: false,
             updated: '2023-02-07T15:37:59.266Z',
             updatedBy: 'AAA01U',
             allocations: [
@@ -587,8 +588,9 @@ describe('activitiesApiClient', () => {
 
       const response = {
         id: 12345,
-        categoryCode: 'CHAP',
+        appointmentType: 'INDIVIDUAL',
         prisonCode: 'SKI',
+        categoryCode: 'CHAP',
         internalLocationId: 123,
         startDate: '2023-02-07',
         startTime: '09:00',
@@ -605,7 +607,6 @@ describe('activitiesApiClient', () => {
             startTime: '13:00',
             endTime: '13:30',
             comment: 'This appointment occurrence has been rescheduled due to staff availability',
-            cancelled: false,
             updated: '2023-02-07T15:37:59.266Z',
             updatedBy: 'AAA01U',
             allocations: [

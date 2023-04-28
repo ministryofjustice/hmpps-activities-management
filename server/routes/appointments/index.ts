@@ -6,6 +6,7 @@ import appointmentsCreateRoutes from './create-and-edit/createRoutes'
 import appointmentsEditRoutes from './create-and-edit/editRoutes'
 import appointmentDetailsRoutes from './details'
 import appointmentOccurrenceDetailsRoutes from './occurrence-details'
+import appointmentSearchRoutes from './search'
 import { Services } from '../../services'
 
 export default function routes(services: Services): Router {
@@ -15,6 +16,7 @@ export default function routes(services: Services): Router {
 
   router.use('/', appointmentsHomeRoutes())
   router.use('/create', appointmentsCreateRoutes(services))
+  router.use('/search', appointmentSearchRoutes(services))
 
   router.use('/:appointmentId(\\d+)', fetchAppointment(activitiesService), appointmentDetailsRoutes(services))
 
