@@ -30,7 +30,7 @@ export default class PrisonerListCsvParser {
     try {
       await finished(parser)
     } catch {
-      throw new FormValidationError('file', 'The selected file must use the template')
+      throw new FormValidationError('file', 'The selected file must use the CSV template')
     }
 
     return prisonerNumbers

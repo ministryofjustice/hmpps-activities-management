@@ -32,6 +32,8 @@ import {
   AppointmentLocationSummary,
   AllAttendanceSummary,
   RolloutPrisonPlan,
+  AppointmentOccurrenceSearchRequest,
+  AppointmentOccurrenceSearchResult,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -398,6 +400,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/attendances/summary/${user.activeCaseLoadId}/${toDateString(sessionDate)}`,
       authToken: user.token,
+    })
+  }
+
+  async searchAppointmentOccurrences(
+    prisonCode: string,
+    searchRequest: AppointmentOccurrenceSearchRequest,
+    user: ServiceUser,
+  ): Promise<AppointmentOccurrenceSearchResult[]> {
+    return this.post({
+      path: `/appointment-occurrences/${prisonCode}/search`,
+      authToken: user.token,
+      data: searchRequest,
     })
   }
 }

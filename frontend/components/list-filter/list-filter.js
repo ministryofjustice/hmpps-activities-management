@@ -4,7 +4,8 @@ function ListFilter(container) {
   this.container = container
 
   new FilterToggleButton({
-    startHidden: true,
+    bigModeMediaQuery: '(min-width: 40.0625em)',
+    startHidden: this.container.dataset.filterStartShown !== 'true',
     toggleButton: {
       container: $('.moj-action-bar__filter'),
       showText: 'Show filter',

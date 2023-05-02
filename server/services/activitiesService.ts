@@ -31,6 +31,7 @@ import {
   AppointmentOccurrenceUpdateRequest,
   PageActivityCandidate,
   AppointmentLocationSummary,
+  AppointmentOccurrenceSearchRequest,
   AllAttendanceSummary,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
@@ -305,5 +306,13 @@ export default class ActivitiesService {
 
   async getAllAttendanceSummary(sessionDate: Date, user: ServiceUser): Promise<AllAttendanceSummary[]> {
     return this.activitiesApiClient.getAllAttendanceSummary(sessionDate, user)
+  }
+
+  async searchAppointmentOccurrences(
+    prisonCode: string,
+    searchRequest: AppointmentOccurrenceSearchRequest,
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.searchAppointmentOccurrences(prisonCode, searchRequest, user)
   }
 }

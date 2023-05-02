@@ -1,0 +1,377 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "components/datePicker.njk" import datePicker %}
+
+{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
+{% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
+
+{% set pageTitle = "Appointments Management - Appointment Search Results" %}
+{% set pageId = 'appointments-search-results-page' %}
+{% set backLinkHref = "/" %}
+
+{% set resultsTableRows = [] %}
+{% set index = 0 %}
+{% for result in results %}
+    {% set resultsTableRows = (resultsTableRows.push([
+        {
+            text: result.startDate | toDate | formatDate('d MMM yyyy'),
+            attributes: { 'data-sort-value': result.startDate + result.startTime, 'data-qa': 'result-date-' + index }
+        }, {
+            text: result.startTime + " to " + result.endTime,
+            attributes: { 'data-qa': 'result-time-' + index }
+        }, {
+            html:
+                ("<div>" + govukTag({ text: "Individual", classes: "govuk-tag--grey" }) + "</div>" if result.appointmentType == AppointmentType.INDIVIDUAL) +
+                ("<div>" + govukTag({ text: "Group", classes: "govuk-tag--grey" }) + result.allocations.length + (" prisoner" if result.allocations.length == 1) + (" prisoners" if result.allocations.length > 1) + "</div>" if result.appointmentType == AppointmentType.GROUP) +
+                ("<div>" + govukTag({ text: "Repeat", classes: "govuk-tag--grey" }) + " appointment " + result.sequenceNumber + " of " + result.maxSequenceNumber + "</div>" if result.isRepeat),
+            attributes: { 'data-qa': 'result-type-' + index }
+        }, {
+            text: result.category.description + (" ('" + result.appointmentDescription + "')" if (result.appointmentDescription) ),
+            attributes: { 'data-qa': 'result-category-' + index }
+        }, {
+            text: result.internalLocation.description,
+            attributes: { 'data-qa': 'result-location-' + index }
+        }, {
+            html: (govukTag({ text: "Edited" }) if result.isEdited) +
+                  (govukTag({ text: "Cancelled", classes: "govuk-tag--grey" }) if result.isCancelled),
+            attributes: { 'data-qa': 'result-status-' + index }
+        }, {
+            html: '<a href="/appointments/' + result.appointmentId + '/occurrence/' + result.appointmentOccurrenceId + '"
+                class="govuk-link--no-visited-state">
+                View and edit<span class="govuk-visually-hidden"> occurrence</span>
+            </a>',
+            classes: 'govuk-!-text-align-right',
+            attributes: { 'data-qa': 'view-and-edit-result-' + index }
+        }
+    ]), resultsTableRows) %}
+    {% set index = index + 1 %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l">Appointment management</span>
+            <h1 class="govuk-heading-l">View and edit an appointment</h1>
+        </div>
+    </div>
+
+    {% set selectedFilterCategories = [] %}
+
+    {% set selectedDateAndTime = [] %}
+    {% if (endDate) %}
+        {% set selectedDateAndTime = (selectedDateAndTime.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+            text: endDate | toDate | formatDate('d MMM yyyy')
+        }), selectedDateAndTime) %}
+    {% endif %}
+
+    {% if (timeSlot) %}
+        {% set selectedDateAndTime = (selectedDateAndTime.push({
+            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+            text: ("Morning (AM)" if timeSlot == TimeSlot.AM) +
+                  ("Afternoon (PM)" if timeSlot == TimeSlot.PM) +
+                  ("Evening (ED)" if timeSlot == TimeSlot.ED)
+        }), selectedDateAndTime) %}
+    {% endif %}
+
+    {% if (selectedDateAndTime.length > 0) %}
+        {% set selectedFilterCategories = (selectedFilterCategories.push({
+            heading: {
+                text: 'End date and time period'
+            },
+            items: selectedDateAndTime
+        }), selectedFilterCategories) %}
+    {% endif %}
+
+    {% set categoryOptions = [{ value: "", text: "" }] %}
+    {% for category in categories %}
+        {% set categoryOptions = (categoryOptions.push( { value: category.code, text: category.description } ), categoryOptions) %}
+        {% if (category.code == categoryCode) %}
+            {% set selectedFilterCategories = (selectedFilterCategories.push({
+                heading: {
+                    text: 'Category'
+                },
+                items: [{
+                    href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+                    text: category.description
+                }]
+            }), selectedFilterCategories) %}
+        {% endif %}
+    {% endfor %}
+
+    {% set locationOptions = [{ value: "", text: "" }] %}
+    {% for location in locations %}
+        {% set locationOptions = (locationOptions.push( { value: location.id, text: location.description }), locationOptions) %}
+        {% if (location.id == locationId) %}
+            {% set selectedFilterCategories = (selectedFilterCategories.push({
+                heading: {
+                    text: 'Location'
+                },
+                items: [{
+                    href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+                    text: location.description
+                }]
+            }), selectedFilterCategories) %}
+        {% endif %}
+    {% endfor %}
+
+    {% if (prisonerNumber) %}
+        {% set selectedFilterCategories = (selectedFilterCategories.push({
+            heading: {
+                text: 'Prisoner number'
+            },
+            items: [{
+                href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy + '&type=' + type,
+                text: prisonerNumber
+            }]
+        }), selectedFilterCategories) %}
+    {% endif %}
+
+    {% if (createdBy) %}
+        {% set selectedFilterCategories = (selectedFilterCategories.push({
+            heading: {
+                text: 'Created by'
+            },
+            items: [{
+                href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + '&type=' + type,
+                text: ("Myself" if createdBy == user.username) +
+                ("All appointment creators" if createdBy == "all")
+            }]
+        }), selectedFilterCategories) %}
+    {% endif %}
+
+    {% if (type) %}
+        {% set selectedFilterCategories = (selectedFilterCategories.push({
+            heading: {
+                text: 'Type'
+            },
+            items: [{
+                href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=',
+                text: ("Individual appointment" if type == AppointmentType.INDIVIDUAL) +
+                ("Group appointment" if type == AppointmentType.GROUP)
+            }]
+        }), selectedFilterCategories) %}
+    {% endif %}
+
+    {% if (selectedFilterCategories.length > 0) %}
+        {% set selectedFilters = {
+            heading: {
+                text: 'Selected filters'
+            },
+            clearLink: {
+                text: 'Clear filters',
+                href: '?startDate=' + now | toDateString
+            },
+            categories: selectedFilterCategories
+        } %}
+    {% endif %}
+
+    {% set filterOptionsHtml %}
+        {{ datePicker({
+            id: 'startDate',
+            name: 'startDate',
+            label: {
+                text: "Start date",
+                classes: "govuk-label--s"
+            },
+            renderedErrorMessage: validationErrors | findError('startDate'),
+            validationErrors: validationErrors,
+            formResponses: formResponses.startDate or startDate
+        }) }}
+
+        {{ datePicker({
+            id: 'endDate',
+            name: 'endDate',
+            label: {
+                text: "End date",
+                classes: "govuk-label--s"
+            },
+            renderedErrorMessage: validationErrors | findError('endDate'),
+            validationErrors: validationErrors,
+            formResponses: formResponses.endDate or endDate
+        }) }}
+
+        {{ govukRadios({
+            name: "timeSlot",
+            classes: "govuk-radios--small",
+            fieldset: {
+                legend: {
+                    text: "Time period",
+                    classes: "govuk-fieldset__legend--s"
+                }
+            },
+            errorMessage: validationErrors | findError('timeSlot'),
+            items: [
+                {
+                    value: TimeSlot.AM,
+                    text: "Morning (AM)",
+                    checked: (formResponses.timeSlot or timeSlot) == TimeSlot.AM
+                },
+                {
+                    value: TimeSlot.PM,
+                    text: "Afternoon (PM)",
+                    checked: (formResponses.timeSlot or timeSlot) == TimeSlot.PM
+                },
+                {
+                    value: TimeSlot.ED,
+                    text: "Evening (ED)",
+                    checked: (formResponses.timeSlot or timeSlot) == TimeSlot.ED
+                }
+            ]
+        }) }}
+
+        {{ govukSelect({
+            id: "categoryCode",
+            name: "categoryCode",
+            label: {
+                text: "Category",
+                classes: "govuk-label--s"
+            },
+            errorMessage: validationErrors | findError('categoryCode'),
+            items: categoryOptions,
+            value: formResponses.categoryCode or categoryCode
+        }) }}
+
+        {{ govukSelect({
+            id: "locationId",
+            name: "locationId",
+            label: {
+                text: "Location",
+                classes: "govuk-label--s"
+            },
+            errorMessage: validationErrors | findError('locationId'),
+            items: locationOptions,
+            value: formResponses.locationId or locationId
+        }) }}
+
+        {{ govukInput({
+            id: "prisonerNumber",
+            name: "prisonerNumber",
+            label: {
+                text: "Prisoner number",
+                classes: "govuk-label--s"
+            },
+            spellcheck: false,
+            errorMessage: validationErrors | findError('prisonerNumber'),
+            value: formResponses.prisonerNumber or prisonerNumber,
+            type: 'search'
+        }) }}
+
+        {{ govukRadios({
+            name: "createdBy",
+            classes: "govuk-radios--small",
+            fieldset: {
+                legend: {
+                    text: "Created by",
+                    classes: "govuk-fieldset__legend--s"
+                }
+            },
+            errorMessage: validationErrors | findError('createdBy'),
+            items: [
+                {
+                    value: user.username,
+                    text: "Myself",
+                    checked: (formResponses.createdBy or createdBy) == user.username
+                },
+                {
+                    value: "all",
+                    text: "All appointment creators",
+                    checked: (formResponses.timeSlot or timeSlot) == "all"
+                }
+            ]
+        }) }}
+
+        {{ govukRadios({
+            name: "type",
+            classes: "govuk-radios--small",
+            fieldset: {
+                legend: {
+                    text: "Type",
+                    classes: "govuk-fieldset__legend--s"
+                }
+            },
+            errorMessage: validationErrors | findError('type'),
+            items: [
+                {
+                    value: AppointmentType.INDIVIDUAL,
+                    text: "Individual appointment",
+                    checked: (formResponses.type or type) == AppointmentType.INDIVIDUAL
+                },
+                {
+                    value: AppointmentType.GROUP,
+                    text: "Group appointment",
+                    checked: (formResponses.type or type) == AppointmentType.GROUP
+                }
+            ]
+        }) }}
+
+        <button class="govuk-button govuk-!-margin-top-7" data-module="govuk-button">
+            Apply filters
+        </button>
+    {% endset %}
+
+    <div class="moj-filter-layout" data-module="activities-list-filter" data-filter-start-shown="true">
+        <div class="moj-filter-layout__filter govuk-!-display-none-print">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ mojFilter({
+                    heading: {
+                        text: 'Filter'
+                    },
+                    selectedFilters: selectedFilters,
+                    optionsHtml: filterOptionsHtml
+                }) }}
+            </form>
+        </div>
+        <div class="moj-filter-layout__content">
+            <div class="moj-action-bar govuk-!-display-none-print">
+                <div class="moj-action-bar__filter"></div>
+            </div>
+
+            {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-qa': 'search-results'
+                },
+                caption: "Appointments",
+                head: [{
+                    text: "Date",
+                    attributes: { "aria-sort": "ascending" }
+                },
+                {
+                    text: "Time",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Type"
+                },
+                {
+                    text: "Category",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Location",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Status"
+                },
+                {
+                    html: '<span class="govuk-visually-hidden">Actions</span>'
+                }],
+                rows: resultsTableRows
+            }) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="categoryCode,locationId"/>
+{% endblock %}
