@@ -117,13 +117,45 @@ describe('Route Handlers - Select period', () => {
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
     })
 
+    it('validation fails if preset option is other and a date more than 14 days in the past is entered', async () => {
+      const body = {
+        datePresetOption: 'other',
+        date: {
+          day: 22,
+          month: 2,
+          year: new Date().getFullYear() - 1,
+        },
+      }
+
+      const requestObject = plainToInstance(TimePeriod, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'date', error: 'Enter a date within the last 14 days' }])
+    })
+
+    it('validation fails if preset option is other and a date more than 60 days in the future is entered', async () => {
+      const body = {
+        datePresetOption: 'other',
+        date: {
+          day: 22,
+          month: 2,
+          year: new Date().getFullYear() + 1,
+        },
+      }
+
+      const requestObject = plainToInstance(TimePeriod, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'date', error: 'Enter a date within the next 60 days' }])
+    })
+
     it('passes validation', async () => {
       const body = {
         datePresetOption: 'other',
         date: {
-          day: 27,
-          month: 2,
-          year: 2022,
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
         },
       }
 

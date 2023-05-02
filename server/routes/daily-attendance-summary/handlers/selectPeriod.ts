@@ -1,9 +1,11 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsIn, ValidateIf, ValidateNested } from 'class-validator'
-import { format, subDays } from 'date-fns'
+import { addDays, format, subDays } from 'date-fns'
 import SimpleDate from '../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../validators/isValidDate'
+import DateIsSameOrAfter from '../../../validators/dateIsSameOrAfter'
+import DateIsSameOrBefore from '../../../validators/dateIsSameOrBefore'
 
 enum PresetDateOptions {
   TODAY = 'today',
@@ -21,6 +23,8 @@ export class TimePeriod {
   @Type(() => SimpleDate)
   @ValidateNested()
   @IsValidDate({ message: 'Enter a valid date' })
+  @DateIsSameOrAfter(subDays(new Date(), 14), { message: 'Enter a date within the last 14 days' })
+  @DateIsSameOrBefore(addDays(new Date(), 60), { message: 'Enter a date within the next 60 days' })
   date: SimpleDate
 }
 
