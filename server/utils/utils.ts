@@ -465,6 +465,7 @@ export const getDailyAttendanceSummary = (attendanceSummary: AllAttendanceSummar
       totalNotAttended[attendance.timeSlot] += attendance.attendanceCount
     } else if (attendance.attendanceReasonCode !== AttendanceReason.ATTENDED) {
       totalAbsences['DAY'] += attendance.attendanceCount
+      totalAbsences[attendance.timeSlot] += attendance.attendanceCount
       if (attendance.issuePayment) {
         totalPaidAbsences['DAY'] += attendance.attendanceCount
         totalPaidAbsences[attendance.timeSlot] += attendance.attendanceCount

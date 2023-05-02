@@ -24,9 +24,12 @@ import {
   exampleDateOneWeekAhead,
   parseDate,
   toFixed,
+  getDailyAttendanceSummary,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
-import { Attendance } from '../@types/activitiesAPI/types'
+import { AllAttendanceSummary, Attendance } from '../@types/activitiesAPI/types'
+import AttendanceReason from '../enum/attendanceReason'
+import AttendanceStatus from '../enum/attendanceStatus'
 
 describe('utils', () => {
   describe('convert to title case', () => {
@@ -376,6 +379,274 @@ describe('utils', () => {
       const number: number = null
       const fixedPointString = toFixed(number, 2)
       expect(fixedPointString).toEqual(null)
+    })
+  })
+
+  describe('getDailyAttendanceSummary', () => {
+    it('calculates the daily attendance summary', () => {
+      const dailyAttendance = [
+        {
+          id: 1,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.WAITING,
+          attendanceReasonCode: null,
+          issuePayment: null,
+          attendanceCount: 3,
+        },
+        {
+          id: 2,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'ED',
+          status: AttendanceStatus.WAITING,
+          attendanceReasonCode: null,
+          issuePayment: null,
+          attendanceCount: 1,
+        },
+        {
+          id: 3,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'ED',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.ATTENDED,
+          issuePayment: true,
+          attendanceCount: 1,
+        },
+        {
+          id: 4,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.CANCELLED,
+          issuePayment: true,
+          attendanceCount: 1,
+        },
+        {
+          id: 5,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.SICK,
+          issuePayment: true,
+          attendanceCount: 1,
+        },
+        {
+          id: 6,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.NOT_REQUIRED,
+          issuePayment: true,
+          attendanceCount: 1,
+        },
+        {
+          id: 7,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.REST,
+          issuePayment: true,
+          attendanceCount: 1,
+        },
+        {
+          id: 8,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.CLASH,
+          issuePayment: true,
+          attendanceCount: 1,
+        },
+        {
+          id: 9,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.OTHER,
+          issuePayment: true,
+          attendanceCount: 1,
+        },
+        {
+          id: 10,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.SICK,
+          issuePayment: false,
+          attendanceCount: 1,
+        },
+        {
+          id: 11,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.REFUSED,
+          issuePayment: false,
+          attendanceCount: 1,
+        },
+        {
+          id: 12,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.REST,
+          issuePayment: false,
+          attendanceCount: 1,
+        },
+        {
+          id: 13,
+          prisonCode: 'MDI',
+          activityId: 1,
+          categoryName: 'Education',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.OTHER,
+          issuePayment: false,
+          attendanceCount: 1,
+        },
+      ] as AllAttendanceSummary[]
+
+      expect(getDailyAttendanceSummary(dailyAttendance)).toEqual({
+        totalAbsences: {
+          AM: 10,
+          DAY: 10,
+          ED: 0,
+          PM: 0,
+        },
+        totalActivities: {
+          AM: 1,
+          DAY: 1,
+          ED: 1,
+          PM: 0,
+        },
+        totalAllocated: {
+          AM: 13,
+          DAY: 15,
+          ED: 2,
+          PM: 0,
+        },
+        totalAttended: {
+          AM: 0,
+          DAY: 1,
+          ED: 1,
+          PM: 0,
+        },
+        totalCancelled: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalClash: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalNotAttended: {
+          AM: 3,
+          DAY: 4,
+          ED: 1,
+          PM: 0,
+        },
+        totalNotRequired: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalPaidAbsences: {
+          AM: 6,
+          DAY: 6,
+          ED: 0,
+          PM: 0,
+        },
+        totalPaidOther: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalPaidRest: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalPaidSick: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalRefused: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalUnPaidAbsences: {
+          AM: 4,
+          DAY: 4,
+          ED: 0,
+          PM: 0,
+        },
+        totalUnpaidOther: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalUnpaidRest: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalUnpaidSick: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+      })
     })
   })
 })
