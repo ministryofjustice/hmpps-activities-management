@@ -237,7 +237,7 @@
 {% endmacro %}
 
 {% macro renderPayStatus(attendance) %}
-    {% if attendance.issuePayment or attendance.payAmount > 0 %}
+    {% if attendance.issuePayment %}
         {{ govukTag({
             text: "Pay",
             classes: "govuk-tag--green"

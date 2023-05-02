@@ -63,7 +63,8 @@ export default class NotAttendedReasonRoutes {
           (notAttendedData[selectedPrisoner.prisonerNumber].absencePay
             ? notAttendedData[selectedPrisoner.prisonerNumber].absencePay
             : false) ||
-          notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason === AttendanceReason.NOT_REQUIRED,
+          notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason === AttendanceReason.NOT_REQUIRED ||
+          notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason === AttendanceReason.CLASH,
         caseNote: notAttendedData[selectedPrisoner.prisonerNumber].caseNote,
         incentiveLevelWarningIssued: notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
           ? notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
