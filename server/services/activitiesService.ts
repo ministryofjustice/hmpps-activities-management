@@ -11,7 +11,6 @@ import {
   AttendanceUpdateRequest,
   InternalLocation,
   LocationGroup,
-  RolloutPrison,
   ScheduledActivity,
   ScheduledEvent,
   PrisonerAllocations,
@@ -30,17 +29,12 @@ import {
   UncancelScheduledInstanceRequest,
   Attendance,
   AppointmentOccurrenceUpdateRequest,
+  PageActivityCandidate,
+  AppointmentLocationSummary,
+  AppointmentOccurrenceSearchRequest,
 } from '../@types/activitiesAPI/types'
-import { SanitisedError } from '../sanitisedError'
-import { CaseLoadExtended } from '../@types/dps'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
-
-const processError = (error: SanitisedError): undefined => {
-  if (!error.status) throw error
-  if (error.status !== 404) throw error // Not Found
-  return undefined
-}
 
 export default class ActivitiesService {
   constructor(
@@ -127,37 +121,6 @@ export default class ActivitiesService {
       prisonerNumbers,
       user,
     )
-  }
-
-  async populateUserPrisonInfo(user: ServiceUser) {
-    const prisonInfoCalls: Promise<RolloutPrison | undefined>[] = []
-    user.allCaseLoads.forEach(cl => {
-      prisonInfoCalls.push(this.getPrison(cl.caseLoadId, user))
-    })
-    const responses: RolloutPrison[] = await Promise.all(prisonInfoCalls)
-    const results = responses.filter(elem => elem !== undefined)
-    const userCaseLoads: CaseLoadExtended[] = []
-    const newUser = { ...user }
-    user.allCaseLoads.forEach(cl => {
-      const match = results.find(r => r.code === cl.caseLoadId)
-      if (match) {
-        const cle = cl as CaseLoadExtended
-        cle.isRolledOut = match.active
-        cle.isAppointmentsEnabled = match.isAppointmentsEnabled
-        userCaseLoads.push(cle)
-        if (cle.caseLoadId === user.activeCaseLoadId) {
-          newUser.activeCaseLoad = cle
-        }
-      } else {
-        userCaseLoads.push(cl)
-      }
-    })
-    newUser.allCaseLoads = userCaseLoads
-    return newUser
-  }
-
-  async getPrison(prisonCode: string, user: ServiceUser): Promise<RolloutPrison | undefined> {
-    return this.activitiesApiClient.getRolloutPrison(prisonCode, user).catch(processError)
   }
 
   async getScheduledPrisonLocations(
@@ -272,6 +235,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAppointmentCategories(user)
   }
 
+  async getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<AppointmentLocationSummary[]> {
+    return this.activitiesApiClient.getAppointmentLocations(prisonCode, user)
+  }
+
   createAppointment(appointment: AppointmentCreateRequest, user: ServiceUser): Promise<Appointment> {
     return this.activitiesApiClient.postCreateAppointment(appointment, user)
   }
@@ -300,8 +267,28 @@ export default class ActivitiesService {
     )
   }
 
-  async getAttendanceDetails(attendanceId: number, user: ServiceUser): Promise<Attendance> {
-    return this.activitiesApiClient.getAttendanceDetails(attendanceId, user)
+  async getAttendanceDetails(attendanceId: number): Promise<Attendance> {
+    return this.activitiesApiClient.getAttendanceDetails(attendanceId)
+  }
+
+  getActivityCandidates(
+    scheduleInstanceId: number,
+    user: ServiceUser,
+    suitableIeps?: string[],
+    suitableRiskLevels?: string[],
+    suitableForEmployed?: boolean,
+    searchQuery?: string,
+    page?: number,
+  ): Promise<PageActivityCandidate> {
+    return this.activitiesApiClient.getActivityCandidates(
+      scheduleInstanceId,
+      user,
+      suitableIeps,
+      suitableRiskLevels,
+      suitableForEmployed,
+      searchQuery,
+      page,
+    )
   }
 
   async editAppointmentOccurrence(
@@ -310,5 +297,17 @@ export default class ActivitiesService {
     user: ServiceUser,
   ) {
     return this.activitiesApiClient.editAppointmentOccurrence(occurrenceId, occurrenceUpdates, user)
+  }
+
+  getPrisonRolloutPlan(prisonCode: string) {
+    return this.activitiesApiClient.getPrisonRolloutPlan(prisonCode)
+  }
+
+  async searchAppointmentOccurrences(
+    prisonCode: string,
+    searchRequest: AppointmentOccurrenceSearchRequest,
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.searchAppointmentOccurrences(prisonCode, searchRequest, user)
   }
 }

@@ -2,7 +2,7 @@
 import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
-import { addMonths, addWeeks, subMonths, subWeeks } from 'date-fns'
+import { addDays, addMonths, addWeeks, subMonths, subWeeks } from 'date-fns'
 import {
   addDefaultSelectedValue,
   buildErrorSummaryList,
@@ -24,6 +24,7 @@ import {
   toDate,
   isTodayOrBefore,
   sliceArray,
+  toDateString,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -36,6 +37,7 @@ import { Services } from '../services'
 import { YesNo } from '../@types/activities'
 import { AppointmentType, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentRepeatPeriod, EditApplyTo } from '../@types/appointments'
+import TimeSlot from '../enum/timeSlot'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -117,13 +119,17 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
   njkEnv.addFilter('toDate', toDate)
+  njkEnv.addFilter('toDateString', toDateString)
   njkEnv.addFilter('todayOrBefore', isTodayOrBefore)
   njkEnv.addFilter('sliceArray', sliceArray)
+  njkEnv.addFilter('addDays', addDays)
+  njkEnv.addFilter('addWeeks', addWeeks)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
 
   njkEnv.addGlobal('YesNo', YesNo)
+  njkEnv.addGlobal('TimeSlot', TimeSlot)
   njkEnv.addGlobal('AppointmentRepeatPeriod', AppointmentRepeatPeriod)
   njkEnv.addGlobal('AppointmentType', AppointmentType)
   njkEnv.addGlobal('AppointmentJourneyMode', AppointmentJourneyMode)

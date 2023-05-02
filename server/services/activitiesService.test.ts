@@ -13,7 +13,6 @@ import {
   ActivityScheduleLite,
   LocationGroup,
   LocationPrefix,
-  RolloutPrison,
   ScheduledActivity,
   PrisonPayBand,
   PrisonerScheduledEvents,
@@ -22,6 +21,7 @@ import {
   ActivitySchedule,
   AppointmentDetails,
   AppointmentOccurrenceDetails,
+  ActivityCandidate,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -164,52 +164,6 @@ describe('Activities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(activitiesApiClient.getScheduledActivity).toHaveBeenCalledWith(1, user)
-    })
-  })
-
-  describe('getPrison', () => {
-    it('should get rollout prison information from activities API', async () => {
-      const expectedResult = { id: 1, code: 'MDI', description: 'Moorlands', active: true } as RolloutPrison
-      when(activitiesApiClient.getRolloutPrison).calledWith(atLeast('MDI')).mockResolvedValue(expectedResult)
-      const actualResult = await activitiesService.getPrison('MDI', user)
-      expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getRolloutPrison).toHaveBeenCalledWith('MDI', user)
-    })
-  })
-
-  describe('populateUserPrisonInfo', () => {
-    it('should add the prisons rollout status to the users caseload info API', async () => {
-      const rolloutPrisonResult = { id: 1, code: 'MDI', description: 'Moorlands', active: true } as RolloutPrison
-      when(activitiesApiClient.getRolloutPrison).calledWith(atLeast('MDI')).mockResolvedValue(rolloutPrisonResult)
-
-      const testUser = {
-        allCaseLoads: [
-          {
-            caseLoadId: 'MDI',
-            caseloadFunction: 'ADMIN',
-            currentlyActive: true,
-            description: 'Moorlands',
-            type: 'APP',
-          },
-        ],
-      } as ServiceUser
-
-      const actualResult = await activitiesService.populateUserPrisonInfo(testUser)
-
-      const expectedResult = {
-        allCaseLoads: [
-          {
-            caseLoadId: 'MDI',
-            caseloadFunction: 'ADMIN',
-            currentlyActive: true,
-            description: 'Moorlands',
-            type: 'APP',
-            isRolledOut: true,
-          },
-        ],
-      } as ServiceUser
-      expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getRolloutPrison).toHaveBeenCalledWith('MDI', testUser)
     })
   })
 
@@ -381,19 +335,22 @@ describe('Activities Service', () => {
         startTime: '09:00',
         endTime: '10:30',
         comment: 'This appointment will help adjusting to life outside of prison',
+        appointmentDescription: 'Appointment description',
         prisonerNumbers: ['A1234BC'],
         appointmentType: AppointmentType.INDIVIDUAL,
       }
 
       const expectedResponse = {
         id: 12345,
-        categoryCode: 'CHAP',
+        appointmentType: 'INDIVIDUAL',
         prisonCode: 'SKI',
+        categoryCode: 'CHAP',
         internalLocationId: 123,
         startDate: '2023-02-07',
         startTime: '09:00',
         endTime: '10:30',
         comment: 'This appointment will help adjusting to life outside of prison',
+        appointmentDescription: 'Appointment description',
         created: '2023-02-07T15:37:59.266Z',
         createdBy: 'AAA01U',
         occurrences: [
@@ -404,7 +361,6 @@ describe('Activities Service', () => {
             startTime: '13:00',
             endTime: '13:30',
             comment: 'This appointment occurrence has been rescheduled due to staff availability',
-            cancelled: false,
             updated: '2023-02-07T15:37:59.266Z',
             updatedBy: 'AAA01U',
             allocations: [
@@ -455,6 +411,27 @@ describe('Activities Service', () => {
       await activitiesService.uncancelScheduledActivity(1, user)
 
       expect(activitiesApiClient.putUncancelScheduledActivity).toHaveBeenCalledWith(1, apiRequest, user)
+    })
+  })
+
+  describe('getActivityCandidates', () => {
+    it('should return content of pageable candidates', async () => {
+      when(activitiesApiClient.getActivityCandidates).mockResolvedValue({
+        content: [{ name: 'Joe Bloggs' }] as ActivityCandidate[],
+      })
+
+      const result = await activitiesService.getActivityCandidates(1, user)
+
+      expect(activitiesApiClient.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      )
+      expect(result).toEqual({ content: [{ name: 'Joe Bloggs' }] })
     })
   })
 

@@ -3,10 +3,11 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Check Answers" %}
+{% set pageTitle = appointmentJourneyTitle("Check Answers", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-check-answers-page' %}
 
 {% set summaryListRows = [] %}
@@ -61,6 +62,52 @@
             ]
         }
     },
+    {
+        key: {
+            text: "Show category on unlock list"
+        },
+        value: {
+            text: session.appointmentJourney.descriptionOption
+        },
+        actions: {
+            items: [
+                {
+                    href: "description?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change description option",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-description-option' }
+                }
+            ]
+        }
+    }
+), summaryListRows) %}
+
+{% if session.appointmentJourney.descriptionOption == 'no' %}
+    {% set summaryListRows = (summaryListRows.push(
+        {
+            key: {
+                text: "Appointment description"
+            },
+            value: {
+                text: session.appointmentJourney.description
+            },
+            actions: {
+                items: [
+                    {
+                        href: "description?fromReview=true",
+                        text: "Change",
+                        visuallyHiddenText: "change description",
+                        classes: "govuk-link--no-visited-state",
+                        attributes: { 'data-qa': 'change-description' }
+                    }
+                ]
+            }
+        }
+    ), summaryListRows) %}
+{% endif %}
+
+{% set summaryListRows = (summaryListRows.push(
     {
         key: {
             text: "Location"

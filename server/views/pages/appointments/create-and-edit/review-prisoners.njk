@@ -4,11 +4,12 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {%- from "moj/components/search/macro.njk" import mojSearch -%}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Review Prisoners" %}
+{% set pageTitle = appointmentJourneyTitle("Review Prisoners", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-review-prisoners-page' %}
 {% set backLinkHref = "select-prisoner" %}
 

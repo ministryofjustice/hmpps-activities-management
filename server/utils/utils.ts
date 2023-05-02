@@ -243,19 +243,24 @@ export const buildErrorSummaryList = (array: FieldValidationError[]) => {
   }))
 }
 
-export const formatDate = (date: Date, fmt: string, inContextName?: boolean) => {
+export const formatDate = (date: unknown, fmt: string, inContextName?: boolean) => {
+  let richDate = date as Date
+  if (typeof date === 'string') {
+    richDate = parseDate(date as string)
+  }
+
   if (inContextName) {
-    if (isToday(date)) {
+    if (isToday(richDate)) {
       return 'today'
     }
-    if (isTomorrow(date)) {
+    if (isTomorrow(richDate)) {
       return 'tomorrow'
     }
-    if (isYesterday(date)) {
+    if (isYesterday(richDate)) {
       return 'yesterday'
     }
   }
-  return format(date, fmt)
+  return format(richDate, fmt)
 }
 
 export const dateInList = (date: Date, dates: Date[]) => {

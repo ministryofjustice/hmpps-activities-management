@@ -1,4 +1,4 @@
-ActivitiesFrontend.PrintButton = function (button) {
+function PrintButton(button) {
   this.printButton = button
 
   this.printButton.addEventListener('click', e => {
@@ -6,3 +6,5 @@ ActivitiesFrontend.PrintButton = function (button) {
     window.print()
   })
 }
+
+export default PrintButton

@@ -4,10 +4,10 @@
 
 {% from "components/datePicker.njk" import datePicker %}
 {% from "components/timePicker.njk" import timePicker %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
-
-{% set pageTitle = "Appointments Management - Create Appointment - Date and Time" %}
+{% set pageTitle = appointmentJourneyTitle("Date and Time", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-date-and-time-page' %}
 {% set backLinkHref = "name" %}
 
@@ -55,7 +55,7 @@
                     formResponses: formResponses.endTime or session.appointmentJourney.endTime
                 }) }}
                 {{ govukButton({
-                    text: "Continue"
+                    text: "Accept and save" if session.appointmentJourney.mode == "EDIT" else "Continue"
                 }) }}
             </form>
         </div>

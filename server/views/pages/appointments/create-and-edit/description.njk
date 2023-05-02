@@ -1,0 +1,67 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+
+{% set pageTitle = appointmentJourneyTitle("Description", session.appointmentJourney) %}
+{% set pageId = 'appointments-create-description-page' %}
+{% set backLinkHref = "category" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    name: "descriptionOption",
+                    fieldset: {
+                        legend: {
+                            text: "Do you want to show " + session.appointmentJourney.category.description + " on the unlock list?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "yes",
+                            text: "Yes",
+                            checked: formResponses.descriptionOption == "yes" or session.appointmentJourney.descriptionOption == "yes"
+                        },
+                        {
+                            value: "no",
+                            text: "No",
+                            checked: formResponses.descriptionOption == "no" or session.appointmentJourney.descriptionOption == "no",
+                            conditional: {
+                                  html: nestedDescription()
+                            }
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('descriptionOption')
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% macro nestedDescription() %}
+    {{ govukCharacterCount({
+        label: {
+            text: "Enter your own appointment description"
+        },
+        id: "description",
+        name: "description",
+        maxlength: 40,
+        rows: 1,
+        value: formResponses.description or session.appointmentJourney.description,
+        errorMessage: validationErrors | findError('description')
+    }) }}
+{% endmacro %}

@@ -16,6 +16,7 @@ import {
   AppointmentDetails,
   AppointmentOccurrenceDetails,
   AppointmentCategorySummary,
+  AppointmentLocationSummary,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -248,11 +249,19 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('getRolloutPrison', () => {
+  describe('getRolloutPrisonPlan', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/rollout/MDI').matchHeader('authorization', `Bearer token`).reply(200, response)
-      const output = await activitiesApiClient.getRolloutPrison('MDI', user)
+      fakeActivitiesApi.get('/rollout/MDI').matchHeader('authorization', `Bearer accessToken`).reply(200, response)
+      const output = await activitiesApiClient.getPrisonRolloutPlan('MDI')
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+
+    it('should return default data when 404 encountered', async () => {
+      const response = { activitiesRolledOut: false, appointmentsRolledOut: false, prisonCode: 'MDI' }
+      fakeActivitiesApi.get('/rollout/MDI').matchHeader('authorization', `Bearer accessToken`).reply(404, response)
+      const output = await activitiesApiClient.getPrisonRolloutPlan('MDI')
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
@@ -431,8 +440,9 @@ describe('activitiesApiClient', () => {
     it('should return appointment from api when valid appointment id is used', async () => {
       const response = {
         id: 12345,
-        categoryCode: 'CHAP',
+        appointmentType: 'INDIVIDUAL',
         prisonCode: 'SKI',
+        categoryCode: 'CHAP',
         internalLocationId: 123,
         startDate: '2023-02-07',
         startTime: '09:00',
@@ -443,12 +453,12 @@ describe('activitiesApiClient', () => {
         occurrences: [
           {
             id: 123456,
+            sequenceNumber: 1,
             internalLocationId: 123,
             startDate: '2023-02-07',
             startTime: '13:00',
             endTime: '13:30',
             comment: 'This appointment occurrence has been rescheduled due to staff availability',
-            cancelled: false,
             updated: '2023-02-07T15:37:59.266Z',
             updatedBy: 'AAA01U',
             allocations: [
@@ -529,6 +539,37 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getAppointmentLocations', () => {
+    it('should return all locations from api', async () => {
+      const response = [
+        {
+          id: 1,
+          prisonCode: 'MDI',
+          description: 'Appointment Location 1',
+        },
+        {
+          id: 2,
+          prisonCode: 'MDI',
+          description: 'Appointment Location 2',
+        },
+        {
+          id: 3,
+          prisonCode: 'MDI',
+          description: 'Appointment Location 3',
+        },
+      ] as AppointmentLocationSummary[]
+
+      fakeActivitiesApi
+        .get('/appointment-locations/MDI')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getAppointmentLocations('MDI', user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('postCreateAppointment', () => {
     it('should return created appointment from api when valid request is sent', async () => {
       const request = {
@@ -540,19 +581,22 @@ describe('activitiesApiClient', () => {
         startTime: '09:00',
         endTime: '10:30',
         comment: 'This appointment will help adjusting to life outside of prison',
+        appointmentDescription: 'Appointment description',
         prisonerNumbers: ['A1234BC'],
         appointmentType: AppointmentType.INDIVIDUAL,
       }
 
       const response = {
         id: 12345,
-        categoryCode: 'CHAP',
+        appointmentType: 'INDIVIDUAL',
         prisonCode: 'SKI',
+        categoryCode: 'CHAP',
         internalLocationId: 123,
         startDate: '2023-02-07',
         startTime: '09:00',
         endTime: '10:30',
         comment: 'This appointment will help adjusting to life outside of prison',
+        appointmentDescription: 'Appointment description',
         created: '2023-02-07T15:37:59.266Z',
         createdBy: 'AAA01U',
         occurrences: [
@@ -563,7 +607,6 @@ describe('activitiesApiClient', () => {
             startTime: '13:00',
             endTime: '13:30',
             comment: 'This appointment occurrence has been rescheduled due to staff availability',
-            cancelled: false,
             updated: '2023-02-07T15:37:59.266Z',
             updatedBy: 'AAA01U',
             allocations: [
@@ -625,6 +668,29 @@ describe('activitiesApiClient', () => {
       }
 
       await activitiesApiClient.editAppointmentOccurrence(1, body, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getActivityCandidates', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/schedules/1/candidates')
+        .query({
+          suitableIncentiveLevel: 'Basic',
+          suitableRiskLevel: 'RHI',
+          suitableForEmployed: true,
+          search: 'test',
+          page: 2,
+          size: 5,
+        })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getActivityCandidates(1, user, ['Basic'], ['RHI'], true, 'test', 2)
+
+      expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
   })

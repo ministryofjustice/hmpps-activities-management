@@ -11,7 +11,6 @@ import {
   CapacityAndAllocated,
   InternalLocation,
   PrisonerScheduledEvents,
-  RolloutPrison,
   ScheduledActivity,
   LocationGroup,
   LocationPrefix,
@@ -28,7 +27,12 @@ import {
   AppointmentOccurrenceDetails,
   ScheduleInstanceCancelRequest,
   UncancelScheduledInstanceRequest,
+  PageActivityCandidate,
   AppointmentOccurrenceUpdateRequest,
+  AppointmentLocationSummary,
+  RolloutPrisonPlan,
+  AppointmentOccurrenceSearchRequest,
+  AppointmentOccurrenceSearchResult,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -174,11 +178,21 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getRolloutPrison(prisonCode: string, user: ServiceUser): Promise<RolloutPrison> {
+  async getPrisonRolloutPlan(prisonCode: string): Promise<RolloutPrisonPlan> {
     return this.get({
       path: `/rollout/${prisonCode}`,
-      authToken: user.token,
     })
+      .then(res => res as RolloutPrisonPlan)
+      .catch(err => {
+        if (err.status === 404) {
+          return {
+            prisonCode,
+            activitiesRolledOut: false,
+            appointmentsRolledOut: false,
+          }
+        }
+        throw err
+      })
   }
 
   getScheduledPrisonLocations(
@@ -301,6 +315,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  async getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<AppointmentLocationSummary[]> {
+    return this.get({
+      path: `/appointment-locations/${prisonCode}`,
+      authToken: user.token,
+    })
+  }
+
   async postCreateAppointment(appointment: AppointmentCreateRequest, user: ServiceUser): Promise<Appointment> {
     return this.post({
       path: `/appointments`,
@@ -333,10 +354,9 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getAttendanceDetails(attendanceId: number, user: ServiceUser): Promise<Attendance> {
+  async getAttendanceDetails(attendanceId: number): Promise<Attendance> {
     return this.get({
       path: `/attendances/${attendanceId}`,
-      authToken: user.token,
     })
   }
 
@@ -349,6 +369,41 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/appointment-occurrences/${occurrenceId}`,
       authToken: user.token,
       data: occurrenceDetails,
+    })
+  }
+
+  getActivityCandidates(
+    scheduleId: number,
+    user: ServiceUser,
+    suitableIncentiveLevel?: string[],
+    suitableRiskLevel?: string[],
+    suitableForEmployed?: boolean,
+    search?: string,
+    page?: number,
+  ): Promise<PageActivityCandidate> {
+    return this.get({
+      path: `/schedules/${scheduleId}/candidates`,
+      query: {
+        suitableIncentiveLevel,
+        suitableRiskLevel,
+        suitableForEmployed,
+        search,
+        page,
+        size: 5,
+      },
+      authToken: user.token,
+    })
+  }
+
+  async searchAppointmentOccurrences(
+    prisonCode: string,
+    searchRequest: AppointmentOccurrenceSearchRequest,
+    user: ServiceUser,
+  ): Promise<AppointmentOccurrenceSearchResult[]> {
+    return this.post({
+      path: `/appointment-occurrences/${prisonCode}/search`,
+      authToken: user.token,
+      data: searchRequest,
     })
   }
 }

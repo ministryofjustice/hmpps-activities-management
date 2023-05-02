@@ -1,3 +1,4 @@
+import path from 'path'
 import DatePicker from '../components/datePicker'
 import SummaryList from '../components/summaryList'
 
@@ -46,6 +47,8 @@ export default abstract class Page {
         cy.get(`#${id}`)
       })
 
+  getButton = (value: string): Cypress.Chainable => cy.get(`button:contains(${value})`)
+
   getInputById = (id: string): Cypress.Chainable => cy.get(`[id=${id}]`)
 
   getInputByName = (name: string): Cypress.Chainable => cy.get(`[name="${name}"]`)
@@ -80,5 +83,12 @@ export default abstract class Page {
 
   assertValidationError = (forName, errorText) => {
     cy.get(`.govuk-error-summary__list a[href="#${forName}"]`).contains(errorText)
+  }
+
+  assertFileDownload = (filename: string) => {
+    const downloadsFolder = Cypress.config('downloadsFolder')
+    const downloadPath = path.join(downloadsFolder, filename)
+
+    cy.readFile(downloadPath).should('exist')
   }
 }

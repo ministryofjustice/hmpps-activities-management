@@ -40,6 +40,14 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
       await handler.POST(req, res)
       expect(res.redirect).toBeCalledWith('select-prisoner')
     })
+
+    it('should redirect to upload by CSV page', async () => {
+      req.body = {
+        howToAdd: 'CSV',
+      }
+      await handler.POST(req, res)
+      expect(res.redirect).toBeCalledWith('upload-by-csv')
+    })
   })
 
   describe('Validation', () => {

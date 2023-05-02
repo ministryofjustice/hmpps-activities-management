@@ -4,8 +4,9 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - How to add prisoners" %}
+{% set pageTitle = appointmentJourneyTitle("How to add prisoners", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-how-to-add-prisoners-page' %}
 {% set backLinkHref = "/appointments" %}
 

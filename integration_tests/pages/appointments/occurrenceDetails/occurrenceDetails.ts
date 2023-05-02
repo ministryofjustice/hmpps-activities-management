@@ -37,4 +37,11 @@ export default class OccurrenceDetailsPage extends Page {
   assertCreatedBy = (createdBy: string) => this.assertSummaryListValue('user-details', 'Created by', createdBy)
 
   assertPrintMovementSlipLink = () => this.printMovementSlipLink().contains('Print movement slip')
+
+  getChangeLink = (property: string) =>
+    cy
+      .get('[data-qa=appointment-details]')
+      .find(`.govuk-summary-list__key:contains(${property})`)
+      .parent()
+      .find(`.govuk-summary-list__actions a:contains(Change)`)
 }

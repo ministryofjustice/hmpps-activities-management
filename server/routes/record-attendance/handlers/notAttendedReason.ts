@@ -11,6 +11,7 @@ import NotAttendedData, {
   ReasonEnteredForAllPrisoners,
 } from '../../../validators/validateNotAttendedData'
 import AttendanceStatus from '../../../enum/attendanceStatus'
+import AttendanceReason from '../../../enum/attendanceReason'
 
 export class NotAttendedReason {
   @Expose()
@@ -48,6 +49,7 @@ export default class NotAttendedReasonRoutes {
     req.session.notAttendedJourney.selectedPrisoners.forEach(selectedPrisoner => {
       attendanceUpdates.push({
         id: selectedPrisoner.attendanceId,
+        prisonCode: user.activeCaseLoadId,
         status: AttendanceStatus.COMPLETED,
         attendanceReason: notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason,
         comment: notAttendedData[selectedPrisoner.prisonerNumber].moreDetail,
@@ -60,7 +62,8 @@ export default class NotAttendedReasonRoutes {
             : false) ||
           (notAttendedData[selectedPrisoner.prisonerNumber].absencePay
             ? notAttendedData[selectedPrisoner.prisonerNumber].absencePay
-            : false),
+            : false) ||
+          notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason === AttendanceReason.NOT_REQUIRED,
         caseNote: notAttendedData[selectedPrisoner.prisonerNumber].caseNote,
         incentiveLevelWarningIssued: notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
           ? notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued

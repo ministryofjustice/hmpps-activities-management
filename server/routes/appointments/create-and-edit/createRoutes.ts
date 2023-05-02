@@ -6,6 +6,7 @@ import StartJourneyRoutes from './handlers/startJourney'
 import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/selectPrisoner'
 import UploadPrisonerListRoutes, { PrisonerList } from './handlers/uploadPrisonerList'
 import CategoryRoutes, { Category } from './handlers/category'
+import DescriptionRoutes, { Description } from './handlers/description'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import RepeatRoutes, { Repeat } from './handlers/repeat'
@@ -13,6 +14,7 @@ import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './handlers/rep
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
+import UploadByCSV from './handlers/uploadByCsv'
 import ReviewPrisoners, { AddAnotherForm } from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
@@ -31,13 +33,15 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const categoryHandler = new CategoryRoutes(activitiesService)
-  const locationHandler = new LocationRoutes(prisonService, activitiesService)
-  const dateAndTimeHandler = new DateAndTimeRoutes()
+  const descriptionHandler = new DescriptionRoutes()
+  const locationHandler = new LocationRoutes(activitiesService)
+  const dateAndTimeHandler = new DateAndTimeRoutes(activitiesService)
   const repeatHandler = new RepeatRoutes()
   const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
   const howToAddPrisoners = new HowToAddPrisoners()
+  const uploadByCsv = new UploadByCSV()
   const reviewPrisoners = new ReviewPrisoners()
 
   get('/start-individual', startHandler.INDIVIDUAL)
@@ -53,10 +57,12 @@ export default function Create({ prisonService, activitiesService }: Services): 
   )
   get('/category', categoryHandler.GET, true)
   post('/category', categoryHandler.POST, Category)
+  get('/description', descriptionHandler.GET, true)
+  post('/description', descriptionHandler.POST, Description)
   get('/location', locationHandler.GET, true)
   post('/location', locationHandler.CREATE, Location)
   get('/date-and-time', dateAndTimeHandler.GET, true)
-  post('/date-and-time', dateAndTimeHandler.POST, DateAndTime)
+  post('/date-and-time', dateAndTimeHandler.CREATE, DateAndTime)
   get('/repeat', repeatHandler.GET, true)
   post('/repeat', repeatHandler.POST, Repeat)
   get('/repeat-period-and-count', repeatPeriodAndCountHandler.GET, true)
@@ -71,6 +77,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
   )
   get('/how-to-add-prisoners', howToAddPrisoners.GET, true)
   post('/how-to-add-prisoners', howToAddPrisoners.POST, HowToAddPrisonersForm)
+  get('/upload-by-csv', uploadByCsv.GET, true)
+  post('/upload-by-csv', uploadByCsv.POST)
   get('/review-prisoners', reviewPrisoners.GET, true)
   post('/review-prisoners', reviewPrisoners.POST, AddAnotherForm)
 

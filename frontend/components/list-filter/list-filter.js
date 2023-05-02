@@ -1,8 +1,11 @@
-ActivitiesFrontend.ListFilter = function (container) {
+import { FilterToggleButton } from '@ministryofjustice/frontend'
+
+function ListFilter(container) {
   this.container = container
 
-  new MOJFrontend.FilterToggleButton({
-    startHidden: true,
+  new FilterToggleButton({
+    bigModeMediaQuery: '(min-width: 40.0625em)',
+    startHidden: this.container.dataset.filterStartShown !== 'true',
     toggleButton: {
       container: $('.moj-action-bar__filter'),
       showText: 'Show filter',
@@ -18,3 +21,5 @@ ActivitiesFrontend.ListFilter = function (container) {
     },
   })
 }
+
+export default ListFilter

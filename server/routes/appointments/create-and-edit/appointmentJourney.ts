@@ -23,6 +23,8 @@ export type AppointmentJourney = {
     code: string
     description: string
   }
+  descriptionOption?: string
+  description?: string
   location?: {
     id: number
     description: string

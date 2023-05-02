@@ -1,7 +1,7 @@
 import { components } from '.'
 
 export type Activity = components['schemas']['Activity']
-export type RolloutPrison = components['schemas']['RolloutPrison']
+export type RolloutPrisonPlan = components['schemas']['RolloutPrisonPlan']
 export type InternalLocation = components['schemas']['InternalLocation']
 export type ActivitySchedule = components['schemas']['ActivitySchedule']
 export type ActivityScheduleLite = components['schemas']['ActivityScheduleLite']
@@ -34,3 +34,7 @@ export type UserSummary = components['schemas']['UserSummary']
 export type PrisonerSummary = components['schemas']['PrisonerSummary']
 export type ActivityScheduleSlot = components['schemas']['ActivityScheduleSlot']
 export type AppointmentOccurrenceUpdateRequest = components['schemas']['AppointmentOccurrenceUpdateRequest']
+export type ActivityCandidate = components['schemas']['ActivityCandidate']
+export type PageActivityCandidate = components['schemas']['PageActivityCandidate']
+export type AppointmentOccurrenceSearchRequest = components['schemas']['AppointmentOccurrenceSearchRequest']
+export type AppointmentOccurrenceSearchResult = components['schemas']['AppointmentOccurrenceSearchResult']

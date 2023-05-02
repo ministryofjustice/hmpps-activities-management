@@ -4,37 +4,34 @@ import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import LocationRoutes, { Location } from './location'
-import PrisonService from '../../../../services/prisonService'
-import { LocationLenient } from '../../../../@types/prisonApiImportCustom'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentJourney } from '../appointmentJourney'
 import atLeast from '../../../../../jest.setup'
+import { AppointmentLocationSummary } from '../../../../@types/activitiesAPI/types'
 
-jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
 
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Create Appointment - Location', () => {
-  const handler = new LocationRoutes(prisonService, activitiesService)
+  const handler = new LocationRoutes(activitiesService)
   let req: Request
   let res: Response
 
   const locations = [
     {
-      locationId: 26152,
-      userDescription: 'Chapel',
+      id: 26152,
+      description: 'Chapel',
     },
     {
-      locationId: 26149,
-      userDescription: 'Gym',
+      id: 26149,
+      description: 'Gym',
     },
     {
-      locationId: 26151,
-      userDescription: 'Library',
+      id: 26151,
+      description: 'Library',
     },
-  ] as LocationLenient[]
+  ] as AppointmentLocationSummary[]
 
   beforeEach(() => {
     res = {
@@ -64,7 +61,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
   describe('GET', () => {
     it('should render the location view', async () => {
-      when(prisonService.getLocationsForAppointments).mockResolvedValue(locations)
+      when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
 
       await handler.GET(req, res)
 
@@ -78,7 +75,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
         locationId: 26149,
       }
 
-      when(prisonService.getLocationsForAppointments).mockResolvedValue(locations)
+      when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
 
       await handler.CREATE(req, res)
 
@@ -94,7 +91,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
         locationId: -1,
       }
 
-      when(prisonService.getLocationsForAppointments).mockResolvedValue(locations)
+      when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
 
       await handler.CREATE(req, res)
 
@@ -122,7 +119,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
         },
       } as unknown as AppointmentJourney
 
-      when(prisonService.getLocationsForAppointments).mockResolvedValue(locations)
+      when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
       when(activitiesService.editAppointmentOccurrence).calledWith(atLeast(12))
 
       await handler.EDIT(req, res)
@@ -132,7 +129,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
       expect(req.flash).toHaveBeenCalledWith(
         'successMessage',
         JSON.stringify({
-          message: `Appointment location changed successfully`,
+          message: `Appointment location for this occurrence changed successfully`,
         }),
       )
 
@@ -144,7 +141,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
         locationId: -1,
       }
 
-      when(prisonService.getLocationsForAppointments).mockResolvedValue(locations)
+      when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
 
       await handler.EDIT(req, res)
 

@@ -2,8 +2,9 @@
 
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = "Appointments Management - Create Appointment - Confirmation" %}
+{% set pageTitle = appointmentJourneyTitle("Confirmation", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-confirmation-page' %}
 
 {% block content %}
@@ -14,9 +15,9 @@
             }) }}
             <p class="govuk-body" data-qa="message">
                 {% if appointment.appointmentType == AppointmentType.INDIVIDUAL %}
-                    You have successfully created an appointment{{ ("series" if appointment.repeat != null) }} for {{ appointment.prisoners[0] | fullName | toTitleCase }}
+                    You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners[0] | fullName | toTitleCase }}
                 {% elseif appointment.appointmentType == AppointmentType.GROUP %}
-                    You have successfully created an appointment{{ ("series" if appointment.repeat != null) }} for {{ appointment.prisoners | length }} prisoners
+                    You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners | length }} prisoners
                 {% endif %}
                 {% if appointment.repeat == null %}
                     on {{ appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}.
@@ -27,8 +28,8 @@
                 ("weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
                 ("fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
                 ("monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY) }}
-                    for {{ appointment.repeat.pount }}
-                    {% if appointment.repeat.pount == 1 %}
+                    for {{ appointment.repeat.count }}
+                    {% if appointment.repeat.count == 1 %}
                         occurrence
                     {% else %}
                         occurrences

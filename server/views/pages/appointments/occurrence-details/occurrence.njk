@@ -57,6 +57,16 @@
         },
         value: {
             text: occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+        },
+        actions: {
+            items: [
+                {
+                    href: occurenceLink + "/edit/start/date-and-time",
+                    text: "Change",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-date' }
+                }
+            ]
         }
     },
     {
@@ -65,6 +75,16 @@
         },
         value: {
             text: occurrence.startTime
+        },
+        actions: {
+            items: [
+                {
+                    href: occurenceLink + "/edit/start/date-and-time",
+                    text: "Change",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-start-time' }
+                }
+            ]
         }
     },
     {
@@ -73,6 +93,16 @@
         },
         value: {
             text: occurrence.endTime
+        },
+        actions: {
+            items: [
+                {
+                    href: occurenceLink + "/edit/start/date-and-time",
+                    text: "Change",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-end-time' }
+                }
+            ]
         }
     }
 ), summaryListRows) %}
@@ -101,7 +131,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l" data-qa='heading'>View and edit appointment details</h1>
+            <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}</h1>
             <h2 class="govuk-heading-m">Appointment details</h2>
             {{ govukSummaryList({
                 rows: summaryListRows,
@@ -120,7 +150,14 @@
                         value: {
                             text: occurrence.createdBy | fullName | toTitleCase | initialiseName
                         }
-                    }
+                    }, {
+                        key: {
+                            text: "Updated by"
+                        },
+                        value: {
+                            text: occurrence.updatedBy | fullName | toTitleCase | initialiseName
+                        }
+                    } if occurrence.updatedBy
                 ],
                 classes: "govuk-!-margin-bottom-9",
                 attributes: { 'data-qa': 'user-details' }

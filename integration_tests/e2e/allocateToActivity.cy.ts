@@ -5,15 +5,13 @@ import getScheduleCapacity from '../fixtures/activitiesApi/getScheduleCapacity.j
 import getAllocations from '../fixtures/activitiesApi/getAllocations.json'
 import inmateDetails from '../fixtures/prisonerSearchApi/prisonerSearchG4793VF.json'
 import prisonerAllocations from '../fixtures/activitiesApi/prisonerAllocations.json'
-import prisonerEducationLevels from '../fixtures/prisonApi/prisonerEducationLevels.json'
 import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
 import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
-import inmateDetailList from '../fixtures/prisonApi/inmateDetailList.json'
-import getAllInmatesPerPrison from '../fixtures/prisonerSearchApi/getAllInmatesPerPrison.json'
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetails.json'
 import getPrisonerIepSummary from '../fixtures/incentivesApi/getPrisonerIepSummary.json'
 import getActivity from '../fixtures/activitiesApi/getActivity.json'
 import getMdiPrisonPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
+import getCandidates from '../fixtures/activitiesApi/getCandidates.json'
 
 import IndexPage from '../pages/index'
 import Page from '../pages/page'
@@ -38,9 +36,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/schedules/5/allocations', getAllocations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
-    cy.stubEndpoint('POST', '/api/education/prisoners', prisonerEducationLevels)
-    cy.stubEndpoint('POST', '/api/bookings/offenders', inmateDetailList)
-    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?page=0&size=20', getAllInmatesPerPrison)
+    cy.stubEndpoint('GET', '/schedules/5/candidates(.)*', getCandidates)
     cy.stubEndpoint('GET', '/api/offenders/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/iep/reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/activities/2', getActivity)
@@ -67,9 +63,6 @@ context('Allocate to activity', () => {
     allocatePage.selectRiskLevelOption('Any Workplace Risk Assessment')
     allocatePage.applyFilters()
     allocatePage.candidateRows().should('have.length', 10)
-    allocatePage.enterCandidateQuery('alfonso')
-    allocatePage.search()
-    allocatePage.candidateRows().should('have.length', 1)
     allocatePage.selectCandidateWithName('Alfonso Cholak')
 
     const payBandPage = Page.verifyOnPage(PayBandPage)

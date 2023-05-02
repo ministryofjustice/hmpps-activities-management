@@ -30,7 +30,7 @@
         key: {
             text: "Pay"
         },
-        value: { text: attendance.payAmount / 100 | toFixed or "none"}
+        value: { text: attendance.payAmount / 100 | toFixed or "None"}
     }
 ), summaryListRows) %}
 
@@ -43,28 +43,31 @@
             value: { text: "Yes" if attendance.incentiveLevelWarningIssued else "No"}
         }
     ), summaryListRows) %}
+{% endif %}
+{% if attendance.caseNoteText %}
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
                 text: "Case Note"
             },
             value: {
-                text: attendance.caseNoteId
+                text: attendance.caseNoteText
             }
         }
     ), summaryListRows) %}
 {% endif %}
-
-{% set summaryListRows = (summaryListRows.push(
-    {
-        key: {
-            text: "Comment"
-        },
-        value: {
-            text: attendance.comment
+{% if attendance.comment %}
+    {% set summaryListRows = (summaryListRows.push(
+        {
+            key: {
+                text: "Comment"
+            },
+            value: {
+                text: attendance.comment
+            }
         }
-    }
-), summaryListRows) %}
+    ), summaryListRows) %}
+{% endif %}
 
 {% set summaryListRows = (summaryListRows.push(
     {

@@ -12,4 +12,6 @@ export default class RepeatPeriodAndCountPage extends Page {
   enterRepeatCount = (count: string) => this.getInputByName('repeatCount').clear().type(count)
 
   assertRepeatCount = (count: string) => this.getInputByName('repeatCount').should('have.value', count)
+
+  assertEndDate = (dateString: string) => cy.get('[data-qa=end-date]').should('contain.text', dateString)
 }

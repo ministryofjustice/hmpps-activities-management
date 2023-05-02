@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import { PathParams } from 'express-serve-static-core'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -31,9 +32,14 @@ export interface ApiConfig {
   agent: AgentConfig
 }
 
+interface RouteAuth {
+  route: PathParams
+  roles: string[]
+}
+
 export default {
   https: production,
-  staticResourceCacheDuration: 20,
+  staticResourceCacheDuration: '1h',
   redis: {
     host: get('REDIS_HOST', 'localhost', requiredInProduction),
     port: parseInt(process.env.REDIS_PORT, 10) || 6379,
@@ -126,4 +132,14 @@ export default {
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
+  routeAuth: [
+    {
+      route: '/allocate/activities',
+      roles: ['ACTIVITY_HUB'],
+    },
+    {
+      route: '/create',
+      roles: ['ACTIVITY_HUB'],
+    },
+  ] as RouteAuth[],
 }

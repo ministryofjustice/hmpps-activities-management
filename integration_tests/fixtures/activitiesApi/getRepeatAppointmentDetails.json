@@ -64,8 +64,13 @@
       "comment": "",
       "isEdited": false,
       "isCancelled": false,
-      "updated": null,
-      "updatedBy": null,
+      "updated": "2023-02-20T10:00:00",
+      "updatedBy": {
+        "id": 231232,
+        "username": "USER1",
+        "firstName": "john",
+        "lastName": "smith"
+      },
       "prisonerCount": 1
     }
   ],

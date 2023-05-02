@@ -17,7 +17,7 @@ export default function services() {
   } = dataAccess()
 
   return {
-    userService: new UserService(hmppsAuthClient, nomisUserApiClient, prisonApiClient),
+    userService: new UserService(hmppsAuthClient, nomisUserApiClient, prisonApiClient, activitiesApiClient),
     prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient),
     activitiesService: new ActivitiesService(activitiesApiClient, prisonerSearchApiClient),
     capacitiesService: new CapacitiesService(activitiesApiClient),

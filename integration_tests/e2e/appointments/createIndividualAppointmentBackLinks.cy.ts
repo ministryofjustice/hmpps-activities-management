@@ -4,6 +4,7 @@ import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
 import SelectPrisonerPage from '../../pages/appointments/create-and-edit/selectPrisonerPage'
 import CategoryPage from '../../pages/appointments/create-and-edit/categoryPage'
+import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
@@ -21,7 +22,7 @@ context('Create individual appointment - back links', () => {
     cy.signIn()
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY', getPrisonPrisoners)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
+    cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments')
   })
 
@@ -40,6 +41,10 @@ context('Create individual appointment - back links', () => {
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.selectCategory('Chaplaincy')
     categoryPage.continue()
+
+    const descriptionPage = Page.verifyOnPage(DescriptionPage)
+    descriptionPage.descriptionOption('Yes')
+    descriptionPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')
@@ -67,6 +72,9 @@ context('Create individual appointment - back links', () => {
     locationPage.assertSelectedLocation('Chapel')
 
     locationPage.back()
+    Page.verifyOnPage(DescriptionPage)
+
+    descriptionPage.back()
     Page.verifyOnPage(CategoryPage)
     categoryPage.assertSelectedCategory('Chaplaincy')
 
@@ -77,6 +85,7 @@ context('Create individual appointment - back links', () => {
     // Continue to repeat page
     selectPrisonerPage.continue()
     categoryPage.continue()
+    descriptionPage.continue()
     locationPage.continue()
     dateAndTimePage.continue()
 

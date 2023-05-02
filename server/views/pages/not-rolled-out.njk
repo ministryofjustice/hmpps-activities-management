@@ -1,0 +1,30 @@
+{% extends "layout.njk" %}
+{% from "components/card.njk" import card %}
+
+{% set pageTitle = applicationName + " - Forbidden" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-xl">The service is not available at {{ user.activeCaseLoad.description }} yet</h1>
+
+            <p class="govuk-body">
+                The service will be available at {{ user.activeCaseLoad.description }}
+                {% if rolloutPlan.activitiesRolloutDate %}
+                    on {{ rolloutPlan.activitiesRolloutDate | formatDate('EEEE d MMMM yyyy') }}.
+                {% else %}
+                    soon. We'll let you know when it's coming.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-button-group">
+                <a id="return-to-home" href="{{ hmppsAuthUrl }}" class="govuk-button">HMPPS services home page</a>
+                <a href='/change-location' class='govuk-link govuk-!-font-size-19'>Change your location</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

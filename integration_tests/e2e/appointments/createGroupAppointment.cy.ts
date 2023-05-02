@@ -4,6 +4,7 @@ import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
 import SelectPrisonerPage from '../../pages/appointments/create-and-edit/selectPrisonerPage'
 import CategoryPage from '../../pages/appointments/create-and-edit/categoryPage'
+import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisonersA1351DZ from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1351DZ.json'
 import getPrisonPrisonersA8644DYA1351DZ from '../../fixtures/prisonerSearchApi/postPrisonerNumbers-A1350DZ-A8644DY.json'
@@ -20,6 +21,7 @@ import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmat
 import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import { formatDate } from '../../../server/utils/utils'
 import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/uploadPrisonerListPage'
+import UploadByCsvPage from '../../pages/appointments/create-and-edit/uploadbyCsvPage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -34,7 +36,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=lee', getPrisonPrisonersA1351DZ)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getPrisonPrisonersA8644DYA1351DZ)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/locations\\?eventType=APP', getAppointmentLocations)
+    cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getGroupAppointmentDetails)
   })
@@ -57,6 +59,11 @@ context('Create group appointment', () => {
     let howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
     howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
     howToAddPrisonersPage.continue()
+
+    const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
+    uploadByCsvPage.getLinkByText('Download CSV file template').click()
+    uploadByCsvPage.assertFileDownload('prisoner-list.csv')
+    uploadByCsvPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('upload-prisoner-list.csv')
@@ -84,6 +91,10 @@ context('Create group appointment', () => {
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.selectCategory('Chaplaincy')
     categoryPage.continue()
+
+    const descriptionPage = Page.verifyOnPage(DescriptionPage)
+    descriptionPage.descriptionOption('Yes')
+    descriptionPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')

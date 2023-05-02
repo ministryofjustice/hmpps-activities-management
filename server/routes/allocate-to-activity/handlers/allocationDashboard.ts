@@ -9,7 +9,6 @@ import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { ActivitySchedule, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 import { parseDate } from '../../../utils/utils'
 import { IepLevel } from '../../../@types/incentivesApi/types'
-import { Education } from '../../../@types/prisonApiImport/types'
 
 type Filters = {
   candidateQuery: string
@@ -44,23 +43,25 @@ export default class AllocationDashboardRoutes {
     const suitableForIep = this.getSuitableForIep(schedule.activity.minimumIncentiveLevel, incentiveLevels)
     const suitableForWra = this.getSuitableForWra(schedule.activity.riskLevel)
 
-    if (Object.values(filters).length === 0) {
+    if (
+      !(filters.incentiveLevelFilter || filters.riskLevelFilter || filters.employmentFilter || filters.candidateQuery)
+    ) {
       filters.incentiveLevelFilter = suitableForIep
       filters.riskLevelFilter = suitableForWra
       filters.employmentFilter = 'Not in work'
     }
 
-    const [allocationSummaryView, currentlyAllocated, candidates] = await Promise.all([
+    const [allocationSummaryView, currentlyAllocated, pagedCandidates] = await Promise.all([
       this.capacitiesService.getScheduleAllocationsSummary(+scheduleId, user),
       this.getCurrentlyAllocated(+scheduleId, user),
-      this.getCandidates(+scheduleId, filters, user),
+      this.getCandidates(+scheduleId, filters, +req.query.page, user),
     ])
 
     res.render('pages/allocate-to-activity/allocation-dashboard', {
       allocationSummaryView,
       schedule,
       currentlyAllocated,
-      candidates,
+      pagedCandidates,
       incentiveLevels,
       filters,
       suitableForIep,
@@ -127,92 +128,58 @@ export default class AllocationDashboardRoutes {
     })
   }
 
-  private getCandidates = async (scheduleId: number, filters: Filters, user: ServiceUser) => {
+  private getCandidates = async (scheduleId: number, filters: Filters, pageNumber: number, user: ServiceUser) => {
     const candidateQueryLower = filters.candidateQuery?.toLowerCase()
-    const suitableIeps = filters.incentiveLevelFilter?.split(' or ')
-    const suitableWpas = filters.riskLevelFilter?.split(' or ')
+    const suitableIeps = this.getSuitableIepLevels(filters)
+    const suitableWpas = this.getSuitableRiskLevelCodes(filters)
+    const suitableForEmployed = this.getSuitableForEmployed(filters)
 
-    const currentlyAllocated = await this.activitiesService
-      .getAllocations(scheduleId, user)
-      .then(allocations => allocations.map(allocation => allocation.prisonerNumber))
-
-    const pageOfInmates = await this.prisonService
-      .getInmates(user.activeCaseLoad.caseLoadId, user)
-      .then(page => page.content)
-      .then(inmates => inmates.filter(i => !currentlyAllocated.includes(i.prisonerNumber)))
-      .then(inmates => inmates.filter(i => i.status === 'ACTIVE IN').filter(i => i.legalStatus !== 'DEAD'))
-      .then(inmates =>
-        inmates.filter(
-          i =>
-            filters.incentiveLevelFilter === 'All Incentive Levels' ||
-            !suitableIeps ||
-            suitableIeps.includes(i.currentIncentive?.level.description),
-        ),
-      )
-      .then(inmates => this.filterByWra(inmates, filters, suitableWpas))
-      .then(inmates =>
-        inmates.filter(
-          i =>
-            !candidateQueryLower ||
-            i.prisonerNumber.toLowerCase().includes(candidateQueryLower) ||
-            `${i.firstName} ${i.lastName}`.toLowerCase().includes(candidateQueryLower),
-        ),
-      )
-
-    const prisonerNumbers = pageOfInmates.map(i => i.prisonerNumber)
-    const [currentAllocations, educationLevels]: [PrisonerAllocations[], Education[]] = await Promise.all([
-      this.activitiesService.getPrisonerAllocations(user.activeCaseLoad.caseLoadId, prisonerNumbers, user),
-      this.prisonService.getEducations(prisonerNumbers, user),
-    ])
-
-    return pageOfInmates
-      .map(inmate => {
-        const otherAllocations =
-          currentAllocations
-            .find(a => a.prisonerNumber === inmate.prisonerNumber)
-            ?.allocations.map(a => ({
-              id: a.scheduleId,
-              scheduleName: a.scheduleDescription,
-              isUnemployment: a.isUnemployment,
-            })) || []
-
-        const inWork = otherAllocations.filter(a => !a.isUnemployment).length > 0
-
-        return {
-          name: `${inmate.firstName} ${inmate.lastName}`,
-          prisonerNumber: inmate.prisonerNumber,
-          cellLocation: inmate.cellLocation,
-          otherAllocations,
-          inWork,
-          releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
-          educationLevels: educationLevels.filter(e => e.bookingId.toString() === inmate.bookingId),
-        }
-      })
-      .filter(
-        i =>
-          !filters.employmentFilter ||
-          filters.employmentFilter === 'Everyone' ||
-          (filters.employmentFilter === 'In work' && i.inWork) ||
-          (filters.employmentFilter === 'Not in work' && !i.inWork),
-      )
+    return this.activitiesService.getActivityCandidates(
+      scheduleId,
+      user,
+      suitableIeps,
+      suitableWpas,
+      suitableForEmployed,
+      candidateQueryLower,
+      pageNumber,
+    )
   }
 
-  private filterByWra = (inmates: Prisoner[], filters: Filters, suitableWras: string[]): Prisoner[] => {
+  private getSuitableIepLevels = (filters: Filters): string[] => {
+    if (filters.incentiveLevelFilter === 'All Incentive Levels') {
+      return undefined
+    }
+
+    return filters.incentiveLevelFilter?.split(' or ')
+  }
+
+  private getSuitableRiskLevelCodes = (filters: Filters): string[] => {
     /* Alert codes mapping to workplace risk assessments:
        RHI - High
        RME - Medium
        RLO - Low
      */
-    const allAlertCodes = ['RHI', 'RME', 'RLO']
-    const suitableAlertCodes = suitableWras?.map(w => `R${w.toUpperCase().slice(0, 2)}`)
 
-    return inmates.filter(
-      i =>
-        !suitableWras ||
-        filters.riskLevelFilter === 'Any Workplace Risk Assessment' ||
-        (filters.riskLevelFilter === 'No Workplace Risk Assessment' &&
-          i.alerts.find(a => a.alertType === 'R' && allAlertCodes.includes(a.alertCode)) === undefined) ||
-        i.alerts.find(a => a.alertType === 'R' && suitableAlertCodes.includes(a.alertCode)) !== undefined,
-    )
+    if (filters.riskLevelFilter === 'Any Workplace Risk Assessment') {
+      return undefined
+    }
+
+    if (filters.riskLevelFilter === 'No Workplace Risk Assessment') {
+      return ['NONE']
+    }
+
+    return filters.riskLevelFilter?.split(' or ')?.map(w => `R${w.toUpperCase().slice(0, 2)}`)
+  }
+
+  private getSuitableForEmployed = (filters: Filters): boolean => {
+    if (filters.employmentFilter === 'Not in work') {
+      return false
+    }
+
+    if (filters.employmentFilter === 'In work') {
+      return true
+    }
+
+    return undefined
   }
 }

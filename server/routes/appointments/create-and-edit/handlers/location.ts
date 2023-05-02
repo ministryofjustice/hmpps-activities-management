@@ -1,8 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
-import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator'
+import { IsNotEmpty, IsNumber } from 'class-validator'
 import { EditApplyTo } from '../../../../@types/appointments'
-import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 
 export class Location {
@@ -13,16 +12,15 @@ export class Location {
   locationId: number
 
   @Expose()
-  @IsEnum(EditApplyTo, { message: 'Select how the change should be applied' })
   applyTo: EditApplyTo
 }
 
 export default class LocationRoutes {
-  constructor(private readonly prisonService: PrisonService, private readonly activitiesService: ActivitiesService) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const locations = await this.prisonService.getLocationsForAppointments(user.activeCaseLoadId, user)
+    const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     res.render('pages/appointments/create-and-edit/location', {
       locations,
@@ -34,8 +32,8 @@ export default class LocationRoutes {
     if (!location) return
 
     req.session.appointmentJourney.location = {
-      id: location.locationId,
-      description: location.userDescription,
+      id: location.id,
+      description: location.description,
     }
 
     res.redirectOrReturn(`date-and-time`)
@@ -52,7 +50,7 @@ export default class LocationRoutes {
     await this.activitiesService.editAppointmentOccurrence(
       +occurrenceId,
       {
-        internalLocationId: result.locationId,
+        internalLocationId: result.id,
         applyTo,
       },
       user,
@@ -61,7 +59,7 @@ export default class LocationRoutes {
     req.flash(
       'successMessage',
       JSON.stringify({
-        message: `Appointment location changed successfully`,
+        message: `Appointment location for this occurrence changed successfully`,
       }),
     )
 
@@ -72,9 +70,9 @@ export default class LocationRoutes {
     const { locationId } = req.body
     const { user } = res.locals
 
-    const location = await this.prisonService
-      .getLocationsForAppointments(user.activeCaseLoadId, user)
-      .then(locations => locations.find(l => l.locationId === locationId))
+    const location = await this.activitiesService
+      .getAppointmentLocations(user.activeCaseLoadId, user)
+      .then(locations => locations.find(l => l.id === locationId))
 
     if (!location) {
       res.validationFailed('locationId', `Selected location not found`)

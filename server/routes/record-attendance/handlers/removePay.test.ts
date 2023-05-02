@@ -63,7 +63,7 @@ describe('Route Handlers - Remove Pay', () => {
         } as ScheduledActivity)
 
       when(activitiesService.getAttendanceDetails)
-        .calledWith(1, res.locals.user)
+        .calledWith(1)
         .mockResolvedValue({
           id: 1,
           prisonerNumber: 'ABC321',
