@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
-import { EditApplyTo } from '../../../../@types/appointments'
 import ActivitiesService from '../../../../services/activitiesService'
+import { EditApplyTo } from '../../../../@types/appointments'
 
 export class Location {
   @Expose()
@@ -10,9 +10,6 @@ export class Location {
   @IsNotEmpty({ message: 'Select a location' })
   @IsNumber({ allowNaN: false }, { message: 'Select a location' })
   locationId: number
-
-  @Expose()
-  applyTo: EditApplyTo
 }
 
 export default class LocationRoutes {
@@ -42,7 +39,6 @@ export default class LocationRoutes {
   EDIT = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentId, occurrenceId } = req.params
-    const { applyTo } = req.body
 
     const result = await this.getLocation(req, res)
     if (!result) return
@@ -51,7 +47,7 @@ export default class LocationRoutes {
       +occurrenceId,
       {
         internalLocationId: result.id,
-        applyTo,
+        applyTo: EditApplyTo.THIS_OCCURRENCE,
       },
       user,
     )

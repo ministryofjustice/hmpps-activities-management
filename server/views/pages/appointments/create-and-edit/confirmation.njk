@@ -24,10 +24,10 @@
                 {% else %}
                     starting on {{ appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}.
                     It will repeat {{ ("every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
-                ("daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
-                ("weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
-                ("fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
-                ("monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY) }}
+                                      ("daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
+                                      ("weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
+                                      ("fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
+                                      ("monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY) }}
                     for {{ appointment.repeat.count }}
                     {% if appointment.repeat.count == 1 %}
                         occurrence
