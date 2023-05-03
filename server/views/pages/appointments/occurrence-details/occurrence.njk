@@ -29,7 +29,7 @@
                                     href: "/appointments/" + occurrence.appointmentId,
                                     text: "View series",
                                     classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'view-appointment-series' }
+                                    attributes: { 'data-qa': 'view-series' }
                                 }
                             ]
                         }
@@ -200,7 +200,7 @@
                 attributes: { 'data-qa': 'appointment-details' }
             }) }}
 
-            {{ prisonerList(occurrence.appointmentType, occurrence.prisoners) }}
+            {{ prisonerList(occurrence.appointmentId, occurrence.id, occurrence.appointmentType, occurrence.prisoners) }}
 
             {{ govukSummaryList({
                 card: {

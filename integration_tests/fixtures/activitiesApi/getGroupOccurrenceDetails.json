@@ -1,5 +1,5 @@
 {
-  "id": 12,
+  "id": 11,
   "appointmentId": 10,
   "sequenceNumber": 2,
   "category": {
@@ -13,10 +13,14 @@
     "description": "Chapel"
   },
   "inCell": false,
-  "startDate": "2023-03-01",
+  "startDate": "2023-02-22",
   "startTime": "14:00",
   "endTime": "15:30",
   "appointmentType": "GROUP",
+  "repeat": {
+    "period": "WEEKLY",
+    "count": 2
+  },
   "comment": "Appointment occurrence level comment",
   "isEdited": false,
   "isCancelled": false,

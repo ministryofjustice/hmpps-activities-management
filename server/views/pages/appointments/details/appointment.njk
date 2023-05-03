@@ -43,7 +43,7 @@
                 View and edit<span class="govuk-visually-hidden"> appointment ' + occurrence.sequenceNumber + '</span>
             </a>',
             classes: 'govuk-!-text-align-right',
-            attributes: { 'data-qa': 'view-and-edit-appointment-' + occurrence.sequenceNumber }
+            attributes: { 'data-qa': 'view-and-edit-occurrence-' + occurrence.sequenceNumber }
         }
     ]), occurrenceTableRows) %}
 {% endfor %}
@@ -146,7 +146,7 @@
                         }
                     }
                 ],
-                attributes: { 'data-qa': 'appointment-details' }
+                attributes: { 'data-qa': 'appointment-history' }
             }) }}
         </div>
     </div>

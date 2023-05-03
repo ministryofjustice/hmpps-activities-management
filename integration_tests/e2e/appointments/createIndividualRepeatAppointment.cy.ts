@@ -10,7 +10,8 @@ import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getRepeatAppointmentDetails from '../../fixtures/activitiesApi/getRepeatAppointmentDetails.json'
-import getOccurrenceDetails from '../../fixtures/activitiesApi/getOccurrenceDetails.json'
+import getOccurrence1Details from '../../fixtures/activitiesApi/getRepeatOccurrence1Details.json'
+import getOccurrence2Details from '../../fixtures/activitiesApi/getRepeatOccurrence2Details.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
@@ -29,7 +30,8 @@ context('Individual repeat appointment', () => {
   getRepeatAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
   getRepeatAppointmentDetails.occurrences[0].startDate = formatDate(tomorrow, 'yyyy-MM-dd')
   getRepeatAppointmentDetails.occurrences[1].startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
-  getOccurrenceDetails.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
+  getOccurrence1Details.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getOccurrence2Details.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -41,7 +43,8 @@ context('Individual repeat appointment', () => {
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatAppointmentDetails)
-    cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getOccurrenceDetails)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getOccurrence1Details)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getOccurrence2Details)
 
     // Move through create individual appointment to repeat page
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -92,7 +95,7 @@ context('Individual repeat appointment', () => {
 
       const confirmationPage = Page.verifyOnPage(ConfirmationPage)
       confirmationPage.assertMessageEquals(
-        `You have successfully created an appointment for Stephen Gregs starting on ${formatDate(
+        `You have successfully created an appointment series for Stephen Gregs starting on ${formatDate(
           tomorrow,
           'EEEE d MMMM yyyy',
         )}. It will repeat weekly for 2 occurrences`,
@@ -100,14 +103,13 @@ context('Individual repeat appointment', () => {
 
       confirmationPage.viewAppointmentLink().click()
 
+      const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+      occurrenceDetailsPage.assertAppointmentSeriesDetails()
+      occurrenceDetailsPage.assertViewSeriesLink()
+      occurrenceDetailsPage.viewSeriesLink().click()
+
       const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
-      appointmentDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
-      appointmentDetailsPage.assertCategory('Chaplaincy')
-      appointmentDetailsPage.assertLocation('Chapel')
-      appointmentDetailsPage.assertStartDate(tomorrow)
-      appointmentDetailsPage.assertStartTime(14, 0)
-      appointmentDetailsPage.assertEndTime(15, 30)
-      appointmentDetailsPage.assertRepeat('Yes')
+      appointmentDetailsPage.assertAppointmentSeriesDetails()
       appointmentDetailsPage.assertRepeatPeriod('Weekly')
       appointmentDetailsPage.assertRepeatCount('2')
       appointmentDetailsPage.assertOccurrences(
@@ -120,8 +122,8 @@ context('Individual repeat appointment', () => {
 
       // View appointment occurrence
       appointmentDetailsPage.viewEditOccurrenceLink(2).click()
-      const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-      occurrenceDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+      Page.verifyOnPage(OccurrenceDetailsPage)
+      occurrenceDetailsPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
       occurrenceDetailsPage.assertCategory('Chaplaincy')
       occurrenceDetailsPage.assertLocation('Chapel')
       occurrenceDetailsPage.assertStartDate(weekTomorrow)
@@ -131,7 +133,7 @@ context('Individual repeat appointment', () => {
       occurrenceDetailsPage.assertPrintMovementSlipLink()
 
       // Go back to appointment details
-      occurrenceDetailsPage.back()
+      occurrenceDetailsPage.viewSeriesLink().click()
       Page.verifyOnPage(AppointmentDetailsPage)
 
       // Print occurrence movement slip

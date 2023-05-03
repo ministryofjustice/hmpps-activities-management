@@ -11,18 +11,20 @@ import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
+import getOccurrenceDetails from '../../fixtures/activitiesApi/getRepeatOccurrence1Details.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
-import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import IndividualMovementSlip from '../../pages/appointments/movementSlip/individualMovementSlip'
 import { formatDate } from '../../../server/utils/utils'
+import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 
 context('Create individual appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   // To pass validation we must ensure the appointment details start date are set to tomorrow
   getAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getOccurrenceDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -34,6 +36,7 @@ context('Create individual appointment', () => {
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getOccurrenceDetails)
   })
 
   it('Should complete create individual appointment journey', () => {
@@ -96,14 +99,14 @@ context('Create individual appointment', () => {
 
     confirmationPage.viewAppointmentLink().click()
 
-    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
-    appointmentDetailsPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    const appointmentDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+    appointmentDetailsPage.assertNoAppointmentSeriesDetails()
     appointmentDetailsPage.assertCategory('Chaplaincy')
     appointmentDetailsPage.assertLocation('Chapel')
     appointmentDetailsPage.assertStartDate(tomorrow)
     appointmentDetailsPage.assertStartTime(14, 0)
     appointmentDetailsPage.assertEndTime(15, 30)
-    appointmentDetailsPage.assertRepeat('No')
+    appointmentDetailsPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
     appointmentDetailsPage.assertCreatedBy('J. Smith')
     appointmentDetailsPage.assertPrintMovementSlipLink()
 

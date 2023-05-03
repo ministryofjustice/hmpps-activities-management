@@ -12,7 +12,7 @@ import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getRepeatGroupAppointmentDetails from '../../fixtures/activitiesApi/getRepeatGroupAppointmentDetails.json'
-import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getGroupOccurrence2Details.json'
+import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getRepeatGroupOccurrence1Details.json'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
@@ -20,17 +20,19 @@ import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTim
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
-import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import { formatDate } from '../../../server/utils/utils'
 import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/uploadPrisonerListPage'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 import UploadByCsvPage from '../../pages/appointments/create-and-edit/uploadbyCsvPage'
+import { AppointmentRepeatPeriod } from '../../../server/@types/appointments'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   const weekTomorrow = addWeeks(tomorrow, 1)
   // To pass validation we must ensure the appointment details start date are set to tomorrow
   getRepeatGroupAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getRepeatGroupAppointmentDetails.repeat.period = AppointmentRepeatPeriod.DAILY
+  getRepeatGroupAppointmentDetails.repeat.count = 7
   getRepeatGroupAppointmentDetails.occurrences[0].startDate = formatDate(tomorrow, 'yyyy-MM-dd')
   getRepeatGroupAppointmentDetails.occurrences[1].startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
   getGroupOccurrenceDetails.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
@@ -46,7 +48,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatGroupAppointmentDetails)
-    cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getGroupOccurrenceDetails)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getGroupOccurrenceDetails)
   })
 
   it('Should complete create group appointment journey', () => {
@@ -136,7 +138,7 @@ context('Create group appointment', () => {
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    const successMessage = `You have successfully created an appointment for 3 prisoners starting on ${formatDate(
+    const successMessage = `You have successfully created an appointment series for 3 prisoners starting on ${formatDate(
       tomorrow,
       'EEEE d MMMM yyyy',
     )}. It will repeat daily (includes weekends) for 7 occurrences`
@@ -146,18 +148,7 @@ context('Create group appointment', () => {
 
     confirmationPage.viewAppointmentLink().click()
 
-    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
-    appointmentDetailsPage.assertCategory('Chaplaincy')
-    appointmentDetailsPage.assertLocation('Chapel')
-    appointmentDetailsPage.assertStartDate(tomorrow)
-    appointmentDetailsPage.assertStartTime(14, 0)
-    appointmentDetailsPage.assertEndTime(15, 30)
-    appointmentDetailsPage.assertRepeat('Yes')
-    appointmentDetailsPage.assertPrisonerCount('3')
-    appointmentDetailsPage.viewEditOccurrenceLink(2).click()
-
     const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-    occurrenceDetailsPage.assertSummaryListValue('prisoner-list', 'Prisoners', '3')
     occurrenceDetailsPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
     occurrenceDetailsPage.assertPrisonerSummary('Winchurch, David', 'A1350DZ', '2-2-024')
     occurrenceDetailsPage.assertPrisonerSummary('Jacobson, Lee', 'A1351DZ', '1')
@@ -169,6 +160,6 @@ context('Create group appointment', () => {
     occurrenceDetailsPage.assertCreatedBy('J. Smith')
     occurrenceDetailsPage.assertPrintMovementSlipLink()
 
-    appointmentDetailsPage.assertCreatedBy('J. Smith')
+    occurrenceDetailsPage.assertCreatedBy('J. Smith')
   })
 })

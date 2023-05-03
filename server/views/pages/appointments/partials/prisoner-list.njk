@@ -1,7 +1,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% macro prisonerList(appointmentType, prisoners) %}
+{% macro prisonerList(appointmentId, appointmentOccurrenceId, appointmentType, prisoners) %}
     {% set prisonerListRows = [] %}
     {% for prisoner in prisoners %}
         {% set prisonerListRows = (prisonerListRows.push({
@@ -20,7 +20,7 @@
     {% endfor %}
 
     {% set prisonerActionItems = [{
-        href: "#",
+        href: ("/appointments/" + appointmentId + "/occurrence/" + appointmentOccurrenceId + "/movement-slip"),
         text: "Print movement slip" + ("s" if prisoners.length > 1 ),
         classes: "govuk-link--no-visited-state",
         attributes: { 'data-qa': 'print-movement-slips' }
