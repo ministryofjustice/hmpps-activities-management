@@ -22,6 +22,7 @@ import {
   fullName,
   prisonerName,
   toDate,
+  parseDate,
   isTodayOrBefore,
   sliceArray,
   toDateString,
@@ -35,8 +36,8 @@ import {
 } from '../utils/calendarUtilities'
 import { Services } from '../services'
 import { YesNo } from '../@types/activities'
-import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentRepeatPeriod } from '../@types/appointments'
+import { AppointmentType, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { AppointmentRepeatPeriod, EditApplyTo } from '../@types/appointments'
 import TimeSlot from '../enum/timeSlot'
 
 const production = process.env.NODE_ENV === 'production'
@@ -119,6 +120,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
   njkEnv.addFilter('toDate', toDate)
+  njkEnv.addFilter('parseDate', parseDate)
   njkEnv.addFilter('toDateString', toDateString)
   njkEnv.addFilter('todayOrBefore', isTodayOrBefore)
   njkEnv.addFilter('sliceArray', sliceArray)
@@ -132,6 +134,8 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('TimeSlot', TimeSlot)
   njkEnv.addGlobal('AppointmentRepeatPeriod', AppointmentRepeatPeriod)
   njkEnv.addGlobal('AppointmentType', AppointmentType)
+  njkEnv.addGlobal('AppointmentJourneyMode', AppointmentJourneyMode)
+  njkEnv.addGlobal('EditApplyTo', EditApplyTo)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)
 
   return njkEnv

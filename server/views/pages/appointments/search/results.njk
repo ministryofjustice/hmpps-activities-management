@@ -27,21 +27,19 @@
             text: result.startTime + " to " + result.endTime,
             attributes: { 'data-qa': 'result-time-' + index }
         }, {
-            html:
-                ("<div>" + govukTag({ text: "Individual", classes: "govuk-tag--grey" }) + "</div>" if result.appointmentType == AppointmentType.INDIVIDUAL) +
-                ("<div>" + govukTag({ text: "Group", classes: "govuk-tag--grey" }) + result.allocations.length + (" prisoner" if result.allocations.length == 1) + (" prisoners" if result.allocations.length > 1) + "</div>" if result.appointmentType == AppointmentType.GROUP) +
-                ("<div>" + govukTag({ text: "Repeat", classes: "govuk-tag--grey" }) + " appointment " + result.sequenceNumber + " of " + result.maxSequenceNumber + "</div>" if result.isRepeat),
-            attributes: { 'data-qa': 'result-type-' + index }
-        }, {
             text: result.category.description + (" ('" + result.appointmentDescription + "')" if (result.appointmentDescription) ),
             attributes: { 'data-qa': 'result-category-' + index }
         }, {
             text: result.internalLocation.description,
             attributes: { 'data-qa': 'result-location-' + index }
         }, {
-            html: (govukTag({ text: "Edited" }) if result.isEdited) +
-                  (govukTag({ text: "Cancelled", classes: "govuk-tag--grey" }) if result.isCancelled),
-            attributes: { 'data-qa': 'result-status-' + index }
+            text: result.allocations.length,
+            classes: 'govuk-!-text-align-right',
+            attributes: { 'data-qa': 'result-prisoner-count-' + index }
+        }, {
+            text: result.sequenceNumber + " of " + result.maxSequenceNumber,
+            classes: 'govuk-!-text-align-right',
+            attributes: { 'data-qa': 'result-sequence-number-' + index }
         }, {
             html: '<a href="/appointments/' + result.appointmentId + '/occurrence/' + result.appointmentOccurrenceId + '"
                 class="govuk-link--no-visited-state">
@@ -350,9 +348,6 @@
                     attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Type"
-                },
-                {
                     text: "Category",
                     attributes: { "aria-sort": "none" }
                 },
@@ -361,7 +356,12 @@
                     attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Status"
+                    text: "Attendees",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Appointment",
+                    attributes: { "aria-sort": "none" }
                 },
                 {
                     html: '<span class="govuk-visually-hidden">Actions</span>'

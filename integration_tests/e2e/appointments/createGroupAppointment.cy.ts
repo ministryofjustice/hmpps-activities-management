@@ -12,21 +12,23 @@ import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getGroupAppointmentDetails from '../../fixtures/activitiesApi/getGroupAppointmentDetails.json'
+import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getGroupOccurrenceDetails.json'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
-import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import { formatDate } from '../../../server/utils/utils'
 import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/uploadPrisonerListPage'
 import UploadByCsvPage from '../../pages/appointments/create-and-edit/uploadbyCsvPage'
+import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   // To pass validation we must ensure the appointment details start date are set to tomorrow
   getGroupAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getGroupOccurrenceDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -39,6 +41,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getGroupAppointmentDetails)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getGroupOccurrenceDetails)
   })
 
   it('Should complete create group appointment journey', () => {
@@ -133,14 +136,13 @@ context('Create group appointment', () => {
 
     confirmationPage.viewAppointmentLink().click()
 
-    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
+    const appointmentDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+    appointmentDetailsPage.assertNoAppointmentSeriesDetails()
     appointmentDetailsPage.assertCategory('Chaplaincy')
     appointmentDetailsPage.assertLocation('Chapel')
     appointmentDetailsPage.assertStartDate(tomorrow)
     appointmentDetailsPage.assertStartTime(14, 0)
     appointmentDetailsPage.assertEndTime(15, 30)
-    appointmentDetailsPage.assertRepeat('No')
-    appointmentDetailsPage.assertSummaryListValue('prisoner-list', 'Prisoners', '3')
     appointmentDetailsPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
     appointmentDetailsPage.assertPrisonerSummary('Winchurch, David', 'A1350DZ', '2-2-024')
     appointmentDetailsPage.assertPrisonerSummary('Jacobson, Lee', 'A1351DZ', '1')

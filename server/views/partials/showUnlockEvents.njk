@@ -11,7 +11,12 @@
                     </a>
                 </div>
             {% elseif e.eventType === 'APPOINTMENT' and e.eventSource === 'SAA'%}
-                <div class="govuk-!-font-weight-bold">{{ e.summary | trim }} {{ e.categoryDescription | trim }}</div>
+                <div class="govuk-!-font-weight-bold">
+                    <a href="/appointments/{{ e.appointmentId }}/occurrence/{{ e.appointmentOccurrenceId }}"
+                       class="govuk-link govuk-link--no-visited-state">
+                        {{ e.summary | trim }} {{ e.categoryDescription | trim }}
+                    </a>
+                </div>
             {% else %}
                 <div class="govuk-!-font-weight-bold">{{ e.summary | trim }}</div>
             {% endif %}

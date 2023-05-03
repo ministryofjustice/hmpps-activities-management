@@ -84,12 +84,12 @@ export interface paths {
      */
     post: operations['prisonerAllocations']
   }
-  '/job/deallocate-offenders': {
+  '/job/manage-allocations': {
     /**
-     * Trigger the job to deallocate offenders when end dates are reached
+     * Trigger the job to manage allocations
      * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
-    post: operations['triggerDeallocateOffendersJob']
+    post: operations['triggerManageAllocationsJob']
   }
   '/job/create-scheduled-instances': {
     /**
@@ -104,6 +104,15 @@ export interface paths {
      * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
     post: operations['triggerCreateAttendanceRecordsJob']
+  }
+  '/bulk-appointments': {
+    /**
+     * Bulk create a set of appointments
+     * @description
+     *     Create a list of appointments and allocate the supplied prisoner or prisoners to them.
+     *     Does not require any specific roles
+     */
+    post: operations['bulkCreateAppointment']
   }
   '/audit/search': {
     /**
@@ -188,7 +197,7 @@ export interface paths {
   '/rollout/{prisonCode}': {
     /**
      * Get a prison's rollout plan by prison code
-     * @description Returns a single prison and it's activities management service rollout plan by its unique code.
+     * @description Returns a single prison and its activities management service rollout plan by its unique code.
      */
     get: operations['getPrisonByCode']
   }
@@ -1097,6 +1106,100 @@ export interface components {
       prisonerNumber: string
       /** @description The list of allocations for the prisoner */
       allocations: components['schemas']['Allocation'][]
+    }
+    /** @description The create request containing the new appointments */
+    BulkAppointmentsRequest: {
+      /**
+       * @description The NOMIS prison code where these appointments takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description The NOMIS reference code for these appointments. Must exist and be active
+       * @example CHAP
+       */
+      categoryCode: string
+      /**
+       * @description
+       *     Free text description for these appointments.  This is used to add more context to the appointment category.
+       *
+       * @example Meeting with the governor
+       */
+      appointmentDescription: string
+      /**
+       * Format: int64
+       * @description
+       *     The NOMIS internal location id within the specified prison. This must be supplied if inCell is false.
+       *     The internal location id must exist, must be within the prison specified by the prisonCode property and be active.
+       *
+       * @example 123
+       */
+      internalLocationId: number
+      /**
+       * @description
+       *     Flag to indicate if the location of the appointments is in cell rather than an internal prison location.
+       *     Internal location id will be ignored if inCell is true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * Format: date
+       * @description The date of the appointments
+       */
+      startDate: string
+      /**
+       * @description
+       *     The list of appointments to create
+       */
+      appointments: components['schemas']['IndividualAppointment'][]
+    }
+    /**
+     * @description
+     *     The list of appointments to create
+     */
+    IndividualAppointment: {
+      /**
+       * @description The prisoner to allocate to the created appointment
+       * @example A1234BC
+       */
+      prisonerNumber: string
+      /**
+       * Format: partial-time
+       * @description The starting time of the appointment
+       * @example 09:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of the appointment
+       * @example 10:30
+       */
+      endTime: string
+    }
+    /** @description Describes a list of activities created as part of a single bulk operation */
+    BulkAppointment: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this bulk appointment
+       * @example 12345
+       */
+      bulkAppointmentId: number
+      /** @description The list of appointments created in bulk. */
+      appointments: components['schemas']['Appointment'][]
+      /**
+       * Format: date-time
+       * @description The date and time this appointment was created. Will not change
+       */
+      created: string
+      /**
+       * @description
+       *     The username of the user authenticated via HMPPS auth that created the appointment.
+       *     Usually a NOMIS username
+       *
+       * @example AAA01U
+       */
+      createdBy: string
     }
     /** @description Set of search filters for searching audit records */
     AuditRecordSearchFilters: {
@@ -2703,19 +2806,19 @@ export interface components {
       addresses: components['schemas']['AddressDto'][]
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       first?: boolean
       last?: boolean
       empty?: boolean
@@ -2724,12 +2827,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      paged?: boolean
-      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
+      paged?: boolean
+      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
@@ -2909,7 +3012,7 @@ export interface components {
       activitiesRolledOut: boolean
       /**
        * Format: date
-       * @description The date activities rolled out
+       * @description The date activities rolled out. Can be null if the prison is not yet scheduled for rollout.
        * @example 2022-09-30
        */
       activitiesRolloutDate?: string
@@ -2920,7 +3023,7 @@ export interface components {
       appointmentsRolledOut: boolean
       /**
        * Format: date
-       * @description The date activities rolled out
+       * @description The date appointments rolled out. Can be null if the prison is not yet scheduled for rollout.
        * @example 2022-09-30
        */
       appointmentsRolloutDate?: string
@@ -4056,10 +4159,10 @@ export interface operations {
     }
   }
   /**
-   * Trigger the job to deallocate offenders when end dates are reached
+   * Trigger the job to manage allocations
    * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
    */
-  triggerDeallocateOffendersJob: {
+  triggerManageAllocationsJob: {
     responses: {
       /** @description Created */
       201: {
@@ -4093,6 +4196,39 @@ export interface operations {
       201: {
         content: {
           'text/plain': string
+        }
+      }
+    }
+  }
+  /**
+   * Bulk create a set of appointments
+   * @description
+   *     Create a list of appointments and allocate the supplied prisoner or prisoners to them.
+   *     Does not require any specific roles
+   */
+  bulkCreateAppointment: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BulkAppointmentsRequest']
+      }
+    }
+    responses: {
+      /** @description The appointments were created. */
+      201: {
+        content: {
+          'application/json': components['schemas']['BulkAppointment']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
         }
       }
     }
@@ -4533,7 +4669,7 @@ export interface operations {
   }
   /**
    * Get a prison's rollout plan by prison code
-   * @description Returns a single prison and it's activities management service rollout plan by its unique code.
+   * @description Returns a single prison and its activities management service rollout plan by its unique code.
    */
   getPrisonByCode: {
     parameters: {
