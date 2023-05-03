@@ -30,7 +30,7 @@
         key: {
             text: "Pay"
         },
-        value: { text: attendance.payAmount / 100 | toFixed or "None"}
+        value: { text: ('£' + (attendance.payAmount / 100) | toFixed) if attendance.issuePayment else 'None' }
     }
 ), summaryListRows) %}
 
@@ -123,7 +123,7 @@
                                 key: {
                                     text: "Pay"
                                 },
-                                value: { text: attendanceHistory.payAmount / 100 | toFixed or "none"}
+                                value: { text: ('£' + (attendance.payAmount / 100) | toFixed) if attendanceHistory.issuePayment else 'None' }
                             }
                         ), historyListRows) %}
 
