@@ -1,6 +1,6 @@
 import { addDays } from 'date-fns'
 import getRepeatGroupAppointmentDetails from '../../fixtures/activitiesApi/getRepeatGroupAppointmentDetails.json'
-import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getRepeatGroupOccurrence2Details.json'
+import getRepeatGroupOccurrence2Details from '../../fixtures/activitiesApi/getRepeatGroupOccurrence2Details.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import Page from '../../pages/page'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
@@ -13,14 +13,14 @@ const nextWeek = addDays(new Date(), 7)
 
 context('Edit appointment', () => {
   beforeEach(() => {
-    getGroupOccurrenceDetails.startDate = formatDate(nextWeek, 'yyyy-MM-dd')
+    getRepeatGroupOccurrence2Details.startDate = formatDate(nextWeek, 'yyyy-MM-dd')
 
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
     cy.signIn()
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatGroupAppointmentDetails)
-    cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getGroupOccurrenceDetails)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getRepeatGroupOccurrence2Details)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('PATCH', '/appointment-occurrences/12')
 

@@ -10,8 +10,8 @@ import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getRepeatAppointmentDetails from '../../fixtures/activitiesApi/getRepeatAppointmentDetails.json'
-import getOccurrence1Details from '../../fixtures/activitiesApi/getRepeatOccurrence1Details.json'
-import getOccurrence2Details from '../../fixtures/activitiesApi/getRepeatOccurrence2Details.json'
+import getRepeatOccurrence1Details from '../../fixtures/activitiesApi/getRepeatOccurrence1Details.json'
+import getRepeatOccurrence2Details from '../../fixtures/activitiesApi/getRepeatOccurrence2Details.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
@@ -30,8 +30,8 @@ context('Individual repeat appointment', () => {
   getRepeatAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
   getRepeatAppointmentDetails.occurrences[0].startDate = formatDate(tomorrow, 'yyyy-MM-dd')
   getRepeatAppointmentDetails.occurrences[1].startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
-  getOccurrence1Details.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
-  getOccurrence2Details.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
+  getRepeatOccurrence1Details.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getRepeatOccurrence2Details.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -43,8 +43,8 @@ context('Individual repeat appointment', () => {
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatAppointmentDetails)
-    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getOccurrence1Details)
-    cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getOccurrence2Details)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getRepeatOccurrence1Details)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getRepeatOccurrence2Details)
 
     // Move through create individual appointment to repeat page
     const indexPage = Page.verifyOnPage(IndexPage)

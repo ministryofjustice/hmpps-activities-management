@@ -12,7 +12,7 @@ import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getRepeatGroupAppointmentDetails from '../../fixtures/activitiesApi/getRepeatGroupAppointmentDetails.json'
-import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getRepeatGroupOccurrence1Details.json'
+import getRepeatGroupOccurrence1Details from '../../fixtures/activitiesApi/getRepeatGroupOccurrence1Details.json'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
@@ -35,7 +35,7 @@ context('Create group appointment', () => {
   getRepeatGroupAppointmentDetails.repeat.count = 7
   getRepeatGroupAppointmentDetails.occurrences[0].startDate = formatDate(tomorrow, 'yyyy-MM-dd')
   getRepeatGroupAppointmentDetails.occurrences[1].startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
-  getGroupOccurrenceDetails.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
+  getRepeatGroupOccurrence1Details.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -48,7 +48,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatGroupAppointmentDetails)
-    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getGroupOccurrenceDetails)
+    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getRepeatGroupOccurrence1Details)
   })
 
   it('Should complete create group appointment journey', () => {

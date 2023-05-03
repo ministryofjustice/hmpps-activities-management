@@ -200,7 +200,7 @@
                 attributes: { 'data-qa': 'appointment-details' }
             }) }}
 
-            {{ prisonerList(occurrence.appointmentId, occurrence.id, occurrence.appointmentType, occurrence.prisoners) }}
+            {{ prisonerList(occurrence.appointmentId, occurrence.id, occurrence.appointmentType, occurrence.repeat, occurrence.prisoners) }}
 
             {{ govukSummaryList({
                 card: {
