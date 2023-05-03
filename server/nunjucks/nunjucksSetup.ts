@@ -22,6 +22,7 @@ import {
   fullName,
   prisonerName,
   toDate,
+  parseDate,
   isTodayOrBefore,
   sliceArray,
   toDateString,
@@ -119,6 +120,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
   njkEnv.addFilter('toDate', toDate)
+  njkEnv.addFilter('parseDate', parseDate)
   njkEnv.addFilter('toDateString', toDateString)
   njkEnv.addFilter('todayOrBefore', isTodayOrBefore)
   njkEnv.addFilter('sliceArray', sliceArray)

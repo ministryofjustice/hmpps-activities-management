@@ -42,11 +42,7 @@
                 <a href="/appointments" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">Create another appointment</a>
             </p>
             <p class="govuk-body">
-                {% if appointment.repeat == null %}
-                    <a href="/appointments/{{ appointment.id }}/occurrence/{{ appointment.occurrences[0].id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and edit appointment details</a>
-                {% else %}
-                    <a href="/appointments/{{ appointment.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-series-link">View appointment series details</a>
-                {% endif %}
+                <a href="/appointments/{{ appointment.id }}/occurrence/{{ appointment.occurrences[0].id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and edit appointment details</a>
             </p>
         </div>
     </div>

@@ -14,22 +14,84 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa="caption">View and edit {{ ("group" if occurrence.appointmentType == AppointmentType.GROUP) + ("individual" if occurrence.appointmentType == AppointmentType.INDIVIDUAL) }} appointment</span>
             <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}</h1>
-            <h2 class="govuk-heading-m">{{ ("Group" if occurrence.appointmentType == AppointmentType.GROUP) + ("Individual" if occurrence.appointmentType == AppointmentType.INDIVIDUAL) }} appointment details</h2>
-            {{ govukSummaryList({
-                rows: [{
-                        key: {
-                            text: "Prisoner"
+
+            {% if occurrence.repeat %}
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Series details"
                         },
-                        value: {
-                            html: appointmentPrisonerSummary(occurrence.prisoners[0].firstName + ' ' + occurrence.prisoners[0].lastName, occurrence.prisoners[0].prisonerNumber, occurrence.prisoners[0].cellLocation, dpsUrl)
+                        actions: {
+                            items: [
+                                {
+                                    href: "/appointments/" + occurrence.appointmentId,
+                                    text: "View series",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'view-appointment-series' }
+                                }
+                            ]
                         }
-                    } if occurrence.appointmentType == AppointmentType.INDIVIDUAL, {
+                    },
+                    rows: [
+                        {
+                            key: {
+                                text: "Frequency"
+                            },
+                            value: {
+                                text: ("Every weekday (Monday to Friday)" if occurrence.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
+                                ("Daily (includes weekends)" if occurrence.repeat.period == AppointmentRepeatPeriod.DAILY) +
+                                ("Weekly" if occurrence.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
+                                ("Fortnightly" if occurrence.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
+                                ("Monthly" if occurrence.repeat.period == AppointmentRepeatPeriod.MONTHLY)
+                            }
+                        }, {
+                            key: {
+                                text: "Occurrence"
+                            },
+                            value: {
+                                text: occurrence.sequenceNumber + " of " + occurrence.repeat.count
+                            }
+                        }
+                    ],
+                    attributes: { 'data-qa': 'appointment-series-details' }
+                }) }}
+            {% endif %}
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Appointment details"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "#",
+                                text: "Cancel appointment",
+                                classes: "govuk-link--no-visited-state",
+                                attributes: { 'data-qa': 'cancel-appointment' }
+                            }
+                        ]
+                    }
+                },
+                rows: [
+                    {
                         key: {
                             text: "Category"
                         },
                         value: {
                             text: occurrence.category.description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "#",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-category' }
+                                }
+                            ]
                         }
                     }, {
                         key: {
@@ -37,6 +99,16 @@
                         },
                         value: {
                             text: ("Yes" if occurrence.appointmentDescription == null) + ("No" if occurrence.appointmentDescription != null)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "#",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-show-category' }
+                                }
+                            ]
                         }
                     }, {
                         key: {
@@ -44,6 +116,16 @@
                         },
                         value: {
                             text: occurrence.appointmentDescription
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "#",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-appointment-description' }
+                                }
+                            ]
                         }
                     } if occurrence.appointmentDescription != null, {
                         key: {
@@ -113,60 +195,52 @@
                                 }
                             ]
                         }
-                    }, {
+                    }
+                ],
+                attributes: { 'data-qa': 'appointment-details' }
+            }) }}
+
+            {{ prisonerList(occurrence.appointmentType, occurrence.prisoners) }}
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Appointment history"
+                    }
+                },
+                rows: [
+                    {
                         key: {
-                            text: "Occurrence"
-                        },
-                        value: {
-                            text: occurrence.sequenceNumber + " of " + occurrence.repeat.count
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "/appointments/" + occurrence.appointmentId,
-                                    text: "View series",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'view-appointment-series' }
-                                }
-                            ]
-                        }
-                    } if occurrence.repeat != null, {
-                        key: {
-                            text: "Created by"
-                        },
+                        text: "Created by"
+                    },
                         value: {
                             text: occurrence.createdBy | fullName | toTitleCase | initialiseName
                         }
                     }, {
                         key: {
-                            text: "Updated by"
+                            text: "Date created"
+                        },
+                        value: {
+                            text: occurrence.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('EEEE d MMMM yyyy')
+                        }
+                    }, {
+                        key: {
+                            text: "Last edited by"
                         },
                         value: {
                             text: occurrence.updatedBy | fullName | toTitleCase | initialiseName
                         }
-                    } if occurrence.updatedBy
+                    } if occurrence.updatedBy, {
+                        key: {
+                            text: "Last edited date"
+                        },
+                        value: {
+                            text: occurrence.updated | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('EEEE d MMMM yyyy')
+                        }
+                    } if occurrence.updated
                 ],
-                classes: "govuk-!-margin-bottom-9",
-                attributes: { 'data-qa': 'appointment-details' }
+                attributes: { 'data-qa': 'appointment-history' }
             }) }}
-
-            {{ prisonerList(occurrence.prisoners) if occurrence.appointmentType == AppointmentType.GROUP }}
-
-            <p class="govuk-body govuk-!-display-none-print">
-                {{ govukButton({
-                    text: "Print movement slip",
-                    href: occurenceLink + '/movement-slip',
-                    attributes: {
-                        'data-qa': 'print-movement-slip-link'
-                    }
-                }) }}
-            </p>
-
-            {% if occurrence.repeat != null %}
-                <p class="govuk-body govuk-!-display-none-print">
-                    <a href="/appointments/{{ occurrence.appointmentId }}" class="govuk-link govuk-link--no-visited-state">Go to series</a>
-                </p>
-            {% endif %}
         </div>
     </div>
 {% endblock %}

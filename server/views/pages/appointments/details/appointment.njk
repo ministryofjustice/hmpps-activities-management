@@ -11,50 +11,6 @@
 {% set pageTitle = "Appointments Management - Appointment Series Details" %}
 {% set pageId = 'appointment-series-view-details-page' %}
 
-{% set summaryListRows = [
-    {
-        key: {
-            text: "Start date"
-        },
-        value: {
-            text: appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy')
-        }
-    }
-] %}
-{% if appointment.repeat != null %}
-    {% set summaryListRows = (summaryListRows.push({
-        key: {
-            text: "Frequency"
-        },
-        value: {
-            text: ("Every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
-                  ("Daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
-                  ("Weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
-                  ("Fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
-                  ("Monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY)
-        }
-    }), summaryListRows) %}
-    {% set summaryListRows = (summaryListRows.push({
-        key: {
-            text: "Occurrences"
-        },
-        value: {
-            text: appointment.repeat.count
-        }
-    }), summaryListRows) %}
-{% endif %}
-
-{% if appointment.appointmentType == AppointmentType.GROUP and appointment.repeat != null %}
-    {% set summaryListRows = (summaryListRows.push({
-        key: {
-            text: "Prisoners"
-        },
-        value: {
-            text: appointment.prisoners | length
-        }
-    }), summaryListRows) %}
-{% endif %}
-
 {% set occurrenceSummaryListRows = [
     {
         key: {
@@ -95,41 +51,84 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l">View appointment series details</h1>
-            {{ govukSummaryList({
-                rows: summaryListRows,
-                classes: "govuk-!-margin-bottom-9",
-                attributes: { 'data-qa': 'appointment-series-details' }
-            }) }}
+            <span class="govuk-caption-l" data-qa="caption">{{ appointment.category.description }} - {{ ("group" if appointment.appointmentType == AppointmentType.GROUP) + ("individual" if appointment.appointmentType == AppointmentType.INDIVIDUAL) }} series</span>
+            <h1 class="govuk-heading-l">Series overview</h1>
 
-            {% if appointment.repeat != null %}
-                <h2 class="govuk-heading-m" data-qa="occurrences-heading">Appointments</h2>
-
-                {{ govukTable({
-                    head: [{
-                        text: "Appointment",
-                        classes: 'govuk-table__header govuk-table__header--occurrence-count'
+            {% if appointment.repeat %}
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Series details"
+                        }
                     },
-                    {
-                        text: "Date",
-                        classes: 'govuk-table__header'
-                    },
-                    {
-                        html: '<span class="govuk-visually-hidden">Notes</span>'
-                    },
-                    {
-                        html: '<span class="govuk-visually-hidden">Actions</span>'
-                    }],
-                    rows: occurrenceTableRows,
-                    classes: "govuk-!-margin-bottom-9",
-                    attributes: { 'data-qa': 'appointment-occurrences' }
+                    rows: [
+                        {
+                            key: {
+                                text: "Frequency"
+                            },
+                            value: {
+                                text: ("Every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
+                                ("Daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
+                                ("Weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
+                                ("Fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
+                                ("Monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY)
+                            }
+                        }, {
+                            key: {
+                                text: "Occurrences"
+                            },
+                            value: {
+                                text: appointment.repeat.count
+                            }
+                        }
+                    ],
+                    attributes: { 'data-qa': 'appointment-series-details' }
                 }) }}
-
-            {% elseif appointment.appointmentType == AppointmentType.GROUP %}
-                {{ prisonerList(appointment.prisoners) }}
             {% endif %}
 
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Remaining appointments</h2>
+                    <ul class="govuk-summary-card__actions">
+                        <li class="govuk-summary-card__action">
+                            <a class="govuk-link" href="#">
+                                Print all movement slips
+                            </a>
+                        </li>
+                        <li class="govuk-summary-card__action">
+                            <a class="govuk-link" href="#">
+                                Cancel all appointments
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="govuk-summary-card__content">
+                    {{ govukTable({
+                        head: [
+                            {
+                                text: "Occurrence",
+                                classes: 'govuk-table__header govuk-table__header--occurrence-count'
+                            }, {
+                                text: "Date",
+                                classes: 'govuk-table__header'
+                            }, {
+                                html: '<span class="govuk-visually-hidden">Notes</span>'
+                            }, {
+                                html: '<span class="govuk-visually-hidden">Actions</span>'
+                            }
+                        ],
+                        rows: occurrenceTableRows,
+                        attributes: { 'data-qa': 'appointment-occurrences' }
+                    }) }}
+                </div>
+            </div>
+
             {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Series history"
+                    }
+                },
                 rows: [
                     {
                         key: {
@@ -138,21 +137,17 @@
                         value: {
                             text: appointment.createdBy | fullName | toTitleCase | initialiseName
                         }
+                    }, {
+                        key: {
+                            text: "Date created"
+                        },
+                        value: {
+                            text: appointment.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('EEEE d MMMM yyyy')
+                        }
                     }
                 ],
-                classes: "govuk-!-margin-bottom-9",
-                attributes: { 'data-qa': 'user-details' }
+                attributes: { 'data-qa': 'appointment-details' }
             }) }}
-
-            <p class="govuk-body govuk-!-display-none-print">
-                {{ govukButton({
-                    text: "Print movement slip",
-                    href: '/appointments/' + appointment.id + '/movement-slip',
-                    attributes: {
-                        'data-qa': 'print-movement-slip-link'
-                    }
-                }) }}
-            </p>
         </div>
     </div>
 {% endblock %}

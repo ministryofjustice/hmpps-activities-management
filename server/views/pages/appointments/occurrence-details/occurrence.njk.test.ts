@@ -22,8 +22,9 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
       occurrence: {
-        startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
         appointmentType: AppointmentType.INDIVIDUAL,
+        startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
+        created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentOccurrenceDetails,
     }
   })
@@ -41,20 +42,8 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     )
   })
 
-  it('should display prisoner summary if individual appointment', () => {
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-    expect($('[data-qa=prisoner-summary]').length).toBe(1)
-    expect($('[data-qa=prisoner-list]').length).toBe(0)
-  })
-
-  it('should display prisoner list if group appointment', () => {
-    viewContext.occurrence.appointmentType = AppointmentType.GROUP
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-    expect($('[data-qa=prisoner-list]').length).toBe(1)
-    expect($('[data-qa=prisoner-summary]').length).toBe(0)
-  })
-
   it('should show updated by if occurrence has been updated', () => {
+    viewContext.occurrence.updated = formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss")
     viewContext.occurrence.updatedBy = {
       id: 123,
       username: 'joebloggs',
@@ -63,8 +52,8 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
-    expect($('[data-qa=user-details] .govuk-summary-list__key:contains("Updated by")').next().text().trim()).toBe(
-      'J. Bloggs',
-    )
+    expect(
+      $('[data-qa=appointment-history] .govuk-summary-list__key:contains("Last edited by")').next().text().trim(),
+    ).toBe('J. Bloggs')
   })
 })
