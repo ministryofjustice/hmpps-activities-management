@@ -1,6 +1,6 @@
 import { addDays } from 'date-fns'
 import getRepeatGroupAppointmentDetails from '../../fixtures/activitiesApi/getRepeatGroupAppointmentDetails.json'
-import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getGroupOccurrenceDetails.json'
+import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getGroupOccurrence2Details.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import Page from '../../pages/page'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'

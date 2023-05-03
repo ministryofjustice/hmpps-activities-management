@@ -11,6 +11,9 @@ export default class OccurrenceDetailsPage extends Page {
   assertAppointmentDetail = (header: string, value: string) =>
     this.assertSummaryListValue('appointment-details', header, value)
 
+  assertAppointmentHistory = (header: string, value: string) =>
+    this.assertSummaryListValue('appointment-history', header, value)
+
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {
     cy.get('[data-qa=prisoner-name]')
       .contains(name)
@@ -34,7 +37,9 @@ export default class OccurrenceDetailsPage extends Page {
   assertEndTime = (hour: number, minute: number) =>
     this.assertAppointmentDetail('End time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
-  assertCreatedBy = (createdBy: string) => this.assertSummaryListValue('user-details', 'Created by', createdBy)
+  assertNoAppointmentSeriesDetails = () => cy.get('[data-qa=appointment-series-details]').should('not.exist')
+
+  assertCreatedBy = (createdBy: string) => this.assertAppointmentHistory('Created by', createdBy)
 
   assertPrintMovementSlipLink = () => this.printMovementSlipLink().contains('Print movement slip')
 

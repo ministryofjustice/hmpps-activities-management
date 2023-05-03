@@ -12,7 +12,7 @@ import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getRepeatGroupAppointmentDetails from '../../fixtures/activitiesApi/getRepeatGroupAppointmentDetails.json'
-import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getGroupOccurrenceDetails.json'
+import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getGroupOccurrence2Details.json'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
