@@ -38,7 +38,7 @@
                     Date: {{ instance.date | toDate | formatDate('EEEE, dd MMMM yyyy') }}
                 </span>
                 <span class="govuk-caption-l">
-                    Location: {{ activity.location }}
+                    Location: {{ "In cell" if activity.inCell else activity.location }}
                 </span>
             </h1>
 
