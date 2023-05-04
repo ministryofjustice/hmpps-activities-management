@@ -25,11 +25,13 @@ import {
   parseDate,
   toFixed,
   getDailyAttendanceSummary,
+  getCancelledActivitySummary,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { AllAttendanceSummary, Attendance } from '../@types/activitiesAPI/types'
 import AttendanceReason from '../enum/attendanceReason'
 import AttendanceStatus from '../enum/attendanceStatus'
+import timeSlot from '../enum/timeSlot'
 
 describe('utils', () => {
   describe('convert to title case', () => {
@@ -644,6 +646,87 @@ describe('utils', () => {
           AM: 1,
           DAY: 1,
           ED: 0,
+          PM: 0,
+        },
+      })
+    })
+  })
+
+  describe('getCancelledActivitySummary', () => {
+    it('calculates the cancelled session summary', () => {
+      const cancelledAttendance = [
+        {
+          id: 1,
+          timeSlot: timeSlot.AM,
+          cancelled: true,
+          category: 'Education',
+          cancelledReason: 'Staff unavailable',
+        },
+        {
+          id: 2,
+          timeSlot: timeSlot.AM,
+          cancelled: true,
+          category: 'Education',
+          cancelledReason: 'Staff training',
+        },
+        {
+          id: 3,
+          timeSlot: timeSlot.AM,
+          cancelled: true,
+          category: 'Education',
+          cancelledReason: 'Session not required',
+        },
+        {
+          id: 4,
+          timeSlot: timeSlot.PM,
+          cancelled: true,
+          category: 'Education',
+          cancelledReason: 'Location unavailable',
+        },
+        {
+          id: 3,
+          timeSlot: timeSlot.ED,
+          cancelled: true,
+          category: 'Education',
+          cancelledReason: 'Prison operational issue',
+        },
+      ]
+
+      expect(getCancelledActivitySummary(cancelledAttendance)).toEqual({
+        totalCancelled: {
+          AM: 3,
+          DAY: 5,
+          ED: 1,
+          PM: 1,
+        },
+        totalStaffUnavailable: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalStaffTraining: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalNotRequired: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalLocationUnavailable: {
+          AM: 0,
+          DAY: 1,
+          ED: 0,
+          PM: 1,
+        },
+        totalOperationalIssue: {
+          AM: 0,
+          DAY: 1,
+          ED: 1,
           PM: 0,
         },
       })
