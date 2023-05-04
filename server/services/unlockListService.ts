@@ -127,11 +127,11 @@ export default class UnlockListService {
       return true
     }
 
-    // TODO: Check rules. In-cell activities / appointments do not have a prison location id?
-    // Probably need to get and check the in-cell marker for both of these - when they are included
-    const activitiesAndAppointments = item.events.filter(ev => ['ACTIVITY', 'APPOINTMENT'].includes(ev.eventType))
-    const activitiesOffWing = activitiesAndAppointments.filter(aa => !aa.internalLocationId)
-    return activitiesOffWing.length > 0
+    // TODO: Check rules for 'ACTIVITY' and 'APPOINTMENT' event types
+    // If event is not 'inCell' then location id should be checked to confirm if event is on-wing or off-wing
+    // If one or more events are off-wing, then prisoner should appear in off-wing list
+
+    return false
   }
 
   private getSubLocationFromCell = (

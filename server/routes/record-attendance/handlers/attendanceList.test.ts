@@ -46,7 +46,10 @@ describe('Route Handlers - Attendance List', () => {
         startTime: '10:00',
         endTime: '11:00',
         activitySchedule: {
-          activity: { summary: 'Maths level 1' },
+          activity: {
+            summary: 'Maths level 1',
+            inCell: false,
+          },
           internalLocation: { description: 'Houseblock 1' },
         },
         attendances: [
@@ -165,6 +168,7 @@ describe('Route Handlers - Attendance List', () => {
           notAttendedPercentage: '33',
           notRecorded: 1,
           notRecordedPercentage: '33',
+          inCell: false,
         },
         instance: {
           id: 1,
@@ -173,7 +177,10 @@ describe('Route Handlers - Attendance List', () => {
           startTime: '10:00',
           endTime: '11:00',
           activitySchedule: {
-            activity: { summary: 'Maths level 1' },
+            activity: {
+              summary: 'Maths level 1',
+              inCell: false,
+            },
             internalLocation: { description: 'Houseblock 1' },
           },
           attendances: [
@@ -252,7 +259,10 @@ describe('Route Handlers - Attendance List', () => {
           startTime: '10:00',
           endTime: '11:00',
           activitySchedule: {
-            activity: { summary: 'Maths level 1' },
+            activity: {
+              summary: 'Maths level 1',
+              inCell: false,
+            },
             internalLocation: { description: 'Houseblock 1' },
           },
           attendances: [

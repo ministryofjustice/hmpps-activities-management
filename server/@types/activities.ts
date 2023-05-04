@@ -68,6 +68,7 @@ export type ActivitiesFilters = {
   categories: ActivityCategory[]
   sessionFilters: FilterItem[]
   categoryFilters: FilterItem[]
+  locationFilters: FilterItem[]
 }
 
 export type SubLocationCellPattern = {
