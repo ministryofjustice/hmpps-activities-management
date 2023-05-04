@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 import { parse } from 'date-fns'
 import DailySummaryRoutes from './dailySummary'
 import ActivitiesService from '../../../services/activitiesService'
-import { AllAttendanceSummary } from '../../../@types/activitiesAPI/types'
+import { AllAttendanceSummary, ScheduledActivity } from '../../../@types/activitiesAPI/types'
 import { formatDate, toDate } from '../../../utils/utils'
 import { AttendanceSummaryFilters, FilterItem } from '../../../@types/activities'
 
@@ -66,6 +66,41 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       },
     ] as AllAttendanceSummary[]
 
+    const mockActivities = [
+      {
+        id: 1,
+        startTime: '10:00',
+        endTime: '11:00',
+        activitySchedule: {
+          activity: { summary: 'Maths level 1', category: { code: 'Maths' } },
+          description: 'Houseblock 1',
+          internalLocation: { description: 'Classroom' },
+        },
+        cancelled: false,
+        attendances: [
+          { status: 'WAITING' },
+          { status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+          { status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+        ],
+      },
+      {
+        id: 2,
+        startTime: '13:00',
+        endTime: '14:00',
+        activitySchedule: {
+          activity: { summary: 'English level 1', category: { code: 'English' } },
+          description: 'Houseblock 2',
+          internalLocation: { description: 'Classroom 2' },
+        },
+        cancelled: false,
+        attendances: [
+          { status: 'WAITING' },
+          { status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+          { status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+        ],
+      },
+    ] as ScheduledActivity[]
+
     it('should redirect to the select period page if date is not provided', async () => {
       await handler.GET(req, res)
 
@@ -84,6 +119,10 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       when(await activitiesService.getAllAttendanceSummary)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockApiResponse)
+
+      when(await activitiesService.getScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockActivities)
 
       await handler.GET(req, res)
 
@@ -186,6 +225,30 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalUnpaidSick: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalStaffUnavailable: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalStaffTraining: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalLocationUnavailable: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalOperationalIssue: {
           AM: 0,
           DAY: 0,
           ED: 0,
@@ -320,6 +383,30 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalUnpaidSick: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalStaffUnavailable: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalStaffTraining: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalLocationUnavailable: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalOperationalIssue: {
           AM: 0,
           DAY: 0,
           ED: 0,

@@ -24,6 +24,7 @@ import TimeSlot from '../enum/timeSlot'
 import AttendanceStatus from '../enum/attendanceStatus'
 import attendanceReason from '../enum/attendanceReason'
 import AttendanceReason from '../enum/attendanceReason'
+import cancellationReasons from '../routes/record-attendance/cancellationReasons'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -537,5 +538,83 @@ export const getDailyAttendanceSummary = (attendanceSummary: AllAttendanceSummar
     totalRefused,
     totalUnpaidRest,
     totalUnpaidOther,
+  }
+}
+
+export const getCancelledActivitySummary = (
+  cancelledActivities: {
+    timeSlot: TimeSlot
+    cancelled: boolean
+    id: number
+    category: string
+    cancelledReason: string
+  }[],
+) => {
+  interface ActivitySummary<Type> {
+    [key: string]: Type
+  }
+  const totalCancelled: ActivitySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalStaffUnavailable: ActivitySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalStaffTraining: ActivitySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalNotRequired: ActivitySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalLocationUnavailable: ActivitySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalOperationalIssue: ActivitySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  cancelledActivities.forEach(activity => {
+    totalCancelled['DAY'] += 1
+    totalCancelled[activity.timeSlot.toUpperCase()] += 1
+    if (activity.cancelledReason === cancellationReasons.STAFF_UNAVAILABLE) {
+      totalStaffUnavailable['DAY'] += 1
+      totalStaffUnavailable[activity.timeSlot.toUpperCase()] += 1
+    } else if (activity.cancelledReason === cancellationReasons.STAFF_TRAINING) {
+      totalStaffTraining['DAY'] += 1
+      totalStaffTraining[activity.timeSlot.toUpperCase()] += 1
+    } else if (activity.cancelledReason === cancellationReasons.NOT_REQUIRED) {
+      totalNotRequired['DAY'] += 1
+      totalNotRequired[activity.timeSlot.toUpperCase()] += 1
+    } else if (activity.cancelledReason === cancellationReasons.LOCATION_UNAVAILABLE) {
+      totalLocationUnavailable['DAY'] += 1
+      totalLocationUnavailable[activity.timeSlot.toUpperCase()] += 1
+    } else if (activity.cancelledReason === cancellationReasons.OPERATIONAL_ISSUE) {
+      totalOperationalIssue['DAY'] += 1
+      totalOperationalIssue[activity.timeSlot.toUpperCase()] += 1
+    }
+  })
+  return {
+    totalCancelled,
+    totalStaffUnavailable,
+    totalStaffTraining,
+    totalNotRequired,
+    totalLocationUnavailable,
+    totalOperationalIssue,
   }
 }

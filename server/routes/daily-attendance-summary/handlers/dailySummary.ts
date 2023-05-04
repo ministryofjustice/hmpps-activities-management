@@ -1,5 +1,12 @@
 import { Request, Response } from 'express'
-import { convertToArray, formatDate, getDailyAttendanceSummary, toDate } from '../../../utils/utils'
+import {
+  convertToArray,
+  formatDate,
+  getDailyAttendanceSummary,
+  getTimeSlotFromTime,
+  toDate,
+  getCancelledActivitySummary,
+} from '../../../utils/utils'
 import ActivitiesService from '../../../services/activitiesService'
 import { AttendanceSummaryFilters, FilterItem } from '../../../@types/activities'
 
@@ -27,11 +34,28 @@ export default class DailySummaryRoutes {
       .filter((category: FilterItem) => category.checked === true)
       .map((category: FilterItem) => category.value)
 
+    const cancelledActivities = await this.activitiesService
+      .getScheduledActivitiesAtPrison(activityDate, user)
+      .then(scheduledActivities =>
+        scheduledActivities.map(activity => ({
+          id: activity.id,
+          category: activity.activitySchedule.activity.category.code,
+          timeSlot: getTimeSlotFromTime(activity.startTime),
+          cancelled: activity.cancelled,
+          cancelledReason: activity.cancelledReason,
+        })),
+      )
+      .then(scheduledActivities =>
+        scheduledActivities.filter(a => categoryFilters.includes(a.category) || categoryFilters.includes('ALL')),
+      )
+      .then(scheduledActivities => scheduledActivities.filter(a => a.cancelled))
+
     return res.render('pages/daily-attendance-summary/daily-summary', {
       activityDate,
       ...getDailyAttendanceSummary(
         attendanceSummary.filter(a => categoryFilters.includes(a.categoryName) || categoryFilters.includes('ALL')),
       ),
+      ...getCancelledActivitySummary(cancelledActivities),
       attendanceSummaryFilters,
     })
   }
@@ -100,10 +124,7 @@ const clearCategoryItem = (
   return newFilters
 }
 
-const parseFiltersFromPost = (
-  oldFilters: AttendanceSummaryFilters,
-  categories: string | string[],
-): AttendanceSummaryFilters => {
+const parseFiltersFromPost = (oldFilters: AttendanceSummaryFilters, categories: string[]): AttendanceSummaryFilters => {
   const newFilters = oldFilters
 
   const categoryFilters = oldFilters.categoryFilters.map(category => {
