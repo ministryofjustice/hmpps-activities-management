@@ -89,13 +89,15 @@
                     <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> {{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}
                </div>
 
-                {% set recordedTime = attendance.recordedTime.split('T') %}
-                <h2 class="govuk-heading-m">Recorded on {{ recordedTime[0] | toDate | formatDate('d MMMM yyyy') }} at {{ recordedTime[1] }}</h2>
-                {{ govukSummaryList({
-                    rows: summaryListRows,
-                    classes: "govuk-!-margin-bottom-9",
-                    attributes: { 'data-qa': 'appointment-details' }
-                }) }}
+                {% if attendance.status !== 'WAITING' %}
+                    {% set recordedTime = attendance.recordedTime.split('T') %}
+                    <h2 class="govuk-heading-m">Recorded on {{ recordedTime[0] | toDate | formatDate('d MMMM yyyy') }} at {{ recordedTime[1] }}</h2>
+                    {{ govukSummaryList({
+                        rows: summaryListRows,
+                        classes: "govuk-!-margin-bottom-9",
+                        attributes: { 'data-qa': 'appointment-details' }
+                    }) }}
+                {% endif %}
 
                 {% if attendance.attendanceHistory | length %}
                     {% if attendance.attendanceHistory | length > 1 %}
