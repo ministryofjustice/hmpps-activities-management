@@ -4,8 +4,6 @@ import AppointmentDetailsRoutes from './appointmentDetails'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 
-jest.mock('../../../../services/activitiesService')
-
 describe('Route Handlers - Appointment Details', () => {
   const handler = new AppointmentDetailsRoutes()
   let req: Request

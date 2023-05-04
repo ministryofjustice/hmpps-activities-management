@@ -237,7 +237,7 @@
 {% endmacro %}
 
 {% macro renderPayStatus(attendance) %}
-    {% if attendance.issuePayment or attendance.payAmount > 0 %}
+    {% if attendance.issuePayment %}
         {{ govukTag({
             text: "Pay",
             classes: "govuk-tag--green"
@@ -253,7 +253,7 @@
 {% endmacro %}
 
 {% macro renderViewLink(attendance) %}
-    {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory|length %}
-        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">View or change</a>
+    {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory|length and attendance.status !== 'WAITING' %}
+        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">View or edit</a>
     {% endif %}
 {% endmacro %}

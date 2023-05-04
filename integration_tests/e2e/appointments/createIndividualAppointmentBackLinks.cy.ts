@@ -9,6 +9,8 @@ import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
+import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
+import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
@@ -23,7 +25,8 @@ context('Create individual appointment - back links', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY', getPrisonPrisoners)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
-    cy.stubEndpoint('POST', '/appointments')
+    cy.stubEndpoint('POST', '/appointments', getAppointment)
+    cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
   })
 
   it('Create individual appointment - back links', () => {

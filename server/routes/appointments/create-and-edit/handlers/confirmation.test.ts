@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import ConfirmationRoutes from './confirmation'
+import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 
 describe('Route Handlers - Create Appointment - Confirmation', () => {
   const handler = new ConfirmationRoutes()
@@ -46,6 +47,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
           },
         },
       },
+      appointment: {} as AppointmentDetails,
       params: {
         id: '1',
       },
@@ -57,11 +59,10 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
   })
 
   describe('GET', () => {
-    it('should render the confirmation page with data from session', async () => {
+    it('should render the confirmation page with appointment details', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
-        id: '1',
-        startDate: new Date('2023-04-23T00:00:00.000+0100'),
+        appointment: req.appointment,
       })
     })
 

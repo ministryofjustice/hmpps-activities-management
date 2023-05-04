@@ -1,5 +1,5 @@
 {% macro showProfileLink(options = {}) %}
-    <div class="hmpps-inline-block" data-qa="prisoner-summary">
+    <div {{ "class=" + options.classes if options.classes }} data-qa="prisoner-summary">
       <div data-qa="prisoner-name">
         {% if options.link %}
           <a href="{{ dpsUrl }}/prisoner/{{ options.prisonerNumber }}"

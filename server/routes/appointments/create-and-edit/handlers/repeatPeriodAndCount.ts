@@ -32,7 +32,7 @@ export class RepeatPeriodAndCount {
   repeatCount: number
 }
 
-export default class QualificationRoutes {
+export default class RepeatPeriodAndCountRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/repeat-period-and-count')
   }
