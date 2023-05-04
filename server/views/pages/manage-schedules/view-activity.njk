@@ -125,7 +125,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: schedule.internalLocation.description
+                            text: "In cell" if schedule.activity.inCell else schedule.internalLocation.description
                         }
                     },
                     {

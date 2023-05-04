@@ -7,6 +7,7 @@ import AutoComplete from './components/autocomplete/autocomplete'
 import Calendar from './spikes/calendar'
 import ListFilter from './components/list-filter/list-filter'
 import AppointmentEndDate from './components/appointment-end-date/end-date'
+import SelectAllLink from './components/select-all-link/select-all-link'
 
 function initAll() {
   var $backLinks = document.querySelectorAll('[class*=js-backlink]')
@@ -44,10 +45,26 @@ function initAll() {
     new ListFilter($filter)
   })
 
-  var $appointmentStartDate = document.querySelectorAll('[data-module="appointment-end-date"]')
-  nodeListForEach($appointmentStartDate, function ($appointmentStartDate) {
-    new AppointmentEndDate($appointmentStartDate)
+  var $appointmentEndDates = document.querySelectorAll('[data-module="appointment-end-date"]')
+  nodeListForEach($appointmentEndDates, function ($appointmentEndDate) {
+    new AppointmentEndDate($appointmentEndDate)
+  })
+
+  var $selectAllLinks = document.querySelectorAll('[data-module="select-all-link"]')
+  nodeListForEach($selectAllLinks, function ($selectAllLink) {
+    new SelectAllLink($selectAllLink)
   })
 }
 
-export { initAll, BackLink, PrintButton, Card, MultiSelect, AutoComplete, Calendar, ListFilter, AppointmentEndDate }
+export {
+  initAll,
+  BackLink,
+  PrintButton,
+  Card,
+  MultiSelect,
+  AutoComplete,
+  Calendar,
+  ListFilter,
+  AppointmentEndDate,
+  SelectAllLink,
+}
