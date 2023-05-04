@@ -14,7 +14,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-3">{{ activities.length }} {{ 'activity' if activities.length == 1 else 'activities' }} scheduled for {{ activityDate | formatDate('d MMMM yyyy', true)}}</h1>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-3">Find an activity to record or edit attendance</h1>
             <ul class="govuk-list">
                 <li><a href="select-period" class="govuk-link govuk-!-font-size-19">View the schedule for a different day</a></li>
             </ul>
@@ -34,17 +34,35 @@
             },
             items: activitiesFilters.sessionFilters
         }) }}
-    {{ govukRadios({
+    {{ govukCheckboxes({
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
-            classes: "govuk-radios--small",
+            classes: "govuk-checkboxes--small",
             fieldset: {
                 legend: {
                     text: 'Categories',
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
+            formGroup: {
+                classes: 'govuk-!-margin-bottom-0'
+            },
             items: activitiesFilters.categoryFilters
+        }) }}
+    <div class="govuk-!-margin-bottom-4">
+        <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters">Select all</a>
+    </div>
+    {{ govukCheckboxes({
+            idPrefix: 'locationFilters',
+            name: 'locationFilters',
+            classes: "govuk-checkboxes--small",
+            fieldset: {
+                legend: {
+                    text: 'Locations',
+                    classes: 'govuk-fieldset__legend--m'
+                }
+            },
+            items: activitiesFilters.locationFilters
         }) }}
     {% endset %}
 
@@ -144,7 +162,7 @@
                         id: 'location-' + tableNumber + '-' + loop.index,
                         "data-sort-value": activity.location
                     },
-                    text: activity.location
+                    text: "In cell" if activity.inCell else activity.location
                 },
                 {
                     attributes: {
