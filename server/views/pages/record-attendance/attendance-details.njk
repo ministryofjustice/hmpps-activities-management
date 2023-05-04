@@ -21,10 +21,9 @@
                 text: "Change",
                 visuallyHiddenText: "Change attendance option"
             }]
-        }
+        } if not instance.cancelled
      }
 ), summaryListRows) %}
-
 {% set summaryListRows = (summaryListRows.push(
     {
         key: {
@@ -89,6 +88,7 @@
                 <div class="govuk-inset-text">
                     <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> {{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}
                </div>
+
                 {% set recordedTime = attendance.recordedTime.split('T') %}
                 <h2 class="govuk-heading-m">Recorded on {{ recordedTime[0] | toDate | formatDate('d MMMM yyyy') }} at {{ recordedTime[1] }}</h2>
                 {{ govukSummaryList({
@@ -99,7 +99,7 @@
 
                 {% if attendance.attendanceHistory | length %}
                     {% if attendance.attendanceHistory | length > 1 %}
-                        <h2 class="govuk-heading-m" data-qa="history-heading">{{ attendance.attendanceHistory | length }} changes has been made to this attendance record</h2>
+                        <h2 class="govuk-heading-m" data-qa="history-heading">{{ attendance.attendanceHistory | length }} changes have been made to this attendance record</h2>
                     {% else %}
                         <h2 class="govuk-heading-m" data-qa="history-heading">{{ attendance.attendanceHistory | length }} change has been made to this attendance record</h2>
                     {% endif %}
