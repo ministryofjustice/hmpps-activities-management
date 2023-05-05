@@ -30,6 +30,7 @@ import {
   PageActivityCandidate,
   AppointmentOccurrenceUpdateRequest,
   AppointmentLocationSummary,
+  AllAttendanceSummary,
   RolloutPrisonPlan,
   AppointmentOccurrenceSearchRequest,
   AppointmentOccurrenceSearchResult,
@@ -391,6 +392,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
         page,
         size: 5,
       },
+      authToken: user.token,
+    })
+  }
+
+  getAllAttendanceSummary(sessionDate: Date, user: ServiceUser): Promise<AllAttendanceSummary[]> {
+    return this.get({
+      path: `/attendances/summary/${user.activeCaseLoadId}/${toDateString(sessionDate)}`,
       authToken: user.token,
     })
   }

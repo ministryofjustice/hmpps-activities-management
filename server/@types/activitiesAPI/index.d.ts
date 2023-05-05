@@ -1746,6 +1746,63 @@ export interface components {
       /** @description The attendance history records for this attendance */
       attendanceHistory: components['schemas']['AttendanceHistory'][]
     }
+    /**
+     * @description
+     *   Represents the key data required to report on daily attendance activity
+     */
+    AllAttendanceSummary: {
+      /**
+       * Format: int64
+       * @description The attendance summary primary key
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the activity
+       * @example 123456
+       */
+      activityId: number
+      /**
+       * @description The name of the activity category
+       * @example Leisure and social
+       */
+      categoryName: string
+      /**
+       * Format: date
+       * @description The scheduled instance date
+       * @example 2023-03-30
+       */
+      sessionDate: string
+      /**
+       * @description AM, PM, ED.
+       * @example AM
+       */
+      timeSlot: string
+      /**
+       * @description WAITING, COMPLETED, LOCKED.
+       * @example WAITING
+       */
+      status: string
+      /** @description The reason for attending or not */
+      attendanceReasonCode?: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * Format: int32
+       * @description The number of attendance records
+       * @example 123456
+       */
+      attendanceCount: number
+    }
     /** @description An attendance record for a prisoner, can be marked or unmarked */
     AttendanceHistory: {
       /**
