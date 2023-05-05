@@ -129,15 +129,15 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         session: {},
       } as unknown as Request
 
-      when(await activitiesService.getAllAttendanceSummary)
+      when(activitiesService.getAllAttendanceSummary)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockApiResponse)
 
-      when(await activitiesService.getScheduledActivitiesAtPrison)
+      when(activitiesService.getScheduledActivitiesAtPrison)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockActivities)
 
-      when(await activitiesService.getAllAttendance)
+      when(activitiesService.getAllAttendance)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockSuspendedResponse)
 
