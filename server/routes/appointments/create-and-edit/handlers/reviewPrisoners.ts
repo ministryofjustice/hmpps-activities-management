@@ -5,6 +5,10 @@ export default class ReviewPrisonerRoutes {
     res.render('pages/appointments/create-and-edit/review-prisoners')
   }
 
+  POST = async (req: Request, res: Response): Promise<void> => {
+    res.redirectOrReturn('category')
+  }
+
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
 

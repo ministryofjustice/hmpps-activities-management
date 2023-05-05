@@ -94,7 +94,7 @@ context('Create group appointment', () => {
 
     reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Jacobson, Lee')
-    reviewPrisonersPage.finishAddingPrisoners()
+    reviewPrisonersPage.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.selectCategory('Chaplaincy')

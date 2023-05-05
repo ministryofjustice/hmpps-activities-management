@@ -80,6 +80,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/upload-by-csv', uploadByCsv.GET, true)
   post('/upload-by-csv', uploadByCsv.POST)
   get('/review-prisoners', reviewPrisoners.GET, true)
+  post('/review-prisoners', reviewPrisoners.POST)
   get('/review-prisoners/:prisonNumber/remove', reviewPrisoners.REMOVE, true)
 
   return router
