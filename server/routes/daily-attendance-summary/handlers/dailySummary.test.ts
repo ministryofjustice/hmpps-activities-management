@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 import { parse } from 'date-fns'
 import DailySummaryRoutes from './dailySummary'
 import ActivitiesService from '../../../services/activitiesService'
-import { AllAttendanceSummary, ScheduledActivity } from '../../../@types/activitiesAPI/types'
+import { AllAttendance, AllAttendanceSummary, ScheduledActivity } from '../../../@types/activitiesAPI/types'
 import { formatDate, toDate } from '../../../utils/utils'
 import { AttendanceSummaryFilters, FilterItem } from '../../../@types/activities'
 
@@ -66,6 +66,19 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       },
     ] as AllAttendanceSummary[]
 
+    const mockSuspendedResponse = [
+      {
+        attendanceId: 1,
+        prisonCode: 'MDI',
+        sessionDate: '2022-10-10',
+        timeSlot: 'AM',
+        status: 'COMPLETED',
+        attendanceReasonCode: 'SUSPENDED',
+        issuePayment: null,
+        prisonerNumber: 'A12345A',
+      },
+    ] as AllAttendance[]
+
     const mockActivities = [
       {
         id: 1,
@@ -123,6 +136,10 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       when(await activitiesService.getScheduledActivitiesAtPrison)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockActivities)
+
+      when(await activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockSuspendedResponse)
 
       await handler.GET(req, res)
 
@@ -254,6 +271,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           ED: 0,
           PM: 0,
         },
+        suspendedPrisonerCount: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
         attendanceSummaryFilters: {
           activityDate: date,
           categoryFilters: [
@@ -271,6 +294,10 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       when(activitiesService.getAllAttendanceSummary)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockApiResponse)
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockSuspendedResponse)
 
       req = {
         query: { date: dateString },
@@ -407,6 +434,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalOperationalIssue: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        suspendedPrisonerCount: {
           AM: 0,
           DAY: 0,
           ED: 0,

@@ -1645,6 +1645,51 @@ export interface components {
     }
     /**
      * @description
+     *   Represents the key data required to report on attendance
+     */
+    AllAttendance: {
+      /**
+       * Format: int64
+       * @description The attendance summary primary key
+       * @example 123456
+       */
+      attendanceId: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: date
+       * @description The scheduled instance date
+       * @example 2023-03-30
+       */
+      sessionDate: string
+      /**
+       * @description AM, PM, ED.
+       * @example AM
+       */
+      timeSlot: string
+      /**
+       * @description WAITING, COMPLETED, LOCKED.
+       * @example WAITING
+       */
+      status: string
+      /** @description The reason for attending or not */
+      attendanceReasonCode?: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description The prison number this attendance record is for
+       * @example A1234AA
+       */
+      prisonerNumber: string
+    }
+    /**
+     * @description
      *   Represents the key data required to report on daily attendance activity
      */
     AllAttendanceSummary: {

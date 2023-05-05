@@ -19,7 +19,13 @@ import enGBLocale from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
-import { AllAttendanceSummary, Attendance, ScheduledActivity, ScheduledEvent } from '../@types/activitiesAPI/types'
+import {
+  AllAttendance,
+  AllAttendanceSummary,
+  Attendance,
+  ScheduledActivity,
+  ScheduledEvent,
+} from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import AttendanceStatus from '../enum/attendanceStatus'
 import attendanceReason from '../enum/attendanceReason'
@@ -616,5 +622,24 @@ export const getCancelledActivitySummary = (
     totalNotRequired,
     totalLocationUnavailable,
     totalOperationalIssue,
+  }
+}
+
+export const getSuspendedPrisonerCount = (suspendedPrisoners: AllAttendance[]) => {
+  interface SuspendedPrisonerCount<Type> {
+    [key: string]: Type
+  }
+  const suspendedPrisonerCount: SuspendedPrisonerCount<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  suspendedPrisoners.forEach(attendance => {
+    suspendedPrisonerCount['DAY'] += 1
+    suspendedPrisonerCount[attendance.timeSlot.toUpperCase()] += 1
+  })
+  return {
+    suspendedPrisonerCount,
   }
 }
