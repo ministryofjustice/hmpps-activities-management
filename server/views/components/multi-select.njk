@@ -34,7 +34,7 @@
                     classes: 'govuk-!-display-none-print'
                 }
             ] %}
-         {% else %}
+        {% else %}
             {% set r = [{ html: '', classes: 'govuk-!-display-none-print' }] %}
         {% endif %}
         {% for item in row.items %}
@@ -92,7 +92,13 @@
             {% endif %}
         </nav>
 
-        <div class='multi-select-sticky' role='toolbar' aria-live='polite' aria-label='Attendance actions' aria-disabled='false'>
+        <div class='multi-select-sticky' role='toolbar' aria-live='polite'
+             aria-label='Attendance actions' aria-disabled='false'
+             {% if params.itemsDescription %}
+             data-description-singular='{{ params.itemsDescription.singular }}'
+             data-description-plural='{{ params.itemsDescription.plural }}'
+             {% endif %}
+        >
             <div class='govuk-width-container'>
                 <span class='multi-select-sticky__count'></span>
                 <div class='govuk-button-group'>

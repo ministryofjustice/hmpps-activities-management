@@ -7,6 +7,8 @@ function MultiSelect(container) {
   this.checkboxes = this.container.querySelectorAll('tbody .govuk-checkboxes__input')
   this.stickyBar = this.container.querySelector('.multi-select-sticky')
   this.selectedCount = this.container.querySelector('.multi-select-sticky__count')
+  this.itemsDescriptionSingular = this.stickyBar.getAttribute('data-description-singular')
+  this.itemsDescriptionPlural = this.stickyBar.getAttribute('data-description-plural')
 
   this.stickyBar.setAttribute('aria-disabled', 'true')
 
@@ -31,11 +33,20 @@ MultiSelect.prototype.handleCheckboxChanged = function () {
     }.bind(this)
   )
 
-  this.selectedCount.innerText = `${count} selected`
-
   if (count > 0) {
     this.stickyBar.classList.add('multi-select-sticky--active')
     this.stickyBar.setAttribute('aria-disabled', 'false')
+
+    this.selectedCount.innerText = `${count} selected`
+
+    console.log(this.itemsDescriptionSingular)
+    console.log(this.itemsDescriptionPlural)
+
+    if (count === 1 && this.itemsDescriptionSingular) {
+      this.selectedCount.innerText = `${count} ${this.itemsDescriptionSingular} selected`
+    } else if (count > 1 && this.itemsDescriptionPlural) {
+      this.selectedCount.innerText = `${count} ${this.itemsDescriptionPlural} selected`
+    }
   } else {
     this.stickyBar.classList.remove('multi-select-sticky--active')
     this.stickyBar.setAttribute('aria-disabled', 'true')
