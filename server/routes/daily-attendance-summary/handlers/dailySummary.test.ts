@@ -272,8 +272,8 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         suspendedPrisonerCount: {
-          AM: 0,
-          DAY: 0,
+          AM: 1,
+          DAY: 1,
           ED: 0,
           PM: 0,
         },
@@ -440,8 +440,8 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         suspendedPrisonerCount: {
-          AM: 0,
-          DAY: 0,
+          AM: 1,
+          DAY: 1,
           ED: 0,
           PM: 0,
         },
