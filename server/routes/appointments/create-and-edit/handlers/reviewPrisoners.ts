@@ -1,13 +1,4 @@
-import { Expose } from 'class-transformer'
-import { IsEnum } from 'class-validator'
 import { Request, Response } from 'express'
-import { YesNo } from '../../../../@types/activities'
-
-export class AddAnotherForm {
-  @Expose()
-  @IsEnum(YesNo, { message: 'Select whether you want to add another prisoner' })
-  addAnother: YesNo
-}
 
 export default class ReviewPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -15,12 +6,16 @@ export default class ReviewPrisonerRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { addAnother } = req.body
+    res.redirectOrReturn('category')
+  }
 
-    if (YesNo[addAnother] === YesNo.YES) {
-      res.redirect('how-to-add-prisoners')
-    } else {
-      res.redirectOrReturn('category')
-    }
+  REMOVE = async (req: Request, res: Response): Promise<void> => {
+    const { prisonNumber } = req.params
+
+    req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.filter(
+      prisoner => prisoner.number !== prisonNumber,
+    )
+
+    res.redirect('../../review-prisoners')
   }
 }

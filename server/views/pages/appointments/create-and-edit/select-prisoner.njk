@@ -12,7 +12,7 @@
 
 {% set headingText = "Search and add prisoner to the appointment" %}
 {% if session.appointmentJourney.type == AppointmentType.GROUP %}
-    {% set headingText = "Search and add prisoners to the appointment list" %}
+    {% set headingText = "Search for an individual to add to the appointment list" %}
 {% endif %}
 
 {% block content %}

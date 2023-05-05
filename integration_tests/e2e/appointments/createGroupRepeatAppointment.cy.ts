@@ -82,8 +82,7 @@ context('Create group appointment', () => {
     let reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
     reviewPrisonersPage.assertPrisonerInList('Winchurch, David')
-    reviewPrisonersPage.selectAddAnotherPrisoner('Yes')
-    reviewPrisonersPage.continue()
+    reviewPrisonersPage.addAnotherPrisoner()
 
     howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
     howToAddPrisonersPage.selectHowToAdd('Search for a prison number to add to the appointment list')
@@ -95,7 +94,6 @@ context('Create group appointment', () => {
 
     reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Jacobson, Lee')
-    reviewPrisonersPage.selectAddAnotherPrisoner('No')
     reviewPrisonersPage.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)

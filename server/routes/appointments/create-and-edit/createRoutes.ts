@@ -15,7 +15,7 @@ import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
 import UploadByCSV from './handlers/uploadByCsv'
-import ReviewPrisoners, { AddAnotherForm } from './handlers/reviewPrisoners'
+import ReviewPrisoners from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
@@ -80,7 +80,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/upload-by-csv', uploadByCsv.GET, true)
   post('/upload-by-csv', uploadByCsv.POST)
   get('/review-prisoners', reviewPrisoners.GET, true)
-  post('/review-prisoners', reviewPrisoners.POST, AddAnotherForm)
+  post('/review-prisoners', reviewPrisoners.POST)
+  get('/review-prisoners/:prisonNumber/remove', reviewPrisoners.REMOVE, true)
 
   return router
 }
