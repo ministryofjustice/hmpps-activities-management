@@ -23,7 +23,7 @@ export default class DescriptionRoutes {
     const { descriptionOption, description } = req.body
     req.session.appointmentJourney.descriptionOption = descriptionOption
     if (descriptionOption === 'no') req.session.appointmentJourney.description = description
-    else req.session.appointmentJourney.description = ''
+    else req.session.appointmentJourney.description = null
     res.redirectOrReturn(`location`)
   }
 }

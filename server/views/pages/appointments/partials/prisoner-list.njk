@@ -1,15 +1,8 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% macro prisonerList(prisoners) %}
-   {% set prisonerListRows = [{
-        key: {
-            text: "Prisoners"
-        },
-        value: {
-            text: prisoners | length
-        }
-    }] %}
+{% macro prisonerList(appointmentId, appointmentOccurrenceId, appointmentType, repeat, prisoners) %}
+    {% set prisonerListRows = [] %}
     {% for prisoner in prisoners %}
         {% set prisonerListRows = (prisonerListRows.push({
             key: {
@@ -26,10 +19,65 @@
         }), prisonerListRows) %}
     {% endfor %}
 
-    <h2 class="govuk-heading-m">Prisoner details</h2>
+    {% set prisonerActionItems = [{
+        href: ("/appointments/" + appointmentId + "/occurrence/" + appointmentOccurrenceId + "/movement-slip" if repeat) + ("/appointments/" + appointmentId + "/movement-slip" if repeat == null),
+        text: "Print movement slip" + ("s" if prisoners.length > 1 ),
+        classes: "govuk-link--no-visited-state",
+        attributes: { 'data-qa': 'print-movement-slips' }
+    }] %}
+    {% if appointmentType == AppointmentType.GROUP %}
+        {% set prisonerActionItems = (prisonerActionItems.push(
+            {
+                href: "#",
+                text: "Add prisoners",
+                classes: "govuk-link--no-visited-state",
+                attributes: { 'data-qa': 'add-prisoners' }
+            }
+        ), prisonerActionItems) %}
+        {% set prisonerActionItems = (prisonerActionItems.push(
+            {
+                href: "#",
+                text: "Remove prisoners",
+                classes: "govuk-link--no-visited-state",
+                attributes: { 'data-qa': 'remove-prisoners' }
+            }
+        ), prisonerActionItems) %}
+    {% endif %}
+
+    {% for occurrence in appointment.occurrences %}
+        {% set occurrenceDate = occurrence.startDate | toDate %}
+        {% set occurrenceTableRows = (occurrenceTableRows.push([
+            {
+                text: occurrence.sequenceNumber,
+                classes: "govuk-!-font-weight-regular govuk-!-text-align-right",
+                attributes: { 'data-qa': 'occurrence-sequence-no-' + occurrence.sequenceNumber }
+            }, {
+                text: occurrenceDate | formatDate('d MMM yyyy'),
+                attributes: { 'data-qa': 'occurrence-date-' + occurrence.sequenceNumber }
+            }, {
+                html: govukTag({ text: "Edited" }) if occurrence.updated,
+                attributes: { 'data-qa': 'occurrence-edited-' + occurrence.sequenceNumber }
+            }, {
+                html: '<a href="/appointments/' + appointment.id + '/occurrence/' + occurrence.id + '"
+                class="govuk-link--no-visited-state">
+                View and edit<span class="govuk-visually-hidden"> appointment ' + occurrence.sequenceNumber + '</span>
+            </a>',
+                classes: 'govuk-!-text-align-right',
+                attributes: { 'data-qa': 'view-and-edit-appointment-' + occurrence.sequenceNumber }
+            }
+        ]), occurrenceTableRows) %}
+    {% endfor %}
+
     {{ govukSummaryList({
+        card: {
+            title: {
+                text: ("Prisoner" if prisoners.length == 1 ) + ("Prisoners (" + prisoners | length + ")" if prisoners.length > 1 )
+            },
+            actions: {
+                items: prisonerActionItems
+            }
+        },
         rows: prisonerListRows,
-        attributes: { 'data-qa': 'prisoner-list' },
-        classes: "govuk-!-margin-bottom-9 govuk-summary-list--vertical-align-top"
+        attributes: { 'data-qa': 'prisoner-list' }
     }) }}
 {% endmacro %}

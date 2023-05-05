@@ -11,8 +11,14 @@ export default class AppointmentDetailsPage extends Page {
 
   printMovementSlipLink = () => cy.get('[data-qa=print-movement-slip-link]')
 
+  assertAppointmentSeriesDetail = (header: string, value: string) =>
+    this.assertSummaryListValue('appointment-series-details', header, value)
+
   assertAppointmentDetail = (header: string, value: string) =>
     this.assertSummaryListValue('appointment-details', header, value)
+
+  assertAppointmentHistory = (header: string, value: string) =>
+    this.assertSummaryListValue('appointment-history', header, value)
 
   assertAppointmentOccurrenceSummary = (sequenceNumber: string, column: string, value: string) =>
     cy
@@ -45,11 +51,11 @@ export default class AppointmentDetailsPage extends Page {
   assertEndTime = (hour: number, minute: number) =>
     this.assertAppointmentDetail('End time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
-  assertRepeat = (option: string) => this.assertAppointmentDetail('Repeat', option)
+  assertAppointmentSeriesDetails = () => cy.get('[data-qa=appointment-series-details]').should('exist')
 
-  assertRepeatPeriod = (option: string) => this.assertAppointmentDetail('Frequency', option)
+  assertRepeatPeriod = (option: string) => this.assertAppointmentSeriesDetail('Frequency', option)
 
-  assertRepeatCount = (option: string) => this.assertAppointmentDetail('Occurrences', option)
+  assertRepeatCount = (option: string) => this.assertAppointmentSeriesDetail('Occurrences', option)
 
   assertOccurrences = (occurrenceMap: Map<number, string>) => {
     occurrenceMap.forEach((date, sequenceNumber) => {
@@ -57,7 +63,7 @@ export default class AppointmentDetailsPage extends Page {
     })
   }
 
-  assertCreatedBy = (createdBy: string) => this.assertSummaryListValue('user-details', 'Created by', createdBy)
+  assertCreatedBy = (createdBy: string) => this.assertAppointmentHistory('Created by', createdBy)
 
   assertPrintMovementSlipLink = () => this.printMovementSlipLink().contains('Print movement slip')
 }

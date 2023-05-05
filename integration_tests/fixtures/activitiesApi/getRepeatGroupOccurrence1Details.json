@@ -17,6 +17,10 @@
   "startTime": "14:00",
   "endTime": "15:30",
   "appointmentType": "GROUP",
+  "repeat": {
+    "period": "WEEKLY",
+    "count": 2
+  },
   "comment": "Appointment occurrence level comment",
   "isEdited": false,
   "isCancelled": false,

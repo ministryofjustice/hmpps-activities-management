@@ -6,7 +6,6 @@ import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
-import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
 
 const view = fs.readFileSync('server/views/pages/appointments/details/appointment.njk')
@@ -16,7 +15,7 @@ const getSummaryListValueElement = ($: CheerioAPI, listIdentifier: string, headi
     .parent()
     .find('.govuk-summary-list__value')
 const getAppointmentDetailsValueElement = ($: CheerioAPI, heading: string) =>
-  getSummaryListValueElement($, 'appointment-details', heading)
+  getSummaryListValueElement($, 'appointment-series-details', heading)
 const getRepeatPeriodValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Frequency')
 const getRepeatCountValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Occurrences')
 
@@ -34,6 +33,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
     viewContext = {
       appointment: {
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
+        created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
     }
   })
@@ -45,8 +45,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
 
     expect(getRepeatPeriodValueElement($).length).toBe(0)
     expect(getRepeatCountValueElement($).length).toBe(0)
-    expect($('[data-qa=occurrences-heading]').length).toBe(0)
-    expect($('[data-qa=appointment-occurrences]').length).toBe(0)
+    expect($('[data-qa=appointment-series-details]').length).toBe(0)
   })
 
   it.each([
@@ -88,35 +87,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('[data-qa=occurrences-heading]').length).toBe(1)
-    expect($('[data-qa=appointment-occurrences]').length).toBe(1)
-  })
-
-  it('should display prisoner list if single group appointment', () => {
-    viewContext.appointment.appointmentType = AppointmentType.GROUP
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-    expect($('[data-qa=prisoner-list]').length).toBe(1)
-    expect($('[data-qa=appointment-details] .govuk-summary-list__key:contains("Prisoners")').length).toBe(0)
-  })
-
-  it('should display prisoner count if repeat group appointment', () => {
-    viewContext.appointment.appointmentType = AppointmentType.GROUP
-    viewContext.appointment.repeat = {
-      period: AppointmentRepeatPeriod.WEEKLY,
-      count: 6,
-    }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-    expect($('[data-qa=appointment-details] .govuk-summary-list__key:contains("Prisoners")').length).toBe(1)
-    expect($('[data-qa=prisoner-list]').length).toBe(0)
-  })
-
-  it('should not display prisoner summary if group appointment', () => {
-    viewContext.appointment.appointmentType = AppointmentType.GROUP
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-    expect($('[data-qa=prisoner-summary]').length).toBe(0)
+    expect($('[data-qa=appointment-series-details]').length).toBe(1)
   })
 
   it('should show updated occurrences as edited', () => {

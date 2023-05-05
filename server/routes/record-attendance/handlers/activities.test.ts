@@ -44,7 +44,7 @@ describe('Route Handlers - Activities', () => {
         startTime: '10:00',
         endTime: '11:00',
         activitySchedule: {
-          activity: { summary: 'Maths level 1', category: { code: 'Maths' } },
+          activity: { summary: 'Maths level 1', category: { code: 'SAA_EDUCATION' }, inCell: true },
           description: 'Houseblock 1',
           internalLocation: { description: 'Classroom' },
         },
@@ -60,7 +60,7 @@ describe('Route Handlers - Activities', () => {
         startTime: '13:00',
         endTime: '14:00',
         activitySchedule: {
-          activity: { summary: 'English level 1', category: { code: 'English' } },
+          activity: { summary: 'Packing', category: { code: 'SAA_INDUSTRIES' }, inCell: false },
           description: 'Houseblock 2',
           internalLocation: { description: 'Classroom 2' },
         },
@@ -76,9 +76,15 @@ describe('Route Handlers - Activities', () => {
     const mockCategories = [
       {
         id: 1,
-        code: 'ALL',
-        name: 'ALL',
-        description: 'ALL',
+        code: 'SAA_EDUCATION',
+        name: 'Eduction',
+        description: 'Eduction',
+      },
+      {
+        id: 2,
+        code: 'SAA_INDUSTRIES',
+        name: 'Packing',
+        description: 'Packing',
       },
     ] as ActivityCategory[]
 
@@ -106,13 +112,20 @@ describe('Route Handlers - Activities', () => {
         session: {
           activitiesFilters: {
             searchTerm: '',
-            categories: ['ALL'],
+            categories: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
             sessionFilters: [
               { value: 'AM', text: 'Morning (AM)', checked: true },
               { value: 'PM', text: 'Afternoon (PM)', checked: true },
               { value: 'ED', text: 'Evening (ED)', checked: true },
             ],
-            categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+            categoryFilters: [
+              { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+              { value: 'SAA_INDUSTRIES', text: 'Industries', checked: true },
+            ],
+            locationFilters: [
+              { value: 'IN_CELL', text: 'In cell', checked: true },
+              { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
+            ],
           },
         },
       } as unknown as Request
@@ -132,7 +145,7 @@ describe('Route Handlers - Activities', () => {
               allocated: 3,
               attended: 1,
               attendedPercentage: '33',
-              category: 'Maths',
+              category: 'SAA_EDUCATION',
               id: 1,
               location: 'Classroom',
               name: 'Maths level 1',
@@ -144,6 +157,7 @@ describe('Route Handlers - Activities', () => {
               time: '10:00 - 11:00',
               timeSlot: 'am',
               cancelled: false,
+              inCell: true,
             },
           ],
           pm: [
@@ -151,10 +165,10 @@ describe('Route Handlers - Activities', () => {
               allocated: 3,
               attended: 1,
               attendedPercentage: '33',
-              category: 'English',
+              category: 'SAA_INDUSTRIES',
               id: 2,
               location: 'Classroom 2',
-              name: 'English level 1',
+              name: 'Packing',
               scheduleName: 'Houseblock 2',
               notAttended: 1,
               notAttendedPercentage: '33',
@@ -163,18 +177,26 @@ describe('Route Handlers - Activities', () => {
               time: '13:00 - 14:00',
               timeSlot: 'pm',
               cancelled: false,
+              inCell: false,
             },
           ],
           length: 2,
         },
         activitiesFilters: {
-          categories: ['ALL'],
-          categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+          categories: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+          categoryFilters: [
+            { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+            { value: 'SAA_INDUSTRIES', text: 'Industries', checked: true },
+          ],
           searchTerm: '',
           sessionFilters: [
             { value: 'AM', text: 'Morning (AM)', checked: true },
             { value: 'PM', text: 'Afternoon (PM)', checked: true },
             { value: 'ED', text: 'Evening (ED)', checked: true },
+          ],
+          locationFilters: [
+            { value: 'IN_CELL', text: 'In cell', checked: true },
+            { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
           ],
         },
         activityDate: date,
@@ -200,13 +222,20 @@ describe('Route Handlers - Activities', () => {
         session: {
           activitiesFilters: {
             searchTerm: 'math',
-            categories: ['ALL'],
+            categories: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
             sessionFilters: [
               { value: 'AM', text: 'Morning (AM)', checked: true },
               { value: 'PM', text: 'Afternoon (PM)', checked: true },
               { value: 'ED', text: 'Evening (ED)', checked: true },
             ],
-            categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+            categoryFilters: [
+              { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+              { value: 'SAA_INDUSTRIES', text: 'Industries', checked: true },
+            ],
+            locationFilters: [
+              { value: 'IN_CELL', text: 'In cell', checked: true },
+              { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
+            ],
           },
         },
       } as unknown as Request
@@ -220,7 +249,7 @@ describe('Route Handlers - Activities', () => {
               allocated: 3,
               attended: 1,
               attendedPercentage: '33',
-              category: 'Maths',
+              category: 'SAA_EDUCATION',
               id: 1,
               location: 'Classroom',
               name: 'Maths level 1',
@@ -232,18 +261,26 @@ describe('Route Handlers - Activities', () => {
               time: '10:00 - 11:00',
               timeSlot: 'am',
               cancelled: false,
+              inCell: true,
             },
           ],
           length: 1,
         },
         activitiesFilters: {
-          categories: ['ALL'],
-          categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+          categories: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+          categoryFilters: [
+            { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+            { value: 'SAA_INDUSTRIES', text: 'Industries', checked: true },
+          ],
           searchTerm: 'math',
           sessionFilters: [
             { value: 'AM', text: 'Morning (AM)', checked: true },
             { value: 'PM', text: 'Afternoon (PM)', checked: true },
             { value: 'ED', text: 'Evening (ED)', checked: true },
+          ],
+          locationFilters: [
+            { value: 'IN_CELL', text: 'In cell', checked: true },
+            { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
           ],
         },
         activityDate: date,
@@ -269,13 +306,17 @@ describe('Route Handlers - Activities', () => {
         session: {
           activitiesFilters: {
             searchTerm: '',
-            categories: ['ALL'],
+            categories: ['SAA_EDUCATION'],
             sessionFilters: [
               { value: 'AM', text: 'Morning (AM)', checked: true },
               { value: 'PM', text: 'Afternoon (PM)', checked: false },
               { value: 'ED', text: 'Evening (ED)', checked: false },
             ],
-            categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+            categoryFilters: [{ value: 'SAA_EDUCATION', text: 'Education', checked: true }],
+            locationFilters: [
+              { value: 'IN_CELL', text: 'In cell', checked: true },
+              { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
+            ],
           },
         },
       } as unknown as Request
@@ -290,7 +331,7 @@ describe('Route Handlers - Activities', () => {
               attended: 1,
               attendedPercentage: '33',
               cancelled: false,
-              category: 'Maths',
+              category: 'SAA_EDUCATION',
               id: 1,
               location: 'Classroom',
               name: 'Maths level 1',
@@ -301,18 +342,23 @@ describe('Route Handlers - Activities', () => {
               notRecordedPercentage: '33',
               time: '10:00 - 11:00',
               timeSlot: 'am',
+              inCell: true,
             },
           ],
           length: 1,
         },
         activitiesFilters: {
-          categories: ['ALL'],
-          categoryFilters: [{ value: 'ALL', text: 'ALL', checked: true }],
+          categories: ['SAA_EDUCATION'],
+          categoryFilters: [{ value: 'SAA_EDUCATION', text: 'Education', checked: true }],
           searchTerm: '',
           sessionFilters: [
             { value: 'AM', text: 'Morning (AM)', checked: true },
             { value: 'PM', text: 'Afternoon (PM)', checked: false },
             { value: 'ED', text: 'Evening (ED)', checked: false },
+          ],
+          locationFilters: [
+            { value: 'IN_CELL', text: 'In cell', checked: true },
+            { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
           ],
         },
         activityDate: date,
@@ -338,13 +384,20 @@ describe('Route Handlers - Activities', () => {
         session: {
           activitiesFilters: {
             searchTerm: '',
-            categories: ['English'],
+            categories: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
             sessionFilters: [
               { value: 'AM', text: 'Morning (AM)', checked: true },
               { value: 'PM', text: 'Afternoon (PM)', checked: true },
               { value: 'ED', text: 'Evening (ED)', checked: true },
             ],
-            categoryFilters: [{ value: 'English', text: 'English', checked: true }],
+            categoryFilters: [
+              { value: 'SAA_EDUCATION', text: 'Education', checked: false },
+              { value: 'SAA_INDUSTRIES', text: 'Industries', checked: true },
+            ],
+            locationFilters: [
+              { value: 'IN_CELL', text: 'In cell', checked: true },
+              { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
+            ],
           },
         },
       } as unknown as Request
@@ -359,10 +412,10 @@ describe('Route Handlers - Activities', () => {
               attended: 1,
               attendedPercentage: '33',
               cancelled: false,
-              category: 'English',
+              category: 'SAA_INDUSTRIES',
               id: 2,
               location: 'Classroom 2',
-              name: 'English level 1',
+              name: 'Packing',
               scheduleName: 'Houseblock 2',
               notAttended: 1,
               notAttendedPercentage: '33',
@@ -370,18 +423,110 @@ describe('Route Handlers - Activities', () => {
               notRecordedPercentage: '33',
               time: '13:00 - 14:00',
               timeSlot: 'pm',
+              inCell: false,
             },
           ],
           length: 1,
         },
         activitiesFilters: {
-          categories: ['English'],
-          categoryFilters: [{ value: 'English', text: 'English', checked: true }],
+          categories: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+          categoryFilters: [
+            { value: 'SAA_EDUCATION', text: 'Education', checked: false },
+            { value: 'SAA_INDUSTRIES', text: 'Industries', checked: true },
+          ],
           searchTerm: '',
           sessionFilters: [
             { value: 'AM', text: 'Morning (AM)', checked: true },
             { value: 'PM', text: 'Afternoon (PM)', checked: true },
             { value: 'ED', text: 'Evening (ED)', checked: true },
+          ],
+          locationFilters: [
+            { value: 'IN_CELL', text: 'In cell', checked: true },
+            { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
+          ],
+        },
+        activityDate: date,
+        previousDay,
+        nextDay,
+      })
+    })
+
+    it('should filter the activities based on the location', async () => {
+      const dateString = '2022-12-08'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+      const previousDay = subDays(new Date(date), 1)
+      const nextDay = addDays(new Date(date), 1)
+
+      when(activitiesService.getScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockApiResponse)
+
+      when(activitiesService.getActivityCategories).calledWith(res.locals.user).mockResolvedValue(mockCategories)
+
+      req = {
+        query: { date: dateString },
+        session: {
+          activitiesFilters: {
+            searchTerm: '',
+            categories: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+            sessionFilters: [
+              { value: 'AM', text: 'Morning (AM)', checked: true },
+              { value: 'PM', text: 'Afternoon (PM)', checked: true },
+              { value: 'ED', text: 'Evening (ED)', checked: true },
+            ],
+            categoryFilters: [
+              { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+              { value: 'SAA_INDUSTRIES', text: 'Industries', checked: true },
+            ],
+            locationFilters: [
+              { value: 'IN_CELL', text: 'In cell', checked: true },
+              { value: 'OUT_OF_CELL', text: 'Out of cell', checked: false },
+            ],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
+        activities: {
+          am: [
+            {
+              allocated: 3,
+              attended: 1,
+              attendedPercentage: '33',
+              cancelled: false,
+              category: 'SAA_EDUCATION',
+              id: 1,
+              location: 'Classroom',
+              name: 'Maths level 1',
+              scheduleName: 'Houseblock 1',
+              notAttended: 1,
+              notAttendedPercentage: '33',
+              notRecorded: 1,
+              notRecordedPercentage: '33',
+              time: '10:00 - 11:00',
+              timeSlot: 'am',
+              inCell: true,
+            },
+          ],
+          length: 1,
+        },
+        activitiesFilters: {
+          categories: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+          categoryFilters: [
+            { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+            { value: 'SAA_INDUSTRIES', text: 'Industries', checked: true },
+          ],
+          searchTerm: '',
+          sessionFilters: [
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: true },
+            { value: 'ED', text: 'Evening (ED)', checked: true },
+          ],
+          locationFilters: [
+            { value: 'IN_CELL', text: 'In cell', checked: true },
+            { value: 'OUT_OF_CELL', text: 'Out of cell', checked: false },
           ],
         },
         activityDate: date,

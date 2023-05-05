@@ -28,12 +28,16 @@ export default class ActivitiesRoutes {
     const nextDay = addDays(new Date(activityDate), 1)
 
     const sessionFilters = activitiesFilters.sessionFilters
-      .filter(session => session.checked === true)
+      .filter(session => session.checked)
       .map(session => session.value)
 
     const categoryFilters = activitiesFilters.categoryFilters
-      .filter(category => category.checked === true)
+      .filter(category => category.checked)
       .map(category => category.value)
+
+    const locationFilters = activitiesFilters.locationFilters
+      .filter(location => location.checked)
+      .map(location => location.value)
 
     const activitiesModel = await this.activitiesService
       .getScheduledActivitiesAtPrison(activityDate, user)
@@ -43,7 +47,8 @@ export default class ActivitiesRoutes {
           name: activity.activitySchedule.activity.summary,
           scheduleName: activity.activitySchedule.description,
           category: activity.activitySchedule.activity.category.code,
-          location: activity.activitySchedule.internalLocation.description,
+          location: activity.activitySchedule.internalLocation?.description,
+          inCell: activity.activitySchedule.activity.inCell,
           timeSlot: getTimeSlotFromTime(activity.startTime),
           time: `${activity.startTime} - ${activity.endTime}`,
           cancelled: activity.cancelled,
@@ -56,8 +61,9 @@ export default class ActivitiesRoutes {
       .then(scheduledActivities =>
         scheduledActivities.filter(a => sessionFilters.includes(a.timeSlot.toUpperCase()) === true),
       )
+      .then(scheduledActivities => scheduledActivities.filter(a => categoryFilters.includes(a.category)))
       .then(scheduledActivities =>
-        scheduledActivities.filter(a => categoryFilters.includes(a.category) || categoryFilters.includes('ALL')),
+        scheduledActivities.filter(a => locationFilters.includes(a.inCell ? 'IN_CELL' : 'OUT_OF_CELL')),
       )
       .then(scheduledActivities => ({
         ..._.groupBy(scheduledActivities, 'timeSlot'),
@@ -81,8 +87,9 @@ export default class ActivitiesRoutes {
 
     req.session.activitiesFilters = parseFiltersFromPost(
       activitiesFilters,
-      req.body?.sessionFilters ? req.body?.sessionFilters : undefined,
-      req.body?.categoryFilters ? req.body?.categoryFilters : undefined,
+      req.body?.sessionFilters,
+      req.body?.categoryFilters,
+      req.body?.locationFilters,
     )
     res.redirect(`activities?date=${isoDateString}`)
   }
@@ -113,18 +120,26 @@ export default class ActivitiesRoutes {
 }
 
 const defaultFilters = (activityDate: Date, searchTerm: string, categories: ActivityCategory[]): ActivitiesFilters => {
-  const categoryFilters: FilterItem[] = [{ value: 'ALL', text: 'All Categories', checked: true }]
-  categories.forEach(category => categoryFilters.push({ value: category.code, text: category.name, checked: false }))
+  const categoryFilters: FilterItem[] = categories.map(category => ({
+    value: category.code,
+    text: category.name,
+    checked: true,
+  }))
   const sessionFilters = [
     { value: 'AM', text: 'Morning (AM)', checked: true },
     { value: 'PM', text: 'Afternoon (PM)', checked: true },
     { value: 'ED', text: 'Evening (ED)', checked: true },
   ] as FilterItem[]
+  const locationFilters: FilterItem[] = [
+    { value: 'IN_CELL', text: 'In cell', checked: true },
+    { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
+  ]
   return {
     activityDate,
     searchTerm,
     sessionFilters,
     categoryFilters,
+    locationFilters,
   } as ActivitiesFilters
 }
 
@@ -171,22 +186,24 @@ const parseFiltersFromPost = (
   oldFilters: ActivitiesFilters,
   sessions: string | string[],
   categories: string | string[],
+  locations: string | string[],
 ): ActivitiesFilters => {
   const newFilters = oldFilters
 
-  const sessionFilters = oldFilters.sessionFilters.map(session => {
+  newFilters.sessionFilters = oldFilters.sessionFilters.map(session => {
     const checked = convertToArray(sessions).includes(session.value)
     return { value: session.value, text: session.text, checked } as FilterItem
   })
 
-  const categoryFilters = oldFilters.categoryFilters.map(category => {
+  newFilters.categoryFilters = oldFilters.categoryFilters.map(category => {
     const checked = convertToArray(categories).includes(category.value)
     return { value: category.value, text: category.text, checked } as FilterItem
   })
 
-  // Only override filter values if something was provided in the POST body
-  if (convertToArray(sessions).length > 0) newFilters.sessionFilters = sessionFilters
-  if (convertToArray(categories).length > 0) newFilters.categoryFilters = categoryFilters
+  newFilters.locationFilters = oldFilters.locationFilters.map(location => {
+    const checked = convertToArray(locations).includes(location.value)
+    return { value: location.value, text: location.text, checked } as FilterItem
+  })
 
   return newFilters
 }
