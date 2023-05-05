@@ -34,10 +34,29 @@
       display: block !important;
     }
 
-    &__count {
+    &__selected-summary {
       display: none;
+    }
+
+    &__count {
       @include govuk-font($size: 19, $weight: bold);
       color: white;
+    }
+
+    &__clear-link {
+      @extend %govuk-link;
+      @include govuk-font($size: 19);
+      color: white;
+      margin-left: 10px;
+
+      &:visited, &:hover {
+        color: white;
+      }
+
+      &:hover {
+        @include govuk-font($size: 19, $weight: bold);
+        cursor: pointer;
+      }
     }
 
     .govuk-width-container {
@@ -59,7 +78,7 @@
 .js-enabled .multi-select-sticky {
   display: none;
 
-  &__count {
+  &__selected-summary {
     display: revert;
   }
 

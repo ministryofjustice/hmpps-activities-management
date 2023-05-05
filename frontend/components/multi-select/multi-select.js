@@ -7,11 +7,16 @@ function MultiSelect(container) {
   this.checkboxes = this.container.querySelectorAll('tbody .govuk-checkboxes__input')
   this.stickyBar = this.container.querySelector('.multi-select-sticky')
   this.selectedCount = this.container.querySelector('.multi-select-sticky__count')
+  this.itemsDescriptionSingular = this.stickyBar.getAttribute('data-description-singular')
+  this.itemsDescriptionPlural = this.stickyBar.getAttribute('data-description-plural')
+  this.clearLink = this.container.querySelector('.multi-select-sticky__clear-link')
 
   this.stickyBar.setAttribute('aria-disabled', 'true')
 
   this.toggleAllButton.addEventListener('change', this.handleToggleAllButtonChanged.bind(this))
   this.toggleAllButton.setAttribute('autocomplete', 'off')
+
+  this.clearLink.addEventListener('click', this.clearAll.bind(this))
 
   nodeListForEach(
     this.checkboxes,
@@ -31,11 +36,17 @@ MultiSelect.prototype.handleCheckboxChanged = function () {
     }.bind(this)
   )
 
-  this.selectedCount.innerText = `${count} selected`
-
   if (count > 0) {
     this.stickyBar.classList.add('multi-select-sticky--active')
     this.stickyBar.setAttribute('aria-disabled', 'false')
+
+    this.selectedCount.innerText = `${count} selected`
+
+    if (count === 1 && this.itemsDescriptionSingular) {
+      this.selectedCount.innerText = `${count} ${this.itemsDescriptionSingular} selected`
+    } else if (count > 1 && this.itemsDescriptionPlural) {
+      this.selectedCount.innerText = `${count} ${this.itemsDescriptionPlural} selected`
+    }
   } else {
     this.stickyBar.classList.remove('multi-select-sticky--active')
     this.stickyBar.setAttribute('aria-disabled', 'true')
@@ -51,6 +62,27 @@ MultiSelect.prototype.handleToggleAllButtonChanged = function () {
       $el.dispatchEvent(event)
     }.bind(this)
   )
+}
+
+MultiSelect.prototype.clearAll = function () {
+  nodeListForEach(
+    this.checkboxes,
+    function ($el) {
+      if ($el.checked) {
+        $el.checked = false
+        var event = document.createEvent('HTMLEvents')
+        event.initEvent('change', false, true)
+        $el.dispatchEvent(event)
+      }
+    }.bind(this)
+  )
+
+  if (this.toggleAllButton.checked) {
+    this.toggleAllButton.checked = false
+    var event = document.createEvent('HTMLEvents')
+    event.initEvent('click', false, true)
+    this.toggleAllButton.dispatchEvent(event)
+  }
 }
 
 export default MultiSelect
