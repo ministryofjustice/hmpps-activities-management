@@ -1,5 +1,6 @@
 {% extends "layout.njk" %}
 
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
@@ -27,24 +28,45 @@
         <div class="govuk-grid-column-full">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukSelect({
-                    id: "location",
-                    name: "location",
-                    label: {
-                        text: "Where does this activity take place?",
-                        classes: "govuk-label--xl",
-                        isPageHeading: true
+                {{ govukRadios({
+                    id: "in-cell",
+                    name: "inCell",
+                    fieldset: {
+                        legend: {
+                            text: "Where does this activity take place?",
+                            classes: "govuk-label--xl",
+                            isPageHeading: true
+                        }
                     },
-                    hint: {
-                        text: "Start typing a location and select from the list of options."
-                    },
-                    formGroup: {
-                        classes: "location-autocomplete-formgroup"
-                    },
-                    errorMessage: validationErrors | findError('location'),
-                    value: formResponses.location or session.createJourney.location.id,
-                    items: options
+                    items: [
+                        {
+                            value: "OUT_OF_CELL",
+                            text: "Out of cell",
+                            checked: formResponses.inCell !== true and session.createJourney.inCell !== true,
+                            conditional: {
+                                html: govukSelect({
+                                    id: "location",
+                                    name: "location",
+                                    label: {
+                                        text: "Start typing a location and select from the list of options."
+                                    },
+                                    formGroup: {
+                                        classes: "location-autocomplete-formgroup"
+                                    },
+                                    errorMessage: validationErrors | findError('location'),
+                                    value: formResponses.location or session.createJourney.location.id,
+                                    items: options
+                                })
+                            }
+                        },
+                        {
+                            value: "IN_CELL",
+                            text: "In cell",
+                            checked: formResponses.inCell == true or session.createJourney.inCell == true
+                        }
+                    ]
                 }) }}
+
                 {{ govukButton({
                     text: "Continue"
                 }) }}
