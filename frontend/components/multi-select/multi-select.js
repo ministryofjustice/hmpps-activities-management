@@ -9,11 +9,14 @@ function MultiSelect(container) {
   this.selectedCount = this.container.querySelector('.multi-select-sticky__count')
   this.itemsDescriptionSingular = this.stickyBar.getAttribute('data-description-singular')
   this.itemsDescriptionPlural = this.stickyBar.getAttribute('data-description-plural')
+  this.clearLink = this.container.querySelector('.multi-select-sticky__clear-link')
 
   this.stickyBar.setAttribute('aria-disabled', 'true')
 
   this.toggleAllButton.addEventListener('change', this.handleToggleAllButtonChanged.bind(this))
   this.toggleAllButton.setAttribute('autocomplete', 'off')
+
+  this.clearLink.addEventListener('click', this.clearAll.bind(this))
 
   nodeListForEach(
     this.checkboxes,
@@ -39,9 +42,6 @@ MultiSelect.prototype.handleCheckboxChanged = function () {
 
     this.selectedCount.innerText = `${count} selected`
 
-    console.log(this.itemsDescriptionSingular)
-    console.log(this.itemsDescriptionPlural)
-
     if (count === 1 && this.itemsDescriptionSingular) {
       this.selectedCount.innerText = `${count} ${this.itemsDescriptionSingular} selected`
     } else if (count > 1 && this.itemsDescriptionPlural) {
@@ -62,6 +62,27 @@ MultiSelect.prototype.handleToggleAllButtonChanged = function () {
       $el.dispatchEvent(event)
     }.bind(this)
   )
+}
+
+MultiSelect.prototype.clearAll = function () {
+  nodeListForEach(
+    this.checkboxes,
+    function ($el) {
+      if ($el.checked) {
+        $el.checked = false
+        var event = document.createEvent('HTMLEvents')
+        event.initEvent('change', false, true)
+        $el.dispatchEvent(event)
+      }
+    }.bind(this)
+  )
+
+  if (this.toggleAllButton.checked) {
+    this.toggleAllButton.checked = false
+    var event = document.createEvent('HTMLEvents')
+    event.initEvent('click', false, true)
+    this.toggleAllButton.dispatchEvent(event)
+  }
 }
 
 export default MultiSelect

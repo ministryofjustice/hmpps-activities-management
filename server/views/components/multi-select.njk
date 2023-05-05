@@ -100,7 +100,10 @@
              {% endif %}
         >
             <div class='govuk-width-container'>
-                <span class='multi-select-sticky__count'></span>
+                <div class='multi-select-sticky__selected-summary'>
+                    <span class='multi-select-sticky__count'></span>
+                    <a class='multi-select-sticky__clear-link'>Clear</a>
+                </div>
                 <div class='govuk-button-group'>
                     {% for action in params.actions %}
                         {{ govukButton({
