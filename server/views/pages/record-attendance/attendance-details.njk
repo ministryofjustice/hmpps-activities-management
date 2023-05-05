@@ -24,6 +24,18 @@
         } if not instance.cancelled
      }
 ), summaryListRows) %}
+{% if attendance.otherAbsenceReason %}
+    {% set summaryListRows = (summaryListRows.push(
+        {
+            key: {
+                text: "Absence reason"
+            },
+            value: {
+                text: attendance.otherAbsenceReason
+            }
+        }
+    ), summaryListRows) %}
+{% endif %}
 {% set summaryListRows = (summaryListRows.push(
     {
         key: {
@@ -55,7 +67,8 @@
         }
     ), summaryListRows) %}
 {% endif %}
-{% if attendance.comment %}
+{# Always show "comment" row if comments are applicable to attendance reason #}
+{% if attendance.attendanceReason.code in ['SICK', 'CANCELLED'] %}
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
@@ -84,9 +97,9 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <h1 class="govuk-heading-l">Attendance details for {{ attendee.name | toTitleCase }}</h1>
+                <h1 class="govuk-heading-l">Attendance record for {{ attendee.name | toTitleCase }}</h1>
                 <div class="govuk-inset-text">
-                    <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> {{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}
+                    <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.startTime | getTimeSlotFromTime | upper }}) 
                </div>
 
                 {% if attendance.status !== 'WAITING' %}
@@ -120,6 +133,19 @@
                              }
                         ), historyListRows) %}
 
+                        {% if attendanceHistory.otherAbsenceReason %}
+                            {% set historyListRows = (historyListRows.push(
+                                {
+                                    key: {
+                                        text: "Absence reason"
+                                    },
+                                    value: {
+                                        text: attendanceHistory.otherAbsenceReason
+                                    }
+                                }
+                            ), historyListRows) %}
+                        {% endif %}
+
                         {% set historyListRows = (historyListRows.push(
                             {
                                 key: {
@@ -150,16 +176,19 @@
                             ), historyListRows) %}
                         {% endif %}
 
-                        {% set historyListRows = (historyListRows.push(
-                            {
-                                key: {
-                                    text: "Comment"
-                                },
-                                value: {
-                                    text: attendanceHistory.comment
+                        {# Always show "comment" row if comments are applicable to attendance reason #}
+                        {% if attendanceHistory.attendanceReason.code in ['SICK', 'CANCELLED'] %}
+                            {% set historyListRows = (historyListRows.push(
+                                {
+                                    key: {
+                                        text: "Comment"
+                                    },
+                                    value: {
+                                        text: attendanceHistory.comment
+                                    }
                                 }
-                            }
-                        ), historyListRows) %}
+                            ), historyListRows) %}
+                        {% endif %}
 
                         {% set historyListRows = (historyListRows.push(
                             {
@@ -179,7 +208,7 @@
                     {% endfor %}
                 {% endif %}
 
-                {% if attendance.issuePayment and now | formatDate('yyyy MM dd') <= instance.date | toDate | formatDate('yyyy MM dd') %}
+                {% if attendance.issuePayment and attendance.attendanceReason.code == 'ATTENDED' and now | formatDate('yyyy MM dd') <= instance.date | toDate | formatDate('yyyy MM dd') %}
                     {{ govukButton({
                         text: "Remove pay and add case note",
                         classes: "govuk-button--warning"
