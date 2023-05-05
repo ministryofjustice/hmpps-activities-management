@@ -3,46 +3,38 @@ import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { addDays, format } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
-import { YesNo } from '../../../../@types/activities'
-import { AppointmentType, AppointmentJourney } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
+import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { formatDate } from '../../../../utils/utils'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/confirmation.njk')
 
 describe('Views - Create Appointment - Check Answers', () => {
   let compiledTemplate: Template
   const tomorrow = addDays(new Date(), 1)
-  let viewContext = {
-    session: {
-      appointmentJourney: { type: AppointmentType.INDIVIDUAL } as AppointmentJourney,
-    },
-    startDate: tomorrow,
+  const viewContext = {
+    appointment: {} as AppointmentDetails,
   }
 
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
-    viewContext = {
-      session: {
-        appointmentJourney: { type: AppointmentType.INDIVIDUAL } as AppointmentJourney,
-      },
-      startDate: tomorrow,
-    }
   })
 
   it('should not display repeat frequency or occurrences when repeat = NO', () => {
-    viewContext.session.appointmentJourney = {
-      type: AppointmentType.INDIVIDUAL,
+    viewContext.appointment = {
+      appointmentType: AppointmentType.INDIVIDUAL,
+      startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
       prisoners: [
         {
-          name: 'TEST PRISONER',
-          number: 'A1234BC',
-          cellLocation: '1-2-3',
+          firstName: 'TEST',
+          lastName: 'PRISONER',
         },
       ],
-      repeat: YesNo.NO,
-    } as AppointmentJourney
+      repeat: null,
+    } as AppointmentDetails
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -60,24 +52,25 @@ describe('Views - Create Appointment - Check Answers', () => {
   ])(
     'frequency $repeatPeriod should be displayed as $expectedText with occurrences when repeat = YES',
     ({ repeatPeriod, expectedText }) => {
-      viewContext.session.appointmentJourney = {
-        type: AppointmentType.INDIVIDUAL,
+      viewContext.appointment = {
+        appointmentType: AppointmentType.INDIVIDUAL,
+        startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
         prisoners: [
           {
-            name: 'TEST PRISONER',
-            number: 'A1234BC',
-            cellLocation: '1-2-3',
+            firstName: 'TEST',
+            lastName: 'PRISONER',
           },
         ],
-        repeat: YesNo.YES,
-        repeatPeriod,
-        repeatCount: 6,
-      } as AppointmentJourney
+        repeat: {
+          period: repeatPeriod,
+          count: 6,
+        },
+      } as AppointmentDetails
 
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
       expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
-        `You have successfully created an appointment for Test Prisoner starting on ${format(
+        `You have successfully created an appointment series for Test Prisoner starting on ${format(
           tomorrow,
           'EEEE d MMMM yyyy',
         )}. It will repeat ${expectedText} for 6 occurrences`,
@@ -87,27 +80,25 @@ describe('Views - Create Appointment - Check Answers', () => {
 
   describe('Group Appointment', () => {
     it('should display number of prisoners added to appointment', () => {
-      viewContext.session.appointmentJourney = {
-        type: AppointmentType.GROUP,
+      viewContext.appointment = {
+        appointmentType: AppointmentType.GROUP,
+        startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
         prisoners: [
           {
-            name: 'TEST PRISONER',
-            number: 'A1234BC',
-            cellLocation: '1-2-3',
+            firstName: 'TEST',
+            lastName: 'PRISONER',
           },
           {
-            name: 'SECOND PRISONER',
-            number: 'A1234BD',
-            cellLocation: '3-2-1',
+            firstName: 'SECOND',
+            lastName: 'PRISONER',
           },
           {
-            name: 'THIRD PRISONER',
-            number: 'A1234BE',
-            cellLocation: '3-3-3',
+            firstName: 'THIRD',
+            lastName: 'PRISONER',
           },
         ],
-        repeat: YesNo.NO,
-      } as AppointmentJourney
+        repeat: null,
+      } as AppointmentDetails
 
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 

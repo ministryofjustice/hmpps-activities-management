@@ -6,153 +6,241 @@
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
 
-{% set pageTitle = "Appointments Management - Appointment Occurrence Details" %}
+{% set pageTitle = "Appointments Management - Appointment Details" %}
 {% set pageId = 'appointment-occurrence-view-details-page' %}
-{% set backLinkHref = "/appointments/" + occurrence.appointmentId %}
 
 {% set occurenceLink = '/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.id  %}
-
-{% set summaryListRows = [] if occurrence.appointmentType == AppointmentType.GROUP else [{
-    key: {
-        text: "Prisoner"
-    },
-    value: {
-        html: appointmentPrisonerSummary(occurrence.prisoners[0].firstName + ' ' + occurrence.prisoners[0].lastName, occurrence.prisoners[0].prisonerNumber, occurrence.prisoners[0].cellLocation, dpsUrl)
-    }
-}] %}
-
-{% set summaryListRows = (summaryListRows.push(
-    {
-        key: {
-            text: "Category"
-        },
-        value: {
-            text: occurrence.category.description
-        }
-    },
-    {
-        key: {
-            text: "Location"
-        },
-        value: {
-            text: occurrence.internalLocation.description
-        },
-        actions: {
-            items: [
-                {
-                    href: occurenceLink + "/edit/start/location",
-                    text: "Change",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-location' }
-                }
-            ]
-        }
-    },
-    {
-        key: {
-            text: "Date"
-        },
-        value: {
-            text: occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy')
-        },
-        actions: {
-            items: [
-                {
-                    href: occurenceLink + "/edit/start/date-and-time",
-                    text: "Change",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-date' }
-                }
-            ]
-        }
-    },
-    {
-        key: {
-            text: "Start time"
-        },
-        value: {
-            text: occurrence.startTime
-        },
-        actions: {
-            items: [
-                {
-                    href: occurenceLink + "/edit/start/date-and-time",
-                    text: "Change",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-start-time' }
-                }
-            ]
-        }
-    },
-    {
-        key: {
-            text: "End time"
-        },
-        value: {
-            text: occurrence.endTime
-        },
-        actions: {
-            items: [
-                {
-                    href: occurenceLink + "/edit/start/date-and-time",
-                    text: "Change",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-end-time' }
-                }
-            ]
-        }
-    }
-), summaryListRows) %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l" data-qa='caption'>View and edit appointment occurrence</span>
+            <span class="govuk-caption-l" data-qa="caption">View and edit {{ ("group" if occurrence.appointmentType == AppointmentType.GROUP) + ("individual" if occurrence.appointmentType == AppointmentType.INDIVIDUAL) }} appointment</span>
             <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}</h1>
-            <h2 class="govuk-heading-m">Appointment occurrence details</h2>
-            {{ govukSummaryList({
-                rows: summaryListRows,
-                classes: "govuk-!-margin-bottom-9",
-                attributes: { 'data-qa': 'appointment-details' }
-            }) }}
 
-            {{ prisonerList(occurrence.prisoners) if occurrence.appointmentType == AppointmentType.GROUP }}
+            {% if occurrence.repeat %}
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Series details"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/appointments/" + occurrence.appointmentId,
+                                    text: "View series",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'view-series' }
+                                }
+                            ]
+                        }
+                    },
+                    rows: [
+                        {
+                            key: {
+                                text: "Frequency"
+                            },
+                            value: {
+                                text: ("Every weekday (Monday to Friday)" if occurrence.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
+                                ("Daily (includes weekends)" if occurrence.repeat.period == AppointmentRepeatPeriod.DAILY) +
+                                ("Weekly" if occurrence.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
+                                ("Fortnightly" if occurrence.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
+                                ("Monthly" if occurrence.repeat.period == AppointmentRepeatPeriod.MONTHLY)
+                            }
+                        }, {
+                            key: {
+                                text: "Occurrence"
+                            },
+                            value: {
+                                text: occurrence.sequenceNumber + " of " + occurrence.repeat.count
+                            }
+                        }
+                    ],
+                    attributes: { 'data-qa': 'appointment-series-details' }
+                }) }}
+            {% endif %}
 
             {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Appointment details"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "#",
+                                text: "Cancel appointment",
+                                classes: "govuk-link--no-visited-state",
+                                attributes: { 'data-qa': 'cancel-appointment' }
+                            }
+                        ]
+                    }
+                },
                 rows: [
                     {
                         key: {
-                            text: "Created by"
+                            text: "Category"
                         },
+                        value: {
+                            text: occurrence.category.description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "#",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-category' }
+                                }
+                            ]
+                        }
+                    }, {
+                        key: {
+                            text: "Show category on unlock list"
+                        },
+                        value: {
+                            text: ("Yes" if occurrence.appointmentDescription == null) + ("No" if occurrence.appointmentDescription != null)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "#",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-show-category' }
+                                }
+                            ]
+                        }
+                    }, {
+                        key: {
+                            text: "Appointment description"
+                        },
+                        value: {
+                            text: occurrence.appointmentDescription
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "#",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-appointment-description' }
+                                }
+                            ]
+                        }
+                    } if occurrence.appointmentDescription != null, {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: occurrence.internalLocation.description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: occurenceLink + "/edit/start/location",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-location' }
+                                }
+                            ]
+                        }
+                    }, {
+                        key: {
+                            text: "Date"
+                        },
+                        value: {
+                            text: occurrence.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: occurenceLink + "/edit/start/date-and-time",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-date' }
+                                }
+                            ]
+                        }
+                    }, {
+                        key: {
+                            text: "Start time"
+                        },
+                        value: {
+                            text: occurrence.startTime
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: occurenceLink + "/edit/start/date-and-time",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-start-time' }
+                                }
+                            ]
+                        }
+                    }, {
+                        key: {
+                            text: "End time"
+                        },
+                        value: {
+                            text: occurrence.endTime
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: occurenceLink + "/edit/start/date-and-time",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-end-time' }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                attributes: { 'data-qa': 'appointment-details' }
+            }) }}
+
+            {{ prisonerList(occurrence.appointmentId, occurrence.id, occurrence.appointmentType, occurrence.repeat, occurrence.prisoners) }}
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Appointment history"
+                    }
+                },
+                rows: [
+                    {
+                        key: {
+                        text: "Created by"
+                    },
                         value: {
                             text: occurrence.createdBy | fullName | toTitleCase | initialiseName
                         }
                     }, {
                         key: {
-                            text: "Updated by"
+                            text: "Date created"
+                        },
+                        value: {
+                            text: occurrence.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('EEEE d MMMM yyyy')
+                        }
+                    }, {
+                        key: {
+                            text: "Last edited by"
                         },
                         value: {
                             text: occurrence.updatedBy | fullName | toTitleCase | initialiseName
                         }
-                    } if occurrence.updatedBy
+                    } if occurrence.updatedBy, {
+                        key: {
+                            text: "Last edited date"
+                        },
+                        value: {
+                            text: occurrence.updated | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('EEEE d MMMM yyyy')
+                        }
+                    } if occurrence.updated
                 ],
-                classes: "govuk-!-margin-bottom-9",
-                attributes: { 'data-qa': 'user-details' }
+                attributes: { 'data-qa': 'appointment-history' }
             }) }}
-
-            <p class="govuk-body govuk-!-display-none-print">
-                {{ govukButton({
-                    text: "Print movement slip",
-                    href: occurenceLink + '/movement-slip',
-                    attributes: {
-                        'data-qa': 'print-movement-slip-link'
-                    }
-                }) }}
-            </p>
-
-            <p class="govuk-body govuk-!-display-none-print">
-                <a href="/appointments/{{ occurrence.appointmentId }}" class="govuk-link govuk-link--no-visited-state">Back to appointment details</a>
-            </p>
         </div>
     </div>
 {% endblock %}

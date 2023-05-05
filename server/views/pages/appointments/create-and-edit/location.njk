@@ -42,6 +42,7 @@
                     value: formResponses.locationId or session.appointmentJourney.location.id,
                     items: options
                 }) }}
+
                 {{ govukButton({
                     text: "Accept and save" if session.appointmentJourney.mode == "EDIT" else "Continue"
                 }) }}

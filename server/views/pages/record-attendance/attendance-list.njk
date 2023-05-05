@@ -38,7 +38,7 @@
                     Date: {{ instance.date | toDate | formatDate('EEEE, dd MMMM yyyy') }}
                 </span>
                 <span class="govuk-caption-l">
-                    Location: {{ activity.location }}
+                    Location: {{ "In cell" if activity.inCell else activity.location }}
                 </span>
             </h1>
 
@@ -237,7 +237,7 @@
 {% endmacro %}
 
 {% macro renderPayStatus(attendance) %}
-    {% if attendance.issuePayment or attendance.payAmount > 0 %}
+    {% if attendance.issuePayment %}
         {{ govukTag({
             text: "Pay",
             classes: "govuk-tag--green"
@@ -254,6 +254,6 @@
 
 {% macro renderViewLink(attendance) %}
     {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory|length %}
-        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">View or change</a>
+        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">View or edit</a>
     {% endif %}
 {% endmacro %}

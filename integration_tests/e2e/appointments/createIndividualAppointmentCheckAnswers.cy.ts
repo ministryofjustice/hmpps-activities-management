@@ -1,4 +1,4 @@
-import { getDate } from 'date-fns'
+import { addDays, getDate } from 'date-fns'
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
@@ -9,6 +9,8 @@ import getPrisonPrisonersA8644DY from '../../fixtures/prisonerSearchApi/getPriso
 import getPrisonPrisonersA1350DZ from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
+import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
+import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
@@ -17,6 +19,11 @@ import { formatDate } from '../../../server/utils/utils'
 import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 
 context('Create individual appointment - check answers change links', () => {
+  const dayAfterTomorrow = addDays(new Date(), 2)
+  getAppointmentDetails.startDate = formatDate(dayAfterTomorrow, 'yyyy-MM-dd')
+  getAppointmentDetails.prisoners[0].firstName = 'DAVID'
+  getAppointmentDetails.prisoners[0].lastName = 'WINCHURCH'
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -26,7 +33,8 @@ context('Create individual appointment - check answers change links', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A1350DZ', getPrisonPrisonersA1350DZ)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
-    cy.stubEndpoint('POST', '/appointments')
+    cy.stubEndpoint('POST', '/appointments', getAppointment)
+    cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
   })
 
   it('Create individual appointment - check answers change links', () => {
@@ -100,8 +108,6 @@ context('Create individual appointment - check answers change links', () => {
     checkAnswersPage.changeStartDate()
     Page.verifyOnPage(DateAndTimePage)
     dateAndTimePage.assertStartDate(tomorrow)
-    const dayAfterTomorrow = new Date()
-    dayAfterTomorrow.setDate(getDate(dayAfterTomorrow) + 2)
     dateAndTimePage.enterStartDate(dayAfterTomorrow)
     dateAndTimePage.continue()
     Page.verifyOnPage(CheckAnswersPage)

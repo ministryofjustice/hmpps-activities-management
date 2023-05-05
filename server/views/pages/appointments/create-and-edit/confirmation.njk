@@ -14,26 +14,26 @@
                 titleText: "Appointment created"
             }) }}
             <p class="govuk-body" data-qa="message">
-                {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-                    You have successfully created an appointment for {{ session.appointmentJourney.prisoners[0].name | toTitleCase }}
-                {% elseif session.appointmentJourney.type == AppointmentType.GROUP %}
-                    You have successfully created an appointment for {{ session.appointmentJourney.prisoners | length }} prisoners
+                {% if appointment.appointmentType == AppointmentType.INDIVIDUAL %}
+                    You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners[0] | fullName | toTitleCase }}
+                {% elseif appointment.appointmentType == AppointmentType.GROUP %}
+                    You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners | length }} prisoners
                 {% endif %}
-                {% if session.appointmentJourney.repeat == YesNo.YES %}
-                   starting on {{ startDate | formatDate('EEEE d MMMM yyyy') }}.
-                   It will repeat {{ ("every weekday (Monday to Friday)" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY) +
-                                     ("daily (includes weekends)" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.DAILY) +
-                                     ("weekly" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKLY) +
-                                     ("fortnightly" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY) +
-                                     ("monthly" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.MONTHLY) }}
-                    for {{ session.appointmentJourney.repeatCount }}
-                    {% if session.appointmentJourney.repeatCount == 1 %}
+                {% if appointment.repeat == null %}
+                    on {{ appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}.
+                {% else %}
+                    starting on {{ appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}.
+                    It will repeat {{ ("every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
+                                      ("daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
+                                      ("weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
+                                      ("fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
+                                      ("monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY) }}
+                    for {{ appointment.repeat.count }}
+                    {% if appointment.repeat.count == 1 %}
                         occurrence
                     {% else %}
                         occurrences
                     {% endif %}
-                {% else %}
-                    on {{ startDate | formatDate('EEEE d MMMM yyyy') }}.
                 {% endif %}
             </p>
 
@@ -42,7 +42,7 @@
                 <a href="/appointments" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">Create another appointment</a>
             </p>
             <p class="govuk-body">
-                <a href="/appointments/{{ id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and edit appointment details</a>
+                <a href="/appointments/{{ appointment.id }}/occurrence/{{ appointment.occurrences[0].id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and edit appointment details</a>
             </p>
         </div>
     </div>
