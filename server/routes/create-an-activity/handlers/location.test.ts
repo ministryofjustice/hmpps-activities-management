@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../utils/utils'
-import LocationRoutes, { Location } from './location'
+import LocationRoutes, { InCell, Location } from './location'
 import PrisonService from '../../../services/prisonService'
 import eventLocations from '../../../services/fixtures/event_locations_2.json'
 import eventLocationsFiltered from '../../../services/fixtures/event_locations_filtered_2.json'
@@ -49,8 +49,9 @@ describe('Route Handlers - Create an activity schedule - location', () => {
   })
 
   describe('POST', () => {
-    it('should save selected location in session and redirect to capacity page', async () => {
+    it('should save selected out of cell location in session and redirect to capacity page', async () => {
       req.body = {
+        inCell: InCell.OUT_OF_CELL,
         location: 27019,
       }
 
@@ -62,13 +63,43 @@ describe('Route Handlers - Create an activity schedule - location', () => {
         id: 27019,
         name: 'Workshop 9',
       })
+      expect(req.session.createJourney.inCell).toEqual(false)
+
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('capacity')
+    })
+
+    it('should save in cell to session and redirect to capacity page', async () => {
+      req.body = {
+        inCell: InCell.IN_CELL,
+      }
+
+      when(prisonService.getEventLocations).mockResolvedValue(eventLocations)
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.location).toEqual(null)
+      expect(req.session.createJourney.inCell).toEqual(true)
+
       expect(res.redirectOrReturn).toHaveBeenCalledWith('capacity')
     })
   })
 
   describe('type validation', () => {
-    it('validation fails if a value is not entered', async () => {
+    it('validation fails if in cell / out of cell option is not selected', async () => {
       const body = {}
+
+      const requestObject = plainToInstance(Location, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([{ property: 'inCell', error: 'Select whether location is in-cell or out of cell' }]),
+      )
+    })
+
+    it('validation fails if a out of cell location is selected and no value entered', async () => {
+      const body = {
+        inCell: InCell.OUT_OF_CELL,
+      }
 
       const requestObject = plainToInstance(Location, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -76,8 +107,9 @@ describe('Route Handlers - Create an activity schedule - location', () => {
       expect(errors).toEqual(expect.arrayContaining([{ property: 'location', error: 'Select a location' }]))
     })
 
-    it('validation fails if a bad value is entered', async () => {
+    it('validation fails if a bad location value is entered', async () => {
       const body = {
+        inCell: InCell.OUT_OF_CELL,
         category: 'bad',
       }
 
