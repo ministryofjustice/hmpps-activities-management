@@ -29,12 +29,12 @@
                     items: [
                         {
                             value: "yes",
-                            text: "Yes",
+                            text: "Yes - I want " + session.appointmentJourney.category.description + " to show on the unlock list",
                             checked: formResponses.descriptionOption == "yes" or session.appointmentJourney.descriptionOption == "yes"
                         },
                         {
                             value: "no",
-                            text: "No",
+                            text: "No - I want to enter my own appointment description to show on the unlock list",
                             checked: formResponses.descriptionOption == "no" or session.appointmentJourney.descriptionOption == "no",
                             conditional: {
                                   html: nestedDescription()
