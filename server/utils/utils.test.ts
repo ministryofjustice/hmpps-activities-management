@@ -26,6 +26,7 @@ import {
   toFixed,
   getDailyAttendanceSummary,
   getCancelledActivitySummary,
+  getSuspendedPrisonerCount,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { AllAttendanceSummary, Attendance } from '../@types/activitiesAPI/types'
@@ -727,6 +728,32 @@ describe('utils', () => {
           AM: 0,
           DAY: 1,
           ED: 1,
+          PM: 0,
+        },
+      })
+    })
+  })
+
+  describe('getSuspendedPrisonerCount', () => {
+    it('calculates the no of suspended prisoners', () => {
+      const suspendedAttendance = [
+        {
+          attendanceId: 1,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.SUSPENDED,
+          issuePayment: false,
+          prisonerNumber: 'A12345A',
+        },
+      ]
+
+      expect(getSuspendedPrisonerCount(suspendedAttendance)).toEqual({
+        suspendedPrisonerCount: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
           PM: 0,
         },
       })

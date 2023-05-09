@@ -6,9 +6,11 @@ import {
   getTimeSlotFromTime,
   toDate,
   getCancelledActivitySummary,
+  getSuspendedPrisonerCount,
 } from '../../../utils/utils'
 import ActivitiesService from '../../../services/activitiesService'
 import { AttendanceSummaryFilters, FilterItem } from '../../../@types/activities'
+import attendanceReason from '../../../enum/attendanceReason'
 
 export default class DailySummaryRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -50,12 +52,17 @@ export default class DailySummaryRoutes {
       )
       .then(scheduledActivities => scheduledActivities.filter(a => a.cancelled))
 
+    const suspendedPrisoners = await this.activitiesService
+      .getAllAttendance(activityDate, user)
+      .then(attendance => attendance.filter(a => a.attendanceReasonCode === attendanceReason.SUSPENDED))
+
     return res.render('pages/daily-attendance-summary/daily-summary', {
       activityDate,
       ...getDailyAttendanceSummary(
         attendanceSummary.filter(a => categoryFilters.includes(a.categoryName) || categoryFilters.includes('ALL')),
       ),
       ...getCancelledActivitySummary(cancelledActivities),
+      ...getSuspendedPrisonerCount(suspendedPrisoners),
       attendanceSummaryFilters,
     })
   }
