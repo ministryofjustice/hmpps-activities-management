@@ -14,7 +14,7 @@
 {% set occurrenceSummaryListRows = [
     {
         key: {
-            text: "Occurrence"
+            text: "Appointment"
         },
         value: {
             text: "Date",
@@ -40,7 +40,7 @@
         }, {
             html: '<a href="/appointments/' + appointment.id + '/occurrence/' + occurrence.id + '"
                 class="govuk-link--no-visited-state">
-                View and edit<span class="govuk-visually-hidden"> appointment ' + occurrence.sequenceNumber + '</span>
+                View and manage<span class="govuk-visually-hidden"> appointment ' + occurrence.sequenceNumber + '</span>
             </a>',
             classes: 'govuk-!-text-align-right',
             attributes: { 'data-qa': 'view-and-edit-occurrence-' + occurrence.sequenceNumber }
@@ -75,10 +75,24 @@
                             }
                         }, {
                             key: {
-                                text: "Occurrences"
+                                text: "Number of appointments"
                             },
                             value: {
                                 text: appointment.repeat.count
+                            }
+                        }, {
+                            key: {
+                            text: "Created by"
+                        },
+                            value: {
+                            text: appointment.createdBy | fullName | toTitleCase | initialiseName
+                        }
+                        }, {
+                            key: {
+                                text: "Date created"
+                            },
+                            value: {
+                                text: appointment.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('EEEE d MMMM yyyy')
                             }
                         }
                     ],
@@ -106,7 +120,7 @@
                     {{ govukTable({
                         head: [
                             {
-                                text: "Occurrence",
+                                text: "Appointment",
                                 classes: 'govuk-table__header govuk-table__header--occurrence-count'
                             }, {
                                 text: "Date",
@@ -122,32 +136,6 @@
                     }) }}
                 </div>
             </div>
-
-            {{ govukSummaryList({
-                card: {
-                    title: {
-                        text: "Series history"
-                    }
-                },
-                rows: [
-                    {
-                        key: {
-                            text: "Created by"
-                        },
-                        value: {
-                            text: appointment.createdBy | fullName | toTitleCase | initialiseName
-                        }
-                    }, {
-                        key: {
-                            text: "Date created"
-                        },
-                        value: {
-                            text: appointment.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('EEEE d MMMM yyyy')
-                        }
-                    }
-                ],
-                attributes: { 'data-qa': 'appointment-history' }
-            }) }}
         </div>
     </div>
 {% endblock %}

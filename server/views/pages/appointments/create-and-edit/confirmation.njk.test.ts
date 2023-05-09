@@ -73,7 +73,7 @@ describe('Views - Create Appointment - Check Answers', () => {
         `You have successfully created an appointment series for Test Prisoner starting on ${format(
           tomorrow,
           'EEEE d MMMM yyyy',
-        )}. It will repeat ${expectedText} for 6 occurrences`,
+        )}. It will repeat ${expectedText} for 6 appointments`,
       )
     },
   )

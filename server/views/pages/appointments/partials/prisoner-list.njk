@@ -15,6 +15,16 @@
                     cellLocation: prisoner.cellLocation,
                     link: true
                 })
+            },
+            actions: {
+                items: [
+                    {
+                        href: "#",
+                        text: "Remove",
+                        classes: "govuk-link--no-visited-state",
+                        attributes: { 'data-qa': 'remove-prisoner' }
+                    }
+                ] if appointmentType == AppointmentType.GROUP and prisoners.length > 1
             }
         }), prisonerListRows) %}
     {% endfor %}
@@ -32,14 +42,6 @@
                 text: "Add prisoners",
                 classes: "govuk-link--no-visited-state",
                 attributes: { 'data-qa': 'add-prisoners' }
-            }
-        ), prisonerActionItems) %}
-        {% set prisonerActionItems = (prisonerActionItems.push(
-            {
-                href: "#",
-                text: "Remove prisoners",
-                classes: "govuk-link--no-visited-state",
-                attributes: { 'data-qa': 'remove-prisoners' }
             }
         ), prisonerActionItems) %}
     {% endif %}
@@ -60,7 +62,7 @@
             }, {
                 html: '<a href="/appointments/' + appointment.id + '/occurrence/' + occurrence.id + '"
                 class="govuk-link--no-visited-state">
-                View and edit<span class="govuk-visually-hidden"> appointment ' + occurrence.sequenceNumber + '</span>
+                View and manage<span class="govuk-visually-hidden"> appointment ' + occurrence.sequenceNumber + '</span>
             </a>',
                 classes: 'govuk-!-text-align-right',
                 attributes: { 'data-qa': 'view-and-edit-appointment-' + occurrence.sequenceNumber }
@@ -71,7 +73,7 @@
     {{ govukSummaryList({
         card: {
             title: {
-                text: ("Prisoner" if prisoners.length == 1 ) + ("Prisoners (" + prisoners | length + ")" if prisoners.length > 1 )
+                text: ("Prisoner (1)" if prisoners.length == 1 ) + ("Prisoners (" + prisoners | length + ")" if prisoners.length > 1 )
             },
             actions: {
                 items: prisonerActionItems

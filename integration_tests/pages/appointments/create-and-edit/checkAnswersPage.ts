@@ -19,7 +19,7 @@ export default class CheckAnswersPage extends Page {
     cy.get('[data-qa=prisoner-name]').contains(name).parent().find('[data-qa=prisoner-number]').contains(number)
   }
 
-  assertCategory = (category: string) => this.assertAppointmentDetail('Category', category)
+  assertCategory = (category: string) => this.assertAppointmentDetail('Type', category)
 
   assertLocation = (location: string) => this.assertAppointmentDetail('Location', location)
 
@@ -35,7 +35,7 @@ export default class CheckAnswersPage extends Page {
 
   assertRepeatPeriod = (option: string) => this.assertAppointmentDetail('Frequency', option)
 
-  assertRepeatCount = (option: string) => this.assertAppointmentDetail('Occurrences', option)
+  assertRepeatCount = (option: string) => this.assertAppointmentDetail('Number of appointments', option)
 
   changePrisoner = () => cy.get('[data-qa=change-prisoner]').click()
 
