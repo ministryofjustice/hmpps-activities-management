@@ -3,7 +3,7 @@ import atLeast from '../../jest.setup'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import PrisonService from './prisonService'
-import { InmateDetail, ReferenceCode } from '../@types/prisonApiImport/types'
+import { AgencyPrisonerPayProfile, InmateDetail, ReferenceCode } from '../@types/prisonApiImport/types'
 import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 import activityLocations from './fixtures/activity_locations_1.json'
@@ -118,6 +118,19 @@ describe('Prison Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(prisonApiClient.getReferenceCodes).toHaveBeenCalledWith('EDU_LEVEL', user)
+    })
+  })
+
+  describe('getPayProfile', () => {
+    it('should get the pay profile for the prison from the prisons API', async () => {
+      const expectedResult = [{ data: 'response' }] as unknown as AgencyPrisonerPayProfile
+
+      when(prisonApiClient.getPayProfile).calledWith(atLeast('MDI')).mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.getPayProfile('MDI')
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(prisonApiClient.getPayProfile).toHaveBeenCalledWith('MDI')
     })
   })
 })
