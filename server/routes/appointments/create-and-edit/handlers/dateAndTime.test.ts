@@ -26,7 +26,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     res = {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
-      redirectOrReturnWithSuccess: jest.fn(),
+      redirectWithSuccess: jest.fn(),
       validationFailed: jest.fn(),
       locals: {
         user,
@@ -133,7 +133,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         }),
         user,
       )
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
         'Appointment date for this occurrence changed successfully',
       )
@@ -162,7 +162,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         }),
         user,
       )
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
         'Appointment start time and end time for this occurrence changed successfully',
       )
@@ -194,7 +194,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         }),
         user,
       )
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
         'Appointment date, start time and end time for this occurrence changed successfully',
       )

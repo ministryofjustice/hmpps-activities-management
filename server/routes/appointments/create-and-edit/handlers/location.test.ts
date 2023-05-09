@@ -44,7 +44,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
       render: jest.fn(),
       redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
-      redirectOrReturnWithSuccess: jest.fn(),
+      redirectWithSuccess: jest.fn(),
       validationFailed: jest.fn(),
     } as unknown as Response
 
@@ -127,7 +127,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       expect(activitiesService.editAppointmentOccurrence)
 
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
         'Appointment location for this occurrence changed successfully',
       )

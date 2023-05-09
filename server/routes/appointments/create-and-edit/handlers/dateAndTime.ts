@@ -81,7 +81,7 @@ export default class DateAndTimeRoutes {
     if (endTime.toIsoString() !== updatedEndTime.toIsoString()) updatedProperties.push('end time')
 
     if (updatedProperties.length > 0) {
-      return res.redirectOrReturnWithSuccess(
+      return res.redirectWithSuccess(
         `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
         `Appointment ${updatedProperties
           .join(', ')
@@ -89,7 +89,7 @@ export default class DateAndTimeRoutes {
       )
     }
 
-    return res.redirectOrReturn(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
   }
 
   private setTimeAndDate(req: Request) {
