@@ -26,6 +26,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     res = {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
       validationFailed: jest.fn(),
       locals: {
         user,
@@ -36,7 +37,6 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       session: {
         appointmentJourney: {},
       },
-      flash: jest.fn(),
     } as unknown as Request
 
     jest.resetAllMocks()
@@ -133,13 +133,10 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         }),
         user,
       )
-      expect(req.flash).toHaveBeenCalledWith(
-        'successMessage',
-        JSON.stringify({
-          message: `Appointment date for this occurrence changed successfully`,
-        }),
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/appointments/2/occurrence/12',
+        'Appointment date for this occurrence changed successfully',
       )
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('/appointments/2/occurrence/12')
     })
 
     it('should update the occurrence start time and end time then redirect back to the occurrence details page', async () => {
@@ -165,13 +162,10 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         }),
         user,
       )
-      expect(req.flash).toHaveBeenCalledWith(
-        'successMessage',
-        JSON.stringify({
-          message: `Appointment start time and end time for this occurrence changed successfully`,
-        }),
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/appointments/2/occurrence/12',
+        'Appointment start time and end time for this occurrence changed successfully',
       )
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('/appointments/2/occurrence/12')
     })
 
     it('should update the occurrence date, start time and end time then redirect back to the occurrence details page', async () => {
@@ -200,13 +194,10 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         }),
         user,
       )
-      expect(req.flash).toHaveBeenCalledWith(
-        'successMessage',
-        JSON.stringify({
-          message: `Appointment date, start time and end time for this occurrence changed successfully`,
-        }),
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/appointments/2/occurrence/12',
+        'Appointment date, start time and end time for this occurrence changed successfully',
       )
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('/appointments/2/occurrence/12')
     })
   })
 

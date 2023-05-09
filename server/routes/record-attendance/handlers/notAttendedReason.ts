@@ -12,6 +12,7 @@ import NotAttendedData, {
 } from '../../../validators/validateNotAttendedData'
 import AttendanceStatus from '../../../enum/attendanceStatus'
 import AttendanceReason from '../../../enum/attendanceReason'
+import { convertToTitleCase } from '../../../utils/utils'
 
 export class NotAttendedReason {
   @Expose()
@@ -46,7 +47,9 @@ export default class NotAttendedReasonRoutes {
     const { notAttendedData }: { notAttendedData: NotAttendedData } = req.body
     const attendanceUpdates: AttendanceUpdateRequest[] = []
 
-    req.session.notAttendedJourney.selectedPrisoners.forEach(selectedPrisoner => {
+    const { selectedPrisoners } = req.session.notAttendedJourney
+
+    selectedPrisoners.forEach(selectedPrisoner => {
       attendanceUpdates.push({
         id: selectedPrisoner.attendanceId,
         prisonCode: user.activeCaseLoadId,
@@ -74,6 +77,12 @@ export default class NotAttendedReasonRoutes {
     })
 
     await this.activitiesService.updateAttendances(attendanceUpdates, user)
-    return res.redirect('attendance-list')
+
+    const successMessage =
+      selectedPrisoners.length === 1
+        ? `We've saved attendance details for ${convertToTitleCase(selectedPrisoners[0].prisonerName)}`
+        : `We've saved attendance details for ${selectedPrisoners.length} prisoners`
+
+    return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
   }
 }

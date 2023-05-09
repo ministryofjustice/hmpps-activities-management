@@ -14,6 +14,12 @@ export default function setUpChangeLinks(): Router {
       res.redirect(returnTo || path)
     }
 
+    res.redirectOrReturnWithSuccess = (path: string, successHeading: string, message?: string): void => {
+      const { returnTo } = req.session
+      req.session.returnTo = null
+      res.redirectWithSuccess(returnTo || path, successHeading, message)
+    }
+
     next()
   })
 
