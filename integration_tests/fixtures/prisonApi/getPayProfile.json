@@ -1,0 +1,13 @@
+{
+  "agencyId": "MDI",
+  "startDate": "2015-06-26",
+  "autoPayFlag": true,
+  "payFrequency": 1,
+  "weeklyAbsenceLimit": 20,
+  "minHalfDayRate": 0.1,
+  "maxHalfDayRate": 3,
+  "maxPieceWorkRate": 7.65,
+  "maxBonusRate": 0,
+  "backdateDays": 30,
+  "defaultPayBandCode": "1"
+}

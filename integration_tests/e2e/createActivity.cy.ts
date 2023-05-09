@@ -17,6 +17,7 @@ import educationLevels from '../fixtures/prisonApi/educationLevels.json'
 import CheckAnswersPage from '../pages/createActivity/checkAnswers'
 import ConfirmationPage from '../pages/createActivity/confirmation'
 import getEventLocations from '../fixtures/prisonApi/getEventLocations.json'
+import getPayProfile from '../fixtures/prisonApi/getPayProfile.json'
 import StartDatePage from '../pages/createSchedule/startDate'
 import EndDateOptionPage from '../pages/createSchedule/endDateOption'
 import EndDatePage from '../pages/createSchedule/endDate'
@@ -36,6 +37,7 @@ context('Create activity', () => {
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/EDU_LEVEL/codes', educationLevels)
     cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
+    cy.stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile)
     cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
   })
 
