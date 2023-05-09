@@ -69,7 +69,8 @@ export default class CheckAnswersRoutes {
       endDate: createJourney.endDate
         ? formatDate(plainToInstance(SimpleDate, createJourney.endDate).toRichDate(), 'yyyy-MM-dd')
         : undefined,
-      locationId: createJourney.location.id,
+      inCell: createJourney.inCell,
+      locationId: createJourney.location?.id,
       capacity: createJourney.capacity,
       slots,
       runsOnBankHoliday: createJourney.runsOnBankHoliday,

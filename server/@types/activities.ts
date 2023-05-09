@@ -71,6 +71,12 @@ export type ActivitiesFilters = {
   locationFilters: FilterItem[]
 }
 
+export type AttendanceSummaryFilters = {
+  activityDate: Date
+  categories: string[]
+  categoryFilters: FilterItem[]
+}
+
 export type SubLocationCellPattern = {
   subLocation: string
   locationPrefix: string

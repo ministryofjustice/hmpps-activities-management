@@ -1,8 +1,5 @@
-import { plainToInstance } from 'class-transformer'
-import { validate } from 'class-validator'
 import { Request, Response } from 'express'
-import ReviewPrisoners, { AddAnotherForm } from './reviewPrisoners'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import ReviewPrisoners from './reviewPrisoners'
 
 describe('Route Handlers - Create Appointment - Review Prisoners', () => {
   const handler = new ReviewPrisoners()
@@ -31,47 +28,35 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
   })
 
-  describe('POST', () => {
-    it('should redirect to back to "how to add" page when "add another" is selected', async () => {
-      req.body = {
-        addAnother: 'YES',
+  describe('REMOVE', () => {
+    it('should remove prisoner and redirect back to GET', async () => {
+      req.session.appointmentJourney.prisoners = [
+        {
+          number: 'A1234BC',
+          name: '',
+          cellLocation: '',
+        },
+        {
+          number: 'B2345CD',
+          name: '',
+          cellLocation: '',
+        },
+      ]
+
+      req.params = {
+        prisonNumber: 'B2345CD',
       }
-      await handler.POST(req, res)
-      expect(res.redirect).toBeCalledWith('how-to-add-prisoners')
+
+      await handler.REMOVE(req, res)
+
+      expect(req.session.appointmentJourney.prisoners).toEqual([
+        {
+          number: 'A1234BC',
+          name: '',
+          cellLocation: '',
+        },
+      ])
+      expect(res.redirect).toBeCalledWith('../../review-prisoners')
     })
-
-    it('should redirect to back to "how to add" page when "add another" is not selected', async () => {
-      req.body = {
-        addAnother: 'NO',
-      }
-      await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('category')
-    })
-  })
-})
-
-describe('Validation', () => {
-  it('should pass validation on a valid selection', async () => {
-    const body = {
-      addAnother: 'YES',
-    }
-
-    const requestObject = plainToInstance(AddAnotherForm, body)
-    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-    expect(errors).toEqual([])
-  })
-
-  it('should fail validation on invalid selection', async () => {
-    const body = {
-      addAnother: 'INVALID',
-    }
-
-    const requestObject = plainToInstance(AddAnotherForm, body)
-    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-    expect(errors).toEqual(
-      expect.arrayContaining([{ error: 'Select whether you want to add another prisoner', property: 'addAnother' }]),
-    )
   })
 })

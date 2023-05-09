@@ -28,6 +28,7 @@ declare module 'express-session' {
     calendarSpikeJourney: CalendarSpikeJourney
     unlockFilters: UnlockFilters
     activitiesFilters: ActivitiesFilters
+    attendanceSummaryFilters: AttendanceSummaryFilters
     notAttendedJourney: NotAttendedJourney
     recordAttendanceRequests: RecordAttendanceRequests
   }
