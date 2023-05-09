@@ -2,8 +2,6 @@ import { Request, Response } from 'express'
 
 import RemoveFlatRateRoutes from './removeFlatRate'
 
-const flash = jest.fn()
-
 describe('Route Handlers - Create an activity - Remove flat rate', () => {
   const handler = new RemoveFlatRateRoutes()
   let req: Request
@@ -19,10 +17,10 @@ describe('Route Handlers - Create an activity - Remove flat rate', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
-      flash,
       query: {},
       session: {
         createJourney: {
@@ -65,27 +63,19 @@ describe('Route Handlers - Create an activity - Remove flat rate', () => {
     it('should redirect to check pay page', async () => {
       req.body = { bandId: '1', choice: 'yes' }
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('check-pay')
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith('check-pay', 'Flat rate Low removed')
     })
 
-    it('should set success message', async () => {
-      req.body = { bandId: '1', choice: 'yes' }
-      await handler.POST(req, res)
-      expect(flash).toHaveBeenCalledWith('successMessage', JSON.stringify({ message: 'Flat rate Low removed' }))
-    })
-
-    it('should not remove pay rate or set success message if action not confirmed', async () => {
+    it('should not remove pay rate if action not confirmed', async () => {
       req.body = { bandId: '1', choice: 'no' }
       await handler.POST(req, res)
       expect(req.session.createJourney.flat).toEqual([{ bandId: 1, bandAlias: 'Low', rate: 100 }])
-      expect(flash).toHaveBeenCalledTimes(0)
     })
 
-    it("should not remove pay rate or set success message if pay rate isn't found", async () => {
+    it("should not remove pay rate if pay rate isn't found", async () => {
       req.body = { bandId: '2', choice: 'yes' }
       await handler.POST(req, res)
       expect(req.session.createJourney.flat).toEqual([{ bandId: 1, bandAlias: 'Low', rate: 100 }])
-      expect(flash).toHaveBeenCalledTimes(0)
     })
   })
 })

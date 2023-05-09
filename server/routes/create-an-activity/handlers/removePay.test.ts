@@ -2,8 +2,6 @@ import { Request, Response } from 'express'
 
 import RemovePayRoutes from './removePay'
 
-const flash = jest.fn()
-
 describe('Route Handlers - Create an activity - Remove pay', () => {
   const handler = new RemovePayRoutes()
   let req: Request
@@ -19,10 +17,10 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
-      flash,
       query: {},
       session: {
         createJourney: {
@@ -75,19 +73,10 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     it('should redirect to check pay page', async () => {
       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('check-pay')
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith('check-pay', 'Basic incentive level rate Low removed')
     })
 
-    it('should set success message', async () => {
-      req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
-      await handler.POST(req, res)
-      expect(flash).toHaveBeenCalledWith(
-        'successMessage',
-        JSON.stringify({ message: 'Basic incentive level rate Low removed' }),
-      )
-    })
-
-    it('should not remove pay rate or set success message if action not confirmed', async () => {
+    it('should not remove pay rate if action not confirmed', async () => {
       req.body = { iep: 'Basic', bandId: '1', choice: 'no' }
       await handler.POST(req, res)
       expect(req.session.createJourney.pay).toEqual([
@@ -96,10 +85,9 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
         { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
         { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
       ])
-      expect(flash).toHaveBeenCalledTimes(0)
     })
 
-    it("should not remove pay rate or set success message if pay rate isn't found", async () => {
+    it("should not remove pay rate if pay rate isn't found", async () => {
       req.body = { iep: 'NonExistentLevel', bandId: '1', choice: 'yes' }
       await handler.POST(req, res)
       expect(req.session.createJourney.pay).toEqual([
@@ -108,7 +96,6 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
         { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
         { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
       ])
-      expect(flash).toHaveBeenCalledTimes(0)
     })
   })
 })

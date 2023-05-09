@@ -81,17 +81,15 @@ export default class DateAndTimeRoutes {
     if (endTime.toIsoString() !== updatedEndTime.toIsoString()) updatedProperties.push('end time')
 
     if (updatedProperties.length > 0) {
-      req.flash(
-        'successMessage',
-        JSON.stringify({
-          message: `Appointment ${updatedProperties
-            .join(', ')
-            .replace(/(,)(?!.*\1)/, ' and')} for this occurrence changed successfully`,
-        }),
+      return res.redirectOrReturnWithSuccess(
+        `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+        `Appointment ${updatedProperties
+          .join(', ')
+          .replace(/(,)(?!.*\1)/, ' and')} for this occurrence changed successfully`,
       )
     }
 
-    res.redirectOrReturn(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+    return res.redirectOrReturn(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
   }
 
   private setTimeAndDate(req: Request) {

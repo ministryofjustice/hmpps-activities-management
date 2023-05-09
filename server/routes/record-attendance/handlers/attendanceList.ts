@@ -71,23 +71,25 @@ export default class AttendanceListRoutes {
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
 
-    if (selectedAttendances) {
-      const selectedAttendanceIds: number[] = []
-      selectedAttendances.forEach(selectAttendee => selectedAttendanceIds.push(Number(selectAttendee.split('-')[0])))
+    const selectedAttendanceIds: number[] = []
+    selectedAttendances.forEach(selectAttendee => selectedAttendanceIds.push(Number(selectAttendee.split('-')[0])))
 
-      if (selectedAttendanceIds) {
-        const attendances = selectedAttendanceIds.map(attendance => ({
-          id: +attendance,
-          prisonCode: user.activeCaseLoadId,
-          status: AttendanceStatus.COMPLETED,
-          attendanceReason: AttendanceReason.ATTENDED,
-          issuePayment: true,
-        }))
-        await this.activitiesService.updateAttendances(attendances, user)
-      }
-    }
+    const attendances = selectedAttendanceIds.map(attendance => ({
+      id: +attendance,
+      prisonCode: user.activeCaseLoadId,
+      status: AttendanceStatus.COMPLETED,
+      attendanceReason: AttendanceReason.ATTENDED,
+      issuePayment: true,
+    }))
 
-    return res.redirect('attendance-list')
+    await this.activitiesService.updateAttendances(attendances, user)
+
+    const successMessage =
+      selectedAttendances.length > 1
+        ? `We've saved attendance details for ${selectedAttendances.length} prisoners`
+        : `We've saved attendance details for ${selectedAttendances.length} prisoner`
+
+    return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
   }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {

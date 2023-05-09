@@ -21,15 +21,12 @@ export default class UncancelSessionRoutes {
 
     if (confirm === 'yes') {
       await this.activitiesService.uncancelScheduledActivity(instanceId, user)
-
-      req.flash(
-        'successMessage',
-        JSON.stringify({
-          message: `Session no longer cancelled`,
-        }),
+      return res.redirectWithSuccess(
+        `/attendance/activities/${instanceId}/attendance-list`,
+        `Session no longer cancelled`,
       )
     }
 
-    res.redirect(`/attendance/activities/${instanceId}/attendance-list`)
+    return res.redirect(`/attendance/activities/${instanceId}/attendance-list`)
   }
 }

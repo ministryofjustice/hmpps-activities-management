@@ -19,6 +19,7 @@ import setUpWebSession from './middleware/setUpWebSession'
 
 import routes from './routes'
 import type { Services } from './services'
+import setUpSuccessMessages from './middleware/setUpSuccessMessages'
 import setUpChangeLinks from './middleware/setUpChangeLinks'
 import trimRequestBody from './middleware/trimBodyMiddleware'
 import setUpValidationExtensions from './middleware/setUpValidationExtensions'
@@ -41,6 +42,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpStaticResources())
   app.use(setUpAuthentication())
   app.use(authorisationMiddleware())
+  app.use(setUpSuccessMessages())
   app.use(setUpChangeLinks())
   app.use(setUpCsrf())
   app.use(setUpCurrentUser(services))

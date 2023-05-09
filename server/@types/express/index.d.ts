@@ -8,8 +8,8 @@ import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
 import { NotAttendedJourney } from '../../routes/record-attendance/journey'
 import { RecordAttendanceRequests } from '../../routes/record-attendance/recordAttendanceRequests'
 
-// eslint-disable-next-line import/no-cycle,import/named
-import { ActivitiesFilters, UnlockFilters } from '../activities'
+// eslint-disable-next-line import/no-cycle
+import { ActivitiesFilters, AttendanceSummaryFilters, UnlockFilters } from '../activities'
 import { AppointmentDetails, AppointmentOccurrenceDetails } from '../activitiesAPI/types'
 
 export default {}
@@ -36,7 +36,9 @@ declare module 'express-session' {
 
 declare module 'express-serve-static-core' {
   interface Response {
-    redirectOrReturn?(path: string, returnTo?: string, flag?: string): void
+    redirectWithSuccess?(path: string, successHeading: string, message?: string): void
+    redirectOrReturnWithSuccess?(path: string, successHeading: string, message?: string): void
+    redirectOrReturn?(path: string): void
     validationFailed?(field: string, message: string): void
   }
 }

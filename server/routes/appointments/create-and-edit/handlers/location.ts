@@ -52,14 +52,10 @@ export default class LocationRoutes {
       user,
     )
 
-    req.flash(
-      'successMessage',
-      JSON.stringify({
-        message: `Appointment location for this occurrence changed successfully`,
-      }),
+    res.redirectOrReturnWithSuccess(
+      `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+      `Appointment location for this occurrence changed successfully`,
     )
-
-    res.redirectOrReturn(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
   }
 
   private getLocation = async (req: Request, res: Response) => {

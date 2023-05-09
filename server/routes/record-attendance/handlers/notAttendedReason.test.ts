@@ -22,14 +22,14 @@ describe('Route Handlers - Non Attendance', () => {
         },
       },
       render: jest.fn(),
-      redirect: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
       params: { id: 1 },
       session: {
         notAttendedJourney: {
-          selectedPrisoners: [{ attendanceId: 1, prisonerNumber: 'ABC123' }],
+          selectedPrisoners: [{ attendanceId: 1, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' }],
         },
       },
       body: {
@@ -101,7 +101,7 @@ describe('Route Handlers - Non Attendance', () => {
             displayInAbsence: true,
           },
         ],
-        selectedPrisoners: [{ attendanceId: 1, prisonerNumber: 'ABC123' }],
+        selectedPrisoners: [{ attendanceId: 1, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' }],
       })
     })
   })
@@ -111,7 +111,11 @@ describe('Route Handlers - Non Attendance', () => {
       await handler.POST(req, res)
 
       expect(activitiesService.updateAttendances).toBeCalledTimes(1)
-      expect(res.redirect).toBeCalledWith('attendance-list')
+      expect(res.redirectWithSuccess).toBeCalledWith(
+        'attendance-list',
+        'Attendance recorded',
+        "We've saved attendance details for Joe Bloggs",
+      )
     })
   })
 })
