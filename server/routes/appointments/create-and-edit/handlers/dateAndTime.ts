@@ -48,14 +48,10 @@ export default class DateAndTimeRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentJourney } = req.session
-    const { appointmentId, occurrenceId } = req.params
 
     res.render('pages/appointments/create-and-edit/date-and-time', {
-      appointmentId,
-      occurrenceId,
-      isCtaAcceptAndSave:
-        appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !this.editAppointmentUtils.isApplyToQuestionRequired(appointmentJourney),
+      backLinkHref: this.editAppointmentUtils.getBackLinkHref(appointmentJourney, 'name', req),
+      isCtaAcceptAndSave: !this.editAppointmentUtils.isApplyToQuestionRequired(appointmentJourney),
     })
   }
 

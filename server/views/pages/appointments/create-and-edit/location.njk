@@ -7,11 +7,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Location", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-location-page' %}
-{% if session.appointmentJourney.mode == AppointmentJourneyMode.CREATE %}
-    {% set backLinkHref = "/category" %}
-{% elseif session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId %}
-{% endif %}
+{% set backLinkHref = backLinkHref %}
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for location in locations %}

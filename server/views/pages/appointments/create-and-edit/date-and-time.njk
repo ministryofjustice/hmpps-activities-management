@@ -9,11 +9,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Date and Time", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-date-and-time-page' %}
-{% if session.appointmentJourney.mode == AppointmentJourneyMode.CREATE %}
-    {% set backLinkHref = "/name" %}
-{% elseif session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId %}
-{% endif %}
+{% set backLinkHref = backLinkHref %}
 
 {% block content %}
     <div class="govuk-grid-row">

@@ -1,7 +1,10 @@
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../services/activitiesService'
-import { AppointmentJourney } from '../../routes/appointments/create-and-edit/appointmentJourney'
+import {
+  AppointmentJourney,
+  AppointmentJourneyMode,
+} from '../../routes/appointments/create-and-edit/appointmentJourney'
 import { EditApplyTo } from '../../@types/appointments'
 import { ServiceUser } from '../../@types/express'
 import { AppointmentOccurrenceUpdateRequest } from '../../@types/activitiesAPI/types'
@@ -11,8 +14,22 @@ import SimpleTime from '../../commonValidationTypes/simpleTime'
 export default class EditAppointmentUtils {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
+  getBackLinkHref(appointmentJourney: AppointmentJourney, defaultBackLinkHref: string, req: Request) {
+    if (
+      appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+      req.params.appointmentId &&
+      req.params.occurrenceId
+    ) {
+      return `/appointments/${req.params.appointmentId}/occurrence/${req.params.occurrenceId}`
+    }
+
+    return defaultBackLinkHref
+  }
+
   isApplyToQuestionRequired(appointmentJourney: AppointmentJourney) {
-    return this.getApplyToOptions(appointmentJourney).length > 1
+    return (
+      appointmentJourney.mode === AppointmentJourneyMode.EDIT && this.getApplyToOptions(appointmentJourney).length > 1
+    )
   }
 
   async redirectOrEdit(

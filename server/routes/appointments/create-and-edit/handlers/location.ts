@@ -23,16 +23,12 @@ export default class LocationRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentJourney } = req.session
-    const { appointmentId, occurrenceId } = req.params
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     res.render('pages/appointments/create-and-edit/location', {
+      backLinkHref: this.editAppointmentUtils.getBackLinkHref(appointmentJourney, 'category', req),
       locations,
-      appointmentId,
-      occurrenceId,
-      isCtaAcceptAndSave:
-        appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !this.editAppointmentUtils.isApplyToQuestionRequired(appointmentJourney),
+      isCtaAcceptAndSave: !this.editAppointmentUtils.isApplyToQuestionRequired(appointmentJourney),
     })
   }
 
