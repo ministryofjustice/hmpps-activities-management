@@ -1,6 +1,4 @@
 import { Router } from 'express'
-import fetchAppointmentOccurrence from '../../middleware/appointments/fetchAppointmentOccurrence'
-import fetchAppointment from '../../middleware/appointments/fetchAppointment'
 import appointmentsHomeRoutes from './home'
 import appointmentsCreateRoutes from './create-and-edit/createRoutes'
 import appointmentsEditRoutes from './create-and-edit/editRoutes'

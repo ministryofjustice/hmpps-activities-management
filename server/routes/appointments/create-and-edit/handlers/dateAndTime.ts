@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Expose, Type, plainToInstance } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
@@ -9,7 +9,6 @@ import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import ActivitiesService from '../../../../services/activitiesService'
-import { EditApplyTo } from '../../../../@types/appointments'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import EditAppointmentUtils from '../../../../utils/helpers/editAppointmentUtils'
 
@@ -49,7 +48,9 @@ export default class DateAndTimeRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/date-and-time', {
       backLinkHref: this.editAppointmentUtils.getBackLinkHref(req, 'name'),
-      isCtaAcceptAndSave: !this.editAppointmentUtils.isApplyToQuestionRequired(req),
+      isCtaAcceptAndSave:
+        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+        !this.editAppointmentUtils.isApplyToQuestionRequired(req),
     })
   }
 

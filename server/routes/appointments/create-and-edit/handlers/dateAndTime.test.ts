@@ -8,6 +8,7 @@ import SimpleTime, { simpleTimeFromDate } from '../../../../commonValidationType
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentJourney } from '../appointmentJourney'
+import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { ServiceUser } from '../../../../@types/express'
 
 jest.mock('../../../../services/activitiesService')
@@ -36,6 +37,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     req = {
       session: {
         appointmentJourney: {},
+        editAppointmentJourney: {},
       },
     } as unknown as Request
 
@@ -46,7 +48,10 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     it('should render the date and time view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/date-and-time')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/date-and-time', {
+        backLinkHref: 'name',
+        isCtaAcceptAndSave: false,
+      })
     })
   })
 
@@ -107,6 +112,8 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         }),
       } as unknown as AppointmentJourney
 
+      req.session.editAppointmentJourney = {} as unknown as EditAppointmentJourney
+
       req.body = {
         startDate: simpleDateFromDate(tomorrow),
         startTime: plainToInstance(SimpleTime, {
@@ -135,7 +142,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
-        'Appointment date for this occurrence changed successfully',
+        'Date for this appointment changed successfully',
       )
     })
 
@@ -164,7 +171,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
-        'Appointment start time and end time for this occurrence changed successfully',
+        'Start time and end time for this appointment changed successfully',
       )
     })
 
@@ -196,7 +203,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
-        'Appointment date, start time and end time for this occurrence changed successfully',
+        'Date, start time and end time for this appointment changed successfully',
       )
     })
   })

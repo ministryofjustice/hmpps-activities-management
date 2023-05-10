@@ -6,6 +6,7 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import LocationRoutes, { Location } from './location'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentJourney } from '../appointmentJourney'
+import { EditAppointmentJourney } from '../editAppointmentJourney'
 import atLeast from '../../../../../jest.setup'
 import { AppointmentLocationSummary } from '../../../../@types/activitiesAPI/types'
 
@@ -51,6 +52,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
     req = {
       session: {
         appointmentJourney: {},
+        editAppointmentJourney: {},
       },
       flash: jest.fn(),
     } as unknown as Request
@@ -66,7 +68,11 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/location', { locations })
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/location', {
+        locations,
+        backLinkHref: 'category',
+        isCtaAcceptAndSave: false,
+      })
     })
   })
 
@@ -110,7 +116,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
     it('should update the occurrence and redirect back to the occurrence details page', async () => {
       req.body = {
-        locationId: 26152,
+        locationId: 26149,
       }
 
       req.session.appointmentJourney = {
@@ -119,6 +125,8 @@ describe('Route Handlers - Create Appointment - Location', () => {
           description: 'Chapel',
         },
       } as unknown as AppointmentJourney
+
+      req.session.editAppointmentJourney = {} as unknown as EditAppointmentJourney
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
       when(activitiesService.editAppointmentOccurrence).calledWith(atLeast(12))
@@ -129,7 +137,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
-        'Appointment location for this occurrence changed successfully',
+        'Location for this appointment changed successfully',
       )
     })
 

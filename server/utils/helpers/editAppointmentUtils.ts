@@ -27,7 +27,7 @@ export default class EditAppointmentUtils {
   }
 
   isApplyToQuestionRequired(req: Request) {
-    return req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT && this.getApplyToOptions(req).length > 1
+    return this.getApplyToOptions(req).length > 1
   }
 
   async redirectOrEdit(req: Request, res: Response, property: string) {

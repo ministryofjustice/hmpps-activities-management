@@ -3,7 +3,7 @@ import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentUtils from '../../../../utils/helpers/editAppointmentUtils'
-import { AppointmentJourney, AppointmentJourneyMode } from '../appointmentJourney'
+import { AppointmentJourneyMode } from '../appointmentJourney'
 
 export class Location {
   @Expose()
@@ -27,7 +27,9 @@ export default class LocationRoutes {
     res.render('pages/appointments/create-and-edit/location', {
       backLinkHref: this.editAppointmentUtils.getBackLinkHref(req, 'category'),
       locations,
-      isCtaAcceptAndSave: !this.editAppointmentUtils.isApplyToQuestionRequired(req),
+      isCtaAcceptAndSave:
+        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+        !this.editAppointmentUtils.isApplyToQuestionRequired(req),
     })
   }
 
