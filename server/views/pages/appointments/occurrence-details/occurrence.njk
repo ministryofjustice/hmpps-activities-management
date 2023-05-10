@@ -82,16 +82,6 @@
                         },
                         value: {
                             text: occurrence.category.description
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "#",
-                                    text: "Change",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'change-category' }
-                                }
-                            ]
                         }
                     }, {
                         key: {
@@ -99,16 +89,6 @@
                         },
                         value: {
                             text: ("Yes" if occurrence.appointmentDescription == null or occurrence.appointmentDescription == '') + ("No" if occurrence.appointmentDescription.length > 0)
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "#",
-                                    text: "Change",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'change-show-category' }
-                                }
-                            ]
                         }
                     }, {
                         key: {
@@ -116,16 +96,6 @@
                         },
                         value: {
                             text: occurrence.appointmentDescription
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "#",
-                                    text: "Change",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'change-appointment-description' }
-                                }
-                            ]
                         }
                     } if occurrence.appointmentDescription != null and occurrence.appointmentDescription != '', {
                         key: {
