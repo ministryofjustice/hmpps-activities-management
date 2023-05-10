@@ -52,7 +52,7 @@ export default class LocationRoutes {
       user,
     )
 
-    res.redirectOrReturnWithSuccess(
+    res.redirectWithSuccess(
       `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
       `Appointment location for this occurrence changed successfully`,
     )

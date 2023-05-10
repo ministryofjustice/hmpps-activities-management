@@ -25,7 +25,7 @@ export default class OccurrenceDetailsPage extends Page {
       .contains(cellLocation)
   }
 
-  assertCategory = (category: string) => this.assertAppointmentDetail('Category', category)
+  assertCategory = (category: string) => this.assertAppointmentDetail('Type', category)
 
   assertLocation = (location: string) => this.assertAppointmentDetail('Location', location)
 

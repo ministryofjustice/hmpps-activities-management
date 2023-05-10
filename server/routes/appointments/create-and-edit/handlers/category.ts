@@ -5,7 +5,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 
 export class Category {
   @Expose()
-  @IsNotEmpty({ message: 'Select a category' })
+  @IsNotEmpty({ message: 'Select a type' })
   categoryCode: string
 }
 
@@ -29,7 +29,7 @@ export default class CategoryRoutes {
       .then(categories => categories.find(c => c.code === categoryCode))
 
     if (!category) {
-      return res.validationFailed('categoryCode', `Selected category not found`)
+      return res.validationFailed('categoryCode', `Selected type not found`)
     }
 
     req.session.appointmentJourney.category = {

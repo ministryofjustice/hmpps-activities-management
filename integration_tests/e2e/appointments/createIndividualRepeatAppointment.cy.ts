@@ -98,7 +98,7 @@ context('Individual repeat appointment', () => {
         `You have successfully created an appointment series for Stephen Gregs starting on ${formatDate(
           tomorrow,
           'EEEE d MMMM yyyy',
-        )}. It will repeat weekly for 2 occurrences`,
+        )}. It will repeat weekly for 2 appointments`,
       )
 
       confirmationPage.viewAppointmentLink().click()

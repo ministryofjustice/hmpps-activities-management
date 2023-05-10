@@ -45,7 +45,7 @@
 {% set summaryListRows = (summaryListRows.push(
     {
         key: {
-            text: "Category"
+            text: "Type"
         },
         value: {
             text: session.appointmentJourney.category.description
@@ -55,7 +55,7 @@
                 {
                     href: "category?fromReview=true",
                     text: "Change",
-                    visuallyHiddenText: "change category",
+                    visuallyHiddenText: "change type",
                     classes: "govuk-link--no-visited-state",
                     attributes: { 'data-qa': 'change-category' }
                 }
@@ -64,7 +64,7 @@
     },
     {
         key: {
-            text: "Show category on unlock list"
+            text: "Show type on unlock list"
         },
         value: {
             text: session.appointmentJourney.descriptionOption
@@ -231,7 +231,7 @@
   }), summaryListRows) %}
   {% set summaryListRows = (summaryListRows.push({
       key: {
-          text: "Occurrences"
+          text: "Number of appointments"
       },
       value: {
           text: session.appointmentJourney.repeatCount

@@ -22,7 +22,7 @@ const getPrisonerDetailsValueElement = (heading: string) =>
     .find('.govuk-summary-list__value')
 
 const getRepeatPeriodValueElement = () => getAppointmentDetailsValueElement('Frequency')
-const getRepeatCountValueElement = () => getAppointmentDetailsValueElement('Occurrences')
+const getRepeatCountValueElement = () => getAppointmentDetailsValueElement('Number of appointments')
 const getIndividualPrisonerValueElement = (qaAttr: string) =>
   getAppointmentDetailsValueElement('Prisoner').find(`[data-qa="${qaAttr}"]`)
 const getPrisonerListValueElement = (qaAttr: string, index: number) =>

@@ -7,7 +7,7 @@ export default class AppointmentDetailsPage extends Page {
   }
 
   viewEditOccurrenceLink = (sequenceNumber: number) =>
-    cy.get(`[data-qa=view-and-edit-occurrence-${sequenceNumber}]`).contains('View and edit')
+    cy.get(`[data-qa=view-and-edit-occurrence-${sequenceNumber}]`).contains('View and manage')
 
   printMovementSlipLink = () => cy.get('[data-qa=print-movement-slip-link]')
 
@@ -16,9 +16,6 @@ export default class AppointmentDetailsPage extends Page {
 
   assertAppointmentDetail = (header: string, value: string) =>
     this.assertSummaryListValue('appointment-details', header, value)
-
-  assertAppointmentHistory = (header: string, value: string) =>
-    this.assertSummaryListValue('appointment-history', header, value)
 
   assertAppointmentOccurrenceSummary = (sequenceNumber: string, column: string, value: string) =>
     cy
@@ -39,7 +36,7 @@ export default class AppointmentDetailsPage extends Page {
 
   assertPrisonerCount = (category: string) => this.assertAppointmentDetail('Prisoners', category)
 
-  assertCategory = (category: string) => this.assertAppointmentDetail('Category', category)
+  assertCategory = (category: string) => this.assertAppointmentDetail('Type', category)
 
   assertLocation = (location: string) => this.assertAppointmentDetail('Location', location)
 
@@ -55,7 +52,7 @@ export default class AppointmentDetailsPage extends Page {
 
   assertRepeatPeriod = (option: string) => this.assertAppointmentSeriesDetail('Frequency', option)
 
-  assertRepeatCount = (option: string) => this.assertAppointmentSeriesDetail('Occurrences', option)
+  assertRepeatCount = (option: string) => this.assertAppointmentSeriesDetail('Number of appointments', option)
 
   assertOccurrences = (occurrenceMap: Map<number, string>) => {
     occurrenceMap.forEach((date, sequenceNumber) => {
@@ -63,7 +60,7 @@ export default class AppointmentDetailsPage extends Page {
     })
   }
 
-  assertCreatedBy = (createdBy: string) => this.assertAppointmentHistory('Created by', createdBy)
+  assertCreatedBy = (createdBy: string) => this.assertAppointmentSeriesDetail('Created by', createdBy)
 
   assertPrintMovementSlipLink = () => this.printMovementSlipLink().contains('Print movement slip')
 }
