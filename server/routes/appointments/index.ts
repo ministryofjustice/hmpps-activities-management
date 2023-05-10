@@ -12,19 +12,13 @@ import { Services } from '../../services'
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
 
-  const { activitiesService } = services
-
   router.use('/', appointmentsHomeRoutes())
   router.use('/create', appointmentsCreateRoutes(services))
   router.use('/search', appointmentSearchRoutes(services))
 
-  router.use('/:appointmentId(\\d+)', fetchAppointment(activitiesService), appointmentDetailsRoutes(services))
+  router.use('/:appointmentId(\\d+)', appointmentDetailsRoutes(services))
 
-  router.use(
-    '/:appointmentId(\\d+)/occurrence/:occurrenceId(\\d+)',
-    fetchAppointmentOccurrence(activitiesService),
-    appointmentOccurrenceDetailsRoutes(),
-  )
+  router.use('/:appointmentId(\\d+)/occurrence/:occurrenceId(\\d+)', appointmentOccurrenceDetailsRoutes(services))
   router.use('/:appointmentId(\\d+)/occurrence/:occurrenceId(\\d+)/edit', appointmentsEditRoutes(services))
 
   return router

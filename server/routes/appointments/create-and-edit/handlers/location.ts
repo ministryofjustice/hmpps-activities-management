@@ -2,7 +2,8 @@ import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import { EditApplyTo } from '../../../../@types/appointments'
+import EditAppointmentUtils from '../../../../utils/helpers/editAppointmentUtils'
+import { AppointmentJourneyMode } from '../appointmentJourney'
 
 export class Location {
   @Expose()
@@ -13,14 +14,25 @@ export class Location {
 }
 
 export default class LocationRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  private readonly editAppointmentUtils: EditAppointmentUtils
+
+  constructor(private readonly activitiesService: ActivitiesService) {
+    this.editAppointmentUtils = new EditAppointmentUtils(activitiesService)
+  }
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { appointmentJourney } = req.session
+    const { appointmentId, occurrenceId } = req.params
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     res.render('pages/appointments/create-and-edit/location', {
       locations,
+      appointmentId,
+      occurrenceId,
+      isCtaAcceptAndSave:
+        appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+        !this.editAppointmentUtils.isApplyToQuestionRequired(appointmentJourney),
     })
   }
 
@@ -43,18 +55,13 @@ export default class LocationRoutes {
     const result = await this.getLocation(req, res)
     if (!result) return
 
-    await this.activitiesService.editAppointmentOccurrence(
+    await this.editAppointmentUtils.redirectOrEdit(
+      +appointmentId,
       +occurrenceId,
-      {
-        internalLocationId: result.id,
-        applyTo: EditApplyTo.THIS_OCCURRENCE,
-      },
+      req.session.appointmentJourney,
+      'location',
       user,
-    )
-
-    res.redirectWithSuccess(
-      `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
-      `Appointment location for this occurrence changed successfully`,
+      res,
     )
   }
 

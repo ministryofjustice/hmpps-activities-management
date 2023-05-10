@@ -1,0 +1,57 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+
+{% set pageTitle = appointmentJourneyTitle("Apply to", session.appointmentJourney) %}
+{% set pageId = 'appointments-manage-apply-to-page' %}
+{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId + "/edit/" + property %}
+
+{% set applyToItems = [] %}
+{% for applyToOption in applyToOptions %}
+    {% set applyToItems = (applyToItems.push({
+        value: applyToOption,
+        text: ("Apply the change to this appointment only" if applyToOption == EditApplyTo.THIS_OCCURRENCE) +
+              ("Apply the change to this appointment and all the appointments after it in the series" if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES and session.appointmentJourney.sequenceNumber + 1 < session.appointmentJourney.repeatCount) +
+              ("Apply the change to this and the following appointment in the series" if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES and session.appointmentJourney.sequenceNumber + 1 == session.appointmentJourney.repeatCount) +
+              ("Apply the change to all appointments in the series" if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and session.appointmentJourney.repeatCount == session.appointmentJourney.occurrencesRemaining) +
+              ("Apply the change to all remaining appointments in the series" if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and session.appointmentJourney.repeatCount > session.appointmentJourney.occurrencesRemaining),
+        hint: {
+            text: "This option will change " +
+                  (session.appointmentJourney.repeatCount - session.appointmentJourney.sequenceNumber if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES) +
+                  (session.appointmentJourney.occurrencesRemaining if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES) +
+                  " appointments"
+        } if applyToOption != EditApplyTo.THIS_OCCURRENCE
+    } ), categoryOptions) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% set repeat = formResponses.repeat or session.appointmentJourney.repeat %}
+                {{ govukRadios({
+                    name: "applyToOption",
+                    fieldset: {
+                        legend: {
+                            text: ("How should this change be applied to the appointments in the series?" if session.appointmentJourney.repeatCount == session.appointmentJourney.occurrencesRemaining) +
+                                  ("How should this change be applied to the remaining appointments in the series?" if session.appointmentJourney.repeatCount > session.appointmentJourney.occurrencesRemaining),
+                            classes: "govuk-label--l",
+                            isPageHeading: true
+                        }
+                    },
+                    errorMessage: validationErrors | findError('applyToOption'),
+                    items: applyToItems
+                }) }}
+
+                {{ govukButton({
+                    text: "Accept and save"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
