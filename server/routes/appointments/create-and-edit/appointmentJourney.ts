@@ -50,4 +50,5 @@ export type AppointmentJourney = {
   repeatCount?: number
   occurrencesRemaining?: number
   sequenceNumber?: number
+  updatedProperties?: string[]
 }

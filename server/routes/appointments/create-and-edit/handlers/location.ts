@@ -3,7 +3,7 @@ import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentUtils from '../../../../utils/helpers/editAppointmentUtils'
-import { AppointmentJourneyMode } from '../appointmentJourney'
+import { AppointmentJourney, AppointmentJourneyMode } from '../appointmentJourney'
 
 export class Location {
   @Expose()
@@ -37,10 +37,12 @@ export default class LocationRoutes {
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentJourney } = req.session
+
     const location = await this.getLocation(req, res)
     if (!location) return
 
-    req.session.appointmentJourney.location = {
+    appointmentJourney.location = {
       id: location.id,
       description: location.description,
     }
@@ -50,19 +52,32 @@ export default class LocationRoutes {
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { appointmentJourney } = req.session
     const { appointmentId, occurrenceId } = req.params
+    const { locationId } = req.body
 
-    const result = await this.getLocation(req, res)
-    if (!result) return
+    if (appointmentJourney.location.id === locationId) {
+      res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+    } else {
+      const location = await this.getLocation(req, res)
+      if (!location) return
 
-    await this.editAppointmentUtils.redirectOrEdit(
-      +appointmentId,
-      +occurrenceId,
-      req.session.appointmentJourney,
-      'location',
-      user,
-      res,
-    )
+      appointmentJourney.location = {
+        id: location.id,
+        description: location.description,
+      }
+
+      appointmentJourney.updatedProperties = ['location']
+
+      await this.editAppointmentUtils.redirectOrEdit(
+        +appointmentId,
+        +occurrenceId,
+        appointmentJourney,
+        'location',
+        user,
+        res,
+      )
+    }
   }
 
   private getLocation = async (req: Request, res: Response) => {

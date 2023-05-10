@@ -20,7 +20,7 @@
               ("Apply the change to all remaining appointments in the series" if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and session.appointmentJourney.repeatCount > session.appointmentJourney.occurrencesRemaining),
         hint: {
             text: "This option will change " +
-                  (session.appointmentJourney.repeatCount - session.appointmentJourney.sequenceNumber if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES) +
+                  (session.appointmentJourney.repeatCount - session.appointmentJourney.sequenceNumber + 1 if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES) +
                   (session.appointmentJourney.occurrencesRemaining if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES) +
                   " appointments"
         } if applyToOption != EditApplyTo.THIS_OCCURRENCE
@@ -35,7 +35,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {% set repeat = formResponses.repeat or session.appointmentJourney.repeat %}
                 {{ govukRadios({
-                    name: "applyToOption",
+                    name: "applyTo",
                     fieldset: {
                         legend: {
                             text: ("How should this change be applied to the appointments in the series?" if session.appointmentJourney.repeatCount == session.appointmentJourney.occurrencesRemaining) +
@@ -44,7 +44,7 @@
                             isPageHeading: true
                         }
                     },
-                    errorMessage: validationErrors | findError('applyToOption'),
+                    errorMessage: validationErrors | findError('applyTo'),
                     items: applyToItems
                 }) }}
 

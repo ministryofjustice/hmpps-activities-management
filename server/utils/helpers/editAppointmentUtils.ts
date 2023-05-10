@@ -1,8 +1,12 @@
 import { Response } from 'express'
+import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../services/activitiesService'
 import { AppointmentJourney } from '../../routes/appointments/create-and-edit/appointmentJourney'
 import { EditApplyTo } from '../../@types/appointments'
 import { ServiceUser } from '../../@types/express'
+import { AppointmentOccurrenceUpdateRequest } from '../../@types/activitiesAPI/types'
+import SimpleDate from '../../commonValidationTypes/simpleDate'
+import SimpleTime from '../../commonValidationTypes/simpleTime'
 
 export default class EditAppointmentUtils {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -23,7 +27,7 @@ export default class EditAppointmentUtils {
       return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/${property}/apply-to`)
     }
 
-    return this.edit(appointmentId, occurrenceId, appointmentJourney, property, EditApplyTo.THIS_OCCURRENCE, user, res)
+    return this.edit(appointmentId, occurrenceId, appointmentJourney, EditApplyTo.THIS_OCCURRENCE, user, res)
   }
 
   getApplyToOptions(appointmentJourney: AppointmentJourney) {
@@ -40,7 +44,9 @@ export default class EditAppointmentUtils {
         applyToOptions.push(EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES)
       }
 
-      applyToOptions.push(EditApplyTo.ALL_FUTURE_OCCURRENCES)
+      if (!appointmentJourney.updatedProperties?.includes('date') || isFirstRemainingOccurrence) {
+        applyToOptions.push(EditApplyTo.ALL_FUTURE_OCCURRENCES)
+      }
     }
 
     return applyToOptions
@@ -50,39 +56,44 @@ export default class EditAppointmentUtils {
     appointmentId: number,
     occurrenceId: number,
     appointmentJourney: AppointmentJourney,
-    property: string,
     applyTo: EditApplyTo,
     user: ServiceUser,
     res: Response,
   ) {
-    switch (property) {
-      case 'location':
-        return this.editLocation(appointmentId, occurrenceId, appointmentJourney, applyTo, user, res)
-      default:
-        return res.redirect('back')
-    }
-  }
+    const occurrenceUpdates = { applyTo } as AppointmentOccurrenceUpdateRequest
 
-  async editLocation(
-    appointmentId: number,
-    occurrenceId: number,
-    appointmentJourney: AppointmentJourney,
-    applyTo: EditApplyTo,
-    user: ServiceUser,
-    res: Response,
-  ) {
-    await this.activitiesService.editAppointmentOccurrence(
-      +occurrenceId,
-      {
-        internalLocationId: appointmentJourney.location.id,
-        applyTo,
-      },
-      user,
-    )
+    appointmentJourney.updatedProperties.forEach(property => {
+      switch (property) {
+        case 'location':
+          occurrenceUpdates.internalLocationId = appointmentJourney.location.id
+          break
+        case 'date':
+          occurrenceUpdates.startDate = plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString()
+          // TODO: This is a hack as the API doesn't currently support apply to all future occurrences for date
+          if (applyTo === EditApplyTo.ALL_FUTURE_OCCURRENCES) {
+            occurrenceUpdates.applyTo = EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES
+          }
+          break
+        case 'start time':
+          occurrenceUpdates.startTime = plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString()
+          break
+        case 'end time':
+          occurrenceUpdates.endTime = plainToInstance(SimpleTime, appointmentJourney.endTime).toIsoString()
+          break
+        default:
+          break
+      }
+    })
 
+    await this.activitiesService.editAppointmentOccurrence(+occurrenceId, occurrenceUpdates, user)
+
+    const updated = appointmentJourney.updatedProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')
     return res.redirectWithSuccess(
       `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
-      `Appointment location for ${this.getAppliedToMessage(applyTo, appointmentJourney)} changed successfully`,
+      `${updated[0].toUpperCase() + updated.slice(1)} for ${this.getAppliedToMessage(
+        applyTo,
+        appointmentJourney,
+      )} changed successfully`,
     )
   }
 
