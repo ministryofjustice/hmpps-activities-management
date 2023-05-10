@@ -67,6 +67,10 @@ export default class StartJourneyRoutes {
       repeat: appointmentOccurrence.repeat ? YesNo.YES : YesNo.NO,
       repeatPeriod: appointmentOccurrence.repeat?.period as AppointmentRepeatPeriod,
       repeatCount: appointmentOccurrence.repeat?.count,
+    }
+
+    req.session.editAppointmentJourney = {
+      repeatCount: appointmentOccurrence.repeat?.count,
       occurrencesRemaining: appointment.occurrences.length,
       sequenceNumber: appointmentOccurrence.sequenceNumber,
     }

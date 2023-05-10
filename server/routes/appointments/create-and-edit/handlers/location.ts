@@ -22,13 +22,12 @@ export default class LocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { appointmentJourney } = req.session
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     res.render('pages/appointments/create-and-edit/location', {
-      backLinkHref: this.editAppointmentUtils.getBackLinkHref(appointmentJourney, 'category', req),
+      backLinkHref: this.editAppointmentUtils.getBackLinkHref(req, 'category'),
       locations,
-      isCtaAcceptAndSave: !this.editAppointmentUtils.isApplyToQuestionRequired(appointmentJourney),
+      isCtaAcceptAndSave: !this.editAppointmentUtils.isApplyToQuestionRequired(req),
     })
   }
 
@@ -47,33 +46,15 @@ export default class LocationRoutes {
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const { appointmentJourney } = req.session
-    const { appointmentId, occurrenceId } = req.params
-    const { locationId } = req.body
+    const location = await this.getLocation(req, res)
+    if (!location) return
 
-    if (appointmentJourney.location.id === locationId) {
-      res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
-    } else {
-      const location = await this.getLocation(req, res)
-      if (!location) return
-
-      appointmentJourney.location = {
-        id: location.id,
-        description: location.description,
-      }
-
-      appointmentJourney.updatedProperties = ['location']
-
-      await this.editAppointmentUtils.redirectOrEdit(
-        +appointmentId,
-        +occurrenceId,
-        appointmentJourney,
-        'location',
-        user,
-        res,
-      )
+    req.session.editAppointmentJourney.location = {
+      id: location.id,
+      description: location.description,
     }
+
+    await this.editAppointmentUtils.redirectOrEdit(req, res, 'location')
   }
 
   private getLocation = async (req: Request, res: Response) => {

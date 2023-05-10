@@ -47,57 +47,26 @@ export default class DateAndTimeRoutes {
   }
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney } = req.session
-
     res.render('pages/appointments/create-and-edit/date-and-time', {
-      backLinkHref: this.editAppointmentUtils.getBackLinkHref(appointmentJourney, 'name', req),
-      isCtaAcceptAndSave: !this.editAppointmentUtils.isApplyToQuestionRequired(appointmentJourney),
+      backLinkHref: this.editAppointmentUtils.getBackLinkHref(req, 'name'),
+      isCtaAcceptAndSave: !this.editAppointmentUtils.isApplyToQuestionRequired(req),
     })
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
-    this.setTimeAndDate(req)
+    this.setTimeAndDate(req, 'appointmentJourney')
 
     res.redirectOrReturn(`repeat`)
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const { appointmentJourney } = req.session
-    const { appointmentId, occurrenceId } = req.params
+    this.setTimeAndDate(req, 'editAppointmentJourney')
 
-    const startDate = plainToInstance(SimpleDate, appointmentJourney.startDate)
-    const startTime = plainToInstance(SimpleTime, appointmentJourney.startTime)
-    const endTime = plainToInstance(SimpleTime, appointmentJourney.endTime)
-
-    this.setTimeAndDate(req)
-
-    const updatedStartDate = plainToInstance(SimpleDate, appointmentJourney.startDate)
-    const updatedStartTime = plainToInstance(SimpleTime, appointmentJourney.startTime)
-    const updatedEndTime = plainToInstance(SimpleTime, appointmentJourney.endTime)
-
-    appointmentJourney.updatedProperties = []
-    if (startDate.toIsoString() !== updatedStartDate.toIsoString()) appointmentJourney.updatedProperties.push('date')
-    if (startTime.toIsoString() !== updatedStartTime.toIsoString())
-      appointmentJourney.updatedProperties.push('start time')
-    if (endTime.toIsoString() !== updatedEndTime.toIsoString()) appointmentJourney.updatedProperties.push('end time')
-
-    if (appointmentJourney.updatedProperties.length === 0) {
-      res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
-    } else {
-      await this.editAppointmentUtils.redirectOrEdit(
-        +appointmentId,
-        +occurrenceId,
-        appointmentJourney,
-        'date-and-time',
-        user,
-        res,
-      )
-    }
+    await this.editAppointmentUtils.redirectOrEdit(req, res, 'date-and-time')
   }
 
-  private setTimeAndDate(req: Request) {
-    const { appointmentJourney } = req.session
+  private setTimeAndDate(req: Request, journeyName: string) {
+    const appointmentJourney = req.session[journeyName]
     const { startDate, startTime, endTime } = req.body
 
     appointmentJourney.startDate = {

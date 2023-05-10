@@ -20,10 +20,9 @@ export default class ApplyToRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney } = req.session
     const { appointmentId, occurrenceId, property } = req.params
 
-    const applyToOptions = this.editAppointmentUtils.getApplyToOptions(appointmentJourney)
+    const applyToOptions = this.editAppointmentUtils.getApplyToOptions(req)
 
     res.render('pages/appointments/create-and-edit/apply-to', {
       appointmentId,
@@ -34,11 +33,8 @@ export default class ApplyToRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const { appointmentJourney } = req.session
-    const { appointmentId, occurrenceId } = req.params
     const { applyTo } = req.body
 
-    await this.editAppointmentUtils.edit(+appointmentId, +occurrenceId, appointmentJourney, applyTo, user, res)
+    await this.editAppointmentUtils.edit(req, res, applyTo)
   }
 }
