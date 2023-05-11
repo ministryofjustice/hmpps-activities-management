@@ -55,11 +55,16 @@ export default class EditAppointmentService {
       updatedProperties.push('date')
     }
 
+    const hasEndTimeChanged = this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)
     if (this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney)) {
-      updatedProperties.push('start time')
+      if (hasEndTimeChanged) {
+        updatedProperties.push('start')
+      } else {
+        updatedProperties.push('start time')
+      }
     }
 
-    if (this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)) {
+    if (hasEndTimeChanged) {
       updatedProperties.push('end time')
     }
 
@@ -88,7 +93,7 @@ export default class EditAppointmentService {
   }
 
   getApplyToOptions(req: Request) {
-    const { editAppointmentJourney } = req.session
+    const { appointmentJourney, editAppointmentJourney } = req.session
 
     const applyToOptions = [EditApplyTo.THIS_OCCURRENCE]
 
@@ -100,7 +105,7 @@ export default class EditAppointmentService {
         applyToOptions.push(EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES)
       }
 
-      if (!editAppointmentJourney.startDate || isFirstRemainingOccurrence) {
+      if (!this.hasStartDateChanged(appointmentJourney, editAppointmentJourney) || isFirstRemainingOccurrence) {
         applyToOptions.push(EditApplyTo.ALL_FUTURE_OCCURRENCES)
       }
     }
@@ -137,17 +142,15 @@ export default class EditAppointmentService {
 
     await this.activitiesService.editAppointmentOccurrence(+occurrenceId, occurrenceUpdates, user)
 
+    const successHeading = `You've changed the ${this.getUpdatedPropertiesMessage(req)} for ${this.getAppliedToMessage(
+      editAppointmentJourney,
+      applyTo,
+    )}`
+
     req.session.appointmentJourney = null
     req.session.editAppointmentJourney = null
 
-    const updatedPropertiesMessage = this.getUpdatedPropertiesMessage(req)
-    res.redirectWithSuccess(
-      `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
-      `${updatedPropertiesMessage[0].toUpperCase() + updatedPropertiesMessage.slice(1)} for ${this.getAppliedToMessage(
-        editAppointmentJourney,
-        applyTo,
-      )} changed successfully`,
-    )
+    res.redirectWithSuccess(`/appointments/${appointmentId}/occurrence/${occurrenceId}`, successHeading)
   }
 
   private hasAnyPropertyChanged(
@@ -192,15 +195,11 @@ export default class EditAppointmentService {
   private getAppliedToMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: EditApplyTo) {
     switch (applyTo) {
       case EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
-        if (editAppointmentJourney.sequenceNumber + 1 === editAppointmentJourney.repeatCount) {
-          return 'this and the following appointment in the series'
-        }
-        return 'this appointment and all the appointments after it in the series'
+        return `appointments ${editAppointmentJourney.sequenceNumber} to ${editAppointmentJourney.repeatCount} in the series`
       case EditApplyTo.ALL_FUTURE_OCCURRENCES:
-        if (editAppointmentJourney.repeatCount > editAppointmentJourney.occurrencesRemaining) {
-          return 'all remaining appointments in the series'
-        }
-        return 'all appointments in the series'
+        return `appointments ${
+          editAppointmentJourney.repeatCount - editAppointmentJourney.occurrencesRemaining + 1
+        } to ${editAppointmentJourney.repeatCount} in the series`
       default:
         return 'this appointment'
     }
