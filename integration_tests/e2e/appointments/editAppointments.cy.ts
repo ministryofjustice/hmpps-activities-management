@@ -63,7 +63,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
+        occurrenceDetailsPage.assertNotificationContents("You've changed the date for this appointment")
       })
     })
 
