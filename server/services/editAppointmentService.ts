@@ -7,6 +7,7 @@ import { EditApplyTo } from '../@types/appointments'
 import { AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 import SimpleTime from '../commonValidationTypes/simpleTime'
+import { fullName, convertToTitleCase } from '../utils/utils'
 
 export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -27,10 +28,11 @@ export default class EditAppointmentService {
     return this.getApplyToOptions(req).length > 1
   }
 
-  async redirectOrEdit(req: Request, res: Response) {
+  async redirectOrEdit(req: Request, res: Response, property: string) {
+    const { appointmentId, occurrenceId } = req.params
     if (this.hasAnyPropertyChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)) {
       if (this.isApplyToQuestionRequired(req)) {
-        return res.redirect(this.getApplyToPath(req))
+        return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/${property}/apply-to`)
       }
 
       return this.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
@@ -39,33 +41,45 @@ export default class EditAppointmentService {
     req.session.appointmentJourney = null
     req.session.editAppointmentJourney = null
 
-    return res.redirect(`/appointments/${req.params.appointmentId}/occurrence/${req.params.occurrenceId}`)
+    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
   }
 
-  getApplyToPath(req: Request) {
-    return `/appointments/${req.params.appointmentId}/occurrence/${req.params.occurrenceId}/edit/apply-to`
-  }
-
-  getUpdatedPropertiesMessage(req: Request) {
+  getEditMessage(req: Request) {
     const { appointmentJourney, editAppointmentJourney } = req.session
 
-    const updatedProperties = []
+    const updateProperties = []
     if (this.hasLocationChanged(appointmentJourney, editAppointmentJourney)) {
-      updatedProperties.push('location')
+      updateProperties.push('location')
     }
 
     if (this.hasStartDateChanged(appointmentJourney, editAppointmentJourney)) {
-      updatedProperties.push('date')
+      updateProperties.push('date')
     }
 
     if (
       this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
       this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)
     ) {
-      updatedProperties.push('time')
+      updateProperties.push('time')
     }
 
-    return updatedProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')
+    const updatedPropertiesMessage = `change the ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')} for`
+
+    if (editAppointmentJourney.removePrisoner) {
+      const removedPrisonerMessage = `remove ${convertToTitleCase(
+        fullName(editAppointmentJourney.removePrisoner),
+      )} from`
+      if (updateProperties.length > 0) {
+        return `${removedPrisonerMessage} and ${updatedPropertiesMessage}`
+      }
+      return removedPrisonerMessage
+    }
+
+    return updatedPropertiesMessage
+  }
+
+  getEditedMessage(req: Request) {
+    return this.getEditMessage(req).replace('remove', 'removed').replace('change', 'changed')
   }
 
   isFirstRemainingOccurrence(req: Request) {
@@ -137,9 +151,15 @@ export default class EditAppointmentService {
       occurrenceUpdates.endTime = plainToInstance(SimpleTime, editAppointmentJourney.endTime).toIsoString()
     }
 
+    if (editAppointmentJourney.removePrisoner) {
+      occurrenceUpdates.prisonerNumbers = appointmentJourney.prisoners
+        .filter(prisoner => prisoner.number !== editAppointmentJourney.removePrisoner.prisonerNumber)
+        .map(prisoner => prisoner.number)
+    }
+
     await this.activitiesService.editAppointmentOccurrence(+occurrenceId, occurrenceUpdates, user)
 
-    const successHeading = `You've changed the ${this.getUpdatedPropertiesMessage(req)} for ${this.getAppliedToMessage(
+    const successHeading = `You've ${this.getEditedMessage(req)} ${this.getAppliedToMessage(
       editAppointmentJourney,
       applyTo,
     )}`

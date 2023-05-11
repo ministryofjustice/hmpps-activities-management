@@ -7,7 +7,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Apply to", session.appointmentJourney) %}
 {% set pageId = 'appointments-manage-apply-to-page' %}
-{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId + "/edit/" + property %}
+{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId + ("/edit/" + property if property) %}
 
 {% set applyToItems = [] %}
 {% for applyToOption in applyToOptions %}
@@ -36,7 +36,7 @@
                     name: "applyTo",
                     fieldset: {
                         legend: {
-                            text: "Which appointments do you want to change the " + updatedPropertiesMessage + " for?",
+                            text: "Which appointments do you want to " + editMessage + "?",
                             classes: "govuk-label--l",
                             isPageHeading: true
                         }
@@ -46,7 +46,7 @@
                 }) }}
 
                 {{ govukButton({
-                    text: "Accept and save"
+                    text: ("Confirm and remove" if session.editAppointmentJourney.removePrisoner else "Accept and save")
                 }) }}
             </form>
         </div>

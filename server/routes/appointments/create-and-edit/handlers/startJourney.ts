@@ -51,7 +51,9 @@ export default class StartJourneyRoutes {
     req.session.editAppointmentJourney.removePrisoner = prisoner
 
     if (this.editAppointmentService.isApplyToQuestionRequired(req)) {
-      return res.redirect(this.editAppointmentService.getApplyToPath(req))
+      return res.redirect(
+        `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${prisonNumber}/remove/apply-to`,
+      )
     }
 
     req.session.editAppointmentJourney.applyTo = EditApplyTo.THIS_OCCURRENCE

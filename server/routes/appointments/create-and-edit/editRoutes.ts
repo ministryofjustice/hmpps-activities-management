@@ -57,10 +57,12 @@ export default function Edit({ activitiesService }: Services): Router {
   post('/location', locationRoutes.EDIT, Location)
   get('/date-and-time', dateAndTimeRoutes.GET, true)
   post('/date-and-time', dateAndTimeRoutes.EDIT, DateAndTime)
-  get('/apply-to', applyToRoutes.GET, true)
-  post('/apply-to', applyToRoutes.POST, ApplyTo)
+  get('/:property/apply-to', applyToRoutes.GET, true)
+  post('/:property/apply-to', applyToRoutes.POST, ApplyTo)
   get('/:prisonNumber/remove/confirm', confirmRemovePrisonerRoutes.GET, true)
   post('/:prisonNumber/remove/confirm', confirmRemovePrisonerRoutes.POST, ConfirmRemovePrisoner)
+  get('/:prisonNumber/remove/apply-to', applyToRoutes.GET, true)
+  post('/:prisonNumber/remove/apply-to', applyToRoutes.POST, ApplyTo)
 
   return router
 }

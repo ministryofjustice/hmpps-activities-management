@@ -26,7 +26,7 @@ export default class ApplyToRoutes {
       appointmentId,
       occurrenceId,
       property,
-      updatedPropertiesMessage: this.editAppointmentService.getUpdatedPropertiesMessage(req),
+      editMessage: this.editAppointmentService.getEditMessage(req),
       applyToOptions: this.editAppointmentService.getApplyToOptions(req),
       startDate: new Date(req.session.appointmentJourney.startDate.date),
       isFirstRemainingOccurrence: this.editAppointmentService.isFirstRemainingOccurrence(req),

@@ -29,11 +29,11 @@ export default class ConfirmRemovePrisonerRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId, occurrenceId } = req.params
-    // const { confirm } = req.body
+    const { confirm } = req.body
 
-    /* if (confirm === YesNo.YES) {
-
-    } */
+    if (confirm === YesNo.YES) {
+      return this.editAppointmentService.edit(req, res, req.session.editAppointmentJourney.applyTo)
+    }
 
     return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
   }
