@@ -1,11 +1,17 @@
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { Request, Response } from 'express'
+import ActivitiesService from '../../../../services/activitiesService'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 import HowToAddPrisoners, { HowToAddOptions, HowToAddPrisonersForm } from './howToAddPrisoners'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 
+jest.mock('../../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+
 describe('Route Handlers - Create Appointment - How to add prisoners', () => {
-  const handler = new HowToAddPrisoners()
+  const handler = new HowToAddPrisoners(new EditAppointmentService(activitiesService))
   let req: Request
   let res: Response
 
@@ -27,6 +33,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
     it('should render the how to add prisoners view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/how-to-add-prisoners', {
+        backLinkHref: '/appointments',
         HowToAddOptions,
       })
     })

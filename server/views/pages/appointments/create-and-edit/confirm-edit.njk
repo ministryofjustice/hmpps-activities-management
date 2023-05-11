@@ -4,16 +4,19 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "pages/appointments/partials/add-prisoner-list.njk" import addPrisonerList %}
 
 {% set pageTitle = appointmentJourneyTitle("Confirm Remove Prisoner", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-repeat-page' %}
-{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId %}
+{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId + ("/edit/prisoners/add/review-prisoners" if session.editAppointmentJourney.addPrisoners) %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
             <h1 class="govuk-heading-l">Are you sure you want to {{ editMessage }} this appointment - {{ startDate | formatDate('EEEE, d MMMM yyyy') }}?</h1>
+
+            {{ addPrisonerList(session.editAppointmentJourney.addPrisoners) }}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
