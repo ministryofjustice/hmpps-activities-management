@@ -43,17 +43,58 @@ export default class EditAppointmentService {
     return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
   }
 
+  getUpdatedPropertiesMessage(req: Request) {
+    const { appointmentJourney, editAppointmentJourney } = req.session
+
+    const updatedProperties = []
+    if (this.hasLocationChanged(appointmentJourney, editAppointmentJourney)) {
+      updatedProperties.push('location')
+    }
+
+    if (this.hasStartDateChanged(appointmentJourney, editAppointmentJourney)) {
+      updatedProperties.push('date')
+    }
+
+    if (this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney)) {
+      updatedProperties.push('start time')
+    }
+
+    if (this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)) {
+      updatedProperties.push('end time')
+    }
+
+    return updatedProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')
+  }
+
+  isFirstRemainingOccurrence(req: Request) {
+    const { editAppointmentJourney } = req.session
+
+    return (
+      editAppointmentJourney.repeatCount - editAppointmentJourney.sequenceNumber + 1 ===
+      editAppointmentJourney.occurrencesRemaining
+    )
+  }
+
+  isSecondLastRemainingOccurrence(req: Request) {
+    const { editAppointmentJourney } = req.session
+
+    return editAppointmentJourney.sequenceNumber + 1 === editAppointmentJourney.repeatCount
+  }
+
+  isLastRemainingOccurrence(req: Request) {
+    const { editAppointmentJourney } = req.session
+
+    return editAppointmentJourney.sequenceNumber === editAppointmentJourney.repeatCount
+  }
+
   getApplyToOptions(req: Request) {
     const { editAppointmentJourney } = req.session
 
     const applyToOptions = [EditApplyTo.THIS_OCCURRENCE]
 
     if (editAppointmentJourney.occurrencesRemaining > 1) {
-      const isFirstRemainingOccurrence =
-        editAppointmentJourney.repeatCount - editAppointmentJourney.sequenceNumber + 1 ===
-        editAppointmentJourney.occurrencesRemaining
-
-      const isLastRemainingOccurrence = editAppointmentJourney.sequenceNumber === editAppointmentJourney.repeatCount
+      const isFirstRemainingOccurrence = this.isFirstRemainingOccurrence(req)
+      const isLastRemainingOccurrence = this.isLastRemainingOccurrence(req)
 
       if (!isFirstRemainingOccurrence && !isLastRemainingOccurrence) {
         applyToOptions.push(EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES)
@@ -74,11 +115,8 @@ export default class EditAppointmentService {
 
     const occurrenceUpdates = { applyTo } as AppointmentOccurrenceUpdateRequest
 
-    const updatedProperties = []
-
     if (this.hasLocationChanged(appointmentJourney, editAppointmentJourney)) {
       occurrenceUpdates.internalLocationId = editAppointmentJourney.location.id
-      updatedProperties.push('location')
     }
 
     if (this.hasStartDateChanged(appointmentJourney, editAppointmentJourney)) {
@@ -87,17 +125,14 @@ export default class EditAppointmentService {
       if (applyTo === EditApplyTo.ALL_FUTURE_OCCURRENCES) {
         occurrenceUpdates.applyTo = EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES
       }
-      updatedProperties.push('date')
     }
 
     if (this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney)) {
       occurrenceUpdates.startTime = plainToInstance(SimpleTime, editAppointmentJourney.startTime).toIsoString()
-      updatedProperties.push('start time')
     }
 
     if (this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)) {
       occurrenceUpdates.endTime = plainToInstance(SimpleTime, editAppointmentJourney.endTime).toIsoString()
-      updatedProperties.push('end time')
     }
 
     await this.activitiesService.editAppointmentOccurrence(+occurrenceId, occurrenceUpdates, user)
@@ -105,10 +140,10 @@ export default class EditAppointmentService {
     req.session.appointmentJourney = null
     req.session.editAppointmentJourney = null
 
-    const updated = updatedProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')
+    const updatedPropertiesMessage = this.getUpdatedPropertiesMessage(req)
     res.redirectWithSuccess(
       `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
-      `${updated[0].toUpperCase() + updated.slice(1)} for ${this.getAppliedToMessage(
+      `${updatedPropertiesMessage[0].toUpperCase() + updatedPropertiesMessage.slice(1)} for ${this.getAppliedToMessage(
         editAppointmentJourney,
         applyTo,
       )} changed successfully`,
