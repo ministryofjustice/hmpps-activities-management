@@ -34,4 +34,14 @@ export default class ReviewPrisonerRoutes {
 
     res.redirect('../../review-prisoners')
   }
+
+  EDIT_REMOVE = async (req: Request, res: Response): Promise<void> => {
+    const { prisonNumber } = req.params
+
+    req.session.editAppointmentJourney.addPrisoners = req.session.editAppointmentJourney.addPrisoners.filter(
+      prisoner => prisoner.number !== prisonNumber,
+    )
+
+    res.redirect('../../review-prisoners')
+  }
 }

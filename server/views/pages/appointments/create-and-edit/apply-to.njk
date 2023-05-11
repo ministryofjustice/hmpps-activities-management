@@ -2,8 +2,10 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% set pageTitle = appointmentJourneyTitle("Apply to", session.appointmentJourney) %}
 {% set pageId = 'appointments-manage-apply-to-page' %}
@@ -30,23 +32,55 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            <h1 class="govuk-heading-l">Which appointments do you want to {{ editMessage }}?</h1>
+
+            {% if session.editAppointmentJourney.addPrisoners %}
+                {% set prisonersList = [] %}
+                {% for prisoner in session.editAppointmentJourney.addPrisoners %}
+                    {% set prisonersList = (prisonersList.push([
+                        {
+                            html: showProfileLink({
+                            name: prisoner.name,
+                            link: true
+                        })
+                        }, {
+                            text: prisoner.number
+                        }, {
+                            text: prisoner.cellLocation
+                        }
+                    ]), prisonersList) %}
+                {% endfor %}
+
+                {{ govukTable({
+                    attributes: {
+                        'data-module': 'moj-sortable-table',
+                        'data-qa': 'prisoners-list-table'
+                    },
+                    head: [
+                        {
+                            text: "Name"
+                        },
+                        {
+                            text: "Prison number"
+                        },
+                        {
+                            text: "Location"
+                        }
+                    ],
+                    rows: prisonersList
+                }) }}
+            {% endif %}
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
                     name: "applyTo",
-                    fieldset: {
-                        legend: {
-                            text: "Which appointments do you want to " + editMessage + "?",
-                            classes: "govuk-label--l",
-                            isPageHeading: true
-                        }
-                    },
                     errorMessage: validationErrors | findError('applyTo'),
                     items: applyToItems
                 }) }}
 
                 {{ govukButton({
-                    text: ("Confirm and remove" if session.editAppointmentJourney.removePrisoner else "Accept and save")
+                    text: "Confirm and add" if session.editAppointmentJourney.addPrisoners else ("Confirm and remove" if session.editAppointmentJourney.removePrisoner else "Accept and save")
                 }) }}
             </form>
         </div>

@@ -102,7 +102,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   )
   get('/prisoners/add/review-prisoners', reviewPrisoners.GET, true)
   post('/prisoners/add/review-prisoners', reviewPrisoners.EDIT)
-  get('/prisoners/add/review-prisoners/:prisonNumber/remove', reviewPrisoners.REMOVE, true)
+  get('/prisoners/add/review-prisoners/:prisonNumber/remove', reviewPrisoners.EDIT_REMOVE, true)
   get('/prisoners/add/confirm', confirmRemovePrisonerRoutes.GET, true)
   post('/prisoners/add/confirm', confirmRemovePrisonerRoutes.POST, ConfirmRemovePrisoner)
   get('/prisoners/add/apply-to', applyToRoutes.GET, true)
