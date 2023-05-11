@@ -21,6 +21,7 @@ import DescriptionPage from '../../pages/appointments/create-and-edit/descriptio
 context('Create individual appointment - check answers change links', () => {
   const dayAfterTomorrow = addDays(new Date(), 2)
   getAppointmentDetails.startDate = formatDate(dayAfterTomorrow, 'yyyy-MM-dd')
+  getAppointmentDetails.occurrences[0].startDate = getAppointmentDetails.startDate
   getAppointmentDetails.prisoners[0].firstName = 'DAVID'
   getAppointmentDetails.prisoners[0].lastName = 'WINCHURCH'
 
@@ -135,7 +136,7 @@ context('Create individual appointment - check answers change links', () => {
     confirmationPage.assertMessageEquals(
       `You have successfully created an appointment for David Winchurch on ${formatDate(
         dayAfterTomorrow,
-        'EEEE d MMMM yyyy',
+        'EEEE, d MMMM yyyy',
       )}.`,
     )
   })

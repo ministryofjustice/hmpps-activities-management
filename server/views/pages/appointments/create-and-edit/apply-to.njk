@@ -1,0 +1,54 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+
+{% set pageTitle = appointmentJourneyTitle("Apply to", session.appointmentJourney) %}
+{% set pageId = 'appointments-manage-apply-to-page' %}
+{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId + "/edit/" + property %}
+
+{% set applyToItems = [] %}
+{% for applyToOption in applyToOptions %}
+    {% set applyToItems = (applyToItems.push({
+        value: applyToOption,
+        text: ("Just this one - " + startDate | formatDate('EEEE, d MMMM yyyy') + " (" + session.editAppointmentJourney.sequenceNumber + " of " + session.editAppointmentJourney.repeatCount + ")" if applyToOption == EditApplyTo.THIS_OCCURRENCE) +
+              ("This one and all the appointments that come after it in the series" if (applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES or (applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence)) and isSecondLastRemainingOccurrence == false) +
+              ("This one and the appointment that comes after it in the series" if isSecondLastRemainingOccurrence and (applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES or (applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence))) +
+              ("This one and all the appointments in the series that haven’t happened yet" if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence == false),
+        hint: {
+            text: "You’re changing appointments " +
+                  (session.editAppointmentJourney.sequenceNumber if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES) +
+                  (session.editAppointmentJourney.repeatCount - session.editAppointmentJourney.occurrencesRemaining + 1 if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES) +
+                  " to " + session.editAppointmentJourney.repeatCount
+        } if applyToOption != EditApplyTo.THIS_OCCURRENCE
+    } ), categoryOptions) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    name: "applyTo",
+                    fieldset: {
+                        legend: {
+                            text: "Which appointments do you want to change the " + updatedPropertiesMessage + " for?",
+                            classes: "govuk-label--l",
+                            isPageHeading: true
+                        }
+                    },
+                    errorMessage: validationErrors | findError('applyTo'),
+                    items: applyToItems
+                }) }}
+
+                {{ govukButton({
+                    text: "Accept and save"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

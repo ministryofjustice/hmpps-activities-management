@@ -17,7 +17,7 @@ export default class IndividualMovementSlip extends Page {
   assertLocation = (location: string) => cy.get('[data-qa=moving-to]').contains(location)
 
   assertStartDate = (startDate: Date) =>
-    cy.get('[data-qa=date-and-time]').contains(formatDate(startDate, 'EEEE d MMMM yyyy'))
+    cy.get('[data-qa=date-and-time]').contains(formatDate(startDate, 'EEEE, d MMMM yyyy'))
 
   assertStartTime = (hour: number, minute: number) =>
     cy.get('[data-qa=date-and-time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)

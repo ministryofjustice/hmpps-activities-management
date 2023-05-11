@@ -97,7 +97,7 @@ context('Individual repeat appointment', () => {
       confirmationPage.assertMessageEquals(
         `You have successfully created an appointment series for Stephen Gregs starting on ${formatDate(
           tomorrow,
-          'EEEE d MMMM yyyy',
+          'EEEE, d MMMM yyyy',
         )}. It will repeat weekly for 2 appointments`,
       )
 
@@ -284,7 +284,7 @@ context('Individual repeat appointment', () => {
         const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
         repeatPeriodAndCountPage.selectRepeatPeriod('Every weekday')
         repeatPeriodAndCountPage.enterRepeatCount('1')
-        repeatPeriodAndCountPage.assertEndDate(format(tomorrow, 'EEEE d MMMM yyyy'))
+        repeatPeriodAndCountPage.assertEndDate(format(tomorrow, 'EEEE, d MMMM yyyy'))
       })
     })
 
@@ -293,7 +293,7 @@ context('Individual repeat appointment', () => {
         const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
         repeatPeriodAndCountPage.selectRepeatPeriod('Daily')
         repeatPeriodAndCountPage.enterRepeatCount('3')
-        repeatPeriodAndCountPage.assertEndDate(format(addDays(tomorrow, 2), 'EEEE d MMMM yyyy'))
+        repeatPeriodAndCountPage.assertEndDate(format(addDays(tomorrow, 2), 'EEEE, d MMMM yyyy'))
       })
     })
 
@@ -302,7 +302,7 @@ context('Individual repeat appointment', () => {
         const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
         repeatPeriodAndCountPage.selectRepeatPeriod('Weekly')
         repeatPeriodAndCountPage.enterRepeatCount('3')
-        repeatPeriodAndCountPage.assertEndDate(format(addWeeks(tomorrow, 2), 'EEEE d MMMM yyyy'))
+        repeatPeriodAndCountPage.assertEndDate(format(addWeeks(tomorrow, 2), 'EEEE, d MMMM yyyy'))
       })
     })
 
@@ -311,7 +311,7 @@ context('Individual repeat appointment', () => {
         const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
         repeatPeriodAndCountPage.selectRepeatPeriod('Fortnightly')
         repeatPeriodAndCountPage.enterRepeatCount('3')
-        repeatPeriodAndCountPage.assertEndDate(format(addWeeks(tomorrow, 2 * 2), 'EEEE d MMMM yyyy'))
+        repeatPeriodAndCountPage.assertEndDate(format(addWeeks(tomorrow, 2 * 2), 'EEEE, d MMMM yyyy'))
       })
     })
 
@@ -320,7 +320,7 @@ context('Individual repeat appointment', () => {
         const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
         repeatPeriodAndCountPage.selectRepeatPeriod('Monthly')
         repeatPeriodAndCountPage.enterRepeatCount('3')
-        repeatPeriodAndCountPage.assertEndDate(format(addMonths(tomorrow, 2), 'EEEE d MMMM yyyy'))
+        repeatPeriodAndCountPage.assertEndDate(format(addMonths(tomorrow, 2), 'EEEE, d MMMM yyyy'))
       })
     })
   })

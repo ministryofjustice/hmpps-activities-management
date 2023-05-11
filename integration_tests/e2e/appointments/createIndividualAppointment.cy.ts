@@ -24,6 +24,7 @@ context('Create individual appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   // To pass validation we must ensure the appointment details start date are set to tomorrow
   getAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getAppointmentDetails.occurrences[0].startDate = getAppointmentDetails.startDate
   getOccurrenceDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
@@ -92,7 +93,7 @@ context('Create individual appointment', () => {
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.assertMessageEquals(
-      `You have successfully created an appointment for Stephen Gregs on ${formatDate(tomorrow, 'EEEE d MMMM yyyy')}.`,
+      `You have successfully created an appointment for Stephen Gregs on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}.`,
     )
     confirmationPage.assertCreateAnotherLinkExists()
     confirmationPage.assertViewAppointmentLinkExists()

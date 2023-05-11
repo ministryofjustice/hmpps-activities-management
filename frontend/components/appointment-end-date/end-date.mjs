@@ -29,7 +29,7 @@ function AppointmentEndDate(container) {
     }
 
     endDateContainer.innerHTML = '<div class="secondary-text-colour">Last appointment on</div>'
-    endDateContainer.innerHTML += `<b>${endDate.toLocaleString('en-GB', dateOptions).replaceAll(',', '')}</b>`
+    endDateContainer.innerHTML += `<b>${endDate.toLocaleString('en-GB', dateOptions)}</b>`
   }
 
   repeatTimesInput.addEventListener('keyup', updateEndDate)
