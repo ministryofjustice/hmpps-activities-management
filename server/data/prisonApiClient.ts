@@ -7,6 +7,7 @@ import {
   CaseLoad,
   InmateBasicDetails,
   ReferenceCode,
+  AgencyPrisonerPayProfile,
 } from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
@@ -80,6 +81,12 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/api/reference-domains/domains/${domain}/codes`,
       authToken: user.token,
+    })
+  }
+
+  async getPayProfile(prisonCode: string): Promise<AgencyPrisonerPayProfile> {
+    return this.get({
+      path: `/api/agencies/${prisonCode}/pay-profile`,
     })
   }
 }

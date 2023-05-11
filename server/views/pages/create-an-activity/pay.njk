@@ -47,7 +47,7 @@
                     },
                     classes: "govuk-input--width-5",
                     errorMessage: validationErrors | findError('rate'),
-                    value: (formResponses.rate | toFixed) or (pay.rate / 100) | toFixed or (flat.rate / 100) | toFixed or ''
+                    value: formResponses.rate or (pay.rate / 100) | toFixed or (flat.rate / 100) | toFixed or ''
                 }) }}
 
                 {% set payBandOptions = [
@@ -84,7 +84,7 @@
                             {
                                 value: incentiveLevel.iepDescription,
                                 text: incentiveLevel.iepDescription,
-                                checked: incentiveLevel.iepDescription in (formResponses.incentiveLevels if formResponses.incentiveLevels) or incentiveLevel.iepDescription == pay.incentiveLevel
+                                checked: incentiveLevel.iepDescription in (formResponses.incentiveLevel if formResponses.incentiveLevel) or incentiveLevel.iepDescription == pay.incentiveLevel
                             }
                         ), incentiveLevelOptions) %}
                     {% endfor %}
