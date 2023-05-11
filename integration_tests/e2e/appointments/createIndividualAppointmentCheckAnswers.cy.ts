@@ -136,7 +136,7 @@ context('Create individual appointment - check answers change links', () => {
     confirmationPage.assertMessageEquals(
       `You have successfully created an appointment for David Winchurch on ${formatDate(
         dayAfterTomorrow,
-        'EEEE d MMMM yyyy',
+        'EEEE, d MMMM yyyy',
       )}.`,
     )
   })

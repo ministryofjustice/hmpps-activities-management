@@ -128,7 +128,7 @@ context('Create group appointment', () => {
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     const successMessage = `You have successfully created an appointment for 3 prisoners on ${formatDate(
       tomorrow,
-      'EEEE d MMMM yyyy',
+      'EEEE, d MMMM yyyy',
     )}.`
     confirmationPage.assertMessageEquals(successMessage)
     confirmationPage.assertCreateAnotherLinkExists()

@@ -93,7 +93,7 @@ context('Create individual appointment', () => {
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.assertMessageEquals(
-      `You have successfully created an appointment for Stephen Gregs on ${formatDate(tomorrow, 'EEEE d MMMM yyyy')}.`,
+      `You have successfully created an appointment for Stephen Gregs on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}.`,
     )
     confirmationPage.assertCreateAnotherLinkExists()
     confirmationPage.assertViewAppointmentLinkExists()
