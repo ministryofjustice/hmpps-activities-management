@@ -10,7 +10,7 @@ import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
-import EditAppointmentUtils from '../../../../utils/helpers/editAppointmentUtils'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 
 export class DateAndTime {
   @Expose()
@@ -39,18 +39,18 @@ export class DateAndTime {
 }
 
 export default class DateAndTimeRoutes {
-  private readonly editAppointmentUtils: EditAppointmentUtils
+  private readonly editAppointmentService: EditAppointmentService
 
   constructor(private readonly activitiesService: ActivitiesService) {
-    this.editAppointmentUtils = new EditAppointmentUtils(activitiesService)
+    this.editAppointmentService = new EditAppointmentService(activitiesService)
   }
 
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/date-and-time', {
-      backLinkHref: this.editAppointmentUtils.getBackLinkHref(req, 'name'),
+      backLinkHref: this.editAppointmentService.getBackLinkHref(req, 'name'),
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !this.editAppointmentUtils.isApplyToQuestionRequired(req),
+        !this.editAppointmentService.isApplyToQuestionRequired(req),
     })
   }
 
@@ -63,7 +63,7 @@ export default class DateAndTimeRoutes {
   EDIT = async (req: Request, res: Response): Promise<void> => {
     this.setTimeAndDate(req, 'editAppointmentJourney')
 
-    await this.editAppointmentUtils.redirectOrEdit(req, res, 'date-and-time')
+    await this.editAppointmentService.redirectOrEdit(req, res, 'date-and-time')
   }
 
   private setTimeAndDate(req: Request, journeyName: string) {

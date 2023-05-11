@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import EditAppointmentUtils from '../../../../utils/helpers/editAppointmentUtils'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 
 export class Location {
@@ -14,10 +14,10 @@ export class Location {
 }
 
 export default class LocationRoutes {
-  private readonly editAppointmentUtils: EditAppointmentUtils
+  private readonly editAppointmentService: EditAppointmentService
 
   constructor(private readonly activitiesService: ActivitiesService) {
-    this.editAppointmentUtils = new EditAppointmentUtils(activitiesService)
+    this.editAppointmentService = new EditAppointmentService(activitiesService)
   }
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -25,11 +25,11 @@ export default class LocationRoutes {
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     res.render('pages/appointments/create-and-edit/location', {
-      backLinkHref: this.editAppointmentUtils.getBackLinkHref(req, 'category'),
+      backLinkHref: this.editAppointmentService.getBackLinkHref(req, 'category'),
       locations,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !this.editAppointmentUtils.isApplyToQuestionRequired(req),
+        !this.editAppointmentService.isApplyToQuestionRequired(req),
     })
   }
 
@@ -56,7 +56,7 @@ export default class LocationRoutes {
       description: location.description,
     }
 
-    await this.editAppointmentUtils.redirectOrEdit(req, res, 'location')
+    await this.editAppointmentService.redirectOrEdit(req, res, 'location')
   }
 
   private getLocation = async (req: Request, res: Response) => {

@@ -8,7 +8,7 @@ import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyEditAppointmentJourneyHandler from '../../../middleware/emptyEditAppointmentJourneyHandler'
 import StartJourneyRoutes from './handlers/startJourney'
 import fetchAppointmentOccurrence from '../../../middleware/appointments/fetchAppointmentOccurrence'
-import EditAppointmentUtils from '../../../utils/helpers/editAppointmentUtils'
+import EditAppointmentService from '../../../services/editAppointmentService'
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
 import setAppointmentJourneyMode from '../../../middleware/appointments/setAppointmentJourneyMode'
 import { AppointmentJourneyMode } from './appointmentJourney'
@@ -31,11 +31,11 @@ export default function Edit({ activitiesService }: Services): Router {
       asyncMiddleware(handler),
     )
 
-  const editAppointmentUtils = new EditAppointmentUtils(activitiesService)
+  const editAppointmentService = new EditAppointmentService(activitiesService)
   const startHandler = new StartJourneyRoutes()
   const locationRoutes = new LocationRoutes(activitiesService)
   const dateAndTimeRoutes = new DateAndTimeRoutes(activitiesService)
-  const applyToRoutes = new ApplyToRoutes(activitiesService, editAppointmentUtils)
+  const applyToRoutes = new ApplyToRoutes(activitiesService, editAppointmentService)
 
   router.get(
     '/start/:property',

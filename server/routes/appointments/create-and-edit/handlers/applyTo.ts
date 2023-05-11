@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
 import { EditApplyTo } from '../../../../@types/appointments'
 import ActivitiesService from '../../../../services/activitiesService'
-import EditAppointmentUtils from '../../../../utils/helpers/editAppointmentUtils'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 
 export class ApplyTo {
   @Expose()
@@ -16,13 +16,13 @@ export class ApplyTo {
 export default class ApplyToRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
-    private readonly editAppointmentUtils: EditAppointmentUtils,
+    private readonly editAppointmentService: EditAppointmentService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId, occurrenceId, property } = req.params
 
-    const applyToOptions = this.editAppointmentUtils.getApplyToOptions(req)
+    const applyToOptions = this.editAppointmentService.getApplyToOptions(req)
 
     res.render('pages/appointments/create-and-edit/apply-to', {
       appointmentId,
@@ -35,6 +35,6 @@ export default class ApplyToRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { applyTo } = req.body
 
-    await this.editAppointmentUtils.edit(req, res, applyTo)
+    await this.editAppointmentService.edit(req, res, applyTo)
   }
 }

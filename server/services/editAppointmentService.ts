@@ -1,17 +1,14 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
-import ActivitiesService from '../../services/activitiesService'
-import {
-  AppointmentJourney,
-  AppointmentJourneyMode,
-} from '../../routes/appointments/create-and-edit/appointmentJourney'
-import { EditAppointmentJourney } from '../../routes/appointments/create-and-edit/editAppointmentJourney'
-import { EditApplyTo } from '../../@types/appointments'
-import { AppointmentOccurrenceUpdateRequest } from '../../@types/activitiesAPI/types'
-import SimpleDate from '../../commonValidationTypes/simpleDate'
-import SimpleTime from '../../commonValidationTypes/simpleTime'
+import ActivitiesService from './activitiesService'
+import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
+import { EditApplyTo } from '../@types/appointments'
+import { AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
+import SimpleDate from '../commonValidationTypes/simpleDate'
+import SimpleTime from '../commonValidationTypes/simpleTime'
 
-export default class EditAppointmentUtils {
+export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   getBackLinkHref(req: Request, defaultBackLinkHref: string) {
