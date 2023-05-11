@@ -4,7 +4,7 @@ import StartJourneyRoutes from './handlers/startJourney'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ApplyToRoutes, { ApplyTo } from './handlers/applyTo'
-import ConfirmRemovePrisonerRoutes, { ConfirmRemovePrisoner } from './handlers/confirmRemovePrisoner'
+import ConfirmEditRoutes, { ConfirmEdit } from './handlers/confirmEdit'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
 import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/selectPrisoner'
 import UploadByCSV from './handlers/uploadByCsv'
@@ -60,7 +60,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   post('/:property/apply-to', applyToRoutes.POST, ApplyTo)
 
   // Remove prisoner routes
-  const confirmRemovePrisonerRoutes = new ConfirmRemovePrisonerRoutes(activitiesService, editAppointmentService)
+  const confirmRemovePrisonerRoutes = new ConfirmEditRoutes(activitiesService, editAppointmentService)
 
   router.get(
     '/start/:prisonNumber/remove',
@@ -69,7 +69,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
     startHandler.REMOVE_PRISONER,
   )
   get('/:prisonNumber/remove/confirm', confirmRemovePrisonerRoutes.GET, true)
-  post('/:prisonNumber/remove/confirm', confirmRemovePrisonerRoutes.POST, ConfirmRemovePrisoner)
+  post('/:prisonNumber/remove/confirm', confirmRemovePrisonerRoutes.POST, ConfirmEdit)
   get('/:prisonNumber/remove/apply-to', applyToRoutes.GET, true)
   post('/:prisonNumber/remove/apply-to', applyToRoutes.POST, ApplyTo)
 
@@ -104,7 +104,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   post('/prisoners/add/review-prisoners', reviewPrisoners.EDIT)
   get('/prisoners/add/review-prisoners/:prisonNumber/remove', reviewPrisoners.EDIT_REMOVE, true)
   get('/prisoners/add/confirm', confirmRemovePrisonerRoutes.GET, true)
-  post('/prisoners/add/confirm', confirmRemovePrisonerRoutes.POST, ConfirmRemovePrisoner)
+  post('/prisoners/add/confirm', confirmRemovePrisonerRoutes.POST, ConfirmEdit)
   get('/prisoners/add/apply-to', applyToRoutes.GET, true)
   post('/prisoners/add/apply-to', applyToRoutes.POST, ApplyTo)
 

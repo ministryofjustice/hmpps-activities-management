@@ -13,18 +13,12 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            <h1 class="govuk-heading-l">Are you sure you want to {{ editMessage }} this appointment - {{ startDate | formatDate('EEEE, d MMMM yyyy') }}?</h1>
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
                     name: "confirm",
-                    fieldset: {
-                        legend: {
-                            text: "Are you sure you want to remove " + (session.editAppointmentJourney.removePrisoner | fullName | toTitleCase) + " from " +
-                                  ("this appointment - " + (startDate | formatDate('EEEE, d MMMM yyyy')) if session.editAppointmentJourney.applyTo == EditApplyTo.THIS_OCCURRENCE),
-                            classes: "govuk-label--l",
-                            isPageHeading: true
-                        }
-                    },
                     errorMessage: validationErrors | findError('confirm'),
                     items: [
                         {

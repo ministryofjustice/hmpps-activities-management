@@ -67,7 +67,11 @@ export default class EditAppointmentService {
       return `change the ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')} for`
     }
 
-    if (editAppointmentJourney.addPrisoners?.length > 0) {
+    if (editAppointmentJourney.addPrisoners?.length === 1) {
+      return `add ${convertToTitleCase(editAppointmentJourney.addPrisoners[0].name)} to`
+    }
+
+    if (editAppointmentJourney.addPrisoners?.length > 1) {
       return 'add the prisoners to'
     }
 
