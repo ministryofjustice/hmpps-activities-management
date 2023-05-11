@@ -137,7 +137,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
-        'Location for this appointment changed successfully',
+        "You've changed the location for this appointment",
       )
     })
 

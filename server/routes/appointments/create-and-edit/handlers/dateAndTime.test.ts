@@ -142,7 +142,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
-        'Date for this appointment changed successfully',
+        "You've changed the date for this appointment",
       )
     })
 
@@ -171,7 +171,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
-        'Start time and end time for this appointment changed successfully',
+        "You've changed the time for this appointment",
       )
     })
 
@@ -203,7 +203,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/2/occurrence/12',
-        'Date, start time and end time for this appointment changed successfully',
+        "You've changed the date and time for this appointment",
       )
     })
   })

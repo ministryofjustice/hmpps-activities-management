@@ -55,17 +55,11 @@ export default class EditAppointmentService {
       updatedProperties.push('date')
     }
 
-    const hasEndTimeChanged = this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)
-    if (this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney)) {
-      if (hasEndTimeChanged) {
-        updatedProperties.push('start')
-      } else {
-        updatedProperties.push('start time')
-      }
-    }
-
-    if (hasEndTimeChanged) {
-      updatedProperties.push('end time')
+    if (
+      this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
+      this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)
+    ) {
+      updatedProperties.push('time')
     }
 
     return updatedProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')

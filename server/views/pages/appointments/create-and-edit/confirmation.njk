@@ -20,9 +20,9 @@
                     You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners | length }} prisoners
                 {% endif %}
                 {% if appointment.repeat == null %}
-                    on {{ appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}.
+                    on {{ appointment.startDate | toDate | formatDate('EEEE, d MMMM yyyy') }}.
                 {% else %}
-                    starting on {{ appointment.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}.
+                    starting on {{ appointment.startDate | toDate | formatDate('EEEE, d MMMM yyyy') }}.
                     It will repeat {{ ("every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
                                       ("daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
                                       ("weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +

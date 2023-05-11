@@ -39,7 +39,7 @@ context('Edit appointment', () => {
         locationPage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents('Location for this appointment changed successfully')
+        occurrenceDetailsPage.assertNotificationContents("You've changed the location for this appointment")
       })
 
       it('Returns to occurrence details page if back link clicked', () => {
@@ -63,7 +63,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents('Date for this appointment changed successfully')
+        occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
       })
     })
 
@@ -79,7 +79,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents('Start time for this appointment changed successfully')
+        occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
       })
     })
 
@@ -94,7 +94,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents('End time for this appointment changed successfully')
+        occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
       })
     })
 
@@ -110,9 +110,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents(
-          'Date, start time and end time for this appointment changed successfully',
-        )
+        occurrenceDetailsPage.assertNotificationContents("You've changed the date and time for this appointment")
       })
 
       it('Returns to occurrence details page if back link clicked', () => {
