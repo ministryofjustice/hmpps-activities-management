@@ -2,7 +2,6 @@ export type EditAppointmentJourney = {
   repeatCount: number
   occurrencesRemaining: number
   sequenceNumber: number
-  updatedProperties?: string[]
   location?: {
     id: number
     description: string

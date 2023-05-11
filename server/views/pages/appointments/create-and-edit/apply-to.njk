@@ -14,14 +14,14 @@
     {% set applyToItems = (applyToItems.push({
         value: applyToOption,
         text: ("Apply the change to this appointment only" if applyToOption == EditApplyTo.THIS_OCCURRENCE) +
-              ("Apply the change to this appointment and all the appointments after it in the series" if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES and session.appointmentJourney.sequenceNumber + 1 < session.appointmentJourney.repeatCount) +
-              ("Apply the change to this and the following appointment in the series" if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES and session.appointmentJourney.sequenceNumber + 1 == session.appointmentJourney.repeatCount) +
-              ("Apply the change to all appointments in the series" if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and session.appointmentJourney.repeatCount == session.appointmentJourney.occurrencesRemaining) +
-              ("Apply the change to all remaining appointments in the series" if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and session.appointmentJourney.repeatCount > session.appointmentJourney.occurrencesRemaining),
+              ("Apply the change to this appointment and all the appointments after it in the series" if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES and session.editAppointmentJourney.sequenceNumber + 1 < session.editAppointmentJourney.repeatCount) +
+              ("Apply the change to this and the following appointment in the series" if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES and session.editAppointmentJourney.sequenceNumber + 1 == session.editAppointmentJourney.repeatCount) +
+              ("Apply the change to all appointments in the series" if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and session.editAppointmentJourney.repeatCount == session.editAppointmentJourney.occurrencesRemaining) +
+              ("Apply the change to all remaining appointments in the series" if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and session.editAppointmentJourney.repeatCount > session.editAppointmentJourney.occurrencesRemaining),
         hint: {
             text: "This option will change " +
-                  (session.appointmentJourney.repeatCount - session.appointmentJourney.sequenceNumber + 1 if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES) +
-                  (session.appointmentJourney.occurrencesRemaining if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES) +
+                  (session.editAppointmentJourney.repeatCount - session.editAppointmentJourney.sequenceNumber + 1 if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES) +
+                  (session.editAppointmentJourney.occurrencesRemaining if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES) +
                   " appointments"
         } if applyToOption != EditApplyTo.THIS_OCCURRENCE
     } ), categoryOptions) %}
@@ -33,13 +33,12 @@
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% set repeat = formResponses.repeat or session.appointmentJourney.repeat %}
                 {{ govukRadios({
                     name: "applyTo",
                     fieldset: {
                         legend: {
-                            text: ("How should this change be applied to the appointments in the series?" if session.appointmentJourney.repeatCount == session.appointmentJourney.occurrencesRemaining) +
-                                  ("How should this change be applied to the remaining appointments in the series?" if session.appointmentJourney.repeatCount > session.appointmentJourney.occurrencesRemaining),
+                            text: ("How should this change be applied to the appointments in the series?" if session.editAppointmentJourney.repeatCount == session.editAppointmentJourney.occurrencesRemaining) +
+                                  ("How should this change be applied to the remaining appointments in the series?" if session.editAppointmentJourney.repeatCount > session.editAppointmentJourney.occurrencesRemaining),
                             classes: "govuk-label--l",
                             isPageHeading: true
                         }
