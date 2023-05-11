@@ -24,6 +24,7 @@ context('Create individual appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   // To pass validation we must ensure the appointment details start date are set to tomorrow
   getAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getAppointmentDetails.occurrences[0].startDate = getAppointmentDetails.startDate
   getOccurrenceDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {

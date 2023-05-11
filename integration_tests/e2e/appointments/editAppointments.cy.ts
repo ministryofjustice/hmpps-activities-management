@@ -39,9 +39,7 @@ context('Edit appointment', () => {
         locationPage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents(
-          'Appointment location for this occurrence changed successfully',
-        )
+        occurrenceDetailsPage.assertNotificationContents('Location for this appointment changed successfully')
       })
 
       it('Returns to occurrence details page if back link clicked', () => {
@@ -65,7 +63,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents('Appointment date for this occurrence changed successfully')
+        occurrenceDetailsPage.assertNotificationContents('Date for this appointment changed successfully')
       })
     })
 
@@ -81,9 +79,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents(
-          'Appointment start time for this occurrence changed successfully',
-        )
+        occurrenceDetailsPage.assertNotificationContents('Start time for this appointment changed successfully')
       })
     })
 
@@ -98,9 +94,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents(
-          'Appointment end time for this occurrence changed successfully',
-        )
+        occurrenceDetailsPage.assertNotificationContents('End time for this appointment changed successfully')
       })
     })
 
@@ -117,7 +111,7 @@ context('Edit appointment', () => {
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents(
-          'Appointment date, start time and end time for this occurrence changed successfully',
+          'Date, start time and end time for this appointment changed successfully',
         )
       })
 

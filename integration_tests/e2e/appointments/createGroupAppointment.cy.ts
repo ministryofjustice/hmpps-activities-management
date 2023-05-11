@@ -28,6 +28,7 @@ context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   // To pass validation we must ensure the appointment details start date are set to tomorrow
   getGroupAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getGroupAppointmentDetails.occurrences[0].startDate = getGroupAppointmentDetails.startDate
   getGroupOccurrenceDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
