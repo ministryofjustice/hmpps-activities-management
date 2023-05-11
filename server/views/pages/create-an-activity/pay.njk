@@ -26,6 +26,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {% if pay.bandId %}<input type="hidden" name="currentPayBand" value="{{ pay.bandId }}" />{% endif %}
+                {% if flat.bandId %}<input type="hidden" name="currentPayBand" value="{{ flat.bandId }}" />{% endif %}
                 {% if pay.incentiveLevel %}<input type="hidden" name="currentIncentiveLevel" value="{{ pay.incentiveLevel }}" />{% endif %}
 
                 <p class="govuk-body">Add all the pay rates available for this activity.</p>
