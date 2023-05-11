@@ -15,7 +15,7 @@
                 <div class="govuk-inset-text">
                     <a href="/attendance/activities/{{ instance.id }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> {{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}
                </div>
-                <h2 class="govuk-heading-m">Did {{ attendee.name | toTitleCase }} attend the {{ instance.activitySchedule.activity.summary }} {{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}?</h2>
+                <h2 class="govuk-heading-m">Did {{ attendee.name | toTitleCase }} attend {{ instance.activitySchedule.activity.summary }} {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.startTime | getTimeSlotFromTime | upper }})?</h2>
 
                 {{ govukRadios({
                   name: "attendanceOption",

@@ -32,13 +32,6 @@ export default class RemoveFlatRateRoutes {
     const flatRateInfo = req.session.createJourney.flat[flatRateIndex]
     req.session.createJourney.flat.splice(flatRateIndex, 1)
 
-    req.flash(
-      'successMessage',
-      JSON.stringify({
-        message: `Flat rate ${flatRateInfo.bandAlias} removed`,
-      }),
-    )
-
-    return res.redirect('check-pay')
+    return res.redirectWithSuccess('check-pay', `Flat rate ${flatRateInfo.bandAlias} removed`)
   }
 }

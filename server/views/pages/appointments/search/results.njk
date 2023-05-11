@@ -27,7 +27,7 @@
             text: result.startTime + " to " + result.endTime,
             attributes: { 'data-qa': 'result-time-' + index }
         }, {
-            text: result.category.description + (" ('" + result.appointmentDescription + "')" if (result.appointmentDescription) ),
+            text: result.category.description,
             attributes: { 'data-qa': 'result-category-' + index }
         }, {
             text: result.internalLocation.description,
@@ -43,7 +43,7 @@
         }, {
             html: '<a href="/appointments/' + result.appointmentId + '/occurrence/' + result.appointmentOccurrenceId + '"
                 class="govuk-link--no-visited-state">
-                View and edit<span class="govuk-visually-hidden"> occurrence</span>
+                View and manage<span class="govuk-visually-hidden"> appointment</span>
             </a>',
             classes: 'govuk-!-text-align-right',
             attributes: { 'data-qa': 'view-and-edit-result-' + index }
@@ -55,8 +55,8 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l">Appointment management</span>
-            <h1 class="govuk-heading-l">View and edit an appointment</h1>
+            <span class="govuk-caption-l">View and manage an appointment</span>
+            <h1 class="govuk-heading-l">Find and edit an appointment</h1>
         </div>
     </div>
 
@@ -94,7 +94,7 @@
         {% if (category.code == categoryCode) %}
             {% set selectedFilterCategories = (selectedFilterCategories.push({
                 heading: {
-                    text: 'Category'
+                    text: 'Type'
                 },
                 items: [{
                     href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
@@ -123,7 +123,7 @@
     {% if (prisonerNumber) %}
         {% set selectedFilterCategories = (selectedFilterCategories.push({
             heading: {
-                text: 'Prisoner number'
+                text: 'Prison number'
             },
             items: [{
                 href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy + '&type=' + type,
@@ -148,7 +148,7 @@
     {% if (type) %}
         {% set selectedFilterCategories = (selectedFilterCategories.push({
             heading: {
-                text: 'Type'
+                text: 'Individual or group'
             },
             items: [{
                 href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=',
@@ -229,7 +229,7 @@
             id: "categoryCode",
             name: "categoryCode",
             label: {
-                text: "Category",
+                text: "Type",
                 classes: "govuk-label--s"
             },
             errorMessage: validationErrors | findError('categoryCode'),
@@ -253,7 +253,7 @@
             id: "prisonerNumber",
             name: "prisonerNumber",
             label: {
-                text: "Prisoner number",
+                text: "Prison number",
                 classes: "govuk-label--s"
             },
             spellcheck: false,
@@ -291,7 +291,7 @@
             classes: "govuk-radios--small",
             fieldset: {
                 legend: {
-                    text: "Type",
+                    text: "Individual or group",
                     classes: "govuk-fieldset__legend--s"
                 }
             },
@@ -348,7 +348,7 @@
                     attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Category",
+                    text: "Type",
                     attributes: { "aria-sort": "none" }
                 },
                 {

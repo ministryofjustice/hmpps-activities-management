@@ -27,6 +27,7 @@ describe('Route Handlers - Attendance List', () => {
         },
       },
       render: jest.fn(),
+      redirectWithSuccess: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
 
@@ -304,14 +305,11 @@ describe('Route Handlers - Attendance List', () => {
         { username: 'joebloggs' },
       )
 
-      expect(res.redirect).toBeCalledWith('attendance-list')
-    })
-
-    it("shouldn't update attendance when no prisoners have been selected", async () => {
-      await handler.ATTENDED(req, res)
-
-      expect(activitiesService.updateAttendances).toBeCalledTimes(0)
-      expect(res.redirect).toBeCalledWith('attendance-list')
+      expect(res.redirectWithSuccess).toBeCalledWith(
+        'attendance-list',
+        'Attendance recorded',
+        "We've saved attendance details for 2 prisoners",
+      )
     })
 
     it('non attendance should be redirected to the non attendance page', async () => {

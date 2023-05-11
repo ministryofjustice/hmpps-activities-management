@@ -17,7 +17,7 @@ const getSummaryListValueElement = ($: CheerioAPI, listIdentifier: string, headi
 const getAppointmentDetailsValueElement = ($: CheerioAPI, heading: string) =>
   getSummaryListValueElement($, 'appointment-series-details', heading)
 const getRepeatPeriodValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Frequency')
-const getRepeatCountValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Occurrences')
+const getRepeatCountValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Number of appointments')
 
 describe('Views - Appointments Management - Appointment Details', () => {
   let compiledTemplate: Template

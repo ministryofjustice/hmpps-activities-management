@@ -84,6 +84,15 @@ export interface paths {
      */
     post: operations['prisonerAllocations']
   }
+  '/migrate-appointment': {
+    /**
+     * Create an appointment or series of appointment occurrences
+     * @description
+     *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
+     *     Does not require any specific roles
+     */
+    post: operations['migrateAppointment']
+  }
   '/job/manage-allocations': {
     /**
      * Trigger the job to manage allocations
@@ -272,12 +281,26 @@ export interface paths {
      */
     get: operations['getLocationGroups']
   }
+  '/attendances/{prisonCode}/{sessionDate}': {
+    /**
+     * Get a daily list of attendances
+     * @description Returns an attendance list.
+     */
+    get: operations['getAttendanceByDate']
+  }
   '/attendances/{attendanceId}': {
     /**
      * Get an attendance by ID
      * @description Returns an attendance.
      */
     get: operations['getAttendanceById']
+  }
+  '/attendances/summary/{prisonCode}/{sessionDate}': {
+    /**
+     * Get a daily summary of attendances
+     * @description Returns an attendance summary.
+     */
+    get: operations['getAttendanceSummaryByDate']
   }
   '/attendance-reasons': {
     /** Get the list of attendance reasons */
@@ -440,12 +463,6 @@ export interface components {
        * @example true
        */
       issuePayment?: boolean
-      /**
-       * Format: int32
-       * @description The payment amount in pence
-       * @example 100
-       */
-      payAmount?: number
       /**
        * @description Case note provided for REFUSED
        * @example Prisoner refused to attend the scheduled activity without reasonable excuse
@@ -1015,7 +1032,7 @@ export interface components {
        * @description The offender booking id
        * @example 10001
        */
-      bookingId?: number
+      bookingId: number
       activitySummary: string
       /** Format: int64 */
       scheduleId: number
@@ -1060,6 +1077,27 @@ export interface components {
        * @example Not attending regularly
        */
       deallocatedReason?: string
+      /**
+       * Format: date-time
+       * @description The date and time the allocation was suspended
+       */
+      suspendedTime?: string
+      /**
+       * @description The person who suspended the prisoner from the activity
+       * @example Mrs Blogs
+       */
+      suspendedBy?: string
+      /**
+       * @description The descriptive reason why this prisoner was suspended from the activity
+       * @example Temporarily released from prison
+       */
+      suspendedReason?: string
+      /**
+       * @description The status of the allocation
+       * @example ACTIVE
+       * @enum {string}
+       */
+      status: 'ACTIVE' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
     }
     /** @description Describes one instance of a prison pay band */
     PrisonPayBand: {
@@ -1107,6 +1145,94 @@ export interface components {
       /** @description The list of allocations for the prisoner */
       allocations: components['schemas']['Allocation'][]
     }
+    /** @description The migration request with the appointment details */
+    AppointmentMigrateRequest: {
+      /**
+       * @description The NOMIS prison code where this appointment takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description The prisoner to allocate to the appointment
+       * @example A1234BC
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
+       * @example 456
+       */
+      bookingId: number
+      /**
+       * @description The NOMIS reference code for this appointment.
+       * @example CHAP
+       */
+      categoryCode: string
+      /**
+       * Format: int64
+       * @description
+       *     The NOMIS internal location id within the specified prison.
+       *
+       * @example 123
+       */
+      internalLocationId: number
+      /**
+       * Format: date
+       * @description The date of the appointment
+       */
+      startDate: string
+      /**
+       * Format: partial-time
+       * @description The starting time of the appointment
+       * @example 09:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of the appointment
+       * @example 10:30
+       */
+      endTime?: string
+      /**
+       * @description
+       *     Notes relating to the appointment.
+       *
+       * @example This appointment will help adjusting to life outside of prison
+       */
+      comment?: string
+      /**
+       * @description
+       *     Indicates that this appointment has been cancelled
+       *
+       * @example false
+       */
+      isCancelled?: boolean
+      /**
+       * Format: date-time
+       * @description The date and time this appointment was created
+       */
+      created: string
+      /**
+       * @description
+       *     The username of the user authenticated via NOMIS/HMPPS auth that created the appointment
+       *
+       * @example AAA01U
+       */
+      createdBy: string
+      /**
+       * Format: date-time
+       * @description
+       *     The date and time this appointment was last changed
+       */
+      updated?: string
+      /**
+       * @description
+       *     The username of the user authenticated via NOMIS/HMPPS auth that modified the appointment
+       *
+       * @example AAA01U
+       */
+      updatedBy?: string
+    }
     /** @description The create request containing the new appointments */
     BulkAppointmentsRequest: {
       /**
@@ -1125,7 +1251,7 @@ export interface components {
        *
        * @example Meeting with the governor
        */
-      appointmentDescription: string
+      appointmentDescription?: string
       /**
        * Format: int64
        * @description
@@ -1745,108 +1871,6 @@ export interface components {
       caseNoteText?: string
       /** @description The attendance history records for this attendance */
       attendanceHistory: components['schemas']['AttendanceHistory'][]
-    }
-    /**
-     * @description
-     *   Represents the key data required to report on attendance
-     */
-    AllAttendance: {
-      /**
-       * Format: int64
-       * @description The attendance summary primary key
-       * @example 123456
-       */
-      attendanceId: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * Format: date
-       * @description The scheduled instance date
-       * @example 2023-03-30
-       */
-      sessionDate: string
-      /**
-       * @description AM, PM, ED.
-       * @example AM
-       */
-      timeSlot: string
-      /**
-       * @description WAITING, COMPLETED, LOCKED.
-       * @example WAITING
-       */
-      status: string
-      /** @description The reason for attending or not */
-      attendanceReasonCode?: string
-      /**
-       * @description Should payment be issued for SICK, REST or OTHER
-       * @example true
-       */
-      issuePayment?: boolean
-      /**
-       * @description The prison number this attendance record is for
-       * @example A1234AA
-       */
-      prisonerNumber: string
-    }
-    /**
-     * @description
-     *   Represents the key data required to report on daily attendance activity
-     */
-    AllAttendanceSummary: {
-      /**
-       * Format: int64
-       * @description The attendance summary primary key
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * Format: int64
-       * @description The internally-generated ID for the activity
-       * @example 123456
-       */
-      activityId: number
-      /**
-       * @description The name of the activity category
-       * @example Leisure and social
-       */
-      categoryName: string
-      /**
-       * Format: date
-       * @description The scheduled instance date
-       * @example 2023-03-30
-       */
-      sessionDate: string
-      /**
-       * @description AM, PM, ED.
-       * @example AM
-       */
-      timeSlot: string
-      /**
-       * @description WAITING, COMPLETED, LOCKED.
-       * @example WAITING
-       */
-      status: string
-      /** @description The reason for attending or not */
-      attendanceReasonCode?: string
-      /**
-       * @description Should payment be issued for SICK, REST or OTHER
-       * @example true
-       */
-      issuePayment?: boolean
-      /**
-       * Format: int32
-       * @description The number of attendance records
-       * @example 123456
-       */
-      attendanceCount: number
     }
     /** @description An attendance record for a prisoner, can be marked or unmarked */
     AttendanceHistory: {
@@ -2918,9 +2942,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       first?: boolean
       last?: boolean
       empty?: boolean
@@ -2938,8 +2962,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /**
      * @description The phone number associated with the address
@@ -3191,58 +3215,54 @@ export interface components {
       /**
        * Format: int64
        * @description Location identifier.
-       * @example 721705
        */
       locationId: number
       /**
        * @description Location type.
-       * @example CELL
+       * @example null
        */
       locationType: string
       /**
        * @description Location description.
-       * @example MDI-RES-HB1-ALE
+       * @example null
        */
       description: string
       /**
        * @description Identifier of Agency this location is associated with.
-       * @example MDI
+       * @example null
        */
       agencyId: string
       /**
        * @description What events this room can be used for.
-       * @example APP
+       * @example null
        */
       locationUsage?: string
       /**
        * Format: int64
        * @description Identifier of this location's parent location.
-       * @example 26960
        */
       parentLocationId?: number
       /**
        * Format: int32
        * @description Current occupancy of location.
-       * @example 10
        */
       currentOccupancy?: number
       /**
        * @description Location prefix. Defines search prefix that will constrain search to this location and its subordinate locations.
-       * @example RES-HB1-ALE
+       * @example null
        */
       locationPrefix?: string
       /**
        * Format: int32
        * @description Operational capacity of the location.
-       * @example 20
        */
       operationalCapacity?: number
       /**
        * @description User-friendly location description.
-       * @example RES-HB1-ALE
+       * @example null
        */
       userDescription?: string
-      /** @description Internal location code */
+      /** @example null */
       internalLocationCode?: string
     }
     /** @description Location prefix response */
@@ -3256,28 +3276,121 @@ export interface components {
     LocationGroup: {
       /**
        * @description The name of the group
-       * @example Block A
+       * @example null
        */
       name: string
       /**
        * @description A key for the group
-       * @example A
+       * @example null
        */
       key: string
       /**
        * @description The child groups of this group
-       * @example [
-       *   {
-       *     "name": "Landing A/1",
-       *     "key": "1"
-       *   },
-       *   {
-       *     "name": "Landing A/2",
-       *     "key": "2"
-       *   }
-       * ]
+       * @example null
        */
       children: components['schemas']['LocationGroup'][]
+    }
+    /**
+     * @description
+     *   Represents the key data required to report on attendance
+     */
+    AllAttendance: {
+      /**
+       * Format: int64
+       * @description The attendance primary key
+       * @example 123456
+       */
+      attendanceId: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: date
+       * @description The date of the session for which attendance may have been marked or a planned absence recorded
+       * @example 2023-03-30
+       */
+      sessionDate: string
+      /**
+       * @description AM, PM, ED.
+       * @example AM
+       */
+      timeSlot: string
+      /**
+       * @description WAITING, COMPLETED, LOCKED.
+       * @example WAITING
+       */
+      status: string
+      /** @description The reason for attending or not */
+      attendanceReasonCode?: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description The prisoner number this attendance record is for
+       * @example A1234AA
+       */
+      prisonerNumber: string
+    }
+    /**
+     * @description
+     *   Represents the key data required to report on daily attendance activity
+     */
+    AllAttendanceSummary: {
+      /**
+       * Format: int64
+       * @description The attendance summary primary key
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the activity
+       * @example 123456
+       */
+      activityId: number
+      /**
+       * @description The name of the activity category
+       * @example Leisure and social
+       */
+      categoryName: string
+      /**
+       * Format: date
+       * @description The date of the session for which attendance may have been marked or a planned absence recorded
+       * @example 2023-03-30
+       */
+      sessionDate: string
+      /**
+       * @description AM, PM, ED.
+       * @example AM
+       */
+      timeSlot: string
+      /**
+       * @description WAITING, COMPLETED, LOCKED.
+       * @example WAITING
+       */
+      status: string
+      /** @description The reason for attending or not */
+      attendanceReasonCode?: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * Format: int32
+       * @description The number of attendance records
+       * @example 123456
+       */
+      attendanceCount: number
     }
     /**
      * @description
@@ -4254,6 +4367,39 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Create an appointment or series of appointment occurrences
+   * @description
+   *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
+   *     Does not require any specific roles
+   */
+  migrateAppointment: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppointmentMigrateRequest']
+      }
+    }
+    responses: {
+      /** @description The appointment or series of appointment occurrences was created. */
+      201: {
+        content: {
+          'application/json': components['schemas']['Appointment']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
@@ -5242,6 +5388,38 @@ export interface operations {
     }
   }
   /**
+   * Get a daily list of attendances
+   * @description Returns an attendance list.
+   */
+  getAttendanceByDate: {
+    parameters: {
+      path: {
+        prisonCode: string
+        sessionDate: string
+      }
+    }
+    responses: {
+      /** @description Attendance list found */
+      200: {
+        content: {
+          'application/json': components['schemas']['AllAttendance'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Get an attendance by ID
    * @description Returns an attendance.
    */
@@ -5272,6 +5450,38 @@ export interface operations {
       }
       /** @description The attendance was not found. */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Get a daily summary of attendances
+   * @description Returns an attendance summary.
+   */
+  getAttendanceSummaryByDate: {
+    parameters: {
+      path: {
+        prisonCode: string
+        sessionDate: string
+      }
+    }
+    responses: {
+      /** @description Attendance Summary found */
+      200: {
+        content: {
+          'application/json': components['schemas']['AllAttendanceSummary'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }

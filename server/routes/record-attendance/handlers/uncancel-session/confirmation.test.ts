@@ -4,8 +4,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 
 jest.mock('../../../../services/activitiesService')
 
-const flash = jest.fn()
-
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Uncancel Session Confirmation', () => {
@@ -25,10 +23,10 @@ describe('Route Handlers - Uncancel Session Confirmation', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
-      flash,
       query: {},
       params: {
         id: '1',
@@ -66,9 +64,10 @@ describe('Route Handlers - Uncancel Session Confirmation', () => {
         lastName: 'Bloggs',
       })
 
-      expect(flash).toHaveBeenCalledWith('successMessage', JSON.stringify({ message: 'Session no longer cancelled' }))
-
-      expect(res.redirect).toHaveBeenCalledWith('/attendance/activities/1/attendance-list')
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '/attendance/activities/1/attendance-list',
+        'Session no longer cancelled',
+      )
     })
 
     it('should redirect back to attendance list if not confirmed', async () => {
