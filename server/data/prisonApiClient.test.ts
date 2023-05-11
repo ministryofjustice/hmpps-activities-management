@@ -153,4 +153,16 @@ describe('prisonApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('getPayProfile', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakePrisonApi.get('/api/agencies/MDI/pay-profile').reply(200, response)
+
+      const output = await prisonApiClient.getPayProfile('MDI')
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

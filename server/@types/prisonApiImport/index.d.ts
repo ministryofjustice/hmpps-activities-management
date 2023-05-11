@@ -3,6 +3,7 @@
  * Do not make direct changes to the file.
  */
 /* eslint-disable camelcase */
+
 export interface paths {
   '/api/adjudications': {
     /** Requires MAINTAIN_ADJUDICATIONS access */
@@ -4573,6 +4574,33 @@ export interface components {
       parentDomain?: string
       /** System Data Flag */
       systemDataFlag?: string
+    }
+    /** Agency Prisoner Pay Profile */
+    AgencyPrisonerPayProfile: {
+      /** Agency identifier */
+      agencyId: string
+      /** The start date when this pay profile took effect */
+      startDate: string
+      /** Reference data item description. */
+      endDate?: string
+      /** Whether automatic payments are enabled */
+      autoPayFlag: boolean
+      /** The frequency that payroll runs for this agency (usually 1) */
+      payFrequency?: number
+      /** The number of absences that are acceptable within one week */
+      weeklyAbsenceLimit?: number
+      /** The minimum value for a half-day rate */
+      minHalfDayRate?: number
+      /** The maximum value for a half-day rate */
+      maxHalfDayRate?: number
+      /** The maximum value for piece work earnings */
+      maxPieceWorkRate?: number
+      /** The maximum value for a bonus award */
+      maxBonusRate?: number
+      /** The number of days allowed to backdate attendance before it locks. */
+      backdateDays?: number
+      /** The default pay band to use when allocating offenders to paid activities. */
+      defaultPayBandCode?: string
     }
     /** Offender transaction drill down details */
     RelatedTransactionDetails: {

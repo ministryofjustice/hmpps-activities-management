@@ -69,6 +69,14 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { iepDescription: 'Standard', active: true },
         ] as IepLevel[])
 
+      when(prisonService.getPayProfile).calledWith(atLeast('MDI')).mockResolvedValue({
+        agencyId: 'MDI',
+        startDate: '2015-06-26',
+        autoPayFlag: true,
+        minHalfDayRate: 0.1,
+        maxHalfDayRate: 3,
+      })
+
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/pay', {
         incentiveLevels: [{ iepDescription: 'Standard', active: true }],
@@ -77,8 +85,8 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { id: 2, alias: 'High', displaySequence: 2 },
         ],
         payRateType: 'single',
-        minimumPayRate: 60,
-        maximumPayRate: 275,
+        minimumPayRate: 10,
+        maximumPayRate: 300,
       })
     })
 
@@ -105,6 +113,14 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { iepDescription: 'Standard', active: true },
         ] as IepLevel[])
 
+      when(prisonService.getPayProfile).calledWith(atLeast('MDI')).mockResolvedValue({
+        agencyId: 'MDI',
+        startDate: '2015-06-26',
+        autoPayFlag: true,
+        minHalfDayRate: 0.1,
+        maxHalfDayRate: 3,
+      })
+
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/pay', {
@@ -114,8 +130,8 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { id: 2, alias: 'High', displaySequence: 2 },
         ],
         payRateType: 'single',
-        minimumPayRate: 60,
-        maximumPayRate: 275,
+        minimumPayRate: 10,
+        maximumPayRate: 300,
         pay: {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',

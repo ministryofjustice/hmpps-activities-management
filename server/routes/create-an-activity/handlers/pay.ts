@@ -45,11 +45,10 @@ export default class PayRoutes {
       this.activitiesService.getPayBandsForPrison(user),
     ])
 
-    // Minimum and maximum pay rates will be retrieved from  a new Prison API endpoint.
-    // Default values are set here until this endpoint is available
+    const payProfile = await this.prisonService.getPayProfile(user.activeCaseLoadId)
 
-    const minimumPayRate = 60
-    const maximumPayRate = 275
+    const minimumPayRate = payProfile.minHalfDayRate * 100
+    const maximumPayRate = payProfile.maxHalfDayRate * 100
 
     req.session.createJourney.minimumPayRate = minimumPayRate
     req.session.createJourney.maximumPayRate = maximumPayRate
