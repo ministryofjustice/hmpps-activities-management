@@ -56,7 +56,7 @@ export default class LocationRoutes {
       description: location.description,
     }
 
-    await this.editAppointmentService.redirectOrEdit(req, res, 'location')
+    await this.editAppointmentService.redirectOrEdit(req, res)
   }
 
   private getLocation = async (req: Request, res: Response) => {

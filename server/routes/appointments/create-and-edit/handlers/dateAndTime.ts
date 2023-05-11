@@ -63,7 +63,7 @@ export default class DateAndTimeRoutes {
   EDIT = async (req: Request, res: Response): Promise<void> => {
     this.setTimeAndDate(req, 'editAppointmentJourney')
 
-    await this.editAppointmentService.redirectOrEdit(req, res, 'date-and-time')
+    await this.editAppointmentService.redirectOrEdit(req, res)
   }
 
   private setTimeAndDate(req: Request, journeyName: string) {

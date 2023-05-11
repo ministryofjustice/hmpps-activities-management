@@ -27,11 +27,10 @@ export default class EditAppointmentService {
     return this.getApplyToOptions(req).length > 1
   }
 
-  async redirectOrEdit(req: Request, res: Response, property: string) {
-    const { appointmentId, occurrenceId } = req.params
+  async redirectOrEdit(req: Request, res: Response) {
     if (this.hasAnyPropertyChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)) {
       if (this.isApplyToQuestionRequired(req)) {
-        return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/${property}/apply-to`)
+        return res.redirect(this.getApplyToPath(req))
       }
 
       return this.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
@@ -40,7 +39,11 @@ export default class EditAppointmentService {
     req.session.appointmentJourney = null
     req.session.editAppointmentJourney = null
 
-    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+    return res.redirect(`/appointments/${req.params.appointmentId}/occurrence/${req.params.occurrenceId}`)
+  }
+
+  getApplyToPath(req: Request) {
+    return `/appointments/${req.params.appointmentId}/occurrence/${req.params.occurrenceId}/edit/apply-to`
   }
 
   getUpdatedPropertiesMessage(req: Request) {
