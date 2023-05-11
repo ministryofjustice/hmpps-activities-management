@@ -1,0 +1,40 @@
+.govuk-tabs--borderless {
+  margin: 0;
+
+  .govuk-tabs__panel {
+    border: none;
+    padding: 20px 0 0 0;
+  }
+
+  .govuk-tabs__list-item {
+    background-color: white;
+    padding: 12px 0;
+    margin-right: 20px;
+    border: revert;
+
+    .govuk-tabs__tab {
+      text-decoration: none;
+      color: $govuk-link-colour;
+
+      &:hover {
+        color: #619bcd !important;
+      }
+    }
+
+    &--selected {
+      margin-top: 0;
+      border-bottom: 5px solid $govuk-brand-colour;
+
+      .govuk-tabs__tab, .govuk-tabs__tab:visited {
+        color: $govuk-link-active-colour;
+      }
+    }
+
+    .govuk-tabs__tab {
+      &:focus {
+        box-shadow: none;
+        background: none;
+      }
+    }
+  }
+}

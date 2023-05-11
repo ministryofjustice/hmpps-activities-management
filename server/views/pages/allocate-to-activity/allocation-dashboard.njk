@@ -2,6 +2,7 @@
 
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "components/multi-select.njk" import multiSelect %}
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
@@ -116,6 +117,7 @@
     </div>
 
     {{ govukTabs({
+        classes: "govuk-tabs--borderless",
         items: [
             {
                 label: "Currently allocated",
@@ -148,64 +150,73 @@
         {% set otherAllocationsHtml %}
             <div>
                 {% for allocation in row.otherAllocations %}
-                    <div>{{ allocation.scheduleName }}</div>
+                    <a href='/allocate/{{ allocation.id }}/allocate' class='govuk-link govuk-link--no-visited-state govuk-!-display-block' target='_blank'>{{ allocation.scheduleName }}</a>
+                {% else %}
+                    <div>None</div>
                 {% endfor %}
             </div>
         {% endset %}
 
-        {% set rows = (rows.push([
-            {
-                html: '
-                    <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                        <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
-                           class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase + '
-                        </a>
-                    </h2>
-                    <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
-                    <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
-                ',
-                attributes: {
-                    "data-sort-value": row.name
+        {% set rows = (rows.push({
+            visuallyHiddenText: 'Select ' + row.name,
+            value: row.prisonerNumber,
+            selectable: true,
+            items: [
+                {
+                    html: '
+                        <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                            <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
+                               class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase + '
+                            </a>
+                        </h2>
+                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
+                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
+                    ',
+                    attributes: {
+                        "data-sort-value": row.name
+                    }
+                },
+                {
+                    text: row.dateAllocated | formatDate('d MMMM yyyy')
+                },
+                {
+                    html: otherAllocationsHtml
+                },
+                {
+                    text: row.releaseDate | formatDate('d MMMM yyyy') if row.releaseDate else 'TBC'
                 }
-            },
-            {
-                text: row.dateAllocated | formatDate('d MMMM yyyy')
-            },
-            {
-                html: otherAllocationsHtml
-            },
-            {
-                text: row.releaseDate | formatDate('d MMMM yyyy') if row.releaseDate else 'TBC'
-            }
-        ]), rows) %}
+            ]
+        }), rows) %}
     {% endfor %}
 
-    <p>Review the list of people currently allocated to identify any non-associations.</p>
-    {{ govukTable({
-        attributes: {
-            'data-module': 'moj-sortable-table'
-        },
-        caption: "Currently allocated",
-        captionClasses: "govuk-visually-hidden",
-        head: [
-            {
-                text: "Prisoner details",
-                attributes: {
-                    "aria-sort": "ascending"
+    <form method='POST'>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        {{ multiSelect({
+            caption: "Currently allocated",
+            captionClasses: "govuk-visually-hidden",
+            name: 'selectedAttendances',
+            head: [
+                {
+                    text: "Prisoner details"
+                },
+                {
+                    text: "Allocation start and end"
+                },
+                {
+                    text: "Other allocations"
+                },
+                {
+                    text: "Earliest release date"
                 }
-            },
-            {
-                text: "Date allocated"
-            },
-            {
-                text: "Other allocations"
-            },
-            {
-                text: "Earliest release date"
+            ],
+            rows: rows,
+            actions: [],
+            itemsDescription: {
+                singular: 'person',
+                plural: 'people'
             }
-        ],
-        rows: rows
-    }) }}
+        }) }}
+    </form>
 {% endset %}
 
 {% set candidatesHtml %}
@@ -366,7 +377,9 @@
         {% set currentAllocationsHtml %}
             <div>
                 {% for allocation in row.otherAllocations %}
-                    <div>{{ allocation.activitySummary }}</div>
+                    <a href='/allocate/{{ allocation.scheduleId }}/allocate' class='govuk-link govuk-link--no-visited-state govuk-!-display-block' target='_blank'>{{ allocation.activitySummary }}</a>
+                {% else %}
+                    <div>None</div>
                 {% endfor %}
             </div>
         {% endset %}
