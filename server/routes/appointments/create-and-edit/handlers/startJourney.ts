@@ -80,7 +80,7 @@ export default class StartJourneyRoutes {
     this.populateEditSession(req)
 
     return res.redirect(
-      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/cancel/cancel-or-delete`,
+      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/cancel/reason`,
     )
   }
 

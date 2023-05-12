@@ -1,0 +1,52 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+
+{% set pageTitle = appointmentJourneyTitle("Cancellation Reason", session.appointmentJourney) %}
+{% set pageId = 'appointments-cancel-reason-page' %}
+{% set backLinkHref = "/date-and-time" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    name: "reason",
+                    fieldset: {
+                        legend: {
+                            text: "Would you like to cancel or delete the appointment?",
+                            classes: "govuk-label--l",
+                            isPageHeading: true
+                        }
+                    },
+                    errorMessage: validationErrors | findError('reason'),
+                    items: [
+                        {
+                            value: AppointmentCancellationReason.CANCELLED,
+                            text: "Cancel - the appointment will no longer go ahead",
+                            hint: {
+                                text: "Will appear on the unlock list with a 'cancelled' tag"
+                            }
+                        },
+                        {
+                            value: AppointmentCancellationReason.CREATED_IN_ERROR,
+                            text: "Delete - the appointment was created in error",
+                            hint: {
+                                text: "Will no longer appear on the unlock list"
+                            }
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

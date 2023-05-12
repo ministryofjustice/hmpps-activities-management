@@ -6,6 +6,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Confirmation", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-confirmation-page' %}
+{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId %}
 
 {% block content %}
     <div class="govuk-grid-row">

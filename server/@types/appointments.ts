@@ -33,6 +33,6 @@ export enum EditApplyTo {
 }
 
 export enum AppointmentCancellationReason {
-  CREATED_IN_ERROR = 1,
-  CANCELLED = 2,
+  CREATED_IN_ERROR = '1',
+  CANCELLED = '2',
 }
