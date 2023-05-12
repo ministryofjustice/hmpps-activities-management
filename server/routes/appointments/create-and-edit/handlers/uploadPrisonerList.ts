@@ -25,13 +25,40 @@ export default class UploadPrisonerListRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const prisonerList = await this.getPrisonerList(req, res, req.session.appointmentJourney.prisoners)
+    if (!prisonerList) return
+
+    req.session.appointmentJourney.prisoners = prisonerList
+
+    res.redirect('review-prisoners')
+  }
+
+  EDIT = async (req: Request, res: Response): Promise<void> => {
+    const prisonerList = await this.getPrisonerList(req, res, req.session.editAppointmentJourney.addPrisoners)
+    if (!prisonerList) return
+
+    req.session.editAppointmentJourney.addPrisoners = prisonerList
+
+    res.redirect('review-prisoners')
+  }
+
+  private getPrisonerList = async (
+    req: Request,
+    res: Response,
+    existingPrisoners: {
+      number: string
+      name: string
+      cellLocation: string
+    }[],
+  ) => {
     const prisonerListCsvFile = req.file
     const { user } = res.locals
 
     const prisonerNumbers = await this.prisonerListCsvParser.getPrisonerNumbers(prisonerListCsvFile)
 
     if (prisonerNumbers.length === 0) {
-      return res.validationFailed('file', 'The selected file does not contain any prisoner numbers')
+      res.validationFailed('file', 'The selected file does not contain any prisoner numbers')
+      return false
     }
 
     const prisoners = (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user))
@@ -53,15 +80,14 @@ export default class UploadPrisonerListRoutes {
         prisonerNumbersNotFound.length === 1
           ? `Prisoner with number ${prisonerNumbersNotFound[0]} was not found`
           : `Prisoners with numbers ${prisonerNumbersNotFound.join(', ')} were not found`
-      return res.validationFailed('file', message)
+      res.validationFailed('file', message)
+      return false
     }
 
-    const existingPrisonersNotInUploadedList = (req.session.appointmentJourney.prisoners ?? []).filter(
+    const existingPrisonersNotInUploadedList = (existingPrisoners ?? []).filter(
       prisoner => !prisonerNumbersFound.includes(prisoner.number),
     )
 
-    req.session.appointmentJourney.prisoners = existingPrisonersNotInUploadedList.concat(prisoners)
-
-    return res.redirect('review-prisoners')
+    return existingPrisonersNotInUploadedList.concat(prisoners)
   }
 }

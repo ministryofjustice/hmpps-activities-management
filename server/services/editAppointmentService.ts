@@ -63,23 +63,27 @@ export default class EditAppointmentService {
       updateProperties.push('time')
     }
 
-    const updatedPropertiesMessage = `change the ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')} for`
-
-    if (editAppointmentJourney.removePrisoner) {
-      const removedPrisonerMessage = `remove ${convertToTitleCase(
-        fullName(editAppointmentJourney.removePrisoner),
-      )} from`
-      if (updateProperties.length > 0) {
-        return `${removedPrisonerMessage} and ${updatedPropertiesMessage}`
-      }
-      return removedPrisonerMessage
+    if (updateProperties.length > 0) {
+      return `change the ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')} for`
     }
 
-    return updatedPropertiesMessage
+    if (editAppointmentJourney.addPrisoners?.length === 1) {
+      return `add ${convertToTitleCase(editAppointmentJourney.addPrisoners[0].name)} to`
+    }
+
+    if (editAppointmentJourney.addPrisoners?.length > 1) {
+      return 'add the prisoners to'
+    }
+
+    if (editAppointmentJourney.removePrisoner) {
+      return `remove ${convertToTitleCase(fullName(editAppointmentJourney.removePrisoner))} from`
+    }
+
+    return ''
   }
 
   getEditedMessage(req: Request) {
-    return this.getEditMessage(req).replace('remove', 'removed').replace('change', 'changed')
+    return this.getEditMessage(req).replace('add', 'added').replace('remove', 'removed').replace('change', 'changed')
   }
 
   isFirstRemainingOccurrence(req: Request) {
@@ -149,6 +153,12 @@ export default class EditAppointmentService {
 
     if (this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)) {
       occurrenceUpdates.endTime = plainToInstance(SimpleTime, editAppointmentJourney.endTime).toIsoString()
+    }
+
+    if (editAppointmentJourney.addPrisoners?.length > 0) {
+      occurrenceUpdates.prisonerNumbers = appointmentJourney.prisoners
+        .concat(editAppointmentJourney.addPrisoners)
+        .map(prisoner => prisoner.number)
     }
 
     if (editAppointmentJourney.removePrisoner) {

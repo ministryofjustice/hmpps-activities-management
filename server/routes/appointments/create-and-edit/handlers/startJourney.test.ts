@@ -146,7 +146,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         sequenceNumber: 2,
       } as EditAppointmentJourney
 
-      await handler.EDIT_OCCURRENCE(req, res)
+      await handler.EDIT(req, res)
 
       expect(req.session.appointmentJourney).toEqual(appointmentJourneySession)
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
@@ -158,7 +158,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         property: '',
       }
 
-      await handler.EDIT_OCCURRENCE(req, res)
+      await handler.EDIT(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('back')
     })

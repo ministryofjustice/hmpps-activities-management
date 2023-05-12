@@ -25,6 +25,11 @@ export type EditAppointmentJourney = {
     minute: number
     date: Date
   }
+  addPrisoners?: {
+    number: string
+    name: string
+    cellLocation: string
+  }[]
   removePrisoner?: PrisonerSummary
   applyTo?: EditApplyTo
 }
