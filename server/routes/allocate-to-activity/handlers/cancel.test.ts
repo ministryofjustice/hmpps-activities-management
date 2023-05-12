@@ -56,7 +56,7 @@ describe('Route Handlers - Allocate - Cancel', () => {
       await handler.POST(req, res)
 
       expect(req.session.allocateJourney).toBeNull()
-      expect(res.redirect).toHaveBeenCalledWith('1/allocate')
+      expect(res.redirect).toHaveBeenCalledWith('1/allocation-dashboard')
     })
 
     it('should redirect back to the check answers page when choice is no', async () => {

@@ -89,7 +89,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/activities-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/activities', {
         activities: expect.arrayContaining([
           {
             summary: 'English level 1',
@@ -149,7 +149,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/activities-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/activities', {
         activities: expect.arrayContaining([
           {
             summary: 'Maths level 1',

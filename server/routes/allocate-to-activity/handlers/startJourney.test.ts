@@ -31,7 +31,8 @@ describe('Route Handlers - Allocate - Start', () => {
     } as unknown as Response
 
     req = {
-      params: { scheduleId: '1', prisonerNumber: 'ABC123' },
+      query: { scheduleId: '1' },
+      params: { prisonerNumber: 'ABC123' },
       session: {},
     } as unknown as Request
   })

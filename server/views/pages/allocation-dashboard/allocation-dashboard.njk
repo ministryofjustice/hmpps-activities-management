@@ -27,7 +27,7 @@
         <div class="govuk-grid-column-one-third">
             <div class='related-tasks'>
                 <ul class='govuk-list'>
-                    <li><a href="/allocate/activities" class="govuk-link">Find other activities with vacancies</a></li>
+                    <li><a href="/allocation-dashboard" class="govuk-link">Find other activities with vacancies</a></li>
                 </ul>
             </div>
         </div>
@@ -150,7 +150,7 @@
         {% set otherAllocationsHtml %}
             <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <li><a href='/allocate/{{ allocation.id }}/allocate' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName }}</a></li>
+                    <li><a href='/allocation-dashboard/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName }}</a></li>
                 {% else %}
                     <li>None</li>
                 {% endfor %}
@@ -194,7 +194,7 @@
         {{ multiSelect({
             caption: "Currently allocated",
             captionClasses: "govuk-visually-hidden",
-            name: 'selectedAttendances',
+            name: 'selectedAllocations',
             head: [
                 {
                     text: "Prisoner details"
@@ -210,7 +210,12 @@
                 }
             ],
             rows: rows,
-            actions: [],
+            actions: [
+                {
+                    text: 'Remove from activity',
+                    formAction: 'allocation-dashboard/deallocate'
+                }
+            ],
             itemsDescription: {
                 singular: 'person',
                 plural: 'people'
@@ -377,7 +382,7 @@
         {% set currentAllocationsHtml %}
             <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <li><a href='/allocate/{{ allocation.scheduleId }}/allocate' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
+                    <li><a href='/allocation-dashboard/{{ allocation.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
                 {% else %}
                     <li>None</li>
                 {% endfor %}
@@ -422,7 +427,7 @@
         ]), rows) %}
     {% endfor %}
 
-    <form method='POST'>
+    <form method='POST' action='{{ schedule.id }}/allocate'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
         {{ govukTable({
             caption: "Candidates",
