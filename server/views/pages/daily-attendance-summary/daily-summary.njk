@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 
 {% set pageTitle = applicationName + " - Daily attendance summary" %}
@@ -10,10 +10,13 @@
 
 {% block content %}
     {% set filterOptionsHtml %}
-    {{ govukRadios({
+    {{ govukCheckboxes({
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
             classes: "govuk-radios--small",
+            hint: {
+                text: "Select all that apply"
+            },
             fieldset: {
                 legend: {
                     text: 'Categories',
@@ -22,6 +25,12 @@
             },
             items: attendanceSummaryFilters.categoryFilters
         }) }}
+        <div class="govuk-!-margin-bottom-4">
+            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters">Select all</a>
+        </div>
+        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
+            Apply filters
+        </button>
     {% endset %}
     <div class="moj-filter-layout" data-module="activities-list-filter">
         <form id="filter-form" method="POST" novalidate>
@@ -49,6 +58,7 @@
                     <div class="moj-action-bar__filter"></div>
                 </div>
                 {{ govukTabs({
+                    classes: "govuk-tabs--borderless",
                     items: [
                         {
                             label: "Daily summary",
@@ -86,31 +96,31 @@
 {% endblock %}
 
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
-    <div class="govuk-grid-column-one-half govuk-!-text-align-left">
-        <p class="govuk-body">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</p>
+    <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-left">
+        <p class="govuk-body govuk-!-margin-bottom-0">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</p>
     </div>
-    <div class="govuk-grid-column-one-half govuk-!-text-align-right">
-        <p>Updated at {{ now | formatDate('HH:MM') }} on {{ now | formatDate('dd MMMM yyyy') }} </p>
+    <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
+        <p class="govuk-body govuk-!-margin-bottom-0">Updated at {{ now | formatDate('HH:MM') }} on {{ now | formatDate('dd MMMM yyyy') }} </p>
     </div>
-    <div class="govuk-grid-row">
+    <div>
         <h1 class="govuk-heading-l">{{ timeSlotDescription }} attendance summary</h1>
     </div>
-    <div class="govuk-grid-row">
+    <div>
         <h2 class="govuk-heading-s">{{ totalAllocated[timeSlot] }} total allocation{% if totalAllocated[timeSlot] != 1 %}s{% endif %} for
         <a href="/attendance/activities?date={{ activityDate | formatDate('yyyy-MM-dd') }}" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">{{ totalActivities[timeSlot] }} activit{% if totalActivities[timeSlot] != 1 %}ies{% else %}y{% endif %}</a></h2>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-quarter">
             <p class="govuk-body govuk-!-margin-bottom-0">Not yet attended</p>
-            <h3 class="govuk-heading-xl">{{ totalNotAttended[timeSlot] }}</h3>
+            <p class="govuk-body govuk-!-margin-bottom-0""><font size="+4">{{ totalNotAttended[timeSlot] }}</font> {{ totalNotAttendedPercentage[timeSlot] }}%</p>
         </div>
         <div class="govuk-grid-column-one-quarter">
             <p class="govuk-body govuk-!-margin-bottom-0">Absences</p>
-            <h3 class="govuk-heading-xl">{{ totalAbsences[timeSlot] }}</h3>
+            <p class="govuk-body govuk-!-margin-bottom-0""><font size="+4">{{ totalAbsences[timeSlot] }}</font> {{ totalAbsencesPercentage[timeSlot] }}%</p>
         </div>
         <div class="govuk-grid-column-one-quarter">
             <p class="govuk-body govuk-!-margin-bottom-0">Attended</p>
-            <h3 class="govuk-heading-xl">{{ totalAttended[timeSlot] }}</h3>
+            <p class="govuk-body govuk-!-margin-bottom-0""><font size="+4">{{ totalAttended[timeSlot] }}</font> {{ totalAttendedPercentage[timeSlot] }}%</p>
         </div>
     </div>
     <hr />
@@ -121,37 +131,37 @@
             {% if totalCancelled[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                     <p class="govuk-body govuk-!-margin-bottom-0">People with cancelled sessions</p>
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ totalCancelled[timeSlot]  }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-1">{{ totalCancelled[timeSlot]  }}</p>
                 </div>
             {% endif %}
             {% if totalPaidSick[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                     <p class="govuk-body govuk-!-margin-bottom-0">Sick</p>
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ totalPaidSick[timeSlot] }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-1">{{ totalPaidSick[timeSlot] }}</p>
                 </div>
             {% endif %}
             {% if totalNotRequired[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                     <p class="govuk-body govuk-!-margin-bottom-0">Not required</p>
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ totalNotRequired[timeSlot] }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-1">{{ totalNotRequired[timeSlot] }}</p>
                 </div>
             {% endif %}
             {% if totalPaidRest[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                   <p class="govuk-body govuk-!-margin-bottom-0">Rest day</p>
-                  <p class="govuk-body govuk-!-margin-bottom-0">{{ totalPaidRest[timeSlot] }}</p>
+                  <p class="govuk-body govuk-!-margin-bottom-1">{{ totalPaidRest[timeSlot] }}</p>
                 </div>
             {% endif %}
             {% if totalClash[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                     <p class="govuk-body govuk-!-margin-bottom-0">Clash</p>
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ totalClash[timeSlot] }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-1">{{ totalClash[timeSlot] }}</p>
                 </div>
             {% endif %}
             {% if totalPaidOther[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                     <p class="govuk-body govuk-!-margin-bottom-0">Other</p>
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ totalPaidOther[timeSlot] }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-1">{{ totalPaidOther[timeSlot] }}</p>
                 </div>
             {% endif %}
         </div>
@@ -199,10 +209,10 @@
                 <p class="govuk-body govuk-!-margin-bottom-0">{{ totalStaffTraining[timeSlot] }}</p>
             </div>
         {% endif %}
-        {% if totalNotRequired[timeSlot] > 0 %}
+        {% if totalActivityNotRequired[timeSlot] > 0 %}
             <div class="govuk-grid-column-one-quarter">
                 <p class="govuk-body govuk-!-margin-bottom-0">Session not required</p>
-                <p class="govuk-body govuk-!-margin-bottom-0">{{ totalNotRequired[timeSlot] }}</p>
+                <p class="govuk-body govuk-!-margin-bottom-0">{{ totalActivityNotRequired[timeSlot] }}</p>
             </div>
         {% endif %}
         {% if totalLocationUnavailable[timeSlot] > 0 %}
