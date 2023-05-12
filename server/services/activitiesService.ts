@@ -34,6 +34,7 @@ import {
   AppointmentOccurrenceSearchRequest,
   AllAttendance,
   AllAttendanceSummary,
+  AppointmentOccurrenceCancelRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
@@ -319,5 +320,13 @@ export default class ActivitiesService {
     user: ServiceUser,
   ) {
     return this.activitiesApiClient.searchAppointmentOccurrences(prisonCode, searchRequest, user)
+  }
+
+  async cancelAppointmentOccurrence(
+    occurrenceId: number,
+    cancelRequest: AppointmentOccurrenceCancelRequest,
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.cancelAppointmentOccurrence(occurrenceId, cancelRequest, user)
   }
 }

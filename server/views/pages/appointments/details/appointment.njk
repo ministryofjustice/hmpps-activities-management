@@ -35,7 +35,8 @@
             text: occurrenceDate | formatDate('d MMM yyyy'),
             attributes: { 'data-qa': 'occurrence-date-' + occurrence.sequenceNumber }
         }, {
-            html: govukTag({ text: "Edited" }) if occurrence.updated,
+            html: (govukTag({ text: "Edited" }) if occurrence.isEdited) +
+                  (govukTag({ text: "Cancelled" }) if occurrence.isCancelled),
             attributes: { 'data-qa': 'occurrence-edited-' + occurrence.sequenceNumber }
         }, {
             html: '<a href="/appointments/' + appointment.id + '/occurrence/' + occurrence.id + '"

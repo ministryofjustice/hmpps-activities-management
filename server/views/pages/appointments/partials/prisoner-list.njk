@@ -1,7 +1,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% macro prisonerList(appointmentId, appointmentOccurrenceId, appointmentType, repeat, prisoners) %}
+{% macro prisonerList(appointmentId, appointmentOccurrenceId, appointmentType, repeat, prisoners, isCancelled) %}
     {% set occurenceLink = '/appointments/' + appointmentId + '/occurrence/' + appointmentOccurrenceId  %}
     {% set prisonerListRows = [] %}
     {% for prisoner in prisoners %}
@@ -25,7 +25,7 @@
                         classes: "govuk-link--no-visited-state",
                         attributes: { 'data-qa': 'remove-prisoner' }
                     }
-                ] if prisoners.length > 1
+                ] if prisoners.length > 1 and isCancelled == false
             }
         }), prisonerListRows) %}
     {% endfor %}
@@ -47,30 +47,6 @@
         ), prisonerActionItems) %}
     {% endif %}
 
-    {% for occurrence in appointment.occurrences %}
-        {% set occurrenceDate = occurrence.startDate | toDate %}
-        {% set occurrenceTableRows = (occurrenceTableRows.push([
-            {
-                text: occurrence.sequenceNumber,
-                classes: "govuk-!-font-weight-regular govuk-!-text-align-right",
-                attributes: { 'data-qa': 'occurrence-sequence-no-' + occurrence.sequenceNumber }
-            }, {
-                text: occurrenceDate | formatDate('d MMM yyyy'),
-                attributes: { 'data-qa': 'occurrence-date-' + occurrence.sequenceNumber }
-            }, {
-                html: govukTag({ text: "Edited" }) if occurrence.updated,
-                attributes: { 'data-qa': 'occurrence-edited-' + occurrence.sequenceNumber }
-            }, {
-                html: '<a href="/appointments/' + appointment.id + '/occurrence/' + occurrence.id + '"
-                class="govuk-link--no-visited-state">
-                View and manage<span class="govuk-visually-hidden"> appointment ' + occurrence.sequenceNumber + '</span>
-            </a>',
-                classes: 'govuk-!-text-align-right',
-                attributes: { 'data-qa': 'view-and-edit-appointment-' + occurrence.sequenceNumber }
-            }
-        ]), occurrenceTableRows) %}
-    {% endfor %}
-
     {{ govukSummaryList({
         card: {
             title: {
@@ -78,7 +54,7 @@
             },
             actions: {
                 items: prisonerActionItems
-            }
+            } if isCancelled == false
         },
         rows: prisonerListRows,
         attributes: { 'data-qa': 'prisoner-list' }
