@@ -1,4 +1,6 @@
 import { Request, Response } from 'express'
+import ActivitiesService from '../../../../services/activitiesService'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import StartJourneyRoutes from './startJourney'
 import { AppointmentDetails, AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
@@ -6,8 +8,12 @@ import { parseDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { YesNo } from '../../../../@types/activities'
 
+jest.mock('../../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+
 describe('Route Handlers - Create Appointment - Start', () => {
-  const handler = new StartJourneyRoutes()
+  const handler = new StartJourneyRoutes(new EditAppointmentService(activitiesService))
   let req: Request
   let res: Response
 
@@ -140,7 +146,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         sequenceNumber: 2,
       } as EditAppointmentJourney
 
-      await handler.EDIT_OCCURRENCE(req, res)
+      await handler.EDIT(req, res)
 
       expect(req.session.appointmentJourney).toEqual(appointmentJourneySession)
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
@@ -152,7 +158,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         property: '',
       }
 
-      await handler.EDIT_OCCURRENCE(req, res)
+      await handler.EDIT(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('back')
     })

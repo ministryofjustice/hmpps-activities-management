@@ -47,9 +47,7 @@ export default class DailySummaryRoutes {
           cancelledReason: activity.cancelledReason,
         })),
       )
-      .then(scheduledActivities =>
-        scheduledActivities.filter(a => categoryFilters.includes(a.category) || categoryFilters.includes('ALL')),
-      )
+      .then(scheduledActivities => scheduledActivities.filter(a => categoryFilters.includes(a.category)))
       .then(scheduledActivities => scheduledActivities.filter(a => a.cancelled))
 
     const suspendedPrisoners = await this.activitiesService
@@ -58,9 +56,7 @@ export default class DailySummaryRoutes {
 
     return res.render('pages/daily-attendance-summary/daily-summary', {
       activityDate,
-      ...getDailyAttendanceSummary(
-        attendanceSummary.filter(a => categoryFilters.includes(a.categoryName) || categoryFilters.includes('ALL')),
-      ),
+      ...getDailyAttendanceSummary(attendanceSummary.filter(a => categoryFilters.includes(a.categoryName))),
       ...getCancelledActivitySummary(cancelledActivities),
       ...getSuspendedPrisonerCount(suspendedPrisoners),
       attendanceSummaryFilters,
@@ -97,8 +93,8 @@ export default class DailySummaryRoutes {
 }
 
 const defaultFilters = (activityDate: Date, categories: string[]): AttendanceSummaryFilters => {
-  const categoryFilters: FilterItem[] = [{ value: 'ALL', text: 'All Categories', checked: true }]
-  categories.forEach(category => categoryFilters.push({ value: category, text: category, checked: false }))
+  const categoryFilters: FilterItem[] = []
+  categories.forEach(category => categoryFilters.push({ value: category, text: category, checked: true }))
   return {
     activityDate,
     categoryFilters,

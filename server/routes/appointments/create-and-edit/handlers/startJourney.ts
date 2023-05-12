@@ -2,9 +2,12 @@ import { Request, Response } from 'express'
 import { formatDate, parseDate } from '../../../../utils/utils'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentRepeatPeriod, EditApplyTo } from '../../../../@types/appointments'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 
 export default class StartJourneyRoutes {
+  constructor(private readonly editAppointmentService: EditAppointmentService) {}
+
   INDIVIDUAL = async (req: Request, res: Response): Promise<void> => {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
@@ -22,11 +25,57 @@ export default class StartJourneyRoutes {
     res.redirect('how-to-add-prisoners')
   }
 
-  EDIT_OCCURRENCE = async (req: Request, res: Response): Promise<void> => {
-    const { appointment, appointmentOccurrence } = req
+  EDIT = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentOccurrence } = req
     const { property } = req.params
 
     if (!property) return res.redirect('back')
+
+    this.populateEditSession(req)
+
+    return res.redirect(
+      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${property}`,
+    )
+  }
+
+  REMOVE_PRISONER = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentOccurrence } = req
+    const { prisonNumber } = req.params
+
+    const prisoner = appointmentOccurrence.prisoners.filter(_ => _.prisonerNumber === prisonNumber)[0]
+
+    if (!prisoner) return res.redirect('back')
+
+    this.populateEditSession(req)
+
+    req.session.editAppointmentJourney.removePrisoner = prisoner
+
+    if (this.editAppointmentService.isApplyToQuestionRequired(req)) {
+      return res.redirect(
+        `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${prisonNumber}/remove/apply-to`,
+      )
+    }
+
+    req.session.editAppointmentJourney.applyTo = EditApplyTo.THIS_OCCURRENCE
+
+    return res.redirect(
+      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${prisonNumber}/remove/confirm`,
+    )
+  }
+
+  ADD_PRISONERS = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentOccurrence } = req
+
+    this.populateEditSession(req)
+    req.session.editAppointmentJourney.addPrisoners = []
+
+    return res.redirect(
+      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/prisoners/add/how-to-add-prisoners`,
+    )
+  }
+
+  private populateEditSession(req: Request) {
+    const { appointment, appointmentOccurrence } = req
 
     const startDate = parseDate(appointmentOccurrence.startDate)
     const startTime = parseDate(
@@ -74,9 +123,5 @@ export default class StartJourneyRoutes {
       occurrencesRemaining: appointment.occurrences.length,
       sequenceNumber: appointmentOccurrence.sequenceNumber,
     }
-
-    return res.redirect(
-      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${property}`,
-    )
   }
 }

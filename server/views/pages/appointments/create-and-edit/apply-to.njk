@@ -4,10 +4,11 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "pages/appointments/partials/add-prisoner-list.njk" import addPrisonerList %}
 
 {% set pageTitle = appointmentJourneyTitle("Apply to", session.appointmentJourney) %}
 {% set pageId = 'appointments-manage-apply-to-page' %}
-{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId + "/edit/" + property %}
+{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId + ("/edit/" + property if property) %}
 
 {% set applyToItems = [] %}
 {% for applyToOption in applyToOptions %}
@@ -30,23 +31,20 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            <h1 class="govuk-heading-l">Which appointments do you want to {{ editMessage }}?</h1>
+
+            {{ addPrisonerList(session.editAppointmentJourney.addPrisoners) }}
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
                     name: "applyTo",
-                    fieldset: {
-                        legend: {
-                            text: "Which appointments do you want to change the " + updatedPropertiesMessage + " for?",
-                            classes: "govuk-label--l",
-                            isPageHeading: true
-                        }
-                    },
                     errorMessage: validationErrors | findError('applyTo'),
                     items: applyToItems
                 }) }}
 
                 {{ govukButton({
-                    text: "Accept and save"
+                    text: "Confirm and add" if session.editAppointmentJourney.addPrisoners else ("Confirm and remove" if session.editAppointmentJourney.removePrisoner else "Accept and save")
                 }) }}
             </form>
         </div>

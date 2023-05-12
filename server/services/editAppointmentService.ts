@@ -7,6 +7,7 @@ import { EditApplyTo } from '../@types/appointments'
 import { AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 import SimpleTime from '../commonValidationTypes/simpleTime'
+import { fullName, convertToTitleCase } from '../utils/utils'
 
 export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -43,26 +44,46 @@ export default class EditAppointmentService {
     return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
   }
 
-  getUpdatedPropertiesMessage(req: Request) {
+  getEditMessage(req: Request) {
     const { appointmentJourney, editAppointmentJourney } = req.session
 
-    const updatedProperties = []
+    const updateProperties = []
     if (this.hasLocationChanged(appointmentJourney, editAppointmentJourney)) {
-      updatedProperties.push('location')
+      updateProperties.push('location')
     }
 
     if (this.hasStartDateChanged(appointmentJourney, editAppointmentJourney)) {
-      updatedProperties.push('date')
+      updateProperties.push('date')
     }
 
     if (
       this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
       this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)
     ) {
-      updatedProperties.push('time')
+      updateProperties.push('time')
     }
 
-    return updatedProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')
+    if (updateProperties.length > 0) {
+      return `change the ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')} for`
+    }
+
+    if (editAppointmentJourney.addPrisoners?.length === 1) {
+      return `add ${convertToTitleCase(editAppointmentJourney.addPrisoners[0].name)} to`
+    }
+
+    if (editAppointmentJourney.addPrisoners?.length > 1) {
+      return 'add the prisoners to'
+    }
+
+    if (editAppointmentJourney.removePrisoner) {
+      return `remove ${convertToTitleCase(fullName(editAppointmentJourney.removePrisoner))} from`
+    }
+
+    return ''
+  }
+
+  getEditedMessage(req: Request) {
+    return this.getEditMessage(req).replace('add', 'added').replace('remove', 'removed').replace('change', 'changed')
   }
 
   isFirstRemainingOccurrence(req: Request) {
@@ -134,9 +155,21 @@ export default class EditAppointmentService {
       occurrenceUpdates.endTime = plainToInstance(SimpleTime, editAppointmentJourney.endTime).toIsoString()
     }
 
+    if (editAppointmentJourney.addPrisoners?.length > 0) {
+      occurrenceUpdates.prisonerNumbers = appointmentJourney.prisoners
+        .concat(editAppointmentJourney.addPrisoners)
+        .map(prisoner => prisoner.number)
+    }
+
+    if (editAppointmentJourney.removePrisoner) {
+      occurrenceUpdates.prisonerNumbers = appointmentJourney.prisoners
+        .filter(prisoner => prisoner.number !== editAppointmentJourney.removePrisoner.prisonerNumber)
+        .map(prisoner => prisoner.number)
+    }
+
     await this.activitiesService.editAppointmentOccurrence(+occurrenceId, occurrenceUpdates, user)
 
-    const successHeading = `You've changed the ${this.getUpdatedPropertiesMessage(req)} for ${this.getAppliedToMessage(
+    const successHeading = `You've ${this.getEditedMessage(req)} ${this.getAppliedToMessage(
       editAppointmentJourney,
       applyTo,
     )}`

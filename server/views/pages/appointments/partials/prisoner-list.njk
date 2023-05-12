@@ -2,6 +2,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% macro prisonerList(appointmentId, appointmentOccurrenceId, appointmentType, repeat, prisoners) %}
+    {% set occurenceLink = '/appointments/' + appointmentId + '/occurrence/' + appointmentOccurrenceId  %}
     {% set prisonerListRows = [] %}
     {% for prisoner in prisoners %}
         {% set prisonerListRows = (prisonerListRows.push({
@@ -19,18 +20,18 @@
             actions: {
                 items: [
                     {
-                        href: "#",
+                        href: occurenceLink + "/edit/start/" + prisoner.prisonerNumber + "/remove",
                         text: "Remove",
                         classes: "govuk-link--no-visited-state",
                         attributes: { 'data-qa': 'remove-prisoner' }
                     }
-                ] if appointmentType == AppointmentType.GROUP and prisoners.length > 1
+                ] if prisoners.length > 1
             }
         }), prisonerListRows) %}
     {% endfor %}
 
     {% set prisonerActionItems = [{
-        href: ("/appointments/" + appointmentId + "/occurrence/" + appointmentOccurrenceId + "/movement-slip" if repeat) + ("/appointments/" + appointmentId + "/movement-slip" if repeat == null),
+        href: (occurenceLink + "/movement-slip" if repeat) + ("/appointments/" + appointmentId + "/movement-slip" if repeat == null),
         text: "Print movement slip" + ("s" if prisoners.length > 1 ),
         classes: "govuk-link--no-visited-state",
         attributes: { 'data-qa': 'print-movement-slips' }
@@ -38,7 +39,7 @@
     {% if appointmentType == AppointmentType.GROUP %}
         {% set prisonerActionItems = (prisonerActionItems.push(
             {
-                href: "#",
+                href: occurenceLink + "/edit/start/prisoners/add",
                 text: "Add prisoners",
                 classes: "govuk-link--no-visited-state",
                 attributes: { 'data-qa': 'add-prisoners' }

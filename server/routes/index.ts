@@ -3,6 +3,7 @@ import type { Services } from '../services'
 import homeRoutes from './home'
 import changeLocationRoutes from './change-location'
 import createRoutes from './create-an-activity'
+import allocationDashboardRoutes from './allocation-dashboard'
 import scheduleRoutes from './manage-schedules'
 import allocateRoutes from './allocate-to-activity'
 import attendanceRoutes from './record-attendance'
@@ -31,7 +32,9 @@ export default function routes(services: Services): Router {
 
   router.use('/', homeRoutes())
   router.use('/create', createRoutes(services))
+  router.use('/allocation-dashboard', allocationDashboardRoutes(services))
   router.use('/allocate', allocateRoutes(services))
+  router.use('/deallocate', allocateRoutes(services))
   router.use('/schedule', scheduleRoutes(services))
   router.use('/attendance', attendanceRoutes(services))
   router.use('/attendance-summary', attendanceSummaryRoutes(services))
