@@ -1,35 +1,28 @@
 import { RequestHandler, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import { Services } from '../../services'
-import ActivitiesRoutes from './handlers/activitiesDashboard'
 import PayBandRoutes, { PayBand } from './handlers/payBand'
 import validationMiddleware from '../../middleware/validationMiddleware'
-import AllocationDashboardRoutes, { SelectedAllocation } from './handlers/allocationDashboard'
 import StartJourneyRoutes from './handlers/startJourney'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import emptyJourneyHandler from '../../middleware/emptyJourneyHandler'
 import CancelRoutes, { ConfirmCancelOptions } from './handlers/cancel'
 
-export default function Index({ activitiesService, prisonService, capacitiesService }: Services): Router {
+export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(path, emptyJourneyHandler('allocateJourney', stepRequiresSession), asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const activitiesHandler = new ActivitiesRoutes(activitiesService, capacitiesService)
-  const allocationDashboardHandler = new AllocationDashboardRoutes(prisonService, capacitiesService, activitiesService)
   const startJourneyHandler = new StartJourneyRoutes(prisonService, activitiesService)
   const payBandHandler = new PayBandRoutes(activitiesService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const cancelHandler = new CancelRoutes()
   const confirmationHandler = new ConfirmationRoutes()
 
-  get('/activities', activitiesHandler.GET)
-  get('/:scheduleId/allocate', allocationDashboardHandler.GET)
-  post('/:scheduleId/allocate', allocationDashboardHandler.POST, SelectedAllocation)
-  get('/:scheduleId/allocate/:prisonerNumber', startJourneyHandler.GET)
+  get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/pay-band', payBandHandler.GET, true)
   post('/pay-band', payBandHandler.POST, PayBand)
   get('/check-answers', checkAnswersHandler.GET, true)

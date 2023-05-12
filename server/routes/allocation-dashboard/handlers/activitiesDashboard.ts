@@ -24,7 +24,7 @@ export default class ActivitiesRoutes {
       })),
     ).then(a => a.filter(p => p.schedules.findIndex(s => !s.endDate || new Date(s.endDate) >= today) >= 0))
 
-    res.render('pages/allocate-to-activity/activities-dashboard', {
+    res.render('pages/allocation-dashboard/activities', {
       total: this.capacitiesService.getTotalAllocationSummary(activitiesWithAllocations.map(a => a.allocationSummary)),
       activities: activitiesWithAllocations,
     })

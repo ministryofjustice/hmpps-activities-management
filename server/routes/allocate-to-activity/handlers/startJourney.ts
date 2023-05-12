@@ -7,7 +7,8 @@ export default class StartJourneyRoutes {
   constructor(private readonly prisonService: PrisonService, private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { scheduleId, prisonerNumber } = req.params
+    const { scheduleId } = req.query
+    const { prisonerNumber } = req.params
     const { user } = res.locals
 
     const [inmate, iepSummary, schedule] = await Promise.all([

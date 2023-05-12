@@ -14,7 +14,7 @@
         <div class="govuk-grid-column-one-third">
             <div class='related-tasks'>
                 <ul class='govuk-list'>
-                    <li><a href="/create/category" class="govuk-link govuk-link--no-visited-state">Create an activity</a></li>
+                    <li><a href="/create/start" class="govuk-link govuk-link--no-visited-state">Create an activity</a></li>
                     <li><a href="/schedule/activities" class="govuk-link govuk-link--no-visited-state">Edit activities</a></li>
                 </ul>
             </div>
@@ -83,7 +83,7 @@
                         },
                         html: '
                                 <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
-                                    <a href="/allocate/' + activity.schedules[0].id + '/allocate" class="govuk-link govuk-link--no-visited-state">' + activity.summary + '</a>
+                                    <a href="/allocation-dashboard/' + activity.schedules[0].id + '" class="govuk-link govuk-link--no-visited-state">' + activity.summary + '</a>
                                 </h2>
                               '
                     },

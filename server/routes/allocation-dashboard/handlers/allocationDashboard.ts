@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Expose } from 'class-transformer'
+import { Expose, Transform } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../services/prisonService'
 import ActivityService from '../../../services/activitiesService'
@@ -9,6 +9,7 @@ import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { ActivitySchedule, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 import { parseDate } from '../../../utils/utils'
 import { IepLevel } from '../../../@types/incentivesApi/types'
+import HasAtLeastOne from '../../../validators/hasAtLeastOne'
 
 type Filters = {
   candidateQuery: string
@@ -21,6 +22,14 @@ export class SelectedAllocation {
   @Expose()
   @IsNotEmpty({ message: 'Select a candidate to allocate them' })
   selectedAllocation: string
+}
+
+export class SelectedAllocations {
+  @Expose()
+  @Expose()
+  @Transform(({ value }) => [value].flat()) // Transform to an array if only one value is provided
+  @HasAtLeastOne({ message: 'Select at least one prisoner' })
+  selectedAllocations: string[]
 }
 
 export default class AllocationDashboardRoutes {
@@ -57,7 +66,7 @@ export default class AllocationDashboardRoutes {
       this.getCandidates(+scheduleId, filters, +req.query.page, user),
     ])
 
-    res.render('pages/allocate-to-activity/allocation-dashboard', {
+    res.render('pages/allocation-dashboard/allocation-dashboard', {
       allocationSummaryView,
       schedule,
       currentlyAllocated,
@@ -69,9 +78,17 @@ export default class AllocationDashboardRoutes {
     })
   }
 
-  POST = async (req: Request, res: Response): Promise<void> => {
+  ALLOCATE = async (req: Request, res: Response): Promise<void> => {
     const { selectedAllocation } = req.body
-    res.redirect(`allocate/${selectedAllocation}`)
+    res.redirect(`/allocate/prisoner/${selectedAllocation}?scheduleId=${req.params.scheduleId}`)
+  }
+
+  DEALLOCATE = async (req: Request, res: Response): Promise<void> => {
+    // TODO: Start the deallocation journey here
+
+    const { selectedAllocations } = req.body
+    res.status(200)
+    res.send(`${selectedAllocations.pop()}`)
   }
 
   private getSuitableForIep = (minimumIncentiveLevel: string, iepLevels: IepLevel[]) => {
