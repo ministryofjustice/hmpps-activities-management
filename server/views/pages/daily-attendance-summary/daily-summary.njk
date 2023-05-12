@@ -14,6 +14,9 @@
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
             classes: "govuk-radios--small",
+            hint: {
+                text: "Select all that apply"
+            },
             fieldset: {
                 legend: {
                     text: 'Categories',
@@ -128,37 +131,37 @@
             {% if totalCancelled[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                     <p class="govuk-body govuk-!-margin-bottom-0">People with cancelled sessions</p>
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ totalCancelled[timeSlot]  }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-1">{{ totalCancelled[timeSlot]  }}</p>
                 </div>
             {% endif %}
             {% if totalPaidSick[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                     <p class="govuk-body govuk-!-margin-bottom-0">Sick</p>
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ totalPaidSick[timeSlot] }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-1">{{ totalPaidSick[timeSlot] }}</p>
                 </div>
             {% endif %}
             {% if totalNotRequired[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                     <p class="govuk-body govuk-!-margin-bottom-0">Not required</p>
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ totalNotRequired[timeSlot] }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-1">{{ totalNotRequired[timeSlot] }}</p>
                 </div>
             {% endif %}
             {% if totalPaidRest[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                   <p class="govuk-body govuk-!-margin-bottom-0">Rest day</p>
-                  <p class="govuk-body govuk-!-margin-bottom-0">{{ totalPaidRest[timeSlot] }}</p>
+                  <p class="govuk-body govuk-!-margin-bottom-1">{{ totalPaidRest[timeSlot] }}</p>
                 </div>
             {% endif %}
             {% if totalClash[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                     <p class="govuk-body govuk-!-margin-bottom-0">Clash</p>
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ totalClash[timeSlot] }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-1">{{ totalClash[timeSlot] }}</p>
                 </div>
             {% endif %}
             {% if totalPaidOther[timeSlot] > 0 %}
                 <div class="govuk-grid-column-one-quarter">
                     <p class="govuk-body govuk-!-margin-bottom-0">Other</p>
-                    <p class="govuk-body govuk-!-margin-bottom-0">{{ totalPaidOther[timeSlot] }}</p>
+                    <p class="govuk-body govuk-!-margin-bottom-1">{{ totalPaidOther[timeSlot] }}</p>
                 </div>
             {% endif %}
         </div>
@@ -206,10 +209,10 @@
                 <p class="govuk-body govuk-!-margin-bottom-0">{{ totalStaffTraining[timeSlot] }}</p>
             </div>
         {% endif %}
-        {% if totalNotRequired[timeSlot] > 0 %}
+        {% if totalActivityNotRequired[timeSlot] > 0 %}
             <div class="govuk-grid-column-one-quarter">
                 <p class="govuk-body govuk-!-margin-bottom-0">Session not required</p>
-                <p class="govuk-body govuk-!-margin-bottom-0">{{ totalNotRequired[timeSlot] }}</p>
+                <p class="govuk-body govuk-!-margin-bottom-0">{{ totalActivityNotRequired[timeSlot] }}</p>
             </div>
         {% endif %}
         {% if totalLocationUnavailable[timeSlot] > 0 %}

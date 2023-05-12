@@ -621,7 +621,7 @@ export const getCancelledActivitySummary = (
     PM: 0,
     ED: 0,
   }
-  const totalNotRequired: ActivitySummary<number> = {
+  const totalActivityNotRequired: ActivitySummary<number> = {
     DAY: 0,
     AM: 0,
     PM: 0,
@@ -649,8 +649,8 @@ export const getCancelledActivitySummary = (
       totalStaffTraining['DAY'] += 1
       totalStaffTraining[activity.timeSlot.toUpperCase()] += 1
     } else if (activity.cancelledReason === cancellationReasons.NOT_REQUIRED) {
-      totalNotRequired['DAY'] += 1
-      totalNotRequired[activity.timeSlot.toUpperCase()] += 1
+      totalActivityNotRequired['DAY'] += 1
+      totalActivityNotRequired[activity.timeSlot.toUpperCase()] += 1
     } else if (activity.cancelledReason === cancellationReasons.LOCATION_UNAVAILABLE) {
       totalLocationUnavailable['DAY'] += 1
       totalLocationUnavailable[activity.timeSlot.toUpperCase()] += 1
@@ -663,7 +663,7 @@ export const getCancelledActivitySummary = (
     totalCancelled,
     totalStaffUnavailable,
     totalStaffTraining,
-    totalNotRequired,
+    totalActivityNotRequired,
     totalLocationUnavailable,
     totalOperationalIssue,
   }

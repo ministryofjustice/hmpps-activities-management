@@ -277,6 +277,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           ED: 0,
           PM: 0,
         },
+        totalActivityNotRequired: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
         totalLocationUnavailable: {
           AM: 0,
           DAY: 0,
@@ -455,6 +461,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalStaffTraining: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalActivityNotRequired: {
           AM: 0,
           DAY: 0,
           ED: 0,

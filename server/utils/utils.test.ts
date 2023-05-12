@@ -730,7 +730,7 @@ describe('utils', () => {
           ED: 0,
           PM: 0,
         },
-        totalNotRequired: {
+        totalActivityNotRequired: {
           AM: 1,
           DAY: 1,
           ED: 0,
