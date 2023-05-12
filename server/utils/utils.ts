@@ -14,7 +14,6 @@ import {
   parse,
   parseISO,
 } from 'date-fns'
-// eslint-disable-next-line import/no-duplicates
 import enGBLocale from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
@@ -371,13 +370,31 @@ export const getDailyAttendanceSummary = (attendanceSummary: AllAttendanceSummar
     PM: 0,
     ED: 0,
   }
+  const totalNotAttendedPercentage: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
   const totalAbsences: DailySummary<number> = {
     DAY: 0,
     AM: 0,
     PM: 0,
     ED: 0,
   }
+  const totalAbsencesPercentage: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
   const totalAttended: DailySummary<number> = {
+    DAY: 0,
+    AM: 0,
+    PM: 0,
+    ED: 0,
+  }
+  const totalAttendedPercentage: DailySummary<number> = {
     DAY: 0,
     AM: 0,
     PM: 0,
@@ -525,13 +542,40 @@ export const getDailyAttendanceSummary = (attendanceSummary: AllAttendanceSummar
       totalAttended[attendance.timeSlot] += attendance.attendanceCount
     }
   })
+  totalNotAttendedPercentage['DAY'] =
+    totalAllocated['DAY'] === 0 ? 0 : Number(((totalNotAttended['DAY'] / totalAllocated['DAY']) * 100).toFixed(1))
+  totalNotAttendedPercentage['AM'] =
+    totalAllocated['AM'] === 0 ? 0 : Number(((totalNotAttended['AM'] / totalAllocated['AM']) * 100).toFixed(1))
+  totalNotAttendedPercentage['PM'] =
+    totalAllocated['PM'] === 0 ? 0 : Number(((totalNotAttended['PM'] / totalAllocated['PM']) * 100).toFixed(1))
+  totalNotAttendedPercentage['ED'] =
+    totalAllocated['ED'] === 0 ? 0 : Number(((totalNotAttended['ED'] / totalAllocated['ED']) * 100).toFixed(1))
+  totalAbsencesPercentage['DAY'] =
+    totalAllocated['DAY'] === 0 ? 0 : Number(((totalAbsences['DAY'] / totalAllocated['DAY']) * 100).toFixed(1))
+  totalAbsencesPercentage['AM'] =
+    totalAllocated['AM'] === 0 ? 0 : Number(((totalAbsences['AM'] / totalAllocated['AM']) * 100).toFixed(1))
+  totalAbsencesPercentage['PM'] =
+    totalAllocated['PM'] === 0 ? 0 : Number(((totalAbsences['PM'] / totalAllocated['PM']) * 100).toFixed(1))
+  totalAbsencesPercentage['ED'] =
+    totalAllocated['ED'] === 0 ? 0 : Number(((totalAbsences['ED'] / totalAllocated['ED']) * 100).toFixed(1))
+  totalAttendedPercentage['DAY'] =
+    totalAllocated['DAY'] === 0 ? 0 : Number(((totalAttended['DAY'] / totalAllocated['DAY']) * 100).toFixed(1))
+  totalAttendedPercentage['AM'] =
+    totalAllocated['AM'] === 0 ? 0 : Number(((totalAttended['AM'] / totalAllocated['AM']) * 100).toFixed(1))
+  totalAttendedPercentage['PM'] =
+    totalAllocated['PM'] === 0 ? 0 : Number(((totalAttended['PM'] / totalAllocated['PM']) * 100).toFixed(1))
+  totalAttendedPercentage['ED'] =
+    totalAllocated['ED'] === 0 ? 0 : Number(((totalAttended['ED'] / totalAllocated['ED']) * 100).toFixed(1))
 
   return {
     totalActivities,
     totalAllocated,
     totalNotAttended,
+    totalNotAttendedPercentage,
     totalAbsences,
+    totalAbsencesPercentage,
     totalAttended,
+    totalAttendedPercentage,
     totalPaidAbsences,
     totalUnPaidAbsences,
     totalCancelled,

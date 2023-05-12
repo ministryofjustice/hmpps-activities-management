@@ -151,6 +151,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           ED: 0,
           PM: 0,
         },
+        totalAbsencesPercentage: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
         totalActivities: {
           AM: 1,
           DAY: 1,
@@ -164,6 +170,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalAttended: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalAttendedPercentage: {
           AM: 0,
           DAY: 0,
           ED: 0,
@@ -185,6 +197,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           AM: 3,
           DAY: 4,
           ED: 1,
+          PM: 0,
+        },
+        totalNotAttendedPercentage: {
+          AM: 100,
+          DAY: 100,
+          ED: 100,
           PM: 0,
         },
         totalNotRequired: {
@@ -279,10 +297,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         },
         attendanceSummaryFilters: {
           activityDate: date,
-          categoryFilters: [
-            { value: 'ALL', text: 'All Categories', checked: true },
-            { value: 'Education', text: 'Education', checked: false },
-          ],
+          categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
         },
       })
     })
@@ -319,6 +334,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           ED: 0,
           PM: 0,
         },
+        totalAbsencesPercentage: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
         totalActivities: {
           AM: 1,
           DAY: 1,
@@ -332,6 +353,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalAttended: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalAttendedPercentage: {
           AM: 0,
           DAY: 0,
           ED: 0,
@@ -353,6 +380,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           AM: 3,
           DAY: 4,
           ED: 1,
+          PM: 0,
+        },
+        totalNotAttendedPercentage: {
+          AM: 100,
+          DAY: 100,
+          ED: 100,
           PM: 0,
         },
         totalNotRequired: {

@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 
 {% set pageTitle = applicationName + " - Daily attendance summary" %}
@@ -10,7 +10,7 @@
 
 {% block content %}
     {% set filterOptionsHtml %}
-    {{ govukRadios({
+    {{ govukCheckboxes({
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
             classes: "govuk-radios--small",
@@ -22,6 +22,12 @@
             },
             items: attendanceSummaryFilters.categoryFilters
         }) }}
+        <div class="govuk-!-margin-bottom-4">
+            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters">Select all</a>
+        </div>
+        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
+            Apply filters
+        </button>
     {% endset %}
     <div class="moj-filter-layout" data-module="activities-list-filter">
         <form id="filter-form" method="POST" novalidate>
@@ -49,6 +55,7 @@
                     <div class="moj-action-bar__filter"></div>
                 </div>
                 {{ govukTabs({
+                    classes: "govuk-tabs--borderless",
                     items: [
                         {
                             label: "Daily summary",
@@ -86,31 +93,31 @@
 {% endblock %}
 
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
-    <div class="govuk-grid-column-one-half govuk-!-text-align-left">
-        <p class="govuk-body">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</p>
+    <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-left">
+        <p class="govuk-body govuk-!-margin-bottom-0">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</p>
     </div>
-    <div class="govuk-grid-column-one-half govuk-!-text-align-right">
-        <p>Updated at {{ now | formatDate('HH:MM') }} on {{ now | formatDate('dd MMMM yyyy') }} </p>
+    <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
+        <p class="govuk-body govuk-!-margin-bottom-0">Updated at {{ now | formatDate('HH:MM') }} on {{ now | formatDate('dd MMMM yyyy') }} </p>
     </div>
-    <div class="govuk-grid-row">
+    <div>
         <h1 class="govuk-heading-l">{{ timeSlotDescription }} attendance summary</h1>
     </div>
-    <div class="govuk-grid-row">
+    <div>
         <h2 class="govuk-heading-s">{{ totalAllocated[timeSlot] }} total allocation{% if totalAllocated[timeSlot] != 1 %}s{% endif %} for
         <a href="/attendance/activities?date={{ activityDate | formatDate('yyyy-MM-dd') }}" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">{{ totalActivities[timeSlot] }} activit{% if totalActivities[timeSlot] != 1 %}ies{% else %}y{% endif %}</a></h2>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-quarter">
             <p class="govuk-body govuk-!-margin-bottom-0">Not yet attended</p>
-            <h3 class="govuk-heading-xl">{{ totalNotAttended[timeSlot] }}</h3>
+            <p class="govuk-body govuk-!-margin-bottom-0""><font size="+4">{{ totalNotAttended[timeSlot] }}</font> {{ totalNotAttendedPercentage[timeSlot] }}%</p>
         </div>
         <div class="govuk-grid-column-one-quarter">
             <p class="govuk-body govuk-!-margin-bottom-0">Absences</p>
-            <h3 class="govuk-heading-xl">{{ totalAbsences[timeSlot] }}</h3>
+            <p class="govuk-body govuk-!-margin-bottom-0""><font size="+4">{{ totalAbsences[timeSlot] }}</font> {{ totalAbsencesPercentage[timeSlot] }}%</p>
         </div>
         <div class="govuk-grid-column-one-quarter">
             <p class="govuk-body govuk-!-margin-bottom-0">Attended</p>
-            <h3 class="govuk-heading-xl">{{ totalAttended[timeSlot] }}</h3>
+            <p class="govuk-body govuk-!-margin-bottom-0""><font size="+4">{{ totalAttended[timeSlot] }}</font> {{ totalAttendedPercentage[timeSlot] }}%</p>
         </div>
     </div>
     <hr />

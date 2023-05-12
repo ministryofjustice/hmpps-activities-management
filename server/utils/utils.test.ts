@@ -553,6 +553,12 @@ describe('utils', () => {
           ED: 0,
           PM: 0,
         },
+        totalAbsencesPercentage: {
+          AM: 76.9,
+          DAY: 66.7,
+          ED: 0,
+          PM: 0,
+        },
         totalActivities: {
           AM: 1,
           DAY: 1,
@@ -571,6 +577,12 @@ describe('utils', () => {
           ED: 1,
           PM: 0,
         },
+        totalAttendedPercentage: {
+          AM: 0,
+          DAY: 6.7,
+          ED: 50,
+          PM: 0,
+        },
         totalCancelled: {
           AM: 1,
           DAY: 1,
@@ -587,6 +599,12 @@ describe('utils', () => {
           AM: 3,
           DAY: 4,
           ED: 1,
+          PM: 0,
+        },
+        totalNotAttendedPercentage: {
+          AM: 23.1,
+          DAY: 26.7,
+          ED: 50,
           PM: 0,
         },
         totalNotRequired: {
