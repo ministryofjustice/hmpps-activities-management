@@ -37,7 +37,7 @@ export default class PayRoutes {
     const bandId = +req.query.bandId
 
     const pay = req.session.createJourney?.pay?.find(p => p.bandId === bandId && p.incentiveLevel === iep)
-    const flat = req.session.createJourney?.flat
+    const flat = req.session.createJourney?.flat?.find(p => p.bandId === bandId)
     const payRateType = req.session.createJourney.payRateTypeOption
 
     const [incentiveLevels, payBands] = await Promise.all([
@@ -82,6 +82,8 @@ export default class PayRoutes {
       p => p.bandId === currentPayBand && p.incentiveLevel === currentIncentiveLevel,
     )
     if (payIndex >= 0) req.session.createJourney.pay.splice(payIndex, 1)
+    const flatIndex = req.session.createJourney.flat.findIndex(p => p.bandId === currentPayBand)
+    if (flatIndex >= 0) req.session.createJourney.flat.splice(flatIndex, 1)
 
     const [bandAlias, displaySequence] = await this.activitiesService
       .getPayBandsForPrison(user)
