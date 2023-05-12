@@ -54,9 +54,9 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
-  const howToAddPrisoners = new HowToAddPrisoners()
+  const howToAddPrisoners = new HowToAddPrisoners(editAppointmentService)
   const uploadByCsv = new UploadByCSV()
-  const reviewPrisoners = new ReviewPrisoners()
+  const reviewPrisoners = new ReviewPrisoners(editAppointmentService)
 
   get('/start-individual', startHandler.INDIVIDUAL)
   get('/start-group', startHandler.GROUP)

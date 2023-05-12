@@ -18,36 +18,51 @@ export default class SelectPrisonerRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const prisoner = await this.getPrisoner(req, res)
+    if (!prisoner) return
+
+    if (req.session.appointmentJourney.type === AppointmentType.GROUP) {
+      if (!req.session.appointmentJourney.prisoners.find(p => p.number === prisoner.number)) {
+        req.session.appointmentJourney.prisoners.push(prisoner)
+      }
+
+      res.redirect('review-prisoners')
+    } else {
+      req.session.appointmentJourney.prisoners = [prisoner]
+
+      res.redirectOrReturn('category')
+    }
+  }
+
+  EDIT = async (req: Request, res: Response): Promise<void> => {
+    const prisoner = await this.getPrisoner(req, res)
+    if (!prisoner) return
+
+    if (!req.session.editAppointmentJourney.addPrisoners.find(p => p.number === prisoner.number)) {
+      req.session.editAppointmentJourney.addPrisoners.push(prisoner)
+    }
+
+    res.redirect('review-prisoners')
+  }
+
+  private getPrisoner = async (req: Request, res: Response) => {
     const { query } = req.body
     const { user } = res.locals
 
     const results = await this.prisonService.searchPrisonInmates(query, user)
 
     if (results.empty) {
-      return res.validationFailed('query', `No prisoners found for query "${query}"`)
+      res.validationFailed('query', `No prisoners found for query "${query}"`)
+      return false
     }
 
     // There is no check that more than one prisoner returned from the prisoner search call as there cannot be
     // more than one match based on prisoner number. In the future if we add searching by name, there will need to
     // be a screen to select the correct prisoner from the returned list.
-    const prisoner = {
+    return {
       number: results.content[0].prisonerNumber,
       name: `${results.content[0].firstName} ${results.content[0].lastName}`,
       cellLocation: results.content[0].cellLocation,
     }
-
-    if (req.session.appointmentJourney.type === AppointmentType.GROUP) {
-      if (req.session.appointmentJourney.prisoners.find(p => p.number === prisoner.number)) {
-        return res.validationFailed('query', `${prisoner.name} (${prisoner.number}) already added to appointment`)
-      }
-
-      req.session.appointmentJourney.prisoners.push(prisoner)
-
-      return res.redirect('review-prisoners')
-    }
-
-    req.session.appointmentJourney.prisoners = [prisoner]
-
-    return res.redirectOrReturn('category')
   }
 }

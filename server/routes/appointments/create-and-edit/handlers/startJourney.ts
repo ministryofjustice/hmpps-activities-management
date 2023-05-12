@@ -25,7 +25,7 @@ export default class StartJourneyRoutes {
     res.redirect('how-to-add-prisoners')
   }
 
-  EDIT_OCCURRENCE = async (req: Request, res: Response): Promise<void> => {
+  EDIT = async (req: Request, res: Response): Promise<void> => {
     const { appointmentOccurrence } = req
     const { property } = req.params
 
@@ -38,7 +38,7 @@ export default class StartJourneyRoutes {
     )
   }
 
-  REMOVE_PRISONER_FROM_OCCURRENCE = async (req: Request, res: Response): Promise<void> => {
+  REMOVE_PRISONER = async (req: Request, res: Response): Promise<void> => {
     const { appointmentOccurrence } = req
     const { prisonNumber } = req.params
 
@@ -60,6 +60,17 @@ export default class StartJourneyRoutes {
 
     return res.redirect(
       `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${prisonNumber}/remove/confirm`,
+    )
+  }
+
+  ADD_PRISONERS = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentOccurrence } = req
+
+    this.populateEditSession(req)
+    req.session.editAppointmentJourney.addPrisoners = []
+
+    return res.redirect(
+      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/prisoners/add/how-to-add-prisoners`,
     )
   }
 

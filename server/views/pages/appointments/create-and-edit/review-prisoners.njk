@@ -12,7 +12,13 @@
 
 {% set pageTitle = appointmentJourneyTitle("Review Prisoners", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-review-prisoners-page' %}
-{% set backLinkHref = "select-prisoner" %}
+{% set backLinkHref = "how-to-add-prisoners" %}
+
+{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set prisoners = session.editAppointmentJourney.addPrisoners %}
+{% else %}
+    {% set prisoners = session.appointmentJourney.prisoners %}
+{% endif %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -22,7 +28,7 @@
         </div>
         <div class="govuk-grid-column-two-thirds">
             {% set prisonersList = [] %}
-            {% for prisoner in session.appointmentJourney.prisoners %}
+            {% for prisoner in prisoners %}
                 {% set prisonersList = (prisonersList.push([
                     {
                         html: showProfileLink({
@@ -43,9 +49,9 @@
                 ]), prisonersList) %}
             {% endfor %}
 
-            {% if session.appointmentJourney.prisoners.length == 0 %}
+            {% if prisoners.length == 0 %}
                 {{ govukWarningText({
-                    text: "The appointment list is empty. You must add at least one person to be able to schedule an appointment.",
+                    text: "The appointment list is empty. You must add at least one person to continue." if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "The appointment list is empty. You must add at least one person to be able to schedule an appointment.",
                     iconFallbackText: "Warning"
                 }) }}
 

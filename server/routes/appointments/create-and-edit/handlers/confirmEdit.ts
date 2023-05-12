@@ -5,13 +5,13 @@ import { YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 
-export class ConfirmRemovePrisoner {
+export class ConfirmEdit {
   @Expose()
-  @IsEnum(YesNo, { message: 'Select yes to confirm removing the prisoner' })
+  @IsEnum(YesNo, { message: 'Select yes to confirm' })
   confirm: YesNo
 }
 
-export default class ConfirmRemovePrisonerRoutes {
+export default class ConfirmEditRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly editAppointmentService: EditAppointmentService,
@@ -20,9 +20,10 @@ export default class ConfirmRemovePrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId, occurrenceId } = req.params
 
-    res.render('pages/appointments/create-and-edit/confirm-remove-prisoner', {
+    res.render('pages/appointments/create-and-edit/confirm-edit', {
       appointmentId,
       occurrenceId,
+      editMessage: this.editAppointmentService.getEditMessage(req),
       startDate: new Date(req.session.appointmentJourney.startDate.date),
     })
   }
