@@ -1,3 +1,6 @@
+import { PrisonerSummary } from '../../../@types/activitiesAPI/types'
+import { EditApplyTo } from '../../../@types/appointments'
+
 export type EditAppointmentJourney = {
   repeatCount: number
   occurrencesRemaining: number
@@ -22,4 +25,6 @@ export type EditAppointmentJourney = {
     minute: number
     date: Date
   }
+  removePrisoner?: PrisonerSummary
+  applyTo?: EditApplyTo
 }

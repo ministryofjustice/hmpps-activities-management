@@ -22,6 +22,7 @@ import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFor
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
 import setAppointmentJourneyMode from '../../../middleware/appointments/setAppointmentJourneyMode'
 import { AppointmentJourneyMode } from './appointmentJourney'
+import EditAppointmentService from '../../../services/editAppointmentService'
 
 export default function Create({ prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -41,7 +42,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
       asyncMiddleware(handler),
     )
 
-  const startHandler = new StartJourneyRoutes()
+  const editAppointmentService = new EditAppointmentService(activitiesService)
+  const startHandler = new StartJourneyRoutes(editAppointmentService)
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const categoryHandler = new CategoryRoutes(activitiesService)
