@@ -23,9 +23,11 @@ import {
   prisonerName,
   toDate,
   parseDate,
+  parseISODate,
   isTodayOrBefore,
   sliceArray,
   toDateString,
+  padNumber,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -116,11 +118,13 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('getTimeSlotFromTime', getTimeSlotFromTime)
   njkEnv.addFilter('startsWithAny', startsWithAny)
   njkEnv.addFilter('toFixed', toFixed)
+  njkEnv.addFilter('padNumber', padNumber)
   njkEnv.addFilter('toMoney', toMoney)
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
   njkEnv.addFilter('toDate', toDate)
   njkEnv.addFilter('parseDate', parseDate)
+  njkEnv.addFilter('parseISODate', parseISODate)
   njkEnv.addFilter('toDateString', toDateString)
   njkEnv.addFilter('todayOrBefore', isTodayOrBefore)
   njkEnv.addFilter('sliceArray', sliceArray)

@@ -2,6 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
@@ -132,7 +133,7 @@
             text: "Date"
         },
         value: {
-            text: startDate | formatDate('EEEE, d MMMM yyyy')
+            text: session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy')
         },
         actions: {
             items: [
@@ -151,7 +152,7 @@
             text: "Start time"
         },
         value: {
-            text: startTime | formatDate('HH:mm')
+            text: session.appointmentJourney.startTime.date | parseISODate | formatDate('HH:mm')
         },
         actions: {
             items: [
@@ -164,13 +165,13 @@
                 }
             ]
         }
-    },
+    } if session.appointmentJourney.startTime,
     {
         key: {
             text: "End time"
         },
         value: {
-            text: endTime | formatDate('HH:mm')
+            text: session.appointmentJourney.endTime.date | parseISODate | formatDate('HH:mm')
         },
         actions: {
             items: [
@@ -183,7 +184,7 @@
                 }
             ]
         }
-    },
+    } if session.appointmentJourney.endTime,
     {
         key: {
             text: "Repeat"
@@ -203,7 +204,7 @@
                 }
             ]
         }
-    }
+    } if session.appointmentJourney.repeat
 ), summaryListRows) %}
 {% if session.appointmentJourney.repeat == YesNo.YES %}
   {% set summaryListRows = (summaryListRows.push({
@@ -249,7 +250,6 @@
       }
   }), summaryListRows) %}
 {% endif %}
-
 {% set summaryListRows = (summaryListRows.push(
     {
         key: {
@@ -271,6 +271,18 @@
         }
     }
 ), summaryListRows) %}
+{% if session.appointmentJourney.type == AppointmentType.BULK %}
+    {% set summaryListRows = (summaryListRows.push(
+        {
+            key: {
+                text: "Appointments created"
+            },
+            value: {
+                text: session.bulkAppointmentJourney.appointments | length
+            }
+        }
+    ), summaryListRows) %}
+{% endif %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -283,6 +295,8 @@
             }) }}
 
             {{ prisonersList() if session.appointmentJourney.type == AppointmentType.GROUP }}
+
+            {{ bulkAppointments() if session.appointmentJourney.type == AppointmentType.BULK }}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -338,4 +352,70 @@
         rows: prisonerListRows,
         attributes: { 'data-qa': 'prisoner-details' }
     }) }}
+{% endmacro %}
+
+{% macro bulkAppointmentsList() %}
+    {% for appointment in session.bulkAppointmentJourney.appointments %}
+        {{ govukSummaryList({
+            card: {
+                title: {
+                    text: "Appointment " + loop.index
+                }
+            },
+            rows: [{
+                key: {
+                    text: "Prisoner"
+                },
+                value: {
+                    html: appointmentPrisonerSummary(
+                        appointment.prisoner.name,
+                        appointment.prisoner.number,
+                        appointment.prisoner.cellLocation
+                    )
+                }
+            }, {
+                key: {
+                    text: "Start time"
+                },
+                value: {
+                    text: appointment.startTime.hour | padNumber + ":" + appointment.startTime.minute | padNumber
+                },
+                actions: {
+                    items: [
+                        {
+                            href: "review-bulk-appointment?fromReview=true",
+                            text: "Change",
+                            visuallyHiddenText: "change start time"
+                        }
+                    ]
+                }
+            }, {
+                key: {
+                    text: "End time"
+                },
+                value: {
+                    text: appointment.endTime.hour | padNumber + ":" + appointment.endTime.minute | padNumber
+                },
+                actions: {
+                    items: [
+                        {
+                            href: "review-bulk-appointment?fromReview=true",
+                            text: "Change",
+                            visuallyHiddenText: "change end time"
+                        }
+                    ]
+                }
+            }]
+        }) }}
+    {% endfor %}
+{% endmacro %}
+
+{% macro bulkAppointments() %}
+    <h2 class="govuk-heading-m">Prisoner appointment details</h2>
+
+    {{ govukDetails({
+        summaryText: "View individual prisoner appointment details",
+        html: bulkAppointmentsList()
+    }) }}
+    
 {% endmacro %}

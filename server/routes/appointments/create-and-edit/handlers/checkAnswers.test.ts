@@ -76,11 +76,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
   describe('GET', () => {
     it('should render the check answers page with data from session', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/check-answers', {
-        startDate: new Date('2023-04-23T00:00:00.000+0100'),
-        startTime: new Date('2023-04-23T09:30:00.000+0100'),
-        endTime: new Date('2023-04-23T13:00:00.000+0100'),
-      })
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/check-answers')
     })
   })
 

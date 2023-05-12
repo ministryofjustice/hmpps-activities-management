@@ -4,6 +4,7 @@ import { AppointmentRepeatPeriod } from '../../../@types/appointments'
 export enum AppointmentType {
   INDIVIDUAL = 'INDIVIDUAL',
   GROUP = 'GROUP',
+  BULK = 'BULK',
 }
 
 export enum AppointmentJourneyMode {

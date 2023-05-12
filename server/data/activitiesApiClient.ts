@@ -37,6 +37,8 @@ import {
   AppointmentOccurrenceSearchResult,
   ActivityUpdateRequest,
   AppointmentOccurrenceCancelRequest,
+  BulkAppointmentsRequest,
+  BulkAppointment,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -338,6 +340,17 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/appointments`,
       authToken: user.token,
       data: appointment,
+    })
+  }
+
+  async postCreateBulkAppointment(
+    bulkAppointments: BulkAppointmentsRequest,
+    user: ServiceUser,
+  ): Promise<BulkAppointment> {
+    return this.post({
+      path: `/bulk-appointments`,
+      authToken: user.token,
+      data: bulkAppointments,
     })
   }
 

@@ -12,19 +12,18 @@
 
 {% set pageTitle = appointmentJourneyTitle("Review Prisoners", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-review-prisoners-page' %}
-{% set backLinkHref = "how-to-add-prisoners" %}
-
-{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set prisoners = session.editAppointmentJourney.addPrisoners %}
-{% else %}
-    {% set prisoners = session.appointmentJourney.prisoners %}
-{% endif %}
+{% set backLinkHref = "upload-by-csv" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners" %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-            <h1 class="govuk-heading-l">Review and add prisoners to the appointment list</h1>
+            {% if session.appointmentJourney.type == AppointmentType.BULK %}
+                <h1 class="govuk-heading-l">Review prisoner details</h1>
+                <p class="govuk-body">You can select and remove prisoners if you need to.</p>
+            {% else %}
+                <h1 class="govuk-heading-l">Review and add prisoners to the appointment list</h1>
+            {% endif %}
         </div>
         <div class="govuk-grid-column-two-thirds">
             {% set prisonersList = [] %}
@@ -83,14 +82,25 @@
                     rows: prisonersList
                 }) }}
 
-            <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "Add another person",
-                    classes: "govuk-button--secondary",
-                    href: "how-to-add-prisoners",
-                    attributes: { 'data-qa': 'add-prisoner-secondary' }
-                }) }}
-            </div>
+            {% if session.appointmentJourney.type == AppointmentType.BULK %}
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Add another person",
+                        classes: "govuk-button--secondary",
+                        href: "upload-bulk-appointment",
+                        attributes: { 'data-qa': 'add-prisoner-secondary' }
+                    }) }}
+                </div>
+            {% else %}
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Add another person",
+                        classes: "govuk-button--secondary",
+                        href: "how-to-add-prisoners",
+                        attributes: { 'data-qa': 'add-prisoner-secondary' }
+                    }) }}
+                </div>
+            {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

@@ -3,7 +3,7 @@ import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
-import { AppointmentJourneyMode } from '../appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 
 export class Location {
   @Expose()
@@ -44,7 +44,11 @@ export default class LocationRoutes {
       description: location.description,
     }
 
-    res.redirectOrReturn(`date-and-time`)
+    if (req.session.appointmentJourney.type === AppointmentType.BULK) {
+      res.redirectOrReturn(`bulk-appointment-date`)
+    } else {
+      res.redirectOrReturn(`date-and-time`)
+    }
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {

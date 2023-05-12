@@ -12,6 +12,7 @@ import { RecordAttendanceRequests } from '../../routes/record-attendance/recordA
 // eslint-disable-next-line import/no-cycle
 import { ActivitiesFilters, AttendanceSummaryFilters, UnlockFilters } from '../activities'
 import { AppointmentDetails, AppointmentOccurrenceDetails } from '../activitiesAPI/types'
+import { BulkAppointmentJourney } from '../../routes/appointments/create-and-edit/bulkAppointmentJourney'
 
 export default {}
 
@@ -27,6 +28,7 @@ declare module 'express-session' {
     allocateJourney: AllocateToActivityJourney
     appointmentJourney: AppointmentJourney
     editAppointmentJourney: EditAppointmentJourney
+    bulkAppointmentJourney: BulkAppointmentJourney
     calendarSpikeJourney: CalendarSpikeJourney
     unlockFilters: UnlockFilters
     activitiesFilters: ActivitiesFilters
@@ -41,7 +43,8 @@ declare module 'express-serve-static-core' {
     redirectWithSuccess?(path: string, successHeading: string, message?: string): void
     redirectOrReturnWithSuccess?(path: string, successHeading: string, message?: string): void
     redirectOrReturn?(path: string): void
-    validationFailed?(field: string, message: string): void
+    addValidationError?(field: string, message: string): void
+    validationFailed?(field?: string, message?: string): void
   }
 }
 
