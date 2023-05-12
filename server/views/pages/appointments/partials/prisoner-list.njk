@@ -39,7 +39,7 @@
     {% if appointmentType == AppointmentType.GROUP %}
         {% set prisonerActionItems = (prisonerActionItems.push(
             {
-                href: "#",
+                href: occurenceLink + "/edit/start/prisoners/add",
                 text: "Add prisoners",
                 classes: "govuk-link--no-visited-state",
                 attributes: { 'data-qa': 'add-prisoners' }

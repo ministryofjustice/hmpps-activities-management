@@ -27,7 +27,7 @@
         <div class="govuk-grid-column-one-third">
             <div class='related-tasks'>
                 <ul class='govuk-list'>
-                    <li><a href="/allocate/activities" class="govuk-link">Find other activities with vacancies</a></li>
+                    <li><a href="/allocation-dashboard" class="govuk-link">Find other activities with vacancies</a></li>
                 </ul>
             </div>
         </div>
@@ -148,13 +148,13 @@
     {% set rows = [] %}
     {% for row in currentlyAllocated %}
         {% set otherAllocationsHtml %}
-            <div>
+            <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <a href='/allocate/{{ allocation.id }}/allocate' class='govuk-link govuk-link--no-visited-state govuk-!-display-block' target='_blank'>{{ allocation.scheduleName }}</a>
+                    <li><a href='/allocation-dashboard/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName }}</a></li>
                 {% else %}
-                    <div>None</div>
+                    <li>None</li>
                 {% endfor %}
-            </div>
+            </ul>
         {% endset %}
 
         {% set rows = (rows.push({
@@ -194,7 +194,7 @@
         {{ multiSelect({
             caption: "Currently allocated",
             captionClasses: "govuk-visually-hidden",
-            name: 'selectedAttendances',
+            name: 'selectedAllocations',
             head: [
                 {
                     text: "Prisoner details"
@@ -210,7 +210,12 @@
                 }
             ],
             rows: rows,
-            actions: [],
+            actions: [
+                {
+                    text: 'Remove from activity',
+                    formAction: 'allocation-dashboard/deallocate'
+                }
+            ],
             itemsDescription: {
                 singular: 'person',
                 plural: 'people'
@@ -375,13 +380,13 @@
     {% set rows = [] %}
     {% for row in pagedCandidates.content %}
         {% set currentAllocationsHtml %}
-            <div>
+            <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <a href='/allocate/{{ allocation.scheduleId }}/allocate' class='govuk-link govuk-link--no-visited-state govuk-!-display-block' target='_blank'>{{ allocation.activitySummary }}</a>
+                    <li><a href='/allocation-dashboard/{{ allocation.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
                 {% else %}
-                    <div>None</div>
+                    <li>None</li>
                 {% endfor %}
-            </div>
+            </ul>
         {% endset %}
         {% set educationLevelHtml %}
             <div>
@@ -422,7 +427,7 @@
         ]), rows) %}
     {% endfor %}
 
-    <form method='POST'>
+    <form method='POST' action='{{ schedule.id }}/allocate'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
         {{ govukTable({
             caption: "Candidates",

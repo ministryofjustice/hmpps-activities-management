@@ -144,7 +144,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/allocation-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/allocation-dashboard', {
         allocationSummaryView: { capacity: 20, allocated: 10, vacancies: 10 },
         schedule: { scheduleId: 1, activity: { minimumIncentiveLevel: 'Basic' } },
         currentlyAllocated: [
@@ -213,7 +213,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/allocate-to-activity/allocation-dashboard',
+        'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
           filters: expect.objectContaining({
             incentiveLevelFilter: 'Standard or Enhanced',
@@ -245,7 +245,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/allocate-to-activity/allocation-dashboard',
+        'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
           filters: expect.objectContaining({
             riskLevelFilter: 'Low',
@@ -277,7 +277,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/allocate-to-activity/allocation-dashboard',
+        'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
           filters: expect.objectContaining({
             riskLevelFilter: 'Low or Medium',
@@ -309,7 +309,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/allocate-to-activity/allocation-dashboard',
+        'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
           filters: expect.objectContaining({
             riskLevelFilter: 'Low or Medium or High',
@@ -335,7 +335,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/allocate-to-activity/allocation-dashboard',
+        'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
           filters: expect.objectContaining({
             riskLevelFilter: 'Any Workplace Risk Assessment',
@@ -360,7 +360,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/allocate-to-activity/allocation-dashboard',
+        'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
           filters: expect.objectContaining({
             riskLevelFilter: 'No Workplace Risk Assessment',
@@ -385,7 +385,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/allocate-to-activity/allocation-dashboard',
+        'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
           filters: expect.objectContaining({
             employmentFilter: 'In work',
@@ -410,7 +410,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/allocate-to-activity/allocation-dashboard',
+        'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
           filters: expect.objectContaining({
             employmentFilter: 'Everyone',
@@ -435,7 +435,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/allocate-to-activity/allocation-dashboard',
+        'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
           filters: expect.objectContaining({
             employmentFilter: 'Not in work',
@@ -471,13 +471,14 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
   })
 
-  describe('POST', () => {
+  describe('ALLOCATE', () => {
     it('should redirect to allocate the selected candidate', async () => {
       req.body = { selectedAllocation: 'ABC123' }
+      req.params = { scheduleId: '1' }
 
-      await handler.POST(req, res)
+      await handler.ALLOCATE(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`allocate/ABC123`)
+      expect(res.redirect).toHaveBeenCalledWith(`/allocate/prisoner/ABC123?scheduleId=1`)
     })
   })
 

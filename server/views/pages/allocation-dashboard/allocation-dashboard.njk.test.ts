@@ -3,7 +3,7 @@ import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { registerNunjucks } from '../../../nunjucks/nunjucksSetup'
 
-const snippet = fs.readFileSync('server/views/pages/allocate-to-activity/allocation-dashboard.njk')
+const snippet = fs.readFileSync('server/views/pages/allocation-dashboard/allocation-dashboard.njk')
 
 describe('Views - Allocation dashboard', () => {
   let compiledTemplate: Template
