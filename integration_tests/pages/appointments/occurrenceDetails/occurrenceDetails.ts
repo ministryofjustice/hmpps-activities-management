@@ -29,7 +29,8 @@ export default class OccurrenceDetailsPage extends Page {
 
   assertLocation = (location: string) => this.assertAppointmentDetail('Location', location)
 
-  assertStartDate = (startDate: Date) => this.assertAppointmentDetail('Date', formatDate(startDate, 'EEEE d MMMM yyyy'))
+  assertStartDate = (startDate: Date) =>
+    this.assertAppointmentDetail('Date', formatDate(startDate, 'EEEE, d MMMM yyyy'))
 
   assertStartTime = (hour: number, minute: number) =>
     this.assertAppointmentDetail('Start time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)

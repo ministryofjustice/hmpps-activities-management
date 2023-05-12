@@ -7,7 +7,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Location", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-location-page' %}
-{% set backLinkHref = "/category" %}
+{% set backLinkHref = backLinkHref %}
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for location in locations %}
@@ -44,7 +44,7 @@
                 }) }}
 
                 {{ govukButton({
-                    text: "Accept and save" if session.appointmentJourney.mode == "EDIT" else "Continue"
+                    text: "Accept and save" if isCtaAcceptAndSave else "Continue"
                 }) }}
             </form>
         </div>

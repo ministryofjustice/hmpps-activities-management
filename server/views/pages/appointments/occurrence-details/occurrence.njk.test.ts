@@ -38,7 +38,7 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=heading]').text().trim()).toBe(
-      `Test Category appointment - ${formatDate(tomorrow, 'EEEE d MMMM yyyy')}`,
+      `Test Category appointment - ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`,
     )
   })
 

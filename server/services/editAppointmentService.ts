@@ -1,0 +1,201 @@
+import { Request, Response } from 'express'
+import { plainToInstance } from 'class-transformer'
+import ActivitiesService from './activitiesService'
+import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
+import { EditApplyTo } from '../@types/appointments'
+import { AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
+import SimpleDate from '../commonValidationTypes/simpleDate'
+import SimpleTime from '../commonValidationTypes/simpleTime'
+
+export default class EditAppointmentService {
+  constructor(private readonly activitiesService: ActivitiesService) {}
+
+  getBackLinkHref(req: Request, defaultBackLinkHref: string) {
+    if (
+      req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+      req.params.appointmentId &&
+      req.params.occurrenceId
+    ) {
+      return `/appointments/${req.params.appointmentId}/occurrence/${req.params.occurrenceId}`
+    }
+
+    return defaultBackLinkHref
+  }
+
+  isApplyToQuestionRequired(req: Request) {
+    return this.getApplyToOptions(req).length > 1
+  }
+
+  async redirectOrEdit(req: Request, res: Response, property: string) {
+    const { appointmentId, occurrenceId } = req.params
+    if (this.hasAnyPropertyChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)) {
+      if (this.isApplyToQuestionRequired(req)) {
+        return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/${property}/apply-to`)
+      }
+
+      return this.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+    }
+
+    req.session.appointmentJourney = null
+    req.session.editAppointmentJourney = null
+
+    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+  }
+
+  getUpdatedPropertiesMessage(req: Request) {
+    const { appointmentJourney, editAppointmentJourney } = req.session
+
+    const updatedProperties = []
+    if (this.hasLocationChanged(appointmentJourney, editAppointmentJourney)) {
+      updatedProperties.push('location')
+    }
+
+    if (this.hasStartDateChanged(appointmentJourney, editAppointmentJourney)) {
+      updatedProperties.push('date')
+    }
+
+    if (
+      this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
+      this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)
+    ) {
+      updatedProperties.push('time')
+    }
+
+    return updatedProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')
+  }
+
+  isFirstRemainingOccurrence(req: Request) {
+    const { editAppointmentJourney } = req.session
+
+    return (
+      editAppointmentJourney.repeatCount - editAppointmentJourney.sequenceNumber + 1 ===
+      editAppointmentJourney.occurrencesRemaining
+    )
+  }
+
+  isSecondLastRemainingOccurrence(req: Request) {
+    const { editAppointmentJourney } = req.session
+
+    return editAppointmentJourney.sequenceNumber + 1 === editAppointmentJourney.repeatCount
+  }
+
+  isLastRemainingOccurrence(req: Request) {
+    const { editAppointmentJourney } = req.session
+
+    return editAppointmentJourney.sequenceNumber === editAppointmentJourney.repeatCount
+  }
+
+  getApplyToOptions(req: Request) {
+    const { appointmentJourney, editAppointmentJourney } = req.session
+
+    const applyToOptions = [EditApplyTo.THIS_OCCURRENCE]
+
+    if (editAppointmentJourney.occurrencesRemaining > 1) {
+      const isFirstRemainingOccurrence = this.isFirstRemainingOccurrence(req)
+      const isLastRemainingOccurrence = this.isLastRemainingOccurrence(req)
+
+      if (!isFirstRemainingOccurrence && !isLastRemainingOccurrence) {
+        applyToOptions.push(EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES)
+      }
+
+      if (!this.hasStartDateChanged(appointmentJourney, editAppointmentJourney) || isFirstRemainingOccurrence) {
+        applyToOptions.push(EditApplyTo.ALL_FUTURE_OCCURRENCES)
+      }
+    }
+
+    return applyToOptions
+  }
+
+  async edit(req: Request, res: Response, applyTo: EditApplyTo) {
+    const { user } = res.locals
+    const { appointmentJourney, editAppointmentJourney } = req.session
+    const { appointmentId, occurrenceId } = req.params
+
+    const occurrenceUpdates = { applyTo } as AppointmentOccurrenceUpdateRequest
+
+    if (this.hasLocationChanged(appointmentJourney, editAppointmentJourney)) {
+      occurrenceUpdates.internalLocationId = editAppointmentJourney.location.id
+    }
+
+    if (this.hasStartDateChanged(appointmentJourney, editAppointmentJourney)) {
+      occurrenceUpdates.startDate = plainToInstance(SimpleDate, editAppointmentJourney.startDate).toIsoString()
+      // TODO: This is a hack as the API doesn't currently support apply to all future occurrences for date
+      if (applyTo === EditApplyTo.ALL_FUTURE_OCCURRENCES) {
+        occurrenceUpdates.applyTo = EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES
+      }
+    }
+
+    if (this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney)) {
+      occurrenceUpdates.startTime = plainToInstance(SimpleTime, editAppointmentJourney.startTime).toIsoString()
+    }
+
+    if (this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)) {
+      occurrenceUpdates.endTime = plainToInstance(SimpleTime, editAppointmentJourney.endTime).toIsoString()
+    }
+
+    await this.activitiesService.editAppointmentOccurrence(+occurrenceId, occurrenceUpdates, user)
+
+    const successHeading = `You've changed the ${this.getUpdatedPropertiesMessage(req)} for ${this.getAppliedToMessage(
+      editAppointmentJourney,
+      applyTo,
+    )}`
+
+    req.session.appointmentJourney = null
+    req.session.editAppointmentJourney = null
+
+    res.redirectWithSuccess(`/appointments/${appointmentId}/occurrence/${occurrenceId}`, successHeading)
+  }
+
+  private hasAnyPropertyChanged(
+    appointmentJourney: AppointmentJourney,
+    editAppointmentJourney: EditAppointmentJourney,
+  ) {
+    return (
+      this.hasLocationChanged(appointmentJourney, editAppointmentJourney) ||
+      this.hasStartDateChanged(appointmentJourney, editAppointmentJourney) ||
+      this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
+      this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)
+    )
+  }
+
+  private hasLocationChanged(appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) {
+    return editAppointmentJourney.location && appointmentJourney.location.id !== editAppointmentJourney.location.id
+  }
+
+  private hasStartDateChanged(appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) {
+    const { startDate } = appointmentJourney
+    const editStartDate = editAppointmentJourney.startDate
+    return (
+      editStartDate &&
+      (startDate.day !== editStartDate.day ||
+        startDate.month !== editStartDate.month ||
+        startDate.year !== editStartDate.year)
+    )
+  }
+
+  private hasStartTimeChanged(appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) {
+    const { startTime } = appointmentJourney
+    const editStartTime = editAppointmentJourney.startTime
+    return editStartTime && (startTime.hour !== editStartTime.hour || startTime.minute !== editStartTime.minute)
+  }
+
+  private hasEndTimeChanged(appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) {
+    const { endTime } = appointmentJourney
+    const editEndTime = editAppointmentJourney.endTime
+    return editEndTime && (endTime.hour !== editEndTime.hour || endTime.minute !== editEndTime.minute)
+  }
+
+  private getAppliedToMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: EditApplyTo) {
+    switch (applyTo) {
+      case EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
+        return `appointments ${editAppointmentJourney.sequenceNumber} to ${editAppointmentJourney.repeatCount} in the series`
+      case EditApplyTo.ALL_FUTURE_OCCURRENCES:
+        return `appointments ${
+          editAppointmentJourney.repeatCount - editAppointmentJourney.occurrencesRemaining + 1
+        } to ${editAppointmentJourney.repeatCount} in the series`
+      default:
+        return 'this appointment'
+    }
+  }
+}

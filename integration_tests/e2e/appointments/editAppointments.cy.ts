@@ -39,9 +39,7 @@ context('Edit appointment', () => {
         locationPage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents(
-          'Appointment location for this occurrence changed successfully',
-        )
+        occurrenceDetailsPage.assertNotificationContents("You've changed the location for this appointment")
       })
 
       it('Returns to occurrence details page if back link clicked', () => {
@@ -65,7 +63,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents('Appointment date for this occurrence changed successfully')
+        occurrenceDetailsPage.assertNotificationContents("You've changed the date for this appointment")
       })
     })
 
@@ -81,9 +79,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents(
-          'Appointment start time for this occurrence changed successfully',
-        )
+        occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
       })
     })
 
@@ -98,9 +94,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents(
-          'Appointment end time for this occurrence changed successfully',
-        )
+        occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
       })
     })
 
@@ -116,9 +110,7 @@ context('Edit appointment', () => {
         dateAndTimePage.getButton('Accept and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents(
-          'Appointment date, start time and end time for this occurrence changed successfully',
-        )
+        occurrenceDetailsPage.assertNotificationContents("You've changed the date and time for this appointment")
       })
 
       it('Returns to occurrence details page if back link clicked', () => {

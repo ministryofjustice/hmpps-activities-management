@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Expose, Type, plainToInstance } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
@@ -9,7 +9,8 @@ import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import ActivitiesService from '../../../../services/activitiesService'
-import { EditApplyTo } from '../../../../@types/appointments'
+import { AppointmentJourneyMode } from '../appointmentJourney'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 
 export class DateAndTime {
   @Expose()
@@ -38,80 +39,54 @@ export class DateAndTime {
 }
 
 export default class DateAndTimeRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  private readonly editAppointmentService: EditAppointmentService
+
+  constructor(private readonly activitiesService: ActivitiesService) {
+    this.editAppointmentService = new EditAppointmentService(activitiesService)
+  }
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/appointments/create-and-edit/date-and-time')
+    res.render('pages/appointments/create-and-edit/date-and-time', {
+      backLinkHref: this.editAppointmentService.getBackLinkHref(req, 'name'),
+      isCtaAcceptAndSave:
+        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+        !this.editAppointmentService.isApplyToQuestionRequired(req),
+    })
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
-    this.setTimeAndDate(req)
+    this.setTimeAndDate(req, 'appointmentJourney')
 
     res.redirectOrReturn(`repeat`)
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const { appointmentId, occurrenceId } = req.params
+    this.setTimeAndDate(req, 'editAppointmentJourney')
 
-    const startDate = plainToInstance(SimpleDate, req.session.appointmentJourney.startDate)
-    const startTime = plainToInstance(SimpleTime, req.session.appointmentJourney.startTime)
-    const endTime = plainToInstance(SimpleTime, req.session.appointmentJourney.endTime)
-
-    this.setTimeAndDate(req)
-
-    const updatedStartDate = plainToInstance(SimpleDate, req.session.appointmentJourney.startDate)
-    const updatedStartTime = plainToInstance(SimpleTime, req.session.appointmentJourney.startTime)
-    const updatedEndTime = plainToInstance(SimpleTime, req.session.appointmentJourney.endTime)
-
-    await this.activitiesService.editAppointmentOccurrence(
-      +occurrenceId,
-      {
-        startDate: updatedStartDate.toIsoString(),
-        startTime: updatedStartTime.toIsoString(),
-        endTime: updatedEndTime.toIsoString(),
-        applyTo: EditApplyTo.THIS_OCCURRENCE,
-      },
-      user,
-    )
-
-    const updatedProperties = []
-    if (startDate.toIsoString() !== updatedStartDate.toIsoString()) updatedProperties.push('date')
-    if (startTime.toIsoString() !== updatedStartTime.toIsoString()) updatedProperties.push('start time')
-    if (endTime.toIsoString() !== updatedEndTime.toIsoString()) updatedProperties.push('end time')
-
-    if (updatedProperties.length > 0) {
-      return res.redirectWithSuccess(
-        `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
-        `Appointment ${updatedProperties
-          .join(', ')
-          .replace(/(,)(?!.*\1)/, ' and')} for this occurrence changed successfully`,
-      )
-    }
-
-    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+    await this.editAppointmentService.redirectOrEdit(req, res, 'date-and-time')
   }
 
-  private setTimeAndDate(req: Request) {
+  private setTimeAndDate(req: Request, journeyName: string) {
+    const appointmentJourney = req.session[journeyName]
     const { startDate, startTime, endTime } = req.body
 
-    req.session.appointmentJourney.startDate = {
+    appointmentJourney.startDate = {
       day: startDate.day,
       month: startDate.month,
       year: startDate.year,
       date: startDate.toRichDate(),
     }
 
-    req.session.appointmentJourney.startTime = {
+    appointmentJourney.startTime = {
       hour: startTime.hour,
       minute: startTime.minute,
-      date: startTime.toDate(req.session.appointmentJourney.startDate.date),
+      date: startTime.toDate(appointmentJourney.startDate.date),
     }
 
-    req.session.appointmentJourney.endTime = {
+    appointmentJourney.endTime = {
       hour: endTime.hour,
       minute: endTime.minute,
-      date: endTime.toDate(req.session.appointmentJourney.startDate.date),
+      date: endTime.toDate(appointmentJourney.startDate.date),
     }
   }
 }

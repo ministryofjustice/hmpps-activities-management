@@ -65,7 +65,7 @@ describe('Views - Appointments Management - Individual Movement Slip', () => {
     expect($('[data-qa=prison-number]').text().trim()).toEqual('A1234BC')
     expect($('[data-qa=cell-location]').text().trim()).toEqual('MDI-1-2-3')
     expect($('[data-qa=date-and-time]').text().trim()).toEqual(
-      `${formatDate(tomorrow, 'EEEE d MMMM yyyy')} - 13:00 to 13:15`,
+      `${formatDate(tomorrow, 'EEEE, d MMMM yyyy')} - 13:00 to 13:15`,
     )
     expect($('[data-qa=moving-to]').text().trim()).toEqual('HB1 Doctors')
     expect($('[data-qa=reason]').text().trim()).toEqual('Medical - Other')
@@ -119,7 +119,7 @@ describe('Views - Appointments Management - Individual Movement Slip', () => {
     expect($('[data-qa=prison-number]').text().trim()).toEqual('A1234BC')
     expect($('[data-qa=cell-location]').text().trim()).toEqual('MDI-1-2-3')
     expect($('[data-qa=date-and-time]').text().trim()).toEqual(
-      `${formatDate(tomorrow, 'EEEE d MMMM yyyy')} - 13:00 to 13:15`,
+      `${formatDate(tomorrow, 'EEEE, d MMMM yyyy')} - 13:00 to 13:15`,
     )
     expect($('[data-qa=moving-to]').text().trim()).toEqual('HB1 Doctors')
     expect($('[data-qa=reason]').text().trim()).toEqual('Medical - Other')

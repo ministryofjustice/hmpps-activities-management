@@ -1,8 +1,10 @@
 import { Request, Response } from 'express'
 import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import StartJourneyRoutes from './startJourney'
-import { AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentDetails, AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
 import { parseDate } from '../../../../utils/utils'
+import { EditAppointmentJourney } from '../editAppointmentJourney'
+import { YesNo } from '../../../../@types/activities'
 
 describe('Route Handlers - Create Appointment - Start', () => {
   const handler = new StartJourneyRoutes()
@@ -49,9 +51,23 @@ describe('Route Handlers - Create Appointment - Start', () => {
       req.params = {
         property: 'location',
       }
+      req.appointment = {
+        occurrences: [
+          {
+            id: 12,
+            sequenceNumber: 2,
+          },
+          {
+            id: 13,
+            sequenceNumber: 3,
+          },
+        ],
+      } as unknown as AppointmentDetails
       req.appointmentOccurrence = {
         id: 12,
         appointmentId: 2,
+        appointmentType: 'GROUP',
+        sequenceNumber: 2,
         category: {
           code: 'CHAP',
           description: 'Chaplaincy',
@@ -64,7 +80,10 @@ describe('Route Handlers - Create Appointment - Start', () => {
         startDate: '2023-04-13',
         startTime: '09:00',
         endTime: '10:00',
-        appointmentType: 'GROUP',
+        repeat: {
+          period: 'WEEKLY',
+          count: 3,
+        },
         prisoners: [
           {
             prisonerNumber: 'A1234BC',
@@ -110,11 +129,21 @@ describe('Route Handlers - Create Appointment - Start', () => {
           hour: 10,
           minute: 0,
         },
+        repeat: YesNo.YES,
+        repeatCount: 3,
+        repeatPeriod: 'WEEKLY',
       } as AppointmentJourney
+
+      const editAppointmentJourneySession = {
+        repeatCount: 3,
+        occurrencesRemaining: 2,
+        sequenceNumber: 2,
+      } as EditAppointmentJourney
 
       await handler.EDIT_OCCURRENCE(req, res)
 
       expect(req.session.appointmentJourney).toEqual(appointmentJourneySession)
+      expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/location`)
     })
 

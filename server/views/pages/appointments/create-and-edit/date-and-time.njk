@@ -9,7 +9,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Date and Time", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-date-and-time-page' %}
-{% set backLinkHref = "name" %}
+{% set backLinkHref = backLinkHref %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -55,7 +55,7 @@
                     formResponses: formResponses.endTime or session.appointmentJourney.endTime
                 }) }}
                 {{ govukButton({
-                    text: "Accept and save" if session.appointmentJourney.mode == "EDIT" else "Continue"
+                    text: "Accept and save" if isCtaAcceptAndSave else "Continue"
                 }) }}
             </form>
         </div>

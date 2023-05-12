@@ -2,7 +2,8 @@ import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import { EditApplyTo } from '../../../../@types/appointments'
+import EditAppointmentService from '../../../../services/editAppointmentService'
+import { AppointmentJourneyMode } from '../appointmentJourney'
 
 export class Location {
   @Expose()
@@ -13,22 +14,32 @@ export class Location {
 }
 
 export default class LocationRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  private readonly editAppointmentService: EditAppointmentService
+
+  constructor(private readonly activitiesService: ActivitiesService) {
+    this.editAppointmentService = new EditAppointmentService(activitiesService)
+  }
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     res.render('pages/appointments/create-and-edit/location', {
+      backLinkHref: this.editAppointmentService.getBackLinkHref(req, 'category'),
       locations,
+      isCtaAcceptAndSave:
+        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+        !this.editAppointmentService.isApplyToQuestionRequired(req),
     })
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentJourney } = req.session
+
     const location = await this.getLocation(req, res)
     if (!location) return
 
-    req.session.appointmentJourney.location = {
+    appointmentJourney.location = {
       id: location.id,
       description: location.description,
     }
@@ -37,25 +48,15 @@ export default class LocationRoutes {
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const { appointmentId, occurrenceId } = req.params
+    const location = await this.getLocation(req, res)
+    if (!location) return
 
-    const result = await this.getLocation(req, res)
-    if (!result) return
+    req.session.editAppointmentJourney.location = {
+      id: location.id,
+      description: location.description,
+    }
 
-    await this.activitiesService.editAppointmentOccurrence(
-      +occurrenceId,
-      {
-        internalLocationId: result.id,
-        applyTo: EditApplyTo.THIS_OCCURRENCE,
-      },
-      user,
-    )
-
-    res.redirectWithSuccess(
-      `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
-      `Appointment location for this occurrence changed successfully`,
-    )
+    await this.editAppointmentService.redirectOrEdit(req, res, 'location')
   }
 
   private getLocation = async (req: Request, res: Response) => {

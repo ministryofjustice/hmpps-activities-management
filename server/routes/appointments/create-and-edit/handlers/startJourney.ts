@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import { formatDate, parseDate } from '../../../../utils/utils'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
+import { YesNo } from '../../../../@types/activities'
+import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
 
 export default class StartJourneyRoutes {
   INDIVIDUAL = async (req: Request, res: Response): Promise<void> => {
@@ -21,7 +23,7 @@ export default class StartJourneyRoutes {
   }
 
   EDIT_OCCURRENCE = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentOccurrence } = req
+    const { appointment, appointmentOccurrence } = req
     const { property } = req.params
 
     if (!property) return res.redirect('back')
@@ -62,6 +64,15 @@ export default class StartJourneyRoutes {
         hour: +formatDate(endTime, 'HH'),
         minute: +formatDate(endTime, 'mm'),
       },
+      repeat: appointmentOccurrence.repeat ? YesNo.YES : YesNo.NO,
+      repeatPeriod: appointmentOccurrence.repeat?.period as AppointmentRepeatPeriod,
+      repeatCount: appointmentOccurrence.repeat?.count,
+    }
+
+    req.session.editAppointmentJourney = {
+      repeatCount: appointmentOccurrence.repeat?.count ?? 1,
+      occurrencesRemaining: appointment.occurrences.length,
+      sequenceNumber: appointmentOccurrence.sequenceNumber,
     }
 
     return res.redirect(
