@@ -74,6 +74,16 @@ export default class StartJourneyRoutes {
     )
   }
 
+  CANCEL = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentOccurrence } = req
+
+    this.populateEditSession(req)
+
+    return res.redirect(
+      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/cancel/cancel-or-delete`,
+    )
+  }
+
   private populateEditSession(req: Request) {
     const { appointment, appointmentOccurrence } = req
 

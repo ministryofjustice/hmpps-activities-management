@@ -108,5 +108,19 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   get('/prisoners/add/apply-to', applyToRoutes.GET, true)
   post('/prisoners/add/apply-to', applyToRoutes.POST, ApplyTo)
 
+  // Cancel routes
+  router.get(
+    '/start/cancel',
+    fetchAppointment(activitiesService),
+    fetchAppointmentOccurrence(activitiesService),
+    startHandler.CANCEL,
+  )
+  get('/cancel/cancel-or-delete', reviewPrisoners.GET, true)
+  post('/cancel/cancel-or-delete', reviewPrisoners.EDIT)
+  get('/cancel/confirm', confirmRemovePrisonerRoutes.GET, true)
+  post('/cancel/confirm', confirmRemovePrisonerRoutes.POST, ConfirmEdit)
+  get('/cancel/apply-to', applyToRoutes.GET, true)
+  post('/cancel/apply-to', applyToRoutes.POST, ApplyTo)
+
   return router
 }
