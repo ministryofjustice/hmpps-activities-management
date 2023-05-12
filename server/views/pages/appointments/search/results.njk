@@ -63,16 +63,9 @@
     {% set selectedFilterCategories = [] %}
 
     {% set selectedDateAndTime = [] %}
-    {% if (endDate) %}
-        {% set selectedDateAndTime = (selectedDateAndTime.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
-            text: endDate | toDate | formatDate('d MMM yyyy')
-        }), selectedDateAndTime) %}
-    {% endif %}
-
     {% if (timeSlot) %}
         {% set selectedDateAndTime = (selectedDateAndTime.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+            href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
             text: ("Morning (AM)" if timeSlot == TimeSlot.AM) +
                   ("Afternoon (PM)" if timeSlot == TimeSlot.PM) +
                   ("Evening (ED)" if timeSlot == TimeSlot.ED)
@@ -82,7 +75,7 @@
     {% if (selectedDateAndTime.length > 0) %}
         {% set selectedFilterCategories = (selectedFilterCategories.push({
             heading: {
-                text: 'End date and time period'
+                text: 'Time period'
             },
             items: selectedDateAndTime
         }), selectedFilterCategories) %}
@@ -97,7 +90,7 @@
                     text: 'Type'
                 },
                 items: [{
-                    href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+                    href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
                     text: category.description
                 }]
             }), selectedFilterCategories) %}
@@ -113,7 +106,7 @@
                     text: 'Location'
                 },
                 items: [{
-                    href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
+                    href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
                     text: location.description
                 }]
             }), selectedFilterCategories) %}
@@ -126,7 +119,7 @@
                 text: 'Prison number'
             },
             items: [{
-                href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy + '&type=' + type,
+                href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy + '&type=' + type,
                 text: prisonerNumber
             }]
         }), selectedFilterCategories) %}
@@ -138,7 +131,7 @@
                 text: 'Created by'
             },
             items: [{
-                href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + '&type=' + type,
+                href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + '&type=' + type,
                 text: ("Myself" if createdBy == user.username) +
                 ("All appointment creators" if createdBy == "all")
             }]
@@ -151,7 +144,7 @@
                 text: 'Individual or group'
             },
             items: [{
-                href: '?startDate=' + startDate | toDate | toDateString + '&endDate=' + (endDate | toDate | toDateString if endDate) + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=',
+                href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=',
                 text: ("Individual appointment" if type == AppointmentType.INDIVIDUAL) +
                 ("Group appointment" if type == AppointmentType.GROUP)
             }]
@@ -165,7 +158,7 @@
             },
             clearLink: {
                 text: 'Clear filters',
-                href: '?startDate=' + now | toDateString
+                href: '?startDate=' + startDate | toDate | toDateString
             },
             categories: selectedFilterCategories
         } %}
@@ -176,24 +169,12 @@
             id: 'startDate',
             name: 'startDate',
             label: {
-                text: "Start date",
+                text: "Date",
                 classes: "govuk-label--s"
             },
             renderedErrorMessage: validationErrors | findError('startDate'),
             validationErrors: validationErrors,
             formResponses: formResponses.startDate or startDate
-        }) }}
-
-        {{ datePicker({
-            id: 'endDate',
-            name: 'endDate',
-            label: {
-                text: "End date",
-                classes: "govuk-label--s"
-            },
-            renderedErrorMessage: validationErrors | findError('endDate'),
-            validationErrors: validationErrors,
-            formResponses: formResponses.endDate or endDate
         }) }}
 
         {{ govukRadios({
