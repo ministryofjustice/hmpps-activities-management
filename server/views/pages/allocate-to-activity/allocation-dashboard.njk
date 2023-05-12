@@ -148,13 +148,13 @@
     {% set rows = [] %}
     {% for row in currentlyAllocated %}
         {% set otherAllocationsHtml %}
-            <div>
+            <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <a href='/allocate/{{ allocation.id }}/allocate' class='govuk-link govuk-link--no-visited-state govuk-!-display-block' target='_blank'>{{ allocation.scheduleName }}</a>
+                    <li><a href='/allocate/{{ allocation.id }}/allocate' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName }}</a></li>
                 {% else %}
-                    <div>None</div>
+                    <li>None</li>
                 {% endfor %}
-            </div>
+            </ul>
         {% endset %}
 
         {% set rows = (rows.push({
@@ -375,13 +375,13 @@
     {% set rows = [] %}
     {% for row in pagedCandidates.content %}
         {% set currentAllocationsHtml %}
-            <div>
+            <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <a href='/allocate/{{ allocation.scheduleId }}/allocate' class='govuk-link govuk-link--no-visited-state govuk-!-display-block' target='_blank'>{{ allocation.activitySummary }}</a>
+                    <li><a href='/allocate/{{ allocation.scheduleId }}/allocate' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
                 {% else %}
-                    <div>None</div>
+                    <li>None</li>
                 {% endfor %}
-            </div>
+            </ul>
         {% endset %}
         {% set educationLevelHtml %}
             <div>
