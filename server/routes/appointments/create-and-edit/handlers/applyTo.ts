@@ -20,16 +20,15 @@ export default class ApplyToRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney } = req.session
     const { appointmentId, occurrenceId, property } = req.params
 
     res.render('pages/appointments/create-and-edit/apply-to', {
       appointmentId,
       occurrenceId,
       property,
-      updatedPropertiesMessage: this.editAppointmentService.getUpdatedPropertiesMessage(req),
+      editMessage: this.editAppointmentService.getEditMessage(req),
       applyToOptions: this.editAppointmentService.getApplyToOptions(req),
-      startDate: new Date(appointmentJourney.startDate.date),
+      startDate: new Date(req.session.appointmentJourney.startDate.date),
       isFirstRemainingOccurrence: this.editAppointmentService.isFirstRemainingOccurrence(req),
       isSecondLastRemainingOccurrence: this.editAppointmentService.isSecondLastRemainingOccurrence(req),
       isLastRemainingOccurrence: this.editAppointmentService.isLastRemainingOccurrence(req),
@@ -38,6 +37,8 @@ export default class ApplyToRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { applyTo } = req.body
+
+    req.session.editAppointmentJourney.applyTo = applyTo
 
     await this.editAppointmentService.edit(req, res, applyTo)
   }
