@@ -28,17 +28,14 @@
                     items: [
                         {
                             value: AppointmentCancellationReason.CANCELLED,
-                            text: "Cancel - the appointment will no longer go ahead",
+                            text: "Cancel - the appointment cannot go ahead",
                             hint: {
-                                text: "Will appear on the unlock list with a 'cancelled' tag"
+                                text: "It will appear on the unlock list with a 'cancelled' tag"
                             }
                         },
                         {
                             value: AppointmentCancellationReason.CREATED_IN_ERROR,
-                            text: "Delete - the appointment was created in error",
-                            hint: {
-                                text: "Will no longer appear on the unlock list"
-                            }
+                            text: "Delete - the appointment should no longer appear on the unlock list"
                         }
                     ]
                 }) }}

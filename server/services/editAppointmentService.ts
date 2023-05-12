@@ -90,6 +90,36 @@ export default class EditAppointmentService {
     return ''
   }
 
+  getEditHintMessage(req: Request) {
+    const { appointmentJourney, editAppointmentJourney } = req.session
+
+    if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
+      return 'cancelling'
+    }
+
+    if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+      return 'deleting'
+    }
+
+    if (this.hasAnyPropertyChanged(appointmentJourney, editAppointmentJourney)) {
+      return 'changing'
+    }
+
+    if (editAppointmentJourney.addPrisoners?.length === 1) {
+      return 'adding this person to'
+    }
+
+    if (editAppointmentJourney.addPrisoners?.length > 1) {
+      return 'adding these people to'
+    }
+
+    if (editAppointmentJourney.removePrisoner) {
+      return 'removing this person from'
+    }
+
+    return ''
+  }
+
   getEditedMessage(req: Request) {
     return this.getEditMessage(req)
       .replace('cancel', 'cancelled')

@@ -19,7 +19,7 @@
               ("This one and the appointment that comes after it in the series" if isSecondLastRemainingOccurrence and (applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES or (applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence))) +
               ("This one and all the appointments in the series that haven’t happened yet" if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence == false),
         hint: {
-            text: "You’re changing appointments " +
+            text: "You’re " + editHintMessage + " appointments " +
                   (session.editAppointmentJourney.sequenceNumber if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES) +
                   (session.editAppointmentJourney.repeatCount - session.editAppointmentJourney.occurrencesRemaining + 1 if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES) +
                   " to " + session.editAppointmentJourney.repeatCount
