@@ -177,7 +177,7 @@
                     }
                 },
                 {
-                    text: row.dateAllocated | formatDate('d MMMM yyyy')
+                    text: row.startDate | formatDate('d MMMM yyyy') + (' to ' + row.endDate | formatDate('d MMMM yyyy') if row.endDate)
                 },
                 {
                     html: otherAllocationsHtml
