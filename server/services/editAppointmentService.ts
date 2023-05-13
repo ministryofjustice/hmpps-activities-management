@@ -3,11 +3,12 @@ import { plainToInstance } from 'class-transformer'
 import ActivitiesService from './activitiesService'
 import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
-import { EditApplyTo } from '../@types/appointments'
-import { AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
+import { AppointmentCancellationReason, EditApplyTo } from '../@types/appointments'
+import { AppointmentOccurrenceCancelRequest, AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 import SimpleTime from '../commonValidationTypes/simpleTime'
-import { fullName, convertToTitleCase } from '../utils/utils'
+import { convertToTitleCase, formatDate, fullName } from '../utils/utils'
+import { YesNo } from '../@types/activities'
 
 export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -38,14 +39,21 @@ export default class EditAppointmentService {
       return this.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
     }
 
-    req.session.appointmentJourney = null
-    req.session.editAppointmentJourney = null
+    this.clearSession(req)
 
     return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
   }
 
   getEditMessage(req: Request) {
     const { appointmentJourney, editAppointmentJourney } = req.session
+
+    if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
+      return 'cancel'
+    }
+
+    if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+      return 'delete'
+    }
 
     const updateProperties = []
     if (this.hasLocationChanged(appointmentJourney, editAppointmentJourney)) {
@@ -82,8 +90,43 @@ export default class EditAppointmentService {
     return ''
   }
 
+  getEditHintMessage(req: Request) {
+    const { appointmentJourney, editAppointmentJourney } = req.session
+
+    if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
+      return 'cancelling'
+    }
+
+    if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+      return 'deleting'
+    }
+
+    if (this.hasAnyPropertyChanged(appointmentJourney, editAppointmentJourney)) {
+      return 'changing'
+    }
+
+    if (editAppointmentJourney.addPrisoners?.length === 1) {
+      return 'adding this person to'
+    }
+
+    if (editAppointmentJourney.addPrisoners?.length > 1) {
+      return 'adding these people to'
+    }
+
+    if (editAppointmentJourney.removePrisoner) {
+      return 'removing this person from'
+    }
+
+    return ''
+  }
+
   getEditedMessage(req: Request) {
-    return this.getEditMessage(req).replace('add', 'added').replace('remove', 'removed').replace('change', 'changed')
+    return this.getEditMessage(req)
+      .replace('cancel', 'cancelled')
+      .replace('delete', 'deleted')
+      .replace('add', 'added')
+      .replace('remove', 'removed')
+      .replace('change', 'changed')
   }
 
   isFirstRemainingOccurrence(req: Request) {
@@ -133,6 +176,47 @@ export default class EditAppointmentService {
     const { appointmentJourney, editAppointmentJourney } = req.session
     const { appointmentId, occurrenceId } = req.params
 
+    if (editAppointmentJourney.cancellationReason) {
+      const { repeat } = appointmentJourney
+      const { cancellationReason } = editAppointmentJourney
+
+      const cancelRequest = {
+        cancellationReasonId: +cancellationReason,
+        applyTo,
+      } as AppointmentOccurrenceCancelRequest
+
+      await this.activitiesService.cancelAppointmentOccurrence(+occurrenceId, cancelRequest, user)
+
+      if (cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+        if (repeat === YesNo.NO) {
+          const successHeading = `You've ${this.getEditedMessage(req)} the ${
+            appointmentJourney.category.description
+          } appointment - ${formatDate(new Date(appointmentJourney.startDate.date), 'EEEE, d MMMM yyyy')}`
+
+          this.clearSession(req)
+
+          return res.redirectWithSuccess(`/appointments`, successHeading)
+        }
+        const successHeading = `You've ${this.getEditedMessage(req)} ${this.getAppliedToSeriesMessage(
+          editAppointmentJourney,
+          applyTo,
+        )}`
+
+        this.clearSession(req)
+
+        return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
+      }
+
+      const successHeading = `You've ${this.getEditedMessage(req)} ${this.getAppliedToAppointmentMessage(
+        editAppointmentJourney,
+        applyTo,
+      )}`
+
+      this.clearSession(req)
+
+      return res.redirectWithSuccess(`/appointments/${appointmentId}/occurrence/${occurrenceId}`, successHeading)
+    }
+
     const occurrenceUpdates = { applyTo } as AppointmentOccurrenceUpdateRequest
 
     if (this.hasLocationChanged(appointmentJourney, editAppointmentJourney)) {
@@ -169,15 +253,14 @@ export default class EditAppointmentService {
 
     await this.activitiesService.editAppointmentOccurrence(+occurrenceId, occurrenceUpdates, user)
 
-    const successHeading = `You've ${this.getEditedMessage(req)} ${this.getAppliedToMessage(
+    const successHeading = `You've ${this.getEditedMessage(req)} ${this.getAppliedToAppointmentMessage(
       editAppointmentJourney,
       applyTo,
     )}`
 
-    req.session.appointmentJourney = null
-    req.session.editAppointmentJourney = null
+    this.clearSession(req)
 
-    res.redirectWithSuccess(`/appointments/${appointmentId}/occurrence/${occurrenceId}`, successHeading)
+    return res.redirectWithSuccess(`/appointments/${appointmentId}/occurrence/${occurrenceId}`, successHeading)
   }
 
   private hasAnyPropertyChanged(
@@ -219,7 +302,7 @@ export default class EditAppointmentService {
     return editEndTime && (endTime.hour !== editEndTime.hour || endTime.minute !== editEndTime.minute)
   }
 
-  private getAppliedToMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: EditApplyTo) {
+  private getAppliedToAppointmentMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: EditApplyTo) {
     switch (applyTo) {
       case EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
         return `appointments ${editAppointmentJourney.sequenceNumber} to ${editAppointmentJourney.repeatCount} in the series`
@@ -230,5 +313,23 @@ export default class EditAppointmentService {
       default:
         return 'this appointment'
     }
+  }
+
+  private getAppliedToSeriesMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: EditApplyTo) {
+    switch (applyTo) {
+      case EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
+        return `appointments ${editAppointmentJourney.sequenceNumber} to ${editAppointmentJourney.repeatCount} in this series`
+      case EditApplyTo.ALL_FUTURE_OCCURRENCES:
+        return `appointments ${
+          editAppointmentJourney.repeatCount - editAppointmentJourney.occurrencesRemaining + 1
+        } to ${editAppointmentJourney.repeatCount} in this series`
+      default:
+        return `appointment ${editAppointmentJourney.sequenceNumber} of ${editAppointmentJourney.repeatCount} in this series`
+    }
+  }
+
+  private clearSession(req: Request) {
+    req.session.appointmentJourney = null
+    req.session.editAppointmentJourney = null
   }
 }

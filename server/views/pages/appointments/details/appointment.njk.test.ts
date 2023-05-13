@@ -114,6 +114,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
           firstName: 'john',
           lastName: 'smith',
         },
+        isEdited: true,
       },
     ] as unknown as AppointmentDetails['occurrences']
 
