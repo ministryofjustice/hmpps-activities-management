@@ -20,6 +20,7 @@ import setAppointmentJourneyMode from '../../../middleware/appointments/setAppoi
 import { AppointmentJourneyMode } from './appointmentJourney'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
+import CancellationReasonRoutes, { CancellationReason } from './handlers/cancellationReason'
 
 export default function Edit({ prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -43,7 +44,24 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   const startHandler = new StartJourneyRoutes(editAppointmentService)
   const locationRoutes = new LocationRoutes(activitiesService)
   const dateAndTimeRoutes = new DateAndTimeRoutes(activitiesService)
+  const confirmEditRoutes = new ConfirmEditRoutes(activitiesService, editAppointmentService)
   const applyToRoutes = new ApplyToRoutes(activitiesService, editAppointmentService)
+
+  // Cancel routes
+  const cancellationReasonRoutes = new CancellationReasonRoutes(editAppointmentService)
+
+  router.get(
+    '/start/cancel',
+    fetchAppointment(activitiesService),
+    fetchAppointmentOccurrence(activitiesService),
+    startHandler.CANCEL,
+  )
+  get('/cancel/reason', cancellationReasonRoutes.GET, true)
+  post('/cancel/reason', cancellationReasonRoutes.POST, CancellationReason)
+  get('/cancel/confirm', confirmEditRoutes.GET, true)
+  post('/cancel/confirm', confirmEditRoutes.POST, ConfirmEdit)
+  get('/cancel/apply-to', applyToRoutes.GET, true)
+  post('/cancel/apply-to', applyToRoutes.POST, ApplyTo)
 
   // Edit property routes
   router.get(
@@ -60,16 +78,14 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   post('/:property/apply-to', applyToRoutes.POST, ApplyTo)
 
   // Remove prisoner routes
-  const confirmRemovePrisonerRoutes = new ConfirmEditRoutes(activitiesService, editAppointmentService)
-
   router.get(
     '/start/:prisonNumber/remove',
     fetchAppointment(activitiesService),
     fetchAppointmentOccurrence(activitiesService),
     startHandler.REMOVE_PRISONER,
   )
-  get('/:prisonNumber/remove/confirm', confirmRemovePrisonerRoutes.GET, true)
-  post('/:prisonNumber/remove/confirm', confirmRemovePrisonerRoutes.POST, ConfirmEdit)
+  get('/:prisonNumber/remove/confirm', confirmEditRoutes.GET, true)
+  post('/:prisonNumber/remove/confirm', confirmEditRoutes.POST, ConfirmEdit)
   get('/:prisonNumber/remove/apply-to', applyToRoutes.GET, true)
   post('/:prisonNumber/remove/apply-to', applyToRoutes.POST, ApplyTo)
 
@@ -103,8 +119,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   get('/prisoners/add/review-prisoners', reviewPrisoners.GET, true)
   post('/prisoners/add/review-prisoners', reviewPrisoners.EDIT)
   get('/prisoners/add/review-prisoners/:prisonNumber/remove', reviewPrisoners.EDIT_REMOVE, true)
-  get('/prisoners/add/confirm', confirmRemovePrisonerRoutes.GET, true)
-  post('/prisoners/add/confirm', confirmRemovePrisonerRoutes.POST, ConfirmEdit)
+  get('/prisoners/add/confirm', confirmEditRoutes.GET, true)
+  post('/prisoners/add/confirm', confirmEditRoutes.POST, ConfirmEdit)
   get('/prisoners/add/apply-to', applyToRoutes.GET, true)
   post('/prisoners/add/apply-to', applyToRoutes.POST, ApplyTo)
 

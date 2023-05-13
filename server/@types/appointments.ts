@@ -31,3 +31,8 @@ export enum EditApplyTo {
   THIS_AND_ALL_FUTURE_OCCURRENCES = 'THIS_AND_ALL_FUTURE_OCCURRENCES',
   ALL_FUTURE_OCCURRENCES = 'ALL_FUTURE_OCCURRENCES',
 }
+
+export enum AppointmentCancellationReason {
+  CREATED_IN_ERROR = '1',
+  CANCELLED = '2',
+}
