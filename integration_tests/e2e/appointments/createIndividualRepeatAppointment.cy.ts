@@ -22,6 +22,7 @@ import AppointmentDetailsPage from '../../pages/appointments/details/appointment
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 import IndividualMovementSlip from '../../pages/appointments/movementSlip/individualMovementSlip'
 import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
+import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 
 context('Individual repeat appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -86,6 +87,9 @@ context('Individual repeat appointment', () => {
       repeatPeriodAndCountPage.selectRepeatPeriod('Weekly')
       repeatPeriodAndCountPage.enterRepeatCount('2')
       repeatPeriodAndCountPage.continue()
+
+      const commentPage = Page.verifyOnPage(CommentPage)
+      commentPage.continue()
 
       const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.assertRepeat('Yes')
@@ -181,6 +185,9 @@ context('Individual repeat appointment', () => {
       repeatPeriodAndCountPage.enterRepeatCount('7')
       repeatPeriodAndCountPage.continue()
 
+      const commentPage = Page.verifyOnPage(CommentPage)
+      commentPage.continue()
+
       const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.assertNoBackLink()
 
@@ -205,6 +212,9 @@ context('Individual repeat appointment', () => {
       const repeatPage = Page.verifyOnPage(RepeatPage)
       repeatPage.selectRepeat('No')
       repeatPage.continue()
+
+      const commentPage = Page.verifyOnPage(CommentPage)
+      commentPage.continue()
 
       const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.assertRepeat('No')

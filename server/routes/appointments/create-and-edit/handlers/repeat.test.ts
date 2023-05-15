@@ -42,7 +42,7 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.NO)
-      expect(res.redirect).toHaveBeenCalledWith('comment')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('comment')
     })
 
     it('should save repeat = YES in session and redirect to repeat period and count page', async () => {
@@ -107,7 +107,7 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
-      expect(res.redirect).toHaveBeenCalledWith('comment')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('comment')
     })
   })
 

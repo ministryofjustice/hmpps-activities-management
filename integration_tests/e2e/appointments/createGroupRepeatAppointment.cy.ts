@@ -25,6 +25,7 @@ import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/upl
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 import UploadByCsvPage from '../../pages/appointments/create-and-edit/uploadbyCsvPage'
 import { AppointmentRepeatPeriod } from '../../../server/@types/appointments'
+import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -123,6 +124,9 @@ context('Create group appointment', () => {
     repeatPeriodAndCountPage.enterRepeatCount('7')
     repeatPeriodAndCountPage.continue()
 
+    const commentPage = Page.verifyOnPage(CommentPage)
+    commentPage.continue()
+
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerInList('Winchurch, David', 'A1350DZ')
     checkAnswersPage.assertPrisonerInList('Gregs, Stephen', 'A8644DY')
@@ -133,6 +137,8 @@ context('Create group appointment', () => {
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.assertRepeat('Yes')
+    checkAnswersPage.assertRepeatPeriod('Daily (includes weekends)')
+    checkAnswersPage.assertRepeatCount('7')
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)

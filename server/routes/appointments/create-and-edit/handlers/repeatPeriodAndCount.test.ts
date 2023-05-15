@@ -14,7 +14,7 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
   beforeEach(() => {
     res = {
       render: jest.fn(),
-      redirect: jest.fn(),
+      redirectOrReturn: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -46,7 +46,7 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
       expect(req.session.appointmentJourney.repeatPeriod).toEqual(AppointmentRepeatPeriod.WEEKLY)
       expect(req.session.appointmentJourney.repeatCount).toEqual(6)
-      expect(res.redirect).toHaveBeenCalledWith('comment')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('comment')
     })
   })
 

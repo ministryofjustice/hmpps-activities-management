@@ -17,6 +17,8 @@ import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnsw
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
 import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
+import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
+import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
 
 context('Create individual appointment - check answers change links', () => {
   const dayAfterTomorrow = addDays(new Date(), 2)
@@ -74,6 +76,9 @@ context('Create individual appointment - check answers change links', () => {
     repeatPage.selectRepeat('No')
     repeatPage.continue()
 
+    const commentPage = Page.verifyOnPage(CommentPage)
+    commentPage.continue()
+
     // Verify initial answers
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
@@ -83,6 +88,7 @@ context('Create individual appointment - check answers change links', () => {
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.assertRepeat('No')
+    checkAnswersPage.assertComment('')
 
     // Change each answer
     checkAnswersPage.changePrisoner()
@@ -129,6 +135,25 @@ context('Create individual appointment - check answers change links', () => {
     dateAndTimePage.continue()
     Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertEndTime(16, 15)
+
+    checkAnswersPage.changeRepeat()
+    Page.verifyOnPage(RepeatPage)
+    repeatPage.selectRepeat('Yes')
+    repeatPage.continue()
+    const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
+    repeatPeriodAndCountPage.selectRepeatPeriod('Every weekday')
+    repeatPeriodAndCountPage.enterRepeatCount('10')
+    repeatPeriodAndCountPage.continue()
+    Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.assertRepeat('Yes')
+    checkAnswersPage.assertRepeatPeriod('Every weekday')
+    checkAnswersPage.assertRepeatCount('10')
+
+    checkAnswersPage.changeComment()
+    Page.verifyOnPage(CommentPage)
+    commentPage.enterComment('Appointment level comment')
+    commentPage.continue()
+    checkAnswersPage.assertComment('Appointment level comment')
 
     checkAnswersPage.createAppointment()
 
