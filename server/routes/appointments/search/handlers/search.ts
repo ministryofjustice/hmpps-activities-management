@@ -16,10 +16,6 @@ export class Search {
   @IsNotEmpty({ message: 'Enter a start date' })
   @IsValidDate({ message: 'Enter a valid start date' })
   startDate: SimpleDate
-
-  @Expose()
-  @Type(() => SimpleDate)
-  endDate: SimpleDate
 }
 
 export default class SearchRoutes {
@@ -27,15 +23,13 @@ export default class SearchRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { startDate, endDate, timeSlot, categoryCode, locationId, prisonerNumber, createdBy, type } = req.query
+    const { startDate, timeSlot, categoryCode, locationId, prisonerNumber, createdBy, type } = req.query
 
     if (!isValid(toDate(startDate as string))) {
       return res.redirect(`?startDate=${toDateString(new Date())}`)
     }
 
     const simpleStartDate = simpleDateFromDate(toDate(startDate as string))
-    const simpleEndDate =
-      endDate && isValid(toDate(endDate as string)) ? simpleDateFromDate(toDate(endDate as string)) : null
 
     const categories = await this.activitiesService.getAppointmentCategories(user)
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
@@ -43,7 +37,6 @@ export default class SearchRoutes {
     const request = {
       appointmentType: type && type !== '' ? type : null,
       startDate: simpleStartDate.toIsoString(),
-      endDate: simpleEndDate ? simpleEndDate?.toIsoString() : null,
       timeSlot: timeSlot && timeSlot !== '' ? timeSlot : null,
       categoryCode: categoryCode && categoryCode !== '' ? categoryCode : null,
       internalLocationId: locationId && locationId !== '' ? +locationId : null,
@@ -55,7 +48,6 @@ export default class SearchRoutes {
 
     return res.render('pages/appointments/search/results', {
       startDate: simpleStartDate,
-      endDate: simpleEndDate,
       timeSlot: timeSlot ?? '',
       categories,
       categoryCode: categoryCode ?? '',
@@ -69,12 +61,10 @@ export default class SearchRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { startDate, endDate, timeSlot, categoryCode, locationId, prisonerNumber, createdBy, type } = req.body
+    const { startDate, timeSlot, categoryCode, locationId, prisonerNumber, createdBy, type } = req.body
 
     return res.redirect(
-      `?startDate=${startDate.toIsoString()}&endDate=${
-        isValid(endDate.toRichDate()) ? endDate.toIsoString() : ''
-      }&timeSlot=${timeSlot ?? ''}&categoryCode=${categoryCode ?? ''}&locationId=${
+      `?startDate=${startDate.toIsoString()}&timeSlot=${timeSlot ?? ''}&categoryCode=${categoryCode ?? ''}&locationId=${
         locationId ?? ''
       }&prisonerNumber=${prisonerNumber}&createdBy=${createdBy ?? ''}&type=${type ?? ''}`,
     )
