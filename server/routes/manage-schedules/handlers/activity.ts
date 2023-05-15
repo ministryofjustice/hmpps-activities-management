@@ -38,19 +38,21 @@ export default class ActivityRoutes {
           return ''
         },
       }
-      req.session.createJourney.endDate = {
-        day: Number(activity.endDate.substring(8, 10)),
-        month: Number(activity.endDate.substring(5, 7)),
-        year: Number(activity.endDate.substring(0, 4)),
-        toIsoString(): string {
-          return undefined
-        },
-        toRichDate(): Date {
-          return undefined
-        },
-        toString(): string {
-          return ''
-        },
+      if (activity.endDate) {
+        req.session.createJourney.endDate = {
+          day: Number(activity.endDate.substring(8, 10)),
+          month: Number(activity.endDate.substring(5, 7)),
+          year: Number(activity.endDate.substring(0, 4)),
+          toIsoString(): string {
+            return undefined
+          },
+          toRichDate(): Date {
+            return undefined
+          },
+          toString(): string {
+            return ''
+          },
+        }
       }
       req.session.createJourney.days = []
       req.session.createJourney.timeSlotsMonday = []

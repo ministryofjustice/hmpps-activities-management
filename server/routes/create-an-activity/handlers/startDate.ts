@@ -48,6 +48,13 @@ export default class StartDateRoutes {
         ),
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      const successMessage = `We've updated the start date for ${req.session.createJourney.name}`
+
+      res.redirectOrReturnWithSuccess(
+        `/schedule/activities/${req.session.createJourney.activityId}`,
+        'Activity updated',
+        successMessage,
+      )
     }
     res.redirectOrReturn(`end-date-option`)
   }

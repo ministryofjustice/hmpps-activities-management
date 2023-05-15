@@ -29,6 +29,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {

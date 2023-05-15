@@ -88,6 +88,13 @@ export default class DaysAndTimesRoutes {
         slots,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      const successMessage = `We've updated the daily schedule for ${req.session.createJourney.name}`
+
+      res.redirectOrReturnWithSuccess(
+        `/schedule/activities/${req.session.createJourney.activityId}`,
+        'Activity updated',
+        successMessage,
+      )
     }
     res.redirectOrReturn('bank-holiday-option')
   }

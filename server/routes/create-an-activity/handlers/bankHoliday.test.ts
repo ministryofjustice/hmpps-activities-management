@@ -27,6 +27,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {

@@ -43,6 +43,13 @@ export default class EndDateRoutes {
         endDate: formatDate(plainToInstance(SimpleDate, req.session.createJourney.endDate).toRichDate(), 'yyyy-MM-dd'),
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      const successMessage = `We've updated the end date for ${req.session.createJourney.name}`
+
+      res.redirectOrReturnWithSuccess(
+        `/schedule/activities/${req.session.createJourney.activityId}`,
+        'Activity updated',
+        successMessage,
+      )
     }
     res.redirectOrReturn(`days-and-times`)
   }
