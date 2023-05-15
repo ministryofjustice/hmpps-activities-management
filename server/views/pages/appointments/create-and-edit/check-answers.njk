@@ -250,6 +250,28 @@
   }), summaryListRows) %}
 {% endif %}
 
+{% set summaryListRows = (summaryListRows.push(
+    {
+        key: {
+            text: "Heads up"
+        },
+        value: {
+            text: session.appointmentJourney.comment
+        },
+        actions: {
+            items: [
+                {
+                    href: "comment?fromReview=true",
+                    text: "Change",
+                    visuallyHiddenText: "change heads up",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-comment' }
+                }
+            ]
+        }
+    }
+), summaryListRows) %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">

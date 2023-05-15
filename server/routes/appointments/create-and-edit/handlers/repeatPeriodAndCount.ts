@@ -44,6 +44,6 @@ export default class RepeatPeriodAndCountRoutes {
     req.session.appointmentJourney.repeatPeriod = repeatPeriod
     req.session.appointmentJourney.repeatCount = repeatCount
 
-    res.redirect(`check-answers`)
+    res.redirect(`comment`)
   }
 }

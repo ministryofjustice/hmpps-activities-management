@@ -1,0 +1,43 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+
+{% set pageTitle = appointmentJourneyTitle("Heads up", session.appointmentJourney) %}
+{% set pageId = 'appointments-create-comment-page' %}
+{% set backLinkHref = backLinkHref %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+      <h1 class="govuk-heading-l">Add a heads up to movement slips</h1>
+      <p class="govuk-body">
+        You can optionally give the attendees a heads up about their appointment. It will be printed on the movement slips.
+      </p>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{ govukTextarea({
+          id: "comment",
+          name: "comment",
+          label: {
+            text: "Heads up (optional)",
+            classes: "govuk-label--m"
+          },
+          hint: {
+            text: "For example, 'You need to bring all your documents about your case to this meeting with your solicitor.'"
+          },
+          rows: "5",
+          value: formResponses.comment or session.appointmentJourney.comment,
+          errorMessage: validationErrors | findError('comment')
+        }) }}
+
+        {{ govukButton({
+          text: "Accept and save" if isCtaAcceptAndSave else "Continue"
+        }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

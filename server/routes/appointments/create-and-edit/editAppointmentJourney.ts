@@ -25,6 +25,7 @@ export type EditAppointmentJourney = {
     minute: number
     date: Date
   }
+  comment?: string
   addPrisoners?: {
     number: string
     name: string
