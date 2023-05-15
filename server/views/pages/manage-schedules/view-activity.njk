@@ -80,6 +80,15 @@
                 },
                 value: {
                     text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+                },
+                actions: {
+                    items: [
+                        {
+                            href: "/create/start-date?fromEditActivity=true",
+                            text: "Change",
+                            visuallyHiddenText: "change start date"
+                        }
+                    ]
                 }
             }] %}
 
@@ -90,6 +99,33 @@
                     },
                     value: {
                         text: schedule.endDate | toDate | formatDate('EEEE d MMMM yyyy')
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/create/end-date?fromEditActivity=true",
+                                text: "Change",
+                                visuallyHiddenText: "change end date"
+                            }
+                        ]
+                    }
+                }), dateAndScheduleRows) %}
+            {% else %}
+                {% set dateAndScheduleRows = (dateAndScheduleRows.push({
+                    key: {
+                        text: "End date"
+                    },
+                    value: {
+                        text: "None set"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/create/end-date?fromEditActivity=true",
+                                text: "Change",
+                                visuallyHiddenText: "change end date"
+                            }
+                        ]
                     }
                 }), dateAndScheduleRows) %}
             {% endif %}
@@ -101,6 +137,15 @@
                     },
                     value: {
                         html: daysAndTimes(schedule.dailySlots)
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/create/days-and-times?fromEditActivity=true",
+                                text: "Change",
+                                visuallyHiddenText: "change days and times"
+                            }
+                        ]
                     }
                 },
                 {
@@ -109,6 +154,15 @@
                     },
                     value: {
                         text: "Yes" if schedule.runsOnBankHoliday else "No"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/create/bank-holiday-option?fromEditActivity=true",
+                                text: "Change",
+                                visuallyHiddenText: "change bank holiday"
+                            }
+                        ]
                     }
                 }
             ), dateAndScheduleRows) %}

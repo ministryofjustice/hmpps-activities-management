@@ -1,12 +1,21 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import { associateErrorsWithProperty, formatDate } from '../../../utils/utils'
 import { simpleDateFromDate } from '../../../commonValidationTypes/simpleDate'
 import EndDateRoutes, { EndDate } from './endDate'
+import ActivitiesService from '../../../services/activitiesService'
+import atLeast from '../../../../jest.setup'
+import activity from '../../../services/fixtures/activity_1.json'
+import { Activity } from '../../../@types/activitiesAPI/types'
+
+jest.mock('../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Create an activity schedule - End date', () => {
-  const handler = new EndDateRoutes()
+  const handler = new EndDateRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -49,6 +58,35 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.endDate).toEqual(endDate)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('days-and-times')
+    })
+
+    it('should save entered end date in database', async () => {
+      const updatedActivity = {
+        endDate: '2023-01-17',
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      const today = new Date()
+      const endDate = simpleDateFromDate(today)
+
+      req = {
+        session: {
+          createJourney: {},
+        },
+        query: {
+          fromEditActivity: true,
+        },
+        body: {
+          endDate,
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
       expect(res.redirectOrReturn).toHaveBeenCalledWith('days-and-times')
     })
   })

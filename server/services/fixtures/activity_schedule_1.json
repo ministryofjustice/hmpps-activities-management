@@ -216,7 +216,50 @@
       "id": 1,
       "startTime": "10:00",
       "endTime": "11:00",
-      "daysOfWeek": ["Mon"]
+      "daysOfWeek": ["Mon"],
+      "mondayFlag": true
+    },
+    {
+      "id": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "daysOfWeek": ["Tue"],
+      "tuesdayFlag": true
+    },
+    {
+      "id": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "daysOfWeek": ["Wed"],
+      "wednesdayFlag": true
+    },
+    {
+      "id": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "daysOfWeek": ["Thu"],
+      "thursdayFlag": true
+    },
+    {
+      "id": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "daysOfWeek": ["Fri"],
+      "fridayFlag": true
+    },
+    {
+      "id": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "daysOfWeek": ["Sat"],
+      "saturdayFlag": true
+    },
+    {
+      "id": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "daysOfWeek": ["Sun"],
+      "sundayFlag": true
     }
   ],
   "runsOnBankHoliday": false

@@ -34,6 +34,7 @@ import {
   AppointmentOccurrenceSearchRequest,
   AllAttendance,
   AllAttendanceSummary,
+  ActivityUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
@@ -78,6 +79,10 @@ export default class ActivitiesService {
 
   createActivity(createBody: ActivityCreateRequest, user: ServiceUser): Promise<Activity> {
     return this.activitiesApiClient.postActivityCreation(createBody, user)
+  }
+
+  updateActivity(prisonCode: string, activityId: number, updateBody: ActivityUpdateRequest) {
+    return this.activitiesApiClient.patchActivityUpdate(prisonCode, activityId, updateBody)
   }
 
   allocateToSchedule(scheduleId: number, prisonerNumber: string, payBandId: number, user: ServiceUser): Promise<void> {

@@ -1,4 +1,8 @@
+// eslint-disable-next-line import/no-cycle
+import SimpleDate from '../../commonValidationTypes/simpleDate'
+
 export type CreateAnActivityJourney = {
+  activityId?: number
   category?: {
     id: number
     name: string
@@ -29,9 +33,9 @@ export type CreateAnActivityJourney = {
     educationLevelCode: string
     educationLevelDescription: string
   }>
-  startDate?: string
+  startDate?: SimpleDate
   endDateOption?: string
-  endDate?: string
+  endDate?: SimpleDate
   days?: string[]
   timeSlotsMonday?: string[]
   timeSlotsTuesday?: string[]

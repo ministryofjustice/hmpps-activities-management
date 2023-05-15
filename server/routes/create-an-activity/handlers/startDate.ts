@@ -6,6 +6,8 @@ import IsValidDate from '../../../validators/isValidDate'
 import DateIsSameOrAfter from '../../../validators/dateIsSameOrAfter'
 import DateIsBeforeOtherProperty from '../../../validators/dateIsBeforeOtherProperty'
 import { formatDate } from '../../../utils/utils'
+import { ActivityUpdateRequest } from '../../../@types/activitiesAPI/types'
+import ActivitiesService from '../../../services/activitiesService'
 
 export class StartDate {
   @Expose()
@@ -22,6 +24,8 @@ export class StartDate {
 }
 
 export default class StartDateRoutes {
+  constructor(private readonly activitiesService: ActivitiesService) {}
+
   GET = async (req: Request, res: Response): Promise<void> => {
     const { session } = req
     res.render('pages/create-an-activity/start-date', {
@@ -33,6 +37,18 @@ export default class StartDateRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.createJourney.startDate = req.body.startDate
+    if (req.query && req.query.fromEditActivity) {
+      const { user } = res.locals
+      const { activityId } = req.session.createJourney
+      const prisonCode = user.activeCaseLoadId
+      const activity = {
+        startDate: formatDate(
+          plainToInstance(SimpleDate, req.session.createJourney.startDate).toRichDate(),
+          'yyyy-MM-dd',
+        ),
+      } as ActivityUpdateRequest
+      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+    }
     res.redirectOrReturn(`end-date-option`)
   }
 }

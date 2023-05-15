@@ -24,12 +24,15 @@ import {
   Attendance,
   ScheduledActivity,
   ScheduledEvent,
+  Slot,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import AttendanceStatus from '../enum/attendanceStatus'
 import attendanceReason from '../enum/attendanceReason'
 import AttendanceReason from '../enum/attendanceReason'
 import cancellationReasons from '../routes/record-attendance/cancellationReasons'
+// eslint-disable-next-line import/no-cycle
+import { CreateAnActivityJourney } from '../routes/create-an-activity/journey'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -686,4 +689,81 @@ export const getSuspendedPrisonerCount = (suspendedPrisoners: AllAttendance[]) =
   return {
     suspendedPrisonerCount,
   }
+}
+
+export const mapSlots = (createJourney: CreateAnActivityJourney) => {
+  const slots = [] as Slot[]
+  const slotMap: Map<string, Slot> = new Map()
+  const setSlot = (key: string, property: string) => {
+    if (slotMap.has(key)) {
+      slotMap.get(key)[property] = true
+    } else {
+      slotMap.set(key, { timeSlot: key } as Slot)
+      slotMap.get(key)[property] = true
+    }
+  }
+
+  createJourney.days.forEach(d => {
+    function slotSetter() {
+      return (ts: string) => {
+        switch (ts) {
+          case 'AM':
+            setSlot('AM', d)
+            break
+          case 'PM':
+            setSlot('PM', d)
+            break
+          case 'ED':
+            setSlot('ED', d)
+            break
+          default:
+          // no action
+        }
+      }
+    }
+
+    switch (d) {
+      case 'monday':
+        if (createJourney.timeSlotsMonday) {
+          createJourney.timeSlotsMonday.forEach(slotSetter())
+        }
+        break
+      case 'tuesday':
+        if (createJourney.timeSlotsTuesday) {
+          createJourney.timeSlotsTuesday.forEach(slotSetter())
+        }
+        break
+      case 'wednesday':
+        if (createJourney.timeSlotsWednesday) {
+          createJourney.timeSlotsWednesday.forEach(slotSetter())
+        }
+        break
+      case 'thursday':
+        if (createJourney.timeSlotsThursday) {
+          createJourney.timeSlotsThursday.forEach(slotSetter())
+        }
+        break
+      case 'friday':
+        if (createJourney.timeSlotsFriday) {
+          createJourney.timeSlotsFriday.forEach(slotSetter())
+        }
+        break
+      case 'saturday':
+        if (createJourney.timeSlotsSaturday) {
+          createJourney.timeSlotsSaturday.forEach(slotSetter())
+        }
+        break
+      case 'sunday':
+        if (createJourney.timeSlotsSunday) {
+          createJourney.timeSlotsSunday.forEach(slotSetter())
+        }
+        break
+      default:
+    }
+  })
+
+  slotMap.forEach(slot => {
+    slots.push(slot)
+  })
+  return slots
 }

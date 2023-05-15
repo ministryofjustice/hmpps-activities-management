@@ -6,6 +6,8 @@ export default function setUpChangeLinks(): Router {
   router.use((req, res, next) => {
     if (req.query.fromReview) {
       req.session.returnTo = 'check-answers'
+    } else if (req.query.fromEditActivity) {
+      req.session.returnTo = `/schedule/activities/${req.session.createJourney.activityId}`
     }
 
     res.redirectOrReturn = (path: string): void => {
