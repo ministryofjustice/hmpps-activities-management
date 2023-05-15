@@ -33,7 +33,7 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
   })
 
   describe('POST', () => {
-    it('should save repeat = YES, period and count in session and redirect to check answers page', async () => {
+    it('should save repeat = YES, period and count in session and redirect to comment page', async () => {
       req.body = {
         repeatPeriod: AppointmentRepeatPeriod.WEEKLY,
         repeatCount: 6,
@@ -46,7 +46,7 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
       expect(req.session.appointmentJourney.repeatPeriod).toEqual(AppointmentRepeatPeriod.WEEKLY)
       expect(req.session.appointmentJourney.repeatCount).toEqual(6)
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      expect(res.redirect).toHaveBeenCalledWith('comment')
     })
   })
 
