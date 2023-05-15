@@ -68,7 +68,6 @@ context('Create individual appointment - back links', () => {
     repeatPage.continue()
 
     const commentPage = Page.verifyOnPage(CommentPage)
-    commentPage.continue()
 
     // Click through back links
     commentPage.back()
@@ -156,6 +155,7 @@ context('Create individual appointment - back links', () => {
     repeatPeriodAndCountPage.enterRepeatCount('5')
     repeatPeriodAndCountPage.back()
     Page.verifyOnPage(RepeatPage)
+    repeatPage.back()
     checkAnswersPage.assertRepeat('No')
 
     checkAnswersPage.changeComment()
