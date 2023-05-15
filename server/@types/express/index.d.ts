@@ -13,6 +13,7 @@ import { RecordAttendanceRequests } from '../../routes/record-attendance/recordA
 import { ActivitiesFilters, AttendanceSummaryFilters, UnlockFilters } from '../activities'
 import { AppointmentDetails, AppointmentOccurrenceDetails } from '../activitiesAPI/types'
 import { BulkAppointmentJourney } from '../../routes/appointments/create-and-edit/bulkAppointmentJourney'
+import { DeallocateFromActivityJourney } from '../../routes/deallocate-from-activity/journey'
 
 export default {}
 
@@ -26,6 +27,7 @@ declare module 'express-session' {
     data: any
     createJourney: CreateAnActivityJourney
     allocateJourney: AllocateToActivityJourney
+    deallocateJourney: DeallocateFromActivityJourney
     appointmentJourney: AppointmentJourney
     editAppointmentJourney: EditAppointmentJourney
     bulkAppointmentJourney: BulkAppointmentJourney
