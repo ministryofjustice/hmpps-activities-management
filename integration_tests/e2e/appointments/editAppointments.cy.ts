@@ -7,6 +7,7 @@ import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/oc
 import { formatDate } from '../../../server/utils/utils'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
+import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 
 const tomorrow = addDays(new Date(), 1)
 const nextWeek = addDays(new Date(), 7)
@@ -119,6 +120,29 @@ context('Edit appointment', () => {
 
         const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
         dateAndTimePage.back()
+        Page.verifyOnPage(OccurrenceDetailsPage)
+      })
+    })
+
+    context('Comment', () => {
+      it('Should update the comment of appointment occurrence', () => {
+        let occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.getChangeLink('Heads up').click()
+
+        const commentPage = Page.verifyOnPage(CommentPage)
+        commentPage.enterComment('Updated appointment level comment')
+        commentPage.getButton('Accept and save').click()
+
+        occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.assertNotificationContents("You've changed the heads up for this appointment")
+      })
+
+      it('Returns to occurrence details page if back link clicked', () => {
+        const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+        occurrenceDetailsPage.getChangeLink('Heads up').click()
+
+        const commentPage = Page.verifyOnPage(CommentPage)
+        commentPage.back()
         Page.verifyOnPage(OccurrenceDetailsPage)
       })
     })

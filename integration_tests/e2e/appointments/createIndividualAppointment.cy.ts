@@ -83,6 +83,7 @@ context('Create individual appointment', () => {
     repeatPage.continue()
 
     const commentPage = Page.verifyOnPage(CommentPage)
+    commentPage.enterComment('Appointment level comment')
     commentPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
@@ -93,6 +94,7 @@ context('Create individual appointment', () => {
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.assertRepeat('No')
+    checkAnswersPage.assertComment('Appointment level comment')
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
