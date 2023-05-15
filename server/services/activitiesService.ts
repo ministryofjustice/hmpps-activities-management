@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { plainToInstance } from 'class-transformer'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
@@ -39,9 +40,13 @@ import {
   BulkAppointmentsRequest,
   BulkAppointment,
   EventReviewSearchResults,
+  PrisonerDeallocationRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
+import { DeallocateFromActivityJourney } from '../routes/deallocate-from-activity/journey'
+import { formatDate } from '../utils/utils'
+import SimpleDate from '../commonValidationTypes/simpleDate'
 
 export default class ActivitiesService {
   constructor(
@@ -350,5 +355,21 @@ export default class ActivitiesService {
     user: ServiceUser,
   ): Promise<EventReviewSearchResults> {
     return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, pageSize, user)
+  }
+
+  async getDeallocationReasons(user: ServiceUser) {
+    return this.activitiesApiClient.getDeallocationReasons(user)
+  }
+
+  async deallocateFromActivity(deallocateJourney: DeallocateFromActivityJourney, user: ServiceUser) {
+    const request: PrisonerDeallocationRequest = {
+      prisonerNumbers: deallocateJourney.prisoners.map(p => p.prisonerNumber),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      reasonCode: deallocateJourney.deallocationReason,
+      endDate: formatDate(plainToInstance(SimpleDate, deallocateJourney.deallocationDate).toRichDate(), 'yyyy-MM-dd'),
+    }
+
+    return this.activitiesApiClient.deallocateFromActivity(deallocateJourney.scheduleId, request, user)
   }
 }

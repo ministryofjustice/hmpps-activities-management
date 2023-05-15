@@ -8,4 +8,5 @@ export type DeallocateFromActivityJourney = {
     cellLocation: string
   }>
   deallocationDate?: string
+  deallocationReason?: string
 }

@@ -1,12 +1,10 @@
 {% extends "layout.njk" %}
 
-{% from "components/datePicker.njk" import datePicker %}
-{% from "govuk/components/details/macro.njk" import govukDetails %}
-{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% set pageTitle = applicationName + " - Deallocate from an activity - Deallocation date" %}
-{% set pageId = 'deallocation-date-page' %}
+{% set pageTitle = applicationName + " - Deallocate from an activity - Deallocation reason" %}
+{% set pageId = 'deallocation-reason-page' %}
 {% set backLinkHref = "/" %}
 
 {% block content %}
@@ -14,9 +12,9 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">{{ session.deallocateJourney.activityName }}</span>
             {% if session.deallocateJourney.allocationsToRemove | length == 1 %}
-                <span class="govuk-heading-xl">When do you want {{ session.deallocateJourney.prisoners[0].name }} to stop attending this activity?</span>
+                <span class="govuk-heading-xl">Why are you taking {{ session.deallocateJourney.prisoners[0].name }} off this activity?</span>
             {% else %}
-                <span class="govuk-heading-xl">When do you want {{ session.deallocateJourney.allocationsToRemove | length }} people to stop attending this activity?</span>
+                <span class="govuk-heading-xl">Why are you taking {{ session.deallocateJourney.allocationsToRemove | length }} people off this activity?</span>
             {% endif %}
         </div>
     </div>
@@ -25,18 +23,27 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ datePicker({
-                    id: 'deallocationDate',
-                    label: {
-                        text: "Deallocation date",
-                        classes: "govuk-visually-hidden"
+                {% set options = [] %}
+                {% for reason in deallocationReasons %}
+                    {% set options = (options.push(
+                        {
+                            value: reason.code,
+                            text: reason.description,
+                            checked: formResponses.deallocationReason == reason.code or session.deallocateJourney.deallocationReason == reason.code
+                        }
+                    ), options) %}
+                {% endfor %}
+
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Select a deallocation reason",
+                            classes: "govuk-visually-hidden"
+                        }
                     },
-                    hint: {
-                        text: "For example, " + now | formatDate('dd MM yyyy')
-                    },
-                    renderedErrorMessage: validationErrors | findError('deallocationDate'),
-                    validationErrors: validationErrors,
-                    formResponses: formResponses.deallocationDate or session.deallocationJourney.deallocationDate
+                    name: "deallocationReason",
+                    errorMessage: validationErrors | findError('deallocationReason'),
+                    items: options
                 }) }}
 
                 {{ govukButton({

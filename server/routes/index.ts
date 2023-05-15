@@ -38,7 +38,7 @@ export default function routes(services: Services): Router {
   router.use('/create', createRoutes(services))
   router.use('/allocation-dashboard', allocationDashboardRoutes(services))
   router.use('/allocate', allocateRoutes(services))
-  router.use('/deallocate', deallocateRoutes())
+  router.use('/deallocate', deallocateRoutes(services))
   router.use('/schedule', scheduleRoutes(services))
   router.use('/attendance', attendanceRoutes(services))
   router.use('/attendance-summary', attendanceSummaryRoutes(services))
