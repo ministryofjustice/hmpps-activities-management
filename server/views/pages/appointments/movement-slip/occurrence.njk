@@ -1,14 +1,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "pages/appointments/partials/occurrence-movement-slip.njk" import occurrenceMovementSlip %}
 
 {% extends "layout.njk" %}
-
-{% macro labelAndValue(label, value, rowClasses, valueClasses) %}
-    <div class="movement-slip__summary__row {{ rowClasses }}">
-        <dt class="movement-slip__summary__row__key">{{ label }}</dt>
-        <dl class="movement-slip__summary__row__value {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dl>
-    </div>
-{% endmacro %}
 
 {% set pageTitle = "Appointments Management - Movement Authorisation" %}
 {% set pageId = 'occurrence-movement-slip-page' %}
@@ -32,25 +25,7 @@
             </div>
         </div>
     </div>
-    {% for prisoner in appointmentOccurrence.prisoners %}
-        <div class="movement-slip">
-            <h2 class="govuk-heading-m movement-slip-header">{{ user.activeCaseLoad.description }} <span class="govuk-!-font-weight-regular">Movement authorisation slip</span></h2>
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ prisoner | fullName | toTitleCase }}, {{ prisoner.prisonerNumber }}</h1>
-            <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="caption">{{ prisoner.prisonCode + '-' + prisoner.cellLocation }}</span>
-
-            <dl class='movement-slip__summary'>
-                {{ labelAndValue('Appointment', appointmentOccurrence.appointmentDescription if appointmentOccurrence.appointmentDescription else appointmentOccurrence.category.description) }}
-                {{ labelAndValue('Time', '<ul class="govuk-list">' +
-                                             '<li>' + appointmentOccurrence.startTime + ' to ' + appointmentOccurrence.endTime + '</li>' +
-                                             '<li>' + (appointmentOccurrence.startDate | toDate | formatDate('EEEE, d MMMM yyyy')) + '</li>' +
-                                         '</ul>') }}
-                {{ labelAndValue('Location', appointmentOccurrence.internalLocation.description) }}
-                {{ labelAndValue('Heads up', appointmentOccurrence.comment, 'movement-slip__row--no-border', 'preserve-line-breaks') }}
-            </dl>
-
-            <p class="govuk-body-s movement-slip-footer">Printed at {{ now | formatDate("h:mm 'on' EEEE, d MMMM yyyy") }}</p>
-        </div>
-    {% endfor %}
+    {{ occurrenceMovementSlip(appointmentOccurrence, now) }}
 {% endblock %}
 
 {% block footer %}
