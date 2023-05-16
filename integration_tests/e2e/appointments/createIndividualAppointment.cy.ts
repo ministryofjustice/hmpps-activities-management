@@ -16,7 +16,7 @@ import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTim
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
-import IndividualMovementSlip from '../../pages/appointments/movementSlip/individualMovementSlip'
+import OccurrenceMovementSlip from '../../pages/appointments/movementSlip/occurrenceMovementSlip'
 import { formatDate } from '../../../server/utils/utils'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
@@ -120,14 +120,13 @@ context('Create individual appointment', () => {
     appointmentDetailsPage.printMovementSlipLink().invoke('removeAttr', 'target')
     appointmentDetailsPage.printMovementSlipLink().click()
 
-    const individualMovementSlipPage = Page.verifyOnPage(IndividualMovementSlip)
+    const individualMovementSlipPage = Page.verifyOnPage(OccurrenceMovementSlip)
     individualMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
     individualMovementSlipPage.assertCategory('Chaplaincy')
     individualMovementSlipPage.assertLocation('Chapel')
     individualMovementSlipPage.assertStartDate(tomorrow)
     individualMovementSlipPage.assertStartTime(14, 0)
     individualMovementSlipPage.assertEndTime(15, 30)
-    individualMovementSlipPage.assertComments('Appointment level comment')
-    individualMovementSlipPage.assertCreatedBy('J. Smith')
+    individualMovementSlipPage.assertComments('Appointment occurrence level comment')
   })
 })

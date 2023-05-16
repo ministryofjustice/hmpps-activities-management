@@ -20,7 +20,7 @@ import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmat
 import { formatDate } from '../../../server/utils/utils'
 import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
-import IndividualMovementSlip from '../../pages/appointments/movementSlip/individualMovementSlip'
+import OccurrenceMovementSlip from '../../pages/appointments/movementSlip/occurrenceMovementSlip'
 import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 
@@ -147,7 +147,8 @@ context('Individual repeat appointment', () => {
       occurrenceDetailsPage.printMovementSlipLink().invoke('removeAttr', 'target')
       occurrenceDetailsPage.printMovementSlipLink().click()
 
-      const occurrenceMovementSlipPage = Page.verifyOnPage(IndividualMovementSlip)
+      const occurrenceMovementSlipPage = Page.verifyOnPage(OccurrenceMovementSlip)
+      occurrenceMovementSlipPage.assertComments('Appointment occurrence level comment')
       occurrenceMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
       occurrenceMovementSlipPage.assertCategory('Chaplaincy')
       occurrenceMovementSlipPage.assertLocation('Chapel')
@@ -155,7 +156,6 @@ context('Individual repeat appointment', () => {
       occurrenceMovementSlipPage.assertStartTime(14, 0)
       occurrenceMovementSlipPage.assertEndTime(15, 30)
       occurrenceMovementSlipPage.assertComments('Appointment occurrence level comment')
-      occurrenceMovementSlipPage.assertCreatedBy('J. Smith')
     })
 
     it('Create individual repeat appointment - back links', () => {

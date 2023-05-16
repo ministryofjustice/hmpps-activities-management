@@ -2,13 +2,13 @@
     {% macro labelAndValue(label, value, rowClasses, valueClasses) %}
         <div class="movement-slip__summary__row {{ rowClasses }}">
             <dt class="movement-slip__summary__row__key">{{ label }}</dt>
-            <dl class="movement-slip__summary__row__value {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dl>
+            <dd class="movement-slip__summary__row__value {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dd>
         </div>
     {% endmacro %}
 
     {% for prisoner in appointmentOccurrence.prisoners %}
         <div class="movement-slip">
-            <h3 class="govuk-heading-m movement-slip-header">{{ caseLoadDescription }} <span class="govuk-!-font-weight-regular">Movement authorisation slip</span></h3>
+            <div class="govuk-heading-m movement-slip-header">{{ caseLoadDescription }} <span class="govuk-!-font-weight-regular">Movement authorisation slip</span></div>
             <h2 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa="prisoner-name-and-number">{{ prisoner | fullName | toTitleCase }}, {{ prisoner.prisonerNumber }}</h2>
             <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="cell-location">{{ prisoner.prisonCode + '-' + prisoner.cellLocation }}</span>
 
