@@ -1,5 +1,5 @@
 import { PrisonerSummary } from '../../../@types/activitiesAPI/types'
-import { EditApplyTo } from '../../../@types/appointments'
+import { AppointmentCancellationReason, EditApplyTo } from '../../../@types/appointments'
 
 export type EditAppointmentJourney = {
   repeatCount: number
@@ -31,5 +31,6 @@ export type EditAppointmentJourney = {
     cellLocation: string
   }[]
   removePrisoner?: PrisonerSummary
+  cancellationReason?: AppointmentCancellationReason
   applyTo?: EditApplyTo
 }

@@ -2,6 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
@@ -14,8 +15,11 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l" data-qa="caption">View and manage an appointment</span>
+            <span class="govuk-caption-l" data-qa="caption">View {{ (" and manage " if occurrence.isCancelled == false) }}an appointment</span>
             <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate("EEEE, d MMMM yyyy") }}</h1>
+            {% if occurrence.isCancelled %}
+                <p class="govuk-!-text-align-right">{{ govukTag({ text: "Cancelled" }) if occurrence.isCancelled }}</p>
+            {% endif %}
 
             {% if occurrence.repeat %}
                 {{ govukSummaryList({
@@ -67,13 +71,13 @@
                     actions: {
                         items: [
                             {
-                                href: "#",
+                                href: occurenceLink + "/edit/start/cancel",
                                 text: "Cancel appointment",
                                 classes: "govuk-link--no-visited-state",
                                 attributes: { 'data-qa': 'cancel-appointment' }
                             }
                         ]
-                    }
+                    } if occurrence.isCancelled == false
                 },
                 rows: [
                     {
@@ -113,7 +117,7 @@
                                     attributes: { 'data-qa': 'change-location' }
                                 }
                             ]
-                        }
+                        } if occurrence.isCancelled == false
                     }, {
                         key: {
                             text: "Date"
@@ -130,7 +134,7 @@
                                     attributes: { 'data-qa': 'change-date' }
                                 }
                             ]
-                        }
+                        } if occurrence.isCancelled == false
                     }, {
                         key: {
                             text: "Start time"
@@ -147,7 +151,7 @@
                                     attributes: { 'data-qa': 'change-start-time' }
                                 }
                             ]
-                        }
+                        } if occurrence.isCancelled == false
                     }, {
                         key: {
                             text: "End time"
@@ -164,13 +168,13 @@
                                     attributes: { 'data-qa': 'change-end-time' }
                                 }
                             ]
-                        }
+                        } if occurrence.isCancelled == false
                     }
                 ],
                 attributes: { 'data-qa': 'appointment-details' }
             }) }}
 
-            {{ prisonerList(occurrence.appointmentId, occurrence.id, occurrence.appointmentType, occurrence.repeat, occurrence.prisoners) }}
+            {{ prisonerList(occurrence.appointmentId, occurrence.id, occurrence.appointmentType, occurrence.repeat, occurrence.prisoners, occurrence.isCancelled) }}
 
             {{ govukSummaryList({
                 card: {
