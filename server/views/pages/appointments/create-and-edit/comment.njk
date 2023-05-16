@@ -13,22 +13,25 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-      <h1 class="govuk-heading-l">Add a heads up to movement slips</h1>
+      {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+        <h1 class="govuk-heading-l">Change the heads up for everyone attending the appointment</h1>
+        <p class="govuk-body">
+          You can edit information for attendees about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.
+        </p>
+      {% else %}
+        <h1 class="govuk-heading-l">Add a heads up for everyone attending the appointment</h1>
+        <p class="govuk-body">
+          Attendees may need information about how to prepare for their appointment. You can add this as a heads up which will be printed on their movement slips.
+        </p>
+      {% endif %}
       <p class="govuk-body">
-        You can optionally give the attendees a heads up about their appointment. It will be printed on the movement slips.
+        Wing staff will be notified there is a heads up on the printed unlock list, but for confidentiality the full text will only be visible when you view the details of the appointment in this service.
       </p>
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
         {{ govukTextarea({
           id: "comment",
           name: "comment",
-          label: {
-            text: "Heads up (optional)",
-            classes: "govuk-label--m"
-          },
-          hint: {
-            text: "For example, 'You need to bring all your documents about your case to this meeting with your solicitor.'"
-          },
           rows: "5",
           value: formResponses.comment or session.appointmentJourney.comment,
           errorMessage: validationErrors | findError('comment')
