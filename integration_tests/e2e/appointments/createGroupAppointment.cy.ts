@@ -23,6 +23,7 @@ import { formatDate } from '../../../server/utils/utils'
 import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/uploadPrisonerListPage'
 import UploadByCsvPage from '../../pages/appointments/create-and-edit/uploadbyCsvPage'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
+import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -112,6 +113,9 @@ context('Create group appointment', () => {
     const repeatPage = Page.verifyOnPage(RepeatPage)
     repeatPage.selectRepeat('No')
     repeatPage.continue()
+
+    const commentPage = Page.verifyOnPage(CommentPage)
+    commentPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerInList('Winchurch, David', 'A1350DZ')

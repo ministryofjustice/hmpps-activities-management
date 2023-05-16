@@ -3,6 +3,7 @@ import { Services } from '../../../services'
 import StartJourneyRoutes from './handlers/startJourney'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
+import CommentRoutes, { Comment } from './handlers/comment'
 import ApplyToRoutes, { ApplyTo } from './handlers/applyTo'
 import ConfirmEditRoutes, { ConfirmEdit } from './handlers/confirmEdit'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
@@ -44,6 +45,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   const startHandler = new StartJourneyRoutes(editAppointmentService)
   const locationRoutes = new LocationRoutes(activitiesService)
   const dateAndTimeRoutes = new DateAndTimeRoutes(activitiesService)
+  const commentHandler = new CommentRoutes(editAppointmentService)
   const confirmEditRoutes = new ConfirmEditRoutes(activitiesService, editAppointmentService)
   const applyToRoutes = new ApplyToRoutes(activitiesService, editAppointmentService)
 
@@ -74,6 +76,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   post('/location', locationRoutes.EDIT, Location)
   get('/date-and-time', dateAndTimeRoutes.GET, true)
   post('/date-and-time', dateAndTimeRoutes.EDIT, DateAndTime)
+  get('/comment', commentHandler.GET, true)
+  post('/comment', commentHandler.EDIT, Comment)
   get('/:property/apply-to', applyToRoutes.GET, true)
   post('/:property/apply-to', applyToRoutes.POST, ApplyTo)
 
