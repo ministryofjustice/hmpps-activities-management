@@ -71,6 +71,10 @@ export default class EditAppointmentService {
       updateProperties.push('time')
     }
 
+    if (this.hasCommentChanged(appointmentJourney, editAppointmentJourney)) {
+      updateProperties.push('heads up')
+    }
+
     if (updateProperties.length > 0) {
       return `change the ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')} for`
     }
@@ -239,6 +243,10 @@ export default class EditAppointmentService {
       occurrenceUpdates.endTime = plainToInstance(SimpleTime, editAppointmentJourney.endTime).toIsoString()
     }
 
+    if (this.hasCommentChanged(appointmentJourney, editAppointmentJourney)) {
+      occurrenceUpdates.comment = editAppointmentJourney.comment
+    }
+
     if (editAppointmentJourney.addPrisoners?.length > 0) {
       occurrenceUpdates.prisonerNumbers = appointmentJourney.prisoners
         .concat(editAppointmentJourney.addPrisoners)
@@ -271,7 +279,8 @@ export default class EditAppointmentService {
       this.hasLocationChanged(appointmentJourney, editAppointmentJourney) ||
       this.hasStartDateChanged(appointmentJourney, editAppointmentJourney) ||
       this.hasStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
-      this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney)
+      this.hasEndTimeChanged(appointmentJourney, editAppointmentJourney) ||
+      this.hasCommentChanged(appointmentJourney, editAppointmentJourney)
     )
   }
 
@@ -300,6 +309,10 @@ export default class EditAppointmentService {
     const { endTime } = appointmentJourney
     const editEndTime = editAppointmentJourney.endTime
     return editEndTime && (endTime.hour !== editEndTime.hour || endTime.minute !== editEndTime.minute)
+  }
+
+  private hasCommentChanged(appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) {
+    return editAppointmentJourney.comment && appointmentJourney.comment !== editAppointmentJourney.comment
   }
 
   private getAppliedToAppointmentMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: EditApplyTo) {

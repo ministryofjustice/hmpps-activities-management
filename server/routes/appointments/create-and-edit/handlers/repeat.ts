@@ -29,12 +29,12 @@ export default class RepeatRoutes {
         req.session.appointmentJourney.repeatPeriod !== undefined &&
         req.session.appointmentJourney.repeatCount !== undefined
       ) {
-        res.redirect(`check-answers`)
+        res.redirectOrReturn(`comment`)
       } else {
         res.redirect(`repeat-period-and-count`)
       }
     } else {
-      res.redirect(`check-answers`)
+      res.redirectOrReturn(`comment`)
     }
   }
 }

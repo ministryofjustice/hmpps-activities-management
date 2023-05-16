@@ -24,16 +24,17 @@ export default class CheckAnswersRoutes {
     const { appointmentJourney } = req.session
 
     const request = {
+      appointmentType: appointmentJourney.type,
+      prisonCode: user.activeCaseLoadId,
+      prisonerNumbers: appointmentJourney.prisoners.map(p => p.number),
       categoryCode: appointmentJourney.category.code,
       appointmentDescription: appointmentJourney.description,
-      prisonCode: user.activeCaseLoadId,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
       startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
       startTime: plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString(),
       endTime: plainToInstance(SimpleTime, appointmentJourney.endTime).toIsoString(),
-      prisonerNumbers: appointmentJourney.prisoners.map(p => p.number),
-      appointmentType: appointmentJourney.type,
+      comment: appointmentJourney.comment,
     } as AppointmentCreateRequest
 
     if (appointmentJourney.repeat === YesNo.YES) {

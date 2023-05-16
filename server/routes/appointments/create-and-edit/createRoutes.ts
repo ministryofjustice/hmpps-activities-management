@@ -11,6 +11,7 @@ import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import RepeatRoutes, { Repeat } from './handlers/repeat'
 import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './handlers/repeatPeriodAndCount'
+import CommentRoutes, { Comment } from './handlers/comment'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
@@ -52,6 +53,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const dateAndTimeHandler = new DateAndTimeRoutes(activitiesService)
   const repeatHandler = new RepeatRoutes()
   const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
+  const commentHandler = new CommentRoutes(editAppointmentService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
   const howToAddPrisoners = new HowToAddPrisoners(editAppointmentService)
@@ -82,6 +84,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
   post('/repeat', repeatHandler.POST, Repeat)
   get('/repeat-period-and-count', repeatPeriodAndCountHandler.GET, true)
   post('/repeat-period-and-count', repeatPeriodAndCountHandler.POST, RepeatPeriodAndCount)
+  get('/comment', commentHandler.GET, true)
+  post('/comment', commentHandler.CREATE, Comment)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
   router.get(

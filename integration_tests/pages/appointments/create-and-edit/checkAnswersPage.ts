@@ -38,6 +38,8 @@ export default class CheckAnswersPage extends Page {
 
   assertRepeatCount = (option: string) => this.assertAppointmentDetail('Number of appointments', option)
 
+  assertComment = (comment: string) => this.assertAppointmentDetail('Heads up', comment)
+
   changePrisoner = () => cy.get('[data-qa=change-prisoner]').click()
 
   changeCategory = () => cy.get('[data-qa=change-category]').click()
@@ -55,6 +57,8 @@ export default class CheckAnswersPage extends Page {
   changeRepeatPeriod = () => cy.get('[data-qa=change-repeat-period]').click()
 
   changeRepeatCount = () => cy.get('[data-qa=change-repeat-count]').click()
+
+  changeComment = () => cy.get('[data-qa=change-comment]').click()
 
   createAppointment = () => cy.get('button').contains('Accept and save').click()
 }

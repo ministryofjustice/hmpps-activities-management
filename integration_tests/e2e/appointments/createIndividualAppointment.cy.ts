@@ -19,6 +19,7 @@ import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmat
 import IndividualMovementSlip from '../../pages/appointments/movementSlip/individualMovementSlip'
 import { formatDate } from '../../../server/utils/utils'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
+import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 
 context('Create individual appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -81,6 +82,10 @@ context('Create individual appointment', () => {
     repeatPage.selectRepeat('No')
     repeatPage.continue()
 
+    const commentPage = Page.verifyOnPage(CommentPage)
+    commentPage.enterComment('Appointment level comment')
+    commentPage.continue()
+
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
     checkAnswersPage.assertCategory('Chaplaincy')
@@ -89,6 +94,7 @@ context('Create individual appointment', () => {
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.assertRepeat('No')
+    checkAnswersPage.assertComment('Appointment level comment')
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)

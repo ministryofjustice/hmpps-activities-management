@@ -15,6 +15,8 @@ import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTim
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
+import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
+import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
 
 context('Create individual appointment - back links', () => {
   beforeEach(() => {
@@ -62,8 +64,16 @@ context('Create individual appointment - back links', () => {
     dateAndTimePage.continue()
 
     const repeatPage = Page.verifyOnPage(RepeatPage)
+    repeatPage.selectRepeat('No')
+    repeatPage.continue()
+
+    const commentPage = Page.verifyOnPage(CommentPage)
 
     // Click through back links
+    commentPage.back()
+    Page.verifyOnPage(RepeatPage)
+    repeatPage.selectRepeat('No')
+
     repeatPage.back()
     Page.verifyOnPage(DateAndTimePage)
     dateAndTimePage.assertStartDate(tomorrow)
@@ -85,16 +95,16 @@ context('Create individual appointment - back links', () => {
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
 
-    // Continue to repeat page
+    // Continue to comment page
     selectPrisonerPage.continue()
     categoryPage.continue()
     descriptionPage.continue()
     locationPage.continue()
     dateAndTimePage.continue()
-
-    Page.verifyOnPage(RepeatPage)
-    repeatPage.selectRepeat('No')
     repeatPage.continue()
+
+    Page.verifyOnPage(CommentPage)
+    commentPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertNoBackLink()
@@ -132,7 +142,25 @@ context('Create individual appointment - back links', () => {
 
     checkAnswersPage.changeRepeat()
     Page.verifyOnPage(RepeatPage)
-    dateAndTimePage.back()
+    repeatPage.back()
+    Page.verifyOnPage(CheckAnswersPage)
+
+    // Repeat is a two page sub journey. Check it can be partially changed then backed out of without changing the answer
+    checkAnswersPage.changeRepeat()
+    Page.verifyOnPage(RepeatPage)
+    repeatPage.selectRepeat('Yes')
+    repeatPage.continue()
+    const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
+    repeatPeriodAndCountPage.selectRepeatPeriod('Every weekday (Monday to Friday)')
+    repeatPeriodAndCountPage.enterRepeatCount('5')
+    repeatPeriodAndCountPage.back()
+    Page.verifyOnPage(RepeatPage)
+    repeatPage.back()
+    checkAnswersPage.assertRepeat('No')
+
+    checkAnswersPage.changeComment()
+    Page.verifyOnPage(CommentPage)
+    commentPage.back()
     Page.verifyOnPage(CheckAnswersPage)
 
     checkAnswersPage.createAppointment()
