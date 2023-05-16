@@ -3,6 +3,13 @@
 
 {% extends "layout.njk" %}
 
+{% macro labelAndValue(label, value, rowClasses, valueClasses) %}
+    <div class="movement-slip__summary__row {{ rowClasses }}">
+        <dt class="movement-slip__summary__row__key">{{ label }}</dt>
+        <dl class="movement-slip__summary__row__value {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dl>
+    </div>
+{% endmacro %}
+
 {% set pageTitle = "Appointments Management - Movement Authorisation" %}
 {% set pageId = 'occurrence-movement-slip-page' %}
 
@@ -31,43 +38,15 @@
             <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ prisoner | fullName | toTitleCase }}, {{ prisoner.prisonerNumber }}</h1>
             <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="caption">{{ prisoner.prisonCode + '-' + prisoner.cellLocation }}</span>
 
-            {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Appointment"
-                        },
-                        value: {
-                            text: appointmentOccurrence.appointmentDescription if appointmentOccurrence.appointmentDescription else appointmentOccurrence.category.description
-                        }
-                    }, {
-                        key: {
-                            text: "Time"
-                        },
-                        value: {
-                            html: '<ul class="govuk-list">' +
-                                  '<li>' + appointmentOccurrence.startTime + ' to ' + appointmentOccurrence.endTime + '</li>' +
-                                  '<li>' + (appointmentOccurrence.startDate | toDate | formatDate('EEEE, d MMMM yyyy')) + '</li>' +
-                                  '</ul>'
-                        }
-                    }, {
-                        key: {
-                            text: "Location"
-                        },
-                        value: {
-                            text: appointmentOccurrence.internalLocation.description
-                        }
-                    }, {
-                        key: {
-                            text: "Heads up"
-                        },
-                        value: {
-                            html: '<span class="preserve-line-breaks">' + (appointmentOccurrence.comment | safe) + '</span>'
-                        },
-                        classes: "govuk-summary-list__row--no-border"
-                    }
-                ]
-            }) }}
+            <dl class='movement-slip__summary'>
+                {{ labelAndValue('Appointment', appointmentOccurrence.appointmentDescription if appointmentOccurrence.appointmentDescription else appointmentOccurrence.category.description) }}
+                {{ labelAndValue('Time', '<ul class="govuk-list">' +
+                                             '<li>' + appointmentOccurrence.startTime + ' to ' + appointmentOccurrence.endTime + '</li>' +
+                                             '<li>' + (appointmentOccurrence.startDate | toDate | formatDate('EEEE, d MMMM yyyy')) + '</li>' +
+                                         '</ul>') }}
+                {{ labelAndValue('Location', appointmentOccurrence.internalLocation.description) }}
+                {{ labelAndValue('Heads up', appointmentOccurrence.comment, 'movement-slip__row--no-border', 'preserve-line-breaks') }}
+            </dl>
 
             <p class="govuk-body-s movement-slip-footer">Printed at {{ now | formatDate("h:mm 'on' EEEE, d MMMM yyyy") }}</p>
         </div>

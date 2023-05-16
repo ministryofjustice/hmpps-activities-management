@@ -1,38 +1,61 @@
 .movement-slip {
   margin-bottom: govuk-spacing(6);
-  padding: govuk-spacing(6) govuk-spacing(3);
+  padding: govuk-spacing(4);
   border: 2px dashed $govuk-border-colour;
   page-break-inside: avoid;
 
   .movement-slip-header {
-    padding-left: 40px;
+    padding-left: 2.5rem;
     background-image: url(#{$moj-images-path}moj-logotype-crest.svg);
     background-repeat: no-repeat;
-    background-size: contain;
-  }
-
-  .govuk-summary-list {
-    margin-bottom: govuk-spacing(3);
+    background-size: 2rem;
+    background-position-y: center;
   }
 
   .movement-slip-footer {
     text-align: right;
     color: $govuk-secondary-text-colour;
     margin-bottom: govuk-spacing(0);
+
+    @media print {
+      font-size: 14px;
+    }
   }
 
-  &__section {
-    display: flex;
-    flex-wrap: wrap;
-    padding-top: govuk-spacing(3);
-    border-top: 1px solid;
+  &__summary {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
 
-    &__values {
+    &__row {
       @extend .govuk-body;
-      margin-bottom: govuk-spacing(3);
-      flex: 1 0 33.333%;
-      box-sizing: border-box;
-      padding-right: govuk-spacing(3);
+      display: table-row;
+      border-bottom: 1px solid $govuk-border-colour;
+
+      &--no-border {
+        border-bottom: 0;
+      }
+
+      &__key {
+        display: table-cell;
+        width: 30%;
+        font-weight: bold;
+        padding: 10px 20px 10px 0;
+        margin: 0;
+      }
+
+      &__value {
+        display: table-cell;
+        padding: 10px 20px 10px 0;
+        margin: 0;
+
+        ul {
+          @media print {
+            font-size: 14px;
+          }
+        }
+      }
 
       @media print {
         font-size: 14px;
