@@ -22,9 +22,12 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
   })
 
-  it('should display appointment details', () => {
+  it('should display individual occurrence details', () => {
     viewContext.movementSlip = {
       id: 10,
+      appointmentId: 5,
+      appointmentType: 'INDIVIDUAL',
+      sequenceNumber: 2,
       category: {
         code: 'MEOT',
         description: 'Medical - Other',
@@ -39,7 +42,9 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
       startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
       startTime: '13:00',
       endTime: '13:15',
-      comment: 'Appointment level comment',
+      comment: 'Appointment occurrence level comment',
+      isEdited: false,
+      isCancelled: false,
       created: '2023-02-17T10:22:04',
       createdBy: {
         firstName: 'John',
@@ -47,7 +52,6 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
       },
       updated: null,
       updatedBy: null,
-      occurrences: [{ id: 10 }],
       prisoners: [
         {
           firstName: 'TEST',
@@ -57,7 +61,7 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
           cellLocation: '1-2-3',
         },
       ],
-    } as AppointmentDetails as MovementSlip
+    } as AppointmentOccurrenceDetails
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -77,6 +81,7 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
     viewContext.movementSlip = {
       id: 10,
       appointmentId: 5,
+      appointmentType: 'INDIVIDUAL',
       sequenceNumber: 2,
       category: {
         code: 'MEOT',
