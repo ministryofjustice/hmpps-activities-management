@@ -74,23 +74,34 @@
             }) }}
 
             <h2 class="govuk-heading-m">Dates and schedule</h2>
-            {% set dateAndScheduleRows = [{
-                key: {
-                    text: "Start date"
-                },
-                value: {
-                    text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
-                },
-                actions: {
-                    items: [
-                        {
-                            href: "/create/start-date?fromEditActivity=true",
-                            text: "Change",
-                            visuallyHiddenText: "change start date"
-                        }
-                    ]
-                }
-            }] %}
+            {% if attendanceCount > 0 %}
+                {% set dateAndScheduleRows = [{
+                    key: {
+                        text: "Start date"
+                    },
+                    value: {
+                        text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+                    }
+                }] %}
+            {% else %}
+                {% set dateAndScheduleRows = [{
+                    key: {
+                        text: "Start date"
+                    },
+                    value: {
+                        text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/create/start-date?fromEditActivity=true",
+                                text: "Change",
+                                visuallyHiddenText: "change start date"
+                            }
+                        ]
+                    }
+                }] %}
+            {% endif %}
 
             {% if schedule.endDate %}
                 {% set dateAndScheduleRows = (dateAndScheduleRows.push({

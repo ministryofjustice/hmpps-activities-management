@@ -180,6 +180,7 @@ describe('Route Handlers - View Activity', () => {
             },
           ],
         },
+        attendanceCount: 0,
       })
     })
   })
