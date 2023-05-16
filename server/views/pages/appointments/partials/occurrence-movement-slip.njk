@@ -9,8 +9,8 @@
     {% for prisoner in appointmentOccurrence.prisoners %}
         <div class="movement-slip">
             <h3 class="govuk-heading-m movement-slip-header">{{ caseLoadDescription }} <span class="govuk-!-font-weight-regular">Movement authorisation slip</span></h3>
-            <h2 class="govuk-heading-l govuk-!-margin-bottom-2">{{ prisoner | fullName | toTitleCase }}, {{ prisoner.prisonerNumber }}</h2>
-            <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="caption">{{ prisoner.prisonCode + '-' + prisoner.cellLocation }}</span>
+            <h2 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa="prisoner-name-and-number">{{ prisoner | fullName | toTitleCase }}, {{ prisoner.prisonerNumber }}</h2>
+            <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="cell-location">{{ prisoner.prisonCode + '-' + prisoner.cellLocation }}</span>
 
             <dl class='movement-slip__summary'>
                 {{ labelAndValue('Appointment', '<ul class="govuk-list">' +
@@ -25,7 +25,7 @@
                 {{ labelAndValue('Heads up', appointmentOccurrence.comment, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointmentOccurrence.comment }}
             </dl>
 
-            <p class="govuk-body-s movement-slip-footer">Printed at {{ printedAt | formatDate("h:mm 'on' EEEE, d MMMM yyyy") }}</p>
+            <p class="govuk-body-s movement-slip-footer">Printed at {{ printedAt | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}</p>
         </div>
     {% endfor %}
 {% endmacro %}

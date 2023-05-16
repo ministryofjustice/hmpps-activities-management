@@ -16,7 +16,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-l govuk-visually-hidden">Print movement slip</h1>
+            <h1 class="govuk-heading-l govuk-visually-hidden">{{ "Print movement slip" + ("s" if appointmentOccurrence.prisoners.length > 1 ) }}</h1>
 
             <div class="govuk-button-group govuk-!-display-none-print">
                 {{ govukButton({
