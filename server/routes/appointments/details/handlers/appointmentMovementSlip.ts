@@ -7,6 +7,6 @@ export default class AppointmentMovementSlipRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointment } = req
 
-    res.render('pages/appointments/movement-slip/individual', { movementSlip: appointment })
+    res.render('pages/appointments/movement-slip/appointment', { movementSlip: appointment })
   }
 }

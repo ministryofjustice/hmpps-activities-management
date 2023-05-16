@@ -1,0 +1,78 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "layout.njk" %}
+
+{% set pageTitle = "Appointments Management - Movement Authorisation" %}
+{% set pageId = 'occurrence-movement-slip-page' %}
+
+{% block header %}
+{% endblock %}
+
+{% block beforeContent %}
+    <span class="govuk-visually-hidden" id="{{ pageId }}"></span>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-button-group float-right govuk-!-display-none-print">
+                {{ govukButton({
+                    text: "Print movement slip" + ("s" if appointmentOccurrence.prisoners.length > 1 ),
+                    classes: "govuk-button--blue js-print no-js-hidden",
+                    preventDoubleClick: true
+                }) }}
+            </div>
+        </div>
+    </div>
+    {% for prisoner in appointmentOccurrence.prisoners %}
+        <div class="movement-slip">
+            <h2 class="govuk-heading-m movement-slip-header">{{ user.activeCaseLoad.description }} <span class="govuk-!-font-weight-regular">Movement authorisation slip</span></h2>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ prisoner | fullName | toTitleCase }}, {{ prisoner.prisonerNumber }}</h1>
+            <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="caption">{{ prisoner.prisonCode + '-' + prisoner.cellLocation }}</span>
+
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Appointment"
+                        },
+                        value: {
+                            text: appointmentOccurrence.appointmentDescription if appointmentOccurrence.appointmentDescription else appointmentOccurrence.category.description
+                        }
+                    }, {
+                        key: {
+                            text: "Time"
+                        },
+                        value: {
+                            html: '<ul class="govuk-list">' +
+                                  '<li>' + appointmentOccurrence.startTime + ' to ' + appointmentOccurrence.endTime + '</li>' +
+                                  '<li>' + (appointmentOccurrence.startDate | toDate | formatDate('EEEE, d MMMM yyyy')) + '</li>' +
+                                  '</ul>'
+                        }
+                    }, {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: appointmentOccurrence.internalLocation.description
+                        }
+                    }, {
+                        key: {
+                            text: "Heads up"
+                        },
+                        value: {
+                            html: '<span class="preserve-line-breaks">' + (appointmentOccurrence.comment | safe) + '</span>'
+                        },
+                        classes: "govuk-summary-list__row--no-border"
+                    }
+                ]
+            }) }}
+
+            <p class="govuk-body-s movement-slip-footer">Printed at {{ now | formatDate("h:mm 'on' EEEE, d MMMM yyyy") }}</p>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

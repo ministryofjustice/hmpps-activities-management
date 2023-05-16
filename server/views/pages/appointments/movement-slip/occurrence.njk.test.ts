@@ -7,9 +7,9 @@ import { AppointmentDetails, AppointmentOccurrenceDetails } from '../../../../@t
 import { MovementSlip } from '../../../../@types/appointments'
 import { formatDate } from '../../../../utils/utils'
 
-const view = fs.readFileSync('server/views/pages/appointments/movement-slip/individual.njk')
+const view = fs.readFileSync('server/views/pages/appointments/movement-slip/occurrence.njk')
 
-describe('Views - Appointments Management - Individual Movement Slip', () => {
+describe('Views - Appointments Management - Occurrence Movement Slip', () => {
   let compiledTemplate: Template
   const viewContext = {
     movementSlip: {} as MovementSlip,

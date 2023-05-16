@@ -1,8 +1,25 @@
 .movement-slip {
   margin-bottom: govuk-spacing(6);
-  padding: 0 govuk-spacing(6) govuk-spacing(3);
-  border-bottom: 2px dashed;
+  padding: govuk-spacing(6) govuk-spacing(3);
+  border: 2px dashed $govuk-border-colour;
   page-break-inside: avoid;
+
+  .movement-slip-header {
+    padding-left: 40px;
+    background-image: url(#{$moj-images-path}moj-logotype-crest.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  .govuk-summary-list {
+    margin-bottom: govuk-spacing(3);
+  }
+
+  .movement-slip-footer {
+    text-align: right;
+    color: $govuk-secondary-text-colour;
+    margin-bottom: govuk-spacing(0);
+  }
 
   &__section {
     display: flex;
