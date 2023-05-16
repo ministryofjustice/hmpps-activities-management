@@ -1,0 +1,115 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Deallocate from an activity - Check answers" %}
+{% set pageId = 'check-deallocation-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.deallocateJourney.activityName }}</span>
+            <span class="govuk-heading-xl">Check and confirm who you're taking off the activity</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {% set rows = [] %}
+                {% if session.deallocateJourney.allocationsToRemove | length == 1 %}
+                    {% set rows = (rows.push(
+                        {
+                            key: {
+                                text: "Name"
+                            },
+                            value: {
+                                text: session.deallocateJourney.prisoners[0].name
+                            }
+                        }
+                    ), rows) %}
+                    {% set rows = (rows.push(
+                        {
+                            key: {
+                                text: "Prisoner number"
+                            },
+                            value: {
+                                text: session.deallocateJourney.prisoners[0].prisonerNumber
+                            }
+                        }
+                    ), rows) %}
+                {% else %}
+                    {% set prisonersHtml %}
+                        <ul class='govuk-list'>
+                            {% for prisoner in session.deallocateJourney.prisoners %}
+                                <li>{{ prisoner.name + ' (' + prisoner.prisonerNumber + ')'}}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endset %}
+                    {% set rows = (rows.push(
+                        {
+                            key: {
+                                text: "People you're taking off"
+                            },
+                            value: {
+                                html: prisonersHtml
+                            }
+                        }
+                    ), rows) %}
+                {% endif %}
+
+                {% set rows = (rows.push(
+                    {
+                        key: {
+                            text: "End of allocation"
+                        },
+                        value: {
+                            text: deallocationDate | formatDate('EEEE, dd MMMM yyyy')
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "#",
+                                    text: "Change",
+                                    visuallyHiddenText: "address"
+                                }
+                            ]
+                        }
+                    }
+                ), rows) %}
+                {% set rows = (rows.push(
+                    {
+                        key: {
+                            text: "Reason"
+                        },
+                        value: {
+                            text: deallocationReason
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "#",
+                                    text: "Change",
+                                    visuallyHiddenText: "contact details"
+                                }
+                            ]
+                        }
+                    }
+                ), rows) %}
+
+                {{ govukSummaryList({
+                    rows: rows
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Confirm and remove"
+                    }) }}
+                    <a href="/allocation-dashboard/{{ session.deallocateJourney.scheduleId }}" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

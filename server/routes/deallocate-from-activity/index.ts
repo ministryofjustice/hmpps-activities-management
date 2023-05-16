@@ -5,6 +5,7 @@ import emptyJourneyHandler from '../../middleware/emptyJourneyHandler'
 import DeallocationDateRoutes, { DeallocationDate } from './handlers/deallocationDate'
 import DeallocationReasonRoutes, { DeallocationReason } from './handlers/deallocationReason'
 import { Services } from '../../services'
+import CheckDeallocationRoutes from './handlers/checkDeallocation'
 
 export default function Index({ activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -15,11 +16,14 @@ export default function Index({ activitiesService }: Services): Router {
 
   const deallocationDateHandler = new DeallocationDateRoutes()
   const deallocationReasonHandler = new DeallocationReasonRoutes(activitiesService)
+  const checkDeallocationHandler = new CheckDeallocationRoutes(activitiesService)
 
   get('/', deallocationDateHandler.GET, true)
   post('/', deallocationDateHandler.POST, DeallocationDate)
   get('/reason', deallocationReasonHandler.GET, true)
   post('/reason', deallocationReasonHandler.POST, DeallocationReason)
+  get('/check-answers', checkDeallocationHandler.GET, true)
+  post('/check-answers', checkDeallocationHandler.POST)
 
   return router
 }
