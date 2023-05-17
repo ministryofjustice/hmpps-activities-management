@@ -31,10 +31,13 @@
     {% endfor %}
 
     {% set prisonerActionItems = [{
-        href: (occurenceLink + "/movement-slip" if repeat) + ("/appointments/" + appointmentId + "/movement-slip" if repeat == null),
+        href: occurenceLink + "/movement-slip",
         text: "Print movement slip" + ("s" if prisoners.length > 1 ),
         classes: "govuk-link--no-visited-state",
-        attributes: { 'data-qa': 'print-movement-slips' }
+        attributes: {
+            'target': '_blank',
+            'data-qa': 'print-movement-slips'
+        }
     }] %}
     {% if appointmentType == AppointmentType.GROUP %}
         {% set prisonerActionItems = (prisonerActionItems.push(
