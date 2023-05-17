@@ -23,6 +23,6 @@ export default class DeallocationReasonRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { deallocationReason } = req.body
     req.session.deallocateJourney.deallocationReason = deallocationReason
-    res.redirect('check-answers')
+    res.redirectOrReturn('check-answers')
   }
 }

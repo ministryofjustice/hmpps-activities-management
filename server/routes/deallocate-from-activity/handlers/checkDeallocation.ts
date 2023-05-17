@@ -19,7 +19,7 @@ export default class CheckDeallocationRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { deallocateJourney } = req.session.deallocateJourney
+    const { deallocateJourney } = req.session
     const { user } = res.locals
     await this.activitiesService.deallocateFromActivity(deallocateJourney, user)
     res.redirect('confirmation')

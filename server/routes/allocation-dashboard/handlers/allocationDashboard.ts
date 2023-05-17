@@ -105,7 +105,7 @@ export default class AllocationDashboardRoutes {
         })),
       )
 
-    res.redirect(`/deallocate`)
+    res.redirect(`/deallocate/date`)
   }
 
   private getSuitableForIep = (minimumIncentiveLevel: string, iepLevels: IepLevel[]) => {

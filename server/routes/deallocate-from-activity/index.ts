@@ -20,8 +20,8 @@ export default function Index({ activitiesService }: Services): Router {
   const checkDeallocationHandler = new CheckDeallocationRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
 
-  get('/', deallocationDateHandler.GET, true)
-  post('/', deallocationDateHandler.POST, DeallocationDate)
+  get('/date', deallocationDateHandler.GET, true)
+  post('/date', deallocationDateHandler.POST, DeallocationDate)
   get('/reason', deallocationReasonHandler.GET, true)
   post('/reason', deallocationReasonHandler.POST, DeallocationReason)
   get('/check-answers', checkDeallocationHandler.GET, true)
