@@ -177,7 +177,7 @@
                     }
                 },
                 {
-                    text: row.startDate | formatDate('d MMMM yyyy') + (' to ' + row.endDate | formatDate('d MMMM yyyy') if row.endDate)
+                    text: row.startDate | formatDate('d MMMM yyyy') + (' to ' + row.endDate | subDays(1) |formatDate('d MMMM yyyy') if row.endDate)
                 },
                 {
                     html: otherAllocationsHtml

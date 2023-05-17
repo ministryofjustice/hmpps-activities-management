@@ -6,6 +6,7 @@ import DeallocationDateRoutes, { DeallocationDate } from './handlers/deallocatio
 import DeallocationReasonRoutes, { DeallocationReason } from './handlers/deallocationReason'
 import { Services } from '../../services'
 import CheckDeallocationRoutes from './handlers/checkDeallocation'
+import ConfirmationRoutes from './handlers/confirmation'
 
 export default function Index({ activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -17,6 +18,7 @@ export default function Index({ activitiesService }: Services): Router {
   const deallocationDateHandler = new DeallocationDateRoutes()
   const deallocationReasonHandler = new DeallocationReasonRoutes(activitiesService)
   const checkDeallocationHandler = new CheckDeallocationRoutes(activitiesService)
+  const confirmationHandler = new ConfirmationRoutes()
 
   get('/', deallocationDateHandler.GET, true)
   post('/', deallocationDateHandler.POST, DeallocationDate)
@@ -24,6 +26,7 @@ export default function Index({ activitiesService }: Services): Router {
   post('/reason', deallocationReasonHandler.POST, DeallocationReason)
   get('/check-answers', checkDeallocationHandler.GET, true)
   post('/check-answers', checkDeallocationHandler.POST)
+  get('/confirmation', confirmationHandler.GET, true)
 
   return router
 }
