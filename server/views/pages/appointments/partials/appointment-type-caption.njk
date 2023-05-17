@@ -3,5 +3,7 @@
     <span class="govuk-caption-l" data-qa="caption">Individual appointment</span>
   {% elseif appointmentType == AppointmentType.GROUP %}
     <span class="govuk-caption-l" data-qa="caption">Group appointment</span>
+  {% elseif appointmentType == AppointmentType.BULK %}
+    <span class="govuk-caption-l" data-qa="caption">Bulk appointments</span>
   {% endif %}
 {% endmacro %}

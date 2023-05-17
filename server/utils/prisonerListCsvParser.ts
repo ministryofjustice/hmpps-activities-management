@@ -5,6 +5,49 @@ import { FormValidationError } from '../middleware/formValidationErrorHandler'
 
 export default class PrisonerListCsvParser {
   async getPrisonerNumbers(file: Express.Multer.File): Promise<string[]> {
+    const rows = await this.readCsvValues(file)
+
+    const prisonerNumbers = rows.map(row => row[0])
+
+    return prisonerNumbers
+  }
+
+  async getAppointments(file: Express.Multer.File) {
+    const rows = await this.readCsvValues(file)
+    return rows.map(row => {
+      const [prisonerNumber, startTimeString, endTimeString] = row
+
+      // TODO: Confirm time validation rules and error messages
+      // This simply prevents errors while processing
+      const timeRegex = /^([01][0-9]|2[0-3]):([0-5][0-9])$/
+
+      let startTime = null
+      if (startTimeString?.match(timeRegex)) {
+        const startTimeParts = startTimeString.split(':')
+        startTime = {
+          hour: parseInt(startTimeParts[0], 10),
+          minute: parseInt(startTimeParts[1], 10),
+        }
+      }
+
+      let endTime = null
+      if (endTimeString?.match(timeRegex)) {
+        const endTimeParts = endTimeString.split(':')
+        endTime = {
+          hour: parseInt(endTimeParts[0], 10),
+          minute: parseInt(endTimeParts[1], 10),
+        }
+      }
+
+      return {
+        prisonerNumber,
+        startTime,
+        endTime,
+      }
+    })
+  }
+
+  async readCsvValues(file: Express.Multer.File) {
     let data
     try {
       data = await fsPromises.readFile(file.path)
@@ -14,15 +57,15 @@ export default class PrisonerListCsvParser {
       await fsPromises.unlink(file.path).catch(_ => true)
     }
 
-    const prisonerNumbers: string[] = []
+    const rowValues: string[][] = []
 
     const parser = parse(data, { trim: true, skipEmptyLines: true }).on('readable', () => {
       let row
       // eslint-disable-next-line no-cond-assign
       while ((row = parser.read())) {
-        const prisonerNumber = row[0]
-        if (prisonerNumber !== 'Prison number' && !prisonerNumbers.includes(prisonerNumber)) {
-          prisonerNumbers.push(prisonerNumber)
+        const [prisonerNumber] = row
+        if (prisonerNumber !== 'Prison number' && !rowValues.map(i => i[0]).includes(prisonerNumber)) {
+          rowValues.push(row)
         }
       }
     })
@@ -33,6 +76,6 @@ export default class PrisonerListCsvParser {
       throw new FormValidationError('file', 'The selected file must use the CSV template')
     }
 
-    return prisonerNumbers
+    return rowValues
   }
 }

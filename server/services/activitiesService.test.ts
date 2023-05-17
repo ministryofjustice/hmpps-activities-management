@@ -22,6 +22,8 @@ import {
   AppointmentDetails,
   AppointmentOccurrenceDetails,
   ActivityCandidate,
+  AppointmentCreateRequest,
+  BulkAppointment,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -338,7 +340,7 @@ describe('Activities Service', () => {
         appointmentDescription: 'Appointment description',
         prisonerNumbers: ['A1234BC'],
         appointmentType: AppointmentType.INDIVIDUAL,
-      }
+      } as AppointmentCreateRequest
 
       const expectedResponse = {
         id: 12345,
@@ -445,6 +447,41 @@ describe('Activities Service', () => {
       await activitiesService.editAppointmentOccurrence(1, apiRequest, user)
 
       expect(activitiesApiClient.editAppointmentOccurrence).toHaveBeenCalledWith(1, apiRequest, user)
+    })
+  })
+
+  describe('createBulkAppointment', () => {
+    it('should call API to create and return bulk appointment', async () => {
+      const request = {
+        prisonCode: 'MDI',
+        categoryCode: 'ACTI',
+        internalLocationId: 27223,
+        inCell: false,
+        startDate: '2023-05-16',
+        appointments: [
+          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30' },
+          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00' },
+        ],
+      }
+
+      const expectedResponse = {
+        bulkAppointmentId: 10,
+        appointments: [
+          {
+            id: 37,
+          },
+          {
+            id: 38,
+          },
+        ],
+      } as BulkAppointment
+
+      when(activitiesApiClient.postCreateBulkAppointment).calledWith(request, user).mockResolvedValue(expectedResponse)
+
+      const response = await activitiesService.createBulkAppointment(request, user)
+
+      expect(activitiesApiClient.postCreateBulkAppointment).toHaveBeenCalledWith(request, user)
+      expect(response).toEqual(expectedResponse)
     })
   })
 })

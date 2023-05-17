@@ -39,8 +39,10 @@ function validationMiddleware(type: new () => object): RequestHandler {
     const flattenErrors: any = (errorList: ValidationError[], parent?: string) => {
       // Flat pack a list of errors with child errors into a 1-dimensional list of errors.
       return errorList.flatMap(error => {
+        const property = `${parent ? `${parent}-` : ''}${error.property}`
+
         return error.children.length > 0
-          ? flattenErrors(error.children, error.property)
+          ? flattenErrors(error.children, property)
           : buildError(error, error.constraints, parent)
       })
     }

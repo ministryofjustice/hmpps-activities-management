@@ -11,23 +11,26 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ govukPanel({
-                titleText: "Appointment created"
+                titleText: "Bulk appointment created" if appointment.type == AppointmentType.BULK else "Appointment created"
             }) }}
             <p class="govuk-body" data-qa="message">
                 {% if appointment.appointmentType == AppointmentType.INDIVIDUAL %}
                     You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners[0] | fullName | toTitleCase }}
                 {% elseif appointment.appointmentType == AppointmentType.GROUP %}
                     You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners | length }} prisoners
+                {% elseif appointment.type == AppointmentType.BULK %}
+                    You have successfully created appointments for {{ appointment.appointments | length }} prisoners
                 {% endif %}
-                {% if appointment.repeat == null %}
+
+                {% if not appointment.repeat %}
                     on {{ appointment.startDate | toDate | formatDate('EEEE, d MMMM yyyy') }}.
                 {% else %}
                     starting on {{ appointment.startDate | toDate | formatDate('EEEE, d MMMM yyyy') }}.
                     It will repeat {{ ("every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
-                                      ("daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
-                                      ("weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
-                                      ("fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
-                                      ("monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY) }}
+                                    ("daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
+                                    ("weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
+                                    ("fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
+                                    ("monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY) }}
                     for {{ appointment.repeat.count }}
                     {% if appointment.repeat.count == 1 %}
                         appointment
@@ -41,9 +44,17 @@
             <p class="govuk-body">
                 <a href="/appointments" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">Create another appointment</a>
             </p>
-            <p class="govuk-body">
-                <a href="/appointments/{{ appointment.id }}/occurrence/{{ appointment.occurrences[0].id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and manage appointment</a>
-            </p>
+
+            {# TODO: Display bulk appointment details #}
+            {% if appointment.type == AppointmentType.BULK %}
+                <p class="govuk-body">
+                    <a href="#" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and manage appointment</a>
+                </p>
+            {% else %}
+                <p class="govuk-body">
+                    <a href="/appointments/{{ appointment.id }}/occurrence/{{ appointment.occurrences[0].id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and manage appointment</a>
+                </p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

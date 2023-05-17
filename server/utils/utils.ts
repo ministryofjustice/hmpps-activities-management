@@ -93,7 +93,13 @@ export const prisonerName = (name: string, boldLastName = true) => {
 }
 
 export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {
+  if (!date) return null
   return parse(date, fromFormat, new Date())
+}
+
+export const parseISODate = (date: string) => {
+  if (!date) return null
+  return parseISO(date)
 }
 
 export const switchDateFormat = (displayDate: string, fromFormat = 'dd/MM/yyyy') => {
@@ -256,6 +262,8 @@ export const buildErrorSummaryList = (array: FieldValidationError[]) => {
 }
 
 export const formatDate = (date: unknown, fmt: string, inContextName?: boolean) => {
+  if (!date) return null
+
   let richDate = date as Date
   if (typeof date === 'string') {
     richDate = parseDate(date as string)
@@ -766,4 +774,8 @@ export const mapSlots = (createJourney: CreateAnActivityJourney) => {
     slots.push(slot)
   })
   return slots
+}
+
+export const padNumber = (num: number, length = 2) => {
+  return (new Array(length).fill('0').join('') + num).slice(-length)
 }

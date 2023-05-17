@@ -17,6 +17,7 @@ import {
   AppointmentOccurrenceDetails,
   AppointmentCategorySummary,
   AppointmentLocationSummary,
+  AppointmentCreateRequest,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -584,7 +585,7 @@ describe('activitiesApiClient', () => {
         appointmentDescription: 'Appointment description',
         prisonerNumbers: ['A1234BC'],
         appointmentType: AppointmentType.INDIVIDUAL,
-      }
+      } as AppointmentCreateRequest
 
       const response = {
         id: 12345,
@@ -689,6 +690,44 @@ describe('activitiesApiClient', () => {
         .reply(200, response)
 
       const output = await activitiesApiClient.getActivityCandidates(1, user, ['Basic'], ['RHI'], true, 'test', 2)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('postCreateBulkAppointment', () => {
+    it('should successfully post data to api', async () => {
+      const request = {
+        prisonCode: 'MDI',
+        categoryCode: 'ACTI',
+        internalLocationId: 27223,
+        inCell: false,
+        startDate: '2023-05-16',
+        appointments: [
+          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30' },
+          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00' },
+        ],
+      }
+
+      const response = {
+        bulkAppointmentId: 10,
+        appointments: [
+          {
+            id: 37,
+          },
+          {
+            id: 38,
+          },
+        ],
+      }
+
+      fakeActivitiesApi
+        .post('/bulk-appointments', request)
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.postCreateBulkAppointment(request, user)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

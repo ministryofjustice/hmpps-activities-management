@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import UploadByCsv from './uploadByCsv'
+import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 
-describe('Route Handlers - Create Appointment - Start', () => {
+describe('Route Handlers - Appointments - Upload by CSV', () => {
   const handler = new UploadByCsv()
   let req: Request
   let res: Response
@@ -13,14 +14,19 @@ describe('Route Handlers - Create Appointment - Start', () => {
     } as unknown as Response
 
     req = {
-      session: {},
+      session: {
+        appointmentJourney: {
+          mode: AppointmentJourneyMode.CREATE,
+          type: AppointmentType.GROUP,
+        },
+      },
     } as unknown as Request
   })
 
   describe('GET', () => {
     it('should render upload by CSV view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-by-csv')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-prisoners-by-csv')
     })
   })
 

@@ -24,6 +24,9 @@ import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
 import setAppointmentJourneyMode from '../../../middleware/appointments/setAppointmentJourneyMode'
 import { AppointmentJourneyMode } from './appointmentJourney'
 import EditAppointmentService from '../../../services/editAppointmentService'
+import UploadBulkAppointment, { AppointmentsList } from './handlers/bulk-appointments/uploadBulkAppointment'
+import BulkAppointmentDateRoutes, { BulkAppointmentDate } from './handlers/bulk-appointments/bulkAppointmentDate'
+import ReviewBulkAppointment, { AppointmentTimes } from './handlers/bulk-appointments/reviewBulkAppointment'
 
 export default function Create({ prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -59,9 +62,13 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const howToAddPrisoners = new HowToAddPrisoners(editAppointmentService)
   const uploadByCsv = new UploadByCSV()
   const reviewPrisoners = new ReviewPrisoners(editAppointmentService)
+  const uploadBulkAppointment = new UploadBulkAppointment(new PrisonerListCsvParser(), prisonService)
+  const bulkAppointmentDate = new BulkAppointmentDateRoutes()
+  const reviewBulkAppointment = new ReviewBulkAppointment()
 
   get('/start-individual', startHandler.INDIVIDUAL)
   get('/start-group', startHandler.GROUP)
+  get('/start-bulk', startHandler.BULK)
   get('/select-prisoner', selectPrisonerHandler.GET, true)
   post('/select-prisoner', selectPrisonerHandler.POST, PrisonerSearch)
   get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
@@ -71,6 +78,13 @@ export default function Create({ prisonService, activitiesService }: Services): 
     validationMiddleware(PrisonerList),
     setAppointmentJourneyMode(AppointmentJourneyMode.CREATE),
     asyncMiddleware(uploadPrisonerListRoutes.POST),
+  )
+  get('/upload-bulk-appointment', uploadBulkAppointment.GET, true)
+  router.post(
+    '/upload-bulk-appointment',
+    setUpMultipartFormDataParsing(),
+    validationMiddleware(AppointmentsList),
+    asyncMiddleware(uploadBulkAppointment.POST),
   )
   get('/category', categoryHandler.GET, true)
   post('/category', categoryHandler.POST, Category)
@@ -102,6 +116,11 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/review-prisoners', reviewPrisoners.GET, true)
   post('/review-prisoners', reviewPrisoners.POST)
   get('/review-prisoners/:prisonNumber/remove', reviewPrisoners.REMOVE, true)
+  get('/bulk-appointment-date', bulkAppointmentDate.GET, true)
+  post('/bulk-appointment-date', bulkAppointmentDate.POST, BulkAppointmentDate)
+  get('/review-bulk-appointment', reviewBulkAppointment.GET, true)
+  post('/review-bulk-appointment', reviewBulkAppointment.POST, AppointmentTimes)
+  get('/bulk-appointments-confirmation/:bulkAppointmentId', confirmationHandler.GET_BULK, true)
 
   return router
 }

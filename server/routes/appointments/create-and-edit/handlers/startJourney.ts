@@ -25,6 +25,17 @@ export default class StartJourneyRoutes {
     res.redirect('how-to-add-prisoners')
   }
 
+  BULK = async (req: Request, res: Response): Promise<void> => {
+    req.session.appointmentJourney = {
+      mode: AppointmentJourneyMode.CREATE,
+      type: AppointmentType.BULK,
+    }
+    req.session.bulkAppointmentJourney = {
+      appointments: [],
+    }
+    res.redirect('upload-by-csv')
+  }
+
   EDIT = async (req: Request, res: Response): Promise<void> => {
     const { appointmentOccurrence } = req
     const { property } = req.params

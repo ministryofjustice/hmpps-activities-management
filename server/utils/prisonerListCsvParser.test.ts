@@ -7,13 +7,13 @@ jest.spyOn(fsPromises, 'unlink').mockImplementation(path => {
   return Promise.resolve()
 })
 
-describe('getPrisonerNumbers', () => {
-  const parser = new PrisonerListCsvParser()
+const parser = new PrisonerListCsvParser()
 
+describe('readCsvValues', () => {
   it('should throw validation error when file not found', async () => {
     let exception
     try {
-      await parser.getPrisonerNumbers({ path: 'server/utils/fixtures/not-found.csv' } as unknown as Express.Multer.File)
+      await parser.readCsvValues({ path: 'server/utils/fixtures/not-found.csv' } as unknown as Express.Multer.File)
     } catch (e) {
       exception = e
     }
@@ -27,7 +27,7 @@ describe('getPrisonerNumbers', () => {
   it('should throw validation error when file is not CSV', async () => {
     let exception
     try {
-      await parser.getPrisonerNumbers({
+      await parser.readCsvValues({
         path: 'server/utils/fixtures/non-csv-file.xlsx',
       } as unknown as Express.Multer.File)
     } catch (e) {
@@ -39,7 +39,9 @@ describe('getPrisonerNumbers', () => {
     expect((exception as FormValidationError).message).toEqual('The selected file must use the CSV template')
     expect(fsPromises.unlink).toHaveBeenCalled()
   })
+})
 
+describe('getPrisonerNumbers', () => {
   it('should return no prisoner numbers when file is empty', async () => {
     const prisonerNumbers = await parser.getPrisonerNumbers({
       path: 'server/utils/fixtures/empty-upload-prisoner-list.csv',
@@ -73,6 +75,113 @@ describe('getPrisonerNumbers', () => {
     } as unknown as Express.Multer.File)
 
     expect(prisonerNumbers).toEqual(['A1234BC', 'B2345CD'])
+    expect(fsPromises.unlink).toHaveBeenCalled()
+  })
+})
+
+describe('getAppointments', () => {
+  it('should return appointments when file is empty', async () => {
+    const appointments = await parser.getAppointments({
+      path: 'server/utils/fixtures/bulk-appointment/empty-bulk-appointment.csv',
+    } as unknown as Express.Multer.File)
+
+    expect(appointments.length).toBe(0)
+    expect(fsPromises.unlink).toHaveBeenCalled()
+  })
+
+  it('should return appointments without header row', async () => {
+    const appointments = await parser.getAppointments({
+      path: 'server/utils/fixtures/bulk-appointment/bulk-appointment.csv',
+    } as unknown as Express.Multer.File)
+
+    expect(appointments).toEqual([
+      {
+        prisonerNumber: 'A1234BC',
+        startTime: {
+          hour: 10,
+          minute: 0,
+        },
+        endTime: {
+          hour: 11,
+          minute: 0,
+        },
+      },
+      {
+        prisonerNumber: 'B2345CD',
+        startTime: {
+          hour: 13,
+          minute: 30,
+        },
+        endTime: {
+          hour: 14,
+          minute: 0,
+        },
+      },
+    ])
+    expect(fsPromises.unlink).toHaveBeenCalled()
+  })
+
+  it('should return appointments when header row not included', async () => {
+    const appointments = await parser.getAppointments({
+      path: 'server/utils/fixtures/bulk-appointment/bulk-appointment-no-header.csv',
+    } as unknown as Express.Multer.File)
+
+    expect(appointments).toEqual([
+      {
+        prisonerNumber: 'A1234BC',
+        startTime: {
+          hour: 10,
+          minute: 0,
+        },
+        endTime: {
+          hour: 11,
+          minute: 0,
+        },
+      },
+      {
+        prisonerNumber: 'B2345CD',
+        startTime: {
+          hour: 13,
+          minute: 30,
+        },
+        endTime: {
+          hour: 14,
+          minute: 0,
+        },
+      },
+    ])
+    expect(fsPromises.unlink).toHaveBeenCalled()
+  })
+
+  it('should return unique appointments', async () => {
+    const appointments = await parser.getAppointments({
+      path: 'server/utils/fixtures/bulk-appointment/bulk-appointment-duplicates.csv',
+    } as unknown as Express.Multer.File)
+
+    expect(appointments).toEqual([
+      {
+        prisonerNumber: 'A1234BC',
+        startTime: {
+          hour: 10,
+          minute: 0,
+        },
+        endTime: {
+          hour: 11,
+          minute: 0,
+        },
+      },
+      {
+        prisonerNumber: 'B2345CD',
+        startTime: {
+          hour: 13,
+          minute: 30,
+        },
+        endTime: {
+          hour: 14,
+          minute: 0,
+        },
+      },
+    ])
     expect(fsPromises.unlink).toHaveBeenCalled()
   })
 })
