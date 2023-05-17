@@ -1,11 +1,20 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import BankHolidayOptionRoutes, { BankHolidayOption } from './bankHoliday'
 import { associateErrorsWithProperty } from '../../../utils/utils'
+import ActivitiesService from '../../../services/activitiesService'
+import atLeast from '../../../../jest.setup'
+import activity from '../../../services/fixtures/activity_1.json'
+import { Activity } from '../../../@types/activitiesAPI/types'
+
+jest.mock('../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Create an activity schedule - Bank Holiday option', () => {
-  const handler = new BankHolidayOptionRoutes()
+  const handler = new BankHolidayOptionRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -18,6 +27,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -43,6 +53,34 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
       await handler.POST(req, res)
 
       expect(req.session.createJourney.runsOnBankHoliday).toEqual(true)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+    })
+
+    it('should save entered end date in database', async () => {
+      const updatedActivity = {
+        runsOnBankHoliday: true,
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      const runsOnBankHoliday = true
+
+      req = {
+        session: {
+          createJourney: {},
+        },
+        query: {
+          fromEditActivity: true,
+        },
+        body: {
+          runsOnBankHoliday,
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
   })

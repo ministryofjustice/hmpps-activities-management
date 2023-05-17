@@ -35,9 +35,18 @@
                     formResponses: formResponses.endDate or session.createJourney.endDate
                 }) }}
                 <input type="hidden" id="startDate" name="startDate" value="{{ startDate }}">
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
+                {% if session.req.query.fromEditActivity %}
+                    <div class="govuk-button-group">
+                      {{ govukButton({
+                        text: "Update end date"
+                      }) }}
+                        <a class="govuk-link js-backlink" href="/">Cancel</a>
+                    </div>
+                {% else %}
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                {% endif %}
             </form>
         </div>
     </div>

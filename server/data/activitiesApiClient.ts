@@ -35,6 +35,7 @@ import {
   RolloutPrisonPlan,
   AppointmentOccurrenceSearchRequest,
   AppointmentOccurrenceSearchResult,
+  ActivityUpdateRequest,
   AppointmentOccurrenceCancelRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
@@ -135,6 +136,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
 
   postActivityCreation(createBody: ActivityCreateRequest, user: ServiceUser): Promise<Activity> {
     return this.post({ path: `/activities`, authToken: user.token, data: createBody })
+  }
+
+  patchActivityUpdate(prisonCode: string, activityId: number, updateBody: ActivityUpdateRequest): Promise<Activity> {
+    return this.patch({
+      path: `/activities/${prisonCode}/activityId/${activityId}`,
+      data: updateBody,
+    })
   }
 
   postAllocation(scheduleId: number, prisonerNumber: string, payBandId: number, user: ServiceUser): Promise<void> {

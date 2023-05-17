@@ -2546,6 +2546,85 @@ export interface components {
        */
       runsOnBankHoliday: boolean
     }
+    /** @description The update request with the updated activity details */
+    ActivityUpdateRequest: {
+      /**
+       * Format: int64
+       * @description The category id for this activity, one of the high-level categories
+       */
+      categoryId: number
+      /**
+       * Format: int64
+       * @description The tier id for this activity, as defined by the Future Prison Regime team
+       * @example 1
+       */
+      tierId?: number
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary: string
+      /**
+       * Format: date
+       * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
+       * @example 2022-12-23
+       */
+      startDate?: string
+      /**
+       * Format: date
+       * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
+       * @example 2022-12-23
+       */
+      endDate?: string
+      /**
+       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
+       * @example BAS
+       */
+      minimumIncentiveNomisCode: string
+      /**
+       * @description The minimum incentive/earned privilege level for this activity
+       * @example Basic
+       */
+      minimumIncentiveLevel: string
+      /**
+       * @description Whether the schedule runs on bank holidays
+       * @example true
+       */
+      runsOnBankHoliday: boolean
+      /**
+       * Format: int32
+       * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
+       * @example 10
+       */
+      capacity?: number
+      /**
+       * @description The most recent risk assessment level for this activity
+       * @example high
+       */
+      riskLevel: string
+      /**
+       * Format: int64
+       * @description The optional NOMIS internal location id for this schedule
+       * @example 98877667
+       */
+      locationId?: number
+      /**
+       * @description Flag to indicate if the location of the activity is in cell
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
+       * @example false
+       */
+      attendanceRequired: boolean
+      /** @description The list of minimum education levels that apply to this activity */
+      minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
+      /** @description The list of pay rates that can apply to this activity */
+      pay: components['schemas']['ActivityPayCreateRequest'][]
+      /** @description The days and times an activity schedule can take place */
+      slots: components['schemas']['Slot'][]
+    }
     /** @description Describes the minimum education levels to be created for an activity */
     ActivityMinimumEducationLevelCreateRequest: {
       /**

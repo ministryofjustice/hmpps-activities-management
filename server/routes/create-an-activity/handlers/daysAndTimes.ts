@@ -1,6 +1,9 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
+import { mapSlots } from '../../../utils/utils'
+import { ActivityUpdateRequest } from '../../../@types/activitiesAPI/types'
+import ActivitiesService from '../../../services/activitiesService'
 
 export class DaysAndTimes {
   @Expose()
@@ -44,6 +47,8 @@ export class DaysAndTimes {
 }
 
 export default class DaysAndTimesRoutes {
+  constructor(private readonly activitiesService: ActivitiesService) {}
+
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/create-an-activity/days-and-times')
   }
@@ -74,6 +79,23 @@ export default class DaysAndTimesRoutes {
     req.session.createJourney.timeSlotsFriday = sanitizeTimeSlots(req.body.timeSlotsFriday)
     req.session.createJourney.timeSlotsSaturday = sanitizeTimeSlots(req.body.timeSlotsSaturday)
     req.session.createJourney.timeSlotsSunday = sanitizeTimeSlots(req.body.timeSlotsSunday)
+    if (req.query && req.query.fromEditActivity) {
+      const { user } = res.locals
+      const { activityId } = req.session.createJourney
+      const prisonCode = user.activeCaseLoadId
+      const slots = mapSlots(req.session.createJourney)
+      const activity = {
+        slots,
+      } as ActivityUpdateRequest
+      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      const successMessage = `We've updated the daily schedule for ${req.session.createJourney.name}`
+
+      res.redirectOrReturnWithSuccess(
+        `/schedule/activities/${req.session.createJourney.activityId}`,
+        'Activity updated',
+        successMessage,
+      )
+    }
     res.redirectOrReturn('bank-holiday-option')
   }
 }

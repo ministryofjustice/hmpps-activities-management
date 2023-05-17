@@ -1,6 +1,7 @@
 import { Expose, plainToInstance, Type } from 'class-transformer'
 import { IsInt, Max, Min } from 'class-validator'
 import { getDate, getMonth, getYear, isValid, parse } from 'date-fns'
+// eslint-disable-next-line import/no-cycle
 import { formatDate } from '../utils/utils'
 
 const DAY_MESSAGE = 'Enter a valid day'

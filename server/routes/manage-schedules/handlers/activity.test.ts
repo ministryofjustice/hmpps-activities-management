@@ -67,6 +67,7 @@ describe('Route Handlers - View Activity', () => {
       params: {
         activityId: '1',
       },
+      session: {},
     } as unknown as Request
   })
 
@@ -117,8 +118,69 @@ describe('Route Handlers - View Activity', () => {
                 },
               ],
             },
+            {
+              day: 'Tuesday',
+              slots: [
+                {
+                  id: 1,
+                  startTime: '10:00',
+                  endTime: '11:00',
+                },
+              ],
+            },
+            {
+              day: 'Wednesday',
+              slots: [
+                {
+                  id: 1,
+                  startTime: '10:00',
+                  endTime: '11:00',
+                },
+              ],
+            },
+            {
+              day: 'Thursday',
+              slots: [
+                {
+                  id: 1,
+                  startTime: '10:00',
+                  endTime: '11:00',
+                },
+              ],
+            },
+            {
+              day: 'Friday',
+              slots: [
+                {
+                  id: 1,
+                  startTime: '10:00',
+                  endTime: '11:00',
+                },
+              ],
+            },
+            {
+              day: 'Saturday',
+              slots: [
+                {
+                  id: 1,
+                  startTime: '10:00',
+                  endTime: '11:00',
+                },
+              ],
+            },
+            {
+              day: 'Sunday',
+              slots: [
+                {
+                  id: 1,
+                  startTime: '10:00',
+                  endTime: '11:00',
+                },
+              ],
+            },
           ],
         },
+        attendanceCount: 0,
       })
     })
   })

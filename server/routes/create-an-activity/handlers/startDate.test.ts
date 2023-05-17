@@ -2,12 +2,21 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays, subDays } from 'date-fns'
+import { when } from 'jest-when'
 import { associateErrorsWithProperty, formatDate } from '../../../utils/utils'
 import StartDateRoutes, { StartDate } from './startDate'
 import { simpleDateFromDate } from '../../../commonValidationTypes/simpleDate'
+import ActivitiesService from '../../../services/activitiesService'
+import atLeast from '../../../../jest.setup'
+import activity from '../../../services/fixtures/activity_1.json'
+import { Activity } from '../../../@types/activitiesAPI/types'
+
+jest.mock('../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Create an activity schedule - Start date', () => {
-  const handler = new StartDateRoutes()
+  const handler = new StartDateRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -20,6 +29,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -50,6 +60,35 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.startDate).toEqual(startDate)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
+    })
+
+    it('should save entered start date in database', async () => {
+      const updatedActivity = {
+        startDate: '2023-01-17',
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      const today = new Date()
+      const startDate = simpleDateFromDate(today)
+
+      req = {
+        session: {
+          createJourney: {},
+        },
+        query: {
+          fromEditActivity: true,
+        },
+        body: {
+          startDate,
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
       expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
     })
   })

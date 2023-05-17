@@ -43,10 +43,18 @@
                     ],
                     errorMessage: validationErrors | findError('runsOnBankHoliday')
                 }) }}
-
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
+                {% if session.req.query.fromEditActivity %}
+                    <div class="govuk-button-group">
+                      {{ govukButton({
+                        text: "Update bank holiday information"
+                      }) }}
+                        <a class="govuk-link js-backlink" href="/">Cancel</a>
+                    </div>
+                {% else %}
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                {% endif %}
             </form>
         </div>
     </div>
