@@ -22,8 +22,20 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
       occurrence: {
+        id: 10,
+        appointmentId: 5,
         appointmentType: AppointmentType.INDIVIDUAL,
+        prisoners: [
+          {
+            firstName: 'TEST',
+            lastName: 'PRISONER',
+            prisonerNumber: 'A1234BC',
+            prisonCode: 'MDI',
+            cellLocation: '1-2-3',
+          },
+        ],
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
+        isCancelled: false,
         created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentOccurrenceDetails,
     }
@@ -40,6 +52,12 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     expect($('[data-qa=heading]').text().trim()).toBe(
       `Test Category appointment - ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`,
     )
+  })
+
+  it('print movement slip link should open in new tab', () => {
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=print-movement-slips]').attr('target')).toBe('_blank')
   })
 
   it('should show updated by if occurrence has been updated', () => {

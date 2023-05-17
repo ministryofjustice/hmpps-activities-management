@@ -68,8 +68,8 @@ describe('Route Handlers - Movement Slip', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/individual', {
-        movementSlip: occurrenceDetails,
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/occurrence', {
+        appointmentOccurrence: occurrenceDetails,
       })
     })
   })

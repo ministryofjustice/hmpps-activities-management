@@ -174,7 +174,7 @@
                             text: "Heads up"
                         },
                         value: {
-                            text: occurrence.comment
+                            html: '<span class="preserve-line-breaks">' + (occurrence.comment | safe) + '</span>'
                         },
                         actions: {
                             items: [
