@@ -45,8 +45,11 @@ import {
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
 import { DeallocateFromActivityJourney } from '../routes/deallocate-from-activity/journey'
+<<<<<<< HEAD
 import { formatDate } from '../utils/utils'
 import SimpleDate from '../commonValidationTypes/simpleDate'
+=======
+>>>>>>> fe62a6d (wip)
 
 export default class ActivitiesService {
   constructor(
@@ -362,6 +365,7 @@ export default class ActivitiesService {
   }
 
   async deallocateFromActivity(deallocateJourney: DeallocateFromActivityJourney, user: ServiceUser) {
+<<<<<<< HEAD
     const request: PrisonerDeallocationRequest = {
       prisonerNumbers: deallocateJourney.prisoners.map(p => p.prisonerNumber),
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -371,5 +375,14 @@ export default class ActivitiesService {
     }
 
     return this.activitiesApiClient.deallocateFromActivity(deallocateJourney.scheduleId, request, user)
+=======
+    const body = {
+      prisonerNumbers: deallocateJourney.prisoners.map(p => p.prisonerNumber),
+      reason: deallocateJourney.deallocationReason,
+      deallocationDate: deallocateJourney.deallocationDate,
+    }
+
+    return this.activitiesApiClient.deallocateFromActivity(deallocateJourney.scheduleId, body, user)
+>>>>>>> fe62a6d (wip)
   }
 }
