@@ -1,0 +1,15 @@
+{% macro searchInput(params) %}
+  <div class="govuk-form-group search-input {{ params.classes }}">
+    {% if params.label.isPageHeading %}<h1 class="govuk-label-wrapper">{% endif %}
+      {% if params.label %}<label class="govuk-label govuk-label--l" for="{{ params.id }}">{{ params.label.text }}</label>{% endif %}
+    {% if params.label.isPageHeading %}</h1>{% endif %}
+
+    {% if params.hint %}<div id="{{ params.id }}-hint" class="govuk-hint">{{ params.hint }}</div>{% endif %}
+
+    <div class="search-input__form-inputs {{ params.formInputs.classes }}">
+      <input class="govuk-input" id="{{ params.id }}" name="{{ params.name }}" type="search" spellcheck="false" aria-describedby="{{ params.id }}-hint" value="{{ params.input.value }}">
+
+      <button class="govuk-button {{ params.button.classes }}" data-module="govuk-button">{{ params.button.text }}</button>
+    </div>
+  </div>
+{% endmacro %}
