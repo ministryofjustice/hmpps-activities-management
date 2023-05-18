@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../services/activitiesService'
+import { ActivityUpdateRequest } from '../../../@types/activitiesAPI/types'
 
 export class Category {
   @Expose()
@@ -35,6 +36,23 @@ export default class CategoryRoutes {
       name: categoryName,
     }
 
-    res.redirectOrReturn('name')
+    if (req.query && req.query.fromEditActivity) {
+      const { activityId } = req.session.createJourney
+      const prisonCode = user.activeCaseLoadId
+      const activity = {
+        categoryId: req.session.createJourney.category.id,
+      } as ActivityUpdateRequest
+
+      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      const successMessage = `We've updated the category for ${req.session.createJourney.name}`
+
+      res.redirectOrReturnWithSuccess(
+        `/schedule/activities/${req.session.createJourney.activityId}`,
+        'Activity updated',
+        successMessage,
+      )
+    } else {
+      res.redirectOrReturn('name')
+    }
   }
 }

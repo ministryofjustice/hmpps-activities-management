@@ -36,6 +36,8 @@ import {
   AllAttendanceSummary,
   ActivityUpdateRequest,
   AppointmentOccurrenceCancelRequest,
+  BulkAppointmentsRequest,
+  BulkAppointment,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
@@ -333,5 +335,9 @@ export default class ActivitiesService {
     user: ServiceUser,
   ) {
     return this.activitiesApiClient.cancelAppointmentOccurrence(occurrenceId, cancelRequest, user)
+  }
+
+  async createBulkAppointment(appointment: BulkAppointmentsRequest, user: ServiceUser): Promise<BulkAppointment> {
+    return this.activitiesApiClient.postCreateBulkAppointment(appointment, user)
   }
 }

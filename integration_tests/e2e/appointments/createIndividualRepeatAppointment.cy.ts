@@ -20,8 +20,9 @@ import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmat
 import { formatDate } from '../../../server/utils/utils'
 import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
-import IndividualMovementSlip from '../../pages/appointments/movementSlip/individualMovementSlip'
+import OccurrenceMovementSlip from '../../pages/appointments/movementSlip/occurrenceMovementSlip'
 import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
+import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 
 context('Individual repeat appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -87,6 +88,9 @@ context('Individual repeat appointment', () => {
       repeatPeriodAndCountPage.enterRepeatCount('2')
       repeatPeriodAndCountPage.continue()
 
+      const commentPage = Page.verifyOnPage(CommentPage)
+      commentPage.continue()
+
       const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.assertRepeat('Yes')
       checkAnswersPage.assertRepeatPeriod('Weekly')
@@ -143,7 +147,8 @@ context('Individual repeat appointment', () => {
       occurrenceDetailsPage.printMovementSlipLink().invoke('removeAttr', 'target')
       occurrenceDetailsPage.printMovementSlipLink().click()
 
-      const occurrenceMovementSlipPage = Page.verifyOnPage(IndividualMovementSlip)
+      const occurrenceMovementSlipPage = Page.verifyOnPage(OccurrenceMovementSlip)
+      occurrenceMovementSlipPage.assertComments('Appointment occurrence level comment')
       occurrenceMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
       occurrenceMovementSlipPage.assertCategory('Chaplaincy')
       occurrenceMovementSlipPage.assertLocation('Chapel')
@@ -151,7 +156,6 @@ context('Individual repeat appointment', () => {
       occurrenceMovementSlipPage.assertStartTime(14, 0)
       occurrenceMovementSlipPage.assertEndTime(15, 30)
       occurrenceMovementSlipPage.assertComments('Appointment occurrence level comment')
-      occurrenceMovementSlipPage.assertCreatedBy('J. Smith')
     })
 
     it('Create individual repeat appointment - back links', () => {
@@ -181,6 +185,9 @@ context('Individual repeat appointment', () => {
       repeatPeriodAndCountPage.enterRepeatCount('7')
       repeatPeriodAndCountPage.continue()
 
+      const commentPage = Page.verifyOnPage(CommentPage)
+      commentPage.continue()
+
       const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.assertNoBackLink()
 
@@ -205,6 +212,9 @@ context('Individual repeat appointment', () => {
       const repeatPage = Page.verifyOnPage(RepeatPage)
       repeatPage.selectRepeat('No')
       repeatPage.continue()
+
+      const commentPage = Page.verifyOnPage(CommentPage)
+      commentPage.continue()
 
       const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.assertRepeat('No')

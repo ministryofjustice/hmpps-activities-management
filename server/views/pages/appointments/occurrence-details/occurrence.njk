@@ -18,7 +18,7 @@
             <span class="govuk-caption-l" data-qa="caption">View {{ (" and manage " if occurrence.isCancelled == false) }}an appointment</span>
             <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate("EEEE, d MMMM yyyy") }}</h1>
             {% if occurrence.isCancelled %}
-                <p class="govuk-!-text-align-right">{{ govukTag({ text: "Cancelled" }) if occurrence.isCancelled }}</p>
+                <p>{{ govukTag({ text: "Cancelled" }) if occurrence.isCancelled }}</p>
             {% endif %}
 
             {% if occurrence.repeat %}
@@ -166,6 +166,23 @@
                                     text: "Change",
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { 'data-qa': 'change-end-time' }
+                                }
+                            ]
+                        } if occurrence.isCancelled == false
+                    }, {
+                        key: {
+                            text: "Heads up"
+                        },
+                        value: {
+                            html: '<span class="preserve-line-breaks">' + (occurrence.comment | safe) + '</span>'
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: occurenceLink + "/edit/start/comment",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-comment' }
                                 }
                             ]
                         } if occurrence.isCancelled == false

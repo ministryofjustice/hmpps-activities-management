@@ -15,7 +15,7 @@
         if params.renderedErrorMessage or
         params.validationErrors | findError(params.id + '-hour') or
         params.validationErrors | findError(params.id + '-minute')
-    %} govuk-form-group--error{% endif %} time-picker">
+    %} govuk-form-group--error{% endif %} time-picker {{ params.classes }}">
         <fieldset class="govuk-fieldset" role="group" aria-describedby="{{ params.hint.id }}">
             {% if params.label %}
                 <legend class="govuk-fieldset__legend {{ params.label.classes }}">
@@ -41,7 +41,7 @@
                         label: {
                             text: "Hour",
                             classes: "govuk-date-input__label"
-                        },
+                        } if not params.hideLabels,
                         errorMessage: params.validationErrors | findError(params.id + '-hour'),
                         items: hours | toTimeItems(params.formResponses['hour']),
                         attributes: {
@@ -56,7 +56,7 @@
                         label: {
                             text: "Minute",
                             classes: "govuk-date-input__label"
-                        },
+                        } if not params.hideLabels,
                         errorMessage: params.validationErrors | findError(params.id + '-minute'),
                         classes: "govuk-input--width-20",
                         items: minutes | toTimeItems(params.formResponses['minute']),

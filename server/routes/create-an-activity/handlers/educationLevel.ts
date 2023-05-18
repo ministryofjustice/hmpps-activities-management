@@ -37,7 +37,7 @@ export default class EducationLevelRoutes {
       educationLevelCode: referenceCode.code,
       educationLevelDescription: referenceCode.description,
     })
-
-    res.redirect(`check-education-level`)
+    if (req.query && req.query.fromEditActivity) res.redirect(`check-education-level?fromEditActivity=true`)
+    else res.redirect(`check-education-level`)
   }
 }

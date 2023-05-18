@@ -181,6 +181,7 @@ describe('Route Handlers - View Activity', () => {
           ],
         },
         attendanceCount: 0,
+        week: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       })
     })
   })

@@ -3,37 +3,49 @@ import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
-import { AppointmentCreateRequest } from '../../../../@types/activitiesAPI/types'
+import { AppointmentCreateRequest, BulkAppointmentsRequest } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
+import { AppointmentType } from '../appointmentJourney'
 
 export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney } = req.session
-
-    res.render('pages/appointments/create-and-edit/check-answers', {
-      startDate: new Date(appointmentJourney.startDate.date),
-      startTime: new Date(appointmentJourney.startTime.date),
-      endTime: new Date(appointmentJourney.endTime.date),
-    })
+    res.render('pages/appointments/create-and-edit/check-answers')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentJourney } = req.session
 
+    let response
+    if (appointmentJourney.type === AppointmentType.BULK) {
+      const request = this.createBulkAppointmentRequest(req, res)
+      response = await this.activitiesService.createBulkAppointment(request, user)
+      res.redirect(`bulk-appointments-confirmation/${response.bulkAppointmentId}`)
+    } else {
+      const request = this.createAppointmentRequest(req, res)
+      response = await this.activitiesService.createAppointment(request, user)
+      res.redirect(`confirmation/${response.id}`)
+    }
+  }
+
+  private createAppointmentRequest(req: Request, res: Response) {
+    const { user } = res.locals
+    const { appointmentJourney } = req.session
+
     const request = {
+      appointmentType: appointmentJourney.type,
+      prisonCode: user.activeCaseLoadId,
+      prisonerNumbers: appointmentJourney.prisoners.map(p => p.number),
       categoryCode: appointmentJourney.category.code,
       appointmentDescription: appointmentJourney.description,
-      prisonCode: user.activeCaseLoadId,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
       startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
       startTime: plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString(),
       endTime: plainToInstance(SimpleTime, appointmentJourney.endTime).toIsoString(),
-      prisonerNumbers: appointmentJourney.prisoners.map(p => p.number),
-      appointmentType: appointmentJourney.type,
+      comment: appointmentJourney.comment,
     } as AppointmentCreateRequest
 
     if (appointmentJourney.repeat === YesNo.YES) {
@@ -43,8 +55,27 @@ export default class CheckAnswersRoutes {
       }
     }
 
-    const response = await this.activitiesService.createAppointment(request, user)
+    return request
+  }
 
-    res.redirect(`confirmation/${response.id}`)
+  private createBulkAppointmentRequest(req: Request, res: Response) {
+    const { user } = res.locals
+    const { appointmentJourney, bulkAppointmentJourney } = req.session
+
+    const request = {
+      prisonCode: user.activeCaseLoadId,
+      categoryCode: appointmentJourney.category.code,
+      appointmentDescription: appointmentJourney.description,
+      internalLocationId: appointmentJourney.location.id,
+      inCell: false,
+      startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
+      appointments: bulkAppointmentJourney.appointments.map(appointment => ({
+        prisonerNumber: appointment.prisoner.number,
+        startTime: plainToInstance(SimpleTime, appointment.startTime).toIsoString(),
+        endTime: plainToInstance(SimpleTime, appointment.endTime).toIsoString(),
+      })),
+    } as BulkAppointmentsRequest
+
+    return request
   }
 }

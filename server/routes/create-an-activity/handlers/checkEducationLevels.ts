@@ -1,6 +1,10 @@
 import { Request, Response } from 'express'
+import { ActivityUpdateRequest } from '../../../@types/activitiesAPI/types'
+import ActivitiesService from '../../../services/activitiesService'
 
 export default class CheckPayRoutes {
+  constructor(private readonly activitiesService: ActivitiesService) {}
+
   GET = async (req: Request, res: Response): Promise<void> => {
     const { educationLevels } = req.session.createJourney
 
@@ -8,6 +12,25 @@ export default class CheckPayRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    if (req.query && req.query.fromEditActivity) {
+      const { user } = res.locals
+      const { activityId } = req.session.createJourney
+      const prisonCode = user.activeCaseLoadId
+      const activity = {
+        minimumEducationLevel: req.session.createJourney.educationLevels?.map(educationLevel => ({
+          educationLevelCode: educationLevel.educationLevelCode,
+          educationLevelDescription: educationLevel.educationLevelDescription,
+        })),
+      } as ActivityUpdateRequest
+      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      const successMessage = `We've updated the education levels for ${req.session.createJourney.name}`
+
+      return res.redirectOrReturnWithSuccess(
+        `/schedule/activities/${req.session.createJourney.activityId}`,
+        'Activity updated',
+        successMessage,
+      )
+    }
     return res.redirectOrReturn(`start-date`)
   }
 }

@@ -1,11 +1,20 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import CapacityRoutes, { Capacity } from './capacity'
+import ActivitiesService from '../../../services/activitiesService'
+import atLeast from '../../../../jest.setup'
+import activity from '../../../services/fixtures/activity_1.json'
+import { Activity } from '../../../@types/activitiesAPI/types'
+
+jest.mock('../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Create an activity schedule - Capacity', () => {
-  const handler = new CapacityRoutes()
+  const handler = new CapacityRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -18,6 +27,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -44,6 +54,36 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
 
       expect(req.session.createJourney.capacity).toEqual(12)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
+    })
+
+    it('should save entered capacity in database', async () => {
+      const updatedActivity = {
+        capacity: 10,
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      req = {
+        session: {
+          createJourney: {},
+        },
+        query: {
+          fromEditActivity: true,
+        },
+        body: {
+          capacity: 10,
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/schedule/activities/undefined',
+        'Activity updated',
+        "We've updated the capacity for undefined",
+      )
     })
   })
 

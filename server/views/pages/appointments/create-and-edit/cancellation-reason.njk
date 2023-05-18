@@ -2,6 +2,7 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
@@ -19,7 +20,7 @@
                     name: "reason",
                     fieldset: {
                         legend: {
-                            text: "Would you like to cancel or delete the appointment?",
+                            text: "Do you want to show the cancelled appointment on the unlock list?",
                             classes: "govuk-label--l",
                             isPageHeading: true
                         }
@@ -28,16 +29,18 @@
                     items: [
                         {
                             value: AppointmentCancellationReason.CANCELLED,
-                            text: "Cancel - the appointment cannot go ahead",
-                            hint: {
-                                text: "It will appear on the unlock list with a 'cancelled' tag"
-                            }
+                            text: "Yes - show the appointment as cancelled on the unlock list"
                         },
                         {
                             value: AppointmentCancellationReason.CREATED_IN_ERROR,
-                            text: "Delete - the appointment should no longer appear on the unlock list"
+                            text: "No - cancel the appointment and delete it from the unlock list"
                         }
                     ]
+                }) }}
+
+                {{ govukDetails({
+                    summaryText: "What is an unlock list?",
+                    text: "The unlock list is used by wing officers to make sure people are let out of their cells at the right time to get to their schedued activities and appointments."
                 }) }}
 
                 {{ govukButton({

@@ -29,8 +29,21 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
   describe('GET', () => {
     it('should render the how to add prisoners view', async () => {
+      const prisoners = [
+        {
+          number: 'A1234BC',
+          name: '',
+          cellLocation: '',
+        },
+        {
+          number: 'B2345CD',
+          name: '',
+          cellLocation: '',
+        },
+      ]
+      req.session.appointmentJourney.prisoners = prisoners
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', { prisoners })
     })
   })
 

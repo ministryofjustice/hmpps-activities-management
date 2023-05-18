@@ -33,6 +33,16 @@
                 </div>
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
+                        "id": "createBulkAppointmentCard",
+                        "href": "appointments/create/start-bulk",
+                        "clickable": "true",
+                        "heading": "Create a bulk appointment",
+                        "description": "Add multiple appointments for a number of people",
+                        "data-qa": "create-bulk-appointment-card"
+                    }) }}
+                </div>
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
                         "id": "searchAppointmentsCard",
                         "href": "appointments/search?startDate=" + now | toDateString,
                         "clickable": "true",

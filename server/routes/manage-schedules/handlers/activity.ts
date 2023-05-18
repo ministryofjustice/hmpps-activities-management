@@ -30,8 +30,8 @@ export default class ActivityRoutes {
       req.session.createJourney.activityId = activity.id
       req.session.createJourney.category = activity.category
       req.session.createJourney.name = activity.summary
+      req.session.createJourney.inCell = activity.inCell
       req.session.createJourney.riskLevel = activity.riskLevel
-      req.session.createJourney.minimumIncentiveLevel = activity.minimumIncentiveLevel
       req.session.createJourney.startDate = {
         day: Number(activity.startDate.substring(8, 10)),
         month: Number(activity.startDate.substring(5, 7)),
@@ -101,6 +101,11 @@ export default class ActivityRoutes {
             req.session.createJourney.timeSlotsSunday.push(getTimeSlotFromTime(slot.startTime).toUpperCase())
           }
           req.session.createJourney.runsOnBankHoliday = schedule.runsOnBankHoliday
+          req.session.createJourney.location = {
+            id: schedule.internalLocation.id,
+            name: schedule.internalLocation.description,
+          }
+          req.session.createJourney.capacity = schedule.capacity
         }),
       )
     }
@@ -113,11 +118,14 @@ export default class ActivityRoutes {
       })),
     ])
 
+    const week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
     res.render('pages/manage-schedules/view-activity', {
       activity,
       schedule,
       incentiveLevelPays,
       attendanceCount,
+      week,
     })
   }
 }

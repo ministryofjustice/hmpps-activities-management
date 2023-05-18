@@ -1,0 +1,31 @@
+{% macro occurrenceMovementSlip(appointmentOccurrence, caseLoadDescription, printedAt) %}
+    {% macro labelAndValue(label, value, rowClasses, valueClasses) %}
+        <div class="movement-slip__summary__row {{ rowClasses }}">
+            <dt class="movement-slip__summary__row__key">{{ label }}</dt>
+            <dd class="movement-slip__summary__row__value {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dd>
+        </div>
+    {% endmacro %}
+
+    {% for prisoner in appointmentOccurrence.prisoners %}
+        <div class="movement-slip">
+            <div class="govuk-heading-m movement-slip-header">{{ caseLoadDescription }} <span class="govuk-!-font-weight-regular">Movement authorisation slip</span></div>
+            <h2 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa="prisoner-name-and-number">{{ prisoner | fullName | toTitleCase }}, {{ prisoner.prisonerNumber }}</h2>
+            <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="cell-location">{{ prisoner.prisonCode + '-' + prisoner.cellLocation }}</span>
+
+            <dl class='movement-slip__summary'>
+                {{ labelAndValue('Appointment', '<ul class="govuk-list">' +
+                    '<li>' + appointmentOccurrence.category.description + '</li>' +
+                    ('<li>' + appointmentOccurrence.appointmentDescription + '</li>' if appointmentOccurrence.appointmentDescription) +
+                '</ul>') }}
+                {{ labelAndValue('Time', '<ul class="govuk-list">' +
+                    '<li>' + appointmentOccurrence.startTime + ' to ' + appointmentOccurrence.endTime + '</li>' +
+                    '<li>' + (appointmentOccurrence.startDate | toDate | formatDate('EEEE, d MMMM yyyy')) + '</li>' +
+                '</ul>') }}
+                {{ labelAndValue('Location', appointmentOccurrence.internalLocation.description) }}
+                {{ labelAndValue('Heads up', appointmentOccurrence.comment, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointmentOccurrence.comment }}
+            </dl>
+
+            <p class="govuk-body-s movement-slip-footer">Printed at {{ printedAt | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}</p>
+        </div>
+    {% endfor %}
+{% endmacro %}

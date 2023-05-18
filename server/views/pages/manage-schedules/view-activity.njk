@@ -2,6 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% set pageTitle = applicationName + " - Activities Dashboard - View activity" %}
 {% set pageId = 'view-activity-page' %}
@@ -18,24 +19,76 @@
                 rows: [
                     {
                         key: {
-                            text: "Activity category"
+                            text: "Name"
                         },
                         value: {
-                            text: activity.category.name
+                            text: activity.summary
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/create/name?fromEditActivity=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change activity name"
+                                }
+                            ]
                         }
                     },
                     {
                         key: {
-                            text: "Activity name"
+                            text: "Activity category"
                         },
                         value: {
-                            text: activity.summary
+                            text: activity.category.name
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/create/category?fromEditActivity=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change category"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: "In cell" if schedule.activity.inCell else schedule.internalLocation.description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/create/location?fromEditActivity=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change location"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Capacity"
+                        },
+                        value: {
+                            text: schedule.capacity
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/create/capacity?fromEditActivity=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change capacity"
+                                }
+                            ]
                         }
                     }
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Requirements and pay</h2>
+            <h2 class="govuk-heading-m">Requirements and suitability</h2>
             {{ govukSummaryList({
                 rows: [
                     {
@@ -44,6 +97,15 @@
                         },
                         value: {
                             text: activity.riskLevel | capitalize
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/create/risk-level?fromEditActivity=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change risk level"
+                                }
+                            ]
                         }
                     },
                     {
@@ -51,23 +113,29 @@
                             text: "Education requirements"
                         },
                         value: {
-                            html: educationRequirementsContent(activity.educationRequirements)
+                            html: educationRequirementsContent(activity.minimumEducationLevel)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/create/check-education-level?fromEditActivity=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change education levels"
+                                }
+                            ]
                         }
-                    },
+                    }
+                ]
+            }) }}
+            <h2 class="govuk-heading-m">Pay rates</h2>
+            {{ govukSummaryList({
+                rows: [
                     {
                         key: {
                             text: "Pay rates"
                         },
                         value: {
                             html: paySummary(incentiveLevelPays)
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Minimum incentive level"
-                        },
-                        value: {
-                            text: activity.minimumIncentiveLevel
                         }
                     }
                 ]
@@ -144,7 +212,7 @@
             {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                 {
                     key: {
-                        text: "Days and times"
+                        text: "Schedule"
                     },
                     value: {
                         html: daysAndTimes(schedule.dailySlots)
@@ -182,28 +250,6 @@
                 rows: dateAndScheduleRows
             }) }}
 
-            <h2 class="govuk-heading-m">Location and capacity</h2>
-            {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Location"
-                        },
-                        value: {
-                            text: "In cell" if schedule.activity.inCell else schedule.internalLocation.description
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Capacity"
-                        },
-                        value: {
-                            text: schedule.capacity
-                        }
-                    }
-                ]
-            }) }}
-
             <div class="govuk-button-group">
                 <a href="/schedule/activities" class="govuk-link">Return to dashboard</a>
             </div>
@@ -216,7 +262,7 @@
     {% if educationRequirements | length > 0 %}
         {% for educationRequirement in educationRequirements %}
             <div class="govuk-!-margin-bottom-2">
-                <div class="govuk-!-font-weight-bold">{{ educationRequirement.educationLevelCode }} {{ educationRequirement.educationLevelDescription }}</div>
+                <div>{{ educationRequirement.educationLevelDescription }}</div>
             </div>
         {% endfor %}
     {% else %}
@@ -236,11 +282,26 @@
 {% endmacro %}
 
 {% macro daysAndTimes(dailySlots) %}
-    {% for day in dailySlots %}
-        <div class="govuk-!-margin-bottom-2">
-            {{ day.day }}
-            {% set comma = joiner(', ') %}
-            ({% for slot in day.slots %}{{ comma() }}{{ slot.startTime | getTimeSlotFromTime }}{% endfor %})
-        </div>
+    {% for day in week %}
+        {% set comma = joiner('and ') %}
+        {% for dailySlot in dailySlots %}
+            <div class="govuk-grid-row govuk-!-margin-bottom-2">
+                {% if dailySlot.day === day %}
+                    <div class="govuk-grid-column-one-half">
+                        <b>{{ day }}
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        {% for slot in dailySlot.slots %}
+                            {{ comma() }}{{ slot.startTime | getTimeSlotFromTime | upper }}
+                        {% endfor %}
+                        </b>
+                    </div>
+                {% else %}
+                    <div class="govuk-grid-column-one-half">
+                        {{ day }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
     {% endfor %}
 {% endmacro %}

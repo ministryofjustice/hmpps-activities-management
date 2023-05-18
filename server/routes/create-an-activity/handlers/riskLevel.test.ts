@@ -3,9 +3,13 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import RiskLevelRoutes, { RiskLevel } from './riskLevel'
+import ActivitiesService from '../../../services/activitiesService'
 
+jest.mock('../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 describe('Route Handlers - Create an activity - Risk level', () => {
-  const handler = new RiskLevelRoutes()
+  const handler = new RiskLevelRoutes(activitiesService)
   let req: Request
   let res: Response
 
