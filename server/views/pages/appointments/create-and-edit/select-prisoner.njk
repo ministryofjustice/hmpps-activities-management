@@ -27,8 +27,8 @@
     {% if prisoners %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="POST">
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <form method="GET">
+                    <input type="hidden" name="search" value="true" />
                     {{ searchInput({
                         id: "query",
                         name: "query",
@@ -67,8 +67,6 @@
                 <div class="govuk-grid-column-full">
                     <form method="POST">
                         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                        <input type="hidden" name="query" value="{{ query }}" />
-                        <input type="hidden" name="isSelection" value="true" />
                         {% set prisonerRows = [] %}
                         {% for prisoner in prisoners %}
                             {% if prisoners | length > 1 %}
@@ -144,10 +142,10 @@
             <div>
         {% endif %}
     {% else %}
-        <form method="POST">
+        <form method="GET">
+            <input type="hidden" name="search" value="true" />
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                     {{ searchInput({
                         id: "query",
                         name: "query",
