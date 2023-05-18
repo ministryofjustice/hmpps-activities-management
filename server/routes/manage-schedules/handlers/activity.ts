@@ -64,6 +64,7 @@ export default class ActivityRoutes {
           },
         }
       }
+      req.session.createJourney.minimumIncentiveLevel = activity.minimumIncentiveLevel
       req.session.createJourney.days = []
       req.session.createJourney.timeSlotsMonday = []
       req.session.createJourney.timeSlotsTuesday = []
@@ -107,7 +108,9 @@ export default class ActivityRoutes {
             id: schedule.internalLocation.id,
             name: schedule.internalLocation.description,
           }
+          req.session.createJourney.currentCapacity = schedule.capacity
           req.session.createJourney.capacity = schedule.capacity
+          req.session.createJourney.allocationCount = allocationCount
         }),
       )
     }
@@ -127,7 +130,6 @@ export default class ActivityRoutes {
       schedule,
       incentiveLevelPays,
       attendanceCount,
-      allocationCount,
       week,
     })
   }

@@ -49,6 +49,8 @@ export type CreateAnActivityJourney = {
     id: number
     name: string
   }
+  currentCapacity?: number
   capacity?: number
+  allocationCount?: number
   runsOnBankHoliday?: boolean
 }
