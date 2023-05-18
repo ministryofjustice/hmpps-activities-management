@@ -1,9 +1,13 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import RiskLevelRoutes, { RiskLevel } from './riskLevel'
 import ActivitiesService from '../../../services/activitiesService'
+import atLeast from '../../../../jest.setup'
+import activity from '../../../services/fixtures/activity_1.json'
+import { Activity } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/activitiesService')
 
@@ -22,6 +26,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -48,6 +53,36 @@ describe('Route Handlers - Create an activity - Risk level', () => {
 
       expect(req.session.createJourney.riskLevel).toEqual('high')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-rate-type')
+    })
+
+    it('should save entered risk level in database', async () => {
+      const updatedActivity = {
+        riskLevel: 'high',
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      req = {
+        session: {
+          createJourney: {},
+        },
+        query: {
+          fromEditActivity: true,
+        },
+        body: {
+          riskLevel: 'high',
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/schedule/activities/undefined',
+        'Activity updated',
+        "We've updated the risk assessment level for undefined",
+      )
     })
   })
 

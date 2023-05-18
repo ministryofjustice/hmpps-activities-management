@@ -18,12 +18,14 @@ export default class ActivityRoutes {
     const activity = await this.activitiesService.getActivity(activityId, user)
 
     let attendanceCount = 0
+    let allocationCount = 0
 
-    activity.schedules.forEach(schedule =>
+    activity.schedules.forEach(schedule => {
+      allocationCount += schedule.allocations.length
       schedule.instances.forEach(instance => {
         attendanceCount += instance.attendances.length
-      }),
-    )
+      })
+    })
 
     if (!req.session.createJourney) {
       req.session.createJourney = {}
@@ -125,6 +127,7 @@ export default class ActivityRoutes {
       schedule,
       incentiveLevelPays,
       attendanceCount,
+      allocationCount,
       week,
     })
   }
