@@ -20,7 +20,7 @@ export default function setUpValidationExtensions(): Router {
         req.flash('formResponses', JSON.stringify(req.body))
         res.redirect('back')
       } else {
-        // If not redirecting, set errors for current session
+        // If not redirecting, set errors for current request
         res.locals.validationErrors = validationErrors
         res.locals.formResponses = req.body
       }

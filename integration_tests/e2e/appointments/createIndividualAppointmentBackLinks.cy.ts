@@ -7,6 +7,7 @@ import CategoryPage from '../../pages/appointments/create-and-edit/categoryPage'
 import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A8644DY.json'
+import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
@@ -25,6 +26,7 @@ context('Create individual appointment - back links', () => {
     cy.task('stubPrisonUser')
     cy.signIn()
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY', getPrisonPrisoners)
+    cy.stubEndpoint('GET', '/prisoner/A8644DY', getPrisonerA8644DY)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
@@ -39,9 +41,12 @@ context('Create individual appointment - back links', () => {
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
     appointmentsManagementPage.createIndividualAppointmentCard().click()
 
-    const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')
-    selectPrisonerPage.continue()
+    selectPrisonerPage.searchButton().click()
+
+    selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    selectPrisonerPage.continueButton().click()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.selectCategory('Chaplaincy')

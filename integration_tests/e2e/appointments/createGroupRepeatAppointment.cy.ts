@@ -7,6 +7,7 @@ import CategoryPage from '../../pages/appointments/create-and-edit/categoryPage'
 import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisonersA1351DZ from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1351DZ.json'
+import getPrisonerA1351DZ from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A1351DZ.json'
 import getPrisonPrisonersA8644DYA1351DZ from '../../fixtures/prisonerSearchApi/postPrisonerNumbers-A1350DZ-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
@@ -44,6 +45,7 @@ context('Create group appointment', () => {
     cy.task('stubPrisonUser')
     cy.signIn()
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=lee', getPrisonPrisonersA1351DZ)
+    cy.stubEndpoint('GET', '/prisoner/A1351DZ', getPrisonerA1351DZ)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getPrisonPrisonersA8644DYA1351DZ)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
@@ -89,9 +91,12 @@ context('Create group appointment', () => {
     howToAddPrisonersPage.selectHowToAdd('Search for a prison number to add to the appointment list')
     howToAddPrisonersPage.continue()
 
-    const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('lee')
-    selectPrisonerPage.continue()
+    selectPrisonerPage.searchButton().click()
+
+    selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    selectPrisonerPage.continueButton().click()
 
     reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Jacobson, Lee')

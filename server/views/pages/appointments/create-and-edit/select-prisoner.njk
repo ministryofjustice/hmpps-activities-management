@@ -18,7 +18,7 @@
 
 {% block content %}
     {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-    {% set defaultPrisonerNumber = formResponses.query %}
+    {% set defaultPrisonerNumber = query or formResponses.query %}
     {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
         {% set defaultPrisonerNumber = defaultPrisonerNumber or session.appointmentJourney.prisoners[0].number %}
     {% endif %}
@@ -41,7 +41,7 @@
                             id: "query",
                             name: "query",
                             type: "search",
-                            value: query,
+                            value: defaultPrisonerNumber,
                             hint: {
                                 text: 'Search by prison number or name'
                             },
@@ -117,7 +117,6 @@
                             captionClasses: "govuk-visually-hidden",
                             head: [{
                                 text: "Prisoner name",
-                                classes: 'govuk-!-width-one-quarter',
                                 attributes: {
                                     "aria-sort": "ascending"
                                 }
@@ -139,9 +138,7 @@
 
                         {{ govukButton({
                             text: "Select prisoner and continue" if prisoners | length > 1 else "Continue",
-                            attributes: {
-                                "data-qa": "continue-button"
-                            }
+                            id: "continue-button"
                         }) }}
                     </form>
                 </div>
@@ -160,7 +157,7 @@
                                 text: 'Search by prison number or name'
                             },
                             type: "search",
-                            value: query,
+                            value: defaultPrisonerNumber,
                             errorMessage: validationErrors | findError("query")
                         },
                         button: {

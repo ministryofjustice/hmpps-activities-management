@@ -1,7 +1,7 @@
 .search-input {
   $root: &;
   width: 100%;
-  
+
   margin-bottom: govuk-spacing(6);
 
   &__form-inputs {
@@ -28,6 +28,7 @@
 
       .govuk-button {
         margin-bottom: 2px;
+        max-width: 150px;
       }
     }
 

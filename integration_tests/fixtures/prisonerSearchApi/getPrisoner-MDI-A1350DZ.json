@@ -1,0 +1,37 @@
+{
+  "prisonerNumber": "A1350DZ",
+  "bookingId": "1205032",
+  "bookNumber": "42035A",
+  "firstName": "DAVID",
+  "middleNames": "BOB",
+  "lastName": "WINCHURCH",
+  "dateOfBirth": "1976-03-14",
+  "gender": "Male",
+  "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British",
+  "youthOffender": false,
+  "status": "ACTIVE IN",
+  "lastMovementTypeCode": "ADM",
+  "lastMovementReasonCode": "V",
+  "inOutStatus": "IN",
+  "prisonId": "MDI",
+  "prisonName": "Moorland (HMP & YOI)",
+  "cellLocation": "2-2-024",
+  "aliases": [],
+  "alerts": [],
+  "legalStatus": "SENTENCED",
+  "imprisonmentStatus": "RECEP_DET",
+  "imprisonmentStatusDescription": "Determinate sentence (reception)",
+  "recall": false,
+  "indeterminateSentence": false,
+  "receptionDate": "2023-02-16",
+  "locationDescription": "Moorland (HMP & YOI)",
+  "restrictedPatient": false,
+  "currentIncentive": {
+    "level": {
+      "code": "ENH",
+      "description": "Enhanced"
+    },
+    "dateTime": "2023-02-16T19:30:30",
+    "nextReviewDate": "2023-05-16"
+  }
+}

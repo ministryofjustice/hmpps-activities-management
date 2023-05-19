@@ -47,7 +47,7 @@ describe('Views - Appointments - Selected prisoners', () => {
     expect($('#prisoner-results-text').text().trim()).toEqual(
       'There are 2 results for "somequery". Select the correct one from the list.',
     )
-    expect($('[data-qa="continue-button"]').text().trim()).toEqual('Select prisoner and continue')
+    expect($('#continue-button').text().trim()).toEqual('Select prisoner and continue')
   })
 
   it('should display single prisoner without radios when single prisoner is found', () => {
@@ -69,7 +69,7 @@ describe('Views - Appointments - Selected prisoners', () => {
     expect($('#prisoner-search-list input[name="selectedPrisoner"][type="radio"]').length).toBe(0)
     expect($('#prisoner-search-list input[name="selectedPrisoner"][type="hidden"]').length).toBe(1)
     expect($('#prisoner-results-text').text().trim()).toEqual('There is 1 result for "somequery".')
-    expect($('[data-qa="continue-button"]').text().trim()).toEqual('Continue')
+    expect($('#continue-button').text().trim()).toEqual('Continue')
   })
 
   it('should display no prisoners and "no matching results" message when there are no results for query', () => {
@@ -83,6 +83,6 @@ describe('Views - Appointments - Selected prisoners', () => {
     expect($('#prisoner-search-list').length).toBe(0)
     expect($('#prisoner-results-text').text().trim()).toEqual('There are no matching results for "somequery".')
     expect($('#prisoner-search-list').length).toBe(0)
-    expect($('[data-qa="continue-button"]').length).toBe(0)
+    expect($('#continue-button').length).toBe(0)
   })
 })
