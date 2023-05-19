@@ -9,7 +9,7 @@ export default function setUpValidationExtensions(): Router {
       validationErrors.push({ field, message })
     }
 
-    res.validationFailed = (field?: string, message?: string, redirect: boolean = true): void => {
+    res.validationFailed = (field?: string, message?: string, redirect = true): void => {
       if (field && message) {
         res.addValidationError(field, message)
       }

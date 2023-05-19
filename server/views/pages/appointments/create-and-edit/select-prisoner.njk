@@ -53,7 +53,7 @@
                         }
                     }) }}
 
-                    <h2 class="govuk-heading-m">
+                    <h2 class="govuk-heading-m" id="prisoner-results-text">
                         {% if prisoners | length == 1 %}
                             There is 1 result for "{{ query }}".
                         {% elseif prisoners | length > 1 %}
@@ -138,7 +138,10 @@
                         }) }}
 
                         {{ govukButton({
-                            text: "Select prisoner and continue" if prisoners | length > 1 else "Continue"
+                            text: "Select prisoner and continue" if prisoners | length > 1 else "Continue",
+                            attributes: {
+                                "data-qa": "continue-button"
+                            }
                         }) }}
                     </form>
                 </div>
