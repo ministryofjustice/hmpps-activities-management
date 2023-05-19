@@ -53,52 +53,62 @@ describe('Route Handlers - Create Appointment - Start', () => {
   })
 
   describe('EDIT_OCCURRENCE', () => {
+    beforeEach(() => {
+      res = {
+        redirect: jest.fn(),
+      } as unknown as Response
+
+      req = {
+        session: {},
+        appointment: {
+          occurrences: [
+            {
+              id: 12,
+              sequenceNumber: 2,
+            },
+            {
+              id: 13,
+              sequenceNumber: 3,
+            },
+          ],
+        } as unknown as AppointmentDetails,
+        appointmentOccurrence: {
+          id: 12,
+          appointmentId: 2,
+          appointmentType: 'GROUP',
+          sequenceNumber: 2,
+          category: {
+            code: 'CHAP',
+            description: 'Chaplaincy',
+          },
+          internalLocation: {
+            id: 26152,
+            prisonCode: 'CHAP',
+            description: 'Chapel',
+          },
+          startDate: '2023-04-13',
+          startTime: '09:00',
+          endTime: '10:00',
+          repeat: {
+            period: 'WEEKLY',
+            count: 3,
+          },
+          prisoners: [
+            {
+              prisonerNumber: 'A1234BC',
+              firstName: 'TEST01',
+              lastName: 'PRISONER01',
+              cellLocation: '1-1-1',
+            },
+          ],
+        } as AppointmentOccurrenceDetails,
+      } as unknown as Request
+    })
+
     it('should populate the session with appointment occurrence details redirect to the correct edit route', async () => {
       req.params = {
         property: 'location',
       }
-      req.appointment = {
-        occurrences: [
-          {
-            id: 12,
-            sequenceNumber: 2,
-          },
-          {
-            id: 13,
-            sequenceNumber: 3,
-          },
-        ],
-      } as unknown as AppointmentDetails
-      req.appointmentOccurrence = {
-        id: 12,
-        appointmentId: 2,
-        appointmentType: 'GROUP',
-        sequenceNumber: 2,
-        category: {
-          code: 'CHAP',
-          description: 'Chaplaincy',
-        },
-        internalLocation: {
-          id: 26152,
-          prisonCode: 'CHAP',
-          description: 'Chapel',
-        },
-        startDate: '2023-04-13',
-        startTime: '09:00',
-        endTime: '10:00',
-        repeat: {
-          period: 'WEEKLY',
-          count: 3,
-        },
-        prisoners: [
-          {
-            prisonerNumber: 'A1234BC',
-            firstName: 'TEST01',
-            lastName: 'PRISONER01',
-            cellLocation: '1-1-1',
-          },
-        ],
-      } as AppointmentOccurrenceDetails
 
       const appointmentJourneySession = {
         mode: AppointmentJourneyMode.EDIT,
@@ -151,6 +161,17 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual(appointmentJourneySession)
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/location`)
+    })
+
+    it('should accept an invalid end date value', async () => {
+      req.appointmentOccurrence.endTime = null
+      req.params = {
+        property: 'location',
+      }
+
+      await handler.EDIT(req, res)
+
+      expect(req.session.appointmentJourney.endTime).toBeNull()
     })
 
     it('should redirect back if property not specified', async () => {

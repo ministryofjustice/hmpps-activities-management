@@ -135,6 +135,19 @@ describe('Edit Appointment Service', () => {
       expect(service.getEditedMessage(req)).toEqual('changed the time for')
     })
 
+    it('when changing the end time from null', () => {
+      req.session.appointmentJourney.endTime = null
+      req.session.editAppointmentJourney.endTime = {
+        hour: 14,
+        minute: 30,
+        date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
+      }
+
+      expect(service.getEditMessage(req)).toEqual('change the time for')
+      expect(service.getEditHintMessage(req)).toEqual('changing')
+      expect(service.getEditedMessage(req)).toEqual('changed the time for')
+    })
+
     it('when changing the start time and end time', () => {
       req.session.editAppointmentJourney.startTime = {
         hour: 10,
@@ -339,6 +352,33 @@ describe('Edit Appointment Service', () => {
     })
 
     it('when changing the end time', async () => {
+      req.session.editAppointmentJourney.endTime = {
+        hour: 14,
+        minute: 30,
+        date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
+      }
+
+      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+
+      expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
+      expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
+        2,
+        {
+          endTime: '14:30',
+          applyTo: EditApplyTo.THIS_OCCURRENCE,
+        } as AppointmentOccurrenceUpdateRequest,
+        res.locals.user,
+      )
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+        "You've changed the time for this appointment",
+      )
+      expect(req.session.appointmentJourney).toBeNull()
+      expect(req.session.editAppointmentJourney).toBeNull()
+    })
+
+    it('when changing the end time from null', async () => {
+      req.session.appointmentJourney.endTime = null
       req.session.editAppointmentJourney.endTime = {
         hour: 14,
         minute: 30,

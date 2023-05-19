@@ -308,7 +308,7 @@ export default class EditAppointmentService {
   private hasEndTimeChanged(appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) {
     const { endTime } = appointmentJourney
     const editEndTime = editAppointmentJourney.endTime
-    return editEndTime && (endTime.hour !== editEndTime.hour || endTime.minute !== editEndTime.minute)
+    return editEndTime && (!endTime || endTime.hour !== editEndTime.hour || endTime.minute !== editEndTime.minute)
   }
 
   private hasCommentChanged(appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) {
