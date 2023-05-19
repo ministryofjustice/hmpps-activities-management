@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Expose, Transform } from 'class-transformer'
+import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
@@ -18,10 +18,11 @@ export default class SelectPrisonerRoutes {
 
     // The "search" variable is used for form validation because it's always set when the form submits
     // "query" can be undefined either because it's an inital page load or because no query term was entered
-    if (!search || search !== 'true') return res.render('pages/appointments/create-and-edit/select-prisoner')
+    if (search && search === 'true') {
+      const prisoners = await this.getPrisoners(req, res)
+      if (prisoners) return res.render('pages/appointments/create-and-edit/select-prisoner', { prisoners, query })
+    }
 
-    const prisoners = await this.getPrisoners(req, res)
-    if (prisoners) return res.render('pages/appointments/create-and-edit/select-prisoner', { prisoners, query })
     return res.render('pages/appointments/create-and-edit/select-prisoner')
   }
 
@@ -39,14 +40,14 @@ export default class SelectPrisonerRoutes {
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
     const result = await this.addSelectedPrisonerToSession(req, res)
-    
+
     if (result) return res.redirect('review-prisoners')
-    
-    res.validationFailed('selectedPrisoner', 'You must select one option')
+
+    return res.validationFailed('selectedPrisoner', 'You must select one option')
   }
 
   private getPrisoners = async (req: Request, res: Response) => {
-    const query = req.query.query
+    const { query } = req.query
     const { user } = res.locals
 
     if (typeof query !== 'string' || query === '') {
@@ -63,11 +64,12 @@ export default class SelectPrisonerRoutes {
     const { selectedPrisoner } = req.body
     const { user } = res.locals
 
-    if (!selectedPrisoner || selectedPrisoner === '') return false
-
-    const prisoner = await this.prisonService.getInmateByPrisonerNumber(selectedPrisoner, user)
-
-    if (!prisoner) return false
+    let prisoner
+    try {
+      prisoner = await this.prisonService.getInmateByPrisonerNumber(selectedPrisoner, user)
+    } catch {
+      return false
+    }
 
     const prisonerData = {
       number: prisoner.prisonerNumber,
