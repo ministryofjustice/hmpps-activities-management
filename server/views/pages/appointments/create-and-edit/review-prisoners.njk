@@ -30,6 +30,9 @@
             {% for prisoner in prisoners %}
                 {% set prisonersList = (prisonersList.push([
                     {
+                        attributes: {
+                            "data-sort-value": prisoner.name | toTitleCase | prisonerName(false)
+                        },
                         html: showProfileLink({
                             name: prisoner.name,
                             prisonerNumber: prisoner.number,
