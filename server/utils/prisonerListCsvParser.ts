@@ -4,12 +4,10 @@ import { finished } from 'stream/promises'
 import { FormValidationError } from '../middleware/formValidationErrorHandler'
 
 export default class PrisonerListCsvParser {
-  async getPrisonerNumbers(file: Express.Multer.File): Promise<string[]> {
+  async getPrisonNumbers(file: Express.Multer.File): Promise<string[]> {
     const rows = await this.readCsvValues(file)
 
-    const prisonerNumbers = rows.map(row => row[0])
-
-    return prisonerNumbers
+    return rows.map(row => row[0])
   }
 
   async getAppointments(file: Express.Multer.File) {

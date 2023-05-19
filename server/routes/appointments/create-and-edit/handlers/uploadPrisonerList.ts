@@ -54,10 +54,10 @@ export default class UploadPrisonerListRoutes {
     const prisonerListCsvFile = req.file
     const { user } = res.locals
 
-    const prisonerNumbers = await this.prisonerListCsvParser.getPrisonerNumbers(prisonerListCsvFile)
+    const prisonerNumbers = await this.prisonerListCsvParser.getPrisonNumbers(prisonerListCsvFile)
 
     if (prisonerNumbers.length === 0) {
-      res.validationFailed('file', 'The selected file does not contain any prisoner numbers')
+      res.validationFailed('file', 'The selected file does not contain any prison numbers')
       return false
     }
 
