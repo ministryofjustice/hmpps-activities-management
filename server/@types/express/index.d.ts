@@ -44,7 +44,7 @@ declare module 'express-serve-static-core' {
     redirectOrReturnWithSuccess?(path: string, successHeading: string, message?: string): void
     redirectOrReturn?(path: string): void
     addValidationError?(field: string, message: string): void
-    validationFailed?(field?: string, message?: string, redirect?: boolean): void
+    validationFailed?(field?: string, message?: string): void
   }
 }
 

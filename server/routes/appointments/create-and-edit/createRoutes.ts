@@ -3,7 +3,7 @@ import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import emptyAppointmentJourneyHandler from '../../../middleware/emptyAppointmentJourneyHandler'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import StartJourneyRoutes from './handlers/startJourney'
-import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/selectPrisoner'
+import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './handlers/selectPrisoner'
 import UploadPrisonerListRoutes, { PrisonerList } from './handlers/uploadPrisonerList'
 import CategoryRoutes, { Category } from './handlers/category'
 import DescriptionRoutes, { Description } from './handlers/description'
@@ -70,7 +70,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/start-group', startHandler.GROUP)
   get('/start-bulk', startHandler.BULK)
   get('/select-prisoner', selectPrisonerHandler.GET, true)
-  post('/select-prisoner', selectPrisonerHandler.POST, PrisonerSearch)
+  post('/select-prisoner', selectPrisonerHandler.SELECT_PRISONER, SelectPrisoner)
+  post('/search-prisoner', selectPrisonerHandler.SEARCH, PrisonerSearch)
   get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
   router.post(
     '/upload-prisoner-list',

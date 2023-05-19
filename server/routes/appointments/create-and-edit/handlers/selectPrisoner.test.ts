@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import SelectPrisonerRoutes, { PrisonerSearch } from './selectPrisoner'
+import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './selectPrisoner'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
@@ -56,7 +56,6 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
     it('should render with a prisoners list if search term is entered', async () => {
       req.query = {
         query: 'John',
-        search: 'true',
       }
 
       const prisonersResult = [
@@ -75,22 +74,9 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         query: 'John',
       })
     })
-
-    it('should render with a validation error if search is submitted, but no search term enter', async () => {
-      req.query = {
-        query: '',
-        search: 'true',
-      }
-
-      await handler.GET(req, res)
-
-      expect(prisonService.searchPrisonInmates).toHaveBeenCalledTimes(0)
-      expect(res.validationFailed).toHaveBeenCalledWith('query', 'Enter a name or prisoner number to search by', false)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/select-prisoner')
-    })
   })
 
-  describe('POST', () => {
+  describe('SELECT_PRISONER', () => {
     it('should save (and replace) prisoner in session then redirect if prisoner selected (individual)', async () => {
       req.body = {
         selectedPrisoner: 'A1234BC',
@@ -118,7 +104,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         .calledWith('A1234BC', res.locals.user)
         .mockResolvedValue(prisonerInfo)
 
-      await handler.POST(req, res)
+      await handler.SELECT_PRISONER(req, res)
 
       expect(req.session.appointmentJourney.prisoners).toEqual([
         {
@@ -157,7 +143,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         .calledWith('A1234BC', res.locals.user)
         .mockResolvedValue(prisonerInfo)
 
-      await handler.POST(req, res)
+      await handler.SELECT_PRISONER(req, res)
 
       expect(req.session.appointmentJourney.prisoners).toEqual([
         {
@@ -174,21 +160,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
     })
 
-    it('validation fails when prisoner selected is not a prisoner from list', async () => {
-      req.body = {
-        selectedPrisoner: 'X0000ZY',
-      }
-
-      when(prisonService.getInmateByPrisonerNumber).calledWith('X0000ZY', res.locals.user).mockRejectedValue(null)
-
-      await handler.POST(req, res)
-
-      expect(res.validationFailed).toHaveBeenCalledWith('selectedPrisoner', 'You must select one option')
-    })
-  })
-
-  describe('EDIT', () => {
-    it('should add prisoner to session and redirect if prisoner selected', async () => {
+    it('should add prisoner to session and redirect if prisoner selected (edit)', async () => {
       req.body = {
         selectedPrisoner: 'A1234BC',
       }
@@ -217,7 +189,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         .calledWith('A1234BC', res.locals.user)
         .mockResolvedValue(prisonerInfo)
 
-      await handler.EDIT(req, res)
+      await handler.SELECT_PRISONER(req, res)
 
       expect(req.session.editAppointmentJourney.addPrisoners).toEqual([
         {
@@ -233,36 +205,88 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
     })
+
+    it('validation fails when prisoner selected is not a prisoner from list', async () => {
+      req.body = {
+        selectedPrisoner: 'X0000ZY',
+      }
+
+      when(prisonService.getInmateByPrisonerNumber).calledWith('X0000ZY', res.locals.user).mockRejectedValue(null)
+
+      await handler.SELECT_PRISONER(req, res)
+
+      expect(res.validationFailed).toHaveBeenCalledWith('selectedPrisoner', 'You must select one option')
+    })
+  })
+
+  describe('SEARCH', () => {
+    it('should redirect with query string', async () => {
+      req.body = {
+        query: 'john',
+      }
+
+      await handler.SEARCH(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(`select-prisoner?query=john`)
+    })
   })
 
   describe('Validation', () => {
-    it('validation fails when prisoner is not selected', async () => {
-      const body = {}
+    describe('SelectPrisoner', () => {
+      it('validation fails when prisoner is not selected', async () => {
+        const body = {}
 
-      const requestObject = plainToInstance(PrisonerSearch, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+        const requestObject = plainToInstance(SelectPrisoner, body)
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'selectedPrisoner', error: 'You must select one option' }]),
-      )
+        expect(errors).toEqual(
+          expect.arrayContaining([{ property: 'selectedPrisoner', error: 'You must select one option' }]),
+        )
+      })
+
+      it('validation fails when selected prisoner is an empty string', async () => {
+        const body = {
+          selectedPrisoner: '',
+        }
+
+        const requestObject = plainToInstance(SelectPrisoner, body)
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+        expect(errors).toEqual(
+          expect.arrayContaining([{ property: 'selectedPrisoner', error: 'You must select one option' }]),
+        )
+      })
+
+      it('passes validation when selected prisoner is not empty', async () => {
+        const body = {
+          selectedPrisoner: 'A1234BC',
+        }
+
+        const requestObject = plainToInstance(SelectPrisoner, body)
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+        expect(errors).toHaveLength(0)
+      })
     })
+  })
 
-    it('validation fails when selected prisoner is an empty string', async () => {
+  describe('PrisonerSearch', () => {
+    it('validation fails when query is empty', async () => {
       const body = {
-        selectedPrisoner: '',
+        query: '',
       }
 
       const requestObject = plainToInstance(PrisonerSearch, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'selectedPrisoner', error: 'You must select one option' }]),
+        expect.arrayContaining([{ property: 'query', error: 'Enter a name or prisoner number to search by' }]),
       )
     })
 
-    it('passes validation when selected prisoner is not empty', async () => {
+    it('passes validation when query search entered', async () => {
       const body = {
-        selectedPrisoner: 'A1234BC',
+        query: 'john',
       }
 
       const requestObject = plainToInstance(PrisonerSearch, body)

@@ -18,7 +18,7 @@
 
 {% block content %}
     {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-    {% set defaultPrisonerNumber = query or formResponses.query %}
+    {% set defaultPrisonerNumber = formResponses.query if formResponses.query != undefined else query %}
     {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
         {% set defaultPrisonerNumber = defaultPrisonerNumber or session.appointmentJourney.prisoners[0].number %}
     {% endif %}
@@ -30,8 +30,8 @@
     {% if prisoners %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="GET">
-                    <input type="hidden" name="search" value="true" />
+                <form method="POST" action='search-prisoner'>
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                     {{ searchInput({
                         classes: "search-input--inline-search",
                         formInputs: {
@@ -145,8 +145,8 @@
             <div>
         {% endif %}
     {% else %}
-        <form method="GET">
-            <input type="hidden" name="search" value="true" />
+        <form method="POST" action='search-prisoner'>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
                     {{ searchInput({
