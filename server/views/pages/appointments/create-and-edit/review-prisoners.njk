@@ -22,7 +22,7 @@
                 <h1 class="govuk-heading-l">Review prisoner details</h1>
                 <p class="govuk-body">You can select and remove prisoners if you need to.</p>
             {% else %}
-                <h1 class="govuk-heading-l">Review and add prisoners to the appointment list</h1>
+                <h1 class="govuk-heading-l">Review and add more people to the list of attendees</h1>
             {% endif %}
         </div>
         <div class="govuk-grid-column-two-thirds">
@@ -53,7 +53,7 @@
 
             {% if prisoners.length == 0 %}
                 {{ govukWarningText({
-                    text: "The appointment list is empty. You must add at least one person to continue." if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "The appointment list is empty. You must add at least one person to be able to schedule an appointment.",
+                    text: "The list of attendees is empty. You must add at least one person to continue." if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "The list of attendees is empty. You must add at least one person to be able to schedule an appointment.",
                     iconFallbackText: "Warning"
                 }) }}
 
@@ -75,7 +75,7 @@
                             classes: 'govuk-table__header'
                         },
                         {
-                            text: "Location",
+                            text: "Cell location",
                             attributes: { "aria-sort": "ascending" },
                             classes: 'govuk-table__header'
                         }, {

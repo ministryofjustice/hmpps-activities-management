@@ -1,5 +1,6 @@
 /* eslint-disable dot-notation */
 import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator'
+import { YesNo } from '../@types/activities'
 
 // eslint-disable-next-line import/prefer-default-export
 export function DescriptionRequired(validationOptions?: ValidationOptions) {
@@ -12,7 +13,7 @@ export function DescriptionRequired(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(description: string, args: ValidationArguments) {
-          if (args.object['descriptionOption'] === 'no' && (description === undefined || description === ''))
+          if (args.object['descriptionOption'] === YesNo.NO && (description === undefined || description === ''))
             return false
           return true
         },
@@ -31,7 +32,7 @@ export function DescriptionMaxLength(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(description: string, args: ValidationArguments) {
-          if (args.object['descriptionOption'] === 'no' && description.length > 40) return false
+          if (args.object['descriptionOption'] === YesNo.NO && description.length > 40) return false
           return true
         },
       },

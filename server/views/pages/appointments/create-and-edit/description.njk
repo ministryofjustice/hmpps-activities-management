@@ -34,7 +34,7 @@
                         },
                         {
                             value: YesNo.NO,
-                            text: "No - I want to enter my own appointment description to show on the unlock list",
+                            text: "No - I want to enter my own appointment name to show on the unlock list",
                             checked: descriptionOption == YesNo.NO,
                             conditional: {
                                   html: nestedDescription()
@@ -55,7 +55,7 @@
 {% macro nestedDescription() %}
     {{ govukCharacterCount({
         label: {
-            text: "Enter your own appointment description"
+            text: "Enter your own appointment name"
         },
         id: "description",
         name: "description",

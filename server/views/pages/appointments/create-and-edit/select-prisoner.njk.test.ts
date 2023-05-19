@@ -45,9 +45,9 @@ describe('Views - Appointments - Selected prisoners', () => {
     expect($('#prisoner-search-list input[name="selectedPrisoner"][type="radio"]').length).toBe(2)
     expect($('#prisoner-search-list input[name="selectedPrisoner"][type="hidden"]').length).toBe(0)
     expect($('#prisoner-results-text').text().trim()).toEqual(
-      'There are 2 results for "somequery". Select the correct one from the list.',
+      "There are 2 results for 'somequery'. Select the correct one from the list.",
     )
-    expect($('#continue-button').text().trim()).toEqual('Select prisoner and continue')
+    expect($('#continue-button').text().trim()).toEqual('Select and continue')
   })
 
   it('should display single prisoner without radios when single prisoner is found', () => {
@@ -68,7 +68,7 @@ describe('Views - Appointments - Selected prisoners', () => {
     expect($('#prisoner-search-list tbody tr').length).toBe(1)
     expect($('#prisoner-search-list input[name="selectedPrisoner"][type="radio"]').length).toBe(0)
     expect($('#prisoner-search-list input[name="selectedPrisoner"][type="hidden"]').length).toBe(1)
-    expect($('#prisoner-results-text').text().trim()).toEqual('There is 1 result for "somequery".')
+    expect($('#prisoner-results-text').text().trim()).toEqual("There is 1 result for 'somequery'.")
     expect($('#continue-button').text().trim()).toEqual('Continue')
   })
 
@@ -81,7 +81,7 @@ describe('Views - Appointments - Selected prisoners', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('#prisoner-search-list').length).toBe(0)
-    expect($('#prisoner-results-text').text().trim()).toEqual('There are no matching results for "somequery".')
+    expect($('#prisoner-results-text').text().trim()).toEqual("There are no matching results for 'somequery'.")
     expect($('#prisoner-search-list').length).toBe(0)
     expect($('#continue-button').length).toBe(0)
   })

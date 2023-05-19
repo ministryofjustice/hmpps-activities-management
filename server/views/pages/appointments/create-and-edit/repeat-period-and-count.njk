@@ -14,7 +14,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-            <h1 class="govuk-heading-l">Add repeat appointment details</h1>
+            <h1 class="govuk-heading-l">How often will the appointment repeat?</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
@@ -22,12 +22,6 @@
                     {% set repeatPeriod = formResponses.repeatPeriod or session.appointmentJourney.repeatPeriod %}
                     {{ govukRadios({
                         name: "repeatPeriod",
-                    fieldset: {
-                        legend: {
-                            text: "How often will the appointment repeat?",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                        },
                         errorMessage: validationErrors | findError('repeatPeriod'),
                         items: [
                             {
@@ -53,6 +47,9 @@
                             {
                                 value: AppointmentRepeatPeriod.MONTHLY,
                                 text: "Monthly",
+                                hint: {
+                                    text: "On the same date every month, or the last day if there is no matching date in the month."
+                                },
                                 checked: repeatPeriod == AppointmentRepeatPeriod.MONTHLY
                             }
                         ]
@@ -62,8 +59,8 @@
                         id: "repeatCount",
                         name: "repeatCount",
                         label: {
-                            text: "How many times will the appointment repeat?",
-                            classes: "govuk-fieldset__legend--m"
+                            text: "How many appointments are there altogether?",
+                            classes: "govuk-label--m"
                         },
                         hint: {
                             text: "Enter the total number of appointments, including the first appointment, up to a maximum of one year."

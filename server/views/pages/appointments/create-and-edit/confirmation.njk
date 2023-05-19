@@ -17,7 +17,7 @@
                 {% if appointment.appointmentType == AppointmentType.INDIVIDUAL %}
                     You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners[0] | fullName | toTitleCase }}
                 {% elseif appointment.appointmentType == AppointmentType.GROUP %}
-                    You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners | length }} prisoners
+                    You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners | length }} {{ "prisoner" if appointment.prisoners.length == 1 else "prisoners" }}
                 {% elseif appointment.type == AppointmentType.BULK %}
                     You have successfully created appointments for {{ appointment.appointments | length }} prisoners
                 {% endif %}
@@ -48,11 +48,11 @@
             {# TODO: Display bulk appointment details #}
             {% if appointment.type == AppointmentType.BULK %}
                 <p class="govuk-body">
-                    <a href="#" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and manage appointment</a>
+                    <a href="#" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and manage the details of the appointments</a>
                 </p>
             {% else %}
                 <p class="govuk-body">
-                    <a href="/appointments/{{ appointment.id }}/occurrence/{{ appointment.occurrences[0].id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and manage appointment</a>
+                    <a href="/appointments/{{ appointment.id }}/occurrence/{{ appointment.occurrences[0].id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and manage the details of this appointment</a>
                 </p>
             {% endif %}
         </div>
