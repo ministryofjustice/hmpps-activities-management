@@ -21,8 +21,8 @@ export default class SelectPrisonerRoutes {
     if (!search || search !== 'true') return res.render('pages/appointments/create-and-edit/select-prisoner')
 
     const prisoners = await this.getPrisoners(req, res)
-    if (!prisoners) return
-    return res.render('pages/appointments/create-and-edit/select-prisoner', { prisoners, query })
+    if (prisoners) return res.render('pages/appointments/create-and-edit/select-prisoner', { prisoners, query })
+    return res.render('pages/appointments/create-and-edit/select-prisoner')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -50,7 +50,7 @@ export default class SelectPrisonerRoutes {
     const { user } = res.locals
 
     if (typeof query !== 'string' || query === '') {
-      res.validationFailed('query', 'Enter a name or prisoner number to search by')
+      res.validationFailed('query', 'Enter a name or prisoner number to search by', false)
       return false
     }
 

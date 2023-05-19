@@ -1,14 +1,15 @@
 .search-input {
   $root: &;
+  width: 100%;
   
   margin-bottom: govuk-spacing(6);
 
   &__form-inputs {
     margin-bottom: govuk-spacing(6);
-  }
 
-  .govuk-input {
-    margin-bottom: govuk-spacing(6);
+    .govuk-form-group {
+      width: 100%;
+    }
   }
 
   .govuk-button {
@@ -18,7 +19,16 @@
   &--inline-search {
     #{$root}__form-inputs {
       display: flex;
-      align-items: flex-start;
+      align-items: flex-end;
+      gap: govuk-spacing(1);
+
+      .govuk-form-group {
+        margin: 0;
+      }
+
+      .govuk-button {
+        margin-bottom: 2px;
+      }
     }
 
     .govuk-input {

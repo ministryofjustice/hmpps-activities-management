@@ -1,6 +1,5 @@
 {% extends "layout.njk" %}
 
-{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {%- from "moj/components/search/macro.njk" import mojSearch -%}
@@ -24,30 +23,34 @@
         {% set defaultPrisonerNumber = defaultPrisonerNumber or session.appointmentJourney.prisoners[0].number %}
     {% endif %}
 
+    <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="query">{{ headingText }}</label>
+    </h1>
+
     {% if prisoners %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form method="GET">
                     <input type="hidden" name="search" value="true" />
                     {{ searchInput({
-                        id: "query",
-                        name: "query",
                         classes: "search-input--inline-search",
-                        label: {
-                            isPageHeading: true,
-                            text: headingText
-                        },
                         formInputs: {
                             classes: "govuk-input--width-30"
                         },
                         input: {
-                            value: query
+                            id: "query",
+                            name: "query",
+                            type: "search",
+                            value: query,
+                            hint: {
+                                text: 'Search by prison number or name'
+                            },
+                            errorMessage: validationErrors | findError("query")
                         },
                         button: {
                             text: "Search",
                             classes: "govuk-button--secondary"
-                        },
-                        hint: "Search by prison number or name"
+                        }
                     }) }}
 
                     <h2 class="govuk-heading-m">
@@ -147,19 +150,22 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
                     {{ searchInput({
-                        id: "query",
-                        name: "query",
-                        label: {
-                            isPageHeading: true,
-                            text: headingText
-                        },
-                        formInputs: {
-                            classes: "govuk-input--width-30"
+                        input: {
+                            id: "query",
+                            name: "query",
+                            hint: {
+                                text: 'Search by prison number or name'
+                            },
+                            type: "search",
+                            value: query,
+                            errorMessage: validationErrors | findError("query")
                         },
                         button: {
                             text: "Search"
                         },
-                        hint: "Search by prison number or name"
+                        formInputs: {
+                            classes: "govuk-input--width-30"
+                        }
                     }) }}
                 </div>
             </div>
