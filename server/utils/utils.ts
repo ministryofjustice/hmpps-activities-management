@@ -78,6 +78,16 @@ export const fullName = (user?: { firstName: string; lastName: string; middleNam
 }
 
 /**
+ * Converts a user object containing firstName & lastName to a "firstName lastName" string.
+ * @param user user to extract full name from
+ * @returns name string
+ */
+export const firstNameLastName = (user?: { firstName: string; lastName: string }): string | null => {
+  if (!user) return null
+  return `${user.firstName} ${user.lastName}`
+}
+
+/**
  * Converts a prisoner name from 'firstName lastName' format to
  * "lastName, firstName" and bolds prisoner lastName
  */
