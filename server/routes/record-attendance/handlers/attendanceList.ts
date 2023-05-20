@@ -32,28 +32,35 @@ export default class AttendanceListRoutes {
     }))
 
     const prisonerNumbers = instance.attendances.map(a => a.prisonerNumber)
-    const otherScheduledEvents = await this.activitiesService
-      .getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user)
-      .then(response => [
-        ...response.activities,
-        ...response.appointments,
-        ...response.courtHearings,
-        ...response.visits,
-      ])
-      .then(events => events.filter(e => e.scheduledInstanceId !== +instanceId))
-      .then(events => events.filter(e => eventClashes(e, instance)))
 
-    const attendees = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
-      inmates.map(i => ({
-        name: `${i.firstName} ${i.lastName}`,
-        prisonerNumber: i.prisonerNumber,
-        location: i.cellLocation,
-        alerts: i.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
-        category: i.category,
-        otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
-        attendance: instance.attendances.find(a => a.prisonerNumber === i.prisonerNumber),
-      })),
-    )
+    const otherScheduledEvents =
+      prisonerNumbers?.length > 0
+        ? await this.activitiesService
+            .getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user)
+            .then(response => [
+              ...response.activities,
+              ...response.appointments,
+              ...response.courtHearings,
+              ...response.visits,
+            ])
+            .then(events => events.filter(e => e.scheduledInstanceId !== +instanceId))
+            .then(events => events.filter(e => eventClashes(e, instance)))
+        : []
+
+    const attendees =
+      prisonerNumbers?.length > 0
+        ? await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
+            inmates.map(i => ({
+              name: `${i.firstName} ${i.lastName}`,
+              prisonerNumber: i.prisonerNumber,
+              location: i.cellLocation,
+              alerts: i.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
+              category: i.category,
+              otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
+              attendance: instance.attendances.find(a => a.prisonerNumber === i.prisonerNumber),
+            })),
+          )
+        : []
 
     return res.render('pages/record-attendance/attendance-list', {
       activity: {
