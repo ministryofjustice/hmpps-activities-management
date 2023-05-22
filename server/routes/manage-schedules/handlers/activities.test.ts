@@ -69,7 +69,7 @@ describe('Route Handlers - Activities dashboard', () => {
 
   describe('GET', () => {
     it('should render all activities', async () => {
-      req.query = { categoryFilter: 'all' }
+      req.query = { categoryFilter: 'all', stateFilter: 'all' }
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/activities-dashboard', {
@@ -109,7 +109,7 @@ describe('Route Handlers - Activities dashboard', () => {
             name: 'Gym, sport, fitness',
           },
         ],
-        filters: { categoryFilter: 'all' },
+        filters: { categoryFilter: 'all', stateFilter: 'all' },
       })
     })
 
@@ -185,6 +185,7 @@ describe('Route Handlers - Activities dashboard', () => {
             id: 3,
             summary: 'Gym',
             category: gymCategory,
+            activityState: 'LIVE',
           } as ActivityLite,
         ])
 
@@ -200,6 +201,7 @@ describe('Route Handlers - Activities dashboard', () => {
             },
             summary: 'Gym',
             id: 3,
+            activityState: 'LIVE',
           },
         ],
         categories: [
@@ -214,6 +216,94 @@ describe('Route Handlers - Activities dashboard', () => {
         ],
         filters: {
           categoryFilter: '2',
+        },
+      })
+    })
+
+    it('should render live activities only', async () => {
+      const gymCategory = {
+        id: 2,
+        name: 'Gym, sport, fitness',
+      } as ActivityCategory
+
+      when(activitiesService.getActivitiesInCategory)
+        .calledWith(atLeast(2))
+        .mockResolvedValue([
+          {
+            id: 3,
+            summary: 'Gym',
+            category: gymCategory,
+            activityState: 'LIVE',
+          } as ActivityLite,
+        ])
+
+      req.query = { categoryFilter: '2', stateFilter: 'live' }
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/activities-dashboard', {
+        activities: [
+          {
+            category: {
+              id: 2,
+              name: 'Gym, sport, fitness',
+            },
+            summary: 'Gym',
+            id: 3,
+            activityState: 'LIVE',
+          },
+        ],
+        categories: [
+          {
+            id: 1,
+            name: 'Education',
+          },
+          {
+            id: 2,
+            name: 'Gym, sport, fitness',
+          },
+        ],
+        filters: {
+          categoryFilter: '2',
+          stateFilter: 'live',
+        },
+      })
+    })
+
+    it('should render archived activities only', async () => {
+      const gymCategory = {
+        id: 2,
+        name: 'Gym, sport, fitness',
+      } as ActivityCategory
+
+      when(activitiesService.getActivitiesInCategory)
+        .calledWith(atLeast(2))
+        .mockResolvedValue([
+          {
+            id: 3,
+            summary: 'Gym',
+            category: gymCategory,
+            activityState: 'LIVE',
+          } as ActivityLite,
+        ])
+
+      req.query = { categoryFilter: '2', stateFilter: 'archived' }
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/activities-dashboard', {
+        activities: [],
+        categories: [
+          {
+            id: 1,
+            name: 'Education',
+          },
+          {
+            id: 2,
+            name: 'Gym, sport, fitness',
+          },
+        ],
+        filters: {
+          categoryFilter: '2',
+          stateFilter: 'archived',
         },
       })
     })

@@ -3,6 +3,7 @@ import ActivitiesService from '../../../services/activitiesService'
 
 type Filters = {
   categoryFilter: string
+  stateFilter: string
 }
 
 export default class ActivitiesRoutes {
@@ -14,8 +15,26 @@ export default class ActivitiesRoutes {
 
     const [activities, categories] = await Promise.all([
       !filters.categoryFilter || filters.categoryFilter === 'all'
-        ? this.activitiesService.getActivities(user)
-        : this.activitiesService.getActivitiesInCategory(+filters.categoryFilter, user),
+        ? await this.activitiesService
+            .getActivities(user)
+            .then(act =>
+              act.filter(
+                a =>
+                  !filters.stateFilter ||
+                  filters.stateFilter === 'all' ||
+                  a.activityState.toLowerCase() === filters.stateFilter,
+              ),
+            )
+        : this.activitiesService
+            .getActivitiesInCategory(+filters.categoryFilter, user)
+            .then(act =>
+              act.filter(
+                a =>
+                  !filters.stateFilter ||
+                  filters.stateFilter === 'all' ||
+                  a.activityState.toLowerCase() === filters.stateFilter,
+              ),
+            ),
 
       this.activitiesService.getActivityCategories(user),
     ])

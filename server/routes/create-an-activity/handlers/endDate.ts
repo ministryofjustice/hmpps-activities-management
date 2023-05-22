@@ -50,7 +50,6 @@ export default class EndDateRoutes {
         'Activity updated',
         successMessage,
       )
-    }
-    res.redirectOrReturn(`days-and-times`)
+    } else res.redirectOrReturn(`days-and-times`)
   }
 }

@@ -88,7 +88,11 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('days-and-times')
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/schedule/activities/undefined',
+        'Activity updated',
+        "We've updated the end date for undefined",
+      )
     })
   })
 

@@ -71,7 +71,6 @@ export default class LocationRoutes {
         'Activity updated',
         successMessage,
       )
-    }
-    res.redirectOrReturn(`capacity`)
+    } else res.redirectOrReturn(`capacity`)
   }
 }
