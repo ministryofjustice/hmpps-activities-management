@@ -19,6 +19,6 @@ describe('Views - Home', () => {
   it('should always show the unlock list tile', () => {
     viewContext = {}
     const $ = cheerio.load(compiledTemplate.render(viewContext))
-    expect($('[data-qa=unlock-list-link]')).toHaveLength(1)
+    expect($('[data-qa=manage-unlock-lists]')).toHaveLength(1)
   })
 })
