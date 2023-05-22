@@ -7,13 +7,18 @@ import LocationRoutes, { InCell, Location } from './location'
 import PrisonService from '../../../services/prisonService'
 import eventLocations from '../../../services/fixtures/event_locations_2.json'
 import eventLocationsFiltered from '../../../services/fixtures/event_locations_filtered_2.json'
+import ActivitiesService from '../../../services/activitiesService'
+import atLeast from '../../../../jest.setup'
+import activity from '../../../services/fixtures/activity_1.json'
+import { Activity } from '../../../@types/activitiesAPI/types'
 
 jest.mock('../../../services/prisonService')
+jest.mock('../../../services/activitiesService')
 
 const prisonService = new PrisonService(null, null, null)
-
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 describe('Route Handlers - Create an activity schedule - location', () => {
-  const handler = new LocationRoutes(prisonService)
+  const handler = new LocationRoutes(activitiesService, prisonService)
   let req: Request
   let res: Response
 
@@ -24,6 +29,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -81,6 +87,36 @@ describe('Route Handlers - Create an activity schedule - location', () => {
       expect(req.session.createJourney.inCell).toEqual(true)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('capacity')
+    })
+
+    it('should save entered location in database', async () => {
+      const updatedActivity = {
+        locationId: 1234,
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      req = {
+        session: {
+          createJourney: {},
+        },
+        query: {
+          fromEditActivity: true,
+        },
+        body: {
+          location: 1234,
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/schedule/activities/undefined',
+        'Activity updated',
+        "We've updated the location for undefined",
+      )
     })
   })
 

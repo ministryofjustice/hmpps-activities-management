@@ -8,6 +8,7 @@ export default class RemoveEducationLevelRoutes {
       p => p.educationLevelCode !== code,
     )
 
-    res.redirect('check-education-level')
+    if (req.query && req.query.fromEditActivity) res.redirect(`check-education-level?fromEditActivity=true`)
+    else res.redirect('check-education-level')
   }
 }

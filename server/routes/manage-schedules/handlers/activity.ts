@@ -18,20 +18,22 @@ export default class ActivityRoutes {
     const activity = await this.activitiesService.getActivity(activityId, user)
 
     let attendanceCount = 0
+    let allocationCount = 0
 
-    activity.schedules.forEach(schedule =>
+    activity.schedules.forEach(schedule => {
+      allocationCount += schedule.allocations.length
       schedule.instances.forEach(instance => {
         attendanceCount += instance.attendances.length
-      }),
-    )
+      })
+    })
 
     if (!req.session.createJourney) {
       req.session.createJourney = {}
       req.session.createJourney.activityId = activity.id
       req.session.createJourney.category = activity.category
       req.session.createJourney.name = activity.summary
+      req.session.createJourney.inCell = activity.inCell
       req.session.createJourney.riskLevel = activity.riskLevel
-      req.session.createJourney.minimumIncentiveLevel = activity.minimumIncentiveLevel
       req.session.createJourney.startDate = {
         day: Number(activity.startDate.substring(8, 10)),
         month: Number(activity.startDate.substring(5, 7)),
@@ -62,6 +64,7 @@ export default class ActivityRoutes {
           },
         }
       }
+      req.session.createJourney.minimumIncentiveLevel = activity.minimumIncentiveLevel
       req.session.createJourney.days = []
       req.session.createJourney.timeSlotsMonday = []
       req.session.createJourney.timeSlotsTuesday = []
@@ -101,6 +104,13 @@ export default class ActivityRoutes {
             req.session.createJourney.timeSlotsSunday.push(getTimeSlotFromTime(slot.startTime).toUpperCase())
           }
           req.session.createJourney.runsOnBankHoliday = schedule.runsOnBankHoliday
+          req.session.createJourney.location = {
+            id: schedule.internalLocation.id,
+            name: schedule.internalLocation.description,
+          }
+          req.session.createJourney.currentCapacity = schedule.capacity
+          req.session.createJourney.capacity = schedule.capacity
+          req.session.createJourney.allocationCount = allocationCount
         }),
       )
     }
@@ -113,11 +123,14 @@ export default class ActivityRoutes {
       })),
     ])
 
+    const week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
     res.render('pages/manage-schedules/view-activity', {
       activity,
       schedule,
       incentiveLevelPays,
       attendanceCount,
+      week,
     })
   }
 }

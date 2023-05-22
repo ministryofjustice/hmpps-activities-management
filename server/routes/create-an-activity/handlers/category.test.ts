@@ -5,7 +5,9 @@ import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import CategoryRoutes, { Category } from './category'
 import ActivitiesService from '../../../services/activitiesService'
-import { ActivityCategory } from '../../../@types/activitiesAPI/types'
+import { Activity, ActivityCategory } from '../../../@types/activitiesAPI/types'
+import atLeast from '../../../../jest.setup'
+import activity from '../../../services/fixtures/activity_1.json'
 
 jest.mock('../../../services/activitiesService')
 
@@ -25,6 +27,7 @@ describe('Route Handlers - Create an activity - Category', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -73,6 +76,41 @@ describe('Route Handlers - Create an activity - Category', () => {
         name: 'Education',
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('name')
+    })
+
+    it('should save entered activity category in database', async () => {
+      const updatedActivity = {
+        categoryId: 2,
+      }
+
+      when(activitiesService.getActivityCategories).mockResolvedValue([
+        { id: 1, name: 'Services' },
+        { id: 2, name: 'Education' },
+      ] as ActivityCategory[])
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      req = {
+        session: {
+          createJourney: {},
+        },
+        query: {
+          fromEditActivity: true,
+        },
+        body: {
+          category: 2,
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/schedule/activities/undefined',
+        'Activity updated',
+        "We've updated the category for undefined",
+      )
     })
   })
 

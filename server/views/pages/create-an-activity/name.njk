@@ -2,6 +2,7 @@
 
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% set pageTitle = applicationName + " - Create an activity - Name" %}
 {% set pageId = 'name-page' %}
@@ -14,7 +15,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukInput({
                     label: {
-                        text: "What is the new activity called?",
+                        text: "Enter the name of the activity",
                         classes: "govuk-label--xl",
                         isPageHeading: true
                     },
@@ -34,9 +35,22 @@
                 <div id="with-hint-info" class="govuk-hint govuk-character-count__message bottom-hint">
                     Maximum number of characters: 40
                 </div>
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
+
+                {% if session.req.query.fromEditActivity %}
+                    {{ govukInsetText({
+                      text: "If you change the name of this activity, it will update all records. This includes any previous sessions of the activity on the unlock, movement and attendance lists."
+                    }) }}
+                    <div class="govuk-button-group">
+                      {{ govukButton({
+                        text: "Update activity name"
+                      }) }}
+                        <a class="govuk-link js-backlink" href="/">Cancel</a>
+                    </div>
+                {% else %}
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                {% endif %}
             </form>
         </div>
     </div>

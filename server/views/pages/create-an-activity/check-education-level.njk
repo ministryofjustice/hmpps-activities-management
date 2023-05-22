@@ -21,6 +21,11 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
+            {% if session.req.query.fromEditActivity %}
+                {% set fromEditText = "&fromEditActivity=true" %}
+            {% else %}
+                {% set fromEditText = "" %}
+            {% endif %}
             {% for educationLevel in educationLevels %}
                 {% set rows = [] %}
                     {% set rows = (rows.push(
@@ -34,7 +39,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "remove-education-level?code=" + educationLevel.educationLevelCode,
+                                    href: "remove-education-level?code=" + educationLevel.educationLevelCode + fromEditText,
                                     text: "Remove",
                                     visuallyHiddenText: "remove education level"
                                 }
@@ -54,11 +59,19 @@
                     {{ govukButton({
                         text: "Confirm education levels"
                     }) }}
-                    {{ govukButton({
-                        text: "Add another education level",
-                        href: 'education-level',
-                        classes: "govuk-button--secondary"
-                    }) }}
+                    {% if session.req.query.fromEditActivity %}
+                        {{ govukButton({
+                            text: "Add another education level",
+                            href: 'education-level?fromEditActivity=true',
+                            classes: "govuk-button--secondary"
+                        }) }}
+                    {% else %}
+                        {{ govukButton({
+                            text: "Add another education level",
+                            href: 'education-level',
+                            classes: "govuk-button--secondary"
+                        }) }}
+                    {% endif %}
                 </div>
             </form>
         </div>
