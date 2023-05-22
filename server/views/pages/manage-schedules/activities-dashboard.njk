@@ -19,6 +19,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <p class="govuk-body">Select an activity to change details and add schedules.</p>
+            <p class="govuk-body">You can also choose to see lists of live, suspended or archived activities, and change their state.</p>
         </div>
         <div class="govuk-grid-column-full">
             <div class='filter'>
@@ -165,9 +166,17 @@
 {% endblock %}
 
 {% macro renderActivityState(activityState) %}
-    {{ govukTag({
-        text: activityState,
-        classes: "govuk-tag--blue"
-       })
-    }}
+    {% if activityState === 'LIVE' %}
+        {{ govukTag({
+            text: activityState,
+            classes: "govuk-tag--blue"
+           })
+        }}
+    {% else %}
+        {{ govukTag({
+            text: activityState,
+            classes: "govuk-tag--red"
+           })
+        }}
+    {% endif %}
 {% endmacro %}
