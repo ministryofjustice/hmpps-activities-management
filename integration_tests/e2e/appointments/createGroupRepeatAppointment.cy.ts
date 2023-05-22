@@ -70,7 +70,7 @@ context('Create group appointment', () => {
     appointmentsManagementPage.createGroupAppointmentCard().click()
 
     let howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
     const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
@@ -88,7 +88,7 @@ context('Create group appointment', () => {
     reviewPrisonersPage.addAnotherPrisoner()
 
     howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Search for a prison number to add to the appointment list')
+    howToAddPrisonersPage.selectHowToAdd('Search by name or prison number to add people to the list of attendees')
     howToAddPrisonersPage.continue()
 
     let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)

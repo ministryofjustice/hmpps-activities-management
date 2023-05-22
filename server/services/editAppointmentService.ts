@@ -84,7 +84,7 @@ export default class EditAppointmentService {
     }
 
     if (editAppointmentJourney.addPrisoners?.length > 1) {
-      return 'add the prisoners to'
+      return 'add the people to'
     }
 
     if (editAppointmentJourney.removePrisoner) {

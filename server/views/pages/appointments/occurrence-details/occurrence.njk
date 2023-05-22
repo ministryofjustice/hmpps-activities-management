@@ -82,21 +82,21 @@
                 rows: [
                     {
                         key: {
-                            text: "Type"
+                            text: "Appointment name"
                         },
                         value: {
                             text: occurrence.category.description
                         }
                     }, {
                         key: {
-                            text: "Show type on unlock list"
+                            text: "Show appointment name on unlock list"
                         },
                         value: {
                             text: ("Yes" if occurrence.appointmentDescription == null or occurrence.appointmentDescription == '') + ("No" if occurrence.appointmentDescription.length > 0)
                         }
                     }, {
                         key: {
-                            text: "Appointment description"
+                            text: "Alternative appointment name"
                         },
                         value: {
                             text: occurrence.appointmentDescription

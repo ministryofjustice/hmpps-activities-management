@@ -35,16 +35,13 @@
                     hint: {
                         text: "Start typing a location and select from the list of options"
                     },
-                    formGroup: {
-                        classes: "location-autocomplete-formgroup"
-                    },
                     errorMessage: validationErrors | findError('locationId'),
-                    value: formResponses.locationId or session.appointmentJourney.location.id,
-                    items: options
+                    items: options,
+                    value: formResponses.locationId or session.appointmentJourney.location.id
                 }) }}
 
                 {{ govukButton({
-                    text: "Accept and save" if isCtaAcceptAndSave else "Continue"
+                    text: "Confirm and save" if isCtaAcceptAndSave else "Continue"
                 }) }}
             </form>
         </div>

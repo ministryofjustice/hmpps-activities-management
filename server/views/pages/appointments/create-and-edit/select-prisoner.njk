@@ -13,7 +13,7 @@
 
 {% set headingText = "Search and add prisoner to the appointment" %}
 {% if session.appointmentJourney.type == AppointmentType.GROUP %}
-    {% set headingText = "Search for an individual to add to the appointment list" %}
+    {% set headingText = "Search for an individual to add to the list of attendees" %}
 {% endif %}
 
 {% block content %}
@@ -23,9 +23,13 @@
         {% set defaultPrisonerNumber = defaultPrisonerNumber or session.appointmentJourney.prisoners[0].number %}
     {% endif %}
 
-    <h1 class="govuk-label-wrapper">
-        <label class="govuk-label govuk-label--l" for="query">{{ headingText }}</label>
-    </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-label-wrapper">
+                <label class="govuk-label govuk-label--l" for="query">{{ headingText }}</label>
+            </h1>
+        </div>
+    </div>
 
     {% if prisoners %}
         <div class="govuk-grid-row">
@@ -43,7 +47,7 @@
                             type: "search",
                             value: defaultPrisonerNumber,
                             hint: {
-                                text: 'Search by prison number or name'
+                                text: 'Search by name or prison number'
                             },
                             errorMessage: validationErrors | findError("query")
                         },
@@ -55,11 +59,11 @@
 
                     <h2 class="govuk-heading-m" id="prisoner-results-text">
                         {% if prisoners | length == 1 %}
-                            There is 1 result for "{{ query }}".
+                            There is 1 result for '{{ query }}'.
                         {% elseif prisoners | length > 1 %}
-                            There are {{ prisoners | length }} results for "{{ query }}". Select the correct one from the list.
+                            There are {{ prisoners | length }} results for '{{ query }}'. Select the correct one from the list.
                         {% else %}
-                            There are no matching results for "{{ query }}".
+                            There are no matching results for '{{ query }}'.
                         {% endif %}
                     </h2>
                 </form>
@@ -73,7 +77,13 @@
                         {% set prisonerRows = [] %}
                         {% for prisoner in prisoners %}
                             {% if prisoners | length > 1 %}
-                                {% set prisonerName = '<label><input type="radio" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '" /> ' + prisoner | firstNameLastName | toTitleCase | prisonerName + '<label>' %}
+                                {% set prisonerName = '<div class="govuk-radios govuk-radios--small" data-module="govuk-radios">' +
+                                                          '<div class="govuk-radios__item">' +
+                                                              '<input type="radio" id="selected-prisoner-' + prisoner.prisonerNumber + '" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '" class="govuk-radios__input"/>' +
+                                                              '<label for="selected-prisoner-' + prisoner.prisonerNumber + '" class="govuk-label govuk-radios__label">' + prisoner | firstNameLastName | toTitleCase | prisonerName + '<label>' +
+                                                          '</div>' +
+                                                      '</div>'
+                                %}
                             {% else %}
                                 {% set prisonerName = '<input type="hidden" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '"> ' + prisoner | firstNameLastName | toTitleCase | prisonerName %}
                             {% endif %}
@@ -116,12 +126,12 @@
                             classes: "fixed-layout-table",
                             captionClasses: "govuk-visually-hidden",
                             head: [{
-                                text: "Prisoner name",
+                                text: "Name",
                                 attributes: {
                                     "aria-sort": "ascending"
                                 }
                             }, {
-                                text: "Prisoner numbers",
+                                text: "Prison number",
                                 attributes: {
                                     "aria-sort": "none"
                                 }
@@ -137,7 +147,7 @@
                         }) }}
 
                         {{ govukButton({
-                            text: "Select prisoner and continue" if prisoners | length > 1 else "Continue",
+                            text: "Select and continue" if prisoners | length > 1 else "Continue",
                             id: "continue-button"
                         }) }}
                     </form>
@@ -154,7 +164,7 @@
                             id: "query",
                             name: "query",
                             hint: {
-                                text: 'Search by prison number or name'
+                                text: 'Search by name or prison number'
                             },
                             type: "search",
                             value: defaultPrisonerNumber,

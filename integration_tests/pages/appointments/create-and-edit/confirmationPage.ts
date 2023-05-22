@@ -11,5 +11,6 @@ export default class ConfirmationPage extends Page {
 
   assertCreateAnotherLinkExists = () => cy.get('[data-qa=create-another-link]').contains('Create another appointment')
 
-  assertViewAppointmentLinkExists = () => this.viewAppointmentLink().contains('View and manage appointment')
+  assertViewAppointmentLinkExists = () =>
+    this.viewAppointmentLink().contains('View and manage the details of this appointment')
 }

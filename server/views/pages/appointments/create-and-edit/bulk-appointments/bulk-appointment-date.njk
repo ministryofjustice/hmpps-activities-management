@@ -33,7 +33,7 @@
                     formResponses: formResponses.startDate or session.appointmentJourney.startDate
                 }) }}
                 {{ govukButton({
-                    text: "Accept and save" if session.appointmentJourney.mode == "EDIT" else "Continue"
+                    text: "Confirm and save" if session.appointmentJourney.mode == "EDIT" else "Continue"
                 }) }}
             </form>
         </div>

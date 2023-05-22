@@ -22,7 +22,7 @@
                     name: "howToAdd",
                     fieldset: {
                         legend: {
-                            text: "How do you want to add prisoners to the appointment?",
+                            text: "How do you want to add people to the list of attendees?",
                             classes: "govuk-label--l",
                             isPageHeading: true
                         }
@@ -31,12 +31,12 @@
                     items: [
                         {
                             value: HowToAddOptions.SEARCH,
-                            text: "Search for a prison number to add to the appointment list",
+                            text: "Search by name or prison number to add people to the list of attendees",
                             checked: formResponses.howToAdd == HowToAddOptions.SEARCH
                         },
                         {
                             value: HowToAddOptions.CSV,
-                            text: "Upload a CSV file of prison numbers to add to the appointment list",
+                            text: "Upload a CSV file of prison numbers to add to the list of attendees",
                             checked: formResponses.howToAdd == HowToAddOptions.CSV
                         }
                     ]

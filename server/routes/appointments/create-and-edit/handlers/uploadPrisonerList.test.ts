@@ -66,7 +66,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         path: 'uploads/unknown.csv',
       } as unknown as Express.Multer.File
 
-      when(prisonerListCsvParser.getPrisonerNumbers)
+      when(prisonerListCsvParser.getPrisonNumbers)
         .calledWith(req.file)
         .mockImplementation(() => {
           throw new FormValidationError('file', 'The selected file could not be uploaded – try again')
@@ -89,7 +89,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         path: 'uploads/unknown.csv',
       } as unknown as Express.Multer.File
 
-      when(prisonerListCsvParser.getPrisonerNumbers)
+      when(prisonerListCsvParser.getPrisonNumbers)
         .calledWith(req.file)
         .mockImplementation(() => {
           throw new FormValidationError('file', 'The selected file must use the CSV template')
@@ -107,19 +107,16 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       expect((exception as FormValidationError).message).toEqual('The selected file must use the CSV template')
     })
 
-    it('validation fails when uploaded file does not contain any prisoner numbers', async () => {
+    it('validation fails when uploaded file does not contain any prison numbers', async () => {
       req.file = {
         path: 'uploads/no-prisoner-numbers.csv',
       } as unknown as Express.Multer.File
 
-      when(prisonerListCsvParser.getPrisonerNumbers).calledWith(req.file).mockReturnValue(Promise.resolve([]))
+      when(prisonerListCsvParser.getPrisonNumbers).calledWith(req.file).mockReturnValue(Promise.resolve([]))
 
       await handler.POST(req, res)
 
-      expect(res.validationFailed).toHaveBeenCalledWith(
-        'file',
-        'The selected file does not contain any prisoner numbers',
-      )
+      expect(res.validationFailed).toHaveBeenCalledWith('file', 'The selected file does not contain any prison numbers')
     })
 
     it('validation fails when single prisoner not found', async () => {
@@ -127,7 +124,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         path: 'uploads/unknown.csv',
       } as unknown as Express.Multer.File
 
-      when(prisonerListCsvParser.getPrisonerNumbers)
+      when(prisonerListCsvParser.getPrisonNumbers)
         .calledWith(req.file)
         .mockReturnValue(Promise.resolve(['A1234BC']))
       when(prisonService.searchInmatesByPrisonerNumbers)
@@ -144,7 +141,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         path: 'uploads/unknown.csv',
       } as unknown as Express.Multer.File
 
-      when(prisonerListCsvParser.getPrisonerNumbers)
+      when(prisonerListCsvParser.getPrisonNumbers)
         .calledWith(req.file)
         .mockReturnValue(Promise.resolve(['A1234BC', 'B2345CD']))
       when(prisonService.searchInmatesByPrisonerNumbers)
@@ -164,7 +161,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         path: 'uploads/two-prisoners.csv',
       } as unknown as Express.Multer.File
 
-      when(prisonerListCsvParser.getPrisonerNumbers)
+      when(prisonerListCsvParser.getPrisonNumbers)
         .calledWith(req.file)
         .mockReturnValue(Promise.resolve(['A1234BC', 'B2345CD']))
       when(prisonService.searchInmatesByPrisonerNumbers)
@@ -196,7 +193,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         path: 'uploads/two-prisoners.csv',
       } as unknown as Express.Multer.File
 
-      when(prisonerListCsvParser.getPrisonerNumbers)
+      when(prisonerListCsvParser.getPrisonNumbers)
         .calledWith(req.file)
         .mockReturnValue(Promise.resolve(['A1234BC', 'B2345CD']))
       when(prisonService.searchInmatesByPrisonerNumbers)
@@ -248,7 +245,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         },
       ]
 
-      when(prisonerListCsvParser.getPrisonerNumbers)
+      when(prisonerListCsvParser.getPrisonNumbers)
         .calledWith(req.file)
         .mockReturnValue(Promise.resolve(['B2345CD']))
       when(prisonService.searchInmatesByPrisonerNumbers)
@@ -293,7 +290,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         },
       ]
 
-      when(prisonerListCsvParser.getPrisonerNumbers)
+      when(prisonerListCsvParser.getPrisonNumbers)
         .calledWith(req.file)
         .mockReturnValue(Promise.resolve(['A1234BC', 'B2345CD']))
       when(prisonService.searchInmatesByPrisonerNumbers)
@@ -337,7 +334,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         path: 'uploads/two-prisoners.csv',
       } as unknown as Express.Multer.File
 
-      when(prisonerListCsvParser.getPrisonerNumbers)
+      when(prisonerListCsvParser.getPrisonNumbers)
         .calledWith(req.file)
         .mockReturnValue(Promise.resolve(['A1234BC', 'B2345CD']))
       when(prisonService.searchInmatesByPrisonerNumbers)
