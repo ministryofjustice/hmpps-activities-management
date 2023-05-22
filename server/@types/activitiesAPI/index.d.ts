@@ -1922,6 +1922,11 @@ export interface components {
       minimumIncentiveLevel: string
       /** @description The list of minimum education levels that can apply to this activity */
       minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevel'][]
+      /**
+       * @description Whether the activity is live or archived
+       * @example live
+       */
+      activityState: string
     }
     /** @description Describes the minimum education levels which apply to an activity */
     ActivityMinimumEducationLevel: {
