@@ -2,7 +2,7 @@
 {% from "components/card.njk" import card %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
-{% set pageId = 'index-page' %}
+{% set pageId = 'record-attendance' %}
 {% set backLinkHref = "/" %}
 
 {% block heading %}
@@ -13,12 +13,12 @@
     <div class="card-group govuk-grid-row">
         <div class="govuk-grid-column-one-third card-group__item">
             {{ card({
-                "id": "MarkAndUpdateAttendance",
+                "id": "RecordAttendance",
                 "href": "/attendance/select-period",
                 "clickable": "true",
                 "heading": "Record attendance and cancel activity sessions",
                 "description": "Mark and update attendance. Cancel individual activity sessions.",
-                "data-qa": "mark-and-update-attendance"
+                "data-qa": "record-attendance"
             }) }}
         </div>
         <div class="govuk-grid-column-one-third card-group__item">

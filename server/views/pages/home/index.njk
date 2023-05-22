@@ -1,59 +1,59 @@
 {% extends "homepageLayout.njk" %}
 {% from "components/card.njk" import card %}
 
-{% set pageTitle = applicationName + " - Create and manage appointments" %}
-{% set pageId = 'appointments-management-page' %}
-{% set backLinkHref = "/" %}
+{% set pageTitle = applicationName + " - Home" %}
+{% set pageId = 'index-page' %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Create and manage appointments</h1>
+    <h1 class="govuk-heading-l">Activities management</h1>
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="card-group govuk-grid-row">
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "createIndividualAppointmentCard",
-                        "href": "appointments/create/start-individual",
-                        "clickable": "true",
-                        "heading": "Create individual appointments",
-                        "description": "Add an appointment for an individual.",
-                        "data-qa": "create-individual-appointment-card"
-                    }) }}
-                </div>
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "createBulkAppointmentCard",
-                        "href": "appointments/create/start-bulk",
-                        "clickable": "true",
-                        "heading": "Create a bulk appointment",
-                        "description": "Add multiple appointments for a number of people.",
-                        "data-qa": "create-bulk-appointment-card"
-                    }) }}
-                </div>
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "createGroupAppointmentCard",
-                        "href": "appointments/create/start-group",
-                        "clickable": "true",
-                        "heading": "Create a group appointment",
-                        "description": "Add a one-off or repeat appointment for a group of people.",
-                        "data-qa": "create-group-appointment-card"
-                    }) }}
-                </div>
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "searchAppointmentsCard",
-                        "href": "appointments/search?startDate=" + now | toDateString,
-                        "clickable": "true",
-                        "heading": "View and manage an appointment",
-                        "description": "Find and edit an existing appointment.",
-                        "data-qa": "search-appointments-card"
-                    }) }}
-                </div>
+    <div class="card-group govuk-grid-row">
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "id": "ManageUnlockLists",
+                "href": "/unlock-list",
+                "clickable": "true",
+                "heading": "Manage unlock lists",
+                "description": "Create and print unlock lists.",
+                "data-qa": "manage-unlock-lists"
+            }) }}
+        </div>
+
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "id": "ManageActivitiesAndAllocations",
+                "href": "/activities",
+                "clickable": "true",
+                "heading": "Manage activities and allocations",
+                "description": "Create and edit activities. Allocate people and edit allocations.",
+                "data-qa": "manage-activities-and-allocations"
+            }) }}
+        </div>
+
+        {% if user.isAppointmentsRolledOut %}
+            <div class="govuk-grid-column-one-third card-group__item">
+                {{ card({
+                    "id": "CreateAndManageAppointments",
+                    "href": "/appointments",
+                    "clickable": "true",
+                    "heading": "Create and manage appointments",
+                    "description": "Add and edit appointments for individuals and groups of people.",
+                    "data-qa": "create-and-manage-appointments"
+                }) }}
             </div>
+        {% endif %}
+
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "id": "MarkAndManageAttendance",
+                "href": "/attendance",
+                "clickable": "true",
+                "heading": "Record activity attendance",
+                "description": "Mark attendance, cancel activity sessions and see daily attendance summaries.",
+                "data-qa": "mark-and-manage-attendance"
+            }) }}
         </div>
     </div>
 {% endblock %}
