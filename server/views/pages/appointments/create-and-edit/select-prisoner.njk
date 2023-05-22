@@ -77,7 +77,13 @@
                         {% set prisonerRows = [] %}
                         {% for prisoner in prisoners %}
                             {% if prisoners | length > 1 %}
-                                {% set prisonerName = '<label><input type="radio" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '" /> ' + prisoner | firstNameLastName | toTitleCase | prisonerName + '<label>' %}
+                                {% set prisonerName = '<div class="govuk-radios govuk-radios--small" data-module="govuk-radios">' +
+                                                          '<div class="govuk-radios__item">' +
+                                                              '<input type="radio" id="selected-prisoner-' + prisoner.prisonerNumber + '" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '" class="govuk-radios__input"/>' +
+                                                              '<label for="selected-prisoner-' + prisoner.prisonerNumber + '" class="govuk-label govuk-radios__label">' + prisoner | firstNameLastName | toTitleCase | prisonerName + '<label>' +
+                                                          '</div>' +
+                                                      '</div>'
+                                %}
                             {% else %}
                                 {% set prisonerName = '<input type="hidden" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '"> ' + prisoner | firstNameLastName | toTitleCase | prisonerName %}
                             {% endif %}
