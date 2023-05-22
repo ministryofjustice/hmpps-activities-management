@@ -33,7 +33,7 @@ export default class UploadBulkAppointment {
     const appointmentInstances = await this.prisonerListCsvParser.getAppointments(prisonerListCsvFile)
 
     if (appointmentInstances.length === 0) {
-      res.validationFailed('file', 'The selected file does not contain any prisoner numbers')
+      res.validationFailed('file', 'The selected file does not contain any prison numbers')
       return false
     }
 

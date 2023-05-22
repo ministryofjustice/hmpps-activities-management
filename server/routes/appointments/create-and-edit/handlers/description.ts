@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import { DescriptionRequired, DescriptionMaxLength } from '../../../../validators/validateAppointmentDescription'
+import { YesNo } from '../../../../@types/activities'
 
 export class Description {
   @Expose()
@@ -22,7 +23,7 @@ export default class DescriptionRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { descriptionOption, description } = req.body
     req.session.appointmentJourney.descriptionOption = descriptionOption
-    if (descriptionOption === 'no') req.session.appointmentJourney.description = description
+    if (descriptionOption === YesNo.NO) req.session.appointmentJourney.description = description
     else req.session.appointmentJourney.description = null
     res.redirectOrReturn(`location`)
   }

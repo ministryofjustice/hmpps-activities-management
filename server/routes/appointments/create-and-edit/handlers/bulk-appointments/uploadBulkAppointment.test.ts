@@ -72,10 +72,7 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
 
       await handler.POST(req, res)
 
-      expect(res.validationFailed).toHaveBeenCalledWith(
-        'file',
-        'The selected file does not contain any prisoner numbers',
-      )
+      expect(res.validationFailed).toHaveBeenCalledWith('file', 'The selected file does not contain any prison numbers')
     })
 
     it('validation fails when single prisoner not found', async () => {

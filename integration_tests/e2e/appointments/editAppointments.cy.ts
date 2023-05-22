@@ -37,7 +37,7 @@ context('Edit appointment', () => {
         const locationPage = Page.verifyOnPage(LocationPage)
         locationPage.assertSelectedLocation('Chapel')
         locationPage.selectLocation('Classroom')
-        locationPage.getButton('Accept and save').click()
+        locationPage.getButton('Confirm and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the location for this appointment")
@@ -61,7 +61,7 @@ context('Edit appointment', () => {
         const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
         dateAndTimePage.assertStartDate(nextWeek)
         dateAndTimePage.enterStartDate(tomorrow)
-        dateAndTimePage.getButton('Accept and save').click()
+        dateAndTimePage.getButton('Confirm and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the date for this appointment")
@@ -77,7 +77,7 @@ context('Edit appointment', () => {
         const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
         dateAndTimePage.assertStartTime(14, 0)
         dateAndTimePage.selectStartTime(14, 30)
-        dateAndTimePage.getButton('Accept and save').click()
+        dateAndTimePage.getButton('Confirm and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
@@ -92,7 +92,7 @@ context('Edit appointment', () => {
         const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
         dateAndTimePage.assertEndTime(15, 30)
         dateAndTimePage.selectEndTime(17, 30)
-        dateAndTimePage.getButton('Accept and save').click()
+        dateAndTimePage.getButton('Confirm and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
@@ -108,7 +108,7 @@ context('Edit appointment', () => {
         dateAndTimePage.enterStartDate(tomorrow)
         dateAndTimePage.selectStartTime(16, 0)
         dateAndTimePage.selectEndTime(17, 30)
-        dateAndTimePage.getButton('Accept and save').click()
+        dateAndTimePage.getButton('Confirm and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the date and time for this appointment")
@@ -131,7 +131,7 @@ context('Edit appointment', () => {
 
         const commentPage = Page.verifyOnPage(CommentPage)
         commentPage.enterComment('Updated appointment level comment')
-        commentPage.getButton('Accept and save').click()
+        commentPage.getButton('Confirm and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the heads up for this appointment")

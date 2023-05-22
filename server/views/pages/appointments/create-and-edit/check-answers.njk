@@ -18,7 +18,7 @@
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
-                text: "Prisoner"
+                text: "Attendee"
             },
             value: {
                 html: appointmentPrisonerSummary(
@@ -33,7 +33,7 @@
                     {
                         href: "select-prisoner?fromReview=true",
                         text: "Change",
-                        visuallyHiddenText: "change prisoner",
+                        visuallyHiddenText: "change attendee",
                         classes: "govuk-link--no-visited-state",
                         attributes: { 'data-qa': 'change-prisoner' }
                     }
@@ -46,7 +46,7 @@
 {% set summaryListRows = (summaryListRows.push(
     {
         key: {
-            text: "Type"
+            text: "Appointment name"
         },
         value: {
             text: session.appointmentJourney.category.description
@@ -56,7 +56,7 @@
                 {
                     href: "category?fromReview=true",
                     text: "Change",
-                    visuallyHiddenText: "change type",
+                    visuallyHiddenText: "change appointment name",
                     classes: "govuk-link--no-visited-state",
                     attributes: { 'data-qa': 'change-category' }
                 }
@@ -65,17 +65,18 @@
     },
     {
         key: {
-            text: "Show type on unlock list"
+            text: "Show appointment name on unlock list"
         },
         value: {
-            text: session.appointmentJourney.descriptionOption
+            text: ("Yes" if session.appointmentJourney.descriptionOption == YesNo.YES) +
+                  ("No" if session.appointmentJourney.descriptionOption == YesNo.NO)
         },
         actions: {
             items: [
                 {
                     href: "description?fromReview=true",
                     text: "Change",
-                    visuallyHiddenText: "change description option",
+                    visuallyHiddenText: "change show appointment name option",
                     classes: "govuk-link--no-visited-state",
                     attributes: { 'data-qa': 'change-description-option' }
                 }
@@ -84,11 +85,11 @@
     }
 ), summaryListRows) %}
 
-{% if session.appointmentJourney.descriptionOption == 'no' %}
+{% if session.appointmentJourney.descriptionOption == YesNo.NO %}
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
-                text: "Appointment description"
+                text: "Alternative appointment name"
             },
             value: {
                 text: session.appointmentJourney.description
@@ -98,7 +99,7 @@
                     {
                         href: "description?fromReview=true",
                         text: "Change",
-                        visuallyHiddenText: "change description",
+                        visuallyHiddenText: "change alternative appointment name",
                         classes: "govuk-link--no-visited-state",
                         attributes: { 'data-qa': 'change-description' }
                     }
@@ -187,7 +188,7 @@
     } if session.appointmentJourney.endTime,
     {
         key: {
-            text: "Repeat"
+            text: "Repeats"
         },
         value: {
             text: ("Yes" if session.appointmentJourney.repeat == YesNo.YES) +
@@ -198,7 +199,7 @@
                 {
                     href: "repeat?fromReview=true",
                     text: "Change",
-                    visuallyHiddenText: "change repeat",
+                    visuallyHiddenText: "change repeats",
                     classes: "govuk-link--no-visited-state",
                     attributes: { 'data-qa': 'change-repeat' }
                 }
@@ -242,7 +243,7 @@
               {
                   href: "repeat-period-and-count?fromReview=true",
                   text: "Change",
-                  visuallyHiddenText: "change repeat count",
+                  visuallyHiddenText: "change number of appointments",
                   classes: "govuk-link--no-visited-state",
                   attributes: { 'data-qa': 'change-repeat-count' }
               }
@@ -287,7 +288,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l">Check your appointment details before you accept and save</h1>
+            <h1 class="govuk-heading-l">Check and confirm the appointment details</h1>
             <h2 class="govuk-heading-m">Appointment details</h2>
             {{ govukSummaryList({
                 rows: summaryListRows,
@@ -303,7 +304,7 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Accept and save",
+                        text: "Confirm and save",
                         preventDoubleClick: true
                     }) }}
                 </div>
@@ -315,7 +316,7 @@
 {% macro prisonersList() %}
     {% set prisonerListRows = [{
         key: {
-            text: "Prisoners"
+            text: "Number of attendees"
         },
         value: {
             text: session.appointmentJourney.prisoners | length
@@ -336,7 +337,7 @@
     {% for prisoner in session.appointmentJourney.prisoners %}
         {% set prisonerListRows = (prisonerListRows.push({
             key: {
-                text: "Prisoner"
+                text: "Name of attendee"
             },
             value: {
                 html: showProfileLink({
@@ -347,7 +348,7 @@
         }), prisonerListRows) %}
     {% endfor %}
 
-    <h2 class="govuk-heading-m">Prisoner details</h2>
+    <h2 class="govuk-heading-m">Attendee details</h2>
     {{ govukSummaryList({
         rows: prisonerListRows,
         attributes: { 'data-qa': 'prisoner-details' }

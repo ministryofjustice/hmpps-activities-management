@@ -24,9 +24,9 @@ const getPrisonerDetailsValueElement = (heading: string) =>
 const getRepeatPeriodValueElement = () => getAppointmentDetailsValueElement('Frequency')
 const getRepeatCountValueElement = () => getAppointmentDetailsValueElement('Number of appointments')
 const getIndividualPrisonerValueElement = (qaAttr: string) =>
-  getAppointmentDetailsValueElement('Prisoner').find(`[data-qa="${qaAttr}"]`)
+  getAppointmentDetailsValueElement('Attendee').find(`[data-qa="${qaAttr}"]`)
 const getPrisonerListValueElement = (qaAttr: string, index: number) =>
-  $(getPrisonerDetailsValueElement('Prisoner').find(`[data-qa="${qaAttr}"]`).get(index))
+  $(getPrisonerDetailsValueElement('Name of attendee').find(`[data-qa="${qaAttr}"]`).get(index))
 
 describe('Views - Create Appointment - Check Answers', () => {
   let compiledTemplate: Template

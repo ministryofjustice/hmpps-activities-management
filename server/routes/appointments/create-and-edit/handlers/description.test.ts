@@ -3,6 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import DescriptionRoutes, { Description } from './description'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { YesNo } from '../../../../@types/activities'
 
 describe('Route Handlers - Create Appointment - Description', () => {
   const handler = new DescriptionRoutes()
@@ -42,10 +43,10 @@ describe('Route Handlers - Create Appointment - Description', () => {
   describe('POST', () => {
     it('redirect as expected when the description option is yes', async () => {
       req.body = {
-        descriptionOption: 'yes',
+        descriptionOption: YesNo.YES,
       }
       await handler.POST(req, res)
-      expect(req.session.appointmentJourney.descriptionOption).toEqual('yes')
+      expect(req.session.appointmentJourney.descriptionOption).toEqual(YesNo.YES)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
   })
@@ -53,11 +54,11 @@ describe('Route Handlers - Create Appointment - Description', () => {
   describe('POST', () => {
     it('redirect as expected when the description option is no', async () => {
       req.body = {
-        descriptionOption: 'no',
+        descriptionOption: YesNo.NO,
         description: 'Appointment description',
       }
       await handler.POST(req, res)
-      expect(req.session.appointmentJourney.descriptionOption).toEqual('no')
+      expect(req.session.appointmentJourney.descriptionOption).toEqual(YesNo.NO)
       expect(req.session.appointmentJourney.description).toEqual('Appointment description')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
@@ -65,7 +66,7 @@ describe('Route Handlers - Create Appointment - Description', () => {
 
   it('validation fails when description is not entered and option is no', async () => {
     const body = {
-      descriptionOption: 'no',
+      descriptionOption: YesNo.NO,
       description: '',
     }
 
@@ -76,7 +77,7 @@ describe('Route Handlers - Create Appointment - Description', () => {
 
   it('validation fails when description is greater than 40 characters', async () => {
     const body = {
-      descriptionOption: 'no',
+      descriptionOption: YesNo.NO,
       description: '12345678901234567890123456789012345678901',
     }
 

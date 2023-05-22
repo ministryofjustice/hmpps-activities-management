@@ -41,9 +41,9 @@ describe('readCsvValues', () => {
   })
 })
 
-describe('getPrisonerNumbers', () => {
-  it('should return no prisoner numbers when file is empty', async () => {
-    const prisonerNumbers = await parser.getPrisonerNumbers({
+describe('getPrisonNumbers', () => {
+  it('should return no prison numbers when file is empty', async () => {
+    const prisonerNumbers = await parser.getPrisonNumbers({
       path: 'server/utils/fixtures/empty-upload-prisoner-list.csv',
     } as unknown as Express.Multer.File)
 
@@ -51,8 +51,8 @@ describe('getPrisonerNumbers', () => {
     expect(fsPromises.unlink).toHaveBeenCalled()
   })
 
-  it('should return prisoner numbers without header row', async () => {
-    const prisonerNumbers = await parser.getPrisonerNumbers({
+  it('should return prison numbers without header row', async () => {
+    const prisonerNumbers = await parser.getPrisonNumbers({
       path: 'server/utils/fixtures/upload-prisoner-list.csv',
     } as unknown as Express.Multer.File)
 
@@ -60,8 +60,8 @@ describe('getPrisonerNumbers', () => {
     expect(fsPromises.unlink).toHaveBeenCalled()
   })
 
-  it('should return prisoner numbers when header row not included', async () => {
-    const prisonerNumbers = await parser.getPrisonerNumbers({
+  it('should return prison numbers when header row not included', async () => {
+    const prisonerNumbers = await parser.getPrisonNumbers({
       path: 'server/utils/fixtures/upload-prisoner-list-no-header.csv',
     } as unknown as Express.Multer.File)
 
@@ -69,8 +69,8 @@ describe('getPrisonerNumbers', () => {
     expect(fsPromises.unlink).toHaveBeenCalled()
   })
 
-  it('should return unique prisoner numbers', async () => {
-    const prisonerNumbers = await parser.getPrisonerNumbers({
+  it('should return unique prison numbers', async () => {
+    const prisonerNumbers = await parser.getPrisonNumbers({
       path: 'server/utils/fixtures/upload-prisoner-list-duplicates.csv',
     } as unknown as Express.Multer.File)
 

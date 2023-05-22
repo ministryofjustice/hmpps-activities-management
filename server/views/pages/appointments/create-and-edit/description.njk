@@ -16,26 +16,26 @@
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
+                {% set descriptionOption = formResponses.descriptionOption or session.appointmentJourney.descriptionOption %}
                 {{ govukRadios({
                     name: "descriptionOption",
                     fieldset: {
                         legend: {
-                            text: "Do you want to show " + session.appointmentJourney.category.description + " on the unlock list?",
+                            text: "Do you want to show '" + session.appointmentJourney.category.description + "' on the unlock list?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
                     },
                     items: [
                         {
-                            value: "yes",
-                            text: "Yes - I want " + session.appointmentJourney.category.description + " to show on the unlock list",
-                            checked: formResponses.descriptionOption == "yes" or session.appointmentJourney.descriptionOption == "yes"
+                            value: YesNo.YES,
+                            text: "Yes - I want '" + session.appointmentJourney.category.description + "' to show on the unlock list",
+                            checked: descriptionOption == YesNo.YES
                         },
                         {
-                            value: "no",
-                            text: "No - I want to enter my own appointment description to show on the unlock list",
-                            checked: formResponses.descriptionOption == "no" or session.appointmentJourney.descriptionOption == "no",
+                            value: YesNo.NO,
+                            text: "No - I want to enter my own appointment name to show on the unlock list",
+                            checked: descriptionOption == YesNo.NO,
                             conditional: {
                                   html: nestedDescription()
                             }
@@ -55,7 +55,7 @@
 {% macro nestedDescription() %}
     {{ govukCharacterCount({
         label: {
-            text: "Enter your own appointment description"
+            text: "Enter my own appointment name"
         },
         id: "description",
         name: "description",
