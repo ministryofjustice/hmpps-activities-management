@@ -3,6 +3,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import { Services } from '../../services'
 import ActivitiesRoutes from './handlers/activities'
 import ActivityRoutes from './handlers/activity'
+import ConfirmCapacityRoutes from './handlers/confirmCapacity'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -10,5 +11,8 @@ export default function Index(services: Services): Router {
   router.get('/activities', asyncMiddleware(activitiesListRouteHandler.GET))
   const activityRouteHandler = new ActivityRoutes(services.activitiesService, services.prisonService)
   router.get('/activities/:activityId', asyncMiddleware(activityRouteHandler.GET))
+  const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(services.activitiesService)
+  router.get('/confirm-capacity', asyncMiddleware(confirmCapacityRouteHandler.GET))
+  router.post('/confirm-capacity', asyncMiddleware(confirmCapacityRouteHandler.POST))
   return router
 }

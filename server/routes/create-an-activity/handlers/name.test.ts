@@ -1,11 +1,20 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import NameRoutes, { Name } from './name'
+import ActivitiesService from '../../../services/activitiesService'
+import atLeast from '../../../../jest.setup'
+import activity from '../../../services/fixtures/activity_1.json'
+import { Activity } from '../../../@types/activitiesAPI/types'
+
+jest.mock('../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Create an activity - Name', () => {
-  const handler = new NameRoutes()
+  const handler = new NameRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -18,6 +27,7 @@ describe('Route Handlers - Create an activity - Name', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -44,6 +54,36 @@ describe('Route Handlers - Create an activity - Name', () => {
 
       expect(req.session.createJourney.name).toEqual('Maths level 1')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('risk-level')
+    })
+
+    it('should save entered activity name in database', async () => {
+      const updatedActivity = {
+        summary: 'updated activity name',
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      req = {
+        session: {
+          createJourney: {},
+        },
+        query: {
+          fromEditActivity: true,
+        },
+        body: {
+          name: 'updated activity name',
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/schedule/activities/undefined',
+        'Activity updated',
+        "We've updated the activity name for updated activity name",
+      )
     })
   })
 

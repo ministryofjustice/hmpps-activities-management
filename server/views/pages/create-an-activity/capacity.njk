@@ -2,6 +2,7 @@
 
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% set pageTitle = applicationName + " - Create a schedule - Capacity" %}
 {% set pageId = 'create-schedule-capacity-page' %}
@@ -38,9 +39,21 @@
                     errorMessage: validationErrors | findError('capacity'),
                     value: formResponses.capacity or session.createJourney.capacity
                 }) }}
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
+                {% if session.req.query.fromEditActivity %}
+                    {{ govukInsetText({
+                      text: session.createJourney.allocationCount + " people are currently allocated to this activity."
+                    }) }}
+                    <div class="govuk-button-group">
+                      {{ govukButton({
+                        text: "Update capacity"
+                      }) }}
+                        <a class="govuk-link js-backlink" href="/">Cancel</a>
+                    </div>
+                {% else %}
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                {% endif %}
             </form>
         </div>
     </div>

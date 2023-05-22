@@ -3,6 +3,8 @@ import _ from 'lodash'
 import { Expose, Transform, Type } from 'class-transformer'
 import { IsEnum, IsNotEmpty, IsNumber, ValidateIf } from 'class-validator'
 import PrisonService from '../../../services/prisonService'
+import ActivitiesService from '../../../services/activitiesService'
+import { ActivityUpdateRequest } from '../../../@types/activitiesAPI/types'
 
 export enum InCell {
   IN_CELL = 'IN_CELL',
@@ -24,7 +26,7 @@ export class Location {
 }
 
 export default class LocationRoutes {
-  constructor(private readonly prisonService: PrisonService) {}
+  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -54,6 +56,22 @@ export default class LocationRoutes {
     }
     req.session.createJourney.inCell = inCell === InCell.IN_CELL
 
+    if (req.query && req.query.fromEditActivity) {
+      const { activityId } = req.session.createJourney
+      const prisonCode = user.activeCaseLoadId
+      const activity = {
+        inCell: req.session.createJourney.inCell,
+        locationId: req.session.createJourney.location?.id,
+      } as ActivityUpdateRequest
+      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      const successMessage = `We've updated the location for ${req.session.createJourney.name}`
+
+      res.redirectOrReturnWithSuccess(
+        `/schedule/activities/${req.session.createJourney.activityId}`,
+        'Activity updated',
+        successMessage,
+      )
+    }
     res.redirectOrReturn(`capacity`)
   }
 }
