@@ -53,7 +53,7 @@
     {{ govukSummaryList({
         card: {
             title: {
-                text: "Number of attendees " + prisoners | length
+                text: prisoners | length + (" attendee" if prisoners.length == 1 else " attendees")
             },
             actions: {
                 items: prisonerActionItems

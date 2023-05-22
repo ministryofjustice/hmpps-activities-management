@@ -9,9 +9,9 @@
 {% set pageId = 'appointments-create-category-page' %}
 {% set backLinkHref = "/select-prisoner" %}
 
-{% set categoryOptions = [{ value: "-", text: "" }] %}
+{% set options = [{ value: "-", text: "" }] %}
 {% for category in categories %}
-    {% set categoryOptions = (categoryOptions.push( { value: category.code, text: category.description } ), categoryOptions) %}
+    {% set options = (options.push( { value: category.code, text: category.description } ), options) %}
 {% endfor %}
 
 {% block meta %}
@@ -32,8 +32,11 @@
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
+                    hint: {
+                        text: "Start typing a name and select from the list of options"
+                    },
                     errorMessage: validationErrors | findError('categoryCode'),
-                    items: categoryOptions,
+                    items: options,
                     value: formResponses.categoryCode or session.appointmentJourney.category.code
                 }) }}
 

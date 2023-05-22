@@ -3,6 +3,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
@@ -42,6 +43,11 @@
                         }
                     ],
                     errorMessage: validationErrors | findError('descriptionOption')
+                }) }}
+
+                {{ govukDetails({
+                    summaryText: "What is an unlock list?",
+                    text: "The unlock list is used by wing officers to make sure people are let out of their cells at the right time to get to their schedued activities and appointments."
                 }) }}
 
                 {{ govukButton({
