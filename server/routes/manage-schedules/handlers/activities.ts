@@ -15,7 +15,7 @@ export default class ActivitiesRoutes {
 
     const [activities, categories] = await Promise.all([
       !filters.categoryFilter || filters.categoryFilter === 'all'
-        ? await this.activitiesService
+        ? this.activitiesService
             .getActivities(user)
             .then(act =>
               act.filter(
