@@ -19,7 +19,7 @@ export default class CheckAnswersPage extends Page {
     cy.get('[data-qa=prisoner-name]').contains(name).parent().find('[data-qa=prisoner-number]').contains(number)
   }
 
-  assertCategory = (category: string) => this.assertAppointmentDetail('Type', category)
+  assertCategory = (category: string) => this.assertAppointmentDetail('Appointment name', category)
 
   assertLocation = (location: string) => this.assertAppointmentDetail('Location', location)
 
@@ -32,7 +32,7 @@ export default class CheckAnswersPage extends Page {
   assertEndTime = (hour: number, minute: number) =>
     this.assertAppointmentDetail('End time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
-  assertRepeat = (option: string) => this.assertAppointmentDetail('Repeat', option)
+  assertRepeat = (option: string) => this.assertAppointmentDetail('Repeats', option)
 
   assertRepeatPeriod = (option: string) => this.assertAppointmentDetail('Frequency', option)
 
@@ -60,5 +60,5 @@ export default class CheckAnswersPage extends Page {
 
   changeComment = () => cy.get('[data-qa=change-comment]').click()
 
-  createAppointment = () => cy.get('button').contains('Accept and save').click()
+  createAppointment = () => cy.get('button').contains('Confirm and save').click()
 }

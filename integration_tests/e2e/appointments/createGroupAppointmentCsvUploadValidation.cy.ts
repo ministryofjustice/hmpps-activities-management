@@ -17,7 +17,7 @@ context('Create group appointment - CSV upload validation', () => {
 
   it('Should fail validation when no file is selected', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
     const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
@@ -31,7 +31,7 @@ context('Create group appointment - CSV upload validation', () => {
 
   it('Should fail validation when uploading CSV file larger than 100kb', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
     const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
@@ -55,7 +55,7 @@ context('Create group appointment - CSV upload validation', () => {
 
   it('Should fail validation when uploading an empty CSV file', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
     const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
@@ -70,7 +70,7 @@ context('Create group appointment - CSV upload validation', () => {
 
   it('Should fail validation when uploading a non CSV file', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
     const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
@@ -85,7 +85,7 @@ context('Create group appointment - CSV upload validation', () => {
 
   it('Should fail validation when uploading a non CSV file with the .csv extension', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
     const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
@@ -100,7 +100,7 @@ context('Create group appointment - CSV upload validation', () => {
 
   it('Should fail validation when CSV file does not contain any prisoner numbers', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
     const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
@@ -110,12 +110,12 @@ context('Create group appointment - CSV upload validation', () => {
     uploadPrisonerListPage.attatchFile('upload-prisoner-list-no-numbers.csv')
     uploadPrisonerListPage.continue()
 
-    uploadPrisonerListPage.assertValidationError('file', 'The selected file does not contain any prisoner numbers')
+    uploadPrisonerListPage.assertValidationError('file', 'The selected file does not contain any prison numbers')
   })
 
   it('Should fail validation when one prisoner not found', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
     const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
@@ -130,7 +130,7 @@ context('Create group appointment - CSV upload validation', () => {
 
   it('Should fail validation when two prisoners not found', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the appointment list')
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
     const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
