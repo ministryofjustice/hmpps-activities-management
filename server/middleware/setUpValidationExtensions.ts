@@ -13,6 +13,7 @@ export default function setUpValidationExtensions(): Router {
       if (field && message) {
         res.addValidationError(field, message)
       }
+
       req.flash('validationErrors', JSON.stringify(validationErrors))
       req.flash('formResponses', JSON.stringify(req.body))
       res.redirect('back')

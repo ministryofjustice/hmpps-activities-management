@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { isValid } from 'date-fns'
 import { formatDate, parseDate } from '../../../../utils/utils'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
@@ -129,15 +130,19 @@ export default class StartJourneyRoutes {
         hour: +formatDate(startTime, 'HH'),
         minute: +formatDate(startTime, 'mm'),
       },
-      endTime: {
-        date: endTime,
-        hour: +formatDate(endTime, 'HH'),
-        minute: +formatDate(endTime, 'mm'),
-      },
+      endTime: null,
       repeat: appointmentOccurrence.repeat ? YesNo.YES : YesNo.NO,
       repeatPeriod: appointmentOccurrence.repeat?.period as AppointmentRepeatPeriod,
       repeatCount: appointmentOccurrence.repeat?.count,
       comment: appointmentOccurrence.comment,
+    }
+
+    if (isValid(endTime)) {
+      req.session.appointmentJourney.endTime = {
+        date: endTime,
+        hour: +formatDate(endTime, 'HH'),
+        minute: +formatDate(endTime, 'mm'),
+      }
     }
 
     req.session.editAppointmentJourney = {

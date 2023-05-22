@@ -1,0 +1,40 @@
+.search-input {
+  $root: &;
+  width: 100%;
+
+  margin-bottom: govuk-spacing(6);
+
+  &__form-inputs {
+    margin-bottom: govuk-spacing(6);
+
+    .govuk-form-group {
+      width: 100%;
+    }
+  }
+
+  .govuk-button {
+    margin: 0;
+  }
+
+  &--inline-search {
+    #{$root}__form-inputs {
+      display: flex;
+      align-items: flex-end;
+      gap: govuk-spacing(1);
+
+      .govuk-form-group {
+        margin: 0;
+      }
+
+      .govuk-button {
+        margin-bottom: 2px;
+        max-width: 150px;
+      }
+    }
+
+    .govuk-input {
+      margin-bottom: 0;
+      margin-right: govuk-spacing(1);
+    }
+  }
+}

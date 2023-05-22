@@ -7,7 +7,7 @@ import CommentRoutes, { Comment } from './handlers/comment'
 import ApplyToRoutes, { ApplyTo } from './handlers/applyTo'
 import ConfirmEditRoutes, { ConfirmEdit } from './handlers/confirmEdit'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
-import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/selectPrisoner'
+import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './handlers/selectPrisoner'
 import UploadByCSV from './handlers/uploadByCsv'
 import UploadPrisonerListRoutes, { PrisonerList } from './handlers/uploadPrisonerList'
 import ReviewPrisoners from './handlers/reviewPrisoners'
@@ -109,7 +109,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   get('/prisoners/add/how-to-add-prisoners', howToAddPrisoners.GET, true)
   post('/prisoners/add/how-to-add-prisoners', howToAddPrisoners.POST, HowToAddPrisonersForm)
   get('/prisoners/add/select-prisoner', selectPrisonerHandler.GET, true)
-  post('/prisoners/add/select-prisoner', selectPrisonerHandler.EDIT, PrisonerSearch)
+  post('/prisoners/add/select-prisoner', selectPrisonerHandler.SELECT_PRISONER, SelectPrisoner)
+  post('/prisoners/add/search-prisoner', selectPrisonerHandler.SEARCH, PrisonerSearch)
   get('/prisoners/add/upload-by-csv', uploadByCsv.GET, true)
   post('/prisoners/add/upload-by-csv', uploadByCsv.POST)
   get('/prisoners/add/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)

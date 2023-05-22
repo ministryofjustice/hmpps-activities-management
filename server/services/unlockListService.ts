@@ -36,6 +36,11 @@ export default class UnlockListService {
       user,
     )
 
+    // Give up here if no prisoners are in the locations selected
+    if (!results || results.totalElements === 0) {
+      return []
+    }
+
     // Create unlock list items for each prisoner returned and populate their sub-location by cell-matching
     const prisoners = results?.content?.map(prisoner => {
       return {

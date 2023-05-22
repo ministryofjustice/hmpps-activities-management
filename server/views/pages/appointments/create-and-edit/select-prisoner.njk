@@ -1,10 +1,11 @@
 {% extends "layout.njk" %}
 
-{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 {%- from "moj/components/search/macro.njk" import mojSearch -%}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "partials/searchInput.njk" import searchInput %}
 
 {% set pageTitle = appointmentJourneyTitle("Select Prisoner", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-select-prisoner-page' %}
@@ -16,38 +17,158 @@
 {% endif %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-            <form method="POST">
-                {% set defaultPrisonerNumber = formResponses.query %}
-                {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-                    {% set defaultPrisonerNumber = defaultPrisonerNumber or session.appointmentJourney.prisoners[0].number %}
-                {% endif %}
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+    {% set defaultPrisonerNumber = formResponses.query if formResponses.query != undefined else query %}
+    {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
+        {% set defaultPrisonerNumber = defaultPrisonerNumber or session.appointmentJourney.prisoners[0].number %}
+    {% endif %}
 
-                {{ govukInput({
-                    id: "query",
-                    name: "query",
-                    label: {
-                        text: headingText,
-                        classes: "govuk-label--l",
-                        isPageHeading: true
-                    },
-                    hint: {
-                        text: "Search by prison number or name"
-                    },
-                    classes: "govuk-input--width-20",
-                    spellcheck: false,
-                    errorMessage: validationErrors | findError('query'),
-                    value: defaultPrisonerNumber,
-                    type: 'search'
-                }) }}
+    <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="query">{{ headingText }}</label>
+    </h1>
 
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
-            </form>
+    {% if prisoners %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="POST" action='search-prisoner'>
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                    {{ searchInput({
+                        classes: "search-input--inline-search",
+                        formInputs: {
+                            classes: "govuk-input--width-30"
+                        },
+                        input: {
+                            id: "query",
+                            name: "query",
+                            type: "search",
+                            value: defaultPrisonerNumber,
+                            hint: {
+                                text: 'Search by prison number or name'
+                            },
+                            errorMessage: validationErrors | findError("query")
+                        },
+                        button: {
+                            text: "Search",
+                            classes: "govuk-button--secondary"
+                        }
+                    }) }}
+
+                    <h2 class="govuk-heading-m" id="prisoner-results-text">
+                        {% if prisoners | length == 1 %}
+                            There is 1 result for "{{ query }}".
+                        {% elseif prisoners | length > 1 %}
+                            There are {{ prisoners | length }} results for "{{ query }}". Select the correct one from the list.
+                        {% else %}
+                            There are no matching results for "{{ query }}".
+                        {% endif %}
+                    </h2>
+                </form>
+            </div>
         </div>
-    </div>
+        {% if prisoners | length >= 1 %}
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <form method="POST">
+                        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                        {% set prisonerRows = [] %}
+                        {% for prisoner in prisoners %}
+                            {% if prisoners | length > 1 %}
+                                {% set prisonerName = '<label><input type="radio" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '" /> ' + prisoner | firstNameLastName | toTitleCase | prisonerName + '<label>' %}
+                            {% else %}
+                                {% set prisonerName = '<input type="hidden" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '"> ' + prisoner | firstNameLastName | toTitleCase | prisonerName %}
+                            {% endif %}
+
+                            {% set prisonerRows = (prisonerRows.push([
+                                {
+                                    attributes: {
+                                        id: 'prisoner-name',
+                                        "data-sort-value": prisoner | firstNameLastName | toTitleCase | prisonerName
+                                    },
+                                    classes: 'govuk-!-font-weight-bold',
+                                    html: prisonerName
+                                }, {
+                                    attributes: {
+                                        id: 'prisoner-number',
+                                        "data-sort-value": prisoner.prisonerNumber
+                                    },
+                                    text: prisoner.prisonerNumber
+                                }, {
+                                    attributes: {
+                                        id: 'prisoner-cell-location',
+                                        "data-sort-value": prisoner.cellLocation
+                                    },
+                                    text: prisoner.cellLocation
+                                }, {
+                                    attributes: {
+                                        id: 'prisoner-actions'
+                                    },
+                                    html: '<a href="' + dpsUrl + '/prisoner/' + prisoner.prisonerNumber + '" class="govuk-link govuk-link--no-visited-state" target="_blank">View prisoner profile<span class="govuk-visually-hidden"> (opens in new tab)</span></a>'
+                                }
+                            ]), prisonerRows) %}
+                        {% endfor %}
+
+                        {{ govukTable({
+                            attributes: {
+                                'data-module': 'moj-sortable-table',
+                                id: 'prisoner-search-list'
+                            },
+                            caption: "Prisoner search list",
+                            classes: "fixed-layout-table",
+                            captionClasses: "govuk-visually-hidden",
+                            head: [{
+                                text: "Prisoner name",
+                                attributes: {
+                                    "aria-sort": "ascending"
+                                }
+                            }, {
+                                text: "Prisoner numbers",
+                                attributes: {
+                                    "aria-sort": "none"
+                                }
+                            }, {
+                                text: "Cell location",
+                                attributes: {
+                                    "aria-sort": "none"
+                                }
+                            }, {
+                                html: '<span class="govuk-visually-hidden">Actions</span>'
+                            }],
+                            rows: prisonerRows
+                        }) }}
+
+                        {{ govukButton({
+                            text: "Select prisoner and continue" if prisoners | length > 1 else "Continue",
+                            id: "continue-button"
+                        }) }}
+                    </form>
+                </div>
+            <div>
+        {% endif %}
+    {% else %}
+        <form method="POST" action='search-prisoner'>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    {{ searchInput({
+                        input: {
+                            id: "query",
+                            name: "query",
+                            hint: {
+                                text: 'Search by prison number or name'
+                            },
+                            type: "search",
+                            value: defaultPrisonerNumber,
+                            errorMessage: validationErrors | findError("query")
+                        },
+                        button: {
+                            text: "Search"
+                        },
+                        formInputs: {
+                            classes: "govuk-input--width-30"
+                        }
+                    }) }}
+                </div>
+            </div>
+        </form>
+    {% endif %}
 {% endblock %}
