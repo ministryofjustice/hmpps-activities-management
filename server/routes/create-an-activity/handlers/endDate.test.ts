@@ -76,7 +76,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
       req = {
         session: {
-          createJourney: {},
+          createJourney: { activityId: 1, name: 'Maths level 1' },
         },
         query: {
           fromEditActivity: true,
@@ -89,9 +89,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/schedule/activities/undefined',
+        '/schedule/activities/1',
         'Activity updated',
-        "We've updated the end date for undefined",
+        "We've updated the end date for Maths level 1",
       )
     })
   })

@@ -25,7 +25,7 @@ export default class ActivitiesRoutes {
                   a.activityState.toLowerCase() === filters.stateFilter,
               ),
             )
-        : this.activitiesService
+        : await this.activitiesService
             .getActivitiesInCategory(+filters.categoryFilter, user)
             .then(act =>
               act.filter(
@@ -36,7 +36,7 @@ export default class ActivitiesRoutes {
               ),
             ),
 
-      this.activitiesService.getActivityCategories(user),
+      await this.activitiesService.getActivityCategories(user),
     ])
 
     res.render('pages/manage-schedules/activities-dashboard', {
