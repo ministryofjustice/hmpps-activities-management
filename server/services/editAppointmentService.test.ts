@@ -231,6 +231,54 @@ describe('Edit Appointment Service', () => {
       expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the heads up for')
     })
+
+    it('when adding one person', () => {
+      req.session.editAppointmentJourney.addPrisoners = [
+        {
+          number: 'A1234BC',
+          name: 'TEST PRISONER',
+          cellLocation: '1-1-1',
+        },
+      ]
+
+      expect(service.getEditMessage(req)).toEqual('add Test Prisoner to')
+      expect(service.getEditHintMessage(req)).toEqual('adding this person to')
+      expect(service.getEditedMessage(req)).toEqual('added Test Prisoner to')
+    })
+
+    it('when adding two people', () => {
+      req.session.editAppointmentJourney.addPrisoners = [
+        {
+          number: 'A1234BC',
+          name: 'TEST PRISONER1',
+          cellLocation: '1-1-1',
+        },
+        {
+          number: 'B2345CD',
+          name: 'TEST PRISONER2',
+          cellLocation: '1-1-1',
+        },
+      ]
+
+      expect(service.getEditMessage(req)).toEqual('add the people to')
+      expect(service.getEditHintMessage(req)).toEqual('adding these people to')
+      expect(service.getEditedMessage(req)).toEqual('added the people to')
+    })
+
+    it('when removing a person', () => {
+      req.session.editAppointmentJourney.removePrisoner = {
+        prisonerNumber: 'A1234BC',
+        bookingId: 1,
+        firstName: 'TEST',
+        lastName: 'PRISONER',
+        prisonCode: 'MDI',
+        cellLocation: '1-1-1',
+      }
+
+      expect(service.getEditMessage(req)).toEqual('remove Test Prisoner from')
+      expect(service.getEditHintMessage(req)).toEqual('removing this person from')
+      expect(service.getEditedMessage(req)).toEqual('removed Test Prisoner from')
+    })
   })
 
   describe('edit', () => {
