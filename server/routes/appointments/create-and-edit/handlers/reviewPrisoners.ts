@@ -1,11 +1,9 @@
 import { Request, Response } from 'express'
 import { AppointmentApplyTo } from '../../../../@types/appointments'
-import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
+import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export default class ReviewPrisonerRoutes {
-  constructor(private readonly editAppointmentService: EditAppointmentService) {}
-
   GET = async (req: Request, res: Response): Promise<void> => {
     let prisoners
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
@@ -26,7 +24,7 @@ export default class ReviewPrisonerRoutes {
   EDIT = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId, occurrenceId } = req.params
 
-    if (this.editAppointmentService.isApplyToQuestionRequired(req)) {
+    if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
       return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/prisoners/add/apply-to`)
     }
 

@@ -42,7 +42,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
     )
 
   const editAppointmentService = new EditAppointmentService(activitiesService)
-  const startHandler = new StartJourneyRoutes(editAppointmentService)
+  const startHandler = new StartJourneyRoutes()
   const locationRoutes = new LocationRoutes(activitiesService)
   const dateAndTimeRoutes = new DateAndTimeRoutes(activitiesService)
   const commentHandler = new CommentRoutes(editAppointmentService)
@@ -50,7 +50,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   const applyToRoutes = new ApplyToRoutes(activitiesService, editAppointmentService)
 
   // Cancel routes
-  const cancellationReasonRoutes = new CancellationReasonRoutes(editAppointmentService)
+  const cancellationReasonRoutes = new CancellationReasonRoutes()
 
   router.get(
     '/start/cancel',
@@ -98,7 +98,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadByCsv = new UploadByCSV()
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const reviewPrisoners = new ReviewPrisoners(editAppointmentService)
+  const reviewPrisoners = new ReviewPrisoners()
 
   router.get(
     '/start/prisoners/add',

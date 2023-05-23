@@ -4,11 +4,9 @@ import { formatDate, parseDate } from '../../../../utils/utils'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentRepeatPeriod, AppointmentApplyTo } from '../../../../@types/appointments'
-import EditAppointmentService from '../../../../services/editAppointmentService'
+import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export default class StartJourneyRoutes {
-  constructor(private readonly editAppointmentService: EditAppointmentService) {}
-
   INDIVIDUAL = async (req: Request, res: Response): Promise<void> => {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
@@ -62,7 +60,7 @@ export default class StartJourneyRoutes {
 
     req.session.editAppointmentJourney.removePrisoner = prisoner
 
-    if (this.editAppointmentService.isApplyToQuestionRequired(req)) {
+    if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
       return res.redirect(
         `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${prisonNumber}/remove/apply-to`,
       )

@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
 import { AppointmentCancellationReason, AppointmentApplyTo } from '../../../../@types/appointments'
-import EditAppointmentService from '../../../../services/editAppointmentService'
+import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class CancellationReason {
   @Expose()
@@ -11,8 +11,6 @@ export class CancellationReason {
 }
 
 export default class CancellationReasonRoutes {
-  constructor(private readonly editAppointmentService: EditAppointmentService) {}
-
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId, occurrenceId } = req.params
 
@@ -28,7 +26,7 @@ export default class CancellationReasonRoutes {
 
     req.session.editAppointmentJourney.cancellationReason = reason
 
-    if (this.editAppointmentService.isApplyToQuestionRequired(req)) {
+    if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
       return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/cancel/apply-to`)
     }
 

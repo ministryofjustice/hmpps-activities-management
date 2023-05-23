@@ -4,6 +4,7 @@ import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
+import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class Location {
   @Expose()
@@ -29,7 +30,7 @@ export default class LocationRoutes {
       locations,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !this.editAppointmentService.isApplyToQuestionRequired(req),
+        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
     })
   }
 

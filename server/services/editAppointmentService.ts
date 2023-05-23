@@ -9,6 +9,7 @@ import SimpleDate from '../commonValidationTypes/simpleDate'
 import SimpleTime from '../commonValidationTypes/simpleTime'
 import { convertToTitleCase, formatDate, fullName } from '../utils/utils'
 import { YesNo } from '../@types/activities'
+import { isApplyToQuestionRequired } from '../utils/editAppointmentUtils'
 
 export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -25,14 +26,10 @@ export default class EditAppointmentService {
     return defaultBackLinkHref
   }
 
-  isApplyToQuestionRequired(req: Request) {
-    return this.getApplyToOptions(req).length > 1
-  }
-
   async redirectOrEdit(req: Request, res: Response, property: string) {
     const { appointmentId, occurrenceId } = req.params
     if (this.hasAnyPropertyChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)) {
-      if (this.isApplyToQuestionRequired(req)) {
+      if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
         return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/${property}/apply-to`)
       }
 

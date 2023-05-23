@@ -1,8 +1,11 @@
 import { Request } from 'express'
-import { AppointmentApplyTo, AppointmentApplyToOption } from '../@types/appointments'
+import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentCancellationReason } from '../@types/appointments'
 import { formatDate } from './utils'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
+
+export const isApplyToQuestionRequired = (editAppointmentJourney: EditAppointmentJourney) =>
+  Array.isArray(editAppointmentJourney.sequenceNumbers) && editAppointmentJourney.sequenceNumbers.length > 1
 
 export const getAppointmentApplyToOptions = (req: Request) => {
   const { appointmentJourney, editAppointmentJourney } = req.session
@@ -16,14 +19,14 @@ export const getAppointmentApplyToOptions = (req: Request) => {
     },
   ] as AppointmentApplyToOption[]
 
-  if (editAppointmentJourney.sequenceNumbers.length > 1) {
+  if (isApplyToQuestionRequired(editAppointmentJourney)) {
     if (isFirstRemainingOccurrence(editAppointmentJourney) || !isLastRemainingOccurrence(editAppointmentJourney)) {
       applyToOptions.push({
         applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
         description: isSecondLastRemainingOccurrence(editAppointmentJourney)
           ? 'This one and the appointment that comes after it in the series'
           : 'This one and all the appointments that come after it in the series',
-        additionalDescription: `You’re changing appointments ${
+        additionalDescription: `You’re ${getEditHintAction(appointmentJourney, editAppointmentJourney)} appointments ${
           editAppointmentJourney.sequenceNumber
         } to ${maxSequenceNumber(editAppointmentJourney)}`,
       })
@@ -36,9 +39,10 @@ export const getAppointmentApplyToOptions = (req: Request) => {
       applyToOptions.push({
         applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
         description: 'This one and all the appointments in the series that haven’t happened yet',
-        additionalDescription: `You’re changing appointments ${minSequenceNumber(
+        additionalDescription: `You’re ${getEditHintAction(
+          appointmentJourney,
           editAppointmentJourney,
-        )} to ${maxSequenceNumber(editAppointmentJourney)}`,
+        )} appointments ${minSequenceNumber(editAppointmentJourney)} to ${maxSequenceNumber(editAppointmentJourney)}`,
       })
     }
   }
@@ -46,13 +50,37 @@ export const getAppointmentApplyToOptions = (req: Request) => {
   return applyToOptions
 }
 
+const getEditHintAction = (appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) => {
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
+    return 'cancelling'
+  }
+
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+    return 'deleting'
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length === 1) {
+    return 'adding this person to'
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length > 1) {
+    return 'adding these people to'
+  }
+
+  if (editAppointmentJourney.removePrisoner) {
+    return 'removing this person from'
+  }
+
+  return 'changing'
+}
+
 const minSequenceNumber = (editAppointmentJourney: EditAppointmentJourney) =>
-  editAppointmentJourney.sequenceNumbers.length
+  Array.isArray(editAppointmentJourney.sequenceNumbers) && editAppointmentJourney.sequenceNumbers.length
     ? Math.min(...editAppointmentJourney.sequenceNumbers)
     : editAppointmentJourney.sequenceNumber
 
 const maxSequenceNumber = (editAppointmentJourney: EditAppointmentJourney) =>
-  editAppointmentJourney.sequenceNumbers.length
+  Array.isArray(editAppointmentJourney.sequenceNumbers) && editAppointmentJourney.sequenceNumbers.length
     ? Math.max(...editAppointmentJourney.sequenceNumbers)
     : editAppointmentJourney.repeatCount
 
@@ -60,6 +88,7 @@ const isFirstRemainingOccurrence = (editAppointmentJourney: EditAppointmentJourn
   editAppointmentJourney.sequenceNumber === minSequenceNumber(editAppointmentJourney)
 
 const isSecondLastRemainingOccurrence = (editAppointmentJourney: EditAppointmentJourney) =>
+  Array.isArray(editAppointmentJourney.sequenceNumbers) &&
   editAppointmentJourney.sequenceNumbers.length > 2 &&
   editAppointmentJourney.sequenceNumber ===
     editAppointmentJourney.sequenceNumbers[editAppointmentJourney.sequenceNumbers.length - 2]
