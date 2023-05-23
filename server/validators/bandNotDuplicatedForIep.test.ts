@@ -54,7 +54,7 @@ describe('bandNotDuplicatedForIep', () => {
   it('should pass validation if a new iep level is selected for the same bandId', async () => {
     const body = {
       bandId: 1,
-      incentiveLevels: ['Standard'],
+      incentiveLevel: 'Standard',
     }
 
     const session = {
