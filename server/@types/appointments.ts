@@ -1,23 +1,3 @@
-import {
-  AppointmentCategorySummary,
-  AppointmentLocationSummary,
-  PrisonerSummary,
-  UserSummary,
-} from './activitiesAPI/types'
-
-export type MovementSlip = {
-  category: AppointmentCategorySummary
-  internalLocation?: AppointmentLocationSummary
-  inCell: boolean
-  startDate: string
-  startTime: string
-  endTime?: string
-  comment: string
-  created: string
-  createdBy: UserSummary
-  prisoners: PrisonerSummary[]
-}
-
 export enum AppointmentRepeatPeriod {
   WEEKDAY = 'WEEKDAY',
   DAILY = 'DAILY',
@@ -26,10 +6,16 @@ export enum AppointmentRepeatPeriod {
   MONTHLY = 'MONTHLY',
 }
 
-export enum EditApplyTo {
+export enum AppointmentApplyTo {
   THIS_OCCURRENCE = 'THIS_OCCURRENCE',
   THIS_AND_ALL_FUTURE_OCCURRENCES = 'THIS_AND_ALL_FUTURE_OCCURRENCES',
   ALL_FUTURE_OCCURRENCES = 'ALL_FUTURE_OCCURRENCES',
+}
+
+export type AppointmentApplyToOption = {
+  applyTo: AppointmentApplyTo
+  description: string
+  additionalDescription: string
 }
 
 export enum AppointmentCancellationReason {

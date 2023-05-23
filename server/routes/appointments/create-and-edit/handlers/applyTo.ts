@@ -1,16 +1,16 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
-import { EditApplyTo } from '../../../../@types/appointments'
+import { AppointmentApplyTo } from '../../../../@types/appointments'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 
 export class ApplyTo {
   @Expose()
-  @IsEnum(EditApplyTo, {
+  @IsEnum(AppointmentApplyTo, {
     message: 'Select how this change should be applied to the remaining appointments in the series',
   })
-  applyTo: EditApplyTo
+  applyTo: AppointmentApplyTo
 }
 
 export default class ApplyToRoutes {

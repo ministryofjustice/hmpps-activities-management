@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { EditApplyTo } from '../../../../@types/appointments'
+import { AppointmentApplyTo } from '../../../../@types/appointments'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 
@@ -30,7 +30,7 @@ export default class ReviewPrisonerRoutes {
       return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/prisoners/add/apply-to`)
     }
 
-    req.session.editAppointmentJourney.applyTo = EditApplyTo.THIS_OCCURRENCE
+    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_OCCURRENCE
 
     return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/prisoners/add/confirm`)
   }

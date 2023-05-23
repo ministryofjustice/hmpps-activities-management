@@ -3,7 +3,7 @@ import { isValid } from 'date-fns'
 import { formatDate, parseDate } from '../../../../utils/utils'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentRepeatPeriod, EditApplyTo } from '../../../../@types/appointments'
+import { AppointmentRepeatPeriod, AppointmentApplyTo } from '../../../../@types/appointments'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 
 export default class StartJourneyRoutes {
@@ -68,7 +68,7 @@ export default class StartJourneyRoutes {
       )
     }
 
-    req.session.editAppointmentJourney.applyTo = EditApplyTo.THIS_OCCURRENCE
+    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_OCCURRENCE
 
     return res.redirect(
       `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${prisonNumber}/remove/confirm`,

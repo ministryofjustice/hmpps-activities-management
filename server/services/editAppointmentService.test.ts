@@ -3,7 +3,7 @@ import ActivitiesService from './activitiesService'
 import EditAppointmentService from './editAppointmentService'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
-import { AppointmentCancellationReason, EditApplyTo } from '../@types/appointments'
+import { AppointmentCancellationReason, AppointmentApplyTo } from '../@types/appointments'
 import { parseDate } from '../utils/utils'
 import { AppointmentOccurrenceCancelRequest, AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
 import { YesNo } from '../@types/activities'
@@ -285,13 +285,13 @@ describe('Edit Appointment Service', () => {
     it('when cancelling an appointment', async () => {
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).toHaveBeenCalledWith(
         2,
         {
           cancellationReasonId: +AppointmentCancellationReason.CANCELLED,
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceCancelRequest,
         res.locals.user,
       )
@@ -308,13 +308,13 @@ describe('Edit Appointment Service', () => {
       req.session.appointmentJourney.repeat = YesNo.NO
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).toHaveBeenCalledWith(
         2,
         {
           cancellationReasonId: +AppointmentCancellationReason.CREATED_IN_ERROR,
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceCancelRequest,
         res.locals.user,
       )
@@ -333,12 +333,12 @@ describe('Edit Appointment Service', () => {
         description: 'Updated location',
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
-        { internalLocationId: 2, applyTo: EditApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
+        { internalLocationId: 2, applyTo: AppointmentApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -357,12 +357,12 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-16'),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
-        { startDate: '2023-05-16', applyTo: EditApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
+        { startDate: '2023-05-16', applyTo: AppointmentApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -380,14 +380,14 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-15T10:00', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
         {
           startTime: '10:00',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -406,14 +406,14 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
         {
           endTime: '14:30',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -433,14 +433,14 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
         {
           endTime: '14:30',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -464,7 +464,7 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
@@ -472,7 +472,7 @@ describe('Edit Appointment Service', () => {
         {
           startTime: '10:00',
           endTime: '14:30',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -497,7 +497,7 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-16T10:00', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
@@ -505,7 +505,7 @@ describe('Edit Appointment Service', () => {
         {
           startDate: '2023-05-16',
           startTime: '10:00',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -530,7 +530,7 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-16T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
@@ -538,7 +538,7 @@ describe('Edit Appointment Service', () => {
         {
           startDate: '2023-05-16',
           endTime: '14:30',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -568,7 +568,7 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-16T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
@@ -577,7 +577,7 @@ describe('Edit Appointment Service', () => {
           startDate: '2023-05-16',
           startTime: '10:00',
           endTime: '14:30',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -592,12 +592,15 @@ describe('Edit Appointment Service', () => {
     it('when changing the comment', async () => {
       req.session.editAppointmentJourney.comment = 'Updated comment'
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
-        { comment: 'Updated comment', applyTo: EditApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
+        {
+          comment: 'Updated comment',
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+        } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -606,6 +609,28 @@ describe('Edit Appointment Service', () => {
       )
       expect(req.session.appointmentJourney).toBeNull()
       expect(req.session.editAppointmentJourney).toBeNull()
+    })
+  })
+
+  describe('is first, second last, last remaining occurrence', () => {
+    it('when appointment series has not started and first appointment', () => {
+      req.session.editAppointmentJourney.repeatCount = 3
+      req.session.editAppointmentJourney.occurrencesRemaining = 3
+      req.session.editAppointmentJourney.sequenceNumber = 1
+
+      expect(service.isFirstRemainingOccurrence(req)).toBe(true)
+      expect(service.isSecondLastRemainingOccurrence(req)).toBe(false)
+      expect(service.isLastRemainingOccurrence(req)).toBe(false)
+    })
+
+    it('when appointment series has not started and second appointment', () => {
+      req.session.editAppointmentJourney.repeatCount = 3
+      req.session.editAppointmentJourney.occurrencesRemaining = 3
+      req.session.editAppointmentJourney.sequenceNumber = 2
+
+      expect(service.isFirstRemainingOccurrence(req)).toBe(false)
+      expect(service.isSecondLastRemainingOccurrence(req)).toBe(true)
+      expect(service.isLastRemainingOccurrence(req)).toBe(false)
     })
   })
 })
