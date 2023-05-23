@@ -95,7 +95,7 @@ export function registerNunjucks(app?: express.Express): Environment {
     {
       autoescape: true,
       express: app,
-    }
+    },
   )
 
   // Only register nunjucks helpers/filters here - they should be implemented and unit tested elsewhere

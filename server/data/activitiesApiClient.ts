@@ -461,6 +461,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   async getChangeEvents(
     prison: string,
     date: string,
@@ -475,6 +476,9 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 =======
+=======
+  /* eslint-disable */
+>>>>>>> f6c68ab (SAA-673 fixing failing test and disbale linting on functions that are work in progress.)
   async getDeallocationReasons(user: ServiceUser) {
     // TODO: Call an actual endpoint
 
@@ -500,6 +504,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  /* eslint-disable */
   async deallocateFromActivity(scheduleId: number, data: any, user: ServiceUser) {
     // TODO: Call the actual endpoint
     console.log(true || scheduleId || data || user)
