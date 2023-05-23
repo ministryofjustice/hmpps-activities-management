@@ -75,7 +75,6 @@ describe('Edit Appointment Service', () => {
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
 
       expect(service.getEditMessage(req)).toEqual('cancel')
-      expect(service.getEditHintMessage(req)).toEqual('cancelling')
       expect(service.getEditedMessage(req)).toEqual('cancelled')
     })
 
@@ -83,7 +82,6 @@ describe('Edit Appointment Service', () => {
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
       expect(service.getEditMessage(req)).toEqual('delete')
-      expect(service.getEditHintMessage(req)).toEqual('deleting')
       expect(service.getEditedMessage(req)).toEqual('deleted')
     })
 
@@ -94,7 +92,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the location for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the location for')
     })
 
@@ -107,7 +104,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the date for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the date for')
     })
 
@@ -119,7 +115,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the time for')
     })
 
@@ -131,7 +126,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the time for')
     })
 
@@ -144,7 +138,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the time for')
     })
 
@@ -161,7 +154,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the time for')
     })
 
@@ -179,7 +171,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the date and time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the date and time for')
     })
 
@@ -197,7 +188,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the date and time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the date and time for')
     })
 
@@ -220,7 +210,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the date and time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the date and time for')
     })
 
@@ -228,7 +217,6 @@ describe('Edit Appointment Service', () => {
       req.session.editAppointmentJourney.comment = 'Updated comment'
 
       expect(service.getEditMessage(req)).toEqual('change the heads up for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the heads up for')
     })
 
@@ -242,7 +230,6 @@ describe('Edit Appointment Service', () => {
       ]
 
       expect(service.getEditMessage(req)).toEqual('add Test Prisoner to')
-      expect(service.getEditHintMessage(req)).toEqual('adding this person to')
       expect(service.getEditedMessage(req)).toEqual('added Test Prisoner to')
     })
 
@@ -261,7 +248,6 @@ describe('Edit Appointment Service', () => {
       ]
 
       expect(service.getEditMessage(req)).toEqual('add the people to')
-      expect(service.getEditHintMessage(req)).toEqual('adding these people to')
       expect(service.getEditedMessage(req)).toEqual('added the people to')
     })
 
@@ -276,7 +262,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('remove Test Prisoner from')
-      expect(service.getEditHintMessage(req)).toEqual('removing this person from')
       expect(service.getEditedMessage(req)).toEqual('removed Test Prisoner from')
     })
   })
