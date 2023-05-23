@@ -15,7 +15,7 @@ export enum AppointmentApplyTo {
 export type AppointmentApplyToOption = {
   applyTo: AppointmentApplyTo
   description: string
-  additionalDescription: string
+  additionalDescription?: string
 }
 
 export enum AppointmentCancellationReason {
