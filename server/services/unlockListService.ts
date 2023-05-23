@@ -163,6 +163,7 @@ export default class UnlockListService {
     return data.sort((p1, p2) => {
       if (p1.priority > p2.priority) return 1
       if (p1.priority < p2.priority) return -1
+      if (p1.startTime < p2.startTime) return -1
       return 0
     })
   }
