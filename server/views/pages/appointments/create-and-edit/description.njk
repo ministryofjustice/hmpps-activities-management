@@ -68,7 +68,10 @@
             name: "description",
             classes: "govuk-input--width-20 govuk-js-character-count",
             value: formResponses.description or session.appointmentJourney.description,
-            errorMessage: validationErrors | findError('description')
+            errorMessage: validationErrors | findError('description'),
+            attributes: {
+                "aria-describedby": "description-info"
+            }
         }) }}
         <div id="description-info" class="govuk-hint govuk-character-count__message">
             You can enter up to 40 characters
