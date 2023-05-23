@@ -611,26 +611,4 @@ describe('Edit Appointment Service', () => {
       expect(req.session.editAppointmentJourney).toBeNull()
     })
   })
-
-  describe('is first, second last, last remaining occurrence', () => {
-    it('when appointment series has not started and first appointment', () => {
-      req.session.editAppointmentJourney.repeatCount = 3
-      req.session.editAppointmentJourney.occurrencesRemaining = 3
-      req.session.editAppointmentJourney.sequenceNumber = 1
-
-      expect(service.isFirstRemainingOccurrence(req)).toBe(true)
-      expect(service.isSecondLastRemainingOccurrence(req)).toBe(false)
-      expect(service.isLastRemainingOccurrence(req)).toBe(false)
-    })
-
-    it('when appointment series has not started and second appointment', () => {
-      req.session.editAppointmentJourney.repeatCount = 3
-      req.session.editAppointmentJourney.occurrencesRemaining = 3
-      req.session.editAppointmentJourney.sequenceNumber = 2
-
-      expect(service.isFirstRemainingOccurrence(req)).toBe(false)
-      expect(service.isSecondLastRemainingOccurrence(req)).toBe(true)
-      expect(service.isLastRemainingOccurrence(req)).toBe(false)
-    })
-  })
 })

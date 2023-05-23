@@ -13,17 +13,11 @@
 {% set applyToItems = [] %}
 {% for applyToOption in applyToOptions %}
     {% set applyToItems = (applyToItems.push({
-        value: applyToOption,
-        text: ("Just this one - " + startDate | formatDate('EEEE, d MMMM yyyy') + " (" + session.editAppointmentJourney.sequenceNumber + " of " + session.editAppointmentJourney.repeatCount + ")" if applyToOption == AppointmentApplyTo.THIS_OCCURRENCE) +
-              ("This one and all the appointments that come after it in the series" if (applyToOption == AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES or (applyToOption == AppointmentApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence)) and isSecondLastRemainingOccurrence == false) +
-              ("This one and the appointment that comes after it in the series" if isSecondLastRemainingOccurrence and (applyToOption == AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES or (applyToOption == AppointmentApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence))) +
-              ("This one and all the appointments in the series that haven’t happened yet" if applyToOption == AppointmentApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence == false),
+        value: applyToOption.applyTo,
+        text: applyToOption.description,
         hint: {
-            text: "You’re " + editHintMessage + " appointments " +
-                  (session.editAppointmentJourney.sequenceNumber if applyToOption == AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES) +
-                  (session.editAppointmentJourney.repeatCount - session.editAppointmentJourney.occurrencesRemaining + 1 if applyToOption == AppointmentApplyTo.ALL_FUTURE_OCCURRENCES) +
-                  " to " + session.editAppointmentJourney.repeatCount
-        } if applyToOption != AppointmentApplyTo.THIS_OCCURRENCE
+            text: applyToOption.additionalDescription
+        }
     } ), categoryOptions) %}
 {% endfor %}
 
