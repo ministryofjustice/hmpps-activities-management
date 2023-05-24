@@ -3,12 +3,13 @@ import { plainToInstance } from 'class-transformer'
 import ActivitiesService from './activitiesService'
 import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
-import { AppointmentCancellationReason, EditApplyTo } from '../@types/appointments'
+import { AppointmentCancellationReason, AppointmentApplyTo } from '../@types/appointments'
 import { AppointmentOccurrenceCancelRequest, AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 import SimpleTime from '../commonValidationTypes/simpleTime'
 import { convertToTitleCase, formatDate, fullName } from '../utils/utils'
 import { YesNo } from '../@types/activities'
+import { isApplyToQuestionRequired } from '../utils/editAppointmentUtils'
 
 export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -25,18 +26,14 @@ export default class EditAppointmentService {
     return defaultBackLinkHref
   }
 
-  isApplyToQuestionRequired(req: Request) {
-    return this.getApplyToOptions(req).length > 1
-  }
-
   async redirectOrEdit(req: Request, res: Response, property: string) {
     const { appointmentId, occurrenceId } = req.params
     if (this.hasAnyPropertyChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)) {
-      if (this.isApplyToQuestionRequired(req)) {
+      if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
         return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/${property}/apply-to`)
       }
 
-      return this.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      return this.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
     }
 
     this.clearSession(req)
@@ -94,36 +91,6 @@ export default class EditAppointmentService {
     return ''
   }
 
-  getEditHintMessage(req: Request) {
-    const { appointmentJourney, editAppointmentJourney } = req.session
-
-    if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
-      return 'cancelling'
-    }
-
-    if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
-      return 'deleting'
-    }
-
-    if (this.hasAnyPropertyChanged(appointmentJourney, editAppointmentJourney)) {
-      return 'changing'
-    }
-
-    if (editAppointmentJourney.addPrisoners?.length === 1) {
-      return 'adding this person to'
-    }
-
-    if (editAppointmentJourney.addPrisoners?.length > 1) {
-      return 'adding these people to'
-    }
-
-    if (editAppointmentJourney.removePrisoner) {
-      return 'removing this person from'
-    }
-
-    return ''
-  }
-
   getEditedMessage(req: Request) {
     return this.getEditMessage(req)
       .replace('cancel', 'cancelled')
@@ -133,49 +100,7 @@ export default class EditAppointmentService {
       .replace('change', 'changed')
   }
 
-  isFirstRemainingOccurrence(req: Request) {
-    const { editAppointmentJourney } = req.session
-
-    return (
-      editAppointmentJourney.repeatCount - editAppointmentJourney.sequenceNumber + 1 ===
-      editAppointmentJourney.occurrencesRemaining
-    )
-  }
-
-  isSecondLastRemainingOccurrence(req: Request) {
-    const { editAppointmentJourney } = req.session
-
-    return editAppointmentJourney.sequenceNumber + 1 === editAppointmentJourney.repeatCount
-  }
-
-  isLastRemainingOccurrence(req: Request) {
-    const { editAppointmentJourney } = req.session
-
-    return editAppointmentJourney.sequenceNumber === editAppointmentJourney.repeatCount
-  }
-
-  getApplyToOptions(req: Request) {
-    const { appointmentJourney, editAppointmentJourney } = req.session
-
-    const applyToOptions = [EditApplyTo.THIS_OCCURRENCE]
-
-    if (editAppointmentJourney.occurrencesRemaining > 1) {
-      const isFirstRemainingOccurrence = this.isFirstRemainingOccurrence(req)
-      const isLastRemainingOccurrence = this.isLastRemainingOccurrence(req)
-
-      if (!isFirstRemainingOccurrence && !isLastRemainingOccurrence) {
-        applyToOptions.push(EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES)
-      }
-
-      if (!this.hasStartDateChanged(appointmentJourney, editAppointmentJourney) || isFirstRemainingOccurrence) {
-        applyToOptions.push(EditApplyTo.ALL_FUTURE_OCCURRENCES)
-      }
-    }
-
-    return applyToOptions
-  }
-
-  async edit(req: Request, res: Response, applyTo: EditApplyTo) {
+  async edit(req: Request, res: Response, applyTo: AppointmentApplyTo) {
     const { user } = res.locals
     const { appointmentJourney, editAppointmentJourney } = req.session
     const { appointmentId, occurrenceId } = req.params
@@ -230,8 +155,8 @@ export default class EditAppointmentService {
     if (this.hasStartDateChanged(appointmentJourney, editAppointmentJourney)) {
       occurrenceUpdates.startDate = plainToInstance(SimpleDate, editAppointmentJourney.startDate).toIsoString()
       // TODO: This is a hack as the API doesn't currently support apply to all future occurrences for date
-      if (applyTo === EditApplyTo.ALL_FUTURE_OCCURRENCES) {
-        occurrenceUpdates.applyTo = EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES
+      if (applyTo === AppointmentApplyTo.ALL_FUTURE_OCCURRENCES) {
+        occurrenceUpdates.applyTo = AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES
       }
     }
 
@@ -315,11 +240,11 @@ export default class EditAppointmentService {
     return editAppointmentJourney.comment && appointmentJourney.comment !== editAppointmentJourney.comment
   }
 
-  private getAppliedToAppointmentMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: EditApplyTo) {
+  private getAppliedToAppointmentMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: AppointmentApplyTo) {
     switch (applyTo) {
-      case EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
+      case AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
         return `appointments ${editAppointmentJourney.sequenceNumber} to ${editAppointmentJourney.repeatCount} in the series`
-      case EditApplyTo.ALL_FUTURE_OCCURRENCES:
+      case AppointmentApplyTo.ALL_FUTURE_OCCURRENCES:
         return `appointments ${
           editAppointmentJourney.repeatCount - editAppointmentJourney.occurrencesRemaining + 1
         } to ${editAppointmentJourney.repeatCount} in the series`
@@ -328,11 +253,11 @@ export default class EditAppointmentService {
     }
   }
 
-  private getAppliedToSeriesMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: EditApplyTo) {
+  private getAppliedToSeriesMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: AppointmentApplyTo) {
     switch (applyTo) {
-      case EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
+      case AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
         return `appointments ${editAppointmentJourney.sequenceNumber} to ${editAppointmentJourney.repeatCount} in this series`
-      case EditApplyTo.ALL_FUTURE_OCCURRENCES:
+      case AppointmentApplyTo.ALL_FUTURE_OCCURRENCES:
         return `appointments ${
           editAppointmentJourney.repeatCount - editAppointmentJourney.occurrencesRemaining + 1
         } to ${editAppointmentJourney.repeatCount} in this series`

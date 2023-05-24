@@ -1,0 +1,45 @@
+{% extends "homepageLayout.njk" %}
+{% from "components/card.njk" import card %}
+
+{% set pageTitle = applicationName + " - Manage activities" %}
+{% set pageId = 'manage-activities-dashboard' %}
+{% set backLinkHref = "/" %}
+
+{% block heading %}
+    <h1 class="govuk-heading-l">Manage activities</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="card-group govuk-grid-row">
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "id": "ManageAllocations",
+                "href": "/allocation-dashboard",
+                "clickable": "true",
+                "heading": "Manage allocations",
+                "description": "Allocate people to, or take them off an activity. See vacancies, check who is currently allocated, and change allocation start and end dates and pay.",
+                "data-qa": "manage-allocations"
+            }) }}
+        </div>
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "id": "EditActivityDetails",
+                "href": "/schedule/activities?stateFilter=live",
+                "clickable": "true",
+                "heading": "Edit activity details",
+                "description": "Change the details of an existing activity including pay rates, requirements and schedule.",
+                "data-qa": "edit-activity-details"
+            }) }}
+        </div>
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "id": "CreateActivity",
+                "href": "/create/start",
+                "clickable": "true",
+                "heading": "Create an activity",
+                "description": "Set up a new activity including pay rates, requirements and schedule.",
+                "data-qa": "create-an-activity"
+            }) }}
+        </div>
+    </div>
+{% endblock %}

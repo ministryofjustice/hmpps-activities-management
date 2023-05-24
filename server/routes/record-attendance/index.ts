@@ -12,6 +12,7 @@ import UncancelSessionConfirmationRoutes, { UncancelConfirmForm } from './handle
 import AttendanceDetailsRoutes from './handlers/attendanceDetails'
 import EditAttendanceRoutes, { EditAttendance } from './handlers/editAttendance'
 import RemovePayRoutes, { RemovePay } from './handlers/removePay'
+import HomeRoutes from './handlers/home'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -20,6 +21,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
+  const homeHandler = new HomeRoutes()
   const selectPeriodHandler = new SelectPeriodRoutes()
   const activitiesHandler = new ActivitiesRoutes(activitiesService)
   const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService)
@@ -31,6 +33,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const editAttendanceHandler = new EditAttendanceRoutes(activitiesService, prisonService)
   const removePayHandler = new RemovePayRoutes(activitiesService, prisonService)
 
+  get('/', homeHandler.GET)
   get('/select-period', selectPeriodHandler.GET)
   post('/select-period', selectPeriodHandler.POST, TimePeriod)
   get('/activities', activitiesHandler.GET)

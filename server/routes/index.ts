@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import type { Services } from '../services'
 import homeRoutes from './home'
+import activityRoutes from './activities'
 import changeLocationRoutes from './change-location'
 import createRoutes from './create-an-activity'
 import allocationDashboardRoutes from './allocation-dashboard'
@@ -31,6 +32,7 @@ export default function routes(services: Services): Router {
   router.use(rolloutMiddleware(services))
 
   router.use('/', homeRoutes())
+  router.use('/activities', activityRoutes())
   router.use('/create', createRoutes(services))
   router.use('/allocation-dashboard', allocationDashboardRoutes(services))
   router.use('/allocate', allocateRoutes(services))

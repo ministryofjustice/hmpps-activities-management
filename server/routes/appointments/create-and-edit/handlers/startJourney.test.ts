@@ -1,6 +1,4 @@
 import { Request, Response } from 'express'
-import ActivitiesService from '../../../../services/activitiesService'
-import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import StartJourneyRoutes from './startJourney'
 import { AppointmentDetails, AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
@@ -8,12 +6,8 @@ import { parseDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { YesNo } from '../../../../@types/activities'
 
-jest.mock('../../../../services/activitiesService')
-
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
-
 describe('Route Handlers - Create Appointment - Start', () => {
-  const handler = new StartJourneyRoutes(new EditAppointmentService(activitiesService))
+  const handler = new StartJourneyRoutes()
   let req: Request
   let res: Response
 
@@ -153,6 +147,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       const editAppointmentJourneySession = {
         repeatCount: 3,
         occurrencesRemaining: 2,
+        sequenceNumbers: [2, 3],
         sequenceNumber: 2,
       } as EditAppointmentJourney
 

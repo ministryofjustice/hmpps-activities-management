@@ -3,12 +3,10 @@ import { isValid } from 'date-fns'
 import { formatDate, parseDate } from '../../../../utils/utils'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentRepeatPeriod, EditApplyTo } from '../../../../@types/appointments'
-import EditAppointmentService from '../../../../services/editAppointmentService'
+import { AppointmentRepeatPeriod, AppointmentApplyTo } from '../../../../@types/appointments'
+import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export default class StartJourneyRoutes {
-  constructor(private readonly editAppointmentService: EditAppointmentService) {}
-
   INDIVIDUAL = async (req: Request, res: Response): Promise<void> => {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
@@ -62,13 +60,13 @@ export default class StartJourneyRoutes {
 
     req.session.editAppointmentJourney.removePrisoner = prisoner
 
-    if (this.editAppointmentService.isApplyToQuestionRequired(req)) {
+    if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
       return res.redirect(
         `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${prisonNumber}/remove/apply-to`,
       )
     }
 
-    req.session.editAppointmentJourney.applyTo = EditApplyTo.THIS_OCCURRENCE
+    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_OCCURRENCE
 
     return res.redirect(
       `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${prisonNumber}/remove/confirm`,
@@ -148,6 +146,7 @@ export default class StartJourneyRoutes {
     req.session.editAppointmentJourney = {
       repeatCount: appointmentOccurrence.repeat?.count ?? 1,
       occurrencesRemaining: appointment.occurrences.length,
+      sequenceNumbers: appointment.occurrences.map(occurrence => occurrence.sequenceNumber),
       sequenceNumber: appointmentOccurrence.sequenceNumber,
     }
   }

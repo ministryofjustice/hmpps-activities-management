@@ -13,6 +13,7 @@ import getCancelledScheduledInstance from '../fixtures/activitiesApi/getSchedule
 import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForAttendance.json'
 import getCategories from '../fixtures/activitiesApi/getCategories.json'
+import AttendanceDashboardPage from '../pages/recordAttendance/attendanceDashboard'
 
 context('Record attendance', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -42,10 +43,12 @@ context('Record attendance', () => {
 
   it('should click through record attendance journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage
-      .recordAttendanceCard()
-      .should('contain.text', 'Mark attendance at activities and appointments and get printable attendance lists.')
-    indexPage.recordAttendanceCard().click()
+    indexPage.markAndManageAttendanceCard().should('contain.text', 'Record activity attendance')
+    indexPage.markAndManageAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().should('contain.text', 'Record attendance and cancel activity sessions')
+    recordAttendancePage.recordAttendanceCard().click()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(today)
