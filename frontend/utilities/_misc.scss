@@ -21,6 +21,14 @@ body {
   padding-bottom: 0;
 }
 
+// Taken from DPS
+// https://github.com/ministryofjustice/digital-prison-services/blob/main/sass/pages/_homepage.scss
+.homepage-content {
+  padding: govuk-spacing(6) 0;
+  background: #f0f4f5;
+  min-height: 500px;
+}
+
 .govuk-table__cell-no-border {
   padding: 10px 20px 10px 0;
   text-align: left;

@@ -25,6 +25,7 @@ import DaysAndTimesPage from '../pages/createSchedule/daysAndTimes'
 import BankHolidayPage from '../pages/createSchedule/bankHoliday'
 import LocationPage from '../pages/createSchedule/location'
 import CapacityPage from '../pages/createSchedule/capacity'
+import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
 
 context('Create activity', () => {
   beforeEach(() => {
@@ -43,8 +44,12 @@ context('Create activity', () => {
 
   it('should click through create activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.createActivityCard().should('contain.text', 'Create a schedulable activity in your prison.')
-    indexPage.createActivityCard().click()
+    indexPage.manageActivitiesAndAllocationsCard().should('contain.text', 'Manage activities and allocations')
+    indexPage.manageActivitiesAndAllocationsCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
+    manageActivitiesPage.cardActivityCard().should('contain.text', 'Create an activity')
+    manageActivitiesPage.cardActivityCard().click()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
     categoryPage.selectCategory('Gym, sport and fitness')
