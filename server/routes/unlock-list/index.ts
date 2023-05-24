@@ -4,6 +4,7 @@ import SelectDateAndLocationRoutes, { DateAndLocation } from './handlers/selectD
 import PlannedEventsRoutes from './handlers/plannedEvents'
 import { Services } from '../../services'
 import validationMiddleware from '../../middleware/validationMiddleware'
+import HomeRoutes from './handlers/home'
 
 export default function Index({ unlockListService, activitiesService }: Services): Router {
   const router = Router()
@@ -12,9 +13,11 @@ export default function Index({ unlockListService, activitiesService }: Services
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
+  const homeHandler = new HomeRoutes()
   const dateAndLocationHandler = new SelectDateAndLocationRoutes(activitiesService)
   const plannedEventsHandler = new PlannedEventsRoutes(activitiesService, unlockListService)
 
+  get('/', homeHandler.GET)
   get('/select-date-and-location', dateAndLocationHandler.GET)
   post('/select-date-and-location', dateAndLocationHandler.POST, DateAndLocation)
   get('/planned-events', plannedEventsHandler.GET)
