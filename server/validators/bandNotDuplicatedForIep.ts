@@ -7,7 +7,7 @@ export default function IsNotDuplicatedForIep(validationOptions?: ValidationOpti
       name: 'bandNotDuplicatedForIep',
       target: object.constructor,
       propertyName,
-      constraints: ['createJourney', 'incentiveLevels'],
+      constraints: ['createJourney', 'incentiveLevel'],
       options: validationOptions,
       validator: {
         validate(bandId: number, args: ValidationArguments) {
@@ -17,7 +17,9 @@ export default function IsNotDuplicatedForIep(validationOptions?: ValidationOpti
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (pay: any) =>
                 pay.bandId === bandId &&
-                args.object['incentiveLevels'].includes(pay.incentiveLevel) &&
+                ((args.object['incentiveLevel'] !== undefined &&
+                  args.object['incentiveLevel'].includes(pay.incentiveLevel)) ||
+                  args.object['incentiveLevel'] === undefined) &&
                 (pay.bandId !== parseInt(args.object['currentPayBand'], 10) ||
                   pay.incentiveLevel !== args.object['currentIncentiveLevel']),
             ) === undefined
