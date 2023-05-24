@@ -11,6 +11,7 @@ import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import EditAppointmentService from '../../../../services/editAppointmentService'
+import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class DateAndTime {
   @Expose()
@@ -50,7 +51,7 @@ export default class DateAndTimeRoutes {
       backLinkHref: this.editAppointmentService.getBackLinkHref(req, 'name'),
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !this.editAppointmentService.isApplyToQuestionRequired(req),
+        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
     })
   }
 

@@ -1,9 +1,10 @@
 import { PrisonerSummary } from '../../../@types/activitiesAPI/types'
-import { AppointmentCancellationReason, EditApplyTo } from '../../../@types/appointments'
+import { AppointmentCancellationReason, AppointmentApplyTo } from '../../../@types/appointments'
 
 export type EditAppointmentJourney = {
   repeatCount: number
   occurrencesRemaining: number
+  sequenceNumbers: number[]
   sequenceNumber: number
   location?: {
     id: number
@@ -33,5 +34,5 @@ export type EditAppointmentJourney = {
   }[]
   removePrisoner?: PrisonerSummary
   cancellationReason?: AppointmentCancellationReason
-  applyTo?: EditApplyTo
+  applyTo?: AppointmentApplyTo
 }

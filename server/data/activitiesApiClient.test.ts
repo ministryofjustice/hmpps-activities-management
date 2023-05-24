@@ -21,7 +21,7 @@ import {
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
-import { EditApplyTo } from '../@types/appointments'
+import { AppointmentApplyTo } from '../@types/appointments'
 
 const user = { token: 'token' } as ServiceUser
 
@@ -665,7 +665,7 @@ describe('activitiesApiClient', () => {
         startDate: '2023-02-07',
         startTime: '13:00',
         endTime: '13:30',
-        applyTo: EditApplyTo.THIS_OCCURRENCE,
+        applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
       }
 
       await activitiesApiClient.editAppointmentOccurrence(1, body, user)

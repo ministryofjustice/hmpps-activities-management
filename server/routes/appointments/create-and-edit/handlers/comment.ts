@@ -3,6 +3,7 @@ import { Expose } from 'class-transformer'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
+import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class Comment {
   @Expose()
@@ -20,7 +21,7 @@ export default class CommentRoutes {
       backLinkHref: this.editAppointmentService.getBackLinkHref(req, defaultBackLinkHref),
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !this.editAppointmentService.isApplyToQuestionRequired(req),
+        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
     })
   }
 
