@@ -1,8 +1,20 @@
 import { Request } from 'express'
 import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentCancellationReason } from '../@types/appointments'
 import { convertToTitleCase, formatDate, fullName } from './utils'
-import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
+
+export const getAppointmentBackLinkHref = (req: Request, defaultBackLinkHref: string) => {
+  if (
+    req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+    req.params.appointmentId &&
+    req.params.occurrenceId
+  ) {
+    return `/appointments/${req.params.appointmentId}/occurrence/${req.params.occurrenceId}`
+  }
+
+  return defaultBackLinkHref
+}
 
 export const isApplyToQuestionRequired = (editAppointmentJourney: EditAppointmentJourney) =>
   Array.isArray(editAppointmentJourney.sequenceNumbers) && editAppointmentJourney.sequenceNumbers.length > 1

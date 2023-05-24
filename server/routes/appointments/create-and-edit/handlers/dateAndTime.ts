@@ -11,7 +11,7 @@ import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import EditAppointmentService from '../../../../services/editAppointmentService'
-import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class DateAndTime {
   @Expose()
@@ -48,7 +48,7 @@ export default class DateAndTimeRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/date-and-time', {
-      backLinkHref: this.editAppointmentService.getBackLinkHref(req, 'name'),
+      backLinkHref: getAppointmentBackLinkHref(req, 'name'),
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.session.editAppointmentJourney),

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import ActivitiesService from './activitiesService'
-import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { AppointmentCancellationReason, AppointmentApplyTo } from '../@types/appointments'
 import { AppointmentOccurrenceCancelRequest, AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
@@ -24,18 +24,6 @@ import {
 
 export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService) {}
-
-  getBackLinkHref(req: Request, defaultBackLinkHref: string) {
-    if (
-      req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-      req.params.appointmentId &&
-      req.params.occurrenceId
-    ) {
-      return `/appointments/${req.params.appointmentId}/occurrence/${req.params.occurrenceId}`
-    }
-
-    return defaultBackLinkHref
-  }
 
   async redirectOrEdit(req: Request, res: Response, property: string) {
     const { appointmentId, occurrenceId } = req.params

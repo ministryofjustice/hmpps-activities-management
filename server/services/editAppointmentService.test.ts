@@ -2,7 +2,11 @@ import { Request, Response } from 'express'
 import { addDays } from 'date-fns'
 import ActivitiesService from './activitiesService'
 import EditAppointmentService from './editAppointmentService'
-import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
+import {
+  AppointmentJourney,
+  AppointmentJourneyMode,
+  AppointmentType,
+} from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { AppointmentCancellationReason, AppointmentApplyTo } from '../@types/appointments'
 import { formatDate, parseDate } from '../utils/utils'
@@ -26,6 +30,8 @@ describe('Edit Appointment Service', () => {
     req = {
       session: {
         appointmentJourney: {
+          mode: AppointmentJourneyMode.EDIT,
+          type: AppointmentType.GROUP,
           category: {
             code: 'TEST',
             description: 'Category',
@@ -75,6 +81,56 @@ describe('Edit Appointment Service', () => {
 
   afterEach(() => {
     jest.resetAllMocks()
+  })
+
+  describe('redirectOrEdit', () => {
+    it('when no property has changed', async () => {
+      await service.redirectOrEdit(req, res, '')
+
+      expect(activitiesService.editAppointmentOccurrence).not.toHaveBeenCalled()
+      expect(req.session.appointmentJourney).toBeNull()
+      expect(req.session.editAppointmentJourney).toBeNull()
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+    })
+
+    it('when changing the location for a non repeating appointment', async () => {
+      req.session.editAppointmentJourney.sequenceNumbers = [1]
+      req.session.editAppointmentJourney.sequenceNumber = 1
+      req.session.editAppointmentJourney.location = {
+        id: 2,
+        description: 'Updated location',
+      }
+
+      await service.redirectOrEdit(req, res, 'location')
+
+      expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
+        2,
+        { internalLocationId: 2, applyTo: AppointmentApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
+        res.locals.user,
+      )
+      expect(req.session.appointmentJourney).toBeNull()
+      expect(req.session.editAppointmentJourney).toBeNull()
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+        "You've changed the location for this appointment",
+      )
+    })
+
+    it('when changing the location for a repeating appointment', async () => {
+      req.session.editAppointmentJourney.location = {
+        id: 2,
+        description: 'Updated location',
+      }
+
+      await service.redirectOrEdit(req, res, 'location')
+
+      expect(activitiesService.editAppointmentOccurrence).not.toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith(
+        `/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/location/apply-to`,
+      )
+      expect(req.session.appointmentJourney).not.toBeNull()
+      expect(req.session.editAppointmentJourney).not.toBeNull()
+    })
   })
 
   describe('edit', () => {

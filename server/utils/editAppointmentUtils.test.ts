@@ -1,12 +1,17 @@
 import { Request } from 'express'
 import { addDays } from 'date-fns'
 import { formatDate, parseDate } from './utils'
-import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
+import {
+  AppointmentJourney,
+  AppointmentJourneyMode,
+  AppointmentType,
+} from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentCancellationReason } from '../@types/appointments'
 import {
   getAppointmentApplyToOptions,
   getAppointmentEditMessage,
+  getAppointmentBackLinkHref,
   isApplyToQuestionRequired,
 } from './editAppointmentUtils'
 
@@ -21,6 +26,8 @@ describe('Edit Appointment Utils', () => {
     req = {
       session: {
         appointmentJourney: {
+          mode: AppointmentJourneyMode.EDIT,
+          type: AppointmentType.GROUP,
           category: {
             code: 'TEST',
             description: 'Category',
@@ -62,6 +69,71 @@ describe('Edit Appointment Utils', () => {
 
   afterEach(() => {
     jest.resetAllMocks()
+  })
+
+  describe('getAppointmentBackLinkHref', () => {
+    it('create mode', () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+      expect(getAppointmentBackLinkHref(req, 'category')).toEqual('category')
+    })
+
+    it('edit mode null appointment id', () => {
+      req.params.appointmentId = null
+      expect(getAppointmentBackLinkHref(req, 'category')).toEqual('category')
+    })
+
+    it('edit mode null occurrence id', () => {
+      req.params.occurrenceId = null
+      expect(getAppointmentBackLinkHref(req, 'category')).toEqual('category')
+    })
+
+    it('edit', () => {
+      expect(getAppointmentBackLinkHref(req, 'category')).toEqual(
+        `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+      )
+    })
+  })
+
+  describe('is apply to question required', () => {
+    it('change future non repeating appointment', () => {
+      req.session.editAppointmentJourney.sequenceNumbers = [1]
+      req.session.editAppointmentJourney.sequenceNumber = 1
+
+      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
+    })
+
+    it('change past non repeating appointment', () => {
+      req.session.editAppointmentJourney.repeatCount = 1
+      req.session.editAppointmentJourney.sequenceNumbers = []
+      req.session.editAppointmentJourney.sequenceNumber = 1
+
+      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
+    })
+
+    it('repeating appointment change single remaining appointment', () => {
+      req.session.editAppointmentJourney.sequenceNumbers = [4]
+      req.session.editAppointmentJourney.sequenceNumber = 4
+
+      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
+    })
+
+    it('repeating appointment no remaining appointments change past appointment', () => {
+      req.session.editAppointmentJourney.sequenceNumbers = []
+      req.session.editAppointmentJourney.sequenceNumber = 3
+
+      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
+    })
+
+    it('repeating appointment two remaining appointments change first appointment', () => {
+      req.session.editAppointmentJourney.sequenceNumbers = [3, 4]
+      req.session.editAppointmentJourney.sequenceNumber = 3
+
+      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(true)
+    })
+
+    it('repeating appointment change appointment', () => {
+      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(true)
+    })
   })
 
   describe('get appointment edit message', () => {
@@ -500,48 +572,6 @@ describe('Edit Appointment Utils', () => {
 
       expect(options[1].additionalDescription).toEqual('You’re removing this person from appointments 2 to 4')
       expect(options[2].additionalDescription).toEqual('You’re removing this person from appointments 1 to 4')
-    })
-  })
-
-  describe('is apply to question required', () => {
-    it('change future non repeating appointment', () => {
-      req.session.editAppointmentJourney.sequenceNumbers = [1]
-      req.session.editAppointmentJourney.sequenceNumber = 1
-
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
-    })
-
-    it('change past non repeating appointment', () => {
-      req.session.editAppointmentJourney.repeatCount = 1
-      req.session.editAppointmentJourney.sequenceNumbers = []
-      req.session.editAppointmentJourney.sequenceNumber = 1
-
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
-    })
-
-    it('repeating appointment change single remaining appointment', () => {
-      req.session.editAppointmentJourney.sequenceNumbers = [4]
-      req.session.editAppointmentJourney.sequenceNumber = 4
-
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
-    })
-
-    it('repeating appointment no remaining appointments change past appointment', () => {
-      req.session.editAppointmentJourney.sequenceNumbers = []
-      req.session.editAppointmentJourney.sequenceNumber = 3
-
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
-    })
-
-    it('repeating appointment two remaining appointments change first appointment', () => {
-      req.session.editAppointmentJourney.sequenceNumbers = [3, 4]
-      req.session.editAppointmentJourney.sequenceNumber = 3
-
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(true)
-    })
-
-    it('repeating appointment change appointment', () => {
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(true)
     })
   })
 })
