@@ -8,6 +8,11 @@
 {% set backLinkHref = "pay" %}
 
 {% block content %}
+    {% if session.req.query.fromEditActivity %}
+        {% set fromEditText = "&fromEditActivity=true" %}
+    {% else %}
+        {% set fromEditText = "" %}
+    {% endif %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
             <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }}</span>
@@ -36,12 +41,12 @@
                             actions: {
                                 items: [
                                     {
-                                        href: "pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true",
+                                        href: "pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText,
                                         text: "Change",
                                         visuallyHiddenText: "change pay rate"
                                     },
                                     {
-                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true",
+                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText,
                                         text: "Remove",
                                         visuallyHiddenText: "remove pay rate"
                                     }
@@ -76,7 +81,7 @@
                                     visuallyHiddenText: "change pay rate"
                                 },
                                 {
-                                    href: "remove-flat-rate?bandId=" + flatRate.bandId + "&fromEditActivity=true",
+                                    href: "remove-flat-rate?bandId=" + flatRate.bandId + fromEditText,
                                     text: "Remove",
                                     visuallyHiddenText: "remove flat rate"
                                 }
@@ -90,6 +95,11 @@
             }) }}
 
             <form method="POST">
+                {% if session.req.query.fromEditActivity %}
+                    {% set fromEditText = "?fromEditActivity=true" %}
+                {% else %}
+                    {% set fromEditText = "" %}
+                {% endif %}
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({
@@ -97,7 +107,7 @@
                     }) }}
                     {{ govukButton({
                         text: "Add another pay rate",
-                        href: 'pay-rate-type?fromEditActivity=true',
+                        href: 'pay-rate-type' + fromEditText,
                         classes: "govuk-button--secondary"
                     }) }}
                 </div>
