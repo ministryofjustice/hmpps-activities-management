@@ -1,6 +1,4 @@
 {% extends "govuk/template.njk" %}
-{% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% block head %}
   <!--[if !IE 8]><!-->
@@ -21,29 +19,7 @@
 {% endblock %}
 
 {% block beforeContent %}
-  {{ govukPhaseBanner({
-    attributes: {
-      role: "complementary"
-    },
-    tag: {
-      text: "beta"
-    },
-    classes: 'govuk-!-display-none-print',
-    html: 'This is a new service – your feedback will help us to improve it.'
-  }) }}
-
-  {% if backLinkHref %}
-    <nav class="govuk-!-display-none-print">
-      {{ govukBackLink({
-        text: backLinkText or "Back",
-        href: backLinkHref,
-        classes: 'js-backlink' if not noJsBackLink
-      }) }}
-    </nav>
-  {% endif %}
-  {% include 'partials/formErrorSummary.njk' %}
-  {% include 'partials/successMessage.njk' %}
-  <span class="govuk-visually-hidden" id="{{ pageId }}"></span>
+  {% include 'partials/beforeContent.njk' %}
 {% endblock %}
 
 {% block footer %}
