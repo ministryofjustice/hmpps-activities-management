@@ -89,14 +89,6 @@ export default {
       },
       agent: new AgentConfig(Number(get('PRISON_API_TIMEOUT_RESPONSE', 30000))),
     },
-    whereaboutsApi: {
-      url: get('WHEREABOUTS_API_URL', 'http://localhost:8080', requiredInProduction),
-      timeout: {
-        response: Number(get('WHEREABOUTS_API_TIMEOUT_RESPONSE', 30000)),
-        deadline: Number(get('WHEREABOUTS_API_TIMEOUT_DEADLINE', 30000)),
-      },
-      agent: new AgentConfig(Number(get('WHEREABOUTS_API_TIMEOUT_RESPONSE', 30000))),
-    },
     prisonerSearchApi: {
       url: get('PRISONER_SEARCH_API_URL', 'http://localhost:8090', requiredInProduction),
       timeout: {
