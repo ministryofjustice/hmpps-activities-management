@@ -66,7 +66,7 @@ export const getAppointmentApplyToOptions = (req: Request) => {
       applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
       description: `Just this one - ${formatDate(new Date(appointmentJourney.startDate.date), 'EEEE, d MMMM yyyy')} (${
         editAppointmentJourney.sequenceNumber
-      } of ${maxSequenceNumber(editAppointmentJourney)})`,
+      } of ${maxAppointmentSequenceNumber(editAppointmentJourney)})`,
     },
   ] as AppointmentApplyToOption[]
 
@@ -79,7 +79,7 @@ export const getAppointmentApplyToOptions = (req: Request) => {
           : 'This one and all the appointments that come after it in the series',
         additionalDescription: `You’re ${getEditHintAction(appointmentJourney, editAppointmentJourney)} appointments ${
           editAppointmentJourney.sequenceNumber
-        } to ${maxSequenceNumber(editAppointmentJourney)}`,
+        } to ${maxAppointmentSequenceNumber(editAppointmentJourney)}`,
       })
     }
 
@@ -93,7 +93,9 @@ export const getAppointmentApplyToOptions = (req: Request) => {
         additionalDescription: `You’re ${getEditHintAction(
           appointmentJourney,
           editAppointmentJourney,
-        )} appointments ${minSequenceNumber(editAppointmentJourney)} to ${maxSequenceNumber(editAppointmentJourney)}`,
+        )} appointments ${minAppointmentSequenceNumber(editAppointmentJourney)} to ${maxAppointmentSequenceNumber(
+          editAppointmentJourney,
+        )}`,
       })
     }
   }
@@ -125,18 +127,18 @@ const getEditHintAction = (appointmentJourney: AppointmentJourney, editAppointme
   return 'changing'
 }
 
-const minSequenceNumber = (editAppointmentJourney: EditAppointmentJourney) =>
+export const minAppointmentSequenceNumber = (editAppointmentJourney: EditAppointmentJourney) =>
   Array.isArray(editAppointmentJourney.sequenceNumbers) && editAppointmentJourney.sequenceNumbers.length
     ? Math.min(...editAppointmentJourney.sequenceNumbers)
     : editAppointmentJourney.sequenceNumber
 
-const maxSequenceNumber = (editAppointmentJourney: EditAppointmentJourney) =>
+export const maxAppointmentSequenceNumber = (editAppointmentJourney: EditAppointmentJourney) =>
   Array.isArray(editAppointmentJourney.sequenceNumbers) && editAppointmentJourney.sequenceNumbers.length
     ? Math.max(...editAppointmentJourney.sequenceNumbers)
     : editAppointmentJourney.repeatCount
 
 const isFirstRemainingOccurrence = (editAppointmentJourney: EditAppointmentJourney) =>
-  editAppointmentJourney.sequenceNumber === minSequenceNumber(editAppointmentJourney)
+  editAppointmentJourney.sequenceNumber === minAppointmentSequenceNumber(editAppointmentJourney)
 
 const isSecondLastRemainingOccurrence = (editAppointmentJourney: EditAppointmentJourney) =>
   Array.isArray(editAppointmentJourney.sequenceNumbers) &&
@@ -145,7 +147,7 @@ const isSecondLastRemainingOccurrence = (editAppointmentJourney: EditAppointment
     editAppointmentJourney.sequenceNumbers[editAppointmentJourney.sequenceNumbers.length - 2]
 
 const isLastRemainingOccurrence = (editAppointmentJourney: EditAppointmentJourney) =>
-  editAppointmentJourney.sequenceNumber === maxSequenceNumber(editAppointmentJourney)
+  editAppointmentJourney.sequenceNumber === maxAppointmentSequenceNumber(editAppointmentJourney)
 
 export const hasAnyAppointmentPropertyChanged = (
   appointmentJourney: AppointmentJourney,

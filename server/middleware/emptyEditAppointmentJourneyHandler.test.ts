@@ -34,7 +34,6 @@ describe('emptyEditAppointmentJourneyHandler', () => {
       req.session.appointmentJourney = null
       req.session.editAppointmentJourney = {
         repeatCount: 1,
-        occurrencesRemaining: 1,
         sequenceNumbers: [1],
         sequenceNumber: 1,
       }
@@ -55,7 +54,6 @@ describe('emptyEditAppointmentJourneyHandler', () => {
       req.session.appointmentJourney = { mode: AppointmentJourneyMode.CREATE, type: AppointmentType.INDIVIDUAL }
       req.session.editAppointmentJourney = {
         repeatCount: 1,
-        occurrencesRemaining: 1,
         sequenceNumbers: [1],
         sequenceNumber: 1,
       }

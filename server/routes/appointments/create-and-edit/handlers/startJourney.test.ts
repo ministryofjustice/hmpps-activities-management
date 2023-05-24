@@ -146,7 +146,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       const editAppointmentJourneySession = {
         repeatCount: 3,
-        occurrencesRemaining: 2,
         sequenceNumbers: [2, 3],
         sequenceNumber: 2,
       } as EditAppointmentJourney
