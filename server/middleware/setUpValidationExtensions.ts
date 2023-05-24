@@ -10,7 +10,7 @@ export default function setUpValidationExtensions(): Router {
     }
 
     res.validationFailed = (field?: string, message?: string): void => {
-      if (field !== undefined && field !== null && message) {
+      if (message) {
         res.addValidationError(field, message)
       }
 
