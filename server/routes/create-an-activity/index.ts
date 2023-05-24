@@ -41,7 +41,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const payHandler = new PayRoutes(prisonService, activitiesService)
   const removePayHandler = new RemovePayRoutes()
   const removeFlatRateHandler = new RemoveFlatRateRoutes()
-  const checkPayHandler = new CheckPayRoutes(prisonService)
+  const checkPayHandler = new CheckPayRoutes(activitiesService, prisonService)
   const qualificationHandler = new QualificationRoutes()
   const educationLevelHandler = new EducationLevelRoutes(prisonService)
   const removeEducationLevelHandler = new RemoveEducationLevelRoutes()

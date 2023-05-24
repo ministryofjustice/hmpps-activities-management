@@ -33,6 +33,11 @@ export default class RemovePayRoutes {
     const payInfo = req.session.createJourney.pay[payIndex]
     req.session.createJourney.pay.splice(payIndex, 1)
 
+    if (req.query && req.query.fromEditActivity)
+      return res.redirectWithSuccess(
+        'check-pay?fromEditActivity=true',
+        `${payInfo.incentiveLevel} incentive level rate ${payInfo.bandAlias} removed`,
+      )
     return res.redirectWithSuccess(
       'check-pay',
       `${payInfo.incentiveLevel} incentive level rate ${payInfo.bandAlias} removed`,

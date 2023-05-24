@@ -86,7 +86,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
     })
   })
 
-  it('should save entered risk level in database', async () => {
+  it('should save entered education levels in database', async () => {
     const updatedActivity = {
       minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'Reading Measure 1.0' }],
     }

@@ -32,6 +32,8 @@ export default class RemoveFlatRateRoutes {
     const flatRateInfo = req.session.createJourney.flat[flatRateIndex]
     req.session.createJourney.flat.splice(flatRateIndex, 1)
 
+    if (req.query && req.query.fromEditActivity)
+      return res.redirectWithSuccess('check-pay?fromEditActivity=true', `Flat rate ${flatRateInfo.bandAlias} removed`)
     return res.redirectWithSuccess('check-pay', `Flat rate ${flatRateInfo.bandAlias} removed`)
   }
 }

@@ -142,6 +142,16 @@
                         },
                         value: {
                             html: paySummary(incentiveLevelPays)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/create/check-pay?fromEditActivity=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change pay",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
                         }
                     }
                 ]

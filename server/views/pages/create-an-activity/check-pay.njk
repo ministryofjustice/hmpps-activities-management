@@ -36,12 +36,12 @@
                             actions: {
                                 items: [
                                     {
-                                        href: "pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId,
+                                        href: "pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true",
                                         text: "Change",
                                         visuallyHiddenText: "change pay rate"
                                     },
                                     {
-                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId,
+                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true",
                                         text: "Remove",
                                         visuallyHiddenText: "remove pay rate"
                                     }
@@ -76,7 +76,7 @@
                                     visuallyHiddenText: "change pay rate"
                                 },
                                 {
-                                    href: "remove-flat-rate?bandId=" + flatRate.bandId,
+                                    href: "remove-flat-rate?bandId=" + flatRate.bandId + "&fromEditActivity=true",
                                     text: "Remove",
                                     visuallyHiddenText: "remove flat rate"
                                 }
@@ -97,7 +97,7 @@
                     }) }}
                     {{ govukButton({
                         text: "Add another pay rate",
-                        href: 'pay-rate-type',
+                        href: 'pay-rate-type?fromEditActivity=true',
                         classes: "govuk-button--secondary"
                     }) }}
                 </div>
