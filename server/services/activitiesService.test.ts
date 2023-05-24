@@ -34,7 +34,7 @@ import appointmentOccurrenceDetails from './fixtures/appointment_occurrence_deta
 import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
-import { EditApplyTo } from '../@types/appointments'
+import { AppointmentApplyTo } from '../@types/appointments'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -441,7 +441,7 @@ describe('Activities Service', () => {
     it('should edit appointment occurrence', async () => {
       const apiRequest = {
         internalLocationId: 123,
-        applyTo: EditApplyTo.THIS_OCCURRENCE,
+        applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
       }
 
       await activitiesService.editAppointmentOccurrence(1, apiRequest, user)
