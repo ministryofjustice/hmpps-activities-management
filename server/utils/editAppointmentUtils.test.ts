@@ -1,10 +1,14 @@
 import { Request } from 'express'
 import { addDays } from 'date-fns'
-import { formatDate } from './utils'
+import { formatDate, parseDate } from './utils'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentCancellationReason } from '../@types/appointments'
-import { getAppointmentApplyToOptions, isApplyToQuestionRequired } from './editAppointmentUtils'
+import {
+  getAppointmentApplyToOptions,
+  getAppointmentEditMessage,
+  isApplyToQuestionRequired,
+} from './editAppointmentUtils'
 
 describe('Edit Appointment Utils', () => {
   const weekTomorrow = addDays(new Date(), 8)
@@ -58,6 +62,217 @@ describe('Edit Appointment Utils', () => {
 
   afterEach(() => {
     jest.resetAllMocks()
+  })
+
+  describe('get appointment edit message', () => {
+    it('when cancelling an appointment', () => {
+      req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'cancel',
+      )
+    })
+
+    it('when deleting an appointment', () => {
+      req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'delete',
+      )
+    })
+
+    it('when changing the location', () => {
+      req.session.editAppointmentJourney.location = {
+        id: 2,
+        description: 'Updated location',
+      }
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the location for',
+      )
+    })
+
+    it('when changing the start date', () => {
+      req.session.editAppointmentJourney.startDate = {
+        day: 16,
+        month: 5,
+        year: 2023,
+        date: parseDate('2023-05-16'),
+      }
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the date for',
+      )
+    })
+
+    it('when changing the start time', () => {
+      req.session.editAppointmentJourney.startTime = {
+        hour: 10,
+        minute: 0,
+        date: parseDate('2023-05-15T10:00', "yyyy-MM-dd'T'HH:mm"),
+      }
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the time for',
+      )
+    })
+
+    it('when changing the end time', () => {
+      req.session.editAppointmentJourney.endTime = {
+        hour: 14,
+        minute: 30,
+        date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
+      }
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the time for',
+      )
+    })
+
+    it('when changing the end time from null', () => {
+      req.session.appointmentJourney.endTime = null
+      req.session.editAppointmentJourney.endTime = {
+        hour: 14,
+        minute: 30,
+        date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
+      }
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the time for',
+      )
+    })
+
+    it('when changing the start time and end time', () => {
+      req.session.editAppointmentJourney.startTime = {
+        hour: 10,
+        minute: 0,
+        date: parseDate('2023-05-15T10:00', "yyyy-MM-dd'T'HH:mm"),
+      }
+      req.session.editAppointmentJourney.endTime = {
+        hour: 14,
+        minute: 30,
+        date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
+      }
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the time for',
+      )
+    })
+
+    it('when changing the start date and start time', () => {
+      req.session.editAppointmentJourney.startDate = {
+        day: 16,
+        month: 5,
+        year: 2023,
+        date: parseDate('2023-05-16'),
+      }
+      req.session.editAppointmentJourney.startTime = {
+        hour: 10,
+        minute: 0,
+        date: parseDate('2023-05-16T10:00', "yyyy-MM-dd'T'HH:mm"),
+      }
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the date and time for',
+      )
+    })
+
+    it('when changing the start date and end time', () => {
+      req.session.editAppointmentJourney.startDate = {
+        day: 16,
+        month: 5,
+        year: 2023,
+        date: parseDate('2023-05-16'),
+      }
+      req.session.editAppointmentJourney.endTime = {
+        hour: 14,
+        minute: 30,
+        date: parseDate('2023-05-16T14:30', "yyyy-MM-dd'T'HH:mm"),
+      }
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the date and time for',
+      )
+    })
+
+    it('when changing the start date, start time and end time', () => {
+      req.session.editAppointmentJourney.startDate = {
+        day: 16,
+        month: 5,
+        year: 2023,
+        date: parseDate('2023-05-16'),
+      }
+      req.session.editAppointmentJourney.startTime = {
+        hour: 10,
+        minute: 0,
+        date: parseDate('2023-05-16T10:00', "yyyy-MM-dd'T'HH:mm"),
+      }
+      req.session.editAppointmentJourney.endTime = {
+        hour: 14,
+        minute: 30,
+        date: parseDate('2023-05-16T14:30', "yyyy-MM-dd'T'HH:mm"),
+      }
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the date and time for',
+      )
+    })
+
+    it('when changing the comment', () => {
+      req.session.editAppointmentJourney.comment = 'Updated comment'
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the heads up for',
+      )
+    })
+
+    it('when adding one person', () => {
+      req.session.editAppointmentJourney.addPrisoners = [
+        {
+          number: 'A1234BC',
+          name: 'TEST PRISONER',
+          cellLocation: '1-1-1',
+        },
+      ]
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'add Test Prisoner to',
+      )
+    })
+
+    it('when adding two people', () => {
+      req.session.editAppointmentJourney.addPrisoners = [
+        {
+          number: 'A1234BC',
+          name: 'TEST PRISONER1',
+          cellLocation: '1-1-1',
+        },
+        {
+          number: 'B2345CD',
+          name: 'TEST PRISONER2',
+          cellLocation: '1-1-1',
+        },
+      ]
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'add the people to',
+      )
+    })
+
+    it('when removing a person', () => {
+      req.session.editAppointmentJourney.removePrisoner = {
+        prisonerNumber: 'A1234BC',
+        bookingId: 1,
+        firstName: 'TEST',
+        lastName: 'PRISONER',
+        prisonCode: 'MDI',
+        cellLocation: '1-1-1',
+      }
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'remove Test Prisoner from',
+      )
+    })
   })
 
   describe('get appointment apply to options', () => {

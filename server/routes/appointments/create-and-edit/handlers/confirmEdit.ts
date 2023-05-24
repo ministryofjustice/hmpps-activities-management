@@ -23,7 +23,6 @@ export default class ConfirmEditRoutes {
     res.render('pages/appointments/create-and-edit/confirm-edit', {
       appointmentId,
       occurrenceId,
-      editMessage: this.editAppointmentService.getEditMessage(req),
       startDate: new Date(req.session.appointmentJourney.startDate.date),
     })
   }

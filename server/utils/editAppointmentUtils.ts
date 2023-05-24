@@ -1,11 +1,62 @@
 import { Request } from 'express'
 import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentCancellationReason } from '../@types/appointments'
-import { formatDate } from './utils'
+import { convertToTitleCase, formatDate, fullName } from './utils'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 
 export const isApplyToQuestionRequired = (editAppointmentJourney: EditAppointmentJourney) =>
   Array.isArray(editAppointmentJourney.sequenceNumbers) && editAppointmentJourney.sequenceNumbers.length > 1
+
+export const getAppointmentEditMessage = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
+    return 'cancel'
+  }
+
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+    return 'delete'
+  }
+
+  const updateProperties = []
+  if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('location')
+  }
+
+  if (hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('date')
+  }
+
+  if (
+    hasAppointmentStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
+    hasAppointmentEndTimeChanged(appointmentJourney, editAppointmentJourney)
+  ) {
+    updateProperties.push('time')
+  }
+
+  if (hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('heads up')
+  }
+
+  if (updateProperties.length > 0) {
+    return `change the ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')} for`
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length === 1) {
+    return `add ${convertToTitleCase(editAppointmentJourney.addPrisoners[0].name)} to`
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length > 1) {
+    return 'add the people to'
+  }
+
+  if (editAppointmentJourney.removePrisoner) {
+    return `remove ${convertToTitleCase(fullName(editAppointmentJourney.removePrisoner))} from`
+  }
+
+  return ''
+}
 
 export const getAppointmentApplyToOptions = (req: Request) => {
   const { appointmentJourney, editAppointmentJourney } = req.session
@@ -34,7 +85,7 @@ export const getAppointmentApplyToOptions = (req: Request) => {
 
     if (
       !isFirstRemainingOccurrence(editAppointmentJourney) &&
-      !hasStartDateChanged(appointmentJourney, editAppointmentJourney)
+      !hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)
     ) {
       applyToOptions.push({
         applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
@@ -96,7 +147,22 @@ const isSecondLastRemainingOccurrence = (editAppointmentJourney: EditAppointment
 const isLastRemainingOccurrence = (editAppointmentJourney: EditAppointmentJourney) =>
   editAppointmentJourney.sequenceNumber === maxSequenceNumber(editAppointmentJourney)
 
-const hasStartDateChanged = (
+export const hasAnyAppointmentPropertyChanged = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) =>
+  hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney) ||
+  hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney) ||
+  hasAppointmentStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
+  hasAppointmentEndTimeChanged(appointmentJourney, editAppointmentJourney) ||
+  hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)
+
+export const hasAppointmentLocationChanged = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => editAppointmentJourney.location && appointmentJourney.location.id !== editAppointmentJourney.location.id
+
+export const hasAppointmentStartDateChanged = (
   appointmentJourney: AppointmentJourney,
   editAppointmentJourney: EditAppointmentJourney,
 ) => {
@@ -109,3 +175,26 @@ const hasStartDateChanged = (
       startDate.year !== editStartDate.year)
   )
 }
+
+export const hasAppointmentStartTimeChanged = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  const { startTime } = appointmentJourney
+  const editStartTime = editAppointmentJourney.startTime
+  return editStartTime && (startTime.hour !== editStartTime.hour || startTime.minute !== editStartTime.minute)
+}
+
+export const hasAppointmentEndTimeChanged = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  const { endTime } = appointmentJourney
+  const editEndTime = editAppointmentJourney.endTime
+  return editEndTime && (!endTime || endTime.hour !== editEndTime.hour || endTime.minute !== editEndTime.minute)
+}
+
+export const hasAppointmentCommentChanged = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => editAppointmentJourney.comment && appointmentJourney.comment !== editAppointmentJourney.comment
