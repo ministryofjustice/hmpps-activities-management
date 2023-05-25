@@ -14,7 +14,7 @@ jest.mock('../../../../services/editAppointmentService')
 
 const editAppointmentService = new EditAppointmentService(null) as jest.Mocked<EditAppointmentService>
 
-describe('Route Handlers - Create Appointment - Repeat', () => {
+describe('Route Handlers - Edit Appointment - Confirm', () => {
   const handler = new ConfirmEditRoutes(editAppointmentService)
   const weekTomorrow = addDays(new Date(), 8)
   let req: Request

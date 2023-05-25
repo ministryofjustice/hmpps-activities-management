@@ -6,7 +6,7 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { AppointmentCancellationReason } from '../../../../@types/appointments'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 
-describe('Route Handlers - Edit Appointment - Apply To', () => {
+describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
   const handler = new CancellationReasonRoutes()
   let req: Request
   let res: Response
