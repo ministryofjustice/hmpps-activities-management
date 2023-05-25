@@ -21,6 +21,7 @@ import CheckAnswersPage from '../pages/allocateToActivity/checkAnswers'
 import CancelPage from '../pages/allocateToActivity/cancel'
 import ConfirmationPage from '../pages/allocateToActivity/confirmation'
 import AllocationDashboard from '../pages/allocateToActivity/AllocationDashboard'
+import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
 
 context('Allocate to activity', () => {
   beforeEach(() => {
@@ -47,8 +48,12 @@ context('Allocate to activity', () => {
 
   it('should click through allocate to activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.allocateToActivityCard().should('contain.text', 'Allocate an inmate to an activity schedule.')
-    indexPage.allocateToActivityCard().click()
+    indexPage.manageActivitiesAndAllocationsCard().should('contain.text', 'Manage activities and allocations')
+    indexPage.manageActivitiesAndAllocationsCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
+    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.allocateToActivityCard().click()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
     activitiesPage.activityRows().should('have.length', 3)

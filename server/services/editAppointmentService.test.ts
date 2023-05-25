@@ -3,7 +3,7 @@ import ActivitiesService from './activitiesService'
 import EditAppointmentService from './editAppointmentService'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
-import { AppointmentCancellationReason, EditApplyTo } from '../@types/appointments'
+import { AppointmentCancellationReason, AppointmentApplyTo } from '../@types/appointments'
 import { parseDate } from '../utils/utils'
 import { AppointmentOccurrenceCancelRequest, AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
 import { YesNo } from '../@types/activities'
@@ -75,7 +75,6 @@ describe('Edit Appointment Service', () => {
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
 
       expect(service.getEditMessage(req)).toEqual('cancel')
-      expect(service.getEditHintMessage(req)).toEqual('cancelling')
       expect(service.getEditedMessage(req)).toEqual('cancelled')
     })
 
@@ -83,7 +82,6 @@ describe('Edit Appointment Service', () => {
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
       expect(service.getEditMessage(req)).toEqual('delete')
-      expect(service.getEditHintMessage(req)).toEqual('deleting')
       expect(service.getEditedMessage(req)).toEqual('deleted')
     })
 
@@ -94,7 +92,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the location for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the location for')
     })
 
@@ -107,7 +104,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the date for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the date for')
     })
 
@@ -119,7 +115,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the time for')
     })
 
@@ -131,7 +126,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the time for')
     })
 
@@ -144,7 +138,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the time for')
     })
 
@@ -161,7 +154,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the time for')
     })
 
@@ -179,7 +171,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the date and time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the date and time for')
     })
 
@@ -197,7 +188,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the date and time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the date and time for')
     })
 
@@ -220,7 +210,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('change the date and time for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the date and time for')
     })
 
@@ -228,7 +217,6 @@ describe('Edit Appointment Service', () => {
       req.session.editAppointmentJourney.comment = 'Updated comment'
 
       expect(service.getEditMessage(req)).toEqual('change the heads up for')
-      expect(service.getEditHintMessage(req)).toEqual('changing')
       expect(service.getEditedMessage(req)).toEqual('changed the heads up for')
     })
 
@@ -242,7 +230,6 @@ describe('Edit Appointment Service', () => {
       ]
 
       expect(service.getEditMessage(req)).toEqual('add Test Prisoner to')
-      expect(service.getEditHintMessage(req)).toEqual('adding this person to')
       expect(service.getEditedMessage(req)).toEqual('added Test Prisoner to')
     })
 
@@ -261,7 +248,6 @@ describe('Edit Appointment Service', () => {
       ]
 
       expect(service.getEditMessage(req)).toEqual('add the people to')
-      expect(service.getEditHintMessage(req)).toEqual('adding these people to')
       expect(service.getEditedMessage(req)).toEqual('added the people to')
     })
 
@@ -276,7 +262,6 @@ describe('Edit Appointment Service', () => {
       }
 
       expect(service.getEditMessage(req)).toEqual('remove Test Prisoner from')
-      expect(service.getEditHintMessage(req)).toEqual('removing this person from')
       expect(service.getEditedMessage(req)).toEqual('removed Test Prisoner from')
     })
   })
@@ -285,13 +270,13 @@ describe('Edit Appointment Service', () => {
     it('when cancelling an appointment', async () => {
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).toHaveBeenCalledWith(
         2,
         {
           cancellationReasonId: +AppointmentCancellationReason.CANCELLED,
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceCancelRequest,
         res.locals.user,
       )
@@ -308,13 +293,13 @@ describe('Edit Appointment Service', () => {
       req.session.appointmentJourney.repeat = YesNo.NO
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).toHaveBeenCalledWith(
         2,
         {
           cancellationReasonId: +AppointmentCancellationReason.CREATED_IN_ERROR,
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceCancelRequest,
         res.locals.user,
       )
@@ -333,12 +318,12 @@ describe('Edit Appointment Service', () => {
         description: 'Updated location',
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
-        { internalLocationId: 2, applyTo: EditApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
+        { internalLocationId: 2, applyTo: AppointmentApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -357,12 +342,12 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-16'),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
-        { startDate: '2023-05-16', applyTo: EditApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
+        { startDate: '2023-05-16', applyTo: AppointmentApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -380,14 +365,14 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-15T10:00', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
         {
           startTime: '10:00',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -406,14 +391,14 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
         {
           endTime: '14:30',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -433,14 +418,14 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
         {
           endTime: '14:30',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -464,7 +449,7 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
@@ -472,7 +457,7 @@ describe('Edit Appointment Service', () => {
         {
           startTime: '10:00',
           endTime: '14:30',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -497,7 +482,7 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-16T10:00', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
@@ -505,7 +490,7 @@ describe('Edit Appointment Service', () => {
         {
           startDate: '2023-05-16',
           startTime: '10:00',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -530,7 +515,7 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-16T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
@@ -538,7 +523,7 @@ describe('Edit Appointment Service', () => {
         {
           startDate: '2023-05-16',
           endTime: '14:30',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -568,7 +553,7 @@ describe('Edit Appointment Service', () => {
         date: parseDate('2023-05-16T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
@@ -577,7 +562,7 @@ describe('Edit Appointment Service', () => {
           startDate: '2023-05-16',
           startTime: '10:00',
           endTime: '14:30',
-          applyTo: EditApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
         } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
@@ -592,12 +577,15 @@ describe('Edit Appointment Service', () => {
     it('when changing the comment', async () => {
       req.session.editAppointmentJourney.comment = 'Updated comment'
 
-      await service.edit(req, res, EditApplyTo.THIS_OCCURRENCE)
+      await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
 
       expect(activitiesService.cancelAppointmentOccurrence).not.toHaveBeenCalled()
       expect(activitiesService.editAppointmentOccurrence).toHaveBeenCalledWith(
         2,
-        { comment: 'Updated comment', applyTo: EditApplyTo.THIS_OCCURRENCE } as AppointmentOccurrenceUpdateRequest,
+        {
+          comment: 'Updated comment',
+          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+        } as AppointmentOccurrenceUpdateRequest,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(

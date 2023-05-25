@@ -4,6 +4,7 @@ import { IsNumber, Min } from 'class-validator'
 import PrisonService from '../../../services/prisonService'
 import ActivitiesService from '../../../services/activitiesService'
 import IsNotDuplicatedForIep from '../../../validators/bandNotDuplicatedForIep'
+import IsNotDuplicatedForFlat from '../../../validators/bandNotDuplicatedForFlat'
 import PayRateBetweenMinAndMax from '../../../validators/payRateBetweenMinAndMax'
 
 export class Pay {
@@ -21,6 +22,7 @@ export class Pay {
   @Type(() => Number)
   @Min(1, { message: 'Select a pay band' })
   @IsNotDuplicatedForIep({ message: 'A rate for the selected band and incentive level already exists' })
+  @IsNotDuplicatedForFlat({ message: 'A rate for the selected band already exists' })
   bandId: number
 
   @Expose()

@@ -16,7 +16,7 @@ describe('bandNotDuplicatedForIep', () => {
   it('should fail validation if a duplicate band and iep level are selected', async () => {
     const body = {
       bandId: 1,
-      incentiveLevels: ['Basic'],
+      incentiveLevel: 'Basic',
     }
 
     const session = {
@@ -36,7 +36,7 @@ describe('bandNotDuplicatedForIep', () => {
   it('should pass validation if a new bandId is selected for the same iep level', async () => {
     const body = {
       bandId: 2,
-      incentiveLevels: ['Basic'],
+      incentiveLevel: 'Basic',
     }
 
     const session = {
@@ -54,7 +54,7 @@ describe('bandNotDuplicatedForIep', () => {
   it('should pass validation if a new iep level is selected for the same bandId', async () => {
     const body = {
       bandId: 1,
-      incentiveLevels: ['Standard'],
+      incentiveLevel: 'Standard',
     }
 
     const session = {
@@ -72,7 +72,7 @@ describe('bandNotDuplicatedForIep', () => {
   it('should pass validation if no pay exists in session', async () => {
     const body = {
       bandId: 1,
-      incentiveLevels: ['Standard'],
+      incentiveLevel: 'Standard',
     }
 
     const session = {
@@ -88,7 +88,7 @@ describe('bandNotDuplicatedForIep', () => {
   it('should not consider the current pay rate as a duplicate', async () => {
     const body = {
       bandId: 1,
-      incentiveLevels: ['Basic'],
+      incentiveLevel: 'Basic',
       currentPayBand: 1,
       currentIncentiveLevel: 'Basic',
     }

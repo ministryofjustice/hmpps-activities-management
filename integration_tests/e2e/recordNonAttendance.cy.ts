@@ -11,6 +11,7 @@ import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi2
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForNonAttendance.json'
 import NotAttendedReasonPage from '../pages/recordAttendance/notAttendedReason'
 import getCategories from '../fixtures/activitiesApi/getCategories.json'
+import AttendanceDashboardPage from '../pages/recordAttendance/attendanceDashboard'
 
 context('Record non attendance', () => {
   beforeEach(() => {
@@ -34,10 +35,12 @@ context('Record non attendance', () => {
 
   it('should click through record non attendance journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage
-      .recordAttendanceCard()
-      .should('contain.text', 'Mark attendance at activities and appointments and get printable attendance lists.')
-    indexPage.recordAttendanceCard().click()
+    indexPage.markAndManageAttendanceCard().should('contain.text', 'Record activity attendance')
+    indexPage.markAndManageAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().should('contain.text', 'Record attendance and cancel activity sessions')
+    recordAttendancePage.recordAttendanceCard().click()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(format(new Date(2023, 1, 2), 'yyyy-MM-dd'))

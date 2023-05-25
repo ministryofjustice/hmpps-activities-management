@@ -45,17 +45,19 @@ context('Create individual appointment', () => {
 
   it('Should complete create individual appointment journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.appointmentsManagementCard().should('contain.text', 'Appointments management')
+    indexPage.appointmentsManagementCard().should('contain.text', 'Create and manage appointments')
     indexPage
       .appointmentsManagementCard()
-      .should('contain.text', 'Create and manage appointments for individuals and groups.')
+      .should('contain.text', 'Add and edit appointments for individuals and groups of people.')
     indexPage.appointmentsManagementCard().click()
 
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage.createIndividualAppointmentCard().should('contain.text', 'Create an appointment')
     appointmentsManagementPage
       .createIndividualAppointmentCard()
-      .should('contain.text', 'Create an appointment for an individual prisoner in your prison.')
+      .should('contain.text', 'Create individual appointments')
+    appointmentsManagementPage
+      .createIndividualAppointmentCard()
+      .should('contain.text', 'Add an appointment for an individual.')
     appointmentsManagementPage.createIndividualAppointmentCard().click()
 
     let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
