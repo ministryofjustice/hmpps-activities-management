@@ -54,8 +54,6 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         user: {},
       },
       render: jest.fn(),
-      redirect: jest.fn(),
-      redirectOrReturn: jest.fn(),
     } as unknown as Response
   })
 
