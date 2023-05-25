@@ -15,11 +15,10 @@ export class Location {
 }
 
 export default class LocationRoutes {
-  private readonly editAppointmentService: EditAppointmentService
-
-  constructor(private readonly activitiesService: ActivitiesService) {
-    this.editAppointmentService = new EditAppointmentService(activitiesService)
-  }
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly editAppointmentService: EditAppointmentService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
