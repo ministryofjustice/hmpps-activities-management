@@ -1,0 +1,20 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% macro otherEvent(event) %}
+  <div class="govuk-body govuk-!-margin-0">
+      <div class="govuk-!-font-weight-bold">
+        {% if event.eventType == 'ACTIVITY' and event.eventSource =='SAA' %}
+          <a href="/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ event.summary }}</a>
+        {% else %}
+          <span>{{ event.summary }}</span>
+        {% endif %}
+        {% if event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
+          <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+        {% endif %}
+      </div>
+      {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
+        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }} - {{ event.endTime }}</div>
+        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
+      {% endif %}
+  </div>
+{% endmacro %}

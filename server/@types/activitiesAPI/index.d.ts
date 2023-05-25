@@ -912,6 +912,11 @@ export interface components {
        */
       appointmentInstanceId?: number
       /**
+       * @description For appointments from SAA the optional appointment description
+       * @example Meeting with the governor
+       */
+      appointmentDescription?: string
+      /**
        * Format: int64
        * @description For adjudication hearings from NOMIS the ID for the OIC hearing, or null for other types
        * @example 9999
