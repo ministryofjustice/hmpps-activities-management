@@ -7,7 +7,7 @@
 {% from "pages/appointments/partials/add-prisoner-list.njk" import addPrisonerList %}
 
 {% set pageTitle = appointmentJourneyTitle("Confirm Remove Prisoner", session.appointmentJourney) %}
-{% set pageId = 'appointments-create-repeat-page' %}
+{% set pageId = 'appointments-confirm-edit-page' %}
 {% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId + ("/edit/prisoners/add/review-prisoners" if session.editAppointmentJourney.addPrisoners) %}
 
 {% block content %}
