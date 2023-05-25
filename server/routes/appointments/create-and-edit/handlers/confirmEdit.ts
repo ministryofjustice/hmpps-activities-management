@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
 import { YesNo } from '../../../../@types/activities'
-import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 
 export class ConfirmEdit {
@@ -12,10 +11,7 @@ export class ConfirmEdit {
 }
 
 export default class ConfirmEditRoutes {
-  constructor(
-    private readonly activitiesService: ActivitiesService,
-    private readonly editAppointmentService: EditAppointmentService,
-  ) {}
+  constructor(private readonly editAppointmentService: EditAppointmentService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId, occurrenceId } = req.params
