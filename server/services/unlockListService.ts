@@ -91,7 +91,7 @@ export default class UnlockListService {
       return {
         ...prisoner,
         displayName: convertToTitleCase(`${prisoner.lastName}, ${prisoner.firstName}`),
-        events: this.sortByPriority(allEventsForPrisoner),
+        events: this.unlockListSort(allEventsForPrisoner),
       } as UnlockListItem
     })
 
@@ -159,11 +159,11 @@ export default class UnlockListService {
     return ''
   }
 
-  private sortByPriority = (data: ScheduledEvent[]): ScheduledEvent[] => {
+  // Events should be sorted by time, then event name (summary)
+  private unlockListSort = (data: ScheduledEvent[]): ScheduledEvent[] => {
     return data.sort((p1, p2) => {
-      if (p1.priority > p2.priority) return 1
-      if (p1.priority < p2.priority) return -1
       if (p1.startTime < p2.startTime) return -1
+      if (p1.summary.toLowerCase() < p2.summary.toLowerCase()) return -1
       return 0
     })
   }
