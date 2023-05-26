@@ -51,7 +51,11 @@ export default class SelectDateAndLocationRoutes {
     }
     // Uses the user's activeCaseLoadId to get the prison location groups
     const locationGroups = await this.activitiesService.getLocationGroups(user)
-    res.render('pages/unlock-list/select-date-and-location', { locationGroups })
+
+    const today = new Date()
+    const tomorrow = addDays(today, 1)
+
+    res.render('pages/unlock-list/select-date-and-location', { locationGroups, today, tomorrow })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
