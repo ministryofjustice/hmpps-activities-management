@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { addDays, subDays } from 'date-fns'
 import ActivitiesService from '../../../services/activitiesService'
 import { convertToArray, formatDate, getAttendanceSummary, getTimeSlotFromTime, toDate } from '../../../utils/utils'
 import { FilterItem, ActivitiesFilters } from '../../../@types/activities'
@@ -23,9 +22,6 @@ export default class ActivitiesRoutes {
     if (activityDate === undefined) {
       return res.redirect('select-period')
     }
-
-    const previousDay = subDays(new Date(activityDate), 1)
-    const nextDay = addDays(new Date(activityDate), 1)
 
     const sessionFilters = activitiesFilters.sessionFilters
       .filter(session => session.checked)
@@ -73,8 +69,6 @@ export default class ActivitiesRoutes {
     return res.render('pages/record-attendance/activities', {
       activities: activitiesModel,
       activityDate,
-      previousDay,
-      nextDay,
       activitiesFilters,
     })
   }

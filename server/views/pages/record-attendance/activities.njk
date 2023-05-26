@@ -4,8 +4,9 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'activities-page' %}
@@ -14,9 +15,14 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-3">Find an activity to record or edit attendance</h1>
-            <ul class="govuk-list">
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Find an activity to record or edit attendance</h1>
+            <span class="govuk-caption-m govuk-!-margin-bottom-4">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</span>
+            <ul class="govuk-list govuk-!-margin-bottom-4">
+                {% if now | toDateString != activityDate | toDateString %}
+                    <li><a href="?date={{ now | toDateString }}" class="govuk-link govuk-!-font-size-19">View the schedule for today</a></li>
+                {% endif %}
                 <li><a href="select-period" class="govuk-link govuk-!-font-size-19">View the schedule for a different day</a></li>
+                <li><a href="/attendance-summary/summary?date={{ activityDate | toDateString }}" class="govuk-link govuk-!-font-size-19">Go to daily attendance summary</a></li>
             </ul>
         </div>
     </div>
@@ -56,6 +62,9 @@
             idPrefix: 'locationFilters',
             name: 'locationFilters',
             classes: "govuk-checkboxes--small",
+            formGroup: {
+                classes: "govuk-!-margin-bottom-4"
+            },
             fieldset: {
                 legend: {
                     text: 'Locations',
@@ -64,6 +73,9 @@
             },
             items: activitiesFilters.locationFilters
         }) }}
+    {{ govukButton({
+        text: 'Apply filters'
+    }) }}
     {% endset %}
 
     <div class="moj-filter-layout" data-module="activities-list-filter">
@@ -120,20 +132,20 @@
 
                 <nav class="govuk-pagination govuk-pagination--block" role="navigation" aria-label="results">
                     <div class="govuk-pagination__prev">
-                      <a class="govuk-link govuk-pagination__link" href="activities?date={{ previousDay | formatDate('yyyy-MM-dd') }}" rel="prev">
+                      <a class="govuk-link govuk-pagination__link" href="activities?date={{ activityDate | addDays(-1) | formatDate('yyyy-MM-dd') }}" rel="prev">
                         <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
                           <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
                         </svg>
                         <span class="govuk-pagination__link-title">Previous day</span><span class="govuk-visually-hidden">:</span>
-                          <span class="govuk-pagination__link-label">{{ previousDay | formatDate('EEEE d MMMM yyyy') }}</span></a>
+                          <span class="govuk-pagination__link-label">{{ activityDate | addDays(-1) | formatDate('EEEE d MMMM yyyy') }}</span></a>
                     </div>
                     <div class="govuk-pagination__next">
-                      <a class="govuk-link govuk-pagination__link" href="activities?date={{ nextDay | formatDate('yyyy-MM-dd') }}" rel="next">
+                      <a class="govuk-link govuk-pagination__link" href="activities?date={{ activityDate | addDays(1) | formatDate('yyyy-MM-dd') }}" rel="next">
                       <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
                         <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
                       </svg>
                         <span class="govuk-pagination__link-title">Next day</span><span class="govuk-visually-hidden">:</span>
-                          <span class="govuk-pagination__link-label">{{ nextDay | formatDate('EEEE d MMMM yyyy') }}</span></a>
+                          <span class="govuk-pagination__link-label">{{ activityDate | addDays(1) | formatDate('EEEE d MMMM yyyy') }}</span></a>
                     </div>
                 </nav>
             </div>
@@ -233,7 +245,7 @@
                     }
                 },
                 {
-                    text: "Scheduled",
+                    text: "Allocated",
                     classes: 'govuk-table__header--numeric',
                     attributes: {
                         "aria-sort": "none"
