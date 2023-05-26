@@ -23,7 +23,10 @@ export default class RemovePayRoutes {
     const { iep, choice } = req.body
     const bandId = +req.body.bandId
 
-    if (choice !== 'yes') return res.redirect('check-pay')
+    if (choice !== 'yes') {
+      if (req.query && req.query.fromEditActivity) return res.redirect('/schedule/check-pay')
+      return res.redirect('check-pay')
+    }
 
     const payIndex = req.session.createJourney.pay.findIndex(p => p.bandId === bandId && p.incentiveLevel === iep)
 
@@ -35,7 +38,7 @@ export default class RemovePayRoutes {
 
     if (req.query && req.query.fromEditActivity)
       return res.redirectWithSuccess(
-        'check-pay?fromEditActivity=true',
+        '/schedule/check-pay',
         `${payInfo.incentiveLevel} incentive level rate ${payInfo.bandAlias} removed`,
       )
     return res.redirectWithSuccess(

@@ -94,7 +94,7 @@ export default class PayRoutes {
 
     const allIncentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
 
-    if (req.session.createJourney.payRateTypeOption === 'single') {
+    if (req.session.createJourney.payRateTypeOption === 'single' || req.query.iep) {
       req.session.createJourney.pay.push({
         incentiveNomisCode: allIncentiveLevels.find(s2 => s2.iepDescription === incentiveLevel).iepLevel,
         incentiveLevel,
@@ -111,7 +111,7 @@ export default class PayRoutes {
         displaySequence: +displaySequence,
       })
     }
-    if (req.query && req.query.fromEditActivity) res.redirect('check-pay?fromEditActivity=true')
+    if (req.query && req.query.fromEditActivity) res.redirect('/schedule/check-pay')
     else res.redirect('check-pay')
   }
 }

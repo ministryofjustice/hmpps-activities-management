@@ -76,6 +76,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       req = {
         session: {
           createJourney: {
+            activityId: 1,
+            name: 'Maths level 1',
             days: [],
             timeSlotsTuesday: [],
             timeSlotsFriday: [],
@@ -93,7 +95,11 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/schedule/activities/1',
+        'Activity updated',
+        "We've updated the daily schedule for Maths level 1",
+      )
     })
   })
 

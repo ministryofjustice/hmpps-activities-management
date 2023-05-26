@@ -130,9 +130,16 @@ export default class ActivityRoutes {
         displaySequence: pay.prisonPayBand.displaySequence,
       })
     })
+    req.session.createJourney.educationLevels = []
+    activity.minimumEducationLevel.forEach(education => {
+      req.session.createJourney.educationLevels.push({
+        educationLevelCode: education.educationLevelCode,
+        educationLevelDescription: education.educationLevelDescription,
+      })
+    })
 
     const [incentiveLevelPays, schedule] = await Promise.all([
-      this.helper.getPayGroupedByIncentiveLevel(activity, user),
+      this.helper.getPayGroupedByIncentiveLevel(req.session.createJourney.pay, user, activity),
       this.activitiesService.getDefaultScheduleOfActivity(activity, user).then(s => ({
         ...s,
         dailySlots: scheduleSlotsToDayMapper(s.slots),
