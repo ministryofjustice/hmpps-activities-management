@@ -5,7 +5,6 @@ import { isValid } from 'date-fns'
 import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import ActivitiesService from '../../../../services/activitiesService'
-import PrisonService from '../../../../services/prisonService'
 import { AppointmentOccurrenceSearchRequest } from '../../../../@types/activitiesAPI/types'
 import { toDate, toDateString } from '../../../../utils/utils'
 
@@ -13,13 +12,13 @@ export class Search {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @IsNotEmpty({ message: 'Enter a start date' })
-  @IsValidDate({ message: 'Enter a valid start date' })
+  @IsNotEmpty({ message: 'Enter a date' })
+  @IsValidDate({ message: 'Enter a valid date' })
   startDate: SimpleDate
 }
 
 export default class SearchRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -66,7 +65,7 @@ export default class SearchRoutes {
     return res.redirect(
       `?startDate=${startDate.toIsoString()}&timeSlot=${timeSlot ?? ''}&categoryCode=${categoryCode ?? ''}&locationId=${
         locationId ?? ''
-      }&prisonerNumber=${prisonerNumber}&createdBy=${createdBy ?? ''}&type=${type ?? ''}`,
+      }&prisonerNumber=${prisonerNumber ?? ''}&createdBy=${createdBy ?? ''}&type=${type ?? ''}`,
     )
   }
 }

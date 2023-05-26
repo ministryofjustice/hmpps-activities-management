@@ -23,7 +23,7 @@
             text: result.startDate | toDate | formatDate('d MMM yyyy'),
             attributes: { 'data-sort-value': result.startDate + result.startTime, 'data-qa': 'result-date-' + index }
         }, {
-            text: result.startTime + " to " + result.endTime,
+            text: result.startTime + (" to " + result.endTime if result.endTime),
             attributes: { 'data-qa': 'result-time-' + index }
         }, {
             text: result.category.description,
@@ -86,7 +86,7 @@
         {% if (category.code == categoryCode) %}
             {% set selectedFilterCategories = (selectedFilterCategories.push({
                 heading: {
-                    text: 'Type'
+                    text: 'Appointment name'
                 },
                 items: [{
                     href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy + '&type=' + type,
@@ -209,7 +209,7 @@
             id: "categoryCode",
             name: "categoryCode",
             label: {
-                text: "Type",
+                text: "Appointment name",
                 classes: "govuk-label--s"
             },
             errorMessage: validationErrors | findError('categoryCode'),
@@ -261,7 +261,7 @@
                 {
                     value: "all",
                     text: "All appointment creators",
-                    checked: (formResponses.timeSlot or timeSlot) == "all"
+                    checked: (formResponses.createdBy or createdBy) == "all"
                 }
             ]
         }) }}
