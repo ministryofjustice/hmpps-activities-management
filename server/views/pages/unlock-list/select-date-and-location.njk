@@ -28,16 +28,19 @@
                             classes: "govuk-fieldset__legend--m"
                         }
                     },
+                    hint: {
+                        text: "You can get unlock lists for dates from up to 60 days from today"
+                    },
                     errorMessage: validationErrors | findError('datePresetOption'),
                     items: [
                         {
                             value: "today",
-                            text: "Today",
+                            text: "Today - " + today | formatDate('d MMMM yyyy', false),
                             checked: formResponses.datePresetOption == 'today'
                         },
                         {
                             value: "tomorrow",
-                            text: "Tomorrow",
+                            text: "Tomorrow - " + tomorrow | formatDate('d MMMM yyyy', false),
                             checked: formResponses.datePresetOption == 'tomorrow'
                         },
                         {
@@ -70,17 +73,17 @@
                     items: [
                         {
                             value: "am",
-                            text: "Morning (AM)",
+                            text: "(AM) Morning",
                             checked: formResponses.activitySlot == 'am'
                         },
                         {
                             value: "pm",
-                            text: "Afternoon (PM)",
+                            text: "(PM) Afternoon",
                             checked: formResponses.activitySlot == 'pm'
                         },
                         {
                             value: "ed",
-                            text: "Evening (ED)",
+                            text: "(ED) Evening",
                             checked: formResponses.activitySlot == 'ed'
                         }
                     ]
