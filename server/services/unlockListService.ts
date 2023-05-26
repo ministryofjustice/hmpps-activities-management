@@ -163,7 +163,9 @@ export default class UnlockListService {
   private unlockListSort = (data: ScheduledEvent[]): ScheduledEvent[] => {
     return data.sort((p1, p2) => {
       if (p1.startTime < p2.startTime) return -1
+      if (p1.startTime > p2.startTime) return 1
       if (p1.summary.toLowerCase() < p2.summary.toLowerCase()) return -1
+      if (p1.summary.toLowerCase() > p2.summary.toLowerCase()) return 1
       return 0
     })
   }
