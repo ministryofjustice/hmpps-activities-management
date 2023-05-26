@@ -4,19 +4,23 @@
 {% macro addPrisonerList(prisoners) %}
     {% if prisoners.length > 1 %}
         {% set prisonersList = [] %}
+        {% set index = 0 %}
         {% for prisoner in prisoners %}
             {% set prisonersList = (prisonersList.push([
                 {
-                    html: showProfileLink({
-                    name: prisoner.name,
-                    link: true
-                })
+                    html: '<a href="' + dpsUrl + '/prisoner/' + prisoner.number + '" target="_blank" class="govuk-link govuk-link--no-visited-state">' +
+                              (prisoner.name | toTitleCase | prisonerName) +
+                          '</a>',
+                    attributes: { 'data-qa': 'prisoner-name-' + index }
                 }, {
-                    text: prisoner.number
+                    text: prisoner.number,
+                    attributes: { 'data-qa': 'prisoner-number-' + index }
                 }, {
-                    text: prisoner.cellLocation
+                    text: prisoner.cellLocation,
+                    attributes: { 'data-qa': 'prisoner-cell-location-' + index }
                 }
             ]), prisonersList) %}
+            {% set index = index + 1 %}
         {% endfor %}
 
         {{ govukTable({
