@@ -6,6 +6,14 @@
 {% set pageTitle = "Activities Management - Record Attendance" %}
 {% set pageId = 'attendance-view-details-page' %}
 
+{% macro attendanceDescription(attendance) %}
+    {% if attendance.attendanceReason.code == "CANCELLED" %}
+        Not attended - Session cancelled
+    {% else %}
+        {{ attendance.attendanceReason.description }}
+    {% endif %}
+{% endmacro %}
+
 {% set summaryListRows = [] %}
 {% set summaryListRows = (summaryListRows.push(
      {
@@ -13,7 +21,7 @@
             text: "Attendance"
         },
         value: {
-            text: attendance.attendanceReason.description
+            text: attendanceDescription(attendance)
         },
         actions: {
             items: [{
@@ -21,9 +29,22 @@
                 text: "Change",
                 visuallyHiddenText: "Change attendance option"
             }]
-        } if not instance.cancelled
+        }
      }
 ), summaryListRows) %}
+{# Always show "comment" row if comments are applicable to attendance reason #}
+{% if attendance.attendanceReason.code in ['SICK', 'CANCELLED'] %}
+    {% set summaryListRows = (summaryListRows.push(
+        {
+            key: {
+                text: "Details"
+            },
+            value: {
+                text: attendance.comment
+            }
+        }
+    ), summaryListRows) %}
+{% endif %}
 {% if attendance.otherAbsenceReason %}
     {% set summaryListRows = (summaryListRows.push(
         {
@@ -63,19 +84,6 @@
             },
             value: {
                 text: attendance.caseNoteText
-            }
-        }
-    ), summaryListRows) %}
-{% endif %}
-{# Always show "comment" row if comments are applicable to attendance reason #}
-{% if attendance.attendanceReason.code in ['SICK', 'CANCELLED'] %}
-    {% set summaryListRows = (summaryListRows.push(
-        {
-            key: {
-                text: "Comment"
-            },
-            value: {
-                text: attendance.comment
             }
         }
     ), summaryListRows) %}
@@ -133,10 +141,24 @@
                                     text: "Attendance"
                                 },
                                 value: {
-                                    text: attendanceHistory.attendanceReason.description
+                                    text: attendanceDescription(attendanceHistory)
                                 }
                              }
                         ), historyListRows) %}
+
+                        {# Always show "comment" row if comments are applicable to attendance reason #}
+                        {% if attendanceHistory.attendanceReason.code in ['SICK', 'CANCELLED'] %}
+                            {% set historyListRows = (historyListRows.push(
+                                {
+                                    key: {
+                                        text: "Details"
+                                    },
+                                    value: {
+                                        text: attendanceHistory.comment
+                                    }
+                                }
+                            ), historyListRows) %}
+                        {% endif %}
 
                         {% if attendanceHistory.otherAbsenceReason %}
                             {% set historyListRows = (historyListRows.push(
@@ -176,20 +198,6 @@
                                     },
                                     value: {
                                         text: attendanceHistory.caseNoteText
-                                    }
-                                }
-                            ), historyListRows) %}
-                        {% endif %}
-
-                        {# Always show "comment" row if comments are applicable to attendance reason #}
-                        {% if attendanceHistory.attendanceReason.code in ['SICK', 'CANCELLED'] %}
-                            {% set historyListRows = (historyListRows.push(
-                                {
-                                    key: {
-                                        text: "Comment"
-                                    },
-                                    value: {
-                                        text: attendanceHistory.comment
                                     }
                                 }
                             ), historyListRows) %}
