@@ -1,14 +1,8 @@
 import { Request, Response } from 'express'
-import ActivitiesService from '../../../../services/activitiesService'
-import EditAppointmentService from '../../../../services/editAppointmentService'
 import ReviewPrisoners from './reviewPrisoners'
 
-jest.mock('../../../../services/activitiesService')
-
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
-
 describe('Route Handlers - Create Appointment - Review Prisoners', () => {
-  const handler = new ReviewPrisoners(new EditAppointmentService(activitiesService))
+  const handler = new ReviewPrisoners()
   let req: Request
   let res: Response
 

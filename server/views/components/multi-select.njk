@@ -107,11 +107,13 @@
                 <div class='govuk-button-group'>
                     {% for action in params.actions %}
                         {{ govukButton({
+                            href: action.href if action.href,
                             text: action.text,
                             classes: 'govuk-button--white',
                             preventDoubleClick: true,
                             attributes: {
-                                formaction: action.formAction
+                                formaction: action.formAction,
+                                'data-max-items': action.maxItems if action.maxItems
                             }
                         }) }}
                     {% endfor %}

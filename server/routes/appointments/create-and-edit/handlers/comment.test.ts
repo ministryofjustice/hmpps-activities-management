@@ -1,16 +1,19 @@
 import { Request, Response } from 'express'
 import CommentRoutes from './comment'
-import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
+import { YesNo } from '../../../../@types/activities'
+import { AppointmentJourneyMode } from '../appointmentJourney'
 
-jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/editAppointmentService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const editAppointmentService = new EditAppointmentService(null) as jest.Mocked<EditAppointmentService>
 
 describe('Route Handlers - Create Appointment - Comment', () => {
-  const handler = new CommentRoutes(new EditAppointmentService(activitiesService))
+  const handler = new CommentRoutes(editAppointmentService)
   let req: Request
   let res: Response
+  const appointmentId = '1'
+  const occurrenceId = '2'
 
   beforeEach(() => {
     res = {
@@ -42,11 +45,39 @@ describe('Route Handlers - Create Appointment - Comment', () => {
 
   describe('GET', () => {
     it('should render the comment view with back to repeat and continue', async () => {
+      req.session.appointmentJourney.repeat = YesNo.NO
+
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/comment', {
         backLinkHref: 'repeat',
         isCtaAcceptAndSave: false,
+      })
+    })
+
+    it('should render the comment view with back to repeat period and count and continue', async () => {
+      req.session.appointmentJourney.repeat = YesNo.YES
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/comment', {
+        backLinkHref: 'repeat-period-and-count',
+        isCtaAcceptAndSave: false,
+      })
+    })
+
+    it('should render the comment view with back to occurrence details and accept and save', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.params = {
+        appointmentId,
+        occurrenceId,
+      }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/comment', {
+        backLinkHref: `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+        isCtaAcceptAndSave: true,
       })
     })
   })
@@ -67,24 +98,20 @@ describe('Route Handlers - Create Appointment - Comment', () => {
   describe('EDIT', () => {
     beforeEach(() => {
       req.params = {
-        appointmentId: '2',
-        occurrenceId: '12',
+        appointmentId,
+        occurrenceId,
       }
     })
 
-    it('should update the comment and redirect back to the occurrence details page', async () => {
+    it('should update the comment and call redirect or edit', async () => {
       req.body = {
         comment: 'Updated appointment level comment',
       }
 
       await handler.EDIT(req, res)
 
-      expect(activitiesService.editAppointmentOccurrence)
-
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/appointments/2/occurrence/12',
-        "You've changed the heads up for this appointment",
-      )
+      expect(req.session.editAppointmentJourney.comment).toEqual('Updated appointment level comment')
+      expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'comment')
     })
   })
 })

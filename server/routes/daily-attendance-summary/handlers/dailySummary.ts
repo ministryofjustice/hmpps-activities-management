@@ -41,7 +41,7 @@ export default class DailySummaryRoutes {
       .then(scheduledActivities =>
         scheduledActivities.map(activity => ({
           id: activity.id,
-          category: activity.activitySchedule.activity.category.code,
+          category: activity.activitySchedule.activity.category.name,
           timeSlot: getTimeSlotFromTime(activity.startTime),
           cancelled: activity.cancelled,
           cancelledReason: activity.cancelledReason,

@@ -1,47 +1,40 @@
 import { Expose, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../utils/utils'
-import IsNotDuplicatedForIep from './bandNotDuplicatedForIep'
+import IsNotDuplicatedForFlat from './bandNotDuplicatedForFlat'
 
-describe('bandNotDuplicatedForIep', () => {
+describe('bandNotDuplicatedForFlat', () => {
   class DummyForm {
     @Expose()
-    @IsNotDuplicatedForIep({ message: 'A rate for the selected band and incentive level already exists' })
+    @IsNotDuplicatedForFlat({ message: 'A rate for the selected band already exists' })
     bandId: number
-
-    @Expose()
-    incentiveLevels: string[]
   }
 
-  it('should fail validation if a duplicate band and iep level are selected', async () => {
+  it('should fail validation if a duplicate band is selected', async () => {
     const body = {
       bandId: 1,
-      incentiveLevel: 'Basic',
     }
 
     const session = {
       createJourney: {
-        pay: [{ bandId: 1, incentiveLevel: 'Basic' }],
+        flat: [{ bandId: 1 }],
       },
     }
 
     const requestObject = plainToInstance(DummyForm, { ...body, ...session })
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-    expect(errors).toEqual([
-      { property: 'bandId', error: 'A rate for the selected band and incentive level already exists' },
-    ])
+    expect(errors).toEqual([{ property: 'bandId', error: 'A rate for the selected band already exists' }])
   })
 
-  it('should pass validation if a new bandId is selected for the same iep level', async () => {
+  it('should pass validation if a new bandId is selected', async () => {
     const body = {
       bandId: 2,
-      incentiveLevel: 'Basic',
     }
 
     const session = {
       createJourney: {
-        pay: [{ bandId: 1, incentiveLevel: 'Basic' }],
+        pay: [{ bandId: 1 }],
       },
     }
 
@@ -51,28 +44,9 @@ describe('bandNotDuplicatedForIep', () => {
     expect(errors).toHaveLength(0)
   })
 
-  it('should pass validation if a new iep level is selected for the same bandId', async () => {
+  it('should pass validation if no flat pay exists in session', async () => {
     const body = {
       bandId: 1,
-      incentiveLevel: 'Standard',
-    }
-
-    const session = {
-      createJourney: {
-        pay: [{ bandId: 1, incentiveLevel: 'Basic' }],
-      },
-    }
-
-    const requestObject = plainToInstance(DummyForm, { ...body, ...session })
-    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-    expect(errors).toHaveLength(0)
-  })
-
-  it('should pass validation if no pay exists in session', async () => {
-    const body = {
-      bandId: 1,
-      incentiveLevel: 'Standard',
     }
 
     const session = {
@@ -88,14 +62,12 @@ describe('bandNotDuplicatedForIep', () => {
   it('should not consider the current pay rate as a duplicate', async () => {
     const body = {
       bandId: 1,
-      incentiveLevel: 'Basic',
       currentPayBand: 1,
-      currentIncentiveLevel: 'Basic',
     }
 
     const session = {
       createJourney: {
-        pay: [{ bandId: 1, incentiveLevel: 'Basic' }],
+        pay: [{ bandId: 1 }],
       },
     }
 

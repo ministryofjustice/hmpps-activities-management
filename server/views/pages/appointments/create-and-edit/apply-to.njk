@@ -13,17 +13,11 @@
 {% set applyToItems = [] %}
 {% for applyToOption in applyToOptions %}
     {% set applyToItems = (applyToItems.push({
-        value: applyToOption,
-        text: ("Just this one - " + startDate | formatDate('EEEE, d MMMM yyyy') + " (" + session.editAppointmentJourney.sequenceNumber + " of " + session.editAppointmentJourney.repeatCount + ")" if applyToOption == EditApplyTo.THIS_OCCURRENCE) +
-              ("This one and all the appointments that come after it in the series" if (applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES or (applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence)) and isSecondLastRemainingOccurrence == false) +
-              ("This one and the appointment that comes after it in the series" if isSecondLastRemainingOccurrence and (applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES or (applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence))) +
-              ("This one and all the appointments in the series that haven’t happened yet" if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES and isFirstRemainingOccurrence == false),
+        value: applyToOption.applyTo,
+        text: applyToOption.description,
         hint: {
-            text: "You’re " + editHintMessage + " appointments " +
-                  (session.editAppointmentJourney.sequenceNumber if applyToOption == EditApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES) +
-                  (session.editAppointmentJourney.repeatCount - session.editAppointmentJourney.occurrencesRemaining + 1 if applyToOption == EditApplyTo.ALL_FUTURE_OCCURRENCES) +
-                  " to " + session.editAppointmentJourney.repeatCount
-        } if applyToOption != EditApplyTo.THIS_OCCURRENCE
+            text: applyToOption.additionalDescription
+        }
     } ), categoryOptions) %}
 {% endfor %}
 
@@ -31,7 +25,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-            <h1 class="govuk-heading-l">Which appointments do you want to {{ editMessage }}?</h1>
+            <h1 class="govuk-heading-l">Which appointments do you want to {{ getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) }}?</h1>
 
             {{ addPrisonerList(session.editAppointmentJourney.addPrisoners) }}
 
