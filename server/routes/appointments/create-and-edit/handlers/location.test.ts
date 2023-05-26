@@ -5,19 +5,23 @@ import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import LocationRoutes, { Location } from './location'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AppointmentJourney } from '../appointmentJourney'
+import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
-import atLeast from '../../../../../jest.setup'
 import { AppointmentLocationSummary } from '../../../../@types/activitiesAPI/types'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/editAppointmentService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const editAppointmentService = new EditAppointmentService(null) as jest.Mocked<EditAppointmentService>
 
 describe('Route Handlers - Create Appointment - Location', () => {
-  const handler = new LocationRoutes(activitiesService)
+  const handler = new LocationRoutes(activitiesService, editAppointmentService)
   let req: Request
   let res: Response
+  const appointmentId = '1'
+  const occurrenceId = '2'
 
   const locations = [
     {
@@ -63,7 +67,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
   })
 
   describe('GET', () => {
-    it('should render the location view', async () => {
+    it('should render the location view with back to category and continue', async () => {
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
 
       await handler.GET(req, res)
@@ -72,6 +76,24 @@ describe('Route Handlers - Create Appointment - Location', () => {
         locations,
         backLinkHref: 'category',
         isCtaAcceptAndSave: false,
+      })
+    })
+
+    it('should render the location view with back to occurrence details and accept and save', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.params = {
+        appointmentId,
+        occurrenceId,
+      }
+
+      when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/location', {
+        locations,
+        backLinkHref: `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+        isCtaAcceptAndSave: true,
       })
     })
   })
@@ -91,6 +113,23 @@ describe('Route Handlers - Create Appointment - Location', () => {
         description: 'Gym',
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
+    })
+
+    it('should save selected location in session and redirect to bulk appointment date page', async () => {
+      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.body = {
+        locationId: 26149,
+      }
+
+      when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
+
+      await handler.CREATE(req, res)
+
+      expect(req.session.appointmentJourney.location).toEqual({
+        id: 26149,
+        description: 'Gym',
+      })
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('bulk-appointment-date')
     })
 
     it('validation fails when selected location is not found', async () => {
@@ -114,7 +153,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
       }
     })
 
-    it('should update the occurrence and redirect back to the occurrence details page', async () => {
+    it('should update the occurrence and call redirect or edit', async () => {
       req.body = {
         locationId: 26149,
       }
@@ -129,16 +168,10 @@ describe('Route Handlers - Create Appointment - Location', () => {
       req.session.editAppointmentJourney = {} as unknown as EditAppointmentJourney
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
-      when(activitiesService.editAppointmentOccurrence).calledWith(atLeast(12))
 
       await handler.EDIT(req, res)
 
-      expect(activitiesService.editAppointmentOccurrence)
-
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/appointments/2/occurrence/12',
-        "You've changed the location for this appointment",
-      )
+      expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'location')
     })
 
     it('validation fails when selected location is not found', async () => {

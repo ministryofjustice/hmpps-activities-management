@@ -25,7 +25,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-            <h1 class="govuk-heading-l">Which appointments do you want to {{ editMessage }}?</h1>
+            <h1 class="govuk-heading-l">Which appointments do you want to {{ getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) }}?</h1>
 
             {{ addPrisonerList(session.editAppointmentJourney.addPrisoners) }}
 
