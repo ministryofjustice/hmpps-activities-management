@@ -12,6 +12,9 @@ const view = fs.readFileSync('server/views/pages/appointments/search/results.njk
 describe('Views - Appointments Management - Appointment Search Results', () => {
   let compiledTemplate: Template
   let viewContext = {
+    user: {
+      username: '',
+    },
     startDate: simpleDateFromDate(new Date()),
     timeSlot: TimeSlot.AM,
     categories: [{}],
@@ -29,6 +32,9 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
   beforeEach(() => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
+      user: {
+        username: 'test.user',
+      },
       startDate: simpleDateFromDate(new Date()),
       timeSlot: TimeSlot.AM,
       categories: [
@@ -45,7 +51,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
           description: 'Gym - Weights',
         },
       ],
-      categoryCode: 'CHAP',
+      categoryCode: 'MEDO',
       locations: [
         {
           id: 26152,
@@ -60,7 +66,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
           description: 'Library',
         },
       ],
-      locationId: 26152,
+      locationId: 26151,
       prisonerNumber: 'A1234BC',
       createdBy: 'all',
       type: AppointmentType.INDIVIDUAL,
@@ -143,6 +149,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
+    expect($('[data-qa=result-date-0]').attr('data-sort-value')).toEqual('2023-05-2610:00')
     expect($('[data-qa=result-time-0]').text().trim()).toEqual('10:00')
   })
 
@@ -161,12 +168,115 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=&categoryCode=CHAP&locationId=26152&prisonerNumber=A1234BC&createdBy=all&type=INDIVIDUAL`,
+      )}&timeSlot=&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=all&type=INDIVIDUAL`,
     )
 
     const checked = $("[name='timeSlot']:checked")
     expect(checked.length).toEqual(1)
     expect(checked.val()).toEqual(timeSlot)
+    expect(
+      $(`label[for='${checked.attr('id')}']`)
+        .text()
+        .trim(),
+    ).toEqual(expectedText)
+  })
+
+  it('should select correct category filter', () => {
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($(".moj-filter__selected > h3:contains('Appointment name')").length).toEqual(1)
+    const removeFilterLink = $(`a.moj-filter__tag:contains('Medical - Doctor')`)
+    expect(removeFilterLink.text().trim()).toEqual(`Remove this filter Medical - Doctor`)
+    expect(removeFilterLink.attr('href')).toEqual(
+      `?startDate=${toDateString(
+        new Date(),
+      )}&timeSlot=am&categoryCode=&locationId=26151&prisonerNumber=A1234BC&createdBy=all&type=INDIVIDUAL`,
+    )
+
+    const selected = $("[name='categoryCode'] > option:selected")
+    expect(selected.val()).toEqual('MEDO')
+    expect(selected.text().trim()).toEqual('Medical - Doctor')
+  })
+
+  it('should select correct location filter', () => {
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($(".moj-filter__selected > h3:contains('Location')").length).toEqual(1)
+    const removeFilterLink = $(`a.moj-filter__tag:contains('Library')`)
+    expect(removeFilterLink.text().trim()).toEqual(`Remove this filter Library`)
+    expect(removeFilterLink.attr('href')).toEqual(
+      `?startDate=${toDateString(
+        new Date(),
+      )}&timeSlot=am&categoryCode=MEDO&locationId=&prisonerNumber=A1234BC&createdBy=all&type=INDIVIDUAL`,
+    )
+
+    const selected = $("[name='locationId'] > option:selected")
+    expect(selected.val()).toEqual('26151')
+    expect(selected.text().trim()).toEqual('Library')
+  })
+
+  it('should use correct prison number filter', () => {
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($(".moj-filter__selected > h3:contains('Prison number')").length).toEqual(1)
+    const removeFilterLink = $(`a.moj-filter__tag:contains('A1234BC')`)
+    expect(removeFilterLink.text().trim()).toEqual(`Remove this filter A1234BC`)
+    expect(removeFilterLink.attr('href')).toEqual(
+      `?startDate=${toDateString(
+        new Date(),
+      )}&timeSlot=am&categoryCode=MEDO&locationId=26151&prisonerNumber=&createdBy=all&type=INDIVIDUAL`,
+    )
+
+    expect($("[name='prisonerNumber']").val()).toEqual('A1234BC')
+  })
+
+  it.each([
+    ['test.user', 'Myself'],
+    ['all', 'All appointment creators'],
+  ])('should select correct created by filter %s %s', (createdBy, expectedText) => {
+    viewContext.createdBy = createdBy
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($(".moj-filter__selected > h3:contains('Created by')").length).toEqual(1)
+    const removeFilterLink = $(`a.moj-filter__tag:contains('${expectedText}')`)
+    expect(removeFilterLink.text().trim()).toEqual(`Remove this filter ${expectedText}`)
+    expect(removeFilterLink.attr('href')).toEqual(
+      `?startDate=${toDateString(
+        new Date(),
+      )}&timeSlot=am&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=&type=INDIVIDUAL`,
+    )
+
+    const checked = $("[name='createdBy']:checked")
+    expect(checked.length).toEqual(1)
+    expect(checked.val()).toEqual(createdBy)
+    expect(
+      $(`label[for='${checked.attr('id')}']`)
+        .text()
+        .trim(),
+    ).toEqual(expectedText)
+  })
+
+  it.each([
+    [AppointmentType.INDIVIDUAL, 'Individual appointment'],
+    [AppointmentType.GROUP, 'Group appointment'],
+  ])('should select correct time period filter %s %s', (type, expectedText) => {
+    viewContext.type = type
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($(".moj-filter__selected > h3:contains('Individual or group')").length).toEqual(1)
+    const removeFilterLink = $(`a.moj-filter__tag:contains('${expectedText}')`)
+    expect(removeFilterLink.text().trim()).toEqual(`Remove this filter ${expectedText}`)
+    expect(removeFilterLink.attr('href')).toEqual(
+      `?startDate=${toDateString(
+        new Date(),
+      )}&timeSlot=am&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=all&type=`,
+    )
+
+    const checked = $("[name='type']:checked")
+    expect(checked.length).toEqual(1)
+    expect(checked.val()).toEqual(type)
     expect(
       $(`label[for='${checked.attr('id')}']`)
         .text()
