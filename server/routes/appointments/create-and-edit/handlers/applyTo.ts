@@ -23,7 +23,6 @@ export default class ApplyToRoutes {
       appointmentId,
       occurrenceId,
       property,
-      editMessage: this.editAppointmentService.getEditMessage(req),
       applyToOptions: getAppointmentApplyToOptions(req),
     })
   }
