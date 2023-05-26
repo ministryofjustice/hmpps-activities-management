@@ -460,8 +460,6 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   async getChangeEvents(
     prison: string,
     date: string,
@@ -475,15 +473,6 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       query: { date, page, size: pageSize },
     })
   }
-=======
-=======
-  /* eslint-disable */
->>>>>>> f6c68ab (SAA-673 fixing failing test and disbale linting on functions that are work in progress.)
-  async getDeallocationReasons(user: ServiceUser) {
-    // TODO: Call an actual endpoint
-
-    console.log(true || user)
->>>>>>> fe62a6d (wip)
 
   async getDeallocationReasons(user: ServiceUser): Promise<DeallocationReason[]> {
     return this.get({
@@ -502,17 +491,5 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
       data: request,
     })
-  }
-
-  /* eslint-disable */
-  async deallocateFromActivity(scheduleId: number, data: any, user: ServiceUser) {
-    // TODO: Call the actual endpoint
-    console.log(true || scheduleId || data || user)
-
-    // return this.post({
-    //   path: `/schedules/${scheduleId}/deallocate`,
-    //   authToken: user.token,
-    //   data,
-    // })
   }
 }

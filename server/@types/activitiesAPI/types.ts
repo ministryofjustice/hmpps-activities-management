@@ -48,3 +48,4 @@ export type EventReviewSearchResults = components['schemas']['EventReviewSearchR
 export type EventReview = components['schemas']['EventReview']
 export type DeallocationReason = components['schemas']['DeallocationReason']
 export type PrisonerDeallocationRequest = components['schemas']['PrisonerDeallocationRequest']
+export type DeallocationReasonCode = components['schemas']['PrisonerDeallocationRequest']['reasonCode']
