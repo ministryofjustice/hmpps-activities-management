@@ -23,7 +23,7 @@
             text: result.startDate | toDate | formatDate('d MMM yyyy'),
             attributes: { 'data-sort-value': result.startDate + result.startTime, 'data-qa': 'result-date-' + index }
         }, {
-            text: result.startTime + " to " + result.endTime,
+            text: result.startTime + (" to " + result.endTime if result.endTime),
             attributes: { 'data-qa': 'result-time-' + index }
         }, {
             text: result.category.description,
