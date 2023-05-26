@@ -71,7 +71,7 @@ describe('Views - Appointments Management - Heads up', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('h1').text()).toContain('Add a heads up')
-    expect($('p').first().text().trim()).toEqual(
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'Attendees may need information about how to prepare for their appointment. You can add this as a heads up which will be printed on their movement slips.',
     )
   })
@@ -82,7 +82,7 @@ describe('Views - Appointments Management - Heads up', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('h1').text()).toContain('Change the heads up')
-    expect($('p').first().text().trim()).toEqual(
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'You can edit information for attendees about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.',
     )
   })
