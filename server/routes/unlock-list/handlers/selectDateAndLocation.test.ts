@@ -48,8 +48,13 @@ describe('Unlock list routes - select date and location', () => {
 
       await handler.GET(req, res)
 
+      const today = new Date()
+      const tomorrow = addDays(today, 1)
+
       expect(res.render).toHaveBeenCalledWith('pages/unlock-list/select-date-and-location', {
         locationGroups: mockedLocationGroups,
+        today,
+        tomorrow,
       })
       expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)
       expect(activitiesService.getLocationGroups).toHaveBeenCalledWith(res.locals.user)
