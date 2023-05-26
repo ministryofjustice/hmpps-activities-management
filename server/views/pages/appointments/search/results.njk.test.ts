@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio'
 import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
+import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import TimeSlot from '../../../../enum/timeSlot'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
@@ -151,6 +152,31 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
 
     expect($('[data-qa=result-date-0]').attr('data-sort-value')).toEqual('2023-05-2610:00')
     expect($('[data-qa=result-time-0]').text().trim()).toEqual('10:00')
+  })
+
+  it('clear filters does not appear if only start date filter is applied', () => {
+    const tomorrow = addDays(new Date(), 1)
+
+    const $ = cheerio.load(compiledTemplate.render({ startDate: simpleDateFromDate(tomorrow) }))
+
+    expect($("a:contains('Clear filters')").length).toEqual(0)
+  })
+
+  it('should use correct start date filter', () => {
+    const tomorrow = addDays(new Date(), 1)
+    viewContext.startDate = simpleDateFromDate(tomorrow)
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    const clearFiltersLink = $("a:contains('Clear filters')")
+    expect(clearFiltersLink.length).toEqual(1)
+    expect(clearFiltersLink.attr('href')).toEqual(`?startDate=${toDateString(tomorrow)}`)
+
+    expect($(".moj-filter__selected > h3:contains('Date')").length).toEqual(0)
+
+    expect($("[name='startDate[day]']").val()).toEqual(`${tomorrow.getDate()}`)
+    expect($("[name='startDate[month]']").val()).toEqual(`${tomorrow.getMonth() + 1}`)
+    expect($("[name='startDate[year]']").val()).toEqual(`${tomorrow.getFullYear()}`)
   })
 
   it.each([
