@@ -3,6 +3,7 @@ import { Expose } from 'class-transformer'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
+import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class Comment {
   @Expose()
@@ -17,10 +18,10 @@ export default class CommentRoutes {
       req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
 
     res.render('pages/appointments/create-and-edit/comment', {
-      backLinkHref: this.editAppointmentService.getBackLinkHref(req, defaultBackLinkHref),
+      backLinkHref: getAppointmentBackLinkHref(req, defaultBackLinkHref),
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !this.editAppointmentService.isApplyToQuestionRequired(req),
+        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
     })
   }
 

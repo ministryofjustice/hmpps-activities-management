@@ -17,15 +17,9 @@
 {% block content %}
     <div class="govuk-grid-row govuk-!-margin-bottom-2">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-2"> Unlock list - {{ unlockFilters.location }}</h1>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ unlockFilters.location }} - Unlock list</h1>
             <div class="govuk-body govuk-!-margin-top-1">{{ unlockFilters.timeSlot | upper }} session</div>
-            <div class="govuk-body govuk-!-margin-top-1">{{ unlockFilters.unlockDate|formatDate('cccc do LLLL y') }}</div>
-
-            <div class="govuk-body govuk-!-display-none-print govuk-!-margin-top-2">
-                <a href="/unlock-list/select-date-and-location" class="govuk-link--no-visited-state">
-                    Choose a different unlock list
-                </a>
-            </div>
+            <div class="govuk-body govuk-!-margin-top-1">{{ unlockFilters.unlockDate|formatDate('cccc d LLLL y') }}</div>
 
             {% set todayOrBefore = unlockFilters.unlockDate | formatDate('yyyy-MM-dd') | todayOrBefore %}
 
@@ -44,14 +38,6 @@
             </div>
         </div>
         <div class="govuk-grid-column-one-third">
-            <div class="govuk-button-group float-right govuk-!-display-none-print">
-                {{ govukButton({
-                    attributes: { id: 'print-unlock' },
-                    text: "Print PDF unlock list",
-                    classes: "govuk-button--blue js-print no-js-hidden",
-                    preventDoubleClick: true
-                }) }}
-            </div>
             <div class="print-only">
                 {{ govukTextarea({
                     attributes: { placeholder: 'Notes' },
@@ -68,7 +54,7 @@
             classes: "govuk-checkboxes--small",
             fieldset: {
                 legend: {
-                    text: 'Sub-locations',
+                    text: 'Residential location',
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
@@ -81,7 +67,7 @@
             classes: "govuk-radios--small",
             fieldset: {
                 legend: {
-                    text: 'Activities',
+                    text: 'Activity',
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
@@ -94,7 +80,7 @@
             classes: "govuk-radios--small",
             fieldset: {
                 legend: {
-                    text: 'Staying or leaving',
+                    text: 'Staying or leaving wing',
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
@@ -150,19 +136,19 @@
                         categories: [
                             {
                                 heading: {
-                                    text: 'Sub-locations'
+                                    text: 'Residential location'
                                 },
                                 items: selectedLocations
                             },
                             {
                                 heading: {
-                                    text: 'Activities'
+                                    text: 'Activity'
                                 },
                                 items: selectedActivities
                             },
                             {
                                 heading: {
-                                    text: 'Staying or leaving'
+                                    text: 'Staying or leaving wing'
                                 },
                                 items: selectedStayingOrLeaving
                             }
@@ -175,7 +161,18 @@
             <div class="moj-filter-layout__content">
                 <div class="moj-action-bar govuk-!-display-none-print">
                     <div class="moj-action-bar__filter"></div>
+
+                    {{ mojButtonMenu({
+                        items: [{
+                            attributes: { id: 'print-unlock' },
+                            text: "Print this unlock list",
+                            classes: "govuk-button--blue js-print no-js-hidden",
+                            preventDoubleClick: true
+                        }]
+                    }) }}
                 </div>
+
+                
                 {% set rows = [] %}
                 {% for item in unlockListItems %}
                     {% set rows = (rows.push([

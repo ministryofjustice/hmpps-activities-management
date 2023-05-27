@@ -8,6 +8,8 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "partials/attendance/otherEvent.njk" import otherEvent %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
@@ -221,22 +223,7 @@
 
 {% macro renderOtherEvents(otherEvents) %}
     {% for event in otherEvents %}
-        <div>
-            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                {% if event.eventType == 'ACTIVITY' and event.eventSource == 'SAA' %}
-                    <a href="/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ event.summary }}</a>
-                {% elseif event.eventType == 'APPOINTMENT' and event.eventSource == 'SAA' %}
-                    <span>{{ event.summary }} {{ event.categoryDescription }}</span>
-                {% else %}
-                    <span>{{ event.summary }}</span>
-                {% endif %}
-            </h2>
-
-            {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
-               <div class="govuk-hint govuk-!-font-size-14 govuk-!-margin-0">{{ event.startTime }} - {{ event.endTime }}</div>
-               <div class="govuk-hint govuk-!-font-size-14 govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
-            {% endif %}
-        </div>
+        {{ otherEvent(event) }}
     {% endfor %}
 {% endmacro %}
 

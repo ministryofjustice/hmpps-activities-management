@@ -1,25 +1,26 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
 {% macro showUnlockEvents(events) %}
     <div class="govuk-body govuk-!-margin-0 govuk-!-font-size-16">
         {% for e in events %}
             {% if not loop.first %}<hr class="mid-grey-tint-20-hr" />{% endif %}
 
-            {% if e.eventType === 'ACTIVITY' and e.eventSource === 'SAA' %}
-                <div class="govuk-!-font-weight-bold">
+            <div class="govuk-!-font-weight-bold">
+                {% if e.eventType === 'ACTIVITY' and e.eventSource === 'SAA' %}
                     <a href="/attendance/activities/{{ e.scheduledInstanceId }}/attendance-list"
-                       class="govuk-link govuk-link--no-visited-state">
+                    class="govuk-link govuk-link--no-visited-state">
                         {{ e.summary | trim }}
                     </a>
-                </div>
-            {% elseif e.eventType === 'APPOINTMENT' and e.eventSource === 'SAA'%}
-                <div class="govuk-!-font-weight-bold">
+                {% elseif e.eventType === 'APPOINTMENT' and e.eventSource === 'SAA'%}
                     <a href="/appointments/{{ e.appointmentId }}/occurrence/{{ e.appointmentOccurrenceId }}"
-                       class="govuk-link govuk-link--no-visited-state">
-                        {{ e.summary | trim }} {{ e.categoryDescription | trim }}
+                    class="govuk-link govuk-link--no-visited-state">
+                        {{ e.summary | trim }}
                     </a>
-                </div>
-            {% else %}
-                <div class="govuk-!-font-weight-bold">{{ e.summary | trim }}</div>
-            {% endif %}
+                    <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+                {% else %}
+                    {{ e.summary | trim }}
+                {% endif %}
+            </div>
 
             {% if e.suspended %}
                 <strong class="govuk-tag govuk-tag--red-border govuk-!-font-size-14">Prisoner suspended</strong>

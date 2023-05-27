@@ -10,6 +10,7 @@ function MultiSelect(container) {
   this.itemsDescriptionSingular = this.stickyBar.getAttribute('data-description-singular')
   this.itemsDescriptionPlural = this.stickyBar.getAttribute('data-description-plural')
   this.clearLink = this.container.querySelector('.multi-select-sticky__clear-link')
+  this.actionButtons = this.container.querySelectorAll('.govuk-button')
 
   this.stickyBar.setAttribute('aria-disabled', 'true')
 
@@ -47,6 +48,8 @@ MultiSelect.prototype.handleCheckboxChanged = function () {
     } else if (count > 1 && this.itemsDescriptionPlural) {
       this.selectedCount.innerText = `${count} ${this.itemsDescriptionPlural} selected`
     }
+
+    this.handleDisabledButtons(count)
   } else {
     this.stickyBar.classList.remove('multi-select-sticky--active')
     this.stickyBar.setAttribute('aria-disabled', 'true')
@@ -60,6 +63,19 @@ MultiSelect.prototype.handleToggleAllButtonChanged = function () {
       var event = document.createEvent('HTMLEvents')
       event.initEvent('change', false, true)
       $el.dispatchEvent(event)
+    }.bind(this)
+  )
+}
+
+MultiSelect.prototype.handleDisabledButtons = function (checkCount) {
+  nodeListForEach(
+    this.actionButtons,
+    function ($el) {
+      if (parseInt($el.dataset.maxItems) < checkCount) {
+        $el.setAttribute('disabled', 'disabled')
+      } else {
+        $el.removeAttribute('disabled')
+      }
     }.bind(this)
   )
 }
