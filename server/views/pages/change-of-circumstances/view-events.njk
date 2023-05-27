@@ -1,0 +1,94 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "moj/components/pagination/macro.njk" import mojPagination %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "components/multi-select.njk" import multiSelect %}
+
+{% set pageTitle = applicationName + " - Review changes in circumstances" %}
+{% set pageId = 'change-of-circumstance-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+        <h1 class="govuk-heading-xl">Changes in circumstances</h1>
+
+        {% set rows = [] %}
+
+        {% for event in changeEvents %}
+
+            {% set rows = (rows.push({
+                visuallyHiddenText: 'Select ' + event.eventReviewId,
+                value: event.eventReviewId + '-' + event.prisonerNumber,
+                selectable: event.acknowledgedBy === null,
+                items: [
+                    {
+                        html: '<span class="print-checkbox govuk-!-margin-left-3"></span>',
+                        classes: 'govuk-table_cell'
+                    },
+                    {
+                        text: event.prisonerNumber
+                    },
+                    {
+                        text: event.eventTime
+                    },
+                    {
+                        text: event.eventType
+                    },
+                    {
+                        text: event.eventData
+                    }
+                ]
+            }), rows) %}
+
+        {% endfor %}
+
+        <form method='POST'>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+            {{ mojPagination(pagination) }}
+
+            {{ multiSelect({
+                id: "changeEvents",
+                caption: "Change events",
+                captionClasses: "govuk-visually-hidden",
+                name: 'selectedEvents',
+                head: [
+                    {
+                        text: "",
+                        classes: 'print-only'
+                    },
+                    {
+                        text: "Prisoner number"
+                    },
+                    {
+                        text: "Event time"
+                    },
+                    {
+                        text: "Event type"
+                    },
+                    {
+                        text: "Description"
+                    }
+                ],
+                rows: rows,
+                actions: [
+                    {
+                        text: 'Acknowledge',
+                        formAction: 'acknowledge'
+                    }
+                ],
+                itemsDescription: {
+                    singular: 'event',
+                    plural: 'events'
+                }
+            }) }}
+
+            {{ mojPagination(pagination) }}
+
+        </form>
+    </div>
+</div>
+{% endblock %}
