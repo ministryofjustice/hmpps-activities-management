@@ -14,35 +14,20 @@ export default class ChangeOfCircumstanceRoutes {
 
     const searchResults = await this.activitiesService.getChangeEvents(prisonCode, queryDate, +page || 0, user)
 
-    logger.info(`Results = ${JSON.stringify(searchResults)}`)
-
-    const paginationArgs: PaginationRequest = {
-      // TODO: Set from the API response - change in flight there.
-      totalResults: 5,
-      currentPage: searchResults.pageNumber,
-      limit: 10, // TODO: Set as a constant?
-    }
-
-    // logger.info(`PaginationArgs = ${JSON.stringify(paginationArgs)}`)
-
-    // TODO: Extend the response to include the totalElements found - in the API
-    const pagination = getPagination(paginationArgs, new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`))
-
-    logger.info(`Pagination = ${JSON.stringify(pagination)}`)
+    logger.info(`Results ${JSON.stringify(searchResults)}`)
 
     // TODO: Get prisoner offender search details for each row of the page
-    // Use - Last name, first name - as "name"
-    // Use - cell-location
-    // Use - number of active / suspended allocations?
 
-    const viewContext = {
-      date: queryDate,
-      page,
-      changeEvents: searchResults.content,
-      pagination,
+    const paginationArgs: PaginationRequest = {
+      totalResults: searchResults.totalElements || 5, // TODO: Temporary until API returns this!!
+      currentPage: searchResults.pageNumber,
+      limit: 10,
     }
+    const pagination = getPagination(paginationArgs, new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`))
 
-    // logger.info(`ViewContext = ${JSON.stringify(viewContext)}`)
+    logger.info(`Pagination ${JSON.stringify(pagination)}`)
+
+    const viewContext = { date: queryDate, page, changeEvents: searchResults.content, pagination }
 
     res.render('pages/change-of-circumstances/view-events', viewContext)
   }

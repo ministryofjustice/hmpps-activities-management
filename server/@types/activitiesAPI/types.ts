@@ -45,3 +45,4 @@ export type AppointmentOccurrenceSearchRequest = components['schemas']['Appointm
 export type AppointmentOccurrenceSearchResult = components['schemas']['AppointmentOccurrenceSearchResult']
 export type AppointmentOccurrenceCancelRequest = components['schemas']['AppointmentOccurrenceCancelRequest']
 export type EventReviewSearchResults = components['schemas']['EventReviewSearchResults']
+export type EventReview = components['schemas']['EventReview']
