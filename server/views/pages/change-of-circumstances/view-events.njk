@@ -42,7 +42,7 @@
                         text: event.prisonerNumber
                     },
                     {
-                        text: event.eventTime
+                        text: event.eventTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMMM yyyy hh:mm a', false)
                     },
                     {
                         html: renderEventTypeTag(event),
