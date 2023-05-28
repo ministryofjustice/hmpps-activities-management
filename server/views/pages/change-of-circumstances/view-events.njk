@@ -4,6 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "moj/components/pagination/macro.njk" import mojPagination %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "components/multi-select.njk" import multiSelect %}
 
 {% set pageTitle = applicationName + " - Review changes in circumstances" %}
@@ -21,12 +22,21 @@
 
             {% set rows = (rows.push({
                 visuallyHiddenText: 'Select ' + event.eventReviewId,
-                value: event.eventReviewId + '-' + event.prisonerNumber,
+                value: event.eventReviewId,
                 selectable: event.acknowledgedBy === null,
                 items: [
                     {
-                        html: '<span class="print-checkbox govuk-!-margin-left-3"></span>',
-                        classes: 'govuk-table_cell'
+                        html: '
+                            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                                <a href="' + dpsUrl + '/prisoner/' + event.prisonerNumber + '"
+                                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + 'MARKE, ANDY**' | toTitleCase + '
+                                </a>
+                            </h2>
+                            <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + event.prisonerNumber + '</div>
+                          ',
+                        attributes: {
+                            "data-qa": "prisoner-details"
+                        }
                     },
                     {
                         text: event.prisonerNumber
@@ -35,60 +45,96 @@
                         text: event.eventTime
                     },
                     {
-                        text: event.eventType
-                    },
-                    {
-                        text: event.eventData
+                        html: renderEventTypeTag(event),
+                        classes: 'govuk-!-display-none-print'
                     }
                 ]
             }), rows) %}
 
         {% endfor %}
 
-        <form method='POST'>
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        {% if rows.length == 0 %}
+            <div class="govuk-body">
+                <h3>There are no changes to show for this date.</h3>
+                <p>To view changes for a different date select the back link and enter different date.</p>
+            </div>
+        {% else %}
 
-            {{ mojPagination(pagination) }}
+            <form method='POST'>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                <input type="hidden" name="date" value="{{ date }}">
+                <input type="hidden" name="page" value="{{ page }}">
 
-            {{ multiSelect({
-                id: "changeEvents",
-                caption: "Change events",
-                captionClasses: "govuk-visually-hidden",
-                name: 'selectedEvents',
-                head: [
-                    {
-                        text: "",
-                        classes: 'print-only'
-                    },
-                    {
-                        text: "Prisoner number"
-                    },
-                    {
-                        text: "Event time"
-                    },
-                    {
-                        text: "Event type"
-                    },
-                    {
-                        text: "Description"
+                {{ mojPagination(pagination) }}
+
+                {{ multiSelect({
+                    id: "changeEvents",
+                    caption: "Change events",
+                    captionClasses: "govuk-visually-hidden",
+                    name: 'selectedEvents',
+                    head: [
+                        {
+                            text: "Name"
+                        },
+                        {
+                            text: "Prison number"
+                        },
+                        {
+                            text: "Event time"
+                        },
+                        {
+                            text: "Event type"
+                        }
+                    ],
+                    rows: rows,
+                    actions: [
+                        {
+                            text: 'Acknowledge',
+                            formAction: 'view-changes'
+                        }
+                    ],
+                    itemsDescription: {
+                        singular: 'event',
+                        plural: 'events'
                     }
-                ],
-                rows: rows,
-                actions: [
-                    {
-                        text: 'Acknowledge',
-                        formAction: 'acknowledge'
-                    }
-                ],
-                itemsDescription: {
-                    singular: 'event',
-                    plural: 'events'
-                }
-            }) }}
+                }) }}
 
-            {{ mojPagination(pagination) }}
+                {{ mojPagination(pagination) }}
 
-        </form>
+            </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
+
+{% macro renderEventTypeTag(event) %}
+    {% if 'non-association' in event.eventType %}
+        {{
+            govukTag({
+                text: "NON-ASSOCIATION",
+                classes: "govuk-tag--orange"
+            })
+        }}
+    {% elseif 'iep-review' in event.eventType %}
+        {{
+            govukTag({
+                text: "IEP STATUS",
+                classes: "govuk-tag--green"
+            })
+        }}
+    {% elseif 'cell.move' in event.eventType %}
+        {{
+            govukTag({
+                text: "CELL-MOVE",
+                classes: "govuk-tag--blue"
+            })
+        }}
+    {% else %}
+        {{
+            govukTag({
+                text: "UNKNOWN-EVENT",
+                classes: "govuk-tag--red"
+            })
+        }}
+    {% endif %}
+{% endmacro %}

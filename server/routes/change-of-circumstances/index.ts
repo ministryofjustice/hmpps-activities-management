@@ -1,6 +1,7 @@
 import { RequestHandler, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import ChangeOfCircumstanceRoutes from './handlers/changeOfCircumstanceRoutes'
+import SelectPeriodForChangesRoutes, { TimePeriodForChanges } from './handlers/selectPeriodForChanges'
 import validationMiddleware from '../../middleware/validationMiddleware'
 import { Services } from '../../services'
 
@@ -12,7 +13,10 @@ export default function Index({ activitiesService }: Services): Router {
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const changeOfCircumstanceHandler = new ChangeOfCircumstanceRoutes(activitiesService)
+  const selectPeriodForChangesHandler = new SelectPeriodForChangesRoutes()
 
+  get('/select-period', selectPeriodForChangesHandler.GET)
+  post('/select-period', selectPeriodForChangesHandler.POST, TimePeriodForChanges)
   get('/view-changes', changeOfCircumstanceHandler.GET)
   post('/view-changes', changeOfCircumstanceHandler.POST)
 

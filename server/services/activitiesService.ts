@@ -43,7 +43,6 @@ import {
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
 
-
 export default class ActivitiesService {
   constructor(
     private readonly activitiesApiClient: ActivitiesApiClient,
@@ -343,7 +342,12 @@ export default class ActivitiesService {
     return this.activitiesApiClient.postCreateBulkAppointment(appointment, user)
   }
 
-  async getChangeEvents(prisonCode: string, requestDate: string, page: number, user: ServiceUser): Promise<EventReviewSearchResults> {
+  async getChangeEvents(
+    prisonCode: string,
+    requestDate: string,
+    page: number,
+    user: ServiceUser,
+  ): Promise<EventReviewSearchResults> {
     return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, user)
   }
 }
