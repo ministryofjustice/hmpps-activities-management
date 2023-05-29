@@ -1,16 +1,20 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../services/activitiesService'
+import PrisonService from '../../../services/prisonService'
 import ChangeOfCircumstanceRoutes from './changeOfCircumstanceRoutes'
 import { EventReview, EventReviewSearchResults } from '../../../@types/activitiesAPI/types'
 import { PageLink } from '../../../utils/paginationUtils'
+import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../services/activitiesService')
+jest.mock('../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Select period for changes', () => {
-  const handler = new ChangeOfCircumstanceRoutes(activitiesService)
+  const handler = new ChangeOfCircumstanceRoutes(activitiesService, prisonService)
   let req: Request
   let res: Response
 
@@ -75,6 +79,16 @@ describe('Route Handlers - Select period for changes', () => {
     },
   ] as EventReview[]
 
+  const prisoners = [
+    {
+      prisonerNumber: 'A1234AA',
+      cellLocation: '1-12-123',
+      firstName: 'Bob',
+      lastName: 'Bobson',
+      dateOfBirth: '11-02-1976',
+    },
+  ] as Prisoner[]
+
   const changeEvents = {
     content,
     totalElements: 3,
@@ -91,8 +105,16 @@ describe('Route Handlers - Select period for changes', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       when(activitiesService.getChangeEvents).mockResolvedValue(changeEvents)
+      when(prisonService.searchInmatesByPrisonerNumbers).mockResolvedValue(prisoners)
       await handler.GET(req, res)
-      const viewContext = { date: `2023-05-16`, page: 0, changeEvents: changeEvents.content, pagination }
+      const results = changeEvents.content.map(item => {
+        return {
+          ...item,
+          name: 'Bobson, Bob',
+          cellLocation: '1-12-123',
+        }
+      })
+      const viewContext = { date: `2023-05-16`, page: 0, changeEvents: results, pagination }
       expect(res.render).toHaveBeenCalledWith('pages/change-of-circumstances/view-events', viewContext)
     })
   })

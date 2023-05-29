@@ -462,12 +462,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     prison: string,
     date: string,
     page: number,
+    pageSize: number,
     user: ServiceUser,
   ): Promise<EventReviewSearchResults> {
     return this.get({
       path: `/event-review/prison/${prison}`,
       authToken: user.token,
-      query: { date, page, size: 10 },
+      query: { date, page, size: pageSize },
     })
   }
 }

@@ -346,8 +346,9 @@ export default class ActivitiesService {
     prisonCode: string,
     requestDate: string,
     page: number,
+    pageSize: number,
     user: ServiceUser,
   ): Promise<EventReviewSearchResults> {
-    return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, user)
+    return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, pageSize, user)
   }
 }
