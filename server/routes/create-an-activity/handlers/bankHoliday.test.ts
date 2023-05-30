@@ -69,7 +69,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
 
       req = {
         session: {
-          createJourney: {},
+          createJourney: { activityId: 1, name: 'Maths level 1' },
         },
         query: {
           fromEditActivity: true,
@@ -81,7 +81,11 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/schedule/activities/1',
+        'Activity updated',
+        "We've updated the bank holiday option for Maths level 1",
+      )
     })
   })
 

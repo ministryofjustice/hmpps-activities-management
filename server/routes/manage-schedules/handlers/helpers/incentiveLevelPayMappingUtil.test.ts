@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import { Request } from 'express'
 import PrisonService from '../../../../services/prisonService'
 import IncentiveLevelPayMappingUtil from './incentiveLevelPayMappingUtil'
 import { ServiceUser } from '../../../../@types/express'
@@ -10,7 +11,7 @@ jest.mock('../../../../services/prisonService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
-describe('Route Handlers - Create an activity - Helper', () => {
+describe('Route Handlers - Edit an activity - Helper', () => {
   const helper = new IncentiveLevelPayMappingUtil(prisonService)
   let user: ServiceUser
   let activity: Activity
@@ -115,24 +116,29 @@ describe('Route Handlers - Create an activity - Helper', () => {
           { iepDescription: 'Enhanced', sequence: 3 },
         ] as IepLevel[])
 
-      const result = await helper.getPayGroupedByIncentiveLevel(activity, user)
+      const req = {
+        session: {
+          createJourney: {
+            pay: [
+              { incentiveLevel: 'Standard', bandId: 2, rate: 200, displaySequence: 2 },
+              { incentiveLevel: 'Standard', bandId: 1, rate: 100, displaySequence: 1 },
+              { incentiveLevel: 'Basic', bandId: 3, rate: 300, displaySequence: 3 },
+              { incentiveLevel: 'Enhanced', bandId: 4, rate: 400, displaySequence: 4 },
+            ],
+          },
+        },
+      } as Request
+
+      const result = await helper.getPayGroupedByIncentiveLevel(req.session.createJourney.pay, user, activity)
       expect(result).toEqual([
         {
           incentiveLevel: 'Basic',
           pays: [
             {
-              incentiveNomisCode: 'BAS',
               incentiveLevel: 'Basic',
-              id: 3,
-              prisonPayBand: {
-                alias: 'Medium',
-                description: 'Pay band 2 (Lowest)',
-                displaySequence: 2,
-                id: 2,
-                nomisPayBand: 2,
-                prisonCode: 'MDI',
-              },
-              rate: 200,
+              bandId: 3,
+              displaySequence: 3,
+              rate: 300,
             },
           ],
         },
@@ -140,32 +146,16 @@ describe('Route Handlers - Create an activity - Helper', () => {
           incentiveLevel: 'Standard',
           pays: [
             {
-              incentiveNomisCode: 'STD',
               incentiveLevel: 'Standard',
-              id: 1,
-              prisonPayBand: {
-                alias: 'Medium',
-                description: 'Pay band 2 (Lowest)',
-                displaySequence: 2,
-                id: 2,
-                nomisPayBand: 2,
-                prisonCode: 'MDI',
-              },
-              rate: 200,
+              bandId: 1,
+              displaySequence: 1,
+              rate: 100,
             },
             {
-              incentiveNomisCode: 'STD',
               incentiveLevel: 'Standard',
-              id: 2,
-              prisonPayBand: {
-                alias: 'Low',
-                description: 'Pay band 2 (Lowest)',
-                displaySequence: 1,
-                id: 1,
-                nomisPayBand: 2,
-                prisonCode: 'MDI',
-              },
-              rate: 100,
+              bandId: 2,
+              displaySequence: 2,
+              rate: 200,
             },
           ],
         },
@@ -173,18 +163,10 @@ describe('Route Handlers - Create an activity - Helper', () => {
           incentiveLevel: 'Enhanced',
           pays: [
             {
-              incentiveNomisCode: 'ENH',
               incentiveLevel: 'Enhanced',
-              id: 4,
-              prisonPayBand: {
-                alias: 'Medium',
-                description: 'Pay band 2 (Lowest)',
-                displaySequence: 4,
-                id: 4,
-                nomisPayBand: 4,
-                prisonCode: 'MDI',
-              },
-              rate: 300,
+              bandId: 4,
+              displaySequence: 4,
+              rate: 400,
             },
           ],
         },
