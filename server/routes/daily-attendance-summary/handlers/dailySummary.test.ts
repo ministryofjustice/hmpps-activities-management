@@ -187,6 +187,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           ED: 0,
           PM: 0,
         },
+        totalCancelledSessions: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
         totalClash: {
           AM: 0,
           DAY: 0,
@@ -371,6 +377,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalCancelled: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalCancelledSessions: {
           AM: 0,
           DAY: 0,
           ED: 0,
