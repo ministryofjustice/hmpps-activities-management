@@ -100,7 +100,7 @@
         <p class="govuk-body govuk-!-margin-bottom-0">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</p>
     </div>
     <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
-        <p class="govuk-body govuk-!-margin-bottom-0">Updated at {{ now | formatDate('HH:MM') }} on {{ now | formatDate('dd MMMM yyyy') }} </p>
+        <p class="govuk-body govuk-!-margin-bottom-0">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('dd MMMM yyyy') }} </p>
     </div>
     <div>
         <h1 class="govuk-heading-l">{{ timeSlotDescription }} attendance summary</h1>
@@ -195,7 +195,7 @@
         </div>
         <hr />
     {% endif %}
-    <h3 class="govuk-heading-s">{{ totalCancelled[timeSlot] }} session{% if totalCancelled[timeSlot] != 1 %}s{% endif %} cancelled</h3>
+    <h3 class="govuk-heading-s">{{ totalCancelledSessions[timeSlot] }} session{% if totalCancelledSessions[timeSlot] != 1 %}s{% endif %} cancelled</h3>
     <div class="govuk-grid-row govuk-!-margin-bottom-1">
         {% if totalStaffUnavailable[timeSlot] > 0 %}
             <div class="govuk-grid-column-one-quarter">
