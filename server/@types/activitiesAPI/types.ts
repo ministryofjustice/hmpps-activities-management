@@ -44,3 +44,5 @@ export type PageActivityCandidate = components['schemas']['PageActivityCandidate
 export type AppointmentOccurrenceSearchRequest = components['schemas']['AppointmentOccurrenceSearchRequest']
 export type AppointmentOccurrenceSearchResult = components['schemas']['AppointmentOccurrenceSearchResult']
 export type AppointmentOccurrenceCancelRequest = components['schemas']['AppointmentOccurrenceCancelRequest']
+export type EventReviewSearchResults = components['schemas']['EventReviewSearchResults']
+export type EventReview = components['schemas']['EventReview']
