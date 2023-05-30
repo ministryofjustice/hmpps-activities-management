@@ -43,7 +43,7 @@ export default class CheckPayRoutes {
         .getIncentiveLevels(user.activeCaseLoadId, user)
         .then(levels => _.sortBy(levels, 'sequence'))
       // eslint-disable-next-line prefer-destructuring
-      minimumIncentiveLevel = incentiveLevels[0]
+      [minimumIncentiveLevel] = incentiveLevels
     }
 
     req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.iepLevel
