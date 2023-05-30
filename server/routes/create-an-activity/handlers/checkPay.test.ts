@@ -5,7 +5,11 @@ import PrisonService from '../../../services/prisonService'
 import CheckPayRoutes from './checkPay'
 import atLeast from '../../../../jest.setup'
 import { IepLevel } from '../../../@types/incentivesApi/types'
+import ActivitiesService from '../../../services/activitiesService'
+import activity from '../../../services/fixtures/activity_1.json'
+import { Activity } from '../../../@types/activitiesAPI/types'
 
+jest.mock('../../../services/activitiesService')
 jest.mock('../../../services/prisonService')
 jest.mock('./helpers/incentiveLevelPayMappingUtil', () => {
   return function factory() {
@@ -20,10 +24,11 @@ jest.mock('./helpers/incentiveLevelPayMappingUtil', () => {
   }
 })
 
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create an activity - Check pay', () => {
-  const handler = new CheckPayRoutes(prisonService)
+  const handler = new CheckPayRoutes(activitiesService, prisonService)
   let req: Request
   let res: Response
 
@@ -38,6 +43,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirect: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
       validationFailed: jest.fn(),
     } as unknown as Response
 
@@ -98,6 +104,60 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       await handler.POST(req, res)
       expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Standard')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
+    })
+
+    it('should save entered pay in database', async () => {
+      const updatedActivity = {
+        pay: [
+          {
+            incentiveNomisCode: 'BAS',
+            incentiveLevel: 'Basic',
+            payBandId: 1,
+            rate: 1,
+          },
+        ],
+      }
+
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValueOnce([
+          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
+          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
+          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
+        ] as IepLevel[])
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      req = {
+        session: {
+          createJourney: {
+            activityId: 1,
+            name: 'Maths Level 1',
+            pay: [
+              {
+                incentiveNomisCode: 'BAS',
+                incentiveLevel: 'Basic',
+                payBandId: 1,
+                rate: 1,
+              },
+            ],
+          },
+        },
+        query: {
+          fromEditActivity: true,
+        },
+        body: {},
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/schedule/activities/1',
+        'Activity updated',
+        "We've updated the pay for Maths Level 1",
+      )
     })
   })
 })

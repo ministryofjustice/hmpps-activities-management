@@ -95,7 +95,6 @@ export default class DaysAndTimesRoutes {
         'Activity updated',
         successMessage,
       )
-    }
-    res.redirectOrReturn('bank-holiday-option')
+    } else res.redirectOrReturn('bank-holiday-option')
   }
 }

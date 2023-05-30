@@ -55,7 +55,6 @@ export default class StartDateRoutes {
         'Activity updated',
         successMessage,
       )
-    }
-    res.redirectOrReturn(`end-date-option`)
+    } else res.redirectOrReturn(`end-date-option`)
   }
 }
