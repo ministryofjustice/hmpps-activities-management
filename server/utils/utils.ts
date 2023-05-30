@@ -624,7 +624,7 @@ export const getCancelledActivitySummary = (
   interface ActivitySummary<Type> {
     [key: string]: Type
   }
-  const totalCancelled: ActivitySummary<number> = {
+  const totalCancelledSessions: ActivitySummary<number> = {
     DAY: 0,
     AM: 0,
     PM: 0,
@@ -661,8 +661,8 @@ export const getCancelledActivitySummary = (
     ED: 0,
   }
   cancelledActivities.forEach(activity => {
-    totalCancelled['DAY'] += 1
-    totalCancelled[activity.timeSlot.toUpperCase()] += 1
+    totalCancelledSessions['DAY'] += 1
+    totalCancelledSessions[activity.timeSlot.toUpperCase()] += 1
     if (activity.cancelledReason === cancellationReasons.STAFF_UNAVAILABLE) {
       totalStaffUnavailable['DAY'] += 1
       totalStaffUnavailable[activity.timeSlot.toUpperCase()] += 1
@@ -681,7 +681,7 @@ export const getCancelledActivitySummary = (
     }
   })
   return {
-    totalCancelled,
+    totalCancelledSessions,
     totalStaffUnavailable,
     totalStaffTraining,
     totalActivityNotRequired,
