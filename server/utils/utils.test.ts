@@ -712,7 +712,7 @@ describe('utils', () => {
       ]
 
       expect(getCancelledActivitySummary(cancelledAttendance)).toEqual({
-        totalCancelled: {
+        totalCancelledSessions: {
           AM: 3,
           DAY: 5,
           ED: 1,
