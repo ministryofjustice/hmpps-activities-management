@@ -7,20 +7,31 @@ type IepPay = {
   incentiveLevel: string
   pays: Array<{
     incentiveLevel: string
-    prisonPayBand: {
-      alias: string
-    }
+    bandId: number
+    bandAlias: string
     rate: number
+    peopleCount: number
   }>
 }
 
 export default class IncentiveLevelPayMappingUtil {
   constructor(private readonly prisonService: PrisonService) {}
 
-  async getPayGroupedByIncentiveLevel(activity: Activity, user: ServiceUser): Promise<IepPay[]> {
+  async getPayGroupedByIncentiveLevel(
+    pay: {
+      incentiveNomisCode: string
+      incentiveLevel: string
+      bandId: number
+      bandAlias: string
+      displaySequence: number
+      rate: number
+    }[],
+    user: ServiceUser,
+    activity: Activity,
+  ): Promise<IepPay[]> {
     const incentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
 
-    return _.chain(activity.pay)
+    const iepPayArray = _.chain(pay)
       .groupBy('incentiveLevel')
       .map((value: unknown[], key: string) => ({
         incentiveLevel: key,
@@ -36,5 +47,56 @@ export default class IncentiveLevelPayMappingUtil {
           } as IepPay),
       )
       .value()
+
+    const prisonerNumbers: string[] = []
+    activity.schedules.forEach(schedule => {
+      schedule.allocations.forEach(allocation => {
+        prisonerNumbers.push(allocation.prisonerNumber)
+      })
+    })
+
+    if (prisonerNumbers.length > 0) {
+      const inmates = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
+
+      const iepPayArrayOut: IepPay[] = []
+      iepPayArray.forEach(incentiveLevelPay => {
+        const paysWithCount: {
+          incentiveLevel: string
+          bandId: number
+          bandAlias: string
+          rate: number
+          peopleCount: number
+        }[] = []
+        incentiveLevelPay.pays.forEach(payBand => {
+          activity.schedules.forEach(schedule => {
+            let peopleCount = 0
+            const allocationsForPayBand = schedule.allocations.filter(
+              allocation => allocation.prisonPayBand.id === payBand.bandId,
+            )
+            allocationsForPayBand.forEach(allocation => {
+              peopleCount += inmates.filter(
+                inmate =>
+                  inmate.prisonerNumber === allocation.prisonerNumber &&
+                  inmate.currentIncentive.level.description === incentiveLevelPay.incentiveLevel,
+              ).length
+            })
+            paysWithCount.push({
+              incentiveLevel: incentiveLevelPay.incentiveLevel,
+              bandId: payBand.bandId,
+              bandAlias: payBand.bandAlias,
+              rate: payBand.rate,
+              peopleCount,
+            })
+          })
+        })
+        iepPayArrayOut.push({
+          incentiveLevel: incentiveLevelPay.incentiveLevel,
+          pays: paysWithCount,
+        })
+      })
+
+      return iepPayArrayOut
+    }
+    return iepPayArray
   }
 }

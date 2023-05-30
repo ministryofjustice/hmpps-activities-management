@@ -39,6 +39,7 @@ import {
   AppointmentOccurrenceCancelRequest,
   BulkAppointmentsRequest,
   BulkAppointment,
+  EventReviewSearchResults,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -454,6 +455,20 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/appointment-occurrences/${occurrenceId}/cancel`,
       authToken: user.token,
       data: cancelRequest,
+    })
+  }
+
+  async getChangeEvents(
+    prison: string,
+    date: string,
+    page: number,
+    pageSize: number,
+    user: ServiceUser,
+  ): Promise<EventReviewSearchResults> {
+    return this.get({
+      path: `/event-review/prison/${prison}`,
+      authToken: user.token,
+      query: { date, page, size: pageSize },
     })
   }
 }

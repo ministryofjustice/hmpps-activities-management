@@ -38,6 +38,7 @@ import {
   AppointmentOccurrenceCancelRequest,
   BulkAppointmentsRequest,
   BulkAppointment,
+  EventReviewSearchResults,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
@@ -339,5 +340,15 @@ export default class ActivitiesService {
 
   async createBulkAppointment(appointment: BulkAppointmentsRequest, user: ServiceUser): Promise<BulkAppointment> {
     return this.activitiesApiClient.postCreateBulkAppointment(appointment, user)
+  }
+
+  async getChangeEvents(
+    prisonCode: string,
+    requestDate: string,
+    page: number,
+    pageSize: number,
+    user: ServiceUser,
+  ): Promise<EventReviewSearchResults> {
+    return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, pageSize, user)
   }
 }

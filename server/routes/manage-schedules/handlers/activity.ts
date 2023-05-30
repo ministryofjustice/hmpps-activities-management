@@ -4,6 +4,7 @@ import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil
 import PrisonService from '../../../services/prisonService'
 import scheduleSlotsToDayMapper from '../../../utils/helpers/scheduleSlotsToDayMapper'
 import { getTimeSlotFromTime } from '../../../utils/utils'
+import AttendanceStatus from '../../../enum/attendanceStatus'
 
 export default class ActivityRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -23,7 +24,11 @@ export default class ActivityRoutes {
     activity.schedules.forEach(schedule => {
       allocationCount += schedule.allocations.length
       schedule.instances.forEach(instance => {
-        attendanceCount += instance.attendances.length
+        instance.attendances.forEach(attendance => {
+          if (attendance.status !== AttendanceStatus.WAITING) {
+            attendanceCount += 1
+          }
+        })
       })
     })
 
@@ -103,18 +108,38 @@ export default class ActivityRoutes {
           req.session.createJourney.timeSlotsSunday.push(getTimeSlotFromTime(slot.startTime).toUpperCase())
         }
         req.session.createJourney.runsOnBankHoliday = schedule.runsOnBankHoliday
-        req.session.createJourney.location = {
-          id: schedule.internalLocation.id,
-          name: schedule.internalLocation.description,
+        if (schedule.internalLocation) {
+          req.session.createJourney.location = {
+            id: schedule.internalLocation.id,
+            name: schedule.internalLocation.description,
+          }
         }
         req.session.createJourney.currentCapacity = schedule.capacity
         req.session.createJourney.capacity = schedule.capacity
         req.session.createJourney.allocationCount = allocationCount
       }),
     )
+    req.session.createJourney.pay = []
+    activity.pay.forEach(pay => {
+      req.session.createJourney.pay.push({
+        incentiveNomisCode: pay.incentiveNomisCode,
+        incentiveLevel: pay.incentiveLevel,
+        rate: pay.rate,
+        bandId: pay.prisonPayBand.id,
+        bandAlias: pay.prisonPayBand.alias,
+        displaySequence: pay.prisonPayBand.displaySequence,
+      })
+    })
+    req.session.createJourney.educationLevels = []
+    activity.minimumEducationLevel.forEach(education => {
+      req.session.createJourney.educationLevels.push({
+        educationLevelCode: education.educationLevelCode,
+        educationLevelDescription: education.educationLevelDescription,
+      })
+    })
 
     const [incentiveLevelPays, schedule] = await Promise.all([
-      this.helper.getPayGroupedByIncentiveLevel(activity, user),
+      this.helper.getPayGroupedByIncentiveLevel(req.session.createJourney.pay, user, activity),
       this.activitiesService.getDefaultScheduleOfActivity(activity, user).then(s => ({
         ...s,
         dailySlots: scheduleSlotsToDayMapper(s.slots),

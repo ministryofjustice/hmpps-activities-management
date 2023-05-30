@@ -2,17 +2,13 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/card.njk" import card %}
 
-{% set pageTitle = applicationName + " - Create an activity - Check pay" %}
+{% set pageTitle = applicationName + " - Edit activity - Check pay" %}
 {% set pageId = 'check-pay-page' %}
 {% set backLinkHref = "pay" %}
 
 {% block content %}
-    {% if session.req.query.fromEditActivity %}
-        {% set fromEditText = "&fromEditActivity=true" %}
-    {% else %}
-        {% set fromEditText = "" %}
-    {% endif %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
             <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }}</span>
@@ -21,43 +17,67 @@
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l">Review pay rates for {{ session.createJourney.name }}</h1>
+            <h1 class="govuk-heading-l">View or change details for {{ session.createJourney.name }}</h1>
         </div>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
             {% for incentiveLevelPay in incentiveLevelPays %}
-                <h2 class="govuk-heading-m">Pay rates for {{ incentiveLevelPay.incentiveLevel }} incentive level</h2>
-                {% set rows = [] %}
+                <h2 class="govuk-heading-m">{{ incentiveLevelPay.incentiveLevel }} incentive level pay rates</h2>
                 {% for pay in incentiveLevelPay.pays %}
+                    {% set rows = [] %}
                     {% set rows = (rows.push(
                         {
                             key: {
-                                text: pay.bandAlias
+                                text: "Amount"
                             },
                             value: {
                                 text: pay.rate | toMoney
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText,
-                                        text: "Change",
-                                        visuallyHiddenText: "change pay rate"
-                                    },
-                                    {
-                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText,
-                                        text: "Remove",
-                                        visuallyHiddenText: "remove pay rate"
-                                    }
-                                ]
                             }
                         }
                     ), rows) %}
+                    {% set rows = (rows.push(
+                        {
+                            key: {
+                                text: "People on this rate"
+                            },
+                            value: {
+                                text: pay.peopleCount or "None"
+                            }
+                        }
+                    ), rows) %}
+
+                    {% set cardItems = [] %}
+                    {% set cardItems = (cardItems.push(
+                        {
+                            href: "/create/pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true",
+                            text: "Change",
+                            classes: "govuk-link--no-visited-state",
+                            attributes: { 'data-qa': 'change-pay' }
+                        }
+                    ), cardItems) %}
+                    {% if not pay.peopleCount %}
+                        {% set cardItems = (cardItems.push(
+                            {
+                                href: "/create/remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true",
+                                text: "Delete pay rate",
+                                classes: "govuk-link--no-visited-state",
+                                attributes: { 'data-qa': 'remove-pay' }
+                            }
+                        ), cardItems) %}
+                    {% endif %}
+                    {{ govukSummaryList({
+                        card: {
+                            title: {
+                                text: pay.bandAlias
+                            },
+                            actions: {
+                                items: cardItems
+                            }
+                        },
+                        rows: rows
+                    }) }}
                 {% endfor %}
-                {{ govukSummaryList({
-                    rows: rows
-                }) }}
             {% endfor %}
 
             {% if flatPay | length %}
@@ -95,11 +115,6 @@
             }) }}
 
             <form method="POST">
-                {% if session.req.query.fromEditActivity %}
-                    {% set fromEditText = "?fromEditActivity=true" %}
-                {% else %}
-                    {% set fromEditText = "" %}
-                {% endif %}
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({
@@ -107,7 +122,7 @@
                     }) }}
                     {{ govukButton({
                         text: "Add another pay rate",
-                        href: 'pay-rate-type' + fromEditText,
+                        href: '/create/pay-rate-type?fromEditActivity=true',
                         classes: "govuk-button--secondary"
                     }) }}
                 </div>
