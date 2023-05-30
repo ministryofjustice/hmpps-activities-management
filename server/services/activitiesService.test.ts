@@ -24,6 +24,8 @@ import {
   ActivityCandidate,
   AppointmentCreateRequest,
   BulkAppointment,
+  EventReview,
+  EventReviewSearchResults,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -482,6 +484,54 @@ describe('Activities Service', () => {
 
       expect(activitiesApiClient.postCreateBulkAppointment).toHaveBeenCalledWith(request, user)
       expect(response).toEqual(expectedResponse)
+    })
+  })
+
+  describe('getChangeEvents', () => {
+    it('should get a list of change events from activities API', async () => {
+      const content = [
+        {
+          eventReviewId: 1,
+          serviceIdentifier: null,
+          eventType: 'prison.xxx.yyy',
+          eventTime: '2023-10-16 23:14:22',
+          prisonCode: 'MDI',
+          prisonerNumber: 'A1234AA',
+          eventData: 'Some data',
+        } as EventReview,
+        {
+          eventReviewId: 2,
+          serviceIdentifier: null,
+          eventType: 'prison.xxx.yyy',
+          eventTime: '2023-10-16 23:14:22',
+          prisonCode: 'MDI',
+          prisonerNumber: 'A1234AA',
+          eventData: 'Some data',
+        } as EventReview,
+        {
+          eventReviewId: 3,
+          serviceIdentifier: null,
+          eventType: 'prison.xxx.yyy',
+          eventTime: '2023-10-16 23:14:22',
+          prisonCode: 'MDI',
+          prisonerNumber: 'A1234AA',
+          eventData: 'Some data',
+        } as EventReview,
+      ]
+
+      const expectedResult = {
+        content,
+        pageNumber: 1,
+        totalElements: 3,
+        totalPages: 1,
+      } as EventReviewSearchResults
+
+      when(activitiesApiClient.getChangeEvents).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getChangeEvents('MDI', '2023-10-16', 1, 10, user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getChangeEvents).toHaveBeenCalledWith('MDI', '2023-10-16', 1, 10, user)
     })
   })
 })

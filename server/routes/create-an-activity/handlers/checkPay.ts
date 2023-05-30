@@ -3,11 +3,13 @@ import _ from 'lodash'
 import PrisonService from '../../../services/prisonService'
 import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 import { IepLevel } from '../../../@types/incentivesApi/types'
+import { ActivityUpdateRequest } from '../../../@types/activitiesAPI/types'
+import ActivitiesService from '../../../services/activitiesService'
 
 export default class CheckPayRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
 
-  constructor(private readonly prisonService: PrisonService) {
+  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {
     this.helper = new IncentiveLevelPayMappingUtil(prisonService)
   }
 
@@ -44,6 +46,43 @@ export default class CheckPayRoutes {
 
     req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.iepLevel
     req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.iepDescription
+
+    if (req.query && req.query.fromEditActivity) {
+      const { activityId } = req.session.createJourney
+      const prisonCode = user.activeCaseLoadId
+      const activity = {
+        pay: req.session.createJourney.pay.map(p => ({
+          incentiveNomisCode: p.incentiveNomisCode,
+          incentiveLevel: p.incentiveLevel,
+          payBandId: p.bandId,
+          rate: p.rate,
+        })),
+      } as ActivityUpdateRequest
+
+      if (req.session.createJourney.flat && req.session.createJourney.flat.length > 0) {
+        const incentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
+
+        req.session.createJourney.flat.forEach(flatRate => {
+          incentiveLevels.forEach(iep =>
+            activity.pay.push({
+              incentiveNomisCode: iep.iepLevel,
+              incentiveLevel: iep.iepDescription,
+              payBandId: flatRate.bandId,
+              rate: flatRate.rate,
+            }),
+          )
+        })
+      }
+
+      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      const successMessage = `We've updated the pay for ${req.session.createJourney.name}`
+
+      return res.redirectOrReturnWithSuccess(
+        `/schedule/activities/${req.session.createJourney.activityId}`,
+        'Activity updated',
+        successMessage,
+      )
+    }
 
     return res.redirectOrReturn(`qualification`)
   }

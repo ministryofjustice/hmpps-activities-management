@@ -34,7 +34,6 @@ export default class BankHolidayOptionRoutes {
         'Activity updated',
         successMessage,
       )
-    }
-    res.redirectOrReturn(`location`)
+    } else res.redirectOrReturn(`location`)
   }
 }

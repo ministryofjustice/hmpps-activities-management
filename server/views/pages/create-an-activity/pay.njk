@@ -78,7 +78,7 @@
                     items: payBandOptions
                 }) }}
 
-                {% if payRateType === "single" %}
+                {% if payRateType === "single" or session.req.query.iep %}
                     {% set incentiveLevelOptions = [] %}
                     {% for incentiveLevel in incentiveLevels %}
                         {% set incentiveLevelOptions = (incentiveLevelOptions.push(
