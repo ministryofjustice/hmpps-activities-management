@@ -17,10 +17,8 @@ export default class CheckPayRoutes {
     const { user } = res.locals
 
     const { activityId, pay } = req.session.createJourney
-    const [activity, incentiveLevelPays] = await Promise.all([
-      this.activitiesService.getActivity(activityId, user),
-      this.helper.getPayGroupedByIncentiveLevel(pay, user, activity),
-    ])
+    const activity = await this.activitiesService.getActivity(activityId, user)
+    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(pay, user, activity)
     const flatPay = req.session.createJourney.flat
 
     res.render(`pages/manage-schedules/check-pay`, { incentiveLevelPays, flatPay })
@@ -45,7 +43,7 @@ export default class CheckPayRoutes {
         .getIncentiveLevels(user.activeCaseLoadId, user)
         .then(levels => _.sortBy(levels, 'sequence'))
       // eslint-disable-next-line prefer-destructuring
-      [minimumIncentiveLevel] = incentiveLevels
+      minimumIncentiveLevel = incentiveLevels[0]
     }
 
     req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.iepLevel
