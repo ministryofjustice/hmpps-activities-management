@@ -1,7 +1,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% macro prisonerList(appointmentId, appointmentOccurrenceId, appointmentType, repeat, prisoners, isCancelled) %}
+{% macro prisonerList(appointmentId, appointmentOccurrenceId, appointmentType, repeat, prisoners, isCancelled, appointmentInPast) %}
     {% set occurenceLink = '/appointments/' + appointmentId + '/occurrence/' + appointmentOccurrenceId  %}
     {% set prisonerListRows = [] %}
     {% for prisoner in prisoners %}
@@ -38,7 +38,7 @@
             'target': '_blank',
             'data-qa': 'print-movement-slips'
         }
-    }] %}
+    }] if appointmentInPast == false %}
     {% if appointmentType == AppointmentType.GROUP %}
         {% set prisonerActionItems = (prisonerActionItems.push(
             {

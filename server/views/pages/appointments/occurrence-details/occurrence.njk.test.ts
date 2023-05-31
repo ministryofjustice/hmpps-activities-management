@@ -12,8 +12,9 @@ const view = fs.readFileSync('server/views/pages/appointments/occurrence-details
 describe('Views - Appointments Management - Appointment Occurrence Details', () => {
   let compiledTemplate: Template
   const tomorrow = addDays(new Date(), 1)
-  let viewContext = {
+  let viewContext: { occurrence: AppointmentOccurrenceDetails; appointmentInPast: boolean } = {
     occurrence: {} as AppointmentOccurrenceDetails,
+    appointmentInPast: false,
   }
 
   const njkEnv = registerNunjucks()
@@ -35,9 +36,11 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
           },
         ],
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
+        startTime: '23:59',
         isCancelled: false,
         created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentOccurrenceDetails,
+      appointmentInPast: false,
     }
   })
 
