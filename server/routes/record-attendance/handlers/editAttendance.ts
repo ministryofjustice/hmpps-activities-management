@@ -11,7 +11,7 @@ import { Attendance, ScheduledActivity } from '../../../@types/activitiesAPI/typ
 enum EditAttendanceOptions {
   YES = 'yes',
   NO = 'no',
-  REMOVE = 'remove',
+  RESET = 'reset',
 }
 
 export class EditAttendance {
@@ -89,16 +89,7 @@ export default class EditAttendanceRoutes {
       return res.redirect(`/attendance/activities/${id}/not-attended-reason`)
     }
 
-    const attendances = [
-      {
-        id: +attendanceId,
-        prisonCode: user.activeCaseLoadId,
-        status: AttendanceStatus.WAITING,
-        attendanceReason: null as AttendanceReason,
-        issuePayment: null as boolean,
-      },
-    ]
-    await this.activitiesService.updateAttendances(attendances, user)
-    return res.redirect(`/attendance/activities/${id}/attendance-list`)
+    // If not "yes" or "no", assume "reset"
+    return res.redirect(`/attendance/activities/${id}/attendance-details/${attendanceId}/reset-attendance`)
   }
 }
