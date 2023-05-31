@@ -3797,6 +3797,13 @@ export interface components {
        */
       isCancelled: boolean
       /**
+       * @description
+       *     Indicates that this appointment occurrence has expired
+       *
+       * @example false
+       */
+      isExpired: boolean
+      /**
        * Format: date-time
        * @description The date and time the parent appointment was created. Will not change
        */

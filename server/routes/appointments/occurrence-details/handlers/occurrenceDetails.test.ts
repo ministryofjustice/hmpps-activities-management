@@ -7,7 +7,6 @@ import { formatDate } from '../../../../utils/utils'
 describe('Route Handlers - Appointment Occurrence Details', () => {
   const handler = new OccurrenceDetailsRoutes()
   const tomorrow = addDays(new Date(), 1)
-  const yesterday = addDays(new Date(), -1)
 
   let req: Request
   let res: Response
@@ -29,7 +28,7 @@ describe('Route Handlers - Appointment Occurrence Details', () => {
   })
 
   describe('GET', () => {
-    it('should render the expected view for future appointment', async () => {
+    it('should render the expected view', async () => {
       const occurrenceDetails = {
         id: 10,
         appointmentId: 9,
@@ -48,29 +47,6 @@ describe('Route Handlers - Appointment Occurrence Details', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/occurrence-details/occurrence', {
         occurrence: occurrenceDetails,
-        appointmentInPast: false,
-      })
-    })
-
-    it('should render the expected view for past appointment', async () => {
-      const occurrenceDetails = {
-        id: 10,
-        appointmentId: 9,
-        startDate: formatDate(yesterday, 'yyyy-MM-dd'),
-        startTime: '23:59',
-      } as AppointmentOccurrenceDetails
-
-      req = {
-        params: {
-          id: '10',
-        },
-        appointmentOccurrence: occurrenceDetails,
-      } as unknown as Request
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/occurrence-details/occurrence', {
-        occurrence: occurrenceDetails,
-        appointmentInPast: true,
       })
     })
   })
