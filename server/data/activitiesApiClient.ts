@@ -40,6 +40,8 @@ import {
   BulkAppointmentsRequest,
   BulkAppointment,
   EventReviewSearchResults,
+  DeallocationReason,
+  PrisonerDeallocationRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -469,6 +471,25 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/event-review/prison/${prison}`,
       authToken: user.token,
       query: { date, page, size: pageSize },
+    })
+  }
+
+  async getDeallocationReasons(user: ServiceUser): Promise<DeallocationReason[]> {
+    return this.get({
+      path: `/allocations/deallocation-reasons`,
+      authToken: user.token,
+    })
+  }
+
+  async deallocateFromActivity(
+    scheduleId: number,
+    request: PrisonerDeallocationRequest,
+    user: ServiceUser,
+  ): Promise<void> {
+    return this.put({
+      path: `/schedules/${scheduleId}/deallocate`,
+      authToken: user.token,
+      data: request,
     })
   }
 }

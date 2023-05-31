@@ -7,6 +7,7 @@ import createRoutes from './create-an-activity'
 import allocationDashboardRoutes from './allocation-dashboard'
 import scheduleRoutes from './manage-schedules'
 import allocateRoutes from './allocate-to-activity'
+import deallocateRoutes from './deallocate-from-activity'
 import attendanceRoutes from './record-attendance'
 import attendanceSummaryRoutes from './daily-attendance-summary'
 import unlockListRoutes from './unlock-list'
@@ -37,7 +38,7 @@ export default function routes(services: Services): Router {
   router.use('/create', createRoutes(services))
   router.use('/allocation-dashboard', allocationDashboardRoutes(services))
   router.use('/allocate', allocateRoutes(services))
-  router.use('/deallocate', allocateRoutes(services))
+  router.use('/deallocate', deallocateRoutes(services))
   router.use('/schedule', scheduleRoutes(services))
   router.use('/attendance', attendanceRoutes(services))
   router.use('/attendance-summary', attendanceSummaryRoutes(services))

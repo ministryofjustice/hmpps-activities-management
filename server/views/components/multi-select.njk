@@ -65,7 +65,7 @@
             rows: rows
         }) }}
 
-        <nav class="govuk-pagination govuk-pagination--block" role="navigation" aria-label="results">
+        <nav class="govuk-pagination govuk-pagination--block govuk-!-display-none-print" role="navigation" aria-label="results">
             {% if params.pagination.previous %}
                 <div class="govuk-pagination__prev">
                     <a class="govuk-link govuk-pagination__link" href="{{ params.pagination.previous.href }}" rel="prev">

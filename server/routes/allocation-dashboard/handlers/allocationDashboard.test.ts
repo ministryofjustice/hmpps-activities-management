@@ -80,10 +80,12 @@ describe('Route Handlers - Allocation dashboard', () => {
           {
             prisonerNumber: 'ABC123',
             allocatedTime: '2023-02-17T15:22:00',
+            startDate: '2023-02-17',
           },
           {
             prisonerNumber: '321CBA',
             allocatedTime: '2023-02-16T12:43:00',
+            startDate: '2023-02-16',
           },
         ] as Allocation[])
       when(prisonService.searchInmatesByPrisonerNumbers)
@@ -150,7 +152,8 @@ describe('Route Handlers - Allocation dashboard', () => {
         currentlyAllocated: [
           {
             cellLocation: 'MDI-1-1-101',
-            dateAllocated: new Date(2023, 1, 17, 15, 22),
+            startDate: new Date(2023, 1, 17),
+            endDate: null,
             name: 'Joe Bloggs',
             otherAllocations: [
               {
@@ -163,7 +166,8 @@ describe('Route Handlers - Allocation dashboard', () => {
           },
           {
             cellLocation: 'MDI-1-1-103',
-            dateAllocated: new Date(2023, 1, 16, 12, 43),
+            startDate: new Date(2023, 1, 16),
+            endDate: null,
             name: 'John Smith',
             otherAllocations: [
               {

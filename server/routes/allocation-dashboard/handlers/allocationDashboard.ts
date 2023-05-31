@@ -7,7 +7,7 @@ import CapacitiesService from '../../../services/capacitiesService'
 import { ServiceUser } from '../../../@types/express'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { ActivitySchedule, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
-import { parseDate } from '../../../utils/utils'
+import { convertToTitleCase, parseDate } from '../../../utils/utils'
 import { IepLevel } from '../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../validators/hasAtLeastOne'
 
@@ -84,11 +84,28 @@ export default class AllocationDashboardRoutes {
   }
 
   DEALLOCATE = async (req: Request, res: Response): Promise<void> => {
-    // TODO: Start the deallocation journey here
-
     const { selectedAllocations } = req.body
-    res.status(200)
-    res.send(`${selectedAllocations.pop()}`)
+    const { user } = res.locals
+
+    const schedule = await this.activitiesService.getActivitySchedule(+req.params.scheduleId, user)
+
+    req.session.deallocateJourney = {
+      allocationsToRemove: selectedAllocations,
+      scheduleId: schedule.id,
+      activityName: schedule.activity.description,
+    }
+
+    req.session.deallocateJourney.prisoners = await this.prisonService
+      .searchInmatesByPrisonerNumbers(selectedAllocations, user)
+      .then(inmates =>
+        inmates.map(i => ({
+          name: convertToTitleCase(`${i.firstName} ${i.lastName}`),
+          prisonerNumber: i.prisonerNumber,
+          cellLocation: i.cellLocation,
+        })),
+      )
+
+    res.redirect(`/deallocate/date`)
   }
 
   private getSuitableForIep = (minimumIncentiveLevel: string, iepLevels: IepLevel[]) => {
@@ -135,8 +152,9 @@ export default class AllocationDashboardRoutes {
         name: `${inmate.firstName} ${inmate.lastName}`,
         prisonerNumber: inmate.prisonerNumber,
         cellLocation: inmate.cellLocation,
-        releaseDate: inmate.releaseDate ? parseDate(inmate.releaseDate) : null,
-        dateAllocated: parseDate(thisAllocation.allocatedTime, "yyyy-MM-dd'T'HH:mm:ss"),
+        releaseDate: parseDate(inmate.releaseDate),
+        startDate: parseDate(thisAllocation.startDate),
+        endDate: parseDate(thisAllocation.endDate),
         otherAllocations: otherAllocations.map(a => ({
           id: a.scheduleId,
           scheduleName: a.scheduleDescription,

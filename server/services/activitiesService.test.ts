@@ -26,6 +26,8 @@ import {
   BulkAppointment,
   EventReview,
   EventReviewSearchResults,
+  DeallocationReason,
+  PrisonerDeallocationRequest,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -37,6 +39,7 @@ import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
+import { DeallocateFromActivityJourney } from '../routes/deallocate-from-activity/journey'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -532,6 +535,41 @@ describe('Activities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(activitiesApiClient.getChangeEvents).toHaveBeenCalledWith('MDI', '2023-10-16', 1, 10, user)
+    })
+  })
+
+  describe('getDeallocationReasons', () => {
+    it('should get the list of deallocation reasons from activities API', async () => {
+      const expectedResult = [{ code: 'PERSONAL', description: 'Personal reason' }] as DeallocationReason[]
+
+      when(activitiesApiClient.getDeallocationReasons).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getDeallocationReasons(user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getDeallocationReasons).toHaveBeenCalledWith(user)
+    })
+  })
+
+  describe('putDeallocateFromActivity', () => {
+    it('should deallocation prisoners', async () => {
+      const journey: DeallocateFromActivityJourney = {
+        allocationsToRemove: ['123456'],
+        scheduleId: 1,
+        activityName: 'Maths',
+        prisoners: [{ name: 'Fred', prisonerNumber: '123456', cellLocation: 'cell 1' }],
+        deallocationDate: '2023-05-31',
+        deallocationReason: 'PERSONAL',
+      }
+
+      const body: PrisonerDeallocationRequest = {
+        prisonerNumbers: ['123456'],
+        reasonCode: 'PERSONAL',
+        endDate: '2023-05-31',
+      }
+
+      await activitiesService.deallocateFromActivity(journey, user)
+      expect(activitiesApiClient.deallocateFromActivity).toHaveBeenCalledWith(1, body, user)
     })
   })
 })
