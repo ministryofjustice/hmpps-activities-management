@@ -1820,6 +1820,11 @@ export interface components {
        * @example false
        */
       isCancelled: boolean
+      /**
+       * @description Indicates whether this appointment occurrence has expired
+       * @example false
+       */
+      isExpired: boolean
     }
     /** @description The create request with the new activity details */
     ActivityCreateRequest: {
