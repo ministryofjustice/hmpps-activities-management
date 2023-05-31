@@ -35,12 +35,12 @@
                     items: [
                         {
                             value: "today",
-                            text: "Today - " + today | formatDate('d MMMM yyyy', false),
+                            text: "Today - " + now | formatDate('d MMMM yyyy', false),
                             checked: formResponses.datePresetOption == 'today'
                         },
                         {
                             value: "tomorrow",
-                            text: "Tomorrow - " + tomorrow | formatDate('d MMMM yyyy', false),
+                            text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
                             checked: formResponses.datePresetOption == 'tomorrow'
                         },
                         {
