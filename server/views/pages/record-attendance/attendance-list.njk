@@ -34,13 +34,13 @@
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
                 {{ activity.name }} - record attendance
                 <span class="govuk-caption-l">
-                    Time: {{ instance.startTime }} - {{ instance.endTime }}
+                    {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.startTime | getTimeSlotFromTime | upper }})
                 </span>
                 <span class="govuk-caption-l">
-                    Date: {{ instance.date | toDate | formatDate('EEEE, dd MMMM yyyy') }}
+                    {{ instance.date | toDate | formatDate('EEEE, dd MMMM yyyy') }}
                 </span>
                 <span class="govuk-caption-l">
-                    Location: {{ "In cell" if activity.inCell else activity.location }}
+                    {{ "In cell" if activity.inCell else activity.location }}
                 </span>
             </h1>
 
@@ -66,7 +66,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">{{ activity.allocated }} prisoners allocated</h2>
+            <h2 class="govuk-heading-m">{{ activity.allocated }} {{ "person" if activity.allocated == 1 else "people" }} allocated</h2>
             <ul class="govuk-list">
                 <li>
                     <span>Attended:</span>
@@ -169,7 +169,7 @@
                     classes: 'print-only'
                 },
                 {
-                    text: "Prisoner details"
+                    text: "Name"
                 },
                 {
                     text: "Cell location"
@@ -178,10 +178,10 @@
                     text: "Relevant alerts"
                 },
                 {
-                    text: "Other scheduled events"
+                    text: "Clashing events"
                 },
                 {
-                    text: "Attendance",
+                    text: "Attendance and pay",
                     classes: 'govuk-!-display-none-print',
                     colspan: 2
                 },
@@ -219,6 +219,8 @@
             }
         }) }}
     </form>
+
+    <div class="print-only govuk-body-s govuk-!-margin-top-6">Printed at {{ now | formatDate('h:mmbbb \'on\' EEEE, dd MMMM yyyy') }}</div>
 {% endblock %}
 
 {% macro renderOtherEvents(otherEvents) %}
