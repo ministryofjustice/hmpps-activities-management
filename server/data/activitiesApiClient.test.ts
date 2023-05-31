@@ -18,6 +18,7 @@ import {
   AppointmentCategorySummary,
   AppointmentLocationSummary,
   AppointmentCreateRequest,
+  PrisonerDeallocationRequest,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -730,6 +731,34 @@ describe('activitiesApiClient', () => {
       const output = await activitiesApiClient.postCreateBulkAppointment(request, user)
 
       expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getDeallocationReasons', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/allocations/deallocation-reasons')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+      const output = await activitiesApiClient.getDeallocationReasons(user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('putDeallocateFromActivity', () => {
+    it('should deallocation prisoners', async () => {
+      fakeActivitiesApi.put('/schedules/1/deallocate').matchHeader('authorization', `Bearer token`).reply(204)
+
+      const body: PrisonerDeallocationRequest = {
+        prisonerNumbers: ['123456'],
+        reasonCode: 'PERSONAL',
+        endDate: '2023-05-31',
+      }
+
+      await activitiesApiClient.deallocateFromActivity(1, body, user)
       expect(nock.isDone()).toBe(true)
     })
   })

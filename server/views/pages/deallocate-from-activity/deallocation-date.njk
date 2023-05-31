@@ -1,0 +1,76 @@
+{% extends "layout.njk" %}
+
+{% from "components/datePicker.njk" import datePicker %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Deallocate from an activity - Deallocation date" %}
+{% set pageId = 'deallocation-date-page' %}
+{% set backLinkHref = "/" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.deallocateJourney.activityName }}</span>
+            {% if session.deallocateJourney.allocationsToRemove | length == 1 %}
+                <span class="govuk-heading-xl">When do you want {{ session.deallocateJourney.prisoners[0].name }} to stop attending this activity?</span>
+            {% else %}
+                <span class="govuk-heading-xl">When do you want {{ session.deallocateJourney.allocationsToRemove | length }} people to stop attending this activity?</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ datePicker({
+                    id: 'deallocationDate',
+                    label: {
+                        text: "Deallocation date",
+                        classes: "govuk-visually-hidden"
+                    },
+                    hint: {
+                        text: "For example, " + now | formatDate('dd MM yyyy')
+                    },
+                    renderedErrorMessage: validationErrors | findError('deallocationDate'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.deallocationDate or session.deallocationJourney.deallocationDate
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+
+                {% if session.deallocateJourney.allocationsToRemove | length > 1 %}
+                    {% set rows = [] %}
+                    {% for prisoner in session.deallocateJourney.prisoners %}
+                        {% set rows = (rows.push([
+                            {
+                                text: prisoner.name
+                            },
+                            {
+                                text: prisoner.prisonerNumber
+                            },
+                            {
+                                text: prisoner.cellLocation
+                            }
+                        ]), rows) %}
+                    {% endfor %}
+
+                    {{ govukDetails({
+                        summaryText: "People you are taking off " + session.deallocateJourney.activityName,
+                        html: govukTable({
+                            caption: "People you are taking off " + session.deallocateJourney.activityName,
+                            captionClasses: "govuk-visually-hidden",
+                            firstCellIsHeader: true,
+                            classes: 'govuk-!-width-two-thirds',
+                            rows: rows
+                        })
+                    }) }}
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

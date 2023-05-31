@@ -2,7 +2,7 @@
 import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
-import { addDays, addMonths, addWeeks, subMonths, subWeeks } from 'date-fns'
+import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks } from 'date-fns'
 import {
   addDefaultSelectedValue,
   buildErrorSummaryList,
@@ -111,6 +111,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('filterActivitiesForDay', filterActivitiesForDay)
   njkEnv.addFilter('sortActivitiesByStartTime', sortActivitiesByStartTime)
   njkEnv.addFilter('dateInList', dateInList)
+  njkEnv.addFilter('subDays', subDays)
   njkEnv.addFilter('subMonths', subMonths)
   njkEnv.addFilter('addMonths', addMonths)
   njkEnv.addFilter('subWeeks', subWeeks)

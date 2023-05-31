@@ -39,9 +39,12 @@ import {
   BulkAppointmentsRequest,
   BulkAppointment,
   EventReviewSearchResults,
+  PrisonerDeallocationRequest,
+  DeallocationReasonCode,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
+import { DeallocateFromActivityJourney } from '../routes/deallocate-from-activity/journey'
 
 export default class ActivitiesService {
   constructor(
@@ -350,5 +353,19 @@ export default class ActivitiesService {
     user: ServiceUser,
   ): Promise<EventReviewSearchResults> {
     return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, pageSize, user)
+  }
+
+  async getDeallocationReasons(user: ServiceUser) {
+    return this.activitiesApiClient.getDeallocationReasons(user)
+  }
+
+  async deallocateFromActivity(deallocateJourney: DeallocateFromActivityJourney, user: ServiceUser) {
+    const request: PrisonerDeallocationRequest = {
+      prisonerNumbers: deallocateJourney.prisoners.map(p => p.prisonerNumber),
+      reasonCode: deallocateJourney.deallocationReason as DeallocationReasonCode,
+      endDate: deallocateJourney.deallocationDate,
+    }
+
+    return this.activitiesApiClient.deallocateFromActivity(deallocateJourney.scheduleId, request, user)
   }
 }
