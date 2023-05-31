@@ -39,7 +39,7 @@
             'data-qa': 'print-movement-slips'
         }
     }] if appointmentInPast == false %}
-    {% if appointmentType == AppointmentType.GROUP %}
+    {% if appointmentType == AppointmentType.GROUP and appointmentInPast == false %}
         {% set prisonerActionItems = (prisonerActionItems.push(
             {
                 href: occurenceLink + "/edit/start/prisoners/add",
@@ -57,7 +57,7 @@
             },
             actions: {
                 items: prisonerActionItems
-            } if isCancelled == false
+            } if isCancelled == false and appointmentInPast == false
         },
         rows: prisonerListRows,
         attributes: { 'data-qa': 'prisoner-list' }
