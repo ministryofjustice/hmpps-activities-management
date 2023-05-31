@@ -229,13 +229,13 @@ describe('Route Handlers - Edit Attendance', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/attendance/activities/1/not-attended-reason`)
     })
 
-    it('redirect as expected when the remove attendance option is selected', async () => {
+    it('redirect as expected when the reset attendance option is selected', async () => {
       req.body = {
-        attendanceOption: 'remove',
+        attendanceOption: 'reset',
       }
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`/attendance/activities/1/attendance-list`)
+      expect(res.redirect).toHaveBeenCalledWith(`/attendance/activities/1/attendance-details/1/reset-attendance`)
     })
   })
 })

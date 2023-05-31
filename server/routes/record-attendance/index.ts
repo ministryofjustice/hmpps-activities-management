@@ -13,6 +13,7 @@ import AttendanceDetailsRoutes from './handlers/attendanceDetails'
 import EditAttendanceRoutes, { EditAttendance } from './handlers/editAttendance'
 import RemovePayRoutes, { RemovePay } from './handlers/removePay'
 import HomeRoutes from './handlers/home'
+import ResetAttendanceRoutes, { ResetAttendance } from './handlers/resetAttendance'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -32,6 +33,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const attendanceDetailsHandler = new AttendanceDetailsRoutes(activitiesService, prisonService)
   const editAttendanceHandler = new EditAttendanceRoutes(activitiesService, prisonService)
   const removePayHandler = new RemovePayRoutes(activitiesService, prisonService)
+  const resetAttendanceRoutes = new ResetAttendanceRoutes(activitiesService, prisonService)
 
   get('/', homeHandler.GET)
   get('/select-period', selectPeriodHandler.GET)
@@ -56,6 +58,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/activities/:id/attendance-details/:attendanceId/edit-attendance', editAttendanceHandler.POST, EditAttendance)
   get('/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.GET)
   post('/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.POST, RemovePay)
+  get('/activities/:id/attendance-details/:attendanceId/reset-attendance', resetAttendanceRoutes.GET)
+  post('/activities/:id/attendance-details/:attendanceId/reset-attendance', resetAttendanceRoutes.POST, ResetAttendance)
 
   return router
 }
