@@ -25,7 +25,7 @@
                         classes: "govuk-link--no-visited-state",
                         attributes: { 'data-qa': 'remove-prisoner' }
                     }
-                ] if prisoners.length > 1 and isCancelled == false
+                ] if prisoners.length > 1 and isCancelled == false and appointmentInPast == false
             }
         }), prisonerListRows) %}
     {% endfor %}
