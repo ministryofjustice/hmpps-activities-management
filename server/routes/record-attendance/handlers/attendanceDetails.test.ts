@@ -106,6 +106,7 @@ describe('Route Handlers - View and Edit Attendance', () => {
         attendee: {
           name: 'Alan Key',
         },
+        activity: { summary: 'Maths level 1' },
       })
     })
   })
