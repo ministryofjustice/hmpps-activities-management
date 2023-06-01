@@ -29,6 +29,7 @@ import {
   toDateString,
   padNumber,
   firstNameLastName,
+  setAttribute,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -134,6 +135,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('addDays', addDays)
   njkEnv.addFilter('addWeeks', addWeeks)
   njkEnv.addFilter('firstNameLastName', firstNameLastName)
+  njkEnv.addFilter('setAttribute', setAttribute)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
