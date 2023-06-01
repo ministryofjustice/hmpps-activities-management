@@ -15,12 +15,6 @@
 {% set pageId = 'appointments-search-results-page' %}
 {% set backLinkHref = "/appointments" %}
 
-{% macro checkEdit(isExpired) %}
-    {% if isExpired == false %}
-        and manage
-    {% endif %}
-{% endmacro %}
-
 {% set resultsTableRows = [] %}
 {% set index = 0 %}
 {% for result in results %}
@@ -48,7 +42,7 @@
         }, {
             html: '<a href="/appointments/' + result.appointmentId + '/occurrence/' + result.appointmentOccurrenceId + '"
                 class="govuk-link--no-visited-state">
-                View' + checkEdit(result.isExpired) + '<span class="govuk-visually-hidden"> appointment</span>
+                View' + (" and manage" if not result.isExpired) + '<span class="govuk-visually-hidden"> appointment</span>
             </a>',
             classes: 'govuk-!-text-align-right',
             attributes: { 'data-qa': 'view-and-edit-result-' + index }
