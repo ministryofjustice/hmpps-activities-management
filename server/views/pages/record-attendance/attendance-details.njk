@@ -29,7 +29,7 @@
                 text: "Change",
                 visuallyHiddenText: "Change attendance option"
             }]
-        }
+        } if attendance.editable
      }
 ), summaryListRows) %}
 {# Always show "comment" row if comments are applicable to attendance reason #}
@@ -231,7 +231,7 @@
                     {% endfor %}
                 {% endif %}
 
-                {% if attendance.issuePayment and attendance.attendanceReason.code == 'ATTENDED' and now | formatDate('yyyy MM dd') <= instance.date | toDate | formatDate('yyyy MM dd') %}
+                {% if attendance.issuePayment and attendance.editable %}
                     {{ govukButton({
                         text: "Remove pay and add case note",
                         classes: "govuk-button--warning"
