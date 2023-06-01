@@ -6,6 +6,7 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "partials/attendance/otherEvent.njk" import otherEvent %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% set pageTitle = applicationName + " - Record attendance - Not Attended Reason" %}
 {% set pageId = 'not-attended-reason-page' %}
@@ -45,7 +46,7 @@
     {% endif %}
     {% if reason.captureCaseNote %}
         {{ govukWarningText({
-          text: prisoner.prisonerName | toTitleCase + " won't be paid because this is an unacceptable absence",
+          text: prisoner.prisonerName | toTitleCase + " won't be paid because this is an unacceptable absence.",
           iconFallbackText: "Warning"
         }) }}
         {{ govukTextarea({
@@ -81,7 +82,7 @@
     {% endif %}
     {% if reason.code === 'NOT_REQUIRED' %}
         <span class="govuk-label">
-            The prisoner will be paid and their attendance will be recorded as an acceptable absence
+            {{ prisoner.prisonerName | toTitleCase }} will be paid and their attendance will be recorded as an acceptable absence.
         </span>
     {% endif %}
     {% if reason.code === "REST" %}
@@ -107,9 +108,8 @@
         }) }}
     {% endif %}
     {% if reason.code === 'CLASH' %}
-        {{
-            renderOtherEvents(prisoner.otherEvents)
-        }}
+        <div class="govuk-!-margin-bottom-4">{{ renderOtherEvents(prisoner.otherEvents) }}</div>
+        <p class="govuk-body">{{ prisoner.prisonerName | toTitleCase }} will be paid and their attendance will be recorded as an acceptable absence.</p>
     {% endif %}
     {% if reason.captureOtherText %}
         {{ govukInput({
@@ -148,12 +148,22 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
+            {% if selectedPrisoners | length > 1 %}
+                <h1 class="govuk-heading-l">Select a reason why {{ selectedPrisoners | length }} prisoners did not attend</h1>
+            {% endif %}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {% for prisoner in selectedPrisoners %}
+                    {% set hasActivityClash = false %}
+                    {% for event in prisoner.otherEvents %}
+                        {% if event.eventType == "ACTIVITY" %}
+                            {% set hasActivityClash = true %}
+                        {% endif %}
+                    {% endfor %}
+
                     {% set notAttendedReasonOptions = [] %}
                      {% for notAttendedReason in notAttendedReasons %}
-                        {% if (notAttendedReason.code != "CLASH") or (prisoner.otherEvents|length) %}
+                        {% if (notAttendedReason.code != "CLASH") or (prisoner.otherEvents|length and not hasActivityClash) %}
                             {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
                                  {
                                      value: notAttendedReason.code,
@@ -166,14 +176,17 @@
                             ), notAttendedReasonOptions) %}
                         {% endif %}
                     {% endfor %}
-                    <h2 class="govuk-fieldset__legend--xl">
-                        <span>Select a reason why {{ prisoner.prisonerName | toTitleCase }} did not attend</span>
-                    </h2>
+                    {% if selectedPrisoners | length > 1 %}
+                        <hr class="govuk-!-margin-bottom-6" />
+                        <h2 class="govuk-fieldset__legend--m govuk-!-margin-bottom-0">{{ prisoner.prisonerName | toTitleCase | prisonerName }}</h2>
+                        <div class="govuk-hint">{{ prisoner.prisonerNumber }}</div>
+                    {% else %}
+                        <h1 class="govuk-fieldset__legend--l">Select a reason why {{ prisoner.prisonerName | toTitleCase }} did not attend</h1>
+                    {% endif %}
                     {{ govukRadios({
                         fieldset: {
                             legend: {
                                 text: "Why did " + prisoner.prisonerName | toTitleCase + " not attend?",
-                                isPageHeading: true,
                                 classes: "govuk-label"
                             }
                         },
@@ -193,6 +206,19 @@
 
 {% macro renderOtherEvents(otherEvents) %}
     {% for event in otherEvents %}
-        {{ otherEvent(event) }}
+        <div class="govuk-body govuk-!-margin-0">
+            {{ event.startTime }} to {{ event.endTime }}:
+            {% if event.eventType == 'ACTIVITY' and event.eventSource =='SAA' %}
+                <a href="/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list">{{ event.summary }}</a>
+            {% elseif event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
+                <a href="/appointments/{{ event.appointmentId }}/occurrence/{{ event.appointmentOccurrenceId }}">{{ event.summary }}</a>
+                <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+            {% else %}
+                {{ event.summary }}
+            {% endif %}
+            {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
+                <div class="govuk-hint govuk-!-margin-0">{{ event.internalLocationDescription | capitalize }}</div>
+            {% endif %}
+        </div>
     {% endfor %}
 {% endmacro %}
