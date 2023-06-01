@@ -1,23 +1,48 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
-{% set statusColours = {
-  SICK: "govuk-tag--red",
-  CLASH: "govuk-tag--red",
-  ATTENDED: "govuk-tag--green",
-  CANCELLED: "govuk-tag--blue",
-  NOT_REQUIRED: "govuk-tag--red",
-  SUSPENDED: "govuk-tag--red",
-  REFUSED: "govuk-tag--red",
-  REST: "govuk-tag--red",
-  OTHER: "govuk-tag--red"
+{% set attendanceTags = {
+  SICK: {
+    text: "Sick",
+    classes: "govuk-tag--red"
+  },
+  CLASH: {
+    text: "Clash",
+    classes: "govuk-tag--red"
+  },
+  ATTENDED: {
+    text: "Attended",
+    classes: "govuk-tag--green"
+  },
+  CANCELLED: {
+    text: "Cancelled",
+    classes: "govuk-tag--blue"
+  },
+  NOT_REQUIRED: {
+    text: "Not required",
+    classes: "govuk-tag--red"
+  },
+  SUSPENDED: {
+    text: "Suspended",
+    classes: "govuk-tag--red"
+  },
+  REFUSED: {
+    text: "Refused",
+    classes: "govuk-tag--red"
+  },
+  REST: {
+    text: "Rest day",
+    classes: "govuk-tag--red"
+  },
+  OTHER: {
+    text: "Other absence",
+    classes: "govuk-tag--red"
+  }
 } %}
+
 
 {% macro attendanceTag(attendance) %}
     {% if attendance.status === 'COMPLETED' %}
-      {{ govukTag({
-          text: attendance.attendanceReason.description,
-          classes: statusColours[attendance.attendanceReason.code]
-      }) }}
+      {{ govukTag(attendanceTags[attendance.attendanceReason.code]) }}
     {% else %}
       Not recorded yet
     {% endif %}
