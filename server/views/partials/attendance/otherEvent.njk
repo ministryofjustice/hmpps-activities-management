@@ -13,7 +13,7 @@
         {% endif %}
       </div>
       {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
-        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }} - {{ event.endTime }}</div>
+        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }} to {{ event.endTime }}</div>
         <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
       {% endif %}
   </div>
