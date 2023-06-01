@@ -2,7 +2,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% macro prisonerList(occurrence) %}
-    {% set occurenceLink = '/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.appointmentOccurrenceId  %}
+    {% set occurenceLink = '/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.id  %}
     {% set prisonerListRows = [] %}
     {% for prisoner in occurrence.prisoners %}
         {% set prisonerListRows = (prisonerListRows.push({
