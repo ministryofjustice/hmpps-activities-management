@@ -18,7 +18,9 @@ export default class AttendanceDetailsRoutes {
       .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
       .then(i => ({ name: `${i.firstName} ${i.lastName}` }))
 
-    res.render('pages/record-attendance/attendance-details', { instance, attendance, attendee })
+    const activity = { ...instance.activitySchedule.activity }
+
+    res.render('pages/record-attendance/attendance-details', { instance, attendance, attendee, activity })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

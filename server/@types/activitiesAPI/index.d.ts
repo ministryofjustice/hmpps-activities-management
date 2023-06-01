@@ -4,6 +4,13 @@
  */
 
 export interface paths {
+  '/schedules/{scheduleId}/deallocate': {
+    /**
+     * Deallocate offenders
+     * @description Deallocates offenders from an activity schedule on a future date. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     */
+    put: operations['deallocate']
+  }
   '/scheduled-instances/{instanceId}/uncancel': {
     /**
      * Un-cancels a scheduled instance.
@@ -113,6 +120,13 @@ export interface paths {
      * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
     post: operations['triggerCreateScheduledInstancesJob']
+  }
+  '/event-review/prison/{prison}/acknowledge': {
+    /**
+     * Acknowledge a list of change of circumstance events in the prison.
+     * @description Used to indicate that a subset of change events have been acknowledged.
+     */
+    post: operations['acknowledgeEvents']
   }
   '/bulk-appointments': {
     /**
@@ -363,6 +377,10 @@ export interface paths {
      */
     get: operations['getAllocationById']
   }
+  '/allocations/deallocation-reasons': {
+    /** Get the list of deallocation reasons */
+    get: operations['getDeallocationReasons']
+  }
   '/activity-categories': {
     /** Get the list of top-level activity categories */
     get: operations['getCategories']
@@ -388,6 +406,45 @@ export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
+    /** @description The prisoner deallocation request details */
+    PrisonerDeallocationRequest: {
+      /** @description The prisoner or prisoners to be deallocated. Must be allocated to the schedule affected by the request. */
+      prisonerNumbers: string[]
+      /**
+       * @description The reason code for the deallocation
+       * @example RELEASED
+       * @enum {string}
+       */
+      reasonCode:
+        | 'DIED'
+        | 'ENDED'
+        | 'EXPIRED'
+        | 'OTHER'
+        | 'PERSONAL'
+        | 'PROBLEM'
+        | 'RELEASED'
+        | 'REMOVED'
+        | 'SECURITY'
+        | 'TEMPORARY_ABSENCE'
+        | 'UNACCEPTABLE_ATTENDANCE'
+        | 'UNACCEPTABLE_BEHAVIOUR'
+        | 'WITHDRAWN'
+      /**
+       * Format: date
+       * @description The future date on which this allocation will end. Must not exceed the end date of the allocation, schedule or activity.
+       * @example 2023-05-24
+       */
+      endDate: string
+    }
+    ErrorResponse: {
+      /** Format: int32 */
+      status: number
+      /** Format: int32 */
+      errorCode?: number
+      userMessage?: string
+      developerMessage?: string
+      moreInfo?: string
+    }
     /** @description The uncancel request with the user details */
     UncancelScheduledInstanceRequest: {
       /**
@@ -400,15 +457,6 @@ export interface components {
        * @example Bob Adams
        */
       displayName: string
-    }
-    ErrorResponse: {
-      /** Format: int32 */
-      status: number
-      /** Format: int32 */
-      errorCode?: number
-      userMessage?: string
-      developerMessage?: string
-      moreInfo?: string
     }
     /** @description The scheduled instance cancellation request */
     ScheduleInstanceCancelRequest: {
@@ -1091,11 +1139,7 @@ export interface components {
        * @example Mrs Blogs
        */
       deallocatedBy?: string
-      /**
-       * @description The descriptive reason why this prisoner was deallocated from the activity
-       * @example Not attending regularly
-       */
-      deallocatedReason?: string
+      deallocatedReason?: components['schemas']['DeallocationReason']
       /**
        * Format: date-time
        * @description The date and time the allocation was suspended
@@ -1117,6 +1161,19 @@ export interface components {
        * @enum {string}
        */
       status: 'ACTIVE' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
+    }
+    /** @description The code and descriptive reason why this prisoner was deallocated from the activity */
+    DeallocationReason: {
+      /**
+       * @description The code for the deallocation reason
+       * @example RELEASED
+       */
+      code: string
+      /**
+       * @description The description for the deallocation reason
+       * @example Released from prison
+       */
+      description: string
     }
     /** @description Describes one instance of a prison pay band */
     PrisonPayBand: {
@@ -1251,6 +1308,18 @@ export interface components {
        * @example AAA01U
        */
       updatedBy?: string
+    }
+    /** @description The prisoner allocation request details */
+    EventAcknowledgeRequest: {
+      /**
+       * @description The list of IDs to acknowledge
+       * @example [
+       *   3,
+       *   5,
+       *   6
+       * ]
+       */
+      eventReviewIds: number[]
     }
     /** @description The create request containing the new appointments */
     BulkAppointmentsRequest: {
@@ -1511,7 +1580,7 @@ export interface components {
       /**
        * @description The prisoner or prisoners to allocate to the created appointment or series of appointment occurrences
        * @example [
-       *   'A1234BC'
+       *   "A1234BC"
        * ]
        */
       prisonerNumbers: string[]
@@ -1663,7 +1732,7 @@ export interface components {
        *     search parameter is supplied.
        *
        * @example [
-       *   'A1234BC'
+       *   "A1234BC"
        * ]
        */
       prisonerNumbers?: string[]
@@ -2814,7 +2883,7 @@ export interface components {
       /**
        * @description The replacement prisoner or prisoners to allocate to the appointment occurrence
        * @example [
-       *   'A1234BC'
+       *   "A1234BC"
        * ]
        */
       prisonerNumbers?: string[]
@@ -3164,10 +3233,10 @@ export interface components {
       number?: number
       sort?: components['schemas']['SortObject']
       first?: boolean
+      last?: boolean
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
-      last?: boolean
       empty?: boolean
     }
     PageableObject: {
@@ -3175,11 +3244,11 @@ export interface components {
       offset?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
+      pageNumber?: number
+      /** Format: int32 */
       pageSize?: number
       paged?: boolean
       unpaged?: boolean
-      /** Format: int32 */
-      pageNumber?: number
     }
     SortObject: {
       empty?: boolean
@@ -3576,14 +3645,12 @@ export interface components {
        * @example 1
        */
       pageNumber: number
-
       /**
-       * Format: int32
+       * Format: int64
        * @description The total number of elements
        * @example 20
        */
       totalElements: number
-
       /**
        * Format: int32
        * @description The total number of pages
@@ -4220,6 +4287,50 @@ export type external = Record<string, never>
 
 export interface operations {
   /**
+   * Deallocate offenders
+   * @description Deallocates offenders from an activity schedule on a future date. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   */
+  deallocate: {
+    parameters: {
+      path: {
+        scheduleId: number
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PrisonerDeallocationRequest']
+      }
+    }
+    responses: {
+      /** @description One or more prisoners were deallocated from the schedule. */
+      204: never
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The activity schedule for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Un-cancels a scheduled instance.
    * @description Un-cancels a previously cancelled scheduled instance.
    */
@@ -4745,6 +4856,55 @@ export interface operations {
       201: {
         content: {
           'text/plain': string
+        }
+      }
+    }
+  }
+  /**
+   * Acknowledge a list of change of circumstance events in the prison.
+   * @description Used to indicate that a subset of change events have been acknowledged.
+   */
+  acknowledgeEvents: {
+    parameters: {
+      path: {
+        /** @description The prison code e.g. MDI */
+        prison: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EventAcknowledgeRequest']
+      }
+    }
+    responses: {
+      /** @description The event IDS were acknowledged. */
+      204: {
+        content: {
+          'application/json': Record<string, never>
+        }
+      }
+      /** @description Invalid request body */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
         }
       }
     }
@@ -6101,6 +6261,29 @@ export interface operations {
       }
       /** @description The allocation for this ID was not found. */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** Get the list of deallocation reasons */
+  getDeallocationReasons: {
+    responses: {
+      /** @description Deallocation reasons found */
+      200: {
+        content: {
+          'application/json': components['schemas']['DeallocationReason'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }

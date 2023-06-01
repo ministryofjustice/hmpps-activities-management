@@ -89,6 +89,14 @@
         value: {
          text: attendance.recordedBy
         }
+    },
+    {
+        key: {
+         text: "Date and time"
+        },
+        value: {
+         text: attendance.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm:ss')
+        }
     }
 ), summaryListRows) %}
 
@@ -97,14 +105,14 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <span class="govuk-caption-l" data-qa="caption">{{ activity.summary }}</span>
                 <h1 class="govuk-heading-l">Attendance record for {{ attendee.name | toTitleCase }}</h1>
                 <div class="govuk-inset-text">
-                    <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.startTime | getTimeSlotFromTime | upper }}) 
+                    <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a>
+                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.startTime | getTimeSlotFromTime | upper }}) 
                </div>
 
                 {% if attendance.status !== 'WAITING' %}
-                    {% set recordedTime = attendance.recordedTime.split('T') %}
-                    <h2 class="govuk-heading-m">Recorded on {{ recordedTime[0] | toDate | formatDate('d MMMM yyyy') }} at {{ recordedTime[1] }}</h2>
                     {{ govukSummaryList({
                         rows: summaryListRows,
                         classes: "govuk-!-margin-bottom-9",
@@ -113,14 +121,11 @@
                 {% endif %}
 
                 {% if attendance.attendanceHistory | length %}
-                    {% if attendance.attendanceHistory | length > 1 %}
-                        <h2 class="govuk-heading-m" data-qa="history-heading">{{ attendance.attendanceHistory | length }} changes have been made to this attendance record</h2>
-                    {% else %}
-                        <h2 class="govuk-heading-m" data-qa="history-heading">{{ attendance.attendanceHistory | length }} change has been made to this attendance record</h2>
-                    {% endif %}
+                    <h2 class="govuk-heading-m" data-qa="history-heading">Change history for this attendance record</h2>
+                    {% set changeNo = attendance.attendanceHistory | length %}
                     {% for attendanceHistory in attendance.attendanceHistory %}
                         {% set recordedTime = attendanceHistory.recordedTime.split('T') %}
-                        <h3 class="govuk-heading-s" data-qa="history-heading">Recorded on {{ recordedTime[0] | toDate | formatDate('d MMMM yyyy') }} at {{ recordedTime[1] }}</h3>
+                        <h3 class="govuk-heading-s" data-qa="history-heading">Change {{ changeNo }}</h3>
                         {% set historyListRows = [] %}
                         {% set historyListRows = (historyListRows.push(
                              {
@@ -170,7 +175,7 @@
                                         text: "Case Note"
                                     },
                                     value: {
-                                        text: attendanceHistory.caseNoteId
+                                        text: attendanceHistory.caseNoteText
                                     }
                                 }
                             ), historyListRows) %}
@@ -198,13 +203,23 @@
                                 value: {
                                  text: attendanceHistory.recordedBy
                                 }
+                            }, {
+                                key: {
+                                    text: "Date and time"
+                                },
+                                value: {
+                                    text: attendanceHistory.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm:ss')
+                                }
                             }
                         ), historyListRows) %}
+
                         {{ govukSummaryList({
                             rows: historyListRows,
                             classes: "history-list-row-count govuk-!-margin-bottom-9",
                             attributes: { 'data-qa': 'attendance-history' }
                         }) }}
+
+                        {% set changeNo = changeNo - 1 %}
                     {% endfor %}
                 {% endif %}
 

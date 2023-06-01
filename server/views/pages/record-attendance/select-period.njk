@@ -17,7 +17,7 @@
                     name: "datePresetOption",
                     fieldset: {
                         legend: {
-                            text: "Select activity or appointment date",
+                            text: "What date do you want to record attendance for?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--xl"
                         }
@@ -26,12 +26,12 @@
                     items: [
                         {
                             value: "today",
-                            text: "Today",
+                            text: "Today - " + now | formatDate('d MMMM yyyy', false),
                             checked: formResponses.datePresetOption == 'today'
                         },
                         {
                             value: "yesterday",
-                            text: "Yesterday",
+                            text: "Yesterday - " + now | addDays(-1) | formatDate('d MMMM yyyy', false),
                             checked: formResponses.datePresetOption == 'yesterday'
                         },
                         {
@@ -42,7 +42,7 @@
                                 datePicker({
                                     id: 'date',
                                     hint: {
-                                        text: "For example, today's date is " + now | formatDate('dd MM yyyy')
+                                        text: "For example, 27 3 2022"
                                     },
                                     renderedErrorMessage: validationErrors | findError('date'),
                                     validationErrors: validationErrors,

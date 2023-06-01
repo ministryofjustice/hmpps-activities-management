@@ -177,7 +177,7 @@
                     }
                 },
                 {
-                    text: row.dateAllocated | formatDate('d MMMM yyyy')
+                    text: row.startDate | formatDate('d MMMM yyyy') + (' to ' + row.endDate | subDays(1) |formatDate('d MMMM yyyy') if row.endDate)
                 },
                 {
                     html: otherAllocationsHtml
@@ -213,7 +213,7 @@
             actions: [
                 {
                     text: 'Remove from activity',
-                    formAction: 'allocation-dashboard/deallocate'
+                    formAction: schedule.id + '/deallocate'
                 },
                 {
                     text: 'Edit allocation',
