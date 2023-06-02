@@ -1,0 +1,21 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+
+{# 
+ # This macro is based on govuk's govukCharacterCount component, but implements govukInput instead of govukTextarea
+ # All params supported by govukInput are supported by this component with the addition of a required maxlength option
+ #}
+{% macro characterCountInput(params) %}
+  {# Modify the describedBy and classes options as needed by the govuk character count js #}
+  {% set describedBy = (params.describedBy + " " if params.describedBy) + params.id + "-count-info" %}
+  {% set params = params | setAttribute('describedBy', describedBy) %}
+
+  {% set classes = (params.classes + " " if params.classes) + "govuk-js-character-count" %}
+  {% set params = params | setAttribute('classes', classes) %}
+
+  <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="{{ params.maxlength }}">
+    {{ govukInput(params) }}
+    <div id="{{ params.id }}-info" class="govuk-hint govuk-character-count__message">
+      You can enter up to {{ params.maxlength }} characters
+    </div>
+  </div>
+{% endmacro %}
