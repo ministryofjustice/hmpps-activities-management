@@ -133,7 +133,6 @@ export default class AttendanceListRoutes {
           prisonerNumber: i.prisonerNumber,
           location: i.cellLocation,
           otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
-          attendanceLabel: this.getAttendanceLabel(i.prisonerNumber, instance.attendances),
           attendanceId: this.getAttendanceId(i.prisonerNumber, instance.attendances),
         })),
       )
@@ -148,14 +147,6 @@ export default class AttendanceListRoutes {
     })
 
     res.redirect(`/attendance/activities/${instanceId}/not-attended-reason`)
-  }
-
-  private getAttendanceLabel = (prisonerNumber: string, attendances: Attendance[]) => {
-    const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
-    if (attendance.status === AttendanceStatus.WAITING) {
-      return 'Not recorded yet'
-    }
-    return attendance.attendanceReason.description === 'ATTENDED' ? 'Attended' : 'Absent'
   }
 
   private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {

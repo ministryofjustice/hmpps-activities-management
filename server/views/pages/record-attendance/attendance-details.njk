@@ -6,14 +6,6 @@
 {% set pageTitle = "Activities Management - Record Attendance" %}
 {% set pageId = 'attendance-view-details-page' %}
 
-{% macro attendanceDescription(attendance) %}
-    {% if attendance.attendanceReason.code == "CANCELLED" %}
-        Not attended - Session cancelled
-    {% else %}
-        {{ attendance.attendanceReason.description }}
-    {% endif %}
-{% endmacro %}
-
 {% set summaryListRows = [] %}
 {% set summaryListRows = (summaryListRows.push(
      {
@@ -21,7 +13,7 @@
             text: "Attendance"
         },
         value: {
-            text: attendanceDescription(attendance)
+            text: attendance.attendanceReason.description
         },
         actions: {
             items: [{
@@ -141,7 +133,7 @@
                                     text: "Attendance"
                                 },
                                 value: {
-                                    text: attendanceDescription(attendanceHistory)
+                                    text: attendance.attendanceReason.description
                                 }
                              }
                         ), historyListRows) %}
