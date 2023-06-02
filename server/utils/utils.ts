@@ -795,3 +795,8 @@ export const mapSlots = (createJourney: CreateAnActivityJourney) => {
 export const padNumber = (num: number, length = 2) => {
   return (new Array(length).fill('0').join('') + num).slice(-length)
 }
+
+export const setAttribute = (object: { [key: string]: string }, key: string, value: string) => {
+  const newObject = { ...object, [key]: value }
+  return newObject
+}
