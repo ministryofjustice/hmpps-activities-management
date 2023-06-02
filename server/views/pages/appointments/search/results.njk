@@ -42,7 +42,7 @@
         }, {
             html: '<a href="/appointments/' + result.appointmentId + '/occurrence/' + result.appointmentOccurrenceId + '"
                 class="govuk-link--no-visited-state">
-                View and manage<span class="govuk-visually-hidden"> appointment</span>
+                View' + (" and manage" if not result.isExpired) + '<span class="govuk-visually-hidden"> appointment</span>
             </a>',
             classes: 'govuk-!-text-align-right',
             attributes: { 'data-qa': 'view-and-edit-result-' + index }

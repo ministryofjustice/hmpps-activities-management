@@ -1,10 +1,10 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% macro prisonerList(appointmentId, appointmentOccurrenceId, appointmentType, repeat, prisoners, isCancelled) %}
-    {% set occurenceLink = '/appointments/' + appointmentId + '/occurrence/' + appointmentOccurrenceId  %}
+{% macro prisonerList(occurrence) %}
+    {% set occurenceLink = '/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.id  %}
     {% set prisonerListRows = [] %}
-    {% for prisoner in prisoners %}
+    {% for prisoner in occurrence.prisoners %}
         {% set prisonerListRows = (prisonerListRows.push({
             key: {
                 text: "Name of attendee"
@@ -25,7 +25,7 @@
                         classes: "govuk-link--no-visited-state",
                         attributes: { 'data-qa': 'remove-prisoner' }
                     }
-                ] if prisoners.length > 1 and isCancelled == false
+                ] if prisoners.length > 1 and occurrence.isCancelled == false and occurrence.isExpired == false
             }
         }), prisonerListRows) %}
     {% endfor %}
@@ -38,8 +38,8 @@
             'target': '_blank',
             'data-qa': 'print-movement-slips'
         }
-    }] %}
-    {% if appointmentType == AppointmentType.GROUP %}
+    }] if occurrence.isExpired == false %}
+    {% if occurrence.appointmentType == AppointmentType.GROUP and occurrence.isExpired == false %}
         {% set prisonerActionItems = (prisonerActionItems.push(
             {
                 href: occurenceLink + "/edit/start/prisoners/add",
@@ -57,7 +57,7 @@
             },
             actions: {
                 items: prisonerActionItems
-            } if isCancelled == false
+            } if occurrence.isCancelled == false and occurrence.isExpired == false
         },
         rows: prisonerListRows,
         attributes: { 'data-qa': 'prisoner-list' }
