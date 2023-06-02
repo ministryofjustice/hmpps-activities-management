@@ -90,6 +90,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
           isRepeat: false,
           sequenceNumber: 1,
           maxSequenceNumber: 1,
+          isExpired: false,
         },
         {
           appointmentId: 2,
@@ -109,6 +110,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
           isRepeat: true,
           sequenceNumber: 2,
           maxSequenceNumber: 6,
+          isExpired: false,
         },
       ],
     }
@@ -125,7 +127,6 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($('[data-qa=result-location-0]').text().trim()).toEqual('Test Location 1')
     expect($('[data-qa=result-prisoner-count-0]').text().trim()).toEqual('1')
     expect($('[data-qa=result-sequence-number-0]').text().trim()).toEqual('1 of 1')
-    expect($('[data-qa=view-and-edit-result-0]').text().trim()).toEqual('View and manage appointment')
     expect($('[data-qa=view-and-edit-result-0] > a').attr('href')).toEqual('/appointments/1/occurrence/2')
 
     resultDate = $('[data-qa=result-date-1]')
@@ -136,7 +137,6 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($('[data-qa=result-location-1]').text().trim()).toEqual('Test Location 2')
     expect($('[data-qa=result-prisoner-count-1]').text().trim()).toEqual('3')
     expect($('[data-qa=result-sequence-number-1]').text().trim()).toEqual('2 of 6')
-    expect($('[data-qa=view-and-edit-result-1]').text().trim()).toEqual('View and manage appointment')
     expect($('[data-qa=view-and-edit-result-1] > a').attr('href')).toEqual('/appointments/2/occurrence/3')
   })
 

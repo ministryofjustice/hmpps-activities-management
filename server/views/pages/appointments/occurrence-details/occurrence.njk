@@ -77,7 +77,7 @@
                                 attributes: { 'data-qa': 'cancel-appointment' }
                             }
                         ]
-                    } if occurrence.isCancelled == false
+                    } if occurrence.isCancelled == false and occurrence.isExpired == false
                 },
                 rows: [
                     {
@@ -117,7 +117,7 @@
                                     attributes: { 'data-qa': 'change-location' }
                                 }
                             ]
-                        } if occurrence.isCancelled == false
+                        } if occurrence.isCancelled == false and occurrence.isExpired == false
                     }, {
                         key: {
                             text: "Date"
@@ -134,7 +134,7 @@
                                     attributes: { 'data-qa': 'change-date' }
                                 }
                             ]
-                        } if occurrence.isCancelled == false
+                        } if occurrence.isCancelled == false and occurrence.isExpired == false
                     }, {
                         key: {
                             text: "Start time"
@@ -151,7 +151,7 @@
                                     attributes: { 'data-qa': 'change-start-time' }
                                 }
                             ]
-                        } if occurrence.isCancelled == false
+                        } if occurrence.isCancelled == false and occurrence.isExpired == false
                     }, {
                         key: {
                             text: "End time"
@@ -168,7 +168,7 @@
                                     attributes: { 'data-qa': 'change-end-time' }
                                 }
                             ]
-                        } if occurrence.isCancelled == false
+                        } if occurrence.isCancelled == false and occurrence.isExpired == false
                     }, {
                         key: {
                             text: "Heads up"
@@ -185,13 +185,13 @@
                                     attributes: { 'data-qa': 'change-comment' }
                                 }
                             ]
-                        } if occurrence.isCancelled == false
+                        } if occurrence.isCancelled == false and occurrence.isExpired == false
                     }
                 ],
                 attributes: { 'data-qa': 'appointment-details' }
             }) }}
 
-            {{ prisonerList(occurrence.appointmentId, occurrence.id, occurrence.appointmentType, occurrence.repeat, occurrence.prisoners, occurrence.isCancelled) }}
+            {{ prisonerList(occurrence) }}
 
             {{ govukSummaryList({
                 card: {
