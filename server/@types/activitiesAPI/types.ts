@@ -46,6 +46,7 @@ export type AppointmentOccurrenceSearchResult = components['schemas']['Appointme
 export type AppointmentOccurrenceCancelRequest = components['schemas']['AppointmentOccurrenceCancelRequest']
 export type EventReviewSearchResults = components['schemas']['EventReviewSearchResults']
 export type EventReview = components['schemas']['EventReview']
+export type EventAcknowledgeRequest = components['schemas']['EventAcknowledgeRequest']
 export type DeallocationReason = components['schemas']['DeallocationReason']
 export type PrisonerDeallocationRequest = components['schemas']['PrisonerDeallocationRequest']
 export type DeallocationReasonCode = components['schemas']['PrisonerDeallocationRequest']['reasonCode']

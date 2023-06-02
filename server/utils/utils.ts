@@ -350,6 +350,12 @@ export const convertToArray = (maybeArray: string | string[]): string[] => {
   return maybeArray ? [maybeArray].flat() : []
 }
 
+export const convertToNumberArray = (maybeArray: string | string[]): number[] => {
+  return convertToArray(maybeArray)
+    .map(item => (Number.isNaN(+item) ? null : +item))
+    .filter(item => item)
+}
+
 export const exampleDateOneWeekAhead = (message: string) => {
   const nextWeek = new Date()
   nextWeek.setDate(nextWeek.getDate() + 7)

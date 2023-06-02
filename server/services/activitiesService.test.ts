@@ -28,6 +28,7 @@ import {
   EventReviewSearchResults,
   DeallocationReason,
   PrisonerDeallocationRequest,
+  EventAcknowledgeRequest,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -208,7 +209,7 @@ describe('Activities Service', () => {
         schedules: [{ id: 110 }, { id: 111 }, { id: 112 }],
       } as unknown as Activity
 
-      activitiesService.getDefaultScheduleOfActivity(activity, user)
+      await activitiesService.getDefaultScheduleOfActivity(activity, user)
 
       expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(110, user)
     })
@@ -535,6 +536,18 @@ describe('Activities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(activitiesApiClient.getChangeEvents).toHaveBeenCalledWith('MDI', '2023-10-16', 1, 10, user)
+    })
+  })
+
+  describe('acknowledgeChangeEvents', () => {
+    it('should acknowledge a list of change event IDS', async () => {
+      when(activitiesApiClient.acknowledgeChangeEvents).mockResolvedValue()
+      const eventReviewIds = [1, 2, 3]
+      const request = { eventReviewIds } as EventAcknowledgeRequest
+
+      await activitiesService.acknowledgeChangeEvents('MDI', eventReviewIds, user)
+
+      expect(activitiesApiClient.acknowledgeChangeEvents).toHaveBeenCalledWith('MDI', request, user)
     })
   })
 

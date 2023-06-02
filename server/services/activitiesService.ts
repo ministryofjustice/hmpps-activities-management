@@ -41,6 +41,7 @@ import {
   EventReviewSearchResults,
   PrisonerDeallocationRequest,
   DeallocationReasonCode,
+  EventAcknowledgeRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
@@ -355,6 +356,11 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getChangeEvents(prisonCode, requestDate, page, pageSize, user)
   }
 
+  async acknowledgeChangeEvents(prisonCode: string, eventIds: number[], user: ServiceUser) {
+    const request = { eventReviewIds: eventIds } as EventAcknowledgeRequest
+    return this.activitiesApiClient.acknowledgeChangeEvents(prisonCode, request, user)
+  }
+
   async getDeallocationReasons(user: ServiceUser) {
     return this.activitiesApiClient.getDeallocationReasons(user)
   }
@@ -365,7 +371,6 @@ export default class ActivitiesService {
       reasonCode: deallocateJourney.deallocationReason as DeallocationReasonCode,
       endDate: deallocateJourney.deallocationDate,
     }
-
     return this.activitiesApiClient.deallocateFromActivity(deallocateJourney.scheduleId, request, user)
   }
 }
