@@ -1,8 +1,8 @@
 {% extends "layout.njk" %}
 
-{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "partials/characterCountInput.njk" import characterCountInput %}
 
 {% set pageTitle = applicationName + " - Create an activity - Name" %}
 {% set pageId = 'name-page' %}
@@ -13,9 +13,10 @@
         <div class="govuk-grid-column-full">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukInput({
+
+                {{ characterCountInput({
                     label: {
-                        text: "Enter the name of the activity",
+                        text: "What's the new activity called?",
                         classes: "govuk-label--xl",
                         isPageHeading: true
                     },
@@ -30,11 +31,8 @@
                     },
                     errorMessage: validationErrors | findError('name'),
                     value: formResponses.name or session.createJourney.name,
-                    describedBy: 'with-hint-info'
+                    maxlength: "40"
                 }) }}
-                <div id="with-hint-info" class="govuk-hint govuk-character-count__message bottom-hint">
-                    Maximum number of characters: 40
-                </div>
 
                 {% if session.req.query.fromEditActivity %}
                     {{ govukInsetText({
