@@ -10,8 +10,8 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <h1 class="govuk-heading-l">Choose unlock list details</h1>
         <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-l">Choose unlock list details</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
@@ -73,17 +73,17 @@
                     items: [
                         {
                             value: "am",
-                            text: "(AM) Morning",
+                            text: "AM (morning)",
                             checked: formResponses.activitySlot == 'am'
                         },
                         {
                             value: "pm",
-                            text: "(PM) Afternoon",
+                            text: "PM (afternoon)",
                             checked: formResponses.activitySlot == 'pm'
                         },
                         {
                             value: "ed",
-                            text: "(ED) Evening",
+                            text: "ED (evening)",
                             checked: formResponses.activitySlot == 'ed'
                         }
                     ]
