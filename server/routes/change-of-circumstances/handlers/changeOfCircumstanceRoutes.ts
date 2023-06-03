@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { getPagination, PaginationRequest } from '../../../utils/paginationUtils'
 import ActivitiesService from '../../../services/activitiesService'
 import PrisonService from '../../../services/prisonService'
-import logger from '../../../../logger'
+import { convertToNumberArray } from '../../../utils/utils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -22,8 +22,8 @@ export default class ChangeOfCircumstanceRoutes {
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
     // Get the pagination settings for this list
-    const totalResults = searchResults.totalElements || 5 // TODO: Temporary until API returns this!!
-    const currentPage = searchResults.pageNumber
+    const totalResults = searchResults.totalElements || 0
+    const currentPage = searchResults.pageNumber || 0
     const paginationReq = { totalResults, currentPage, limit: ITEMS_PER_PAGE } as PaginationRequest
     const pagination = getPagination(paginationReq, new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`))
 
@@ -44,10 +44,12 @@ export default class ChangeOfCircumstanceRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { date, page, selectedEvents } = req.body
-    // const { user } = res.locals
+    const { user } = res.locals
+    const prisonCode = user.activeCaseLoadId
     const redirectPage = page || 0
-    logger.info(`POST - selected ${JSON.stringify(selectedEvents)} - date ${date} page ${redirectPage}`)
-    // await this.activitiesService.acknowledgeChangeEvents(bodyList, user)
+
+    await this.activitiesService.acknowledgeChangeEvents(prisonCode, convertToNumberArray(selectedEvents), user)
+
     res.redirect(`view-changes?date=${date}&page=${redirectPage}`)
   }
 }

@@ -500,11 +500,11 @@ export interface components {
        */
       prisonCode: string
       /**
-       * @description The status - WAITING, COMPLETED, LOCKED
+       * @description The status - WAITING, COMPLETED
        * @example WAITING
        * @enum {string}
        */
-      status: 'WAITING' | 'COMPLETED' | 'LOCKED'
+      status: 'WAITING' | 'COMPLETED'
       /**
        * @description The reason codes- SICK, REFUSED, NOT_REQUIRED, REST, CLASH, OTHER, SUSPENDED, CANCELLED, ATTENDED
        * @example ATTENDED
@@ -1575,7 +1575,7 @@ export interface components {
       /**
        * @description The prisoner or prisoners to allocate to the created appointment or series of appointment occurrences
        * @example [
-       *   "A1234BC"
+       *   'A1234BC'
        * ]
        */
       prisonerNumbers: string[]
@@ -1727,7 +1727,7 @@ export interface components {
        *     search parameter is supplied.
        *
        * @example [
-       *   "A1234BC"
+       *   'A1234BC'
        * ]
        */
       prisonerNumbers?: string[]
@@ -2552,7 +2552,7 @@ export interface components {
        */
       recordedBy?: string
       /**
-       * @description WAITING, COMPLETED, LOCKED.
+       * @description WAITING or COMPLETED
        * @example WAITING
        */
       status: string
@@ -2592,6 +2592,11 @@ export interface components {
       caseNoteText?: string
       /** @description The attendance history records for this attendance */
       attendanceHistory: components['schemas']['AttendanceHistory'][]
+      /**
+       * @description Flag to show whether this attendance is editable
+       * @example true
+       */
+      editable: boolean
     }
     /** @description An attendance record for a prisoner, can be marked or unmarked */
     AttendanceHistory: {
@@ -2632,6 +2637,11 @@ export interface components {
        * @example Prisoner has a valid reason to miss the activity.
        */
       otherAbsenceReason?: string
+      /**
+       * @description Free text for any case note entered against the attendance record
+       * @example Prisoner has refused to attend the activity without a valid reason to miss the activity.
+       */
+      caseNoteText?: string
     }
     /** @description The reason for attending or not */
     AttendanceReason: {
@@ -2883,7 +2893,7 @@ export interface components {
       /**
        * @description The replacement prisoner or prisoners to allocate to the appointment occurrence
        * @example [
-       *   "A1234BC"
+       *   'A1234BC'
        * ]
        */
       prisonerNumbers?: string[]
@@ -3037,7 +3047,7 @@ export interface components {
        */
       comment?: string
       /**
-       * @description WAITING, COMPLETED, LOCKED.
+       * @description WAITING, COMPLETED.
        * @example WAITING
        */
       status: string
@@ -3232,10 +3242,10 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      first?: boolean
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
-      first?: boolean
       last?: boolean
       empty?: boolean
     }
@@ -3686,7 +3696,7 @@ export interface components {
        */
       timeSlot: string
       /**
-       * @description WAITING, COMPLETED, LOCKED.
+       * @description WAITING, COMPLETED.
        * @example WAITING
        */
       status: string
@@ -3742,7 +3752,7 @@ export interface components {
        */
       timeSlot: string
       /**
-       * @description WAITING, COMPLETED, LOCKED.
+       * @description WAITING, COMPLETED.
        * @example WAITING
        */
       status: string
@@ -4830,6 +4840,12 @@ export interface operations {
    * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
    */
   triggerManageAttendanceRecordsJob: {
+    parameters: {
+      query: {
+        /** @description If true will run the attendance expiry process in addition to other features. Defaults to false. */
+        withExpiry?: boolean
+      }
+    }
     responses: {
       /** @description Created */
       201: {
