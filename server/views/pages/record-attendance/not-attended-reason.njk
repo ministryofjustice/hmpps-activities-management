@@ -7,6 +7,7 @@
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "partials/attendance/otherEvent.njk" import otherEvent %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 
 {% set pageTitle = applicationName + " - Record attendance - Not Attended Reason" %}
 {% set pageId = 'not-attended-reason-page' %}
@@ -34,14 +35,16 @@
                 }
             ]
         }) }}
-        {{ govukInput({
+        {{ govukCharacterCount({
             label: {
                 text: "Can you provide more detail? (optional)"
             },
+            id: "notAttendedData-"  + prisoner.prisonerNumber + "-moreDetail",
             name: "notAttendedData["  + prisoner.prisonerNumber + "][moreDetail]",
             classes: "govuk-!-width-one-half",
             errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][moreDetail]"),
-            value: formResponses.notAttendedData[prisoner.prisonerNumber].moreDetail
+            value: formResponses.notAttendedData[prisoner.prisonerNumber].moreDetail,
+            maxlength: "100"
         }) }}
     {% endif %}
     {% if reason.captureCaseNote %}
@@ -49,14 +52,16 @@
           text: prisoner.prisonerName | toTitleCase + " won't be paid because this is an unacceptable absence.",
           iconFallbackText: "Warning"
         }) }}
-        {{ govukTextarea({
+        {{ govukCharacterCount({
             label: {
                 text: "Add a case note"
             },
+            id: "notAttendedData-"  + prisoner.prisonerNumber + "-caseNote",
             name: "notAttendedData["  + prisoner.prisonerNumber + "][caseNote]",
             classes: "govuk-!-width-one-half",
             errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][caseNote]"),
-            value: formResponses.notAttendedData[prisoner.prisonerNumber].caseNote
+            value: formResponses.notAttendedData[prisoner.prisonerNumber].caseNote,
+            maxlength: "4000"
         }) }}
        {{ govukRadios({
             classes: "govuk-radios--inline",
@@ -112,14 +117,16 @@
         <p class="govuk-body">{{ prisoner.prisonerName | toTitleCase }} will be paid and their attendance will be recorded as an acceptable absence.</p>
     {% endif %}
     {% if reason.captureOtherText %}
-        {{ govukInput({
+        {{ govukCharacterCount({
             label: {
                 text: "Add an absence reason"
             },
+            id: "notAttendedData-"  + prisoner.prisonerNumber + "-absenceReason",
             name: "notAttendedData["  + prisoner.prisonerNumber + "][absenceReason]",
             classes: "govuk-!-width-one-half",
             errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][absenceReason]"),
-            value: formResponses.notAttendedData[prisoner.prisonerNumber].absenceReason
+            value: formResponses.notAttendedData[prisoner.prisonerNumber].absenceReason,
+            maxlength: "100"
         }) }}
        {{ govukRadios({
             classes: "govuk-radios--inline",

@@ -21,9 +21,21 @@
                 text: "Change",
                 visuallyHiddenText: "Change attendance option"
             }]
-        } if not instance.cancelled
+        } if attendance.editable
      }
 ), summaryListRows) %}
+{% if attendance.attendanceReason.code == 'CANCELLED' %}
+    {% set summaryListRows = (summaryListRows.push(
+        {
+            key: {
+                text: "Cancellation reason"
+            },
+            value: {
+                text: attendance.comment
+            }
+        }
+    ), summaryListRows) %}
+{% endif %}
 {% if attendance.otherAbsenceReason %}
     {% set summaryListRows = (summaryListRows.push(
         {
@@ -68,7 +80,7 @@
     ), summaryListRows) %}
 {% endif %}
 {# Always show "comment" row if comments are applicable to attendance reason #}
-{% if attendance.attendanceReason.code in ['SICK', 'CANCELLED'] %}
+{% if attendance.attendanceReason.code == 'SICK' %}
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
@@ -138,6 +150,19 @@
                              }
                         ), historyListRows) %}
 
+                        {% if attendanceHistory.attendanceReason.code == 'CANCELLED' %}
+                            {% set historyListRows = (historyListRows.push(
+                                {
+                                    key: {
+                                        text: "Cancellation reason"
+                                    },
+                                    value: {
+                                        text: attendanceHistory.comment
+                                    }
+                                }
+                            ), historyListRows) %}
+                        {% endif %}
+
                         {% if attendanceHistory.otherAbsenceReason %}
                             {% set historyListRows = (historyListRows.push(
                                 {
@@ -182,7 +207,7 @@
                         {% endif %}
 
                         {# Always show "comment" row if comments are applicable to attendance reason #}
-                        {% if attendanceHistory.attendanceReason.code in ['SICK', 'CANCELLED'] %}
+                        {% if attendanceHistory.attendanceReason.code == 'SICK' %}
                             {% set historyListRows = (historyListRows.push(
                                 {
                                     key: {
@@ -223,7 +248,7 @@
                     {% endfor %}
                 {% endif %}
 
-                {% if attendance.issuePayment and attendance.attendanceReason.code == 'ATTENDED' and now | formatDate('yyyy MM dd') <= instance.date | toDate | formatDate('yyyy MM dd') %}
+                {% if attendance.issuePayment and attendance.attendanceReason.code == 'ATTENDED' and attendance.editable %}
                     {{ govukButton({
                         text: "Remove pay and add case note",
                         classes: "govuk-button--warning"

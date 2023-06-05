@@ -247,6 +247,6 @@
 
 {% macro renderViewLink(attendance) %}
     {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory|length %}
-        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">View or edit</a>
+        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">{{ "View or edit" if attendance.editable else "View" }}</a>
     {% endif %}
 {% endmacro %}
