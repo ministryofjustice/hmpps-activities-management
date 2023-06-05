@@ -41,6 +41,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -516,6 +517,17 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.UPDATE(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`/allocation-dashboard/1/check-allocation/ABC123`)
+    })
+
+    it('validation fails if multiple allocations are selected', async () => {
+      req.body = { selectedAllocations: ['ABC123', 'ABC124'] }
+
+      await handler.UPDATE(req, res)
+
+      expect(res.validationFailed).toHaveBeenCalledWith(
+        'selectedAllocations',
+        'You can only select one allocation to edit',
+      )
     })
   })
 })
