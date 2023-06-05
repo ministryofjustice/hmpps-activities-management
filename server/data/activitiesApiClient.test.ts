@@ -19,6 +19,9 @@ import {
   AppointmentLocationSummary,
   AppointmentCreateRequest,
   PrisonerDeallocationRequest,
+  EventAcknowledgeRequest,
+  EventReview,
+  EventReviewSearchResults,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -759,6 +762,43 @@ describe('activitiesApiClient', () => {
       }
 
       await activitiesApiClient.deallocateFromActivity(1, body, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getChangeEvents', () => {
+    it('should return change events from the API', async () => {
+      const content = [
+        {
+          eventReviewId: 1,
+          serviceIdentifier: null,
+          eventType: 'prison.xxx.yyy',
+          eventTime: '2023-10-16 23:14:22',
+          prisonCode: 'MDI',
+          prisonerNumber: 'A1234AA',
+          eventData: 'Some data',
+        } as EventReview,
+      ]
+      const response = { content, pageNumber: 1, totalElements: 1, totalPages: 1 } as EventReviewSearchResults
+      fakeActivitiesApi
+        .get('/event-review/prison/MDI')
+        .query({ date: '2023-01-01', page: 0, size: 10 })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+      const output = await activitiesApiClient.getChangeEvents('MDI', '2023-01-01', 0, 10, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('acknowledgeChangeEvents', () => {
+    it('should acknowledge change events', async () => {
+      const request = { eventReviewIds: [1, 2, 3] } as EventAcknowledgeRequest
+      fakeActivitiesApi
+        .post('/event-review/prison/MDI/acknowledge')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(204)
+      await activitiesApiClient.acknowledgeChangeEvents('MDI', request, user)
       expect(nock.isDone()).toBe(true)
     })
   })

@@ -1575,7 +1575,7 @@ export interface components {
       /**
        * @description The prisoner or prisoners to allocate to the created appointment or series of appointment occurrences
        * @example [
-       *   "A1234BC"
+       *   'A1234BC'
        * ]
        */
       prisonerNumbers: string[]
@@ -1727,7 +1727,7 @@ export interface components {
        *     search parameter is supplied.
        *
        * @example [
-       *   "A1234BC"
+       *   'A1234BC'
        * ]
        */
       prisonerNumbers?: string[]
@@ -2893,7 +2893,7 @@ export interface components {
       /**
        * @description The replacement prisoner or prisoners to allocate to the appointment occurrence
        * @example [
-       *   "A1234BC"
+       *   'A1234BC'
        * ]
        */
       prisonerNumbers?: string[]
@@ -3242,10 +3242,10 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      first?: boolean
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
-      first?: boolean
       last?: boolean
       empty?: boolean
     }
@@ -4840,6 +4840,12 @@ export interface operations {
    * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
    */
   triggerManageAttendanceRecordsJob: {
+    parameters: {
+      query: {
+        /** @description If true will run the attendance expiry process in addition to other features. Defaults to false. */
+        withExpiry?: boolean
+      }
+    }
     responses: {
       /** @description Created */
       201: {

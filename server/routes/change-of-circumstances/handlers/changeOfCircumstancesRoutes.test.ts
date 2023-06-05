@@ -118,4 +118,36 @@ describe('Route Handlers - Select period for changes', () => {
       expect(res.render).toHaveBeenCalledWith('pages/change-of-circumstances/view-events', viewContext)
     })
   })
+
+  describe('POST', () => {
+    it('should submit event IDs for acknowledgement and redirect to view', async () => {
+      req = {
+        body: { date: '2023-10-01', page: 0, selectedEvents: ['1', '2', '3'] },
+      } as unknown as Request
+      when(activitiesService.acknowledgeChangeEvents).mockResolvedValue()
+      await handler.POST(req, res)
+      expect(activitiesService.acknowledgeChangeEvents).toHaveBeenCalledWith('MDI', [1, 2, 3], res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith(`view-changes?date=${req.body.date}&page=${req.body.page}`)
+    })
+
+    it('should submit  single event ID and redirect to view', async () => {
+      req = {
+        body: { date: '2023-10-01', page: 1, selectedEvents: '1' },
+      } as unknown as Request
+      when(activitiesService.acknowledgeChangeEvents).mockResolvedValue()
+      await handler.POST(req, res)
+      expect(activitiesService.acknowledgeChangeEvents).toHaveBeenCalledWith('MDI', [1], res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith(`view-changes?date=${req.body.date}&page=${req.body.page}`)
+    })
+
+    it('should handle no selected items - not currently possible in the UI', async () => {
+      req = {
+        body: { date: '2023-10-01', page: 1, selectedEvents: undefined },
+      } as unknown as Request
+      when(activitiesService.acknowledgeChangeEvents).mockResolvedValue()
+      await handler.POST(req, res)
+      expect(activitiesService.acknowledgeChangeEvents).toHaveBeenCalledWith('MDI', [], res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith(`view-changes?date=${req.body.date}&page=${req.body.page}`)
+    })
+  })
 })
