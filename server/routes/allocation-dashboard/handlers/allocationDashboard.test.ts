@@ -507,4 +507,15 @@ describe('Route Handlers - Allocation dashboard', () => {
       expect(errors).toHaveLength(0)
     })
   })
+
+  describe('UPDATE', () => {
+    it('should redirect to update the selected allocation', async () => {
+      req.body = { selectedAllocations: 'ABC123' }
+      req.params = { scheduleId: '1' }
+
+      await handler.UPDATE(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(`/allocation-dashboard/1/check-allocation/ABC123`)
+    })
+  })
 })
