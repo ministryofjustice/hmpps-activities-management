@@ -22,7 +22,7 @@ export default function Index({ activitiesService, prisonService, capacitiesServ
   post('/:scheduleId/deallocate', allocationDashboardHandler.DEALLOCATE, SelectedAllocations)
   get('/:scheduleId/check-allocation/:prisonerNumber', checkAllocationHandler.GET)
   post('/:scheduleId/check-allocation/:prisonerNumber', checkAllocationHandler.POST)
-  post('/:scheduleId/check-allocation', allocationDashboardHandler.UPDATE)
+  post('/:scheduleId/check-allocation', allocationDashboardHandler.UPDATE, SelectedAllocations)
 
   return router
 }

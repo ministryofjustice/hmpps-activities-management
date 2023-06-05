@@ -110,7 +110,11 @@ export default class AllocationDashboardRoutes {
 
   UPDATE = async (req: Request, res: Response): Promise<void> => {
     const { selectedAllocations } = req.body
-    res.redirect(`/allocation-dashboard/${req.params.scheduleId}/check-allocation/${selectedAllocations}`)
+    if (selectedAllocations.length > 1) {
+      res.validationFailed('selectedAllocations', 'You can only select one allocation to edit')
+    } else {
+      res.redirect(`/allocation-dashboard/${req.params.scheduleId}/check-allocation/${selectedAllocations[0]}`)
+    }
   }
 
   private getSuitableForIep = (minimumIncentiveLevel: string, iepLevels: IepLevel[]) => {

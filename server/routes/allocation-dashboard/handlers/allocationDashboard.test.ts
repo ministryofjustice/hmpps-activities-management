@@ -510,7 +510,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
   describe('UPDATE', () => {
     it('should redirect to update the selected allocation', async () => {
-      req.body = { selectedAllocations: 'ABC123' }
+      req.body = { selectedAllocations: ['ABC123'] }
       req.params = { scheduleId: '1' }
 
       await handler.UPDATE(req, res)
