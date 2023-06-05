@@ -42,6 +42,7 @@ import {
   EventReviewSearchResults,
   DeallocationReason,
   PrisonerDeallocationRequest,
+  EventAcknowledgeRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -471,6 +472,14 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/event-review/prison/${prison}`,
       authToken: user.token,
       query: { date, page, size: pageSize },
+    })
+  }
+
+  async acknowledgeChangeEvents(prison: string, request: EventAcknowledgeRequest, user: ServiceUser): Promise<void> {
+    return this.post({
+      path: `/event-review/prison/${prison}/acknowledge`,
+      data: request,
+      authToken: user.token,
     })
   }
 

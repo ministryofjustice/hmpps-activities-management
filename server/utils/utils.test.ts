@@ -20,6 +20,7 @@ import {
   formatDate,
   toMoney,
   convertToArray,
+  convertToNumberArray,
   toTimeItems,
   exampleDateOneWeekAhead,
   parseDate,
@@ -293,6 +294,18 @@ describe('utils', () => {
       ['Empty list', [], 0],
     ])('%s convertToArray(%s) has %s elements', (desc: string, maybeArray: string | string[], size: number) => {
       expect(convertToArray(maybeArray)).toHaveLength(size)
+    })
+  })
+
+  describe('convertToNumberArray', () => {
+    it.each([
+      ['Undefined', undefined, 0],
+      ['Single string value', '1', 1],
+      ['Has 2 number elements and NaNs', ['1', '2', 'a', 'b'], 2],
+      ['Has 6 number elements and NaNs', ['1', '2', '3', '4', '5', '6', null], 6],
+      ['Empty list', [], 0],
+    ])('%s convertToNumberArray(%s) has %s elements', (desc: string, maybeArray: string | string[], size: number) => {
+      expect(convertToNumberArray(maybeArray)).toHaveLength(size)
     })
   })
 
