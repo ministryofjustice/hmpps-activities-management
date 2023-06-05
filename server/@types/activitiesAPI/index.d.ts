@@ -206,10 +206,6 @@ export interface paths {
      */
     get: operations['candidates']
   }
-  '/schedules/{activityScheduleId}/capacity': {
-    /** Get the capacity and number of allocated slots in an activity schedule */
-    get: operations['getActivityScheduleCapacity']
-  }
   '/scheduled-instances/{instanceId}': {
     /**
      * Get a scheduled instance by ID
@@ -261,10 +257,6 @@ export interface paths {
      * @description Returns a list of zero or more scheduled prison locations for the supplied criteria.
      */
     get: operations['getScheduledPrisonLocations']
-  }
-  '/prison/{prisonCode}/activity-categories/{categoryId}/capacity': {
-    /** Get the capacity and number of allocated slots in an activity category within a prison */
-    get: operations['getActivityCategoryCapacity']
   }
   '/prison/{prisonCode}/activity-categories/{categoryId}/activities': {
     /** Get list of activities within a category at a specified prison */
@@ -395,10 +387,6 @@ export interface paths {
   '/activities/{activityId}/schedules': {
     /** Get the capacity and number of allocated slots in an activity */
     get: operations['getActivitySchedules']
-  }
-  '/activities/{activityId}/capacity': {
-    /** Get the capacity and number of allocated slots in an activity */
-    get: operations['getActivityCapacity']
   }
 }
 
@@ -795,6 +783,7 @@ export interface components {
        *     will be used.
        */
       allocations: components['schemas']['AppointmentOccurrenceAllocation'][]
+      isCancelled: boolean
     }
     /**
      * @description
@@ -1155,7 +1144,7 @@ export interface components {
        * @example ACTIVE
        * @enum {string}
        */
-      status: 'ACTIVE' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
+      status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
     }
     /** @description The code and descriptive reason why this prisoner was deallocated from the activity */
     DeallocationReason: {
@@ -1575,7 +1564,7 @@ export interface components {
       /**
        * @description The prisoner or prisoners to allocate to the created appointment or series of appointment occurrences
        * @example [
-       *   'A1234BC'
+       *   "A1234BC"
        * ]
        */
       prisonerNumbers: string[]
@@ -1727,7 +1716,7 @@ export interface components {
        *     search parameter is supplied.
        *
        * @example [
-       *   'A1234BC'
+       *   "A1234BC"
        * ]
        */
       prisonerNumbers?: string[]
@@ -2296,6 +2285,16 @@ export interface components {
        * @example 2022-12-21
        */
       endDate?: string
+      /**
+       * Format: int32
+       * @description The capacity of the activity
+       */
+      capacity: number
+      /**
+       * Format: int32
+       * @description The number of prisoners currently allocated to the activity
+       */
+      allocated: number
       /**
        * Format: date-time
        * @description The date and time when this activity was created
@@ -2893,7 +2892,7 @@ export interface components {
       /**
        * @description The replacement prisoner or prisoners to allocate to the appointment occurrence
        * @example [
-       *   'A1234BC'
+       *   "A1234BC"
        * ]
        */
       prisonerNumbers?: string[]
@@ -3236,34 +3235,34 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      first?: boolean
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
-      last?: boolean
       empty?: boolean
     }
     PageableObject: {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
+      paged?: boolean
+      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /**
      * @description The phone number associated with the address
@@ -3291,21 +3290,6 @@ export interface components {
        * @example 123
        */
       ext?: string
-    }
-    /** @description Describes the capacity and allocated slots of an activity or category */
-    CapacityAndAllocated: {
-      /**
-       * Format: int32
-       * @description The maximum number of people who can attend the category or activity
-       * @example 30
-       */
-      capacity: number
-      /**
-       * Format: int32
-       * @description The number of slots currently filled in the activity or category
-       * @example 27
-       */
-      allocated: number
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -5340,40 +5324,6 @@ export interface operations {
       }
     }
   }
-  /** Get the capacity and number of allocated slots in an activity schedule */
-  getActivityScheduleCapacity: {
-    parameters: {
-      path: {
-        activityScheduleId: number
-      }
-    }
-    responses: {
-      /** @description Activity schedule capacity */
-      200: {
-        content: {
-          'application/json': components['schemas']['CapacityAndAllocated']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Schedule ID not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   /**
    * Get a scheduled instance by ID
    * @description Returns a scheduled instance.
@@ -5644,41 +5594,6 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Get the capacity and number of allocated slots in an activity category within a prison */
-  getActivityCategoryCapacity: {
-    parameters: {
-      path: {
-        prisonCode: string
-        categoryId: number
-      }
-    }
-    responses: {
-      /** @description Activity category capacity */
-      200: {
-        content: {
-          'application/json': components['schemas']['CapacityAndAllocated']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Category ID not found */
-      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
@@ -6385,40 +6300,6 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['ActivityScheduleLite']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Activity ID not found */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /** Get the capacity and number of allocated slots in an activity */
-  getActivityCapacity: {
-    parameters: {
-      path: {
-        activityId: number
-      }
-    }
-    responses: {
-      /** @description Activity capacity */
-      200: {
-        content: {
-          'application/json': components['schemas']['CapacityAndAllocated']
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
