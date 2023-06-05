@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 
 {% set pageTitle = "Activities Management - Record Attendance" %}
 {% set pageId = 'attendance-remove-pay-page' %}
@@ -41,10 +41,12 @@
 {% endblock %}
 
 {% macro nestedCaseNote() %}
-    {{ govukTextarea({
+    {{ govukCharacterCount({
         label: {
-            text: "Provide a short  explanation for your decision, this will be added to their case notes."
+            text: "Provide a short explanation for your decision, this will be added to their case notes."
         },
-        name: "caseNote"
+        name: "caseNote",
+        id: "caseNote",
+        maxlength: "4000"
     }) }}
 {% endmacro %}
