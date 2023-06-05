@@ -1,0 +1,99 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set pageTitle = applicationName + " - Update allocation - Check answers" %}
+{% set pageId = 'check-allocation-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ allocation.activitySummary }}</span>
+            <span class="govuk-heading-xl">Change allocation details for {{ prisonerName }} ({{ allocation.prisonerNumber }})</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+                  <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                      Start of allocation
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                      {{ allocation.startDate | formatDate('EEEE, dd MMMM yyyy') }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    {% if isStarted %}
+                      {{govukTag({
+                        text: "Started",
+                        classes: "govuk-tag--green"
+                      })}}
+                    {% else %}
+                      <a href="#" class="govuk-link govuk-link--no-visited-state">
+                        Change
+                      </a>
+                    {% endif %}
+                    </dd>
+                  </div>
+                </dl>
+
+                {{ govukSummaryList({
+                    classes: 'govuk-summary-list govuk-!-margin-bottom-0',
+                    rows:
+                    [
+                        {
+                            key: {
+                                text: "End of allocation"
+                            },
+                            value: {
+                                text: allocation.endDate | formatDate('EEEE, dd MMMM yyyy')
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "#",
+                                        text: "Change",
+                                        visuallyHiddenText: "change allocation end date"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }) }}
+
+                <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+                  <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                      Pay rate
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                      {{ pay.prisonPayBand.alias }} - {{ pay.rate | toMoney }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    {% if isOnlyPay %}
+                        No alternative pay rates
+                    {% else %}
+                      <a href="#" class="govuk-link govuk-link--no-visited-state">
+                        Change
+                      </a>
+                    {% endif %}
+                    </dd>
+                  </div>
+                </dl>
+                </br>
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Return to currently allocated"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

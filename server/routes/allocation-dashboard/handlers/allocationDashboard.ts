@@ -108,6 +108,15 @@ export default class AllocationDashboardRoutes {
     res.redirect(`/deallocate/date`)
   }
 
+  UPDATE = async (req: Request, res: Response): Promise<void> => {
+    const { selectedAllocations } = req.body
+    if (selectedAllocations.length > 1) {
+      res.validationFailed('selectedAllocations', 'You can only select one allocation to edit')
+    } else {
+      res.redirect(`/allocation-dashboard/${req.params.scheduleId}/check-allocation/${selectedAllocations[0]}`)
+    }
+  }
+
   private getSuitableForIep = (minimumIncentiveLevel: string, iepLevels: IepLevel[]) => {
     let string = ''
     let sequenceOfMinimumIep: number
@@ -149,6 +158,7 @@ export default class AllocationDashboardRoutes {
         .allocations.filter(a => a.scheduleId !== scheduleId)
 
       return {
+        allocationId: thisAllocation.id,
         name: `${inmate.firstName} ${inmate.lastName}`,
         prisonerNumber: inmate.prisonerNumber,
         cellLocation: inmate.cellLocation,
