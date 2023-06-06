@@ -1,0 +1,53 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% from "components/datePicker.njk" import datePicker %}
+
+{% set pageTitle = applicationName + " - Edit allocation - End date" %}
+{% set pageId = 'edit-allocation-end-date-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m">Edit allocation for {{ prisonerName }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ datePicker({
+                    id: 'endDate',
+                    label: {
+                        text: "When do you want " + prisonerName + " to stop attending " + activitySummary + "?",
+                        classes: "govuk-fieldset__legend--l",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "For example, 29 12 2022"
+                    },
+                    renderedErrorMessage: validationErrors | findError('endDate'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.endDate or endDate
+                }) }}
+                <input type="hidden" id="startDate" name="startDate" value="{{ startDate }}">
+                <input type="hidden" id="allocationId" name="allocationId" value="{{ allocationId }}">
+                <input type="hidden" id="scheduleId" name="scheduleId" value="{{ scheduleId }}">
+                <input type="hidden" id="prisonerNumber" name="prisonerNumber" value="{{ prisonerNumber }}">
+
+                {{ govukInsetText({
+                  text: "Note that their name will be on any unlock and movement lists that have already been printed."
+                }) }}
+
+                <div class="govuk-button-group">
+                  {{ govukButton({
+                    text: "Update end date"
+                  }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

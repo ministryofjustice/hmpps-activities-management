@@ -36,6 +36,7 @@ import {
   AppointmentOccurrenceSearchRequest,
   AppointmentOccurrenceSearchResult,
   ActivityUpdateRequest,
+  AllocationUpdateRequest,
   AppointmentOccurrenceCancelRequest,
   BulkAppointmentsRequest,
   BulkAppointment,
@@ -147,6 +148,17 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   patchActivityUpdate(prisonCode: string, activityId: number, updateBody: ActivityUpdateRequest): Promise<Activity> {
     return this.patch({
       path: `/activities/${prisonCode}/activityId/${activityId}`,
+      data: updateBody,
+    })
+  }
+
+  patchAllocationUpdate(
+    prisonCode: string,
+    allocationId: number,
+    updateBody: AllocationUpdateRequest,
+  ): Promise<Allocation> {
+    return this.patch({
+      path: `/allocations/${prisonCode}/allocationId/${allocationId}`,
       data: updateBody,
     })
   }
@@ -285,6 +297,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getAllocations(scheduleId: number, user: ServiceUser): Promise<Allocation[]> {
     return this.get({
       path: `/schedules/${scheduleId}/allocations`,
+      authToken: user.token,
+    })
+  }
+
+  async getAllocation(allocationId: number, user: ServiceUser): Promise<Allocation> {
+    return this.get({
+      path: `/allocations/id/${allocationId}`,
       authToken: user.token,
     })
   }

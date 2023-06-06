@@ -35,7 +35,7 @@
                         classes: "govuk-tag--green"
                       })}}
                     {% else %}
-                      <a href="#" class="govuk-link govuk-link--no-visited-state">
+                      <a href="/allocation-dashboard/{{ allocation.id }}/start-date" class="govuk-link govuk-link--no-visited-state">
                         Change
                       </a>
                     {% endif %}
@@ -43,29 +43,32 @@
                   </div>
                 </dl>
 
-                {{ govukSummaryList({
-                    classes: 'govuk-summary-list govuk-!-margin-bottom-0',
-                    rows:
-                    [
-                        {
-                            key: {
-                                text: "End of allocation"
-                            },
-                            value: {
-                                text: allocation.endDate | formatDate('EEEE, dd MMMM yyyy')
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "#",
-                                        text: "Change",
-                                        visuallyHiddenText: "change allocation end date"
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                }) }}
+                <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+                  <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                      End of allocation
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                    {% if allocation.endDate %}
+                        {{ allocation.endDate | formatDate('EEEE, dd MMMM yyyy') }}
+                    {% else %}
+                        None set
+                    {% endif %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    {% if allocation.endDate %}
+                      <a href="/allocation-dashboard/{{ allocation.id }}/end-date-option" class="govuk-link govuk-link--no-visited-state">
+                        Change
+                      </a>
+                    {% else %}
+                      <a href="/allocation-dashboard/{{ allocation.id }}/end-date" class="govuk-link govuk-link--no-visited-state">
+                        Change
+                      </a>
+                    {% endif %}
+                    </dd>
+                  </div>
+                </dl>
+                </br>
 
                 <dl class="govuk-summary-list govuk-!-margin-bottom-0">
                   <div class="govuk-summary-list__row">
@@ -79,7 +82,7 @@
                     {% if isOnlyPay %}
                         No alternative pay rates
                     {% else %}
-                      <a href="#" class="govuk-link govuk-link--no-visited-state">
+                      <a href="/allocation-dashboard/{{ allocation.id }}/pay-band" class="govuk-link govuk-link--no-visited-state">
                         Change
                       </a>
                     {% endif %}
