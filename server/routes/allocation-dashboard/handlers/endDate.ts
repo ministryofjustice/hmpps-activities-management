@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, plainToInstance, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateNested } from 'class-validator'
-import SimpleDate from '../../../commonValidationTypes/simpleDate'
+import SimpleDate, { simpleDateFromDate } from '../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../validators/isValidDate'
 import { convertToTitleCase, formatDate } from '../../../utils/utils'
 import { AllocationUpdateRequest } from '../../../@types/activitiesAPI/types'
@@ -31,42 +31,13 @@ export default class EndDateRoutes {
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
     const { scheduleId } = allocation
     const { prisonerNumber } = allocation
-    const startDate = {
-      day: Number(allocation.startDate.substring(8, 10)),
-      month: Number(allocation.startDate.substring(5, 7)),
-      year: Number(allocation.startDate.substring(0, 4)),
-      toIsoString(): string {
-        return undefined
-      },
-      toRichDate(): Date {
-        return undefined
-      },
-      toString(): string {
-        return ''
-      },
-    }
-    const endDate = allocation.endDate
-      ? {
-          day: Number(allocation.endDate.substring(8, 10)),
-          month: Number(allocation.endDate.substring(5, 7)),
-          year: Number(allocation.endDate.substring(0, 4)),
-          toIsoString(): string {
-            return undefined
-          },
-          toRichDate(): Date {
-            return undefined
-          },
-          toString(): string {
-            return ''
-          },
-        }
-      : undefined
+    const endDate = allocation.endDate ? simpleDateFromDate(new Date(allocation.endDate)) : undefined
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
     const prisonerName = convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)
 
     res.render(`pages/allocation-dashboard/end-date`, {
       endDate,
-      startDate: startDate ? formatDate(plainToInstance(SimpleDate, startDate).toRichDate(), 'yyyy-MM-dd') : undefined,
+      startDate: allocation.startDate,
       scheduleId,
       allocationId,
       prisonerNumber,
