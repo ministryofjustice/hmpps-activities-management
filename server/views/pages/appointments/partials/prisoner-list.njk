@@ -57,7 +57,8 @@
             },
             actions: {
                 items: prisonerActionItems
-            } if occurrence.isCancelled == false and occurrence.isExpired == false
+            } if occurrence.isCancelled == false and occurrence.isExpired == false,
+            attributes: { 'data-qa': 'prisoner-list-title' }
         },
         rows: prisonerListRows,
         attributes: { 'data-qa': 'prisoner-list' }

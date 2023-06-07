@@ -76,4 +76,38 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
       $('[data-qa=appointment-history] .govuk-summary-list__key:contains("Last edited by")').next().text().trim(),
     ).toBe('J. Bloggs')
   })
+
+  it('should show number of attendees for group appointments', () => {
+    viewContext = {
+      occurrence: {
+        id: 10,
+        appointmentId: 5,
+        appointmentType: AppointmentType.GROUP,
+        prisoners: [
+          {
+            firstName: 'TEST 1',
+            lastName: 'PRISONER 1',
+            prisonerNumber: 'A1234BC',
+            prisonCode: 'MDI',
+            cellLocation: '1-2-3',
+          },
+          {
+            firstName: 'TEST 2',
+            lastName: 'PRISONER 2',
+            prisonerNumber: 'A1234BD',
+            prisonCode: 'MDI',
+            cellLocation: '1-2-3',
+          },
+        ],
+        startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
+        startTime: '23:59',
+        isCancelled: false,
+        isExpired: false,
+        created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
+      } as AppointmentOccurrenceDetails,
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    expect($('[data-qa=prisoner-list-title]').text().trim()).toContain('2 attendees')
+  })
 })
