@@ -1,7 +1,5 @@
 import getActivities from '../fixtures/activitiesApi/getActivities.json'
-import getActivityCapacity from '../fixtures/activitiesApi/getActivityCapacity.json'
 import getSchedulesInActivity from '../fixtures/activitiesApi/getSchedulesInActivity.json'
-import getScheduleCapacity from '../fixtures/activitiesApi/getScheduleCapacity.json'
 import getAllocations from '../fixtures/activitiesApi/getAllocations.json'
 import inmateDetails from '../fixtures/prisonerSearchApi/prisonerSearchG4793VF.json'
 import prisonerAllocations from '../fixtures/activitiesApi/prisonerAllocations.json'
@@ -29,20 +27,18 @@ context('Allocate to activity', () => {
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
     cy.stubEndpoint('GET', '/prison/MDI/activities', getActivities)
-    cy.stubEndpoint('GET', '/activities/(\\d)*/capacity', getActivityCapacity)
     cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
-    cy.stubEndpoint('GET', '/schedules/(\\d)*/capacity', getScheduleCapacity)
-    cy.stubEndpoint('GET', '/schedules/5', getSchedule)
+    cy.stubEndpoint('GET', '/schedules/2', getSchedule)
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
-    cy.stubEndpoint('GET', '/schedules/5/allocations', getAllocations)
+    cy.stubEndpoint('GET', '/schedules/2/allocations', getAllocations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
-    cy.stubEndpoint('GET', '/schedules/5/candidates(.)*', getCandidates)
+    cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('GET', '/api/offenders/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/iep/reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/activities/2', getActivity)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
-    cy.stubEndpoint('POST', '/schedules/5/allocations')
+    cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.signIn()
   })
 
