@@ -1,0 +1,28 @@
+{
+  "id": 5,
+  "prisonerNumber": "ABC123",
+  "bookingId": 1205033,
+  "activitySummary": "Maths Level 1",
+  "scheduleId": 2,
+  "scheduleDescription": "Maths Level 1",
+  "isUnemployment": false,
+  "prisonPayBand": {
+    "id": 11,
+    "displaySequence": 1,
+    "alias": "Low",
+    "description": "Pay band 1 (Lowest)",
+    "nomisPayBand": 1,
+    "prisonCode": "MDI"
+  },
+  "startDate": "2023-06-02",
+  "endDate": "2023-07-02",
+  "allocatedTime": "2023-06-02T15:37:00",
+  "allocatedBy": "SCH_ACTIVITY",
+  "deallocatedTime": null,
+  "deallocatedBy": null,
+  "deallocatedReason": null,
+  "suspendedTime": null,
+  "suspendedBy": null,
+  "suspendedReason": null,
+  "status": "ACTIVE"
+}

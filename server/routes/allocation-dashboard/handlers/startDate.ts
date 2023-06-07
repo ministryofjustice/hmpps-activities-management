@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, plainToInstance, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateNested } from 'class-validator'
-import SimpleDate from '../../../commonValidationTypes/simpleDate'
+import SimpleDate, { simpleDateFromDate } from '../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../validators/isValidDate'
 import DateIsSameOrAfter from '../../../validators/dateIsSameOrAfter'
 import DateIsBeforeOtherProperty from '../../../validators/dateIsBeforeOtherProperty'
@@ -33,40 +33,13 @@ export default class StartDateRoutes {
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
     const { scheduleId } = allocation
     const { prisonerNumber } = allocation
-    const startDate = {
-      day: Number(allocation.startDate.substring(8, 10)),
-      month: Number(allocation.startDate.substring(5, 7)),
-      year: Number(allocation.startDate.substring(0, 4)),
-      toIsoString(): string {
-        return undefined
-      },
-      toRichDate(): Date {
-        return undefined
-      },
-      toString(): string {
-        return ''
-      },
-    }
-    const endDate = {
-      day: Number(allocation.endDate.substring(8, 10)),
-      month: Number(allocation.endDate.substring(5, 7)),
-      year: Number(allocation.endDate.substring(0, 4)),
-      toIsoString(): string {
-        return undefined
-      },
-      toRichDate(): Date {
-        return undefined
-      },
-      toString(): string {
-        return ''
-      },
-    }
+    const startDate = simpleDateFromDate(new Date(allocation.startDate))
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
     const prisonerName = convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)
 
     res.render(`pages/allocation-dashboard/start-date`, {
       startDate,
-      endDate: endDate ? formatDate(plainToInstance(SimpleDate, endDate).toRichDate(), 'yyyy-MM-dd') : undefined,
+      endDate: allocation.endDate ? allocation.endDate : undefined,
       scheduleId,
       allocationId,
       prisonerNumber,
