@@ -4,26 +4,22 @@ import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import ActivitiesService from '../../../services/activitiesService'
-import CapacitiesService from '../../../services/capacitiesService'
 import PrisonService from '../../../services/prisonService'
 import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashboard'
 import atLeast from '../../../../jest.setup'
 import { ActivitySchedule, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
-import { AllocationsSummary } from '../../../@types/activities'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import { IepLevel } from '../../../@types/incentivesApi/types'
 
 jest.mock('../../../services/prisonService')
-jest.mock('../../../services/capacitiesService')
 jest.mock('../../../services/activitiesService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-const capacitiesService = new CapacitiesService(null) as jest.Mocked<CapacitiesService>
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Allocation dashboard', () => {
-  const handler = new AllocationDashboardRoutes(prisonService, capacitiesService, activitiesService)
+  const handler = new AllocationDashboardRoutes(prisonService, activitiesService)
   let req: Request
   let res: Response
 
@@ -68,13 +64,6 @@ describe('Route Handlers - Allocation dashboard', () => {
           { sequence: 1, iepDescription: 'Standard' },
           { sequence: 2, iepDescription: 'Enhanced' },
         ] as IepLevel[])
-      when(capacitiesService.getScheduleAllocationsSummary)
-        .calledWith(atLeast(1))
-        .mockResolvedValue({
-          capacity: 20,
-          allocated: 10,
-          vacancies: 10,
-        } as AllocationsSummary)
       when(activitiesService.getAllocations)
         .calledWith(atLeast(1))
         .mockResolvedValue([
@@ -142,13 +131,12 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should render the correct view', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       req.query = { candidateQuery: 'jack' }
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/allocation-dashboard', {
-        allocationSummaryView: { capacity: 20, allocated: 10, vacancies: 10 },
         schedule: { scheduleId: 1, activity: { minimumIncentiveLevel: 'Basic' } },
         currentlyAllocated: [
           {
@@ -206,7 +194,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should calculate suitable iep correctly', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       activitiesService.getActivitySchedule = jest.fn()
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
@@ -238,7 +226,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should calculate suitable workplace risk assessment correctly - LOW', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       activitiesService.getActivitySchedule = jest.fn()
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
@@ -270,7 +258,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should calculate suitable workplace risk assessment correctly - MEDIUM', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       activitiesService.getActivitySchedule = jest.fn()
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
@@ -302,7 +290,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should calculate suitable workplace risk assessment correctly - HIGH', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       activitiesService.getActivitySchedule = jest.fn()
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
@@ -334,7 +322,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with risk level filter set to any', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       req.query.riskLevelFilter = 'Any Workplace Risk Assessment'
 
       await handler.GET(req, res)
@@ -359,7 +347,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with risk level filter set to none', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       req.query.riskLevelFilter = 'No Workplace Risk Assessment'
 
       await handler.GET(req, res)
@@ -384,7 +372,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with employment filter set to In work', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       req.query.employmentFilter = 'In work'
 
       await handler.GET(req, res)
@@ -409,7 +397,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with employment filter set to Everyone', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       req.query.employmentFilter = 'Everyone'
 
       await handler.GET(req, res)
@@ -434,7 +422,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with employment filter set to Not in work', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       req.query.employmentFilter = 'Not in work'
 
       await handler.GET(req, res)
@@ -459,7 +447,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with search string given', async () => {
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
       req.query.candidateQuery = 'joe'
 
       await handler.GET(req, res)
@@ -479,7 +467,7 @@ describe('Route Handlers - Allocation dashboard', () => {
   describe('ALLOCATE', () => {
     it('should redirect to allocate the selected candidate', async () => {
       req.body = { selectedAllocation: 'ABC123' }
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
 
       await handler.ALLOCATE(req, res)
 
@@ -512,7 +500,7 @@ describe('Route Handlers - Allocation dashboard', () => {
   describe('UPDATE', () => {
     it('should redirect to update the selected allocation', async () => {
       req.body = { selectedAllocations: ['ABC123'] }
-      req.params = { scheduleId: '1' }
+      req.params = { activityId: '1' }
 
       await handler.UPDATE(req, res)
 

@@ -3,7 +3,6 @@ import { Expose, Transform } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../services/prisonService'
 import ActivityService from '../../../services/activitiesService'
-import CapacitiesService from '../../../services/capacitiesService'
 import { ServiceUser } from '../../../@types/express'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { ActivitySchedule, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
@@ -33,19 +32,15 @@ export class SelectedAllocations {
 }
 
 export default class AllocationDashboardRoutes {
-  constructor(
-    private readonly prisonService: PrisonService,
-    private readonly capacitiesService: CapacitiesService,
-    private readonly activitiesService: ActivityService,
-  ) {}
+  constructor(private readonly prisonService: PrisonService, private readonly activitiesService: ActivityService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { scheduleId } = req.params
+    const { activityId } = req.params
     const filters = req.query as Filters
 
     const [schedule, incentiveLevels]: [ActivitySchedule, IepLevel[]] = await Promise.all([
-      this.activitiesService.getActivitySchedule(+scheduleId, user),
+      this.activitiesService.getActivitySchedule(+activityId, user),
       this.prisonService.getIncentiveLevels(user.activeCaseLoad.caseLoadId, user),
     ])
 
@@ -60,14 +55,12 @@ export default class AllocationDashboardRoutes {
       filters.employmentFilter = 'Not in work'
     }
 
-    const [allocationSummaryView, currentlyAllocated, pagedCandidates] = await Promise.all([
-      this.capacitiesService.getScheduleAllocationsSummary(+scheduleId, user),
-      this.getCurrentlyAllocated(+scheduleId, user),
-      this.getCandidates(+scheduleId, filters, +req.query.page, user),
+    const [currentlyAllocated, pagedCandidates] = await Promise.all([
+      this.getCurrentlyAllocated(+activityId, user),
+      this.getCandidates(+activityId, filters, +req.query.page, user),
     ])
 
     res.render('pages/allocation-dashboard/allocation-dashboard', {
-      allocationSummaryView,
       schedule,
       currentlyAllocated,
       pagedCandidates,
@@ -80,14 +73,14 @@ export default class AllocationDashboardRoutes {
 
   ALLOCATE = async (req: Request, res: Response): Promise<void> => {
     const { selectedAllocation } = req.body
-    res.redirect(`/allocate/prisoner/${selectedAllocation}?scheduleId=${req.params.scheduleId}`)
+    res.redirect(`/allocate/prisoner/${selectedAllocation}?scheduleId=${req.params.activityId}`)
   }
 
   DEALLOCATE = async (req: Request, res: Response): Promise<void> => {
     const { selectedAllocations } = req.body
     const { user } = res.locals
 
-    const schedule = await this.activitiesService.getActivitySchedule(+req.params.scheduleId, user)
+    const schedule = await this.activitiesService.getActivitySchedule(+req.params.activityId, user)
 
     req.session.deallocateJourney = {
       allocationsToRemove: selectedAllocations,
@@ -113,7 +106,7 @@ export default class AllocationDashboardRoutes {
     if (selectedAllocations.length > 1) {
       res.validationFailed('selectedAllocations', 'You can only select one allocation to edit')
     } else {
-      res.redirect(`/allocation-dashboard/${req.params.scheduleId}/check-allocation/${selectedAllocations[0]}`)
+      res.redirect(`/allocation-dashboard/${req.params.activityId}/check-allocation/${selectedAllocations[0]}`)
     }
   }
 

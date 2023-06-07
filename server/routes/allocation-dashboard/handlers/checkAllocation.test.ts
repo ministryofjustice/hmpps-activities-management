@@ -39,7 +39,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     req = {
       params: {
-        scheduleId: 1,
+        activityId: 1,
         prisonerNumber: 'ABC123',
       },
     } as unknown as Request
