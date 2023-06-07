@@ -46,7 +46,7 @@
                                 text: "Vacancies:"
                             },
                             {
-                                text: allocationSummaryView.vacancies
+                                text: schedule.activity.capacity - schedule.activity.allocated
                             }
                         ],
                         [
@@ -54,7 +54,7 @@
                                 text: "Allocated:"
                             },
                             {
-                                text: allocationSummaryView.allocated
+                                text: schedule.activity.allocated
                             }
                         ],
                         [
@@ -62,7 +62,7 @@
                                 text: "Capacity:"
                             },
                             {
-                                text: allocationSummaryView.capacity
+                                text: schedule.activity.capacity
                             }
                         ]
                     ]

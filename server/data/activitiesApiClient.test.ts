@@ -67,19 +67,6 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('getCategoryCapacity', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-      fakeActivitiesApi
-        .get('/prison/MDI/activity-categories/1/capacity')
-        .matchHeader('authorization', `Bearer token`)
-        .reply(200, response)
-      const output = await activitiesApiClient.getCategoryCapacity('MDI', 1, user)
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
   describe('getActivitiesInCategory', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
@@ -103,16 +90,6 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('getActivityCapacity', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-      fakeActivitiesApi.get('/activities/1/capacity').matchHeader('authorization', `Bearer token`).reply(200, response)
-      const output = await activitiesApiClient.getActivityCapacity(1, user)
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
   describe('getSchedulesOfActivity', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
@@ -128,16 +105,6 @@ describe('activitiesApiClient', () => {
       const response = { data: 'data' }
       fakeActivitiesApi.get('/schedules/1').matchHeader('authorization', `Bearer token`).reply(200, response)
       const output = await activitiesApiClient.getActivitySchedule(1, user)
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
-  describe('getScheduleCapacity', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-      fakeActivitiesApi.get('/schedules/1/capacity').matchHeader('authorization', `Bearer token`).reply(200, response)
-      const output = await activitiesApiClient.getScheduleCapacity(1, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
