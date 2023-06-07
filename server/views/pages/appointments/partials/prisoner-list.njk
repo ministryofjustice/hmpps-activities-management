@@ -25,14 +25,14 @@
                         classes: "govuk-link--no-visited-state",
                         attributes: { 'data-qa': 'remove-prisoner' }
                     }
-                ] if prisoners.length > 1 and occurrence.isCancelled == false and occurrence.isExpired == false
+                ] if occurrence.prisoners.length > 1 and occurrence.isCancelled == false and occurrence.isExpired == false
             }
         }), prisonerListRows) %}
     {% endfor %}
 
     {% set prisonerActionItems = [{
         href: occurenceLink + "/movement-slip",
-        text: "Print movement slip" + ("s" if prisoners.length > 1 ),
+        text: "Print movement slip" + ("s" if occurrence.prisoners.length > 1 ),
         classes: "govuk-link--no-visited-state",
         attributes: {
             'target': '_blank',
@@ -53,7 +53,7 @@
     {{ govukSummaryList({
         card: {
             title: {
-                text: occurrence.prisoners | length + (" attendee" if prisoners.length == 1 else " attendees")
+                text: occurrence.prisoners | length + (" attendee" if occurrence.prisoners.length == 1 else " attendees")
             },
             actions: {
                 items: prisonerActionItems
