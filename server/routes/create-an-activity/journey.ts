@@ -30,6 +30,8 @@ export type CreateAnActivityJourney = {
   minimumIncentiveLevel?: string
   qualificationOption?: string
   educationLevels?: Array<{
+    studyAreaCode: string
+    studyAreaDescription: string
     educationLevelCode: string
     educationLevelDescription: string
   }>

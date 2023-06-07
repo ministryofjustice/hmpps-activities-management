@@ -1,0 +1,2004 @@
+[
+  {
+    "domain": "STUDY_AREA",
+    "code": "ACCOU",
+    "description": "Accountancy",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "ACCUP",
+    "description": "Acupuncture",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "ARAB",
+    "description": "Arabic",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "AROMA",
+    "description": "Aromatherapy",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "ARTDE",
+    "description": "Art & Design",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "BIO",
+    "description": "Biology",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "BRICK",
+    "description": "Bricklaying",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "BUSTU",
+    "description": "Business Studies",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "CAD",
+    "description": "Computer Aided Design",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "CARP",
+    "description": "Carpentry",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "CHE",
+    "description": "Chemistry",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "CHIR",
+    "description": "Chiropody",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "COMM",
+    "description": "Commerce",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "CONCPDN",
+    "description": "Concrete Production",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "DOMSC",
+    "description": "Domestic Science",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "DRA",
+    "description": "Drama",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDCU041",
+    "description": "Following Instructions",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDL",
+    "description": "European Driving Licence for IT",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC001",
+    "description": "Art and Design Colour Theory and Design",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC002",
+    "description": "Assess myself for a job",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC003",
+    "description": "Audio Software",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC004",
+    "description": "Award in Dev Skills Creat&Cult/al IndQCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC005",
+    "description": "Award in Employability Skills (QCF)",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC006",
+    "description": "Award in ESOL SFLReading Entry 1 QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC007",
+    "description": "Award in ESOL SFL Reading Entry 2 QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC008",
+    "description": "Award in ESOL SFL Reading Entry 3 QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC009",
+    "description": "Award in ESOL SFL Speak & List Ent 1 QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC010",
+    "description": "Award in ESOL SFL Speak & List Ent 2 QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC011",
+    "description": "Award in ESOL SFL Speak & List Ent 3 QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC012",
+    "description": "Award in ESOL SFL Writing Entry 1 QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC013",
+    "description": "Award in ESOL SFL Writing Entry 2 QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC014",
+    "description": "Award in ESOL SFL Writing Entry 3 QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC015",
+    "description": "Award in Skills F/Learning &Emp Ent QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC016",
+    "description": "Basic Food Preparation and Cooking",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC017",
+    "description": "Basic Visual Language",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC018",
+    "description": "Cert Intro to Hair & Beauty Sector QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC019",
+    "description": "Certificate in Barbering (QCF)",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC020",
+    "description": "Certificate in Employability Skills QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC021",
+    "description": "Cert in Hair Techniques QCF",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC022",
+    "description": "Communicate in a Business Env",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC023",
+    "description": "Communication in the Workplace",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC024",
+    "description": "Cooking Skills",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC025",
+    "description": "Cooking with Rice Grains & Pulses",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC026",
+    "description": "Creating a Tailored Curriculum Vitae",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC027",
+    "description": "Creating an art or craft product",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC028",
+    "description": "Creative Media Skills",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC029",
+    "description": "Creative Writing Skills",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC030",
+    "description": "Database Software",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC031",
+    "description": "Desktop Publishing Software",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC032",
+    "description": "Developing & Presenting Info Using ICT",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC033",
+    "description": "Developing Painting and Drawing",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC034",
+    "description": "Developing Presentation Skills",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC035",
+    "description": "Dev Skills for W/place Foll/Instructions",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC036",
+    "description": "Displaying Information Using ICT",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC037",
+    "description": "Drawing",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC038",
+    "description": "Employment Skills",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC039",
+    "description": "Engage in Discussion",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC040",
+    "description": "Exploring Art",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC042",
+    "description": "Functional Skills qualif in English",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC043",
+    "description": "Funct Skills qualif in English at Ent 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC044",
+    "description": "Funct Skills qualif in English at Ent 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC045",
+    "description": "Funct Skills qualif in English at Ent 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC046",
+    "description": "Functional Skills qualification in Maths",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC047",
+    "description": "Functional Skills qual in Maths at Ent 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC048",
+    "description": "Functional Skills qual in Maths at Ent 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC049",
+    "description": "Functional Skills qual in Maths at Ent 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC050",
+    "description": "Handling Data collect org & rep data",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC051",
+    "description": "Handling Data  mean & range",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC052",
+    "description": "Household Cleaning",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC053",
+    "description": "Improving Productivity Using IT",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC054",
+    "description": "Intro to Building and Construction",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC055",
+    "description": "Intro Use of Tools & Equip for Pract Act",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC056",
+    "description": "Job Seeking Skills",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC057",
+    "description": "Living in a Diverse Society",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC058",
+    "description": "Measure shape & space calc using sh&sp",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC059",
+    "description": "M/sure shape & space length weight & cap",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC060",
+    "description": "Measure shape & space money",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC061",
+    "description": "Measure shape & space money time & temp",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC062",
+    "description": "Mentoring",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC063",
+    "description": "Mentoring Practice",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC064",
+    "description": "News Media Techniques",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC065",
+    "description": "Number addition & subtraction",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC066",
+    "description": "Number decimals",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC067",
+    "description": "Number fractions ratio & proportion",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC068",
+    "description": "Number multiplication",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC069",
+    "description": "Number percentages",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC070",
+    "description": "Number positive & neg numbers",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC071",
+    "description": "Painting",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC072",
+    "description": "Participate in an Occupational Taster",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC073",
+    "description": "Personal Action Planning",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC074",
+    "description": "Personal Care and Hygiene",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC075",
+    "description": "Personal Development",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC076",
+    "description": "Personal Health",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC077",
+    "description": "Personal Skills Audit",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC078",
+    "description": "Preparation for work",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC079",
+    "description": "Presentation software",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC080",
+    "description": "Produce a piece of art work",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC081",
+    "description": "Producing Charts Using ICT",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC082",
+    "description": "Reading reading & understanding words",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC083",
+    "description": "Reading reading for meaning",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC084",
+    "description": "Reading using reading skills",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC086",
+    "description": "Recog use & care for tools in horticul",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC087",
+    "description": "Recog & Sup Equality & Diversity Work",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC088",
+    "description": "Speaking & listening to provide info",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC089",
+    "description": "Speaking & Listening at Work",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC090",
+    "description": "Spreadsheet Software",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC091",
+    "description": "Teamwork Skills",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC092",
+    "description": "Understand how to complete a job search",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC093",
+    "description": "Understand & Achieve Pers Learning Goals",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC094",
+    "description": "Understanding Business & Enterprise",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC095",
+    "description": "Word Processing software",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC096",
+    "description": "Working in Art and Design",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC097",
+    "description": "Writing planning and organising writing",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC098",
+    "description": "Using grammar punct & spell in writing",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC099",
+    "description": "Writing for clear communication",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC100",
+    "description": "Writing letters of the alphabet&spelling",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC101",
+    "description": "BICS",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC102",
+    "description": "Woodwise",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC103",
+    "description": "Award in Football Coach Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC104",
+    "description": "WAMITAB Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC105",
+    "description": "WAMITAB Level 2",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC106",
+    "description": "Ofqual cert in the restorative process",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC107",
+    "description": "Personal Finance",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC108",
+    "description": "Community Living",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC109",
+    "description": "Art and Design Drawing",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC110",
+    "description": "Art & Design Working in Creative Inds",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC111",
+    "description": "Art and Design Sculpture",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC112",
+    "description": "Basic Cookery",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC113",
+    "description": "Bricklaying",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC114",
+    "description": "Forklift Truck Ops Counterbalance",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC115",
+    "description": "Forklift Truck Ops Telescopic",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC116",
+    "description": "Intro to the Facilities Industry",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC117",
+    "description": "Business Administration",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC118",
+    "description": "Certificate in Horticulture",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC119",
+    "description": "Diploma in Horticulture",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC120",
+    "description": "Basic Stock/ship & Welfare Pigs & Sheep",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC121",
+    "description": "Cert of Competence in Tractor Driving",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC122",
+    "description": "Cert of Competence Brush Cutting Ops",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC123",
+    "description": "Cert of Competence Hedge Trimmers",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC124",
+    "description": "Cert of Competence Rotavators",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC125",
+    "description": "Cert of Competence Mowers",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC126",
+    "description": "Safe Use of Vet Medicines",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC127",
+    "description": "Personal Trainer Level 3",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC128",
+    "description": "Fitness Instructor",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC129",
+    "description": "First Aid at Work",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC130",
+    "description": "Emergency First Aid",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC131",
+    "description": "First Aid Appointed Person",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC132",
+    "description": "NVQ Level 2 Dip in Food Prep & Cook",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC133",
+    "description": "ICT",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC134",
+    "description": "Advice and Guidance",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC135",
+    "description": "Book Keeping",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC136",
+    "description": "Development Skills",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC137",
+    "description": "Electrics",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC138",
+    "description": "Employability",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC139",
+    "description": "ESOL",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC140",
+    "description": "Fitness & Self Development",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC141",
+    "description": "Highways Streetworks",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC142",
+    "description": "Industrial Cleaning",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC143",
+    "description": "I-Media",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC144",
+    "description": "Retail",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC145",
+    "description": "Personal & Social Development PSD",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC146",
+    "description": "Tiling",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC147",
+    "description": "Warehousing & Storage",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC148",
+    "description": "Way2Learn",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC149",
+    "description": "Welding",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC150",
+    "description": "Living With Loss",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC151",
+    "description": "Understanding Loss",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC152",
+    "description": "Faith and Diversity",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC153",
+    "description": "Community Development",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "EDUC154",
+    "description": "Active in Sport Golf Level 1",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "ENG",
+    "description": "English",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "ENGI",
+    "description": "Engineering",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "ENGLA",
+    "description": "English Language",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "ENGLI",
+    "description": "English Literature",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "ESUC085",
+    "description": "Reading using reading to extend vocab",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "FRE",
+    "description": "French",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "GEN",
+    "description": "General Studies",
+    "activeFlag": "Y",
+    "listSeq": 1,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "GENPDN",
+    "description": "General Production",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "GEOG",
+    "description": "Geography",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "GERMN",
+    "description": "German",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "GREE",
+    "description": "Greek",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "HALFACDMY",
+    "description": "Halfords Academy",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "HARBOD",
+    "description": "Hair & Beauty",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "HEA",
+    "description": "Health and Hygiene",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "HIS",
+    "description": "History",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "HORT",
+    "description": "Horticulture",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "IMR",
+    "description": "IMR Workshop",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "ITALI",
+    "description": "Italian",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "LATN",
+    "description": "Latin",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "LAW",
+    "description": "Law",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "LESTU",
+    "description": "Legal Studies",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "LETOR",
+    "description": "Leisure & Tourism",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "MAT",
+    "description": "Mathematics",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "MEDI",
+    "description": "Medicine",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "MOTOR",
+    "description": "Motor Mechanics",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "MULTISKLS",
+    "description": "Multi Skills",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "MUS",
+    "description": "Music",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "NURS",
+    "description": "Nursing",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "PAINT",
+    "description": "Painting & Decorating",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "PE",
+    "description": "Physical Education",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "PHY",
+    "description": "Physics",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "PHYS",
+    "description": "Physiotherapy",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "PICTA",
+    "description": "PICTA",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "PLAST",
+    "description": "Plastering",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "PLUMB",
+    "description": "Plumbing",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "POTU",
+    "description": "Portuguese",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "RECPT_ASSESS",
+    "description": "Level at Reception",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "RECYCLE",
+    "description": "Recycling",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "RMC_STL",
+    "description": "Reading Measure - current",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 4,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "RMS_STL",
+    "description": "Reading Measure - start",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 4,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "RP_STL",
+    "description": "Reading Plan",
+    "parentCode": "STL",
+    "activeFlag": "Y",
+    "listSeq": 4,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "RP_STM",
+    "description": "Reading Plan",
+    "parentCode": "STM",
+    "activeFlag": "Y",
+    "listSeq": 4,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "SCI",
+    "description": "Science",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "SPANS",
+    "description": "Spanish",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "STA",
+    "description": "Statistics",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "TEDR",
+    "description": "Technical Drawing",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "THE",
+    "description": "Theatre",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "TRAINING",
+    "description": "Training",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "TURK",
+    "description": "Turkish",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "TYP",
+    "description": "Typing",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "WASTEMAN",
+    "description": "Waste Management",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  },
+  {
+    "domain": "STUDY_AREA",
+    "code": "WHA",
+    "description": "Workplace Hazard Awareness",
+    "activeFlag": "Y",
+    "listSeq": 99,
+    "systemDataFlag": "N",
+    "subCodes": []
+  }
+]

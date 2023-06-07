@@ -32,10 +32,14 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
             {
               educationLevelCode: '1',
               educationLevelDescription: 'Reading Measure 1.0',
+              studyAreaCode: 'ENGLA',
+              studyAreaDescription: 'English Language',
             },
             {
               educationLevelCode: '1.1',
               educationLevelDescription: 'Reading Measure 1.1',
+              studyAreaCode: 'ENGLA',
+              studyAreaDescription: 'English Language',
             },
           ],
           incentiveLevels: ['Basic', 'Standard'],
@@ -50,12 +54,14 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
   describe('GET', () => {
     it('should remove specified education level and redirect', async () => {
-      req.query = { code: '1.1' }
+      req.query = { eduLevel: '1.1', studyArea: 'ENGLA' }
       await handler.GET(req, res)
       expect(req.session.createJourney.educationLevels).toEqual([
         {
           educationLevelCode: '1',
           educationLevelDescription: 'Reading Measure 1.0',
+          studyAreaCode: 'ENGLA',
+          studyAreaDescription: 'English Language',
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('check-education-level')

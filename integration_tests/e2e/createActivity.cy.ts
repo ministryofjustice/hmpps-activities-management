@@ -14,6 +14,7 @@ import getCategories from '../fixtures/activitiesApi/getCategories.json'
 import moorlandPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
 import educationLevels from '../fixtures/prisonApi/educationLevels.json'
+import studyAreas from '../fixtures/prisonApi/studyAreas.json'
 import CheckAnswersPage from '../pages/createActivity/checkAnswers'
 import ConfirmationPage from '../pages/createActivity/confirmation'
 import getEventLocations from '../fixtures/prisonApi/getEventLocations.json'
@@ -37,6 +38,7 @@ context('Create activity', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/EDU_LEVEL/codes', educationLevels)
+    cy.stubEndpoint('GET', '/api/reference-domains/domains/STUDY_AREA/codes', studyAreas)
     cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
     cy.stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile)
     cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
@@ -96,12 +98,13 @@ context('Create activity', () => {
     qualificationPage.continue()
 
     const educationLevelPage = Page.verifyOnPage(EducationLevelPage)
+    educationLevelPage.selectStudyArea('English Language')
     educationLevelPage.selectEducationLevel('Reading Measure 17.0')
-    educationLevelPage.reviewAndAddMoreEducationLevels()
+    educationLevelPage.continue()
 
     const checkEducationLevelPage = Page.verifyOnPage(CheckEducationLevelsPage)
     checkEducationLevelPage.educationLevelRows().should('have.length', 1)
-    checkEducationLevelPage.confirmEducationLevels()
+    checkEducationLevelPage.continue()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
     const startDatePicker = startDatePage.getDatePicker()

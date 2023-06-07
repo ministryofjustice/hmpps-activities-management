@@ -45,10 +45,14 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
             {
               educationLevelCode: '1',
               educationLevelDescription: 'Reading Measure 1.0',
+              studyAreaCode: 'ENGLA',
+              studyAreaDescription: 'English Language',
             },
             {
               educationLevelCode: '1.1',
               educationLevelDescription: 'Reading Measure 1.1',
+              studyAreaCode: 'ENGLA',
+              studyAreaDescription: 'English Language',
             },
           ],
           incentiveLevels: ['Standard', 'Enhanced'],
@@ -69,10 +73,14 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
           {
             educationLevelCode: '1',
             educationLevelDescription: 'Reading Measure 1.0',
+            studyAreaCode: 'ENGLA',
+            studyAreaDescription: 'English Language',
           },
           {
             educationLevelCode: '1.1',
             educationLevelDescription: 'Reading Measure 1.1',
+            studyAreaCode: 'ENGLA',
+            studyAreaDescription: 'English Language',
           },
         ],
       })
@@ -88,7 +96,14 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
 
   it('should save entered education levels in database', async () => {
     const updatedActivity = {
-      minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'Reading Measure 1.0' }],
+      minimumEducationLevel: [
+        {
+          educationLevelCode: '1',
+          educationLevelDescription: 'Reading Measure 1.0',
+          studyAreaCode: 'ENGLA',
+          studyAreaDescription: 'English Language',
+        },
+      ],
     }
 
     when(activitiesService.updateActivity)
@@ -98,7 +113,14 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
     req = {
       session: {
         createJourney: {
-          educationLevels: [{ educationLevelCode: '1', educationLevelDescription: 'Reading Measure 1.0' }],
+          educationLevels: [
+            {
+              educationLevelCode: '1',
+              educationLevelDescription: 'Reading Measure 1.0',
+              studyAreaCode: 'ENGLA',
+              studyAreaDescription: 'English Language',
+            },
+          ],
         },
       },
       query: {

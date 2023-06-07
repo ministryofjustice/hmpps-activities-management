@@ -9,18 +9,18 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half">
-            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
-            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l">Review education levels and qualifications for {{ session.createJourney.name }}</h1>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
+            <h1 class="govuk-heading-m">{{ session.createJourney.name }}</span>
+
+            <h2 class='govuk-heading-l'>Review education levels and qualifications</h2>
+            
+            {% if educationLevels | length %}
+                <h3 class='govuk-heading-m'>Level or qualification</h3>
+            {% else %}
+                <p class="govuk-body">No levels or qualifications added</p>
+            {% endif %}
+
             {% if session.req.query.fromEditActivity %}
                 {% set fromEditText = "&fromEditActivity=true" %}
             {% else %}
@@ -31,15 +31,15 @@
                     {% set rows = (rows.push(
                     {
                         key: {
-                            text: educationLevel.educationLevelCode
+                            text: educationLevel.educationLevelDescription
                         },
                         value: {
-                            text: educationLevel.educationLevelDescription
+                            text: educationLevel.studyAreaDescription
                         },
                         actions: {
                             items: [
                                 {
-                                    href: "remove-education-level?code=" + educationLevel.educationLevelCode + fromEditText,
+                                    href: "remove-education-level?eduLevel=" + educationLevel.educationLevelCode + "&studyArea=" + educationLevel.studyAreaCode + fromEditText,
                                     text: "Remove",
                                     visuallyHiddenText: "remove education level"
                                 }
@@ -47,7 +47,6 @@
                         }
                     }
                     ), rows) %}
-                <h2 class='govuk-heading-m'>Level or qualification</h2>
                 {{ govukSummaryList({
                     rows: rows
                 }) }}
@@ -55,24 +54,16 @@
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <div class="govuk-button-group">
+                <div>
                     {{ govukButton({
-                        text: "Confirm education levels"
+                        text: "Add a qualification",
+                        href: 'education-level' + ('?fromEditActivity=true' if session.req.query.fromEditActivity),
+                        classes: "govuk-button--secondary govuk-!-margin-bottom-8"
                     }) }}
-                    {% if session.req.query.fromEditActivity %}
-                        {{ govukButton({
-                            text: "Add another education level",
-                            href: 'education-level?fromEditActivity=true',
-                            classes: "govuk-button--secondary"
-                        }) }}
-                    {% else %}
-                        {{ govukButton({
-                            text: "Add another education level",
-                            href: 'education-level',
-                            classes: "govuk-button--secondary"
-                        }) }}
-                    {% endif %}
                 </div>
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
             </form>
         </div>
     </div>
