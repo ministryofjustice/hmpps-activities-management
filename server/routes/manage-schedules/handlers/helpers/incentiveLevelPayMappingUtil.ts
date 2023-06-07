@@ -71,7 +71,7 @@ export default class IncentiveLevelPayMappingUtil {
           activity.schedules.forEach(schedule => {
             let peopleCount = 0
             const allocationsForPayBand = schedule.allocations.filter(
-              allocation => allocation.prisonPayBand.id === payBand.bandId,
+              allocation => allocation.payRate.prisonPayBand.id === payBand.bandId,
             )
             allocationsForPayBand.forEach(allocation => {
               peopleCount += inmates.filter(

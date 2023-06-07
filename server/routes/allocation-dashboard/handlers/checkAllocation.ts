@@ -22,7 +22,7 @@ export default class CheckAllocationRoutes {
     const activity = await this.activitiesService.getActivity(schedule.activity.id, user)
     const isOnlyPay = activity.pay.filter(p => p.incentiveLevel === iepSummary?.iepLevel).length === 1
     const pay = activity.pay.find(
-      a => a.prisonPayBand.id === allocation.prisonPayBand.id && a.incentiveLevel === iepSummary?.iepLevel,
+      a => a.prisonPayBand.id === allocation.payRate.prisonPayBand.id && a.incentiveLevel === iepSummary?.iepLevel,
     )
 
     const isStarted = new Date(allocation.startDate) <= new Date()
