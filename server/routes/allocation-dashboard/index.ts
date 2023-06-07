@@ -10,14 +10,14 @@ import StartDateRoutes, { StartDate } from './handlers/startDate'
 import PayBandRoutes, { PayBand } from './handlers/payBand'
 import EndDateOptionRoutes, { EndDateOption } from './handlers/endDateOption'
 
-export default function Index({ activitiesService, prisonService, capacitiesService }: Services): Router {
+export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const activitiesHandler = new ActivitiesRoutes(activitiesService, capacitiesService)
-  const allocationDashboardHandler = new AllocationDashboardRoutes(prisonService, capacitiesService, activitiesService)
+  const activitiesHandler = new ActivitiesRoutes(activitiesService)
+  const allocationDashboardHandler = new AllocationDashboardRoutes(prisonService, activitiesService)
   const checkAllocationHandler = new CheckAllocationRoutes(activitiesService, prisonService)
   const startDateHandler = new StartDateRoutes(activitiesService, prisonService)
   const endDateHandler = new EndDateRoutes(activitiesService, prisonService)
@@ -39,6 +39,12 @@ export default function Index({ activitiesService, prisonService, capacitiesServ
   post('/:allocationId/pay-band', payBandHandler.POST, PayBand)
   get('/:allocationId/end-date-option', endDateOptionHandler.GET)
   post('/:allocationId/end-date-option', endDateOptionHandler.POST, EndDateOption)
+  get('/:activityId', allocationDashboardHandler.GET)
+  post('/:activityId/allocate', allocationDashboardHandler.ALLOCATE, SelectedAllocation)
+  post('/:activityId/deallocate', allocationDashboardHandler.DEALLOCATE, SelectedAllocations)
+  get('/:activityId/check-allocation/:prisonerNumber', checkAllocationHandler.GET)
+  post('/:activityId/check-allocation/:prisonerNumber', checkAllocationHandler.POST)
+  post('/:activityId/check-allocation', allocationDashboardHandler.UPDATE, SelectedAllocations)
 
   return router
 }

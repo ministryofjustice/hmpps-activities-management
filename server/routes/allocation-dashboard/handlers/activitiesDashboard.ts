@@ -1,32 +1,56 @@
 import { Request, Response } from 'express'
-import { startOfToday } from 'date-fns'
 import ActivitiesService from '../../../services/activitiesService'
-import CapacitiesService from '../../../services/capacitiesService'
+import { ActivityLite } from '../../../@types/activitiesAPI/types'
+
+type CapacityAndAllocated = {
+  capacity: number
+  allocated: number
+}
 
 export default class ActivitiesRoutes {
-  constructor(
-    private readonly activitiesService: ActivitiesService,
-    private readonly capacitiesService: CapacitiesService,
-  ) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
 
-    const today = startOfToday()
-
-    const activities = await this.activitiesService.getActivities(user)
-
-    const activitiesWithAllocations = await Promise.all(
-      activities.map(async a => ({
+    const activities = await this.activitiesService.getActivities(user).then(act =>
+      act.map(a => ({
         ...a,
-        allocationSummary: await this.capacitiesService.getActivityAllocationsSummary(a.id, user),
-        schedules: await this.activitiesService.getSchedulesOfActivity(a.id, user),
+        allocationSummary: this.addCalculatedFields(this.getCapacityAndAllocated(a)),
       })),
-    ).then(a => a.filter(p => p.schedules.findIndex(s => !s.endDate || new Date(s.endDate) >= today) >= 0))
+    )
 
     res.render('pages/allocation-dashboard/activities', {
-      total: this.capacitiesService.getTotalAllocationSummary(activitiesWithAllocations.map(a => a.allocationSummary)),
-      activities: activitiesWithAllocations,
+      total: this.addCalculatedFields(this.calculateTotals(activities)),
+      activities,
     })
+  }
+
+  private getCapacityAndAllocated = (activity: ActivityLite): CapacityAndAllocated => ({
+    capacity: activity.capacity,
+    allocated: activity.allocated,
+  })
+
+  private addCalculatedFields = (capacityAndAllocated: CapacityAndAllocated) => {
+    const percentageAllocated = Math.floor((capacityAndAllocated.allocated / capacityAndAllocated.capacity) * 100)
+
+    return {
+      ...capacityAndAllocated,
+      percentageAllocated: Number.isNaN(percentageAllocated) ? 100 : percentageAllocated,
+      vacancies: capacityAndAllocated.capacity - capacityAndAllocated.allocated,
+    }
+  }
+
+  private calculateTotals = (activities: ActivityLite[]): CapacityAndAllocated => {
+    return activities.reduce(
+      (totals, a) => ({
+        capacity: totals.capacity + a.capacity,
+        allocated: totals.allocated + a.allocated,
+      }),
+      {
+        capacity: 0,
+        allocated: 0,
+      },
+    )
   }
 }

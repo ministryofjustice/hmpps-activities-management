@@ -3,7 +3,6 @@ import UserService from './userService'
 import PrisonService from './prisonService'
 import ActivitiesService from './activitiesService'
 import BankHolidayService from './bankHolidayService'
-import CapacitiesService from './capacitiesService'
 import UnlockListService from './unlockListService'
 
 export default function services() {
@@ -20,7 +19,6 @@ export default function services() {
     userService: new UserService(hmppsAuthClient, nomisUserApiClient, prisonApiClient, activitiesApiClient),
     prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient),
     activitiesService: new ActivitiesService(activitiesApiClient, prisonerSearchApiClient),
-    capacitiesService: new CapacitiesService(activitiesApiClient),
     ukBankHolidayService: new BankHolidayService(),
     unlockListService: new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient),
   }

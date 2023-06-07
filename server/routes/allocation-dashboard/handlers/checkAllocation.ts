@@ -10,7 +10,7 @@ export default class CheckAllocationRoutes {
     const { user } = res.locals
 
     const [schedule, prisoner, iepSummary] = await Promise.all([
-      this.activitiesService.getActivitySchedule(+req.params.scheduleId, user),
+      this.activitiesService.getActivitySchedule(+req.params.activityId, user),
       this.prisonService.getInmateByPrisonerNumber(req.params.prisonerNumber, user),
       this.prisonService.getPrisonerIepSummary(req.params.prisonerNumber, user),
     ])
@@ -30,6 +30,6 @@ export default class CheckAllocationRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    res.redirect(`/allocation-dashboard/${req.params.scheduleId}`)
+    res.redirect(`/allocation-dashboard/${req.params.activityId}`)
   }
 }
