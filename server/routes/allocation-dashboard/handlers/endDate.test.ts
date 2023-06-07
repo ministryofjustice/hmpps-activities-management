@@ -78,15 +78,19 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      // expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/end-date', {
-      //   activitySummary: 'Maths Level 1',
-      //   allocationId: 1,
-      //   startDate: '2023-01-01',
-      //   prisonerName: 'John Smith',
-      //   prisonerNumber: 'ABC123',
-      //   scheduleId: 1,
-      //   endDate: simpleDateFromDate(new Date('2023-01-31')),
-      // })
+      expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/end-date', {
+        activitySummary: 'Maths Level 1',
+        allocationId: 1,
+        startDate: '2023-01-01',
+        prisonerName: 'John Smith',
+        prisonerNumber: 'ABC123',
+        scheduleId: 1,
+        endDate: expect.objectContaining({
+          day: 31,
+          month: 1,
+          year: 2023,
+        }),
+      })
     })
   })
 
