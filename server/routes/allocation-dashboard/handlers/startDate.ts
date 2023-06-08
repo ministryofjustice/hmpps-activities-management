@@ -31,8 +31,7 @@ export default class StartDateRoutes {
     const { user } = res.locals
     const { allocationId } = req.params
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
-    const { scheduleId } = allocation
-    const { prisonerNumber } = allocation
+    const { scheduleId, prisonerNumber } = allocation
     const startDate = simpleDateFromDate(new Date(allocation.startDate))
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
     const prisonerName = convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)
@@ -48,9 +47,8 @@ export default class StartDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { startDate } = req.body
+    const { startDate, allocationId, prisonerNumber, scheduleId } = req.body
     const { user } = res.locals
-    const { allocationId, prisonerNumber, scheduleId } = req.body
     const prisonCode = user.activeCaseLoadId
     const allocation = {
       startDate: formatDate(plainToInstance(SimpleDate, startDate).toRichDate(), 'yyyy-MM-dd'),
