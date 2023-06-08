@@ -21,8 +21,7 @@ export default class PayBandRoutes {
     const { user } = res.locals
     const { allocationId } = req.params
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
-    const { scheduleId } = allocation
-    const { prisonerNumber } = allocation
+    const { scheduleId, prisonerNumber } = allocation
 
     const [schedule, prisoner, iepSummary] = await Promise.all([
       this.activitiesService.getActivitySchedule(scheduleId, user),
