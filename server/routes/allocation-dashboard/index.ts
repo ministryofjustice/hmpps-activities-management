@@ -25,12 +25,6 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const endDateOptionHandler = new EndDateOptionRoutes(activitiesService)
 
   get('/', activitiesHandler.GET)
-  get('/:scheduleId', allocationDashboardHandler.GET)
-  post('/:scheduleId/allocate', allocationDashboardHandler.ALLOCATE, SelectedAllocation)
-  post('/:scheduleId/deallocate', allocationDashboardHandler.DEALLOCATE, SelectedAllocations)
-  get('/:scheduleId/check-allocation/:prisonerNumber', checkAllocationHandler.GET)
-  post('/:scheduleId/check-allocation/:prisonerNumber', checkAllocationHandler.POST)
-  post('/:scheduleId/check-allocation', allocationDashboardHandler.UPDATE, SelectedAllocations)
   get('/:allocationId/start-date', startDateHandler.GET)
   post('/:allocationId/start-date', startDateHandler.POST, StartDate)
   get('/:allocationId/end-date', endDateHandler.GET)
