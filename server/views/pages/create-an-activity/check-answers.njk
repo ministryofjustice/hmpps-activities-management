@@ -249,11 +249,9 @@
 {% endmacro %}
 
 {% macro educationLevelSummary(educationLevels) %}
-    {% if educationLevels | length %}
-        {% for educationLevel in educationLevels %}
-            <div>{{ educationLevel.studyAreaDescription }}: {{ educationLevel.educationLevelDescription }}</div>
-        {% endfor %}
+    {% for educationLevel in educationLevels %}
+        <div>{{ educationLevel.studyAreaDescription }}: {{ educationLevel.educationLevelDescription }}</div>
     {% else %}
         None set
-    {% endif %}
+    {% endfor %}
 {% endmacro %}

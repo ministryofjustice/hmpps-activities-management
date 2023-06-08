@@ -38,10 +38,60 @@ describe('educationLevelNotDuplicated', () => {
     expect(errors).toEqual([{ property: 'eduLevelCode', error: 'Education already exists' }])
   })
 
-  it('should pass validation if no education level exists in session', async () => {
+  it('should pass validation if education level exists for a different study area', async () => {
+    const body = {
+      studyAreaCode: 'MAT',
+      eduLevelCode: 'CERT001',
+    }
+
+    const session = {
+      createJourney: {
+        educationLevels: [
+          {
+            studyAreaCode: 'ENGLA',
+            studyAreaDescription: 'English Language',
+            educationLevelCode: 'CERT001',
+            educationLevelDescription: 'Certificate Level 1',
+          },
+        ],
+      },
+    }
+
+    const requestObject = plainToInstance(DummyForm, { ...body, ...session })
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    expect(errors).toHaveLength(0)
+  })
+
+  it('should pass validation if study area exists for a different education level', async () => {
     const body = {
       studyAreaCode: 'ENGLA',
-      referenceCode: '1',
+      eduLevelCode: 'CERT002',
+    }
+
+    const session = {
+      createJourney: {
+        educationLevels: [
+          {
+            studyAreaCode: 'ENGLA',
+            studyAreaDescription: 'English Language',
+            educationLevelCode: 'CERT001',
+            educationLevelDescription: 'Certificate Level 1',
+          },
+        ],
+      },
+    }
+
+    const requestObject = plainToInstance(DummyForm, { ...body, ...session })
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    expect(errors).toHaveLength(0)
+  })
+
+  it('should pass validation if no education exists in session', async () => {
+    const body = {
+      studyAreaCode: 'ENGLA',
+      eduLevelCode: '1',
     }
 
     const session = {
