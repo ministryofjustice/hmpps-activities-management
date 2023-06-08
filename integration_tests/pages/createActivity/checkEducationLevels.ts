@@ -10,7 +10,5 @@ export default class CheckEducationLevelsPage extends Page {
       return Cypress.$.makeArray($el)
     })
 
-  confirmEducationLevels = () => cy.get('button').contains('Confirm education levels').click()
-
   addAnother = () => cy.get('a').contains('Add another education level').click()
 }

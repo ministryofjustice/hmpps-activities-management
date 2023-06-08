@@ -2005,6 +2005,16 @@ export interface components {
        * @example Reading Measure 1.0
        */
       educationLevelDescription: string
+      /**
+       * @description The study area code
+       * @example ENGLA
+       */
+      studyAreaCode: string
+      /**
+       * @description The study area description
+       * @example English Language
+       */
+      studyAreaDescription: string
     }
     /** @description Describes the pay rates and bands to be created for an activity */
     ActivityPayCreateRequest: {
@@ -2325,6 +2335,16 @@ export interface components {
        * @example Basic
        */
       educationLevelDescription: string
+      /**
+       * @description The study area code
+       * @example ENGLA
+       */
+      studyAreaCode: string
+      /**
+       * @description The study area description
+       * @example English Language
+       */
+      studyAreaDescription: string
     }
     /** @description Describes the pay rates and bands which apply to an activity */
     ActivityPay: {

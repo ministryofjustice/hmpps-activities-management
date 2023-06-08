@@ -7,48 +7,62 @@
 {% set pageId = 'create-activity-education-level-page' %}
 {% set backLinkHref = "qualification" %}
 
-{% set options = [{ value: '', text: '' }] %}
-{% for referenceCode in referenceCodes %}
-    {% set options = (options.push( { value: referenceCode.code, text: referenceCode.description }), options) %}
+{% set studyAreaOptions = [{ value: '', text: '' }] %}
+{% for studyArea in studyAreas %}
+    {% set studyAreaOptions = (studyAreaOptions.push( { value: studyArea.code, text: studyArea.description }), studyAreaOptions) %}
+{% endfor %}
+
+{% set eduLevelOptions = [{ value: '', text: '' }] %}
+{% for eduLevel in eduLevels %}
+    {% set eduLevelOptions = (eduLevelOptions.push( { value: eduLevel.code, text: eduLevel.description }), eduLevelOptions) %}
 {% endfor %}
 
 {% block meta %}
-    <meta name="autocompleteElements" content="referenceCode"/>
+    <meta name="autocompleteElements" content="studyAreaCode"/>
+    <meta name="autocompleteElements" content="eduLevelCode"/>
 {% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half">
-            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
-            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-xl">Select education levels or other qualifications</h1>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <p>Choose the education level or qualification that participants need to be eligible for this activity.</p>
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
+            <h1 class="govuk-heading-m">{{ session.createJourney.name }}</h1>
+
+            <h2 class="govuk-heading-l">Select education levels and qualifications</h2>
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukSelect({
-                    id: "referenceCode",
-                    name: "referenceCode",
+                    id: "studyAreaCode",
+                    name: "studyAreaCode",
                     label: {
-                        text: "Education Level",
-                        classes: 'govuk-visually-hidden'
+                        text: "Subject or skill",
+                        classes: "govuk-label--m"
                     },
                     hint: {
-                        text: "Start typing an education level and select from the list of options."
+                        text: "Choose the area of study for the education level or qualification that participants need to be eligible for this activity."
                     },
-                    errorMessage: validationErrors | findError('referenceCode'),
-                    value: formResponses.referenceCode or session.createActivityJourney.educationLevels.educationLevelCode,
-                    items: options
+                    errorMessage: validationErrors | findError('studyAreaCode'),
+                    value: formResponses.studyAreaCode or session.createActivityJourney.educationLevels.educationLevelCode,
+                    items: studyAreaOptions
+                }) }}
+
+                {{ govukSelect({
+                    id: "eduLevelCode",
+                    name: "eduLevelCode",
+                    label: {
+                        text: "Education Level or other qualification",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        text: "Choose the education level or qualification that participants need to be eligible for this activity."
+                    },
+                    errorMessage: validationErrors | findError('eduLevelCode'),
+                    value: formResponses.eduLevelCode or session.createActivityJourney.educationLevels.educationLevelCode,
+                    items: eduLevelOptions
                 }) }}
                 {{ govukButton({
-                    text: "Review and add more education levels"
+                    text: "Continue"
                 }) }}
             </form>
         </div>
