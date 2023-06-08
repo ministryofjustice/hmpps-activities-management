@@ -47,9 +47,8 @@ export default class StartDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { startDate } = req.body
+    const { startDate, allocationId, prisonerNumber, scheduleId } = req.body
     const { user } = res.locals
-    const { allocationId, prisonerNumber, scheduleId } = req.body
     const prisonCode = user.activeCaseLoadId
     const allocation = {
       startDate: formatDate(plainToInstance(SimpleDate, startDate).toRichDate(), 'yyyy-MM-dd'),
