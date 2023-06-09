@@ -59,10 +59,7 @@ export default class CheckAnswersRoutes {
         payBandId: pay.bandId,
         rate: pay.rate,
       })),
-      minimumEducationLevel: createJourney.educationLevels?.map(educationLevel => ({
-        educationLevelCode: educationLevel.educationLevelCode,
-        educationLevelDescription: educationLevel.educationLevelDescription,
-      })),
+      minimumEducationLevel: createJourney.educationLevels,
       description: createJourney.name,
       startDate: formatDate(plainToInstance(SimpleDate, createJourney.startDate).toRichDate(), 'yyyy-MM-dd'),
       endDate: createJourney.endDate

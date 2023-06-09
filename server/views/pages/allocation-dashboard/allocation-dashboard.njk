@@ -74,7 +74,7 @@
                 {% set requiredEducationHtml %}
                     <div>
                         {% for education in schedule.activity.minimumEducationLevel %}
-                            <div>{{ education.educationLevelDescription }}</div>
+                            <div>{{ education.studyAreaDescription }}: {{ education.educationLevelDescription }}</div>
                         {% else %}
                             None required
                         {% endfor %}

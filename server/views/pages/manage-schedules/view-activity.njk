@@ -283,7 +283,7 @@
     {% if educationRequirements | length > 0 %}
         {% for educationRequirement in educationRequirements %}
             <div class="govuk-!-margin-bottom-2">
-                <div>{{ educationRequirement.educationLevelDescription }}</div>
+                <div>{{ educationRequirement.studyAreaDescription }}: {{ educationRequirement.educationLevelDescription }}</div>
             </div>
         {% endfor %}
     {% else %}

@@ -17,10 +17,7 @@ export default class CheckPayRoutes {
       const { activityId } = req.session.createJourney
       const prisonCode = user.activeCaseLoadId
       const activity = {
-        minimumEducationLevel: req.session.createJourney.educationLevels?.map(educationLevel => ({
-          educationLevelCode: educationLevel.educationLevelCode,
-          educationLevelDescription: educationLevel.educationLevelDescription,
-        })),
+        minimumEducationLevel: req.session.createJourney.educationLevels,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
       const successMessage = `We've updated the education levels for ${req.session.createJourney.name}`
