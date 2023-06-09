@@ -19,6 +19,10 @@ export type AppointmentJourney = {
     number: string
     name: string
     cellLocation: string
+    category?: string
+    alerts?: {
+      alertCode: string
+    }[]
   }[]
   category?: {
     code: string

@@ -6,6 +6,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "partials/searchInput.njk" import searchInput %}
+{% from "components/alertsList.njk" import alertsList %}
 
 {% set pageTitle = appointmentJourneyTitle("Select Prisoner", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-select-prisoner-page' %}
@@ -110,6 +111,12 @@
                                     text: prisoner.cellLocation
                                 }, {
                                     attributes: {
+                                        id: 'prisoner-alerts'
+                                    },
+                                    html: alertsList({ alerts: prisoner.alerts, category: prisoner.category }),
+                                    classes: 'hmpps-max-width-240'
+                                }, {
+                                    attributes: {
                                         id: 'prisoner-actions'
                                     },
                                     html: '<a href="' + dpsUrl + '/prisoner/' + prisoner.prisonerNumber + '" class="govuk-link govuk-link--no-visited-state" target="_blank">View prisoner profile<span class="govuk-visually-hidden"> (opens in new tab)</span></a>'
@@ -140,6 +147,8 @@
                                 attributes: {
                                     "aria-sort": "none"
                                 }
+                            }, {
+                                text: "Relevant alerts"
                             }, {
                                 html: '<span class="govuk-visually-hidden">Actions</span>'
                             }],

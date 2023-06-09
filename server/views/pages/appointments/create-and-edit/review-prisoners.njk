@@ -9,6 +9,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "components/alertsList.njk" import alertsList %}
 
 {% set pageTitle = appointmentJourneyTitle("Review Prisoners", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-review-prisoners-page' %}
@@ -40,6 +41,12 @@
                         })
                     }, {
                         text: prisoner.cellLocation
+                    }, {
+                        attributes: {
+                            id: 'prisoner-alerts'
+                        },
+                        html: alertsList({ alerts: prisoner.alerts, category: prisoner.category }),
+                        classes: 'hmpps-max-width-240'
                     }, {
                         html: '<a href="review-prisoners/' + prisoner.number + '/remove"
                             class="govuk-link--no-visited-state">
@@ -78,6 +85,8 @@
                             text: "Cell location",
                             attributes: { "aria-sort": "ascending" },
                             classes: 'govuk-table__header'
+                        }, {
+                            text: "Relevant alerts"
                         }, {
                             html: '<span class="govuk-visually-hidden">Actions</span>'
                         }

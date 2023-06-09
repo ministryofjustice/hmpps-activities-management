@@ -20,6 +20,8 @@ export class PrisonerSearch {
 export default class SelectPrisonerRoutes {
   constructor(private readonly prisonService: PrisonService) {}
 
+  private RELEVANT_ALERT_CODES = ['HA', 'XA', 'RCON', 'XEL', 'RNO121', 'PEEP', 'XRF', 'XSA', 'XTACT']
+
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     let { query } = req.query
@@ -72,6 +74,10 @@ export default class SelectPrisonerRoutes {
       number: prisoner.prisonerNumber,
       name: `${prisoner.firstName} ${prisoner.lastName}`,
       cellLocation: prisoner.cellLocation,
+      category: prisoner.category,
+      alerts: prisoner.alerts
+        ?.filter(alert => alert.active && !alert.expired && this.RELEVANT_ALERT_CODES.includes(alert.alertCode))
+        .map(alert => ({ alertCode: alert.alertCode })),
     }
 
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {

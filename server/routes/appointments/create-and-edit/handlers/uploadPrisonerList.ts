@@ -20,6 +20,8 @@ export default class UploadPrisonerListRoutes {
     private readonly prisonService: PrisonService,
   ) {}
 
+  private RELEVANT_ALERT_CODES = ['HA', 'XA', 'RCON', 'XEL', 'RNO121', 'PEEP', 'XRF', 'XSA', 'XTACT']
+
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/upload-prisoner-list')
   }
@@ -67,6 +69,10 @@ export default class UploadPrisonerListRoutes {
         number: prisoner.prisonerNumber,
         name: `${prisoner.firstName} ${prisoner.lastName}`,
         cellLocation: prisoner.cellLocation,
+        category: prisoner.category,
+        alerts: prisoner.alerts
+          ?.filter(alert => alert.active && !alert.expired && this.RELEVANT_ALERT_CODES.includes(alert.alertCode))
+          .map(alert => ({ alertCode: alert.alertCode })),
       }))
 
     const prisonerNumbersFound = prisoners.map(prisoner => prisoner.number)
