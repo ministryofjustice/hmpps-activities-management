@@ -84,7 +84,7 @@ describe('activitiesApiClient', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
       fakeActivitiesApi
-        .get('/prison/MDI/activities?activeOnly=true')
+        .get('/prison/MDI/activities?excludeArchived=true')
         .matchHeader('authorization', `Bearer token`)
         .reply(200, response)
       const output = await activitiesApiClient.getActivities('MDI', true, user)
