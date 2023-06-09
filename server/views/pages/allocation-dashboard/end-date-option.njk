@@ -1,0 +1,55 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = applicationName + " - Edit allocation - End Date option" %}
+{% set pageId = 'edit-allocation-end-date-option-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m">Edit allocation for {{prisonerName }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" id="allocationId" name="allocationId" value="{{ allocationId }}">
+                <input type="hidden" id="scheduleId" name="scheduleId" value="{{ scheduleId }}">
+                <input type="hidden" id="prisonerNumber" name="prisonerNumber" value="{{ prisonerNumber }}">
+
+                {{ govukRadios({
+                    classes: "govuk-radios",
+                    name: "endDateOption",
+                    fieldset: {
+                        legend: {
+                            text: "Do you want to change or remove the end of allocation?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "change",
+                            text: "Change the date",
+                            checked: endDateOption == "change"
+                        },
+                        {
+                            value: "remove",
+                            text: "Remove it, they will stay on the activity",
+                            checked: endDateOption == "remove"
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('endDateOption')
+                }) }}
+
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

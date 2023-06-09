@@ -36,6 +36,7 @@ import {
   AllAttendance,
   AllAttendanceSummary,
   ActivityUpdateRequest,
+  AllocationUpdateRequest,
   AppointmentOccurrenceCancelRequest,
   BulkAppointmentsRequest,
   BulkAppointment,
@@ -94,6 +95,10 @@ export default class ActivitiesService {
 
   updateActivity(prisonCode: string, activityId: number, updateBody: ActivityUpdateRequest) {
     return this.activitiesApiClient.patchActivityUpdate(prisonCode, activityId, updateBody)
+  }
+
+  updateAllocation(prisonCode: string, allocationId: number, updateBody: AllocationUpdateRequest) {
+    return this.activitiesApiClient.patchAllocationUpdate(prisonCode, allocationId, updateBody)
   }
 
   allocateToSchedule(scheduleId: number, prisonerNumber: string, payBandId: number, user: ServiceUser): Promise<void> {
@@ -221,6 +226,10 @@ export default class ActivitiesService {
 
   async getAllocations(id: number, user: ServiceUser): Promise<Allocation[]> {
     return this.activitiesApiClient.getAllocations(id, user)
+  }
+
+  async getAllocation(allocationId: number, user: ServiceUser): Promise<Allocation> {
+    return this.activitiesApiClient.getAllocation(allocationId, user)
   }
 
   async getPrisonerAllocations(

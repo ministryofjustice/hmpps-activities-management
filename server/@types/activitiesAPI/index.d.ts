@@ -3006,6 +3006,28 @@ export interface components {
       /** @description The days and times an activity schedule can take place */
       slots?: components['schemas']['Slot'][]
     }
+    /** @description The update request with the new allocation details */
+    AllocationUpdateRequest: {
+      /**
+       * Format: date
+       * @description The date on which this allocation will start.
+       * @example 2022-12-23
+       */
+      startDate?: string
+      /**
+       * Format: date
+       * @description The date on which this allocation ends. If null, the allocation has no end date and will be scheduled indefinitely.
+       * @example 2022-12-23
+       */
+      endDate?: string
+      /**
+       * Format: boolean
+       * @description A flag to indicate that the allocation end date is to be removed.
+       * @example true
+       */
+      removeEndDate?: boolean
+      payBandId?: number
+    }
     /**
      * @description
      *   Represents the key data required to synchronise an attendance with Nomis
