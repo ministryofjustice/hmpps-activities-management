@@ -135,6 +135,7 @@ context('Create activity', () => {
     bankHolidayPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
+    locationPage.selectOutOfCell()
     locationPage.selectLocation('HB2 Classroom 2')
     locationPage.continue()
 
