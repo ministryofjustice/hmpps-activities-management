@@ -41,6 +41,7 @@ import activityScheduleAllocation from './fixtures/activity_schedule_allocation_
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
 import { DeallocateFromActivityJourney } from '../routes/deallocate-from-activity/journey'
+import SimpleDate from '../commonValidationTypes/simpleDate'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -571,7 +572,7 @@ describe('Activities Service', () => {
         scheduleId: 1,
         activityName: 'Maths',
         prisoners: [{ name: 'Fred', prisonerNumber: '123456', cellLocation: 'cell 1' }],
-        deallocationDate: '2023-05-31',
+        deallocationDate: { day: 31, month: 5, year: 2023 } as SimpleDate,
         deallocationReason: 'PERSONAL',
       }
 
