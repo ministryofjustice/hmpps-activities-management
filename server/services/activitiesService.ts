@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { plainToInstance } from 'class-transformer'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
@@ -47,6 +48,8 @@ import {
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
 import { DeallocateFromActivityJourney } from '../routes/deallocate-from-activity/journey'
+import { formatDate } from '../utils/utils'
+import SimpleDate from '../commonValidationTypes/simpleDate'
 
 export default class ActivitiesService {
   constructor(
@@ -378,7 +381,7 @@ export default class ActivitiesService {
     const request: PrisonerDeallocationRequest = {
       prisonerNumbers: deallocateJourney.prisoners.map(p => p.prisonerNumber),
       reasonCode: deallocateJourney.deallocationReason as DeallocationReasonCode,
-      endDate: deallocateJourney.deallocationDate,
+      endDate: formatDate(plainToInstance(SimpleDate, deallocateJourney.deallocationDate).toRichDate(), 'yyyy-MM-dd'),
     }
     return this.activitiesApiClient.deallocateFromActivity(deallocateJourney.scheduleId, request, user)
   }

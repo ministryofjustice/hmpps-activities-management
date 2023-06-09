@@ -1,3 +1,5 @@
+import SimpleDate from '../../commonValidationTypes/simpleDate'
+
 export type DeallocateFromActivityJourney = {
   allocationsToRemove: string[]
   scheduleId: number
@@ -7,6 +9,6 @@ export type DeallocateFromActivityJourney = {
     prisonerNumber: string
     cellLocation: string
   }>
-  deallocationDate?: string
+  deallocationDate?: SimpleDate
   deallocationReason?: string
 }
