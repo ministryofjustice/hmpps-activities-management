@@ -83,8 +83,11 @@ describe('activitiesApiClient', () => {
   describe('getActivities', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/prison/MDI/activities').matchHeader('authorization', `Bearer token`).reply(200, response)
-      const output = await activitiesApiClient.getActivities('MDI', user)
+      fakeActivitiesApi
+        .get('/prison/MDI/activities?activeOnly=true')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+      const output = await activitiesApiClient.getActivities('MDI', true, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
