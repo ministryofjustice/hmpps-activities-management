@@ -69,8 +69,8 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAttendanceReasons(user)
   }
 
-  async getActivities(user: ServiceUser): Promise<ActivityLite[]> {
-    return this.activitiesApiClient.getActivities(user.activeCaseLoadId, user)
+  async getActivities(activeOnly: boolean, user: ServiceUser): Promise<ActivityLite[]> {
+    return this.activitiesApiClient.getActivities(user.activeCaseLoadId, activeOnly, user)
   }
 
   async getActivitiesInCategory(categoryId: number, user: ServiceUser): Promise<ActivityLite[]> {

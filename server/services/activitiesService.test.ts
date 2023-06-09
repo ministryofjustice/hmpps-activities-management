@@ -102,10 +102,10 @@ describe('Activities Service', () => {
 
       when(activitiesApiClient.getActivities).mockResolvedValue(expectedResult)
 
-      const actualResult = await activitiesService.getActivities(user)
+      const actualResult = await activitiesService.getActivities(true, user)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getActivities).toHaveBeenCalledWith('MDI', user)
+      expect(activitiesApiClient.getActivities).toHaveBeenCalledWith('MDI', true, user)
     })
   })
 
