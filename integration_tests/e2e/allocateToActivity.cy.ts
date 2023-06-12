@@ -30,7 +30,7 @@ context('Allocate to activity', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubPrisonUser')
-    cy.stubEndpoint('GET', '/prison/MDI/activities', getActivities)
+    cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
     cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/2', getSchedule)
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)

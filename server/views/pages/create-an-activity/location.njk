@@ -42,7 +42,7 @@
                         {
                             value: "OUT_OF_CELL",
                             text: "Out of cell",
-                            checked: formResponses.inCell !== true and session.createJourney.inCell !== true,
+                            checked: formResponses.location or session.createJourney.location,
                             conditional: {
                                 html: govukSelect({
                                     id: "location",

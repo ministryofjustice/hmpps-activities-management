@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../services/activitiesService'
 import CheckDeallocationRoutes from './checkDeallocation'
+import SimpleDate from '../../../commonValidationTypes/simpleDate'
 
 jest.mock('../../../services/activitiesService')
 
@@ -29,7 +30,7 @@ describe('Route Handlers - Check deallocation', () => {
     req = {
       session: {
         deallocateJourney: {
-          deallocationDate: '2023-06-05',
+          deallocationDate: { day: 5, month: 6, year: 2023 } as SimpleDate,
           deallocationReason: 'OTHER',
         },
       },
@@ -42,7 +43,7 @@ describe('Route Handlers - Check deallocation', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/deallocate-from-activity/check-answers', {
-        deallocationDate: new Date(2023, 5, 5),
+        deallocationDate: '2023-06-05',
         deallocationReason: 'OTHER',
       })
     })
@@ -61,7 +62,11 @@ describe('Route Handlers - Check deallocation', () => {
 
       expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
         {
-          deallocationDate: '2023-06-05',
+          deallocationDate: {
+            day: 5,
+            month: 6,
+            year: 2023,
+          },
           deallocationReason: 'OTHER',
         },
         {},

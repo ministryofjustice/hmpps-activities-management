@@ -21,7 +21,7 @@ export default class DeallocationDateRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { deallocationDate } = req.body
-    req.session.deallocateJourney.deallocationDate = deallocationDate.toIsoString()
+    req.session.deallocateJourney.deallocationDate = deallocationDate
     res.redirectOrReturn('reason')
   }
 }
