@@ -95,11 +95,6 @@
             }) }}
 
             <form method="POST">
-                {% if session.req.query.fromEditActivity %}
-                    {% set fromEditText = "?fromEditActivity=true" %}
-                {% else %}
-                    {% set fromEditText = "" %}
-                {% endif %}
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({
@@ -107,7 +102,7 @@
                     }) }}
                     {{ govukButton({
                         text: "Add another pay rate",
-                        href: 'pay-rate-type' + fromEditText + '&preserveHistory=true',
+                        href: 'pay-rate-type?preserveHistory=true' + fromEditText,
                         classes: "govuk-button--secondary"
                     }) }}
                 </div>
