@@ -7,7 +7,7 @@ import IsValidCsvFile from '../../../../validators/isValidCsvFile'
 import PrisonerListCsvParser from '../../../../utils/prisonerListCsvParser'
 import {
   getAppointmentPrisonerNonAssociations,
-  getAppointmentPrisoners,
+  getAppointmentPrisonersAdd,
   getRelevantAppointmentAlerts,
 } from '../../../../utils/appointmentUtils'
 import { AppointmentPrisoner } from '../../../../@types/appointments'
@@ -94,6 +94,6 @@ export default class UploadPrisonerListRoutes {
       ),
     }))
 
-    return getAppointmentPrisoners(existingPrisoners, ...newPrisoners)
+    return getAppointmentPrisonersAdd(existingPrisoners, ...newPrisoners)
   }
 }

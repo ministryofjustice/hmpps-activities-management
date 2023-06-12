@@ -14,40 +14,69 @@ export const getAppointmentPrisonerNonAssociations = (nonAssociationDetails?: Of
   return nonAssociationDetails?.nonAssociations?.map(
     na =>
       ({
-        number: na.offenderNonAssociation.offenderNo,
         name: `${na.offenderNonAssociation.firstName} ${na.offenderNonAssociation.lastName}`,
+        number: na.offenderNonAssociation.offenderNo,
         cellLocation: na.offenderNonAssociation.assignedLivingUnitDescription,
       } as AppointmentNonAssociation),
   )
 }
 
-export const getAppointmentPrisoners = (
+export const getAppointmentPrisonersAdd = (
   existingPrisoners: AppointmentPrisoner[],
-  ...newPrisoners: AppointmentPrisoner[]
+  ...prisonersToAdd: AppointmentPrisoner[]
 ) => {
-  const updatedPrisoners = existingPrisoners?.filter(p => !newPrisoners.map(np => np.number).includes(p.number)) ?? []
+  const updatedPrisoners = (
+    existingPrisoners?.filter(p => !prisonersToAdd.map(np => np.number).includes(p.number)) ?? []
+  ).concat(prisonersToAdd)
 
-  newPrisoners.forEach(newPrisoner => {
-    newPrisoner.nonAssociations?.forEach(na => {
-      const allocatedPrisoner = existingPrisoners.find(p => p.number === na.number)
+  // Loop through each prisoner
+  updatedPrisoners.forEach(prisoner => {
+    // Loop through each of their non associations
+    prisoner.nonAssociations?.forEach(na => {
+      // Find the non associated prisoner in the existing list if it exists. Prisoner a's non association with prisoner b
+      const allocatedPrisoner = updatedPrisoners.find(p => p.number === na.number)
       if (allocatedPrisoner) {
+        // Mark the non association as a key non association. This will highlight it in the UI
         // eslint-disable-next-line no-param-reassign
         na.isAllocated = true
-        let allocatedPrisonerNonAssociation = allocatedPrisoner.nonAssociations.find(apna => apna.number === na.number)
+
+        // Find the inverse non association. Prisoner b's non association with prisoner a
+        let allocatedPrisonerNonAssociation = allocatedPrisoner.nonAssociations.find(
+          apna => apna.number === prisoner.number,
+        )
         if (!allocatedPrisonerNonAssociation) {
+          // If the inverse non association doesn't exist, create it
           allocatedPrisonerNonAssociation = {
-            number: newPrisoner.number,
-            name: newPrisoner.name,
-            cellLocation: newPrisoner.cellLocation,
+            name: prisoner.name,
+            number: prisoner.number,
+            cellLocation: prisoner.cellLocation,
           } as AppointmentNonAssociation
           allocatedPrisoner.nonAssociations.push(allocatedPrisonerNonAssociation)
         }
 
+        // Mark the inverse non association as a key non association. This will highlight it in the UI
         allocatedPrisonerNonAssociation.isAllocated = true
       }
     })
+  })
 
-    updatedPrisoners.push(newPrisoner)
+  return updatedPrisoners
+}
+
+export const getAppointmentPrisonersRemove = (
+  existingPrisoners: AppointmentPrisoner[],
+  ...prisonersToRemove: AppointmentPrisoner[]
+) => {
+  const prisonNumberToRemove = prisonersToRemove.map(np => np.number)
+  const updatedPrisoners = existingPrisoners?.filter(p => !prisonNumberToRemove.includes(p.number)) ?? []
+
+  updatedPrisoners.forEach(prisoner => {
+    prisoner.nonAssociations
+      ?.filter(na => prisonNumberToRemove.includes(na.number))
+      .forEach(na => {
+        // eslint-disable-next-line no-param-reassign
+        na.isAllocated = false
+      })
   })
 
   return updatedPrisoners

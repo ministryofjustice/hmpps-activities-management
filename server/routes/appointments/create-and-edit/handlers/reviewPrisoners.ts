@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { AppointmentApplyTo } from '../../../../@types/appointments'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import { getAppointmentPrisonersRemove } from '../../../../utils/appointmentUtils'
 
 export default class ReviewPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -41,8 +42,9 @@ export default class ReviewPrisonerRoutes {
         appointment => appointment.prisoner.number !== prisonNumber,
       )
     } else {
-      req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.filter(
-        prisoner => prisoner.number !== prisonNumber,
+      req.session.appointmentJourney.prisoners = getAppointmentPrisonersRemove(
+        req.session.appointmentJourney.prisoners,
+        ...req.session.appointmentJourney.prisoners.filter(prisoner => prisoner.number === prisonNumber),
       )
     }
 

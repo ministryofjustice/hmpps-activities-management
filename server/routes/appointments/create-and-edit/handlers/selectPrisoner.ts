@@ -5,7 +5,7 @@ import PrisonService from '../../../../services/prisonService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import {
-  getAppointmentPrisoners,
+  getAppointmentPrisonersAdd,
   getAppointmentPrisonerNonAssociations,
   getRelevantAppointmentAlerts,
 } from '../../../../utils/appointmentUtils'
@@ -88,12 +88,12 @@ export default class SelectPrisonerRoutes {
     }
 
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
-      req.session.editAppointmentJourney.addPrisoners = getAppointmentPrisoners(
+      req.session.editAppointmentJourney.addPrisoners = getAppointmentPrisonersAdd(
         req.session.editAppointmentJourney.addPrisoners,
         prisonerData,
       )
     } else if (req.session.appointmentJourney.type === AppointmentType.GROUP) {
-      req.session.appointmentJourney.prisoners = getAppointmentPrisoners(
+      req.session.appointmentJourney.prisoners = getAppointmentPrisonersAdd(
         req.session.appointmentJourney.prisoners,
         prisonerData,
       )
