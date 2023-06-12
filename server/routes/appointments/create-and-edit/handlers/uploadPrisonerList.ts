@@ -5,7 +5,12 @@ import PrisonService from '../../../../services/prisonService'
 import IsNotEmptyFile from '../../../../validators/isNotEmptyFile'
 import IsValidCsvFile from '../../../../validators/isValidCsvFile'
 import PrisonerListCsvParser from '../../../../utils/prisonerListCsvParser'
-import { getRelevantAppointmentAlerts } from '../../../../utils/appointmentUtils'
+import {
+  getAppointmentPrisonerNonAssociations,
+  getAppointmentPrisoners,
+  getRelevantAppointmentAlerts,
+} from '../../../../utils/appointmentUtils'
+import { AppointmentPrisoner } from '../../../../@types/appointments'
 
 export class PrisonerList {
   @Expose()
@@ -43,15 +48,7 @@ export default class UploadPrisonerListRoutes {
     res.redirect('review-prisoners')
   }
 
-  private getPrisonerList = async (
-    req: Request,
-    res: Response,
-    existingPrisoners: {
-      number: string
-      name: string
-      cellLocation: string
-    }[],
-  ) => {
+  private getPrisonerList = async (req: Request, res: Response, existingPrisoners: AppointmentPrisoner[]) => {
     const prisonerListCsvFile = req.file
     const { user } = res.locals
 
@@ -62,17 +59,11 @@ export default class UploadPrisonerListRoutes {
       return false
     }
 
-    const prisoners = (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user))
-      .filter(prisoner => prisoner.prisonId === user.activeCaseLoadId)
-      .map(prisoner => ({
-        number: prisoner.prisonerNumber,
-        name: `${prisoner.firstName} ${prisoner.lastName}`,
-        cellLocation: prisoner.cellLocation,
-        category: prisoner.category,
-        alerts: getRelevantAppointmentAlerts(prisoner.alerts),
-      }))
+    const prisonersFound = (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)).filter(
+      prisoner => prisoner.prisonId === user.activeCaseLoadId,
+    )
 
-    const prisonerNumbersFound = prisoners.map(prisoner => prisoner.number)
+    const prisonerNumbersFound = prisonersFound.map(prisoner => prisoner.prisonerNumber)
 
     const prisonerNumbersNotFound = prisonerNumbers.filter(
       prisonerNumber => !prisonerNumbersFound.includes(prisonerNumber),
@@ -87,10 +78,22 @@ export default class UploadPrisonerListRoutes {
       return false
     }
 
-    const existingPrisonersNotInUploadedList = (existingPrisoners ?? []).filter(
-      prisoner => !prisonerNumbersFound.includes(prisoner.number),
+    const prisonersNonAssociationDetails = await this.prisonService.getPrisonersNonAssociationDetails(
+      prisonerNumbersFound,
+      user,
     )
 
-    return existingPrisonersNotInUploadedList.concat(prisoners)
+    const newPrisoners = prisonersFound.map(prisoner => ({
+      name: `${prisoner.firstName} ${prisoner.lastName}`,
+      number: prisoner.prisonerNumber,
+      cellLocation: prisoner.cellLocation,
+      category: prisoner.category,
+      alerts: getRelevantAppointmentAlerts(prisoner.alerts),
+      nonAssociations: getAppointmentPrisonerNonAssociations(
+        prisonersNonAssociationDetails?.get(prisoner.prisonerNumber),
+      ),
+    }))
+
+    return getAppointmentPrisoners(existingPrisoners, ...newPrisoners)
   }
 }

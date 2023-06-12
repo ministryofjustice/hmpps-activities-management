@@ -138,7 +138,7 @@
 
 {% macro nonAssociations(nonAssociations) %}
     {% for nonAssociation in nonAssociations %}
-        {{ govukTag({ text: nonAssociation.name, classes: "govuk-tag--grey" }) }}
+        {{ govukTag({ text: nonAssociation.name | prisonerName, classes: ("govuk-tag--red-border" if nonAssociation.isAllocated else "govuk-tag--grey") }) }}
     {% endfor %}
 {% endmacro %}
 

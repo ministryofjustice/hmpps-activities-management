@@ -1,5 +1,5 @@
 import { PrisonerSummary } from '../../../@types/activitiesAPI/types'
-import { AppointmentCancellationReason, AppointmentApplyTo } from '../../../@types/appointments'
+import { AppointmentCancellationReason, AppointmentApplyTo, AppointmentPrisoner } from '../../../@types/appointments'
 
 export type EditAppointmentJourney = {
   repeatCount: number
@@ -26,11 +26,7 @@ export type EditAppointmentJourney = {
     date: Date
   }
   comment?: string
-  addPrisoners?: {
-    number: string
-    name: string
-    cellLocation: string
-  }[]
+  addPrisoners?: AppointmentPrisoner[]
   removePrisoner?: PrisonerSummary
   cancellationReason?: AppointmentCancellationReason
   applyTo?: AppointmentApplyTo

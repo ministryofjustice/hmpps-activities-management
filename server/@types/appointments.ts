@@ -1,3 +1,23 @@
+export type AppointmentPrisoner = {
+  name: string
+  number: string
+  cellLocation: string
+  category?: string
+  alerts?: AppointmentAlert[]
+  nonAssociations?: AppointmentNonAssociation[]
+}
+
+export type AppointmentAlert = {
+  alertCode: string
+}
+
+export type AppointmentNonAssociation = {
+  name: string
+  number: string
+  cellLocation: string
+  isAllocated: boolean
+}
+
 export enum AppointmentRepeatPeriod {
   WEEKDAY = 'WEEKDAY',
   DAILY = 'DAILY',

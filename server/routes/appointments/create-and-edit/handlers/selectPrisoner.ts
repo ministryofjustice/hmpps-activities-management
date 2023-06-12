@@ -4,7 +4,11 @@ import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { getAppointmentNonAssociations, getRelevantAppointmentAlerts } from '../../../../utils/appointmentUtils'
+import {
+  getAppointmentPrisoners,
+  getAppointmentPrisonerNonAssociations,
+  getRelevantAppointmentAlerts,
+} from '../../../../utils/appointmentUtils'
 
 export class SelectPrisoner {
   @Expose()
@@ -75,20 +79,24 @@ export default class SelectPrisonerRoutes {
     )
 
     const prisonerData = {
-      number: prisoner.prisonerNumber,
       name: `${prisoner.firstName} ${prisoner.lastName}`,
+      number: prisoner.prisonerNumber,
       cellLocation: prisoner.cellLocation,
       category: prisoner.category,
       alerts: getRelevantAppointmentAlerts(prisoner.alerts),
-      nonAssociations: getAppointmentNonAssociations(prisonerNonAssociationDetails),
+      nonAssociations: getAppointmentPrisonerNonAssociations(prisonerNonAssociationDetails),
     }
 
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
-      if (req.session.editAppointmentJourney.addPrisoners.find(p => p.number === prisonerData.number)) return true
-      req.session.editAppointmentJourney.addPrisoners.push(prisonerData)
+      req.session.editAppointmentJourney.addPrisoners = getAppointmentPrisoners(
+        req.session.editAppointmentJourney.addPrisoners,
+        prisonerData,
+      )
     } else if (req.session.appointmentJourney.type === AppointmentType.GROUP) {
-      if (req.session.appointmentJourney.prisoners.find(p => p.number === prisonerData.number)) return true
-      req.session.appointmentJourney.prisoners.push(prisonerData)
+      req.session.appointmentJourney.prisoners = getAppointmentPrisoners(
+        req.session.appointmentJourney.prisoners,
+        prisonerData,
+      )
     } else if (req.session.appointmentJourney.type === AppointmentType.INDIVIDUAL) {
       req.session.appointmentJourney.prisoners = [prisonerData]
     }

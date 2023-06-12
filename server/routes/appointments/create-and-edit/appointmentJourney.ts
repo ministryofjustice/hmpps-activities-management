@@ -1,5 +1,5 @@
 import { YesNo } from '../../../@types/activities'
-import { AppointmentRepeatPeriod } from '../../../@types/appointments'
+import { AppointmentPrisoner, AppointmentRepeatPeriod } from '../../../@types/appointments'
 
 export enum AppointmentType {
   INDIVIDUAL = 'INDIVIDUAL',
@@ -15,20 +15,7 @@ export enum AppointmentJourneyMode {
 export type AppointmentJourney = {
   mode: AppointmentJourneyMode
   type: AppointmentType
-  prisoners?: {
-    number: string
-    name: string
-    cellLocation: string
-    category?: string
-    alerts?: {
-      alertCode: string
-    }[]
-    nonAssociations?: {
-      number: string
-      name: string
-      cellLocation: string
-    }[]
-  }[]
+  prisoners?: AppointmentPrisoner[]
   category?: {
     code: string
     description: string

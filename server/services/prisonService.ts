@@ -95,4 +95,11 @@ export default class PrisonService {
   ): Promise<OffenderNonAssociationDetails> {
     return this.prisonApiClient.getPrisonerNonAssociationDetails(prisonNumber, user)
   }
+
+  async getPrisonersNonAssociationDetails(
+    prisonNumbers: string[],
+    user: ServiceUser,
+  ): Promise<Map<string, OffenderNonAssociationDetails>> {
+    return this.prisonApiClient.getPrisonersNonAssociationDetails(prisonNumbers, user)
+  }
 }
