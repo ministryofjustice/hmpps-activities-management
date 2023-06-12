@@ -4,6 +4,7 @@ import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import { getAppointmentNonAssociations, getRelevantAppointmentAlerts } from '../../../../utils/appointmentUtils'
 
 export class SelectPrisoner {
   @Expose()
@@ -19,8 +20,6 @@ export class PrisonerSearch {
 
 export default class SelectPrisonerRoutes {
   constructor(private readonly prisonService: PrisonService) {}
-
-  private RELEVANT_ALERT_CODES = ['HA', 'XA', 'RCON', 'XEL', 'RNO121', 'PEEP', 'XRF', 'XSA', 'XTACT']
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -70,14 +69,18 @@ export default class SelectPrisonerRoutes {
       return false
     }
 
+    const prisonerNonAssociationDetails = await this.prisonService.getPrisonerNonAssociationDetails(
+      prisoner.prisonerNumber,
+      user,
+    )
+
     const prisonerData = {
       number: prisoner.prisonerNumber,
       name: `${prisoner.firstName} ${prisoner.lastName}`,
       cellLocation: prisoner.cellLocation,
       category: prisoner.category,
-      alerts: prisoner.alerts
-        ?.filter(alert => alert.active && !alert.expired && this.RELEVANT_ALERT_CODES.includes(alert.alertCode))
-        .map(alert => ({ alertCode: alert.alertCode })),
+      alerts: getRelevantAppointmentAlerts(prisoner.alerts),
+      nonAssociations: getAppointmentNonAssociations(prisonerNonAssociationDetails),
     }
 
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {

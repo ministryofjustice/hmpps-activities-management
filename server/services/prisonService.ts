@@ -6,6 +6,7 @@ import {
   InmateBasicDetails,
   ReferenceCode,
   AgencyPrisonerPayProfile,
+  OffenderNonAssociationDetails,
 } from '../@types/prisonApiImport/types'
 import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
@@ -86,5 +87,12 @@ export default class PrisonService {
 
   async getPayProfile(prisonCode: string): Promise<AgencyPrisonerPayProfile> {
     return this.prisonApiClient.getPayProfile(prisonCode)
+  }
+
+  async getPrisonerNonAssociationDetails(
+    prisonNumber: string,
+    user: ServiceUser,
+  ): Promise<OffenderNonAssociationDetails> {
+    return this.prisonApiClient.getPrisonerNonAssociationDetails(prisonNumber, user)
   }
 }

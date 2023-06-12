@@ -23,6 +23,11 @@ export type AppointmentJourney = {
     alerts?: {
       alertCode: string
     }[]
+    nonAssociations?: {
+      number: string
+      name: string
+      cellLocation: string
+    }[]
   }[]
   category?: {
     code: string

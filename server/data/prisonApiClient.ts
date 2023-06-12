@@ -8,6 +8,7 @@ import {
   InmateBasicDetails,
   ReferenceCode,
   AgencyPrisonerPayProfile,
+  OffenderNonAssociationDetails,
 } from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
@@ -87,6 +88,33 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
   async getPayProfile(prisonCode: string): Promise<AgencyPrisonerPayProfile> {
     return this.get({
       path: `/api/agencies/${prisonCode}/pay-profile`,
+    })
+  }
+
+  async getPrisonerNonAssociationDetails(
+    prisonNumber: string,
+    user: ServiceUser,
+  ): Promise<OffenderNonAssociationDetails> {
+    return this.get({
+      path: `/api/offenders/${prisonNumber}/non-association-details`,
+      authToken: user.token,
+    })
+  }
+
+  async getPrisonersNonAssociationDetails(
+    prisonNumbers: string[],
+    user: ServiceUser,
+  ): Promise<Map<string, OffenderNonAssociationDetails>> {
+    return Promise.all(
+      prisonNumbers.map(prisonNumber => this.getPrisonerNonAssociationDetails(prisonNumber, user)),
+    ).then(result => {
+      const prisonNumbersNonAssociationsMap = new Map<string, OffenderNonAssociationDetails>()
+
+      result.forEach(nonAssociations => {
+        prisonNumbersNonAssociationsMap.set(nonAssociations.offenderNo, nonAssociations)
+      })
+
+      return prisonNumbersNonAssociationsMap
     })
   }
 }

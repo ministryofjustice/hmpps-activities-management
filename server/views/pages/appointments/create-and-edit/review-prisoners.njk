@@ -10,6 +10,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "components/alertsList.njk" import alertsList %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% set pageTitle = appointmentJourneyTitle("Review Prisoners", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-review-prisoners-page' %}
@@ -46,6 +47,12 @@
                             id: 'prisoner-alerts'
                         },
                         html: alertsList({ alerts: prisoner.alerts, category: prisoner.category }),
+                        classes: 'hmpps-max-width-240'
+                    }, {
+                        attributes: {
+                            id: 'prisoner-non-associations'
+                        },
+                        html: nonAssociations(prisoner.nonAssociations),
                         classes: 'hmpps-max-width-240'
                     }, {
                         html: '<a href="review-prisoners/' + prisoner.number + '/remove"
@@ -88,6 +95,8 @@
                         }, {
                             text: "Relevant alerts"
                         }, {
+                            text: "Non associations"
+                        }, {
                             html: '<span class="govuk-visually-hidden">Actions</span>'
                         }
                     ],
@@ -126,3 +135,10 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro nonAssociations(nonAssociations) %}
+    {% for nonAssociation in nonAssociations %}
+        {{ govukTag({ text: nonAssociation.name, classes: "govuk-tag--grey" }) }}
+    {% endfor %}
+{% endmacro %}
+

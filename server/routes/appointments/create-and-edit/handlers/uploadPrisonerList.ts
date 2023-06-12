@@ -5,6 +5,7 @@ import PrisonService from '../../../../services/prisonService'
 import IsNotEmptyFile from '../../../../validators/isNotEmptyFile'
 import IsValidCsvFile from '../../../../validators/isValidCsvFile'
 import PrisonerListCsvParser from '../../../../utils/prisonerListCsvParser'
+import { getRelevantAppointmentAlerts } from '../../../../utils/appointmentUtils'
 
 export class PrisonerList {
   @Expose()
@@ -19,8 +20,6 @@ export default class UploadPrisonerListRoutes {
     private readonly prisonerListCsvParser: PrisonerListCsvParser,
     private readonly prisonService: PrisonService,
   ) {}
-
-  private RELEVANT_ALERT_CODES = ['HA', 'XA', 'RCON', 'XEL', 'RNO121', 'PEEP', 'XRF', 'XSA', 'XTACT']
 
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/upload-prisoner-list')
@@ -70,9 +69,7 @@ export default class UploadPrisonerListRoutes {
         name: `${prisoner.firstName} ${prisoner.lastName}`,
         cellLocation: prisoner.cellLocation,
         category: prisoner.category,
-        alerts: prisoner.alerts
-          ?.filter(alert => alert.active && !alert.expired && this.RELEVANT_ALERT_CODES.includes(alert.alertCode))
-          .map(alert => ({ alertCode: alert.alertCode })),
+        alerts: getRelevantAppointmentAlerts(prisoner.alerts),
       }))
 
     const prisonerNumbersFound = prisoners.map(prisoner => prisoner.number)
