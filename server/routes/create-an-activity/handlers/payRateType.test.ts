@@ -17,7 +17,7 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
         },
       },
       render: jest.fn(),
-      redirectOrReturn: jest.fn(),
+      redirect: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -43,7 +43,7 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.payRateTypeOption).toEqual('single')
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('pay')
+      expect(res.redirect).toHaveBeenCalledWith('pay')
     })
   })
 

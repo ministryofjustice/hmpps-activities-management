@@ -19,7 +19,7 @@ export default class RepeatRoutes {
 
     const originalRepeat = req.session.appointmentJourney.repeat
 
-    if (repeat === YesNo.NO || req.session.appointmentJourney.repeat === undefined) {
+    if (repeat === YesNo.NO || originalRepeat === undefined) {
       req.session.appointmentJourney.repeat = repeat
     }
 
@@ -31,7 +31,7 @@ export default class RepeatRoutes {
       ) {
         res.redirectOrReturn(`comment`)
       } else {
-        res.redirect(`repeat-period-and-count`)
+        res.redirect(`repeat-period-and-count${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
       }
     } else {
       res.redirectOrReturn(`comment`)
