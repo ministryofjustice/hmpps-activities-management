@@ -37,7 +37,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         appointmentJourney: {},
       },
       body: {},
-      query: {},
+      query: { preserveHistory: 'true' },
       flash: jest.fn(),
     } as unknown as Request
   })
@@ -50,7 +50,9 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
     it('should render the default select-prisoner view if no search term entered', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/select-prisoner')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/select-prisoner', {
+        preserveHistory: 'true',
+      })
     })
 
     it('should render with a prisoners list if search term is entered', async () => {

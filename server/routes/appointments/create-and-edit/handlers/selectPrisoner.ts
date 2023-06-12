@@ -22,6 +22,7 @@ export default class SelectPrisonerRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { preserveHistory } = req.query
     let { query } = req.query
     if (res.locals.formResponses?.query !== undefined) {
       query = res.locals.formResponses.query
@@ -34,12 +35,12 @@ export default class SelectPrisonerRoutes {
       return res.render('pages/appointments/create-and-edit/select-prisoner', { prisoners, query })
     }
 
-    return res.render('pages/appointments/create-and-edit/select-prisoner')
+    return res.render('pages/appointments/create-and-edit/select-prisoner', { preserveHistory })
   }
 
   SEARCH = async (req: Request, res: Response): Promise<void> => {
     const { query } = req.body
-    return res.redirect(`select-prisoner?query=${query}`)
+    return res.redirect(`select-prisoner?query=${query}${req.query.preserveHistory ? '&preserveHistory=true' : ''}`)
   }
 
   SELECT_PRISONER = async (req: Request, res: Response): Promise<void> => {
