@@ -6,6 +6,7 @@
 
 {% set pageTitle = applicationName + " - Create an activity - Check answers" %}
 {% set pageId = 'check-answers-page' %}
+{% set backLinkHref = "/create/capacity" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -28,7 +29,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "category?fromReview=true",
+                                    href: "category?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change category"
                                 }
@@ -45,7 +46,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "name?fromReview=true",
+                                    href: "name?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change name"
                                 }
@@ -70,7 +71,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "risk-level?fromReview=true",
+                                    href: "risk-level?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change risk level"
                                 }
@@ -87,7 +88,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "check-education-level?fromReview=true",
+                                    href: "check-education-level?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change education levels"
                                 }
@@ -104,7 +105,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "check-pay?fromReview=true",
+                                    href: "check-pay?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change pay rates"
                                 }
@@ -127,7 +128,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "start-date?fromReview=true",
+                                    href: "start-date?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change start date"
                                 }
@@ -144,7 +145,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "end-date?fromReview=true",
+                                    href: "end-date?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change end date"
                                 }
@@ -158,7 +159,7 @@
                         value: { html: scheduleSummary(session.createJourney.days, times) },
                         actions: {
                             items: [{
-                                href: "days-and-times?fromReview=true",
+                                href: "days-and-times?preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "Change schedule"
                             }]
@@ -169,7 +170,7 @@
                         value: { text: "Yes" if session.createJourney.runsOnBankHoliday else "No"},
                         actions: {
                             items: [{
-                                href: "bank-holiday-option?fromReview=true",
+                                href: "bank-holiday-option?preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "Change bank holiday option"
                             }]
@@ -191,7 +192,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "location?fromReview=true",
+                                    href: "location?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change location"
                                 }
@@ -208,7 +209,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "capacity?fromReview=true",
+                                    href: "capacity?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change capacity"
                                 }

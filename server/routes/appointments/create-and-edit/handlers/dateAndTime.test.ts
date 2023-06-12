@@ -51,7 +51,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/date-and-time', {
-        backLinkHref: 'name',
+        backLinkHref: 'location',
         isCtaAcceptAndSave: false,
       })
     })

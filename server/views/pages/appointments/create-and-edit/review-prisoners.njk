@@ -12,7 +12,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Review Prisoners", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-review-prisoners-page' %}
-{% set backLinkHref = "upload-by-csv" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners" %}
+{% set backLinkHref = "upload-bulk-appointment" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -90,7 +90,7 @@
                     {{ govukButton({
                         text: "Add another person",
                         classes: "govuk-button--secondary",
-                        href: "upload-bulk-appointment",
+                        href: "upload-bulk-appointment?preserveHistory=true",
                         attributes: { 'data-qa': 'add-prisoner-secondary' }
                     }) }}
                 </div>
@@ -99,7 +99,7 @@
                     {{ govukButton({
                         text: "Add another person",
                         classes: "govuk-button--secondary",
-                        href: "how-to-add-prisoners",
+                        href: "how-to-add-prisoners?preserveHistory=true",
                         attributes: { 'data-qa': 'add-prisoner-secondary' }
                     }) }}
                 </div>

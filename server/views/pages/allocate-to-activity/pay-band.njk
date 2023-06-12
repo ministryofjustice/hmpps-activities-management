@@ -5,7 +5,7 @@
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Pay band" %}
 {% set pageId = 'pay-band-page' %}
-{% set backLinkHref = "/" %}
+{% set backLinkHref = "/allocation-dashboard/" + session.allocateJourney.activity.scheduleId + "#candidates-tab" %}
 
 {% set bandOptions = [] %}
 {% for pay in payBands %}

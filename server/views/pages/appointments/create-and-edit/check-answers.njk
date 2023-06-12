@@ -31,7 +31,7 @@
             actions: {
                 items: [
                     {
-                        href: "select-prisoner?fromReview=true",
+                        href: "select-prisoner?preserveHistory=true",
                         text: "Change",
                         visuallyHiddenText: "change attendee",
                         classes: "govuk-link--no-visited-state",
@@ -54,7 +54,7 @@
         actions: {
             items: [
                 {
-                    href: "category?fromReview=true",
+                    href: "category?preserveHistory=true",
                     text: "Change",
                     visuallyHiddenText: "change appointment name",
                     classes: "govuk-link--no-visited-state",
@@ -74,7 +74,7 @@
         actions: {
             items: [
                 {
-                    href: "description?fromReview=true",
+                    href: "description?preserveHistory=true",
                     text: "Change",
                     visuallyHiddenText: "change show appointment name option",
                     classes: "govuk-link--no-visited-state",
@@ -97,7 +97,7 @@
             actions: {
                 items: [
                     {
-                        href: "description?fromReview=true",
+                        href: "description?preserveHistory=true",
                         text: "Change",
                         visuallyHiddenText: "change alternative appointment name",
                         classes: "govuk-link--no-visited-state",
@@ -120,7 +120,7 @@
         actions: {
             items: [
                 {
-                    href: "location?fromReview=true",
+                    href: "location?preserveHistory=true",
                     text: "Change",
                     visuallyHiddenText: "change location",
                     classes: "govuk-link--no-visited-state",
@@ -139,7 +139,7 @@
         actions: {
             items: [
                 {
-                    href: 'bulk-appointment-date?fromReview=true' if session.appointmentJourney.type == AppointmentType.BULK else 'date-and-time?fromReview=true',
+                    href: 'bulk-appointment-date?preserveHistory=true' if session.appointmentJourney.type == AppointmentType.BULK else 'date-and-time?preserveHistory=true',
                     text: "Change",
                     visuallyHiddenText: "change date",
                     classes: "govuk-link--no-visited-state",
@@ -158,7 +158,7 @@
         actions: {
             items: [
                 {
-                    href: "date-and-time?fromReview=true",
+                    href: "date-and-time?preserveHistory=true",
                     text: "Change",
                     visuallyHiddenText: "change start time",
                     classes: "govuk-link--no-visited-state",
@@ -177,7 +177,7 @@
         actions: {
             items: [
                 {
-                    href: "date-and-time?fromReview=true",
+                    href: "date-and-time?preserveHistory=true",
                     text: "Change",
                     visuallyHiddenText: "change end time",
                     classes: "govuk-link--no-visited-state",
@@ -197,7 +197,7 @@
         actions: {
             items: [
                 {
-                    href: "repeat?fromReview=true",
+                    href: "repeat?preserveHistory=true",
                     text: "Change",
                     visuallyHiddenText: "change repeats",
                     classes: "govuk-link--no-visited-state",
@@ -222,7 +222,7 @@
       actions: {
           items: [
               {
-                  href: "repeat-period-and-count?fromReview=true",
+                  href: "repeat-period-and-count?preserveHistory=true",
                   text: "Change",
                   visuallyHiddenText: "change repeat period",
                   classes: "govuk-link--no-visited-state",
@@ -241,7 +241,7 @@
       actions: {
           items: [
               {
-                  href: "repeat-period-and-count?fromReview=true",
+                  href: "repeat-period-and-count?preserveHistory=true",
                   text: "Change",
                   visuallyHiddenText: "change number of appointments",
                   classes: "govuk-link--no-visited-state",
@@ -262,7 +262,7 @@
         actions: {
             items: [
                 {
-                    href: "comment?fromReview=true",
+                    href: "comment?preserveHistory=true",
                     text: "Change",
                     visuallyHiddenText: "change heads up",
                     classes: "govuk-link--no-visited-state",
@@ -324,7 +324,7 @@
         actions: {
             items: [
                 {
-                    href: "review-prisoners?fromReview=true",
+                    href: "review-prisoners?preserveHistory=true",
                     text: "Change",
                     visuallyHiddenText: "change prisoners",
                     classes: "govuk-link--no-visited-state",
@@ -384,7 +384,7 @@
                 actions: {
                     items: [
                         {
-                            href: "review-bulk-appointment?fromReview=true",
+                            href: "review-bulk-appointment?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "change start time"
                         }
@@ -400,7 +400,7 @@
                 actions: {
                     items: [
                         {
-                            href: "review-bulk-appointment?fromReview=true",
+                            href: "review-bulk-appointment?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "change end time"
                         }
