@@ -1,3 +1,5 @@
+import SimpleDate from '../../commonValidationTypes/simpleDate'
+
 export type AllocateToActivityJourney = {
   inmate: {
     prisonerName: string
@@ -15,4 +17,6 @@ export type AllocateToActivityJourney = {
     name: string
     location: string
   }
+  startDate?: SimpleDate
+  endDate?: SimpleDate
 }

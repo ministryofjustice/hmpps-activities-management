@@ -169,11 +169,13 @@ describe('activitiesApiClient', () => {
         .post('/schedules/1/allocations', {
           prisonerNumber: 'ABC123',
           payBandId: 1,
+          startDate: '2023-01-01',
+          endDate: null,
         })
         .matchHeader('authorization', `Bearer token`)
         .reply(204)
 
-      await activitiesApiClient.postAllocation(1, 'ABC123', 1, user)
+      await activitiesApiClient.postAllocation(1, 'ABC123', 1, user, '2023-01-01', null)
 
       expect(nock.isDone()).toBe(true)
     })

@@ -141,11 +141,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  postAllocation(scheduleId: number, prisonerNumber: string, payBandId: number, user: ServiceUser): Promise<void> {
+  postAllocation(
+    scheduleId: number,
+    prisonerNumber: string,
+    payBandId: number,
+    user: ServiceUser,
+    startDate: string,
+    endDate: string,
+  ): Promise<void> {
     return this.post({
       path: `/schedules/${scheduleId}/allocations`,
       authToken: user.token,
-      data: { prisonerNumber, payBandId },
+      data: { prisonerNumber, payBandId, startDate, endDate },
     })
   }
 

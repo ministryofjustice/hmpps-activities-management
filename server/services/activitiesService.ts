@@ -98,8 +98,15 @@ export default class ActivitiesService {
     return this.activitiesApiClient.patchAllocationUpdate(prisonCode, allocationId, updateBody)
   }
 
-  allocateToSchedule(scheduleId: number, prisonerNumber: string, payBandId: number, user: ServiceUser): Promise<void> {
-    return this.activitiesApiClient.postAllocation(scheduleId, prisonerNumber, payBandId, user)
+  allocateToSchedule(
+    scheduleId: number,
+    prisonerNumber: string,
+    payBandId: number,
+    user: ServiceUser,
+    startDate: string,
+    endDate: string,
+  ): Promise<void> {
+    return this.activitiesApiClient.postAllocation(scheduleId, prisonerNumber, payBandId, user, startDate, endDate)
   }
 
   getPayBandsForPrison(user: ServiceUser): Promise<PrisonPayBand[]> {

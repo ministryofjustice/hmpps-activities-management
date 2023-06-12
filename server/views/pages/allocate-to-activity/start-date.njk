@@ -1,0 +1,44 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "components/datePicker.njk" import datePicker %}
+
+{% set pageTitle = applicationName + " - Allocation - Start date" %}
+{% set pageId = 'allocation-start-date-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m">{{ prisonerName }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ datePicker({
+                    id: 'startDate',
+                    label: {
+                        text: "When do you want " + prisonerName + " to start attending this activity?",
+                        classes: "govuk-fieldset__legend--l",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "For example, 29 12 2022"
+                    },
+                    renderedErrorMessage: validationErrors | findError('startDate'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.startDate or session.allocateJourney.startDate
+                }) }}
+                <div class="govuk-button-group">
+                  {{ govukButton({
+                    text: "Save and continue"
+                  }) }}
+                    <a class="govuk-link js-backlink" href="/">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
