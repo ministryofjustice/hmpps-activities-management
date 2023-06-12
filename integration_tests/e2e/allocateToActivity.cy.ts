@@ -1,3 +1,4 @@
+import { addMonths } from 'date-fns'
 import getActivities from '../fixtures/activitiesApi/getActivities.json'
 import getSchedulesInActivity from '../fixtures/activitiesApi/getSchedulesInActivity.json'
 import getAllocations from '../fixtures/activitiesApi/getAllocations.json'
@@ -13,6 +14,9 @@ import getCandidates from '../fixtures/activitiesApi/getCandidates.json'
 
 import IndexPage from '../pages/index'
 import Page from '../pages/page'
+import StartDatePage from '../pages/allocateToActivity/startDate'
+import EndDateOptionPage from '../pages/allocateToActivity/endDateOption'
+import EndDatePage from '../pages/allocateToActivity/endDate'
 import ActivitiesDashboardPage from '../pages/allocateToActivity/activitiesDashboard'
 import PayBandPage from '../pages/allocateToActivity/payBand'
 import CheckAnswersPage from '../pages/allocateToActivity/checkAnswers'
@@ -65,6 +69,22 @@ context('Allocate to activity', () => {
     allocatePage.applyFilters()
     allocatePage.candidateRows().should('have.length', 10)
     allocatePage.selectCandidateWithName('Alfonso Cholak')
+
+    const startDatePage = Page.verifyOnPage(StartDatePage)
+    const startDatePicker = startDatePage.getDatePicker()
+    const startDate = addMonths(new Date(), 1)
+    startDatePicker.enterDate(startDate)
+    startDatePage.saveAndContinue()
+
+    const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
+    endDateOptionPage.addEndDate('Yes')
+    endDateOptionPage.saveAndContinue()
+
+    const endDatePage = Page.verifyOnPage(EndDatePage)
+    const endDatePicker = endDatePage.getDatePicker()
+    const endDate = addMonths(new Date(), 8)
+    endDatePicker.enterDate(endDate)
+    endDatePage.continue()
 
     const payBandPage = Page.verifyOnPage(PayBandPage)
     payBandPage.selectPayBand('Medium (£1.75)')
