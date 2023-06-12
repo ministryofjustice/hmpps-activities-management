@@ -13,7 +13,7 @@ export default class ActivitiesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
 
-    const activities = await this.activitiesService.getActivities(user).then(act =>
+    const activities = await this.activitiesService.getActivities(true, user).then(act =>
       act.map(a => ({
         ...a,
         allocationSummary: this.addCalculatedFields(this.getCapacityAndAllocated(a)),

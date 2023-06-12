@@ -80,9 +80,10 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getActivities(prisonCode: string, user: ServiceUser): Promise<ActivityLite[]> {
+  async getActivities(prisonCode: string, excludeArchived: boolean, user: ServiceUser): Promise<ActivityLite[]> {
     return this.get({
       path: `/prison/${prisonCode}/activities`,
+      query: { excludeArchived },
       authToken: user.token,
     })
   }
