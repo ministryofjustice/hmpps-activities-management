@@ -11,7 +11,7 @@ import { RecordAttendanceRequests } from '../../routes/record-attendance/recordA
 
 // eslint-disable-next-line import/no-cycle
 import { ActivitiesFilters, AttendanceSummaryFilters, UnlockFilters } from '../activities'
-import { AppointmentDetails, AppointmentOccurrenceDetails } from '../activitiesAPI/types'
+import { AppointmentDetails, AppointmentOccurrenceDetails, BulkAppointmentDetails } from '../activitiesAPI/types'
 import { BulkAppointmentJourney } from '../../routes/appointments/create-and-edit/bulkAppointmentJourney'
 import { DeallocateFromActivityJourney } from '../../routes/deallocate-from-activity/journey'
 
@@ -64,6 +64,7 @@ export declare global {
       logout(done: (err: unknown) => void): void
       appointment?: AppointmentDetails
       appointmentOccurrence?: AppointmentOccurrenceDetails
+      bulkAppointment?: BulkAppointmentDetails
     }
   }
 }

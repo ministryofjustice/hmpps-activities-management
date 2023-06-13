@@ -40,6 +40,7 @@ import {
   AppointmentOccurrenceCancelRequest,
   BulkAppointmentsRequest,
   BulkAppointment,
+  BulkAppointmentDetails,
   EventReviewSearchResults,
   PrisonerDeallocationRequest,
   DeallocationReasonCode,
@@ -363,6 +364,10 @@ export default class ActivitiesService {
 
   async createBulkAppointment(appointment: BulkAppointmentsRequest, user: ServiceUser): Promise<BulkAppointment> {
     return this.activitiesApiClient.postCreateBulkAppointment(appointment, user)
+  }
+
+  async getBulkAppointmentDetails(bulkAppointmentId: number, user: ServiceUser): Promise<BulkAppointmentDetails> {
+    return this.activitiesApiClient.getBulkAppointmentDetails(bulkAppointmentId, user)
   }
 
   async getChangeEvents(

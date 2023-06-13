@@ -31,6 +31,7 @@ export type AppointmentOccurrence = components['schemas']['AppointmentOccurrence
 export type AppointmentCreateRequest = components['schemas']['AppointmentCreateRequest']
 export type BulkAppointmentsRequest = components['schemas']['BulkAppointmentsRequest']
 export type BulkAppointment = components['schemas']['BulkAppointment']
+export type BulkAppointmentDetails = components['schemas']['BulkAppointmentDetails']
 export type AppointmentDetails = components['schemas']['AppointmentDetails']
 export type AppointmentOccurrenceDetails = components['schemas']['AppointmentOccurrenceDetails']
 export type UncancelScheduledInstanceRequest = components['schemas']['UncancelScheduledInstanceRequest']
