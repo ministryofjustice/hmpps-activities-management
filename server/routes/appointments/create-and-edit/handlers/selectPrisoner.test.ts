@@ -229,7 +229,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
 
       await handler.SEARCH(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`select-prisoner?query=john`)
+      expect(res.redirect).toHaveBeenCalledWith(`select-prisoner?query=john&preserveHistory=true`)
     })
   })
 
