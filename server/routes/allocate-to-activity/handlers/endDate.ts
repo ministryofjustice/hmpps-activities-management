@@ -38,7 +38,7 @@ export default class EndDateRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.allocateJourney.endDate = req.body.endDate
 
-    if (req.query && req.query.fromReview) {
+    if (req.query && req.query.preserveHistory) {
       res.redirect(`/allocate/check-answers`)
     } else {
       res.redirect(`/allocate/pay-band`)

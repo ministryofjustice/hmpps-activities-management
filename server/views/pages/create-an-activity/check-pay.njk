@@ -41,12 +41,12 @@
                             actions: {
                                 items: [
                                     {
-                                        href: "pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText,
+                                        href: "pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText + "&preserveHistory=true",
                                         text: "Change",
                                         visuallyHiddenText: "change pay rate"
                                     },
                                     {
-                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText,
+                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText + "&preserveHistory=true",
                                         text: "Remove",
                                         visuallyHiddenText: "remove pay rate"
                                     }
@@ -81,7 +81,7 @@
                                     visuallyHiddenText: "change pay rate"
                                 },
                                 {
-                                    href: "remove-flat-rate?bandId=" + flatRate.bandId + fromEditText,
+                                    href: "remove-flat-rate?bandId=" + flatRate.bandId + fromEditText + "&preserveHistory=true",
                                     text: "Remove",
                                     visuallyHiddenText: "remove flat rate"
                                 }
@@ -95,11 +95,6 @@
             }) }}
 
             <form method="POST">
-                {% if session.req.query.fromEditActivity %}
-                    {% set fromEditText = "?fromEditActivity=true" %}
-                {% else %}
-                    {% set fromEditText = "" %}
-                {% endif %}
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({
@@ -107,7 +102,7 @@
                     }) }}
                     {{ govukButton({
                         text: "Add another pay rate",
-                        href: 'pay-rate-type' + fromEditText,
+                        href: 'pay-rate-type?preserveHistory=true' + fromEditText,
                         classes: "govuk-button--secondary"
                     }) }}
                 </div>

@@ -7,7 +7,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Type", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-category-page' %}
-{% set backLinkHref = "/select-prisoner" %}
+{% set backLinkHref = "/appointments/create/select-prisoner?query=" + session.appointmentJourney.prisoners[0].number %}
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for category in categories %}

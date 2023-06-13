@@ -11,7 +11,7 @@
 
 {% set pageTitle = applicationName + " - Allocate" %}
 {% set pageId = 'allocation-dashboard-page' %}
-{% set backLinkHref = "/allocate/categories" %}
+{% set backLinkHref = "/allocation-dashboard" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -27,7 +27,7 @@
         <div class="govuk-grid-column-one-third">
             <div class='related-tasks'>
                 <ul class='govuk-list'>
-                    <li><a href="/allocation-dashboard" class="govuk-link">Find other activities with vacancies</a></li>
+                    <li><a href="/allocation-dashboard?preserveHistory=true" class="govuk-link govuk-link--no-visited-state">Find other activities with vacancies</a></li>
                 </ul>
             </div>
         </div>
@@ -526,7 +526,8 @@
     {% endfor %}
 
     <p>Check the activity schedule is compatible with any current allocations. 
-    You can check individual schedules using the <a href="{{ dpsUrl }}/prisoner-search?keywords=&location={{ user.activeCaseLoad.caseLoadId }}") }}>prisoner profile</a></p>
+    You can check individual schedules using the <a href="{{ dpsUrl }}/prisoner-search?keywords=&location={{ user.activeCaseLoad.caseLoadId }}") }}
+                                                    target='_blank' class='govuk-link--no-visited-state'>prisoner profile</a></p>
     <p>This schedule {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
 
     {{ govukTable({

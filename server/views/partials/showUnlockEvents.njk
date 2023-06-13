@@ -7,12 +7,12 @@
 
             <div class="govuk-!-font-weight-bold">
                 {% if e.eventType === 'ACTIVITY' and e.eventSource === 'SAA' %}
-                    <a href="/attendance/activities/{{ e.scheduledInstanceId }}/attendance-list"
+                    <a href="/attendance/activities/{{ e.scheduledInstanceId }}/attendance-list?preserveHistory=true"
                     class="govuk-link govuk-link--no-visited-state">
                         {{ e.summary | trim }}
                     </a>
                 {% elseif e.eventType === 'APPOINTMENT' and e.eventSource === 'SAA'%}
-                    <a href="/appointments/{{ e.appointmentId }}/occurrence/{{ e.appointmentOccurrenceId }}"
+                    <a href="/appointments/{{ e.appointmentId }}/occurrence/{{ e.appointmentOccurrenceId }}?preserveHistory=true"
                     class="govuk-link govuk-link--no-visited-state">
                         {{ e.summary | trim }}
                     </a>

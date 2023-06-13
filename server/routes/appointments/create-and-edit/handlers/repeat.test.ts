@@ -19,6 +19,7 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
     } as unknown as Response
 
     req = {
+      query: {},
       session: {
         appointmentJourney: {},
       },

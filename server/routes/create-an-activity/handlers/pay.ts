@@ -111,7 +111,7 @@ export default class PayRoutes {
         displaySequence: +displaySequence,
       })
     }
-    if (req.query.fromEditActivity) res.redirect('/schedule/check-pay')
+    if (req.query.fromEditActivity) res.redirect('/schedule/check-pay?preserveHistory=true')
     else res.redirect('check-pay')
   }
 }
