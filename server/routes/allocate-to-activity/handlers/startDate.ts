@@ -27,7 +27,7 @@ export default class StartDateRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.allocateJourney.startDate = req.body.startDate
 
-    if (req.query && req.query.fromReview) {
+    if (req.query && req.query.preserveHistory) {
       res.redirect(`/allocate/check-answers`)
     } else {
       res.redirect(`/allocate/end-date-option`)
