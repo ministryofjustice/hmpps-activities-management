@@ -79,7 +79,7 @@ describe('Route Handlers - Allocate - Start', () => {
           location: 'Education room 1',
         },
       })
-      expect(res.redirect).toHaveBeenCalledWith('/allocate/pay-band')
+      expect(res.redirect).toHaveBeenCalledWith('/allocate/start-date')
     })
   })
 })

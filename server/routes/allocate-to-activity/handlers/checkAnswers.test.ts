@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import ActivitiesService from '../../../services/activitiesService'
 import CheckAnswersRoutes from './checkAnswers'
+import { simpleDateFromDate } from '../../../commonValidationTypes/simpleDate'
 
 jest.mock('../../../services/activitiesService')
 
@@ -37,6 +38,8 @@ describe('Route Handlers - Allocate - Check answers', () => {
             name: 'Maths',
             location: 'Education room 1',
           },
+          startDate: simpleDateFromDate(new Date('2023-01-01')),
+          endDate: null,
         },
       },
     } as unknown as Request
@@ -56,6 +59,8 @@ describe('Route Handlers - Allocate - Check answers', () => {
         payBand: 'A',
         activityName: 'Maths',
         activityLocation: 'Education room 1',
+        startDate: '1st January 2023',
+        endDate: 'Not set',
       })
     })
   })
@@ -63,7 +68,14 @@ describe('Route Handlers - Allocate - Check answers', () => {
   describe('POST', () => {
     it('should create the allocation and redirect to confirmation page', async () => {
       await handler.POST(req, res)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(1, 'ABC123', 1, { username: 'joebloggs' })
+      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+        1,
+        'ABC123',
+        1,
+        { username: 'joebloggs' },
+        '2023-01-01',
+        null,
+      )
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
   })
