@@ -7,7 +7,7 @@
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Before you allocate" %}
 {% set pageId = 'before-you-allocate-page' %}
-{% set backLinkHref = "/" %}
+{% set backLinkHref = "/allocation-dashboard/" + session.allocateJourney.activity.scheduleId %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -15,7 +15,7 @@
             <span class="govuk-caption-m">{{ session.allocateJourney.activity.name }}</span>
             <h1 class="govuk-heading-l">Before you allocate</h1>
 
-            <p class="govuk-body">Use the information on this page to decide if <a href="{{ dpsUrl }}/prisoner/{{ session.allocateJourney.inmate.prisonerNumber }}">{{ session.allocateJourney.inmate.prisonerName }}</a> is suitable for {{ session.allocateJourney.activity.name }}.</p>
+            <p class="govuk-body">Use the information on this page to decide if <a href="{{ dpsUrl }}/prisoner/{{ session.allocateJourney.inmate.prisonerNumber }}" class="govuk-link" target="_blank">{{ session.allocateJourney.inmate.prisonerName }}<span class="govuk-visually-hidden"> (opens in new tab)</span></a> is suitable for {{ session.allocateJourney.activity.name }}.</p>
 
             <p class="govuk-body">You may need to consult with other departments before making your decision.</p>
 
@@ -153,7 +153,7 @@
                         rows: currentAllocations
                     }) }}
 
-                    <a href="https://digital-dev.prison.service.justice.gov.uk/prisoner/A3840DZ/work-and-skills" class="govuk-link" target="_blank">View allocations form the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</a>
+                    <a href="https://digital-dev.prison.service.justice.gov.uk/prisoner/A3840DZ/work-and-skills" class="govuk-link" target="_blank">View allocations form the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
                 {% else %}
                     <span class="govuk-!-font-weight-bold">No other allocations</span>
                 {% endif %}
@@ -199,7 +199,9 @@
 
 {% macro prisonerEducation(educationItems) %}
     {% for education in educationItems %}
-        <div>{{ education.studyArea }}: {{ education.educationLevel }}</div>
+        {% if loop.index <= 3 %}    
+            <div>{{ education.studyArea }}: {{ education.educationLevel }}</div>
+        {% endif %}
     {% else %}
         None
     {% endfor %}
@@ -207,7 +209,7 @@
 
 {% macro nonAssociations(nonAssociations) %}
     {% for nonAssociation in nonAssociations %}
-        <div>{{ nonAssociation.offenderNonAssociation | firstNameLastName }}</div>
+        <div><a href="{{ dpsUrl }}/prisoner/{{ nonAssociation.offenderNonAssociation.offenderNo }}" class="govuk-link" target="_blank">{{ nonAssociation.offenderNonAssociation | firstNameLastName }}<span class="govuk-visually-hidden"> (opens in new tab)</span></a></div>
     {% else %}
         None
     {% endfor %}
