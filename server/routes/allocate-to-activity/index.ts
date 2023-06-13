@@ -8,6 +8,9 @@ import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import emptyJourneyHandler from '../../middleware/emptyJourneyHandler'
 import CancelRoutes, { ConfirmCancelOptions } from './handlers/cancel'
+import StartDateRoutes, { StartDate } from './handlers/startDate'
+import EndDateOptionRoutes, { EndDateOption } from './handlers/endDateOption'
+import EndDateRoutes, { EndDate } from './handlers/endDate'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -21,8 +24,17 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const cancelHandler = new CancelRoutes()
   const confirmationHandler = new ConfirmationRoutes()
+  const startDateHandler = new StartDateRoutes()
+  const endDateOptionHandler = new EndDateOptionRoutes()
+  const endDateHandler = new EndDateRoutes()
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
+  get('/start-date', startDateHandler.GET)
+  post('/start-date', startDateHandler.POST, StartDate)
+  get('/end-date-option', endDateOptionHandler.GET)
+  post('/end-date-option', endDateOptionHandler.POST, EndDateOption)
+  get('/end-date', endDateHandler.GET)
+  post('/end-date', endDateHandler.POST, EndDate)
   get('/pay-band', payBandHandler.GET, true)
   post('/pay-band', payBandHandler.POST, PayBand)
   get('/check-answers', checkAnswersHandler.GET, true)

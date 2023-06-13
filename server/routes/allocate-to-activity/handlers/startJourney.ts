@@ -32,6 +32,6 @@ export default class StartJourneyRoutes {
       },
     }
 
-    res.redirect(`/allocate/pay-band`)
+    res.redirect(`/allocate/start-date`)
   }
 }
