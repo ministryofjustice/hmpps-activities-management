@@ -1,0 +1,37 @@
+{
+  "workplaceRiskAssessment": {
+    "suitable": true,
+    "riskLevel": "none"
+  },
+  "incentiveLevel": {
+    "suitable": true,
+    "incentiveLevel": "Standard"
+  },
+  "education": {
+    "suitable": true,
+    "education": [
+      {
+        "bookingId": 1207746,
+        "startDate": "2023-05-01",
+        "endDate": "2023-06-01",
+        "studyArea": "English Literature",
+        "educationLevel": "Level 1",
+        "numberOfYears": null,
+        "graduationYear": null,
+        "comment": "English Literature 1.0 reading",
+        "school": "GHI",
+        "isSpecialEducation": true,
+        "schedule": null,
+        "addresses": []
+      }
+    ]
+  },
+  "releaseDate": {
+    "suitable": false,
+    "earliestReleaseDate": null
+  },
+  "nonAssociation": {
+    "suitable": true,
+    "nonAssociations": []
+  }
+}

@@ -56,9 +56,9 @@ describe('Route Handlers - Edit allocation - Start date', () => {
           startDate: '2023-01-01',
           endDate: '2023-01-31',
           payRate: {
-            id: 1, 
-            incentiveNomisCode: "STD",
-            incentiveLevel: "Standard",
+            id: 1,
+            incentiveNomisCode: 'STD',
+            incentiveLevel: 'Standard',
             prisonPayBand: {
               id: 1,
               displaySequence: 1,

@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import BeforeYouAllocate, { ConfirmOptions } from './beforeYouAllocate'
-import ActivitiesService from '../../../services/activitiesService'
 import { addDays, formatISO } from 'date-fns'
-import { AllocationSuitability, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
-import atLeast from '../../../../jest.setup'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import BeforeYouAllocate, { ConfirmOptions } from './beforeYouAllocate'
+import ActivitiesService from '../../../services/activitiesService'
+import { AllocationSuitability, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
+import atLeast from '../../../../jest.setup'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 
 jest.mock('../../../services/activitiesService')
@@ -59,7 +59,7 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
         },
         incentiveLevel: {
           suitable: true,
-          incentiveLevel: 'Standard'
+          incentiveLevel: 'Standard',
         },
         education: {
           suitable: true,
@@ -72,35 +72,37 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
         nonAssociation: {
           suitable: true,
           nonAssociations: [],
-        }
+        },
       } as AllocationSuitability
 
-      const otherAllocations = [{
-        prisonerNumber: "ABC123",
-        allocations: [
-          {
-            id: 123456,
-            prisonerNumber: "ABC123",
-            activitySummary: "English 1",
-            scheduleId: 1,
-            payRate: {
+      const otherAllocations = [
+        {
+          prisonerNumber: 'ABC123',
+          allocations: [
+            {
               id: 123456,
-              incentiveNomisCode: "BAS",
-              incentiveLevel: "Basic",
-              prisonPayBand: {
+              prisonerNumber: 'ABC123',
+              activitySummary: 'English 1',
+              scheduleId: 1,
+              payRate: {
                 id: 123456,
-                alias: "Low",
-                description: "Pay band 1",
-                nomisPayBand: 1,
+                incentiveNomisCode: 'BAS',
+                incentiveLevel: 'Basic',
+                prisonPayBand: {
+                  id: 123456,
+                  alias: 'Low',
+                  description: 'Pay band 1',
+                  nomisPayBand: 1,
+                },
+                rate: 150,
+                pieceRate: 150,
+                pieceRateItems: 10,
               },
-              rate: 150,
-              pieceRate: 150,
-              pieceRateItems: 10
+              status: 'ACTIVE',
             },
-            status: "ACTIVE"
-          }
-        ]
-      }] as PrisonerAllocations[]
+          ],
+        },
+      ] as PrisonerAllocations[]
 
       when(activitiesService.allocationSuitability)
         .calledWith(atLeast(1, 'ABC123'))
@@ -112,13 +114,10 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toBeCalledWith(
-        'pages/allocate-to-activity/before-you-allocate',
-        { 
-          allocationSuitability,
-          prisonerAllocations: otherAllocations[0].allocations
-        },
-      )
+      expect(res.render).toBeCalledWith('pages/allocate-to-activity/before-you-allocate', {
+        allocationSuitability,
+        prisonerAllocations: otherAllocations[0].allocations,
+      })
     })
   })
 
@@ -130,7 +129,7 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('pay-band')
+      expect(res.redirect).toHaveBeenCalledWith('start-date')
     })
 
     it('should redirect back to the allocation dashboard', async () => {
@@ -143,7 +142,7 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
       expect(res.redirect).toHaveBeenCalledWith('/allocation-dashboard/1')
     })
   })
-  
+
   describe('validation', () => {
     it('validation fails if a value is not entered', async () => {
       const body = {}
@@ -151,7 +150,9 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
       const requestObject = plainToInstance(ConfirmOptions, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'confirm', error: 'Please confirm you want to continue with this allocation' }])
+      expect(errors).toEqual([
+        { property: 'confirm', error: 'Please confirm you want to continue with this allocation' },
+      ])
     })
 
     it('validation fails if a bad value is entered', async () => {
@@ -162,7 +163,9 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
       const requestObject = plainToInstance(ConfirmOptions, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'confirm', error: 'Please confirm you want to continue with this allocation' }])
+      expect(errors).toEqual([
+        { property: 'confirm', error: 'Please confirm you want to continue with this allocation' },
+      ])
     })
 
     it('passes validation', async () => {

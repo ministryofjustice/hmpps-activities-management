@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import ActivitiesService from '../../../services/activitiesService'
 import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
+import ActivitiesService from '../../../services/activitiesService'
 
 export class ConfirmOptions {
   @Expose()
@@ -29,7 +29,7 @@ export default class BeforeYouAllocateRoutes {
     const { confirm } = req.body
     const { scheduleId } = req.session.allocateJourney.activity
 
-    if (confirm == 'yes') return res.redirect('pay-band')
-    else return res.redirect(`/allocation-dashboard/${scheduleId}`)
+    if (confirm === 'yes') return res.redirect('start-date')
+    return res.redirect(`/allocation-dashboard/${scheduleId}`)
   }
 }
