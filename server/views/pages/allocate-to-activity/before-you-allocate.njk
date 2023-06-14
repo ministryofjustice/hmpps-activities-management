@@ -90,17 +90,6 @@
                                 allocationSuitability.releaseDate.suitable
                             )
                         }
-                    ],
-                    [
-                        {
-                            text: 'Non-associations'
-                        },
-                        {
-                            html: nonAssociations(allocationSuitability.nonAssociation.nonAssociations)
-                        },
-                        {
-                            html: suitablityTag(allocationSuitability.nonAssociation.suitable)
-                        }
                     ]
                 ]
             }) }}
@@ -202,14 +191,6 @@
         {% if loop.index <= 3 %}    
             <div>{{ education.studyArea }}: {{ education.educationLevel }}</div>
         {% endif %}
-    {% else %}
-        None
-    {% endfor %}
-{% endmacro %}
-
-{% macro nonAssociations(nonAssociations) %}
-    {% for nonAssociation in nonAssociations %}
-        <div><a href="{{ dpsUrl }}/prisoner/{{ nonAssociation.offenderNonAssociation.offenderNo }}" class="govuk-link" target="_blank">{{ nonAssociation.offenderNonAssociation | firstNameLastName }}<span class="govuk-visually-hidden"> (opens in new tab)</span></a></div>
     {% else %}
         None
     {% endfor %}
