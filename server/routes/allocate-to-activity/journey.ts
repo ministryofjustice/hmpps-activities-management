@@ -1,21 +1,21 @@
 import SimpleDate from '../../commonValidationTypes/simpleDate'
 
 export type AllocateToActivityJourney = {
-  inmate: {
+  inmate?: {
     prisonerName: string
     prisonerNumber: string
-    cellLocation: string
-    incentiveLevel: string
+    cellLocation?: string
+    incentiveLevel?: string
     payBand?: {
       id: number
       alias: string
     }
   }
-  activity: {
-    activityId: number
+  activity?: {
+    activityId?: number
     scheduleId: number
     name: string
-    location: string
+    location?: string
   }
   startDate?: SimpleDate
   endDate?: SimpleDate

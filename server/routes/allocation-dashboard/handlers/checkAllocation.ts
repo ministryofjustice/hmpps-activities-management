@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../services/activitiesService'
 import { convertToTitleCase } from '../../../utils/utils'
 import PrisonService from '../../../services/prisonService'
+import { simpleDateFromDate } from '../../../commonValidationTypes/simpleDate'
 
 export default class CheckAllocationRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
@@ -25,6 +26,21 @@ export default class CheckAllocationRoutes {
     )
 
     const isStarted = new Date(allocation.startDate) <= new Date()
+
+    req.session.allocateJourney = {
+      inmate: {
+        prisonerNumber: req.params.prisonerNumber,
+        prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
+        incentiveLevel: iepSummary?.iepLevel,
+      },
+      activity: {
+        activityId: schedule.activity.id,
+        scheduleId: schedule.id,
+        name: schedule.description,
+      },
+      startDate: simpleDateFromDate(new Date(allocation.startDate)),
+      endDate: allocation.endDate ? simpleDateFromDate(new Date(allocation.endDate)) : undefined,
+    }
 
     res.render('pages/allocation-dashboard/check-answers', { allocation, prisonerName, pay, isStarted, isOnlyPay })
   }
