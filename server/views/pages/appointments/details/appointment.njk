@@ -5,22 +5,8 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
-{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
-
 {% set pageTitle = "Appointments Management - Appointment Series Details" %}
 {% set pageId = 'appointments-view-details-page' %}
-
-{% set occurrenceSummaryListRows = [
-    {
-        key: {
-            text: "Appointment"
-        },
-        value: {
-            text: "Date",
-            classes: "govuk-!-font-weight-bold"
-        }
-    }
-] %}
 
 {% set occurrenceTableRows = [] %}
 {% for occurrence in appointment.occurrences %}
@@ -36,7 +22,7 @@
         }, {
             html: (govukTag({ text: "Edited" }) if occurrence.isEdited) +
                   (govukTag({ text: "Cancelled" }) if occurrence.isCancelled),
-            attributes: { 'data-qa': 'occurrence-edited-' + occurrence.sequenceNumber }
+            attributes: { 'data-qa': 'occurrence-status-' + occurrence.sequenceNumber }
         }, {
             html: '<a href="/appointments/' + appointment.id + '/occurrence/' + occurrence.id + '"
                 class="govuk-link--no-visited-state">
@@ -114,7 +100,7 @@
                                 text: "Date",
                                 classes: 'govuk-table__header'
                             }, {
-                                html: '<span class="govuk-visually-hidden">Notes</span>'
+                                html: '<span class="govuk-visually-hidden">Status</span>'
                             }, {
                                 html: '<span class="govuk-visually-hidden">Actions</span>'
                             }

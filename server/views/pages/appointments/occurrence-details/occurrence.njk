@@ -4,7 +4,6 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
-{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
 
 {% set pageTitle = "Appointments Management - Appointment Details" %}
@@ -15,7 +14,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l" data-qa="caption">View {{ (" and manage " if occurrence.isCancelled == false) }}an appointment</span>
+            <span class="govuk-caption-l" data-qa="caption">View {{ (" and manage " if occurrence.isCancelled == false and occurrence.isExpired == false) }}an appointment</span>
             <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate("EEEE, d MMMM yyyy") }}</h1>
             {% if occurrence.isCancelled %}
                 <p>{{ govukTag({ text: "Cancelled" }) if occurrence.isCancelled }}</p>
