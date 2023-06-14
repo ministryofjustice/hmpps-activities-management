@@ -308,7 +308,7 @@ describe('activitiesApiClient', () => {
       ] as Allocation[]
 
       fakeActivitiesApi
-        .get('/schedules/1/allocations')
+        .get('/schedules/1/allocations?activeOnly=false')
         .matchHeader('authorization', `Bearer token`)
         .reply(200, response)
 

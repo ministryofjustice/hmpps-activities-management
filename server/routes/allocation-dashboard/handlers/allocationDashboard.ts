@@ -5,7 +5,7 @@ import PrisonService from '../../../services/prisonService'
 import ActivityService from '../../../services/activitiesService'
 import { ServiceUser } from '../../../@types/express'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
-import { ActivitySchedule, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
+import { ActivitySchedule, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 import { convertToTitleCase, parseDate } from '../../../utils/utils'
 import { IepLevel } from '../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../validators/hasAtLeastOne'
@@ -146,10 +146,12 @@ export default class AllocationDashboardRoutes {
 
     return inmateDetails.map(inmate => {
       const thisAllocation = currentlyAllocated.find(a => a.prisonerNumber === inmate.prisonerNumber)
-      const otherAllocations = prisonerAllocations
-        .find(a => a.prisonerNumber === inmate.prisonerNumber)
-        .allocations.filter(a => a.scheduleId !== scheduleId)
-
+      let otherAllocations: Allocation[] = []
+      if (prisonerAllocations.length > 0) {
+        otherAllocations = prisonerAllocations
+          .find(a => a.prisonerNumber === inmate.prisonerNumber)
+          .allocations.filter(a => a.scheduleId !== scheduleId)
+      }
       return {
         allocationId: thisAllocation.id,
         name: `${inmate.firstName} ${inmate.lastName}`,

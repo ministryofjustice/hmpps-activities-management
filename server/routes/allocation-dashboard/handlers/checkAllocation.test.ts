@@ -42,6 +42,17 @@ describe('Route Handlers - Allocation dashboard', () => {
         activityId: 1,
         prisonerNumber: 'ABC123',
       },
+      session: {
+        allocateJourney: {
+          endDate: '2099-12-31',
+          inmate: {
+            prisonerNumber: 'ABC123',
+          },
+          activity: {
+            scheduleId: 1,
+          },
+        },
+      },
     } as unknown as Request
   })
 

@@ -4,18 +4,18 @@ export type AllocateToActivityJourney = {
   inmate: {
     prisonerName: string
     prisonerNumber: string
-    cellLocation: string
-    incentiveLevel: string
+    cellLocation?: string
+    incentiveLevel?: string
     payBand?: {
       id: number
       alias: string
     }
   }
   activity: {
-    activityId: number
+    activityId?: number
     scheduleId: number
     name: string
-    location: string
+    location?: string
   }
   startDate?: SimpleDate
   endDate?: SimpleDate

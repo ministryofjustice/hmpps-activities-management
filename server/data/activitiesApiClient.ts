@@ -283,7 +283,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
 
   async getAllocations(scheduleId: number, user: ServiceUser): Promise<Allocation[]> {
     return this.get({
-      path: `/schedules/${scheduleId}/allocations`,
+      path: `/schedules/${scheduleId}/allocations?activeOnly=false`,
       authToken: user.token,
     })
   }
