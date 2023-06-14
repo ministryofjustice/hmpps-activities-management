@@ -38,6 +38,17 @@ describe('Route Handlers - Edit allocation - End date', () => {
       params: {
         allocationId: 1,
       },
+      session: {
+        allocateJourney: {
+          endDate: '2099-12-31',
+          inmate: {
+            prisonerNumber: 'ABC123',
+          },
+          activity: {
+            scheduleId: 1,
+          },
+        },
+      },
     } as unknown as Request
   })
 
