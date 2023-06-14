@@ -150,7 +150,7 @@ export default class AllocationDashboardRoutes {
       if (prisonerAllocations.length > 0) {
         otherAllocations = prisonerAllocations
           .find(a => a.prisonerNumber === inmate.prisonerNumber)
-          .allocations.filter(a => a.scheduleId !== scheduleId)
+          ?.allocations.filter(a => a.scheduleId !== scheduleId)
       }
       return {
         allocationId: thisAllocation.id,
@@ -160,7 +160,7 @@ export default class AllocationDashboardRoutes {
         releaseDate: parseDate(inmate.releaseDate),
         startDate: parseDate(thisAllocation.startDate),
         endDate: parseDate(thisAllocation.endDate),
-        otherAllocations: otherAllocations.map(a => ({
+        otherAllocations: otherAllocations?.map(a => ({
           id: a.scheduleId,
           scheduleName: a.scheduleDescription,
         })),
