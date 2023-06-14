@@ -774,4 +774,16 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('allocationSuitability', () => {
+    it('should return allocation suitability', async () => {
+      fakeActivitiesApi
+        .get(`/schedules/1/suitability`)
+        .query({ prisonerNumber: 'AA1234BC' })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200)
+      await activitiesApiClient.allocationSuitability(1, 'AA1234BC', user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

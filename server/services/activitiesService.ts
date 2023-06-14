@@ -239,6 +239,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAllocation(allocationId, user)
   }
 
+  async getActivePrisonPrisonerAllocations(prisonerNumbers: string[], user: ServiceUser) {
+    return this.activitiesApiClient.getPrisonerAllocations(user.activeCaseLoadId, prisonerNumbers, user)
+  }
+
   async getPrisonerAllocations(
     prisonCode: string,
     prisonerNumbers: string[],
@@ -391,5 +395,9 @@ export default class ActivitiesService {
       endDate: formatDate(plainToInstance(SimpleDate, deallocateJourney.deallocationDate).toRichDate(), 'yyyy-MM-dd'),
     }
     return this.activitiesApiClient.deallocateFromActivity(deallocateJourney.scheduleId, request, user)
+  }
+
+  async allocationSuitability(scheduleId: number, prisonerNumber: string, user: ServiceUser) {
+    return this.activitiesApiClient.allocationSuitability(scheduleId, prisonerNumber, user)
   }
 }
