@@ -1,7 +1,7 @@
 import SimpleDate from '../../commonValidationTypes/simpleDate'
 
 export type AllocateToActivityJourney = {
-  inmate?: {
+  inmate: {
     prisonerName: string
     prisonerNumber: string
     cellLocation?: string
@@ -11,7 +11,7 @@ export type AllocateToActivityJourney = {
       alias: string
     }
   }
-  activity?: {
+  activity: {
     activityId?: number
     scheduleId: number
     name: string
