@@ -34,7 +34,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/2', getSchedule)
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
-    cy.stubEndpoint('GET', '/schedules/2/allocations', getAllocations)
+    cy.stubEndpoint('GET', '/schedules/2/allocations?activeOnly=false', getAllocations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
@@ -42,7 +42,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/iep/reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/activities/2', getActivity)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
-    cy.stubEndpoint('POST', '/schedules/2/allocations?activeOnly=false')
+    cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.signIn()
   })
 
