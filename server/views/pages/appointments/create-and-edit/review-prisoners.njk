@@ -86,16 +86,16 @@
                     rows: prisonersList
                 }) }}
 
-            <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "Add another person",
-                    classes: "govuk-button--secondary",
-                    href: "upload-bulk-appointment?preserveHistory=true" if session.appointmentJourney.type == AppointmentType.BULK
-                        else "how-to-add-prisoners?preserveHistory=true",
-                    attributes: { 'data-qa': 'add-prisoner-secondary' }
-                }) }}
-            </div>
-
+            {% if session.appointmentJourney.type != AppointmentType.BULK %}
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Add another person",
+                        classes: "govuk-button--secondary",
+                        href: "how-to-add-prisoners?preserveHistory=true",
+                        attributes: { 'data-qa': 'add-prisoner-secondary' }
+                    }) }}
+                </div>
+            {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

@@ -2,6 +2,7 @@ import { RequestHandler, Router } from 'express'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import { Services } from '../../services'
 import PayBandRoutes, { PayBand } from './handlers/payBand'
+import BeforeYouAllocateRoutes, { ConfirmOptions } from './handlers/beforeYouAllocate'
 import validationMiddleware from '../../middleware/validationMiddleware'
 import StartJourneyRoutes from './handlers/startJourney'
 import CheckAnswersRoutes from './handlers/checkAnswers'
@@ -20,6 +21,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const startJourneyHandler = new StartJourneyRoutes(prisonService, activitiesService)
+  const beforeYouAllocateHandler = new BeforeYouAllocateRoutes(activitiesService)
   const payBandHandler = new PayBandRoutes(activitiesService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const cancelHandler = new CancelRoutes()
@@ -29,6 +31,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const endDateHandler = new EndDateRoutes()
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
+  get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
+  post('/before-you-allocate', beforeYouAllocateHandler.POST, ConfirmOptions)
   get('/start-date', startDateHandler.GET)
   post('/start-date', startDateHandler.POST, StartDate)
   get('/end-date-option', endDateOptionHandler.GET)

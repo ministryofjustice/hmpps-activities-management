@@ -29,6 +29,8 @@ import {
   DeallocationReason,
   PrisonerDeallocationRequest,
   EventAcknowledgeRequest,
+  AllocationSuitability,
+  PrisonerAllocations,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -584,6 +586,65 @@ describe('Activities Service', () => {
 
       await activitiesService.deallocateFromActivity(journey, user)
       expect(activitiesApiClient.deallocateFromActivity).toHaveBeenCalledWith(1, body, user)
+    })
+  })
+
+  describe('getActivePrisonPrisonerAllocations', () => {
+    it('should get prisoner allocations for the active prison', async () => {
+      const expectedResult = [
+        {
+          prisonerNumber: 'G4793VF',
+          allocations: [
+            {
+              id: 1,
+              prisonerNumber: 'G4793VF',
+              activitySummary: 'Maths level 1',
+              scheduleDescription: 'Entry level Maths 1',
+              startDate: '2022-10-10',
+              endDate: null,
+            },
+          ],
+        },
+      ] as PrisonerAllocations[]
+
+      when(activitiesApiClient.getPrisonerAllocations).mockResolvedValue(expectedResult)
+
+      const result = await activitiesService.getActivePrisonPrisonerAllocations(['A1234BC'], user)
+      expect(activitiesApiClient.getPrisonerAllocations).toHaveBeenCalledWith('MDI', ['A1234BC'], user)
+      expect(result).toEqual(expectedResult)
+    })
+  })
+
+  describe('allocationSuitability', () => {
+    it('should get prisoner allocation suitability', async () => {
+      const expectedResult = {
+        workplaceRiskAssessment: {
+          suitable: true,
+          riskLevel: 'none',
+        },
+        incentiveLevel: {
+          suitable: true,
+          incentiveLevel: 'Standard',
+        },
+        education: {
+          suitable: true,
+          education: [],
+        },
+        releaseDate: {
+          suitable: false,
+          earliestReleaseDate: null,
+        },
+        nonAssociation: {
+          suitable: true,
+          nonAssociations: [],
+        },
+      } as AllocationSuitability
+
+      when(activitiesApiClient.allocationSuitability).mockResolvedValue(expectedResult)
+
+      const result = await activitiesService.allocationSuitability(2, 'A1234BC', user)
+      expect(activitiesApiClient.allocationSuitability).toHaveBeenCalledWith(2, 'A1234BC', user)
+      expect(result).toEqual(expectedResult)
     })
   })
 })

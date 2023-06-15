@@ -43,6 +43,7 @@ import {
   DeallocationReason,
   PrisonerDeallocationRequest,
   EventAcknowledgeRequest,
+  AllocationSuitability,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -282,7 +283,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
 
   async getAllocations(scheduleId: number, user: ServiceUser): Promise<Allocation[]> {
     return this.get({
-      path: `/schedules/${scheduleId}/allocations`,
+      path: `/schedules/${scheduleId}/allocations?activeOnly=false`,
       authToken: user.token,
     })
   }
@@ -504,6 +505,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/schedules/${scheduleId}/deallocate`,
       authToken: user.token,
       data: request,
+    })
+  }
+
+  async allocationSuitability(
+    scheduleId: number,
+    prisonerNumber: string,
+    user: ServiceUser,
+  ): Promise<AllocationSuitability> {
+    return this.get({
+      path: `/schedules/${scheduleId}/suitability`,
+      authToken: user.token,
+      query: { prisonerNumber },
     })
   }
 }

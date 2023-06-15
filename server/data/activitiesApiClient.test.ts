@@ -308,7 +308,7 @@ describe('activitiesApiClient', () => {
       ] as Allocation[]
 
       fakeActivitiesApi
-        .get('/schedules/1/allocations')
+        .get('/schedules/1/allocations?activeOnly=false')
         .matchHeader('authorization', `Bearer token`)
         .reply(200, response)
 
@@ -771,6 +771,18 @@ describe('activitiesApiClient', () => {
         .matchHeader('authorization', `Bearer token`)
         .reply(204)
       await activitiesApiClient.acknowledgeChangeEvents('MDI', request, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('allocationSuitability', () => {
+    it('should return allocation suitability', async () => {
+      fakeActivitiesApi
+        .get(`/schedules/1/suitability`)
+        .query({ prisonerNumber: 'AA1234BC' })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200)
+      await activitiesApiClient.allocationSuitability(1, 'AA1234BC', user)
       expect(nock.isDone()).toBe(true)
     })
   })
