@@ -3,6 +3,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
 
@@ -18,6 +19,12 @@
             <h1 class="govuk-heading-l" data-qa='heading'>{{ occurrence.category.description }} appointment - {{ occurrence.startDate | toDate | formatDate("EEEE, d MMMM yyyy") }}</h1>
             {% if occurrence.isCancelled %}
                 <p>{{ govukTag({ text: "Cancelled" }) if occurrence.isCancelled }}</p>
+            {% endif %}
+
+            {% if occurrence.bulkAppointment %}
+                {{ govukInsetText({
+                    html: 'This appointment was scheduled in a <strong>set of ' + occurrence.bulkAppointment.appointmentCount + '</strong>. You can <a href="/appointments/bulk-appointments/' + occurrence.bulkAppointment.bulkAppointmentId + '">view the set</a> to cancel all ' + occurrence.bulkAppointment.appointmentCount + ' appointments, or print all movement slips at once.'
+                }) }}
             {% endif %}
 
             {% if occurrence.repeat %}

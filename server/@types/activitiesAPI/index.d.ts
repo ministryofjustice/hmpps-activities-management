@@ -3547,8 +3547,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -3930,12 +3930,7 @@ export interface components {
        * @example 12345
        */
       appointmentId: number
-      /**
-       * Format: int64
-       * @description The internally generated identifier for the parent set of appointments created in bulk
-       * @example 12345
-       */
-      bulkAppointmentId?: number
+      bulkAppointment?: components['schemas']['BulkAppointmentSummary']
       /**
        * @description The appointment type (INDIVIDUAL or GROUP)
        * @example INDIVIDUAL
@@ -4081,6 +4076,23 @@ export interface components {
        */
       created: string
       createdBy: components['schemas']['UserSummary']
+    }
+    /** @description Summarises a set of appointments created as part of a single bulk operation */
+    BulkAppointmentSummary: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this set of appointments
+       * @example 12345
+       */
+      bulkAppointmentId: number
+      /**
+       * Format: int32
+       * @description
+       *     The number of appointments in the set created in bulk
+       *
+       * @example 3
+       */
+      appointmentCount: number
     }
     /**
      * @description
