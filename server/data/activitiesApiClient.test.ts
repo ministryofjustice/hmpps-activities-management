@@ -689,7 +689,7 @@ describe('activitiesApiClient', () => {
       } as BulkAppointmentsRequest
 
       const response = {
-        bulkAppointmentId: 10,
+        id: 10,
         appointments: [
           {
             id: 37,

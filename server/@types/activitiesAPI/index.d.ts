@@ -1465,7 +1465,7 @@ export interface components {
        * @description The internally generated identifier for this set of appointments
        * @example 12345
        */
-      bulkAppointmentId: number
+      id: number
       /** @description The set of appointments created in bulk */
       appointments: components['schemas']['Appointment'][]
       /**
@@ -3541,9 +3541,9 @@ export interface components {
       paged?: boolean
       unpaged?: boolean
       /** Format: int32 */
-      pageSize?: number
-      /** Format: int32 */
       pageNumber?: number
+      /** Format: int32 */
+      pageSize?: number
     }
     SortObject: {
       empty?: boolean
@@ -4045,7 +4045,7 @@ export interface components {
        * @description The internally generated identifier for this set of appointments
        * @example 12345
        */
-      bulkAppointmentId: number
+      id: number
       category: components['schemas']['AppointmentCategorySummary']
       /**
        * @description
@@ -4084,7 +4084,7 @@ export interface components {
        * @description The internally generated identifier for this set of appointments
        * @example 12345
        */
-      bulkAppointmentId: number
+      id: number
       /**
        * Format: int32
        * @description

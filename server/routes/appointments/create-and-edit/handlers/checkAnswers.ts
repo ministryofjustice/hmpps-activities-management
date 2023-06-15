@@ -22,7 +22,7 @@ export default class CheckAnswersRoutes {
     if (appointmentJourney.type === AppointmentType.BULK) {
       const request = this.createBulkAppointmentRequest(req, res)
       response = await this.activitiesService.createBulkAppointment(request, user)
-      res.redirect(`bulk-appointments-confirmation/${response.bulkAppointmentId}`)
+      res.redirect(`bulk-appointments-confirmation/${response.id}`)
     } else {
       const request = this.createAppointmentRequest(req, res)
       response = await this.activitiesService.createAppointment(request, user)

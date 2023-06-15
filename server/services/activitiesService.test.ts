@@ -476,7 +476,7 @@ describe('Activities Service', () => {
       } as BulkAppointmentsRequest
 
       const expectedResponse = {
-        bulkAppointmentId: 10,
+        id: 10,
         appointments: [
           {
             id: 37,

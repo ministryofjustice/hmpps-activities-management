@@ -27,6 +27,7 @@ import EditAppointmentService from '../../../services/editAppointmentService'
 import UploadBulkAppointment, { AppointmentsList } from './handlers/bulk-appointments/uploadBulkAppointment'
 import BulkAppointmentDateRoutes, { BulkAppointmentDate } from './handlers/bulk-appointments/bulkAppointmentDate'
 import ReviewBulkAppointment, { AppointmentTimes } from './handlers/bulk-appointments/reviewBulkAppointment'
+import fetchBulkAppointment from '../../../middleware/appointments/fetchBulkAppointment'
 
 export default function Create({ prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -121,7 +122,13 @@ export default function Create({ prisonService, activitiesService }: Services): 
   post('/bulk-appointment-date', bulkAppointmentDate.POST, BulkAppointmentDate)
   get('/review-bulk-appointment', reviewBulkAppointment.GET, true)
   post('/review-bulk-appointment', reviewBulkAppointment.POST, AppointmentTimes)
-  get('/bulk-appointments-confirmation/:bulkAppointmentId', confirmationHandler.GET_BULK, true)
+  router.get(
+    '/bulk-appointments-confirmation/:bulkAppointmentId',
+    fetchBulkAppointment(activitiesService),
+    emptyAppointmentJourneyHandler(true),
+    setAppointmentJourneyMode(AppointmentJourneyMode.CREATE),
+    asyncMiddleware(confirmationHandler.GET_BULK),
+  )
 
   return router
 }
