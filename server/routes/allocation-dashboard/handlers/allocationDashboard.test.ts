@@ -7,10 +7,10 @@ import ActivitiesService from '../../../services/activitiesService'
 import PrisonService from '../../../services/prisonService'
 import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashboard'
 import atLeast from '../../../../jest.setup'
-import { ActivitySchedule, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
+import { Activity, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../utils/utils'
-import { IepLevel } from '../../../@types/incentivesApi/types'
+import { IepLevel, IepSummary } from '../../../@types/incentivesApi/types'
 
 jest.mock('../../../services/prisonService')
 jest.mock('../../../services/activitiesService')
@@ -51,28 +51,31 @@ describe('Route Handlers - Allocation dashboard', () => {
 
   describe('GET', () => {
     beforeEach(() => {
-      when(activitiesService.getActivitySchedule)
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
         .calledWith(atLeast(1))
         .mockResolvedValue({
-          scheduleId: 1,
-          activity: { minimumIncentiveLevel: 'Basic' },
-        } as unknown as ActivitySchedule)
+          pay: [{ incentiveNomisCode: 'BAS' }, { incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
+          schedules: [{ scheduleId: 1 }],
+        } as unknown as Activity)
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValue([
-          { sequence: 0, iepDescription: 'Basic' },
-          { sequence: 1, iepDescription: 'Standard' },
-          { sequence: 2, iepDescription: 'Enhanced' },
+          { sequence: 0, iepLevel: 'BAS', iepDescription: 'Basic' },
+          { sequence: 1, iepLevel: 'STD', iepDescription: 'Standard' },
+          { sequence: 2, iepLevel: 'ENH', iepDescription: 'Enhanced' },
         ] as IepLevel[])
       when(activitiesService.getAllocations)
         .calledWith(atLeast(1))
         .mockResolvedValue([
           {
+            id: 1,
             prisonerNumber: 'ABC123',
             allocatedTime: '2023-02-17T15:22:00',
             startDate: '2023-02-17',
           },
           {
+            id: 2,
             prisonerNumber: '321CBA',
             allocatedTime: '2023-02-16T12:43:00',
             startDate: '2023-02-16',
@@ -137,9 +140,10 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/allocation-dashboard', {
-        schedule: { scheduleId: 1, activity: { minimumIncentiveLevel: 'Basic' } },
+        schedule: { scheduleId: 1 },
         currentlyAllocated: [
           {
+            allocationId: 1,
             cellLocation: 'MDI-1-1-101',
             startDate: new Date(2023, 1, 17),
             endDate: null,
@@ -154,6 +158,7 @@ describe('Route Handlers - Allocation dashboard', () => {
             releaseDate: new Date(2023, 11, 25),
           },
           {
+            allocationId: 2,
             cellLocation: 'MDI-1-1-103',
             startDate: new Date(2023, 1, 16),
             endDate: null,
@@ -181,9 +186,9 @@ describe('Route Handlers - Allocation dashboard', () => {
           ],
         },
         incentiveLevels: [
-          { sequence: 0, iepDescription: 'Basic' },
-          { sequence: 1, iepDescription: 'Standard' },
-          { sequence: 2, iepDescription: 'Enhanced' },
+          { sequence: 0, iepLevel: 'BAS', iepDescription: 'Basic' },
+          { sequence: 1, iepLevel: 'STD', iepDescription: 'Standard' },
+          { sequence: 2, iepLevel: 'ENH', iepDescription: 'Enhanced' },
         ],
         filters: {
           candidateQuery: 'jack',
@@ -195,13 +200,13 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     it('should calculate suitable iep correctly', async () => {
       req.params = { activityId: '1' }
-      activitiesService.getActivitySchedule = jest.fn()
-      when(activitiesService.getActivitySchedule)
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
         .calledWith(atLeast(1))
         .mockResolvedValue({
-          scheduleId: 1,
-          activity: { minimumIncentiveLevel: 'Standard' },
-        } as unknown as ActivitySchedule)
+          pay: [{ incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
+          schedules: [],
+        } as unknown as Activity)
 
       await handler.GET(req, res)
 
@@ -209,9 +214,9 @@ describe('Route Handlers - Allocation dashboard', () => {
         'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
           filters: expect.objectContaining({
-            incentiveLevelFilter: 'Standard or Enhanced',
+            incentiveLevelFilter: 'Standard, Enhanced',
           }),
-          suitableForIep: 'Standard or Enhanced',
+          suitableForIep: 'Standard, Enhanced',
         }),
       )
       expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
@@ -227,13 +232,10 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     it('should calculate suitable workplace risk assessment correctly - LOW', async () => {
       req.params = { activityId: '1' }
-      activitiesService.getActivitySchedule = jest.fn()
-      when(activitiesService.getActivitySchedule)
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({
-          scheduleId: 1,
-          activity: { minimumIncentiveLevel: 'Standard', riskLevel: 'low' },
-        } as unknown as ActivitySchedule)
+        .mockResolvedValue({ pay: [], riskLevel: 'low', schedules: [] } as unknown as Activity)
 
       await handler.GET(req, res)
 
@@ -259,13 +261,10 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     it('should calculate suitable workplace risk assessment correctly - MEDIUM', async () => {
       req.params = { activityId: '1' }
-      activitiesService.getActivitySchedule = jest.fn()
-      when(activitiesService.getActivitySchedule)
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({
-          scheduleId: 1,
-          activity: { minimumIncentiveLevel: 'Standard', riskLevel: 'medium' },
-        } as unknown as ActivitySchedule)
+        .mockResolvedValue({ pay: [], riskLevel: 'medium', schedules: [] } as unknown as Activity)
 
       await handler.GET(req, res)
 
@@ -291,13 +290,10 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     it('should calculate suitable workplace risk assessment correctly - HIGH', async () => {
       req.params = { activityId: '1' }
-      activitiesService.getActivitySchedule = jest.fn()
-      when(activitiesService.getActivitySchedule)
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({
-          scheduleId: 1,
-          activity: { minimumIncentiveLevel: 'Standard', riskLevel: 'high' },
-        } as unknown as ActivitySchedule)
+        .mockResolvedValue({ pay: [], riskLevel: 'high', schedules: [] } as unknown as Activity)
 
       await handler.GET(req, res)
 
@@ -466,12 +462,44 @@ describe('Route Handlers - Allocation dashboard', () => {
 
   describe('ALLOCATE', () => {
     it('should redirect to allocate the selected candidate', async () => {
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
+
+      prisonService.getPrisonerIepSummary = jest.fn()
+      when(prisonService.getPrisonerIepSummary)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue({ iepLevel: 'ENH' } as IepSummary)
+
       req.body = { selectedAllocation: 'ABC123' }
       req.params = { activityId: '1' }
 
       await handler.ALLOCATE(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`/allocate/prisoner/ABC123?scheduleId=1`)
+    })
+
+    it('should throw validation error if a pay rate doesnt exist to match the inmates iep level', async () => {
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
+
+      prisonService.getPrisonerIepSummary = jest.fn()
+      when(prisonService.getPrisonerIepSummary)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue({ iepLevel: 'BAS' } as IepSummary)
+
+      req.body = { selectedAllocation: 'ABC123' }
+      req.params = { activityId: '1' }
+
+      await handler.ALLOCATE(req, res)
+
+      expect(res.validationFailed).toHaveBeenCalledWith(
+        'selectedAllocation',
+        'No suitable pay rate exists for this candidate',
+      )
     })
   })
 

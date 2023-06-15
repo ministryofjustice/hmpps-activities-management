@@ -81,6 +81,11 @@
                     </div>
                 {% endset %}
 
+                {% set suitableForIepHtml %}
+                    <p>{{ suitableForIep }}</p>
+                    <p class='govuk-hint'>You can control which incentive levels are suitable by <a class='govuk-link govuk-link--no-visited-state' href='/schedule/activities/{{ schedule.id }}' target='_blank'>adding or removing corresponding pay rates.</a></p>
+                {% endset %}
+
                 {{ govukTable({
                     caption: "Requirements",
                     captionClasses: "govuk-table__caption--m",
@@ -99,7 +104,7 @@
                                 text: "Suitable for incentive level:"
                             },
                             {
-                                text: suitableForIep
+                                html: suitableForIepHtml
                             }
                         ],
                         [
@@ -258,11 +263,6 @@
             <div class="filter__items">
                 {% set employmentOptions = [
                     {
-                        value: 'Everyone',
-                        text: 'Everyone',
-                        selected: filters.employmentFilter == 'Everyone'
-                    },
-                    {
                         value: 'Not in work',
                         text: 'Not in work',
                         selected: filters.employmentFilter == 'Not in work'
@@ -271,6 +271,11 @@
                         value: 'In work',
                         text: 'In work',
                         selected: filters.employmentFilter == 'In work'
+                    },
+                    {
+                        value: 'Everyone',
+                        text: 'Everyone',
+                        selected: filters.employmentFilter == 'Everyone'
                     }
                 ] %}
                 {{ govukSelect({
@@ -322,9 +327,9 @@
 
                 {% set incentiveLevelOptions = [
                     {
-                        value: 'All Incentive Levels',
-                        text: 'All Incentive Levels',
-                        selected: filters.incentiveLevelFilter == 'All Incentive Levels'
+                        value: suitableForIep,
+                        text: 'Suitable incentive levels: ' + suitableForIep,
+                        selected: filters.incentiveLevelFilter == suitableForIep
                     }
                 ] %}
                 {% for incentiveLevel in incentiveLevels %}
@@ -332,38 +337,17 @@
                         {
                             value: incentiveLevel.iepDescription,
                             text: incentiveLevel.iepDescription,
-                            selected: filters.incentiveLevelFilter == incentiveLevel.iepDescription
+                            selected: filters.incentiveLevelFilter == incentiveLevel.iepDescription and incentiveLevel.iepDescription != suitableForIep
                         }
                     ), incentiveLevelOptions) %}
                 {% endfor %}
-                {% for incentiveLevel in incentiveLevels %}
-                    {% if loop.first or loop.last %}
-                        {% set option = incentiveLevel.iepDescription %}
-                    {% else %}
-                        {% set option = option + ' or ' + incentiveLevel.iepDescription %}
-                        {% set incentiveLevelOptions = (incentiveLevelOptions.push(
-                            {
-                                value: option,
-                                text: option,
-                                selected: filters.incentiveLevelFilter == option
-                            }
-                        ), incentiveLevelOptions) %}
-                    {% endif %}
-                {% endfor %}
-                {% for incentiveLevel in incentiveLevels | reverse %}
-                    {% if loop.first or loop.last %}
-                        {% set option = incentiveLevel.iepDescription %}
-                    {% else %}
-                        {% set option = incentiveLevel.iepDescription + ' or ' + option %}
-                        {% set incentiveLevelOptions = (incentiveLevelOptions.push(
-                            {
-                                value: option,
-                                text: option,
-                                selected: filters.incentiveLevelFilter == option
-                            }
-                        ), incentiveLevelOptions) %}
-                    {% endif %}
-                {% endfor %}
+                {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                    {
+                        value: 'All Incentive Levels',
+                        text: 'All Incentive Levels',
+                        selected: filters.incentiveLevelFilter == 'All Incentive Levels'
+                    }
+                ), incentiveLevelOptions) %}
 
                 {{ govukSelect({
                     id: "incentiveLevelFilter",
