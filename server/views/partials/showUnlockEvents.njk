@@ -16,7 +16,11 @@
                     class="govuk-link govuk-link--no-visited-state">
                         {{ e.summary | trim }}
                     </a>
-                    <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+                    {% if e.cancelled %}
+                        <div>{{ govukTag({ text: 'Cancelled Appointment', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
+                    {% else %}
+                        <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+                    {% endif %}
                 {% else %}
                     {{ e.summary | trim }}
                 {% endif %}
