@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import _ from 'lodash'
 import PrisonService from '../../../services/prisonService'
 import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
-import { IepLevel } from '../../../@types/incentivesApi/types'
 import { ActivityUpdateRequest } from '../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../services/activitiesService'
 
@@ -30,19 +29,10 @@ export default class CheckPayRoutes {
       return res.validationFailed('', `Add at least one pay rate`)
     }
 
-    let minimumIncentiveLevel: IepLevel
-    if (pay.length > 0) {
-      minimumIncentiveLevel = await this.prisonService
-        .getIncentiveLevels(user.activeCaseLoadId, user)
-        .then(levels => _.sortBy(levels, 'sequence'))
-        .then(levels => levels.find(l => pay.find(p => p.incentiveLevel === l.iepDescription)))
-    } else {
-      const incentiveLevels = await this.prisonService
-        .getIncentiveLevels(user.activeCaseLoadId, user)
-        .then(levels => _.sortBy(levels, 'sequence'))
-      // eslint-disable-next-line prefer-destructuring
-      minimumIncentiveLevel = incentiveLevels[0]
-    }
+    const minimumIncentiveLevel = await this.prisonService
+      .getIncentiveLevels(user.activeCaseLoadId, user)
+      .then(levels => _.sortBy(levels, 'sequence'))
+      .then(levels => levels.find(l => pay.find(p => p.incentiveLevel === l.iepDescription)))
 
     req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.iepLevel
     req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.iepDescription
