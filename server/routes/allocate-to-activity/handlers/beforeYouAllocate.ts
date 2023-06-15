@@ -30,6 +30,6 @@ export default class BeforeYouAllocateRoutes {
     const { scheduleId } = req.session.allocateJourney.activity
 
     if (confirm === 'yes') return res.redirect('start-date')
-    return res.redirect(`/allocation-dashboard/${scheduleId}`)
+    return res.redirect(`/allocation-dashboard/${scheduleId}#candidates-tab`)
   }
 }
