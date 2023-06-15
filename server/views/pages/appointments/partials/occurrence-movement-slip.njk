@@ -22,7 +22,7 @@
                     '<li>' + (appointmentOccurrence.startDate | toDate | formatDate('EEEE, d MMMM yyyy')) + '</li>' +
                 '</ul>') }}
                 {{ labelAndValue('Location', appointmentOccurrence.internalLocation.description) }}
-                {{ labelAndValue('Heads up', appointmentOccurrence.comment, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointmentOccurrence.comment }}
+                {{ labelAndValue('Comment', appointmentOccurrence.comment | escape, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointmentOccurrence.comment }}
             </dl>
 
             <p class="govuk-body-s movement-slip-footer">Printed at {{ printedAt | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}</p>

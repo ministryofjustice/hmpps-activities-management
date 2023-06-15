@@ -461,7 +461,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
-          "You've changed the heads up for this appointment",
+          "You've changed the comment for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()

@@ -251,27 +251,29 @@
       }
   }), summaryListRows) %}
 {% endif %}
-{% set summaryListRows = (summaryListRows.push(
-    {
-        key: {
-            text: "Heads up"
-        },
-        value: {
-            html: '<span class="preserve-line-breaks">' + (session.appointmentJourney.comment | safe) + '</span>'
-        },
-        actions: {
-            items: [
-                {
-                    href: "comment?preserveHistory=true",
-                    text: "Change",
-                    visuallyHiddenText: "change heads up",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-comment' }
-                }
-            ]
+{% if session.appointmentJourney.type !== AppointmentType.BULK %}
+    {% set summaryListRows = (summaryListRows.push(
+        {
+            key: {
+                text: "Comment"
+            },
+            value: {
+                html: '<span class="preserve-line-breaks">' + (session.appointmentJourney.comment | escape) + '</span>'
+            },
+            actions: {
+                items: [
+                    {
+                        href: "comment?preserveHistory=true",
+                        text: "Change",
+                        visuallyHiddenText: "change comment",
+                        classes: "govuk-link--no-visited-state",
+                        attributes: { 'data-qa': 'change-comment' }
+                    }
+                ]
+            }
         }
-    }
-), summaryListRows) %}
+    ), summaryListRows) %}
+{% endif %}
 {% if session.appointmentJourney.type == AppointmentType.BULK %}
     {% set summaryListRows = (summaryListRows.push(
         {
@@ -290,17 +292,18 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">Check and confirm the appointment details</h1>
             <h2 class="govuk-heading-m">Appointment details</h2>
-            {{ govukSummaryList({
-                rows: summaryListRows,
-                attributes: { 'data-qa': 'appointment-details' }
-            }) }}
-
-            {{ prisonersList() if session.appointmentJourney.type == AppointmentType.GROUP }}
-
-            {{ bulkAppointments() if session.appointmentJourney.type == AppointmentType.BULK }}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukSummaryList({
+                    rows: summaryListRows,
+                    attributes: { 'data-qa': 'appointment-details' }
+                }) }}
+
+                {{ prisonersList() if session.appointmentJourney.type == AppointmentType.GROUP }}
+
+                {{ bulkAppointments() if session.appointmentJourney.type == AppointmentType.BULK }}
 
                 <div class="govuk-button-group">
                     {{ govukButton({
@@ -355,7 +358,16 @@
     }) }}
 {% endmacro %}
 
-{% macro bulkAppointmentsList() %}
+{% macro bulkAppointments() %}
+    <div class="govuk-button-group">
+        {{ govukButton({
+            text: "Confirm and save",
+            preventDoubleClick: true
+        }) }}
+    </div>
+
+    <h2 class="govuk-heading-m">You are creating {{ session.bulkAppointmentJourney.appointments | length }} appointments</h2>
+
     {% for appointment in session.bulkAppointmentJourney.appointments %}
         {{ govukSummaryList({
             card: {
@@ -406,17 +418,23 @@
                         }
                     ]
                 }
+            }, {
+                key: {
+                    text: "Comment"
+                },
+                value: {
+                    html: '<span class="preserve-line-breaks">' + appointment.comment | escape + '</span>'
+                },
+                actions: {
+                    items: [
+                        {
+                            href: "bulk-appointment-comments/" + appointment.prisoner.number + "?preserveHistory=true",
+                            text: "Change",
+                            visuallyHiddenText: "change comment"
+                        }
+                    ]
+                }
             }]
         }) }}
     {% endfor %}
-{% endmacro %}
-
-{% macro bulkAppointments() %}
-    <h2 class="govuk-heading-m">Prisoner appointment details</h2>
-
-    {{ govukDetails({
-        summaryText: "View individual prisoner appointment details",
-        html: bulkAppointmentsList()
-    }) }}
-    
 {% endmacro %}

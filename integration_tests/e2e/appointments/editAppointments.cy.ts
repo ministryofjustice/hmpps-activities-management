@@ -127,19 +127,19 @@ context('Edit appointment', () => {
     context('Comment', () => {
       it('Should update the comment of appointment occurrence', () => {
         let occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.getChangeLink('Heads up').click()
+        occurrenceDetailsPage.getChangeLink('Comment').click()
 
         const commentPage = Page.verifyOnPage(CommentPage)
         commentPage.enterComment('Updated appointment level comment')
         commentPage.getButton('Confirm and save').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.assertNotificationContents("You've changed the heads up for this appointment")
+        occurrenceDetailsPage.assertNotificationContents("You've changed the comment for this appointment")
       })
 
       it('Returns to occurrence details page if back link clicked', () => {
         const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-        occurrenceDetailsPage.getChangeLink('Heads up').click()
+        occurrenceDetailsPage.getChangeLink('Comment').click()
 
         const commentPage = Page.verifyOnPage(CommentPage)
         commentPage.back()
