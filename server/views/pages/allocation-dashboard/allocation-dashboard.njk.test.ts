@@ -17,6 +17,7 @@ describe('Views - Allocation dashboard', () => {
 
   it('should generate the incentive levels filter dropdown correctly', () => {
     viewContext = {
+      suitableForIep: 'Basic, Enhanced',
       incentiveLevels: [
         { iepDescription: 'Basic' },
         { iepDescription: 'Standard' },
@@ -33,18 +34,13 @@ describe('Views - Allocation dashboard', () => {
         .map((i, e) => $(e).text())
         .get(),
     ).toEqual([
-      'All Incentive Levels',
+      'Suitable incentive levels: Basic, Enhanced',
       'Basic',
       'Standard',
       'Enhanced',
       'Enhanced 2',
       'Enhanced 3',
-      'Basic or Standard',
-      'Basic or Standard or Enhanced',
-      'Basic or Standard or Enhanced or Enhanced 2',
-      'Enhanced 2 or Enhanced 3',
-      'Enhanced or Enhanced 2 or Enhanced 3',
-      'Standard or Enhanced or Enhanced 2 or Enhanced 3',
+      'All Incentive Levels',
     ])
   })
 })

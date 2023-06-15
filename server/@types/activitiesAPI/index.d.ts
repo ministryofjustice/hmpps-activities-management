@@ -209,6 +209,13 @@ export interface paths {
      */
     get: operations['getScheduleId']
   }
+  '/schedules/{scheduleId}/suitability': {
+    /**
+     * Gets the suitability details of a candidate for an activity
+     * @description Returns candidate suitability details considering factors such as, workplace risk assessment, incentive level, education levels, earliest release date and non-associations Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     */
+    get: operations['allocationSuitability']
+  }
   '/schedules/{scheduleId}/candidates': {
     /**
      * Get the suitable candidates for an activity
@@ -1096,6 +1103,44 @@ export interface components {
        */
       priority: number
     }
+    /** @description Describes the pay rates and bands which apply to an activity */
+    ActivityPay: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity pay
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The NOMIS code for the incentive/earned privilege level
+       * @example BAS
+       */
+      incentiveNomisCode: string
+      /**
+       * @description The incentive/earned privilege level
+       * @example Basic
+       */
+      incentiveLevel: string
+      prisonPayBand: components['schemas']['PrisonPayBand']
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
+       * @example 150
+       */
+      pieceRate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
+       * @example 10
+       */
+      pieceRateItems?: number
+    }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
       /**
@@ -1121,7 +1166,7 @@ export interface components {
       scheduleDescription: string
       /** @description Indicates whether this allocation is to an activity within the 'Not in work' category */
       isUnemployment: boolean
-      prisonPayBand: components['schemas']['PrisonPayBand']
+      payRate?: components['schemas']['ActivityPay']
       /**
        * Format: date
        * @description The date when the prisoner will start the activity
@@ -1405,6 +1450,13 @@ export interface components {
        * @example 10:30
        */
       endTime: string
+      /**
+       * @description
+       *     Notes relating to the appointment.
+       *
+       * @example This appointment will help adjusting to life outside of prison
+       */
+      comment: string
     }
     /** @description Describes a set of appointments created as part of a single bulk operation */
     BulkAppointment: {
@@ -2377,44 +2429,6 @@ export interface components {
        */
       studyAreaDescription: string
     }
-    /** @description Describes the pay rates and bands which apply to an activity */
-    ActivityPay: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity pay
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The NOMIS code for the incentive/earned privilege level
-       * @example BAS
-       */
-      incentiveNomisCode: string
-      /**
-       * @description The incentive/earned privilege level
-       * @example Basic
-       */
-      incentiveLevel: string
-      prisonPayBand: components['schemas']['PrisonPayBand']
-      /**
-       * Format: int32
-       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
-       * @example 150
-       */
-      rate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
-       * @example 150
-       */
-      pieceRate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
-       * @example 10
-       */
-      pieceRateItems?: number
-    }
     /**
      * @description
      *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
@@ -3158,34 +3172,6 @@ export interface components {
        */
       issuePayment?: boolean
     }
-    /** @description Describes a candidate for allocation to an activity */
-    ActivityCandidate: {
-      /**
-       * @description The candidate's name
-       * @example Joe Bloggs
-       */
-      name: string
-      /**
-       * @description The candidate's prisoner number
-       * @example GF10101
-       */
-      prisonerNumber: string
-      /**
-       * @description The candidate's cell location
-       * @example MDI-1-1-101
-       */
-      cellLocation?: string
-      /** @description Any activities the candidate is currently allocated to */
-      otherAllocations: components['schemas']['Allocation'][]
-      /**
-       * Format: date
-       * @description The candidate's earliest release date
-       * @example 2027-01-24
-       */
-      releaseDate?: string
-      /** @description The qualifications this candidate holds */
-      educationLevels: components['schemas']['Education'][]
-    }
     AddressDto: {
       /**
        * @description Primary Address
@@ -3301,7 +3287,15 @@ export interface components {
        */
       activeFlag?: boolean
     }
-    /** @description The qualifications this candidate holds */
+    /** @description Cross references prisoners details with activity requirements */
+    AllocationSuitability: {
+      workplaceRiskAssessment?: components['schemas']['WRASuitability']
+      incentiveLevel?: components['schemas']['IncentiveLevelSuitability']
+      education?: components['schemas']['EducationSuitability']
+      releaseDate?: components['schemas']['ReleaseDateSuitability']
+      nonAssociation?: components['schemas']['NonAssociationSuitability']
+    }
+    /** @description The prisoner's education levels */
     Education: {
       /** Format: int64 */
       bookingId: number
@@ -3320,39 +3314,139 @@ export interface components {
       schedule: string
       addresses: components['schemas']['AddressDto'][]
     }
-    PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
-      /** Format: int64 */
-      totalElements?: number
-      /** Format: int32 */
-      size?: number
-      content?: components['schemas']['ActivityCandidate'][]
-      /** Format: int32 */
-      number?: number
-      sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
-      /** Format: int32 */
-      numberOfElements?: number
-      first?: boolean
-      last?: boolean
-      empty?: boolean
+    /** @description Prisoner workplace education suitability */
+    EducationSuitability: {
+      /**
+       * @description The prisoner's suitability
+       * @example true
+       */
+      suitable: boolean
+      /** @description The prisoner's education levels */
+      education: components['schemas']['Education'][]
     }
-    PageableObject: {
-      /** Format: int64 */
-      offset?: number
-      sort?: components['schemas']['SortObject']
-      /** Format: int32 */
-      pageNumber?: number
-      /** Format: int32 */
-      pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
+    /** @description Prisoner's incentive level suitability */
+    IncentiveLevelSuitability: {
+      /**
+       * @description The prisoner's suitability
+       * @example true
+       */
+      suitable: boolean
+      /**
+       * @description The prisoner's current incentive level
+       * @example standard
+       */
+      incentiveLevel?: string
     }
-    SortObject: {
-      empty?: boolean
-      sorted?: boolean
-      unsorted?: boolean
+    /** @description Prisoner workplace risk assessment suitability */
+    NonAssociationSuitability: {
+      /**
+       * @description The prisoner's suitability
+       * @example true
+       */
+      suitable: boolean
+      /** @description The prisoner's non-associations */
+      nonAssociations: components['schemas']['OffenderNonAssociationDetail'][]
+    }
+    /** @example null */
+    OffenderNonAssociation: {
+      /**
+       * @description The offenders number
+       * @example G0135GA
+       */
+      offenderNo: string
+      /**
+       * @description The offenders first name
+       * @example Joseph
+       */
+      firstName: string
+      /**
+       * @description The offenders last name
+       * @example Bloggs
+       */
+      lastName: string
+      /**
+       * @description The non-association reason code
+       * @example PER
+       */
+      reasonCode: string
+      /**
+       * @description The non-association reason description
+       * @example Perpetrator
+       */
+      reasonDescription: string
+      /**
+       * @description Description of the agency (e.g. prison) the offender is assigned to.
+       * @example Pentonville (PVI)
+       */
+      agencyDescription: string
+      /**
+       * @description Description of living unit (e.g. cell) the offender is assigned to.
+       * @example PVI-1-2-4
+       */
+      assignedLivingUnitDescription: string
+      /**
+       * Format: int64
+       * @description Id of living unit (e.g. cell) the offender is assigned to.
+       * @example 123
+       */
+      assignedLivingUnitId: number
+    }
+    /** @description The prisoner's non-associations */
+    OffenderNonAssociationDetail: {
+      /**
+       * @description The non-association reason code
+       * @example VIC
+       */
+      reasonCode: string
+      /**
+       * @description The non-association reason description
+       * @example Victim
+       */
+      reasonDescription: string
+      /**
+       * @description The non-association type code
+       * @example WING
+       */
+      typeCode: string
+      /**
+       * @description The non-association type description
+       * @example Do Not Locate on Same Wing
+       */
+      typeDescription: string
+      /**
+       * @description Date and time the mom-association is effective from. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
+       * @example 2021-07-05T10:35:17
+       */
+      effectiveDate: string
+      offenderNonAssociation: components['schemas']['OffenderNonAssociation']
+      /**
+       * @description Date and time the mom-association expires. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
+       * @example 2021-07-05T10:35:17
+       */
+      expiryDate?: string
+      /**
+       * @description The person who authorised the non-association (free text).
+       * @example null
+       */
+      authorisedBy?: string
+      /**
+       * @description Additional free text comments related to the non-association.
+       * @example null
+       */
+      comments?: string
+    }
+    /** @description Prisoner release date suitability */
+    ReleaseDateSuitability: {
+      /**
+       * @description The prisoner's suitability
+       * @example true
+       */
+      suitable: boolean
+      /**
+       * Format: date
+       * @description The prisoner's earliest release date
+       */
+      earliestReleaseDate?: string
     }
     /**
      * @description The phone number associated with the address
@@ -3380,6 +3474,81 @@ export interface components {
        * @example 123
        */
       ext?: string
+    }
+    /** @description Prisoner workplace risk assessment suitability */
+    WRASuitability: {
+      /**
+       * @description The prisoner's suitability
+       * @example true
+       */
+      suitable: boolean
+      /**
+       * @description The prisoner's WRA level
+       * @example medium
+       */
+      riskLevel: string
+    }
+    /** @description Describes a candidate for allocation to an activity */
+    ActivityCandidate: {
+      /**
+       * @description The candidate's name
+       * @example Joe Bloggs
+       */
+      name: string
+      /**
+       * @description The candidate's prisoner number
+       * @example GF10101
+       */
+      prisonerNumber: string
+      /**
+       * @description The candidate's cell location
+       * @example MDI-1-1-101
+       */
+      cellLocation?: string
+      /** @description Any activities the candidate is currently allocated to */
+      otherAllocations: components['schemas']['Allocation'][]
+      /**
+       * Format: date
+       * @description The candidate's earliest release date
+       * @example 2027-01-24
+       */
+      releaseDate?: string
+      /** @description The qualifications this candidate holds */
+      educationLevels: components['schemas']['Education'][]
+    }
+    PageActivityCandidate: {
+      /** Format: int32 */
+      totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
+      /** Format: int32 */
+      size?: number
+      content?: components['schemas']['ActivityCandidate'][]
+      /** Format: int32 */
+      number?: number
+      sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
+      /** Format: int32 */
+      numberOfElements?: number
+      first?: boolean
+      last?: boolean
+      empty?: boolean
+    }
+    PageableObject: {
+      /** Format: int64 */
+      offset?: number
+      sort?: components['schemas']['SortObject']
+      paged?: boolean
+      unpaged?: boolean
+      /** Format: int32 */
+      pageSize?: number
+      /** Format: int32 */
+      pageNumber?: number
+    }
+    SortObject: {
+      empty?: boolean
+      unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -3762,6 +3931,12 @@ export interface components {
        */
       appointmentId: number
       /**
+       * Format: int64
+       * @description The internally generated identifier for the parent set of appointments created in bulk
+       * @example 12345
+       */
+      bulkAppointmentId?: number
+      /**
        * @description The appointment type (INDIVIDUAL or GROUP)
        * @example INDIVIDUAL
        * @enum {string}
@@ -3876,6 +4051,28 @@ export interface components {
        * @example 12345
        */
       bulkAppointmentId: number
+      category: components['schemas']['AppointmentCategorySummary']
+      /**
+       * @description
+       *     Free text description used to create the set of appointments in bulk. This is used to add more context to the appointment category.
+       *
+       * @example Meeting with the governor
+       */
+      appointmentDescription?: string
+      internalLocation?: components['schemas']['AppointmentLocationSummary']
+      /**
+       * @description
+       *     Flag to indicate if the location used to create the set of appointments in bulk was in cell rather than an internal prison location.
+       *     Internal location will be null if in cell = true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * Format: date
+       * @description The date used to create the set of appointments in bulk
+       */
+      startDate: string
       /** @description The details of the set of appointment occurrences created in bulk */
       occurrences: components['schemas']['AppointmentOccurrenceDetails'][]
       /**
@@ -5429,6 +5626,53 @@ export interface operations {
         }
       }
       /** @description The activity for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Gets the suitability details of a candidate for an activity
+   * @description Returns candidate suitability details considering factors such as, workplace risk assessment, incentive level, education levels, earliest release date and non-associations Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   */
+  allocationSuitability: {
+    parameters: {
+      query: {
+        /** @description Prisoner number (required). Format A9999AA. */
+        prisonerNumber: string
+      }
+      path: {
+        scheduleId: number
+      }
+    }
+    responses: {
+      /** @description Candidate suitability details. */
+      200: {
+        content: {
+          'application/json': components['schemas']['AllocationSuitability'][]
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The activity schedule for this ID was not found. */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']

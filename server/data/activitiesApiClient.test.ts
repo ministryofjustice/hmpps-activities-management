@@ -22,6 +22,8 @@ import {
   EventAcknowledgeRequest,
   EventReview,
   EventReviewSearchResults,
+  BulkAppointmentsRequest,
+  IndividualAppointment,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -681,10 +683,10 @@ describe('activitiesApiClient', () => {
         inCell: false,
         startDate: '2023-05-16',
         appointments: [
-          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30' },
-          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00' },
+          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30', comment: '' } as IndividualAppointment,
+          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00', comment: '' } as IndividualAppointment,
         ],
-      }
+      } as BulkAppointmentsRequest
 
       const response = {
         bulkAppointmentId: 10,
@@ -771,6 +773,18 @@ describe('activitiesApiClient', () => {
         .matchHeader('authorization', `Bearer token`)
         .reply(204)
       await activitiesApiClient.acknowledgeChangeEvents('MDI', request, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('allocationSuitability', () => {
+    it('should return allocation suitability', async () => {
+      fakeActivitiesApi
+        .get(`/schedules/1/suitability`)
+        .query({ prisonerNumber: 'AA1234BC' })
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200)
+      await activitiesApiClient.allocationSuitability(1, 'AA1234BC', user)
       expect(nock.isDone()).toBe(true)
     })
   })

@@ -105,3 +105,8 @@ body {
   }
 }
 
+.govuk-hint {
+  a {
+    color: $govuk-link-colour;
+  }
+}

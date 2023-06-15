@@ -5,9 +5,9 @@ import PrisonService from '../../../services/prisonService'
 import ActivityService from '../../../services/activitiesService'
 import { ServiceUser } from '../../../@types/express'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
-import { ActivitySchedule, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
+import { Activity, ActivityPay, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 import { convertToTitleCase, parseDate } from '../../../utils/utils'
-import { IepLevel } from '../../../@types/incentivesApi/types'
+import { IepLevel, IepSummary } from '../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../validators/hasAtLeastOne'
 
 type Filters = {
@@ -39,13 +39,13 @@ export default class AllocationDashboardRoutes {
     const { activityId } = req.params
     const filters = req.query as Filters
 
-    const [schedule, incentiveLevels]: [ActivitySchedule, IepLevel[]] = await Promise.all([
-      this.activitiesService.getActivitySchedule(+activityId, user),
+    const [activity, incentiveLevels]: [Activity, IepLevel[]] = await Promise.all([
+      this.activitiesService.getActivity(+activityId, user),
       this.prisonService.getIncentiveLevels(user.activeCaseLoad.caseLoadId, user),
     ])
 
-    const suitableForIep = this.getSuitableForIep(schedule.activity.minimumIncentiveLevel, incentiveLevels)
-    const suitableForWra = this.getSuitableForWra(schedule.activity.riskLevel)
+    const suitableForIep = this.getSuitableForIep(activity.pay, incentiveLevels)
+    const suitableForWra = this.getSuitableForWra(activity.riskLevel)
 
     if (
       !(filters.incentiveLevelFilter || filters.riskLevelFilter || filters.employmentFilter || filters.candidateQuery)
@@ -61,7 +61,7 @@ export default class AllocationDashboardRoutes {
     ])
 
     res.render('pages/allocation-dashboard/allocation-dashboard', {
-      schedule,
+      schedule: activity.schedules[0],
       currentlyAllocated,
       pagedCandidates,
       incentiveLevels,
@@ -73,7 +73,17 @@ export default class AllocationDashboardRoutes {
 
   ALLOCATE = async (req: Request, res: Response): Promise<void> => {
     const { selectedAllocation } = req.body
-    res.redirect(`/allocate/prisoner/${selectedAllocation}?scheduleId=${req.params.activityId}`)
+    const { user } = res.locals
+
+    const [iepSummary, activity]: [IepSummary, Activity] = await Promise.all([
+      this.prisonService.getPrisonerIepSummary(selectedAllocation, user),
+      this.activitiesService.getActivity(+req.params.activityId, user),
+    ])
+
+    if (!activity.pay.map(p => p.incentiveLevel).includes(iepSummary.iepLevel)) {
+      return res.validationFailed('selectedAllocation', 'No suitable pay rate exists for this candidate')
+    }
+    return res.redirect(`/allocate/prisoner/${selectedAllocation}?scheduleId=${req.params.activityId}`)
   }
 
   DEALLOCATE = async (req: Request, res: Response): Promise<void> => {
@@ -110,24 +120,10 @@ export default class AllocationDashboardRoutes {
     }
   }
 
-  private getSuitableForIep = (minimumIncentiveLevel: string, iepLevels: IepLevel[]) => {
-    let string = ''
-    let sequenceOfMinimumIep: number
-    iepLevels.forEach(i => {
-      if (i.iepDescription === minimumIncentiveLevel) {
-        string = i.iepDescription
-        sequenceOfMinimumIep = i.sequence
-      }
-
-      if (i.sequence > sequenceOfMinimumIep) {
-        string = `${string} or ${i.iepDescription}`
-      }
-    })
-
-    if (string.split(' or ').length === iepLevels.length) {
-      string = 'All Incentive Levels'
-    }
-    return string
+  private getSuitableForIep = (pay: ActivityPay[], iepLevels: IepLevel[]) => {
+    const suitableIepLevels = iepLevels.filter(i => pay.map(p => p.incentiveNomisCode).includes(i.iepLevel))
+    if (suitableIepLevels.length === iepLevels.length) return 'All Incentive Levels'
+    return suitableIepLevels.map(i => i.iepDescription).join(', ')
   }
 
   private getSuitableForWra = (riskLevel: string) => {
@@ -190,7 +186,7 @@ export default class AllocationDashboardRoutes {
       return undefined
     }
 
-    return filters.incentiveLevelFilter?.split(' or ')
+    return filters.incentiveLevelFilter?.split(', ')
   }
 
   private getSuitableRiskLevelCodes = (filters: Filters): string[] => {

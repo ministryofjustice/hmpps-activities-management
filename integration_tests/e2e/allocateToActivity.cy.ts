@@ -11,6 +11,7 @@ import getPrisonerIepSummary from '../fixtures/incentivesApi/getPrisonerIepSumma
 import getActivity from '../fixtures/activitiesApi/getActivity.json'
 import getMdiPrisonPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import getCandidates from '../fixtures/activitiesApi/getCandidates.json'
+import getCandidateSuitability from '../fixtures/activitiesApi/getCandidateSuitability.json'
 
 import IndexPage from '../pages/index'
 import Page from '../pages/page'
@@ -24,6 +25,7 @@ import CancelPage from '../pages/allocateToActivity/cancel'
 import ConfirmationPage from '../pages/allocateToActivity/confirmation'
 import AllocationDashboard from '../pages/allocateToActivity/AllocationDashboard'
 import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
+import BeforeYouAllocate from '../pages/allocateToActivity/before-you-allocate'
 
 context('Allocate to activity', () => {
   beforeEach(() => {
@@ -32,10 +34,12 @@ context('Allocate to activity', () => {
     cy.task('stubPrisonUser')
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
     cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
+    cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A5015DY', getCandidateSuitability)
     cy.stubEndpoint('GET', '/schedules/2', getSchedule)
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=false', getAllocations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
+    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('GET', '/api/offenders/A5015DY', getInmateDetails)
@@ -69,6 +73,10 @@ context('Allocate to activity', () => {
     allocatePage.applyFilters()
     allocatePage.candidateRows().should('have.length', 10)
     allocatePage.selectCandidateWithName('Alfonso Cholak')
+
+    const beforeYouAllocatePage = Page.verifyOnPage(BeforeYouAllocate)
+    beforeYouAllocatePage.selectConfirmationRadio('yes')
+    beforeYouAllocatePage.getButton('Confirm').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
     const startDatePicker = startDatePage.getDatePicker()
