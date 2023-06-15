@@ -85,16 +85,7 @@
                     rows: prisonersList
                 }) }}
 
-            {% if session.appointmentJourney.type == AppointmentType.BULK %}
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Add another person",
-                        classes: "govuk-button--secondary",
-                        href: "upload-bulk-appointment?preserveHistory=true",
-                        attributes: { 'data-qa': 'add-prisoner-secondary' }
-                    }) }}
-                </div>
-            {% else %}
+            {% if session.appointmentJourney.type != AppointmentType.BULK %}
                 <div class="govuk-button-group">
                     {{ govukButton({
                         text: "Add another person",
