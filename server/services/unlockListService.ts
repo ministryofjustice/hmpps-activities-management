@@ -1,5 +1,4 @@
 import { SubLocationCellPattern, UnlockFilters, UnlockListItem } from '../@types/activities'
-import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
@@ -8,7 +7,6 @@ import { convertToTitleCase, toDateString } from '../utils/utils'
 
 export default class UnlockListService {
   constructor(
-    private readonly prisonApiClient: PrisonApiClient,
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
     private readonly activitiesApiClient: ActivitiesApiClient,
   ) {}
@@ -37,31 +35,21 @@ export default class UnlockListService {
     )
 
     // Give up here if no prisoners are in the locations selected
-    if (!results || results.totalElements === 0) {
-      return []
-    }
+    if (!results || results.totalElements === 0) return []
 
     // Create unlock list items for each prisoner returned and populate their sub-location by cell-matching
-    const prisoners = results?.content?.map(prisoner => {
-      return {
-        prisonerNumber: prisoner.prisonerNumber,
-        bookingId: prisoner?.bookingId,
-        firstName: prisoner.firstName,
-        lastName: prisoner.lastName,
-        cellLocation: prisoner?.cellLocation,
-        category: prisoner?.category,
-        incentiveLevel: prisoner?.currentIncentive,
-        alerts: prisoner?.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
-        status: prisoner?.inOutStatus,
-        prisonCode: prisoner?.prisonId,
-        locationGroup: unlockFilters.location,
-        locationSubGroup: this.getSubLocationFromCell(prison, subLocationCellPatterns, prisoner?.cellLocation),
-      } as unknown as UnlockListItem
-    })
+    const prisoners = results?.content?.map(prisoner => ({
+      ...prisoner,
+      alerts: prisoner?.alerts?.filter(a =>
+        this.RELEVANT_ALERT_CODES.includes(a.alertCode),
+      ) as UnlockListItem['alerts'],
+      locationGroup: unlockFilters.location,
+      locationSubGroup: this.getSubLocationFromCell(prison, subLocationCellPatterns, prisoner?.cellLocation),
+    }))
 
     // Apply filters for selected sub-locations
-    const locationFilters = unlockFilters.locationFilters.filter(loc => loc.checked === true).map(loc => loc.value)
-    const filteredPrisoners = prisoners.filter(prisoner => locationFilters.includes(prisoner.locationSubGroup) === true)
+    const locationFilters = unlockFilters.locationFilters.filter(loc => loc.checked).map(loc => loc.value)
+    const filteredPrisoners = prisoners.filter(prisoner => locationFilters.includes(prisoner.locationSubGroup))
 
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       prison,
@@ -108,13 +96,11 @@ export default class UnlockListService {
 
     // Apply filter for staying or leaving the wing
     const stayingOrLeavingFilters = unlockFilters.stayingOrLeavingFilters.filter(s => s.checked).map(s => s.value)
-    let filteredItems: UnlockListItem[]
-    if (stayingOrLeavingFilters.includes('Both')) {
-      filteredItems = activityFilteredItems
-    } else if (stayingOrLeavingFilters.includes('Leaving')) {
-      filteredItems = activityFilteredItems.filter(item => this.isLeaving(item))
-    } else {
-      filteredItems = activityFilteredItems.filter(item => !this.isLeaving(item))
+    let filteredItems = activityFilteredItems
+    if (stayingOrLeavingFilters.includes('Leaving')) {
+      filteredItems = filteredItems.filter(item => this.isLeaving(item))
+    } else if (stayingOrLeavingFilters.includes('Staying')) {
+      filteredItems = filteredItems.filter(item => !this.isLeaving(item))
     }
 
     return filteredItems

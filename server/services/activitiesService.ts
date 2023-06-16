@@ -6,7 +6,6 @@ import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
   ActivityLite,
-  ActivitySchedule,
   ActivityScheduleLite,
   Allocation,
   AttendanceUpdateRequest,
@@ -44,8 +43,8 @@ import {
   PrisonerDeallocationRequest,
   DeallocationReasonCode,
   EventAcknowledgeRequest,
+  ActivitySchedule,
 } from '../@types/activitiesAPI/types'
-import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
 import { DeallocateFromActivityJourney } from '../routes/deallocate-from-activity/journey'
 import { formatDate } from '../utils/utils'
@@ -170,13 +169,7 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getActivitySchedule(id, user)
   }
 
-  async getActivitySchedules(
-    prisonCode: string,
-    locationId: string,
-    date: string,
-    period: string,
-    user: ServiceUser,
-  ): Promise<ActivityScheduleAllocation[]> {
+  async getActivitySchedules(prisonCode: string, locationId: string, date: string, period: string, user: ServiceUser) {
     const activitySchedules = await this.activitiesApiClient.getActivitySchedules(
       prisonCode,
       locationId,
@@ -186,14 +179,8 @@ export default class ActivitiesService {
     )
 
     // We'd like to assume there would be only one activity schedule returned - but we cant at this stage
-    const prisonerNumbers: string[] = activitySchedules
-      .map(as => {
-        if (as.instances.length === 1) {
-          // We wouldn't be able to cope with multiple instances
-          return as.allocations.map(alloc => alloc.prisonerNumber)
-        }
-        return []
-      })
+    const prisonerNumbers = activitySchedules
+      .map(as => (as.instances.length === 1 ? as.allocations.map(alloc => alloc.prisonerNumber) : []))
       .flat()
 
     const prisoners = await this.prisonerSearchApiClient.searchByPrisonerNumbers({ prisonerNumbers }, user)
@@ -201,16 +188,13 @@ export default class ActivitiesService {
     return activitySchedules
       .map(as => {
         if (as.instances.length === 1) {
-          // We wouldn't be able to cope with multiple instances
-          return as.allocations.map(alloc => {
-            return {
-              activityScheduleId: as.id,
-              description: as.description,
-              internalLocation: as.internalLocation,
-              prisoner: prisoners.find(p => p.prisonerNumber === alloc.prisonerNumber),
-              attendance: as.instances[0].attendances.find(a => a.prisonerNumber === alloc.prisonerNumber),
-            }
-          })
+          return as.allocations.map(alloc => ({
+            activityScheduleId: as.id,
+            description: as.description,
+            internalLocation: as.internalLocation,
+            prisoner: prisoners.find(p => p.prisonerNumber === alloc.prisonerNumber),
+            attendance: as.instances[0].attendances.find(a => a.prisonerNumber === alloc.prisonerNumber),
+          }))
         }
         return []
       })

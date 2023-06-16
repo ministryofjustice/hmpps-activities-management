@@ -1,5 +1,4 @@
 import { formatDate, toDate } from '../utils/utils'
-import PrisonApiClient from '../data/prisonApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
@@ -12,7 +11,6 @@ jest.mock('../data/prisonApiClient')
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
 
-const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
 const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
 const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
 
@@ -172,7 +170,7 @@ const testUnlockFilters = (
   stayingOrLeavingFilters,
 })
 
-const unlockListService = new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient)
+const unlockListService = new UnlockListService(prisonerSearchApiClient, activitiesApiClient)
 
 describe('Unlock list service', () => {
   afterEach(() => {
