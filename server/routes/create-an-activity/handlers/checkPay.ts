@@ -32,7 +32,7 @@ export default class CheckPayRoutes {
     const minimumIncentiveLevel = await this.prisonService
       .getIncentiveLevels(user.activeCaseLoadId, user)
       .then(levels => _.sortBy(levels, 'sequence'))
-      .then(levels => levels.find(l => pay.find(p => p.incentiveLevel === l.iepDescription)))
+      .then(levels => levels.find(l => pay.find(p => p.incentiveLevel === l.iepDescription) || flat.length))
 
     req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.iepLevel
     req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.iepDescription
