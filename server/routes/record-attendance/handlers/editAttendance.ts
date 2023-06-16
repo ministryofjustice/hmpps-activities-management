@@ -66,7 +66,7 @@ export default class EditAttendanceRoutes {
         .getScheduledEventsForPrisoners(toDate(instance.date), [attendance.prisonerNumber], user)
         .then(response => [
           ...response.activities,
-          ...response.appointments,
+          ...response.appointments.filter(app => !app.deleted),
           ...response.courtHearings,
           ...response.visits,
         ])

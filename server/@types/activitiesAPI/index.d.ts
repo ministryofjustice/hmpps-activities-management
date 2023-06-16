@@ -1071,6 +1071,11 @@ export interface components {
        * @description The event priority - configurable by prison, or via defaults.
        */
       priority: number
+      /**
+       * @description Set to true if this event has been deleted
+       * @example false
+       */
+      deleted: boolean
     }
     /** @description Describes the pay rates and bands which apply to an activity */
     ActivityPay: {
