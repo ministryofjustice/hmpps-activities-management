@@ -19,6 +19,7 @@ describe('Route Handlers - Create an activity - Start', () => {
 
     req = {
       session: {},
+      query: { preserveHistory: 'true' },
     } as unknown as Request
   })
 
@@ -27,7 +28,7 @@ describe('Route Handlers - Create an activity - Start', () => {
       await handler.GET(req, res)
 
       expect(req.session.createJourney).toEqual({})
-      expect(res.redirect).toHaveBeenCalledWith('category')
+      expect(res.redirect).toHaveBeenCalledWith('category?preserveHistory=true')
     })
   })
 })
