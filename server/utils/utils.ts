@@ -500,7 +500,7 @@ export const getDailyAttendanceSummary = (attendanceSummary: AllAttendanceSummar
     ED: 0,
   }
 
-  totalActivities['DAY'] = attendanceSummary.map(c => c.categoryName).filter((v, k, arr) => arr.indexOf(v) === k).length
+  totalActivities['DAY'] = attendanceSummary.length
   const amActivities = attendanceSummary.filter(a => a.timeSlot === 'AM').map(a => ({ activityId: a.activityId }))
   totalActivities['AM'] = amActivities.map(a => a.activityId).filter((v, k, arr) => arr.indexOf(v) === k).length
   const pmActivities = attendanceSummary.filter(a => a.timeSlot === 'PM').map(a => ({ activityId: a.activityId }))
