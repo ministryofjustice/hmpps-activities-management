@@ -51,7 +51,7 @@ export default class AllocationDashboardRoutes {
       !(filters.incentiveLevelFilter || filters.riskLevelFilter || filters.employmentFilter || filters.candidateQuery)
     ) {
       filters.incentiveLevelFilter = suitableForIep
-      filters.riskLevelFilter = suitableForWra
+      filters.riskLevelFilter = 'Any Workplace Risk Assessment'
       filters.employmentFilter = 'Not in work'
     }
 
