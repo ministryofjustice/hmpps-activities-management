@@ -92,11 +92,11 @@ context('Allocate to activity', () => {
     const endDatePicker = endDatePage.getDatePicker()
     const endDate = addMonths(new Date(), 8)
     endDatePicker.enterDate(endDate)
-    endDatePage.continue()
+    endDatePage.saveAndContinue()
 
     const payBandPage = Page.verifyOnPage(PayBandPage)
     payBandPage.selectPayBand('Medium (£1.75)')
-    payBandPage.confirmPayAndContinue()
+    payBandPage.saveAndContinue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.cancel()
