@@ -16,7 +16,12 @@
                     class="govuk-link govuk-link--no-visited-state">
                         {{ e.summary | trim }}
                     </a>
-                    <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+                    <div>
+                        {{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}
+                        {% if e.comments %}
+                            {{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow' }) }}
+                        {% endif %}
+                    </div>
                 {% else %}
                     {{ e.summary | trim }}
                 {% endif %}
@@ -29,10 +34,6 @@
             {% if e.eventType != 'EXTERNAL_TRANSFER' and e.eventType != 'COURT_HEARING' %}
                 <div>{{ e.startTime }}{% if e.endTime %} - {{ e.endTime }}{% endif %}</div>
                 <div>{{ "In cell" if e.inCell else e.internalLocationDescription | trim | title }}</div>
-            {% endif %}
-
-            {% if e.eventType === 'APPOINTMENT' and e.comments %}
-                <div>{{ e.comments | trim | truncate(40) }}</div>
             {% endif %}
         {% endfor %}
     </div>
