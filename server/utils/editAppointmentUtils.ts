@@ -211,4 +211,4 @@ export const hasAppointmentEndTimeChanged = (
 export const hasAppointmentCommentChanged = (
   appointmentJourney: AppointmentJourney,
   editAppointmentJourney: EditAppointmentJourney,
-) => editAppointmentJourney.comment && appointmentJourney.comment !== editAppointmentJourney.comment
+) => editAppointmentJourney.comment !== undefined && appointmentJourney.comment !== editAppointmentJourney.comment
