@@ -42,7 +42,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
     )
 
   const editAppointmentService = new EditAppointmentService(activitiesService)
-  const startHandler = new StartJourneyRoutes()
+  const startHandler = new StartJourneyRoutes(prisonService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeRoutes = new DateAndTimeRoutes(editAppointmentService)
   const commentHandler = new CommentRoutes(editAppointmentService)

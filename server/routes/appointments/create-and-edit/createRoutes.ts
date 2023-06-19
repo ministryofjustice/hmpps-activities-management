@@ -47,7 +47,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
     )
 
   const editAppointmentService = new EditAppointmentService(activitiesService)
-  const startHandler = new StartJourneyRoutes()
+  const startHandler = new StartJourneyRoutes(prisonService)
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const categoryHandler = new CategoryRoutes(activitiesService)

@@ -6,9 +6,14 @@ import { parseDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentApplyTo } from '../../../../@types/appointments'
+import PrisonService from '../../../../services/prisonService'
+
+jest.mock('../../../../services/prisonService')
+
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create Appointment - Start', () => {
-  const handler = new StartJourneyRoutes()
+  const handler = new StartJourneyRoutes(prisonService)
   let req: Request
   let res: Response
   const appointment = {
@@ -62,11 +67,20 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
   beforeEach(() => {
     res = {
+      locals: {
+        user: {
+          username: 'test.user',
+          activeCaseLoadId: 'TPR',
+        },
+      },
       redirect: jest.fn(),
     } as unknown as Response
 
     req = {
       session: {},
+      query: {
+        prisonNumber: 'A1234BC',
+      },
     } as unknown as Request
   })
 
