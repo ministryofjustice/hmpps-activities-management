@@ -12,6 +12,10 @@ import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import RepeatRoutes, { Repeat } from './handlers/repeat'
 import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './handlers/repeatPeriodAndCount'
 import CommentRoutes, { Comment } from './handlers/comment'
+import BulkAppointmentComments from './handlers/bulk-appointments/bulkAppointmentComments'
+import BulkAppointmentAddComment, {
+  BulkAppointmentComment,
+} from './handlers/bulk-appointments/bulkAppointmentAddComment'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
@@ -57,6 +61,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const repeatHandler = new RepeatRoutes()
   const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
   const commentHandler = new CommentRoutes(editAppointmentService)
+  const bulkAppointmentCommentsHandler = new BulkAppointmentComments()
+  const bulkAppointmentAddCommentHanlder = new BulkAppointmentAddComment()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
   const howToAddPrisoners = new HowToAddPrisoners(editAppointmentService)
@@ -100,6 +106,10 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/repeat-period-and-count', repeatPeriodAndCountHandler.GET, true)
   post('/repeat-period-and-count', repeatPeriodAndCountHandler.POST, RepeatPeriodAndCount)
   get('/comment', commentHandler.GET, true)
+  get('/bulk-appointment-comments', bulkAppointmentCommentsHandler.GET, true)
+  post('/bulk-appointment-comments', bulkAppointmentCommentsHandler.POST)
+  get('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.GET, true)
+  post('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.POST, BulkAppointmentComment)
   post('/comment', commentHandler.CREATE, Comment)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)

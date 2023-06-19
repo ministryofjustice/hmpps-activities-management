@@ -13,5 +13,6 @@ export type BulkAppointmentJourney = {
       name: string
       cellLocation: string
     }
+    comment?: string
   }[]
 }

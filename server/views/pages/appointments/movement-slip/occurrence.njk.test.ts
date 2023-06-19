@@ -77,7 +77,7 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
     expect($('[data-qa=appointment]').text().trim()).toEqual('Medical - Other')
     expect($('[data-qa=time]').text().trim()).toEqual(`13:00 to 13:15${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
     expect($('[data-qa=location]').text().trim()).toEqual('HB1 Doctors')
-    expect($('[data-qa=heads-up]').text().trim()).toEqual('Appointment occurrence level comment')
+    expect($('[data-qa=extra-information]').text().trim()).toEqual('Appointment occurrence level comment')
   })
 
   it('should display appointment description', () => {
@@ -88,11 +88,11 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
     expect($('[data-qa=appointment]').text().trim()).toEqual('Medical - OtherChoir')
   })
 
-  it('should not display heads up when there are no comments', () => {
+  it('should not display comment when there are no comments', () => {
     viewContext.appointmentOccurrence.comment = ''
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('[data-qa=heads-up]').length).toBe(0)
+    expect($('[data-qa=comment]').length).toBe(0)
   })
 })

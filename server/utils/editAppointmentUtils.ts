@@ -48,7 +48,7 @@ export const getAppointmentEditMessage = (
   }
 
   if (hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)) {
-    updateProperties.push('heads up')
+    updateProperties.push('extra information')
   }
 
   if (updateProperties.length > 0) {

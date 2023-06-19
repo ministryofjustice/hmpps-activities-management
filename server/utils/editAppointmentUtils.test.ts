@@ -294,7 +294,7 @@ describe('Edit Appointment Utils', () => {
       req.session.editAppointmentJourney.comment = 'Updated comment'
 
       expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'change the heads up for',
+        'change the extra information for',
       )
     })
 
