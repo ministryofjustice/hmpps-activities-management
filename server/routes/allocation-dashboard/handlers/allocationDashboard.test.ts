@@ -99,8 +99,8 @@ describe('Route Handlers - Allocation dashboard', () => {
             releaseDate: '2023-12-26',
           },
         ] as Prisoner[])
-      when(activitiesService.getPrisonerAllocations)
-        .calledWith(atLeast('MDI', ['ABC123', '321CBA']))
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith(atLeast(['ABC123', '321CBA']))
         .mockResolvedValue([
           {
             prisonerNumber: 'ABC123',

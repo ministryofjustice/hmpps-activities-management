@@ -283,7 +283,8 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
 
   async getAllocations(scheduleId: number, user: ServiceUser): Promise<Allocation[]> {
     return this.get({
-      path: `/schedules/${scheduleId}/allocations?activeOnly=false`,
+      path: `/schedules/${scheduleId}/allocations`,
+      query: { activeOnly: true },
       authToken: user.token,
     })
   }
@@ -300,6 +301,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     prisonerNumbers: string[],
     user: ServiceUser,
   ): Promise<PrisonerAllocations[]> {
+    if (prisonerNumbers.length === 0) return []
     return this.post({
       path: `/prisons/${prisonCode}/prisoner-allocations`,
       data: prisonerNumbers,
