@@ -377,13 +377,6 @@
                 {% endfor %}
             </ul>
         {% endset %}
-        {% set educationLevelHtml %}
-            <div>
-                {% for educationLevel in row.educationLevels %}
-                    <div>{{ educationLevel.studyArea }} - {{ educationLevel.educationLevel }}</div>
-                {% endfor %}
-            </div>
-        {% endset %}
         {% set id = 'selectedAllocation' + (('-' + loop.index0) if loop.index0 else '') %}
         {% set rows = (rows.push([
             {
@@ -409,9 +402,6 @@
             },
             {
                 text: row.releaseDate | formatDate('d MMMM yyyy') if row.releaseDate else 'TBC'
-            },
-            {
-                html: educationLevelHtml
             }
         ]), rows) %}
     {% endfor %}
@@ -430,9 +420,6 @@
                 },
                 {
                     text: "Earliest release date"
-                },
-                {
-                    text: "Education level"
                 }
             ],
             rows: rows

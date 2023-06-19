@@ -100,9 +100,3 @@ up its environment to reference the DEV APIs, local activities API and local con
 ## Ensuring slack notifications are raised correctly
 
 To ensure notifications are routed to the correct slack channels, update the `alerts-slack-channel` and `releases-slack-channel` parameters in `.circle/config.yml` to an appropriate channel.
-
-
-### Dependency Checks
-
-Some scheduled checks ensure that key dependencies are kept up to date.
-They are implemented via a scheduled job in CircleCI. See the `check_outdated` job in `.circleci/config.yml`
