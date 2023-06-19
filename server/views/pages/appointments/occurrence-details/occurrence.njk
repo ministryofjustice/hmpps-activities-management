@@ -171,10 +171,10 @@
                         } if occurrence.isCancelled == false and occurrence.isExpired == false
                     }, {
                         key: {
-                            text: "Heads up"
+                            text: "Extra information"
                         },
                         value: {
-                            html: '<span class="preserve-line-breaks">' + (occurrence.comment | safe) + '</span>'
+                            html: '<span class="preserve-line-breaks">' + (occurrence.comment | escape) + '</span>'
                         },
                         actions: {
                             items: [

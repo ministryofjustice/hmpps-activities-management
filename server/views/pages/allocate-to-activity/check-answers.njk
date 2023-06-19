@@ -52,6 +52,7 @@
                             items: [
                                 {
                                     href: "start-date?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
                                     text: "Change",
                                     visuallyHiddenText: "change start date"
                                 }
@@ -69,6 +70,7 @@
                             items: [
                                 {
                                     href: "end-date?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
                                     text: "Change",
                                     visuallyHiddenText: "change end date"
                                 }
@@ -125,7 +127,7 @@
                     {{ govukButton({
                         text: "Confirm allocation"
                     }) }}
-                    <a href="cancel" class="govuk-link">Cancel and return to the list of candidates</a>
+                    <a href="/allocate/cancel" class="govuk-link govuk-link--no-visited-state">Cancel and return to the list of candidates</a>
                 </div>
             </form>
         </div>

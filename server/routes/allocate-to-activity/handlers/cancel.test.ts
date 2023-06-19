@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 import CancelRoutes, { ConfirmCancelOptions } from './cancel'
 
@@ -21,6 +22,7 @@ describe('Route Handlers - Allocate - Cancel', () => {
     } as unknown as Response
 
     req = {
+      get: jest.fn(),
       session: {
         allocateJourney: {
           inmate: {
@@ -42,7 +44,9 @@ describe('Route Handlers - Allocate - Cancel', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
+      when(req.get).calledWith('Referrer').mockReturnValue('check-answers')
       await handler.GET(req, res)
+      expect(req.session.returnTo).toEqual('check-answers')
       expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/cancel')
     })
   })
@@ -64,9 +68,12 @@ describe('Route Handlers - Allocate - Cancel', () => {
         choice: 'no',
       }
 
+      req.session.returnTo = 'check-answers'
+
       await handler.POST(req, res)
 
       expect(req.session.allocateJourney).not.toBeNull()
+      expect(req.session.returnTo).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })

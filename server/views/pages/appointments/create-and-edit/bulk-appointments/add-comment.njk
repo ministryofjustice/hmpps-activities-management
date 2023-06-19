@@ -1,0 +1,39 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+
+{% set pageTitle = appointmentJourneyTitle("Add Appointment Comment", session.appointmentJourney) %}
+{% set pageId = 'appointments-create-bulk-appointment-add-comment-page' %}
+{% set backLinkHref = 'bulk-appointment-comments' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+                <h1 class="govuk-heading-l"><label for="comment">Add extra information for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }}</label></h1>
+
+                <p class='govuk-body'>Give the attendee extra information about their appointment. This will be printed on their movement slip.</p>
+
+                {{ govukCharacterCount({
+                    hint: {
+                        text: 'For example, \'You need to bring all your documents about your case to this meeting with your solicitor.\''
+                    },
+                    id: "comment",
+                    name: "comment",
+                    errorMessage: validationErrors | findError("comment"),
+                    value: formResponses.comment or comment,
+                    maxlength: "4000"
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

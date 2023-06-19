@@ -7,6 +7,7 @@
 
 {% set pageTitle = applicationName + " - Allocation - End date" %}
 {% set pageId = 'allocation-end-date-page' %}
+{% set backLinkHref = '/allocate/end-date-option' %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -36,9 +37,10 @@
                 }) }}
 
                 <div class="govuk-button-group">
-                  {{ govukButton({
-                    text: "Continue"
-                  }) }}
+                    {{ govukButton({
+                        text: "Save and continue"
+                    }) }}
+                    <a class="govuk-link js-backlink" href="/allocate/cancel?preserveHistory=true">Cancel</a>
                 </div>
             </form>
         </div>

@@ -7,10 +7,14 @@
 
 {% set pageTitle = appointmentJourneyTitle("Type", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-category-page' %}
-{% if session.appointmentJourney.prisonNumber %}
-    {% set backLinkHref = dpsUrl + '/prisoner/' + session.appointmentJourney.prisonNumber %}
+{% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
+    {% if session.appointmentJourney.prisonNumber %}
+        {% set backLinkHref = dpsUrl + '/prisoner/' + session.appointmentJourney.prisonNumber %}
+    {% else %}
+        {% set backLinkHref = "/appointments/create/select-prisoner?query=" + session.appointmentJourney.prisoners[0].number %}
+    {% endif %}
 {% else %}
-    {% set backLinkHref = "/appointments/create/select-prisoner?query=" + session.appointmentJourney.prisoners[0].number %}
+    {% set backLinkHref = "/appointments/create/review-prisoners" %}
 {% endif %}
 
 {% set options = [{ value: "-", text: "" }] %}

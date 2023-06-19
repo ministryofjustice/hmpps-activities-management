@@ -90,6 +90,6 @@ export default class ReviewBulkAppointmentRoutes {
 
     req.session.bulkAppointmentJourney.appointments = appointments
 
-    return res.redirectOrReturn(`comment`)
+    return res.redirectOrReturn(`bulk-appointment-comments`)
   }
 }

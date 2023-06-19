@@ -6,6 +6,4 @@ export default class PayBandPage extends Page {
   }
 
   selectPayBand = (text: string) => this.getInputByLabel(text).click()
-
-  confirmPayAndContinue = () => cy.get('button').contains('Confirm pay and continue').click()
 }

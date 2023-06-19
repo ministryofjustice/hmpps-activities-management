@@ -179,7 +179,7 @@
                         {
                             attributes: { id: 'activity-' + loop.index, "data-sort-value": item.displayName },
                             html: showProfileLink({
-                                name: item.displayName,
+                                name: item.firstName + " " + item.lastName,
                                 prisonerNumber: item.prisonerNumber,
                                 link: true,
                                 classes: 'hmpps-inline-block'
@@ -244,7 +244,7 @@
                         {
                             html: "Activity",
                             attributes: { "aria-sort": "none" },
-                            classes: 'govuk-table__header'
+                            classes: 'govuk-table__header govuk-!-width-one-third'
                         },
                         {
                             html: "<span>Refused</span>",
