@@ -7,10 +7,10 @@
 
 {% set pageTitle = appointmentJourneyTitle("Type", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-category-page' %}
-{% if session.appointmentJourney.type == AppointmentType.BULK %}
-    {% set backLinkHref = "/appointments/create/review-prisoners" %}
-{% else %}
+{% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
     {% set backLinkHref = "/appointments/create/select-prisoner?query=" + session.appointmentJourney.prisoners[0].number %}
+{% else %}
+    {% set backLinkHref = "/appointments/create/review-prisoners" %}
 {% endif %}
 
 {% set options = [{ value: "-", text: "" }] %}

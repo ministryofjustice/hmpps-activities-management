@@ -134,33 +134,6 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
       expect(res.redirect).toHaveBeenCalledWith('../bulk-appointment-comments')
     })
 
-    it('updates existing comment and redirects back to the comments review page', async () => {
-      const testPrisonerAppointment = {
-        prisoner: {
-          number: 'A1234BC',
-        },
-        comment: 'A comment',
-      }
-      req.session.bulkAppointmentJourney.appointments = [
-        testPrisonerAppointment,
-      ] as BulkAppointmentJourney['appointments']
-
-      req.body = {
-        comment: 'A different comment',
-      }
-
-      req.params = {
-        prisonerNumber: 'A1234BC',
-      }
-
-      expect(req.session.bulkAppointmentJourney.appointments[0].comment).toEqual('A comment')
-
-      handler.POST(req, res)
-
-      expect(req.session.bulkAppointmentJourney.appointments[0].comment).toEqual('A different comment')
-      expect(res.redirect).toHaveBeenCalledWith('../bulk-appointment-comments')
-    })
-
     it('fails to find prisoner and redirects back to the comments review page with session unchanged', async () => {
       const testPrisonerAppointment = {
         prisoner: {

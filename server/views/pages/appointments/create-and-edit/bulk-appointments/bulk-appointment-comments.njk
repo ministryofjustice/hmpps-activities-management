@@ -30,19 +30,19 @@
                                 prisonerNumber: appointment.prisoner.number,
                                 link: true
                             }),
-                            classes: 'govuk-table__celll--vertical-align-top',
+                            classes: 'govuk-table__cell--vertical-align-top',
                             attributes: {
                                 'data-qa': 'prisoner-info-cell'
                             }
                         }, {
                             html: '<span class="preserve-line-breaks">' + appointment.comment | escape + '</span>',
-                            classes: 'govuk-table__celll--vertical-align-top',
+                            classes: 'govuk-table__cell--vertical-align-top',
                             attributes: {
                                 'data-qa': 'comment-cell'
                             }
                         }, {
                             html: '<a href="bulk-appointment-comments/' + appointment.prisoner.number + '" class="govuk-link">' + ('Edit' if appointment.comment else 'Add') + ' extra information</a>',
-                            classes: 'govuk-!-text-align-right govuk-table__celll--vertical-align-top',
+                            classes: 'govuk-!-text-align-right govuk-table__cell--vertical-align-top',
                             attributes: {
                                 'data-qa': 'actions-cell'
                             }
