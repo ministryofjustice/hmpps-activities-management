@@ -18,7 +18,13 @@ export default class StartJourneyRoutes {
     const { prisonNumber } = req.query
     if (prisonNumber && typeof prisonNumber === 'string') {
       const { user } = res.locals
-      const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumber, user)
+
+      let prisoner
+      try {
+        prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumber, user)
+      } catch {
+        return res.redirect(`select-prisoner?query=${prisonNumber}`)
+      }
       if (prisoner) {
         const prisonerData = {
           number: prisoner.prisonerNumber,
@@ -26,10 +32,12 @@ export default class StartJourneyRoutes {
           cellLocation: prisoner.cellLocation,
         }
         req.session.appointmentJourney.prisoners = [prisonerData]
+        req.session.appointmentJourney.prisonNumber = prisonNumber
         return res.redirect(`category`)
       }
     }
-    return res.redirect(`select-prisoner`)
+    req.query.query = prisonNumber
+    return res.redirect(`select-prisoner?query=${prisonNumber}`)
   }
 
   GROUP = async (req: Request, res: Response): Promise<void> => {
