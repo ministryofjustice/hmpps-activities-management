@@ -96,7 +96,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
+      expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
 
     it('should populate the session with individual appointment journey type and redirect to select category page', async () => {

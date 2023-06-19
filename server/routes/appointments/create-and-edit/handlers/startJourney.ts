@@ -36,8 +36,7 @@ export default class StartJourneyRoutes {
         return res.redirect(`category`)
       }
     }
-    req.query.query = prisonNumber
-    return res.redirect(`select-prisoner?query=${prisonNumber}`)
+    return res.redirect(`select-prisoner`)
   }
 
   GROUP = async (req: Request, res: Response): Promise<void> => {
