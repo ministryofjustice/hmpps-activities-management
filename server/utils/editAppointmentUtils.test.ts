@@ -298,6 +298,14 @@ describe('Edit Appointment Utils', () => {
       )
     })
 
+    it('when removing the comment', () => {
+      req.session.editAppointmentJourney.comment = ''
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the extra information for',
+      )
+    })
+
     it('when adding one person', () => {
       req.session.editAppointmentJourney.addPrisoners = [
         {
