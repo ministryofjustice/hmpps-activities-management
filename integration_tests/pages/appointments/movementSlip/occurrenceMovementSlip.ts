@@ -24,5 +24,5 @@ export default class OccurrenceMovementSlip extends Page {
   assertEndTime = (hour: number, minute: number) =>
     cy.get('[data-qa=time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
-  assertComments = (comments: string) => cy.get('[data-qa=comment]').contains(comments)
+  assertComments = (comments: string) => cy.get('[data-qa=extra-information]').contains(comments)
 }

@@ -77,7 +77,7 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
     expect($('[data-qa=appointment]').text().trim()).toEqual('Medical - Other')
     expect($('[data-qa=time]').text().trim()).toEqual(`13:00 to 13:15${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
     expect($('[data-qa=location]').text().trim()).toEqual('HB1 Doctors')
-    expect($('[data-qa=comment]').text().trim()).toEqual('Appointment occurrence level comment')
+    expect($('[data-qa=extra-information]').text().trim()).toEqual('Appointment occurrence level comment')
   })
 
   it('should display appointment description', () => {

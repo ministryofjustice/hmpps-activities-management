@@ -15,9 +15,9 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-                <h1 class="govuk-heading-l"><label for="comment">Add a comment for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }}</label></h1>
+                <h1 class="govuk-heading-l"><label for="comment">Add extra information for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }}</label></h1>
 
-                <p class='govuk-body'>Give the attendee a comment about their appointment. This will be printed on their movement slip.</p>
+                <p class='govuk-body'>Give the attendee extra information about their appointment. This will be printed on their movement slip.</p>
 
                 {{ govukCharacterCount({
                     hint: {

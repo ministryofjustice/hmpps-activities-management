@@ -6,7 +6,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Appointment Comments", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Appointment extra information", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-bulk-appointment-comments-page' %}
 {% set backLinkHref = 'review-bulk-appointment' %}
 
@@ -14,9 +14,9 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-            <h1 class="govuk-heading-l">Add a comment to movement slips (optional)</h1>
-            <p class="govuk-body">Attendees may need information about how to prepare for their appointment. You can add this as a comment to their movement slip.</p>
-            <p class="govuk-body">Wing staff will be notified there is a comment on the printed unlock list, but for confidentiality the full details will only be visible when you view the details of the appointment in this service.</p>
+            <h1 class="govuk-heading-l">Add extra information to movement slips (optional)</h1>
+            <p class="govuk-body">Attendees may need information about how to prepare for their appointment. You can add this as extra information to their movement slip.</p>
+            <p class="govuk-body">Wing staff will be notified there is extra information on the printed unlock list, but for confidentiality the full details will only be visible when you view the details of the appointment in this service.</p>
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -41,7 +41,7 @@
                                 'data-qa': 'comment-cell'
                             }
                         }, {
-                            html: '<a href="bulk-appointment-comments/' + appointment.prisoner.number + '" class="govuk-link">' + ('Edit' if appointment.comment else 'Add') + ' comment</a>',
+                            html: '<a href="bulk-appointment-comments/' + appointment.prisoner.number + '" class="govuk-link">' + ('Edit' if appointment.comment else 'Add') + ' extra information</a>',
                             classes: 'govuk-!-text-align-right govuk-table__celll--vertical-align-top',
                             attributes: {
                                 'data-qa': 'actions-cell'
@@ -59,7 +59,7 @@
                             text: "Name",
                             classes: 'govuk-table__header'
                         }, {
-                            html: '<span class="govuk-visually-hidden">Comment</span>',
+                            html: '<span class="govuk-visually-hidden">Extra information</span>',
                             classes: 'govuk-!-width-one-half'
                         }, {
                             html: '<span class="govuk-visually-hidden">Actions</span>'

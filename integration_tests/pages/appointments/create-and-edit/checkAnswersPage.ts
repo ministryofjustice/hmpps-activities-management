@@ -38,7 +38,7 @@ export default class CheckAnswersPage extends Page {
 
   assertRepeatCount = (option: string) => this.assertAppointmentDetail('Number of appointments', option)
 
-  assertComment = (comment: string) => this.assertAppointmentDetail('Comment', comment)
+  assertComment = (comment: string) => this.assertAppointmentDetail('Extra information', comment)
 
   changePrisoner = () => cy.get('[data-qa=change-prisoner]').click()
 

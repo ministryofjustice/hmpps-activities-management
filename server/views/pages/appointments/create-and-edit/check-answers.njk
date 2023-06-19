@@ -255,7 +255,7 @@
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
-                text: "Comment"
+                text: "Extra information"
             },
             value: {
                 html: '<span class="preserve-line-breaks">' + (session.appointmentJourney.comment | escape) + '</span>'
@@ -265,7 +265,7 @@
                     {
                         href: "comment?preserveHistory=true",
                         text: "Change",
-                        visuallyHiddenText: "change comment",
+                        visuallyHiddenText: "change extra information",
                         classes: "govuk-link--no-visited-state",
                         attributes: { 'data-qa': 'change-comment' }
                     }
@@ -420,7 +420,7 @@
                 }
             }, {
                 key: {
-                    text: "Comment"
+                    text: "Extra information"
                 },
                 value: {
                     html: '<span class="preserve-line-breaks">' + appointment.comment | escape + '</span>'
@@ -430,7 +430,7 @@
                         {
                             href: "bulk-appointment-comments/" + appointment.prisoner.number + "?preserveHistory=true",
                             text: "Change",
-                            visuallyHiddenText: "change comment"
+                            visuallyHiddenText: "change extra information"
                         }
                     ]
                 }

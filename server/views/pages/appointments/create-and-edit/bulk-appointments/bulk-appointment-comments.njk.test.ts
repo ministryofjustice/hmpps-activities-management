@@ -67,12 +67,12 @@ describe('Views - Create Bulk Appointment - Add Comment', () => {
     expect($('[data-qa="comments-table"] tr').length).toEqual(4)
 
     expect(getPrisonerCommentsTableCell('A1234AA', 'comment-cell').text()).toEqual('appointment comment')
-    expect(getPrisonerCommentsTableCell('A1234AA', 'actions-cell').text()).toEqual('Edit comment')
+    expect(getPrisonerCommentsTableCell('A1234AA', 'actions-cell').text()).toEqual('Edit extra information')
 
     expect(getPrisonerCommentsTableCell('Z4321YX', 'comment-cell').text()).toEqual('')
-    expect(getPrisonerCommentsTableCell('Z4321YX', 'actions-cell').text()).toEqual('Add comment')
+    expect(getPrisonerCommentsTableCell('Z4321YX', 'actions-cell').text()).toEqual('Add extra information')
 
     expect(getPrisonerCommentsTableCell('B2222BB', 'comment-cell').text()).toEqual('')
-    expect(getPrisonerCommentsTableCell('B2222BB', 'actions-cell').text()).toEqual('Add comment')
+    expect(getPrisonerCommentsTableCell('B2222BB', 'actions-cell').text()).toEqual('Add extra information')
   })
 })
