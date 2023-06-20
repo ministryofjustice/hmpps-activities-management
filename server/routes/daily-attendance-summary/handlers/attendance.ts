@@ -1,18 +1,9 @@
 import { Request, Response } from 'express'
-import {
-  convertToArray,
-  formatDate,
-  getDailyAttendanceSummary,
-  getTimeSlotFromTime,
-  toDate,
-  getCancelledActivitySummary,
-  getSuspendedPrisonerCount,
-} from '../../../utils/utils'
+import { convertToArray, formatDate, toDate } from '../../../utils/utils'
 import ActivitiesService from '../../../services/activitiesService'
 import { AttendanceSummaryFilters, FilterItem } from '../../../@types/activities'
-import attendanceReason from '../../../enum/attendanceReason'
 
-export default class DailySummaryRoutes {
+export default class DailyAttendanceRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -22,41 +13,24 @@ export default class DailySummaryRoutes {
       return res.redirect('select-period')
     }
 
-    let { attendanceSummaryFilters } = req.session
+    const { attendanceSummaryFilters } = req.session
 
-    const attendanceSummary = await this.activitiesService.getAllAttendanceSummary(activityDate, user)
-    const uniqueCategories = attendanceSummary.map(c => c.categoryName).filter((v, k, arr) => arr.indexOf(v) === k)
+    //    const uniqueCategories = attendance.map(c => c.categoryName).filter((v, k, arr) => arr.indexOf(v) === k)
 
-    if (!attendanceSummaryFilters || attendanceSummaryFilters.categoryFilters.length === 0) {
-      attendanceSummaryFilters = defaultFilters(activityDate, uniqueCategories)
-      req.session.attendanceSummaryFilters = attendanceSummaryFilters
-    }
-    const categoryFilters = attendanceSummaryFilters.categoryFilters
-      .filter((category: FilterItem) => category.checked === true)
-      .map((category: FilterItem) => category.value)
+    // if (!attendanceSummaryFilters || attendanceSummaryFilters.categoryFilters.length === 0) {
+    //   attendanceSummaryFilters = defaultFilters(activityDate, uniqueCategories)
+    //   req.session.attendanceSummaryFilters = attendanceSummaryFilters
+    // }
+    // const categoryFilters = attendanceSummaryFilters.categoryFilters
+    //   .filter((category: FilterItem) => category.checked === true)
+    //   .map((category: FilterItem) => category.value)
 
-    const cancelledActivities = await this.activitiesService
-      .getScheduledActivitiesAtPrison(activityDate, user)
-      .then(scheduledActivities =>
-        scheduledActivities.map(activity => ({
-          id: activity.id,
-          category: activity.activitySchedule.activity.category.name,
-          timeSlot: getTimeSlotFromTime(activity.startTime),
-          cancelled: activity.cancelled,
-          cancelledReason: activity.cancelledReason,
-        })),
-      )
-      .then(scheduledActivities => scheduledActivities.filter(a => categoryFilters.includes(a.category)))
-      .then(scheduledActivities => scheduledActivities.filter(a => a.cancelled))
+    const attendance = await this.activitiesService.getAllAttendance(activityDate, user)
+    //      .filter(a => categoryFilters.includes(a.categoryName))
 
-    const suspendedPrisoners = await this.activitiesService
-      .getAllAttendance(activityDate, user)
-      .then(attendance => attendance.filter(a => a.attendanceReasonCode === attendanceReason.SUSPENDED))
-    return res.render('pages/daily-attendance-summary/daily-summary', {
+    return res.render('pages/daily-attendance-summary/attendance', {
       activityDate,
-      ...getDailyAttendanceSummary(attendanceSummary.filter(a => categoryFilters.includes(a.categoryName))),
-      ...getCancelledActivitySummary(cancelledActivities),
-      ...getSuspendedPrisonerCount(suspendedPrisoners),
+      attendance,
       attendanceSummaryFilters,
     })
   }
