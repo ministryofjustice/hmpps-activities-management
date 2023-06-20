@@ -39,7 +39,7 @@ export default class AttendanceListRoutes {
             .getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user)
             .then(response => [
               ...response.activities,
-              ...response.appointments.filter(app => !app.deleted),
+              ...response.appointments,
               ...response.courtHearings,
               ...response.visits,
             ])
@@ -118,7 +118,7 @@ export default class AttendanceListRoutes {
       .getScheduledEventsForPrisoners(toDate(instance.date), selectedPrisoners, user)
       .then(response => [
         ...response.activities,
-        ...response.appointments.filter(app => !app.deleted),
+        ...response.appointments,
         ...response.courtHearings,
         ...response.visits,
       ])

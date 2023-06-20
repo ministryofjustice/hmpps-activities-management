@@ -73,9 +73,7 @@ export default class UnlockListService {
 
     // Match the prisoners with their events by prisonerNumber
     const unlockListItems = filteredPrisoners.map(prisoner => {
-      const appointments = scheduledEvents?.appointments.filter(
-        app => app.prisonerNumber === prisoner.prisonerNumber && !app.deleted,
-      )
+      const appointments = scheduledEvents?.appointments.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
       const courtHearings = scheduledEvents?.courtHearings.filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
       const visits = scheduledEvents?.visits.filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
       const adjudications = scheduledEvents?.adjudications.filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
