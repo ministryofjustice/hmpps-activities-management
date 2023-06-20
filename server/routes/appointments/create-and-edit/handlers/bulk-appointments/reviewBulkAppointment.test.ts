@@ -201,7 +201,7 @@ describe('Route Handlers - Create Bulk Appointment - Review Bulk Appointment', (
           },
         },
       ])
-      expect(res.redirectOrReturn).toHaveBeenCalledWith(`comment`)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('bulk-appointment-comments')
     })
   })
 

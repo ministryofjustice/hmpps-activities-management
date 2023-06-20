@@ -14,7 +14,6 @@ import {
   LocationGroup,
   ScheduledActivity,
   ScheduledEvent,
-  PrisonerAllocations,
   Activity,
   ActivityCreateRequest,
   PrisonPayBand,
@@ -242,17 +241,6 @@ export default class ActivitiesService {
 
   async getActivePrisonPrisonerAllocations(prisonerNumbers: string[], user: ServiceUser) {
     return this.activitiesApiClient.getPrisonerAllocations(user.activeCaseLoadId, prisonerNumbers, user)
-  }
-
-  async getPrisonerAllocations(
-    prisonCode: string,
-    prisonerNumbers: string[],
-    user: ServiceUser,
-  ): Promise<PrisonerAllocations[]> {
-    if (prisonerNumbers.length < 1) {
-      return []
-    }
-    return this.activitiesApiClient.getPrisonerAllocations(prisonCode, prisonerNumbers, user)
   }
 
   async getAppointment(appointmentId: number, user: ServiceUser): Promise<Appointment> {

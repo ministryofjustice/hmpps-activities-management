@@ -9,7 +9,11 @@
           <span>{{ event.summary }}</span>
         {% endif %}
         {% if event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
-          <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+            {% if event.cancelled %}
+                <div>{{ govukTag({ text: 'Cancelled Appointment', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
+            {% else %}
+                <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+            {% endif %}
         {% endif %}
       </div>
       {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}

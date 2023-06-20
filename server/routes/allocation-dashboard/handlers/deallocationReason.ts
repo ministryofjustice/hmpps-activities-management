@@ -32,7 +32,7 @@ export default class DeallocationReasonRoutes {
     const { user } = res.locals
     const prisonCode = user.activeCaseLoadId
     const allocation = {
-      endDate: formatDate(plainToInstance(SimpleDate, endDate), 'yyyy-MM-dd'),
+      endDate: formatDate(plainToInstance(SimpleDate, endDate).toRichDate(), 'yyyy-MM-dd'),
       reasonCode: deallocationReason,
     } as AllocationUpdateRequest
     await this.activitiesService.updateAllocation(prisonCode, +allocationId, allocation)

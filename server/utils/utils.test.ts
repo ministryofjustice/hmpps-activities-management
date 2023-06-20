@@ -416,7 +416,7 @@ describe('utils', () => {
         {
           id: 2,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 2,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'ED',
@@ -428,7 +428,7 @@ describe('utils', () => {
         {
           id: 3,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 3,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'ED',
@@ -440,7 +440,7 @@ describe('utils', () => {
         {
           id: 4,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 4,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
@@ -452,7 +452,7 @@ describe('utils', () => {
         {
           id: 5,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 5,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
@@ -464,7 +464,7 @@ describe('utils', () => {
         {
           id: 6,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 6,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
@@ -476,7 +476,7 @@ describe('utils', () => {
         {
           id: 7,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 7,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
@@ -488,7 +488,7 @@ describe('utils', () => {
         {
           id: 8,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 8,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
@@ -500,7 +500,7 @@ describe('utils', () => {
         {
           id: 9,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 9,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
@@ -512,7 +512,7 @@ describe('utils', () => {
         {
           id: 10,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 10,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
@@ -524,7 +524,7 @@ describe('utils', () => {
         {
           id: 11,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 11,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
@@ -536,7 +536,7 @@ describe('utils', () => {
         {
           id: 12,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 12,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
@@ -548,7 +548,7 @@ describe('utils', () => {
         {
           id: 13,
           prisonCode: 'MDI',
-          activityId: 1,
+          activityId: 13,
           categoryName: 'Education',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
@@ -573,9 +573,9 @@ describe('utils', () => {
           PM: 0,
         },
         totalActivities: {
-          AM: 1,
-          DAY: 1,
-          ED: 1,
+          AM: 11,
+          DAY: 13,
+          ED: 2,
           PM: 0,
         },
         totalAllocated: {

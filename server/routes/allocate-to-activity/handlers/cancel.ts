@@ -10,18 +10,21 @@ export class ConfirmCancelOptions {
 
 export default class CancelRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
+    req.session.returnTo = req.get('Referrer')
     res.render('pages/allocate-to-activity/cancel')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { activity } = req.session.allocateJourney
     const { choice } = req.body
+    const { returnTo } = req.session
+    req.session.returnTo = null
 
     if (choice === 'yes') {
       req.session.allocateJourney = null
       res.redirect(`/allocation-dashboard/${activity.scheduleId}#candidates-tab`)
     } else {
-      res.redirect(`check-answers`)
+      res.redirect(returnTo)
     }
   }
 }

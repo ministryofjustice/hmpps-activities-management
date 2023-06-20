@@ -73,6 +73,7 @@ export default class CheckAnswersRoutes {
         prisonerNumber: appointment.prisoner.number,
         startTime: plainToInstance(SimpleTime, appointment.startTime).toIsoString(),
         endTime: plainToInstance(SimpleTime, appointment.endTime).toIsoString(),
+        comment: appointment.comment,
       })),
     } as BulkAppointmentsRequest
 

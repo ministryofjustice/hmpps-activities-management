@@ -159,7 +159,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         },
         totalActivities: {
           AM: 1,
-          DAY: 1,
+          DAY: 2,
           ED: 1,
           PM: 0,
         },
@@ -354,7 +354,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         },
         totalActivities: {
           AM: 1,
-          DAY: 1,
+          DAY: 2,
           ED: 1,
           PM: 0,
         },

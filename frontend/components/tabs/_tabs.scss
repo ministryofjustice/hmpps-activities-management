@@ -1,6 +1,10 @@
 .govuk-tabs--borderless {
   margin: 0;
 
+  .govuk-grid-row {
+    margin-right: 0;
+  }
+
   .govuk-tabs__panel {
     border: none;
     padding: 20px 0 0 0;

@@ -58,6 +58,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
           },
           riskLevel: 'High',
           pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', bandId: 1, rate: 100 }],
+          flat: [],
           incentiveLevels: ['Standard', 'Enhanced'],
         },
       },
@@ -72,6 +73,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
     it('should render page correctly', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/check-pay', {
+        flatPay: [],
         incentiveLevelPays: [
           {
             incentiveLevel: 'Standard',
