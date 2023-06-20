@@ -1,6 +1,9 @@
 .govuk-tabs--borderless {
   margin: 0;
-  overflow-x: hidden;
+
+  .govuk-grid-row {
+    margin-right: 0;
+  }
 
   .govuk-tabs__panel {
     border: none;
