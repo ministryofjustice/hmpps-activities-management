@@ -88,6 +88,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
   describe('INDIVIDUAL', () => {
     it('should populate the session with individual appointment journey type and redirect to select prisoner page', async () => {
+      when(prisonService.getInmateByPrisonerNumber).calledWith('A1234BC', res.locals.user).mockResolvedValue(null)
       await handler.INDIVIDUAL(req, res)
 
       expect(req.session.appointmentJourney).toEqual({
@@ -96,7 +97,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
+      expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
     })
 
     it('should populate the session with individual appointment journey type and redirect to select category page', async () => {
@@ -122,7 +123,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
             number: 'A1234BC',
           },
         ],
-        prisonNumber: 'A1234BC',
+        fromPrisonNumberProfile: 'A1234BC',
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
