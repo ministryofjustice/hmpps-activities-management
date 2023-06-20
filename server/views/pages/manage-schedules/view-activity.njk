@@ -304,26 +304,32 @@
 {% endmacro %}
 
 {% macro daysAndTimes(dailySlots) %}
-    {% for day in week %}
-        {% set comma = joiner('and ') %}
-        {% for dailySlot in dailySlots %}
-            <div class="govuk-grid-row govuk-!-margin-bottom-2">
-                {% if dailySlot.day === day %}
-                    <div class="govuk-grid-column-one-half">
-                        <b>{{ day }}
-                    </div>
-                    <div class="govuk-grid-column-one-half">
-                        {% for slot in dailySlot.slots %}
-                            {{ comma() }}{{ slot.startTime | getTimeSlotFromTime | upper }}
-                        {% endfor %}
-                        </b>
-                    </div>
-                {% else %}
-                    <div class="govuk-grid-column-one-half">
-                        {{ day }}
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
+    {% set dayRows = [] %}
+    {% for day in dailySlots %}
+        {% set scheduleText %}
+            {% set ands = joiner('and ') %}
+            {% for slot in day.slots %}
+                {{ ands() }}{{ slot | upper }}
+            {% else %}
+                <span class='govuk-hint'>Not scheduled</span>
+            {% endfor %}
+        {% endset %}
+
+        {% set dayRows = (dayRows.push(
+            {
+                key: {
+                    html: '<span' + (' class="govuk-hint"' if not day.slots | length) + '>' + day.day + '</span>'
+                },
+                value: {
+                    html: scheduleText
+                }
+            }
+        ), dayRows) %}
     {% endfor %}
+
+
+    {{ govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: dayRows
+    }) }}
 {% endmacro %}
