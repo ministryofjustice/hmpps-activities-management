@@ -99,8 +99,8 @@ describe('Route Handlers - Allocation dashboard', () => {
             releaseDate: '2023-12-26',
           },
         ] as Prisoner[])
-      when(activitiesService.getPrisonerAllocations)
-        .calledWith(atLeast('MDI', ['ABC123', '321CBA']))
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith(atLeast(['ABC123', '321CBA']))
         .mockResolvedValue([
           {
             prisonerNumber: 'ABC123',
@@ -127,7 +127,6 @@ describe('Route Handlers - Allocation dashboard', () => {
               cellLocation: '4-2-009',
               otherAllocations: [],
               releaseDate: null,
-              educationLevels: [],
             },
           ],
         })
@@ -177,7 +176,6 @@ describe('Route Handlers - Allocation dashboard', () => {
           content: [
             {
               cellLocation: '4-2-009',
-              educationLevels: [],
               name: 'RODNEY REINDEER',
               otherAllocations: [],
               prisonerNumber: 'A0013DZ',
@@ -223,7 +221,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         1,
         user,
         ['Standard', 'Enhanced'],
-        expect.anything(),
+        undefined,
         expect.anything(),
         undefined,
         0,
@@ -242,20 +240,8 @@ describe('Route Handlers - Allocation dashboard', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
-          filters: expect.objectContaining({
-            riskLevelFilter: 'Low',
-          }),
           suitableForWra: 'Low',
         }),
-      )
-      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
-        1,
-        user,
-        expect.anything(),
-        ['RLO'],
-        expect.anything(),
-        undefined,
-        0,
       )
     })
 
@@ -271,20 +257,8 @@ describe('Route Handlers - Allocation dashboard', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
-          filters: expect.objectContaining({
-            riskLevelFilter: 'Low or Medium',
-          }),
           suitableForWra: 'Low or Medium',
         }),
-      )
-      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
-        1,
-        user,
-        expect.anything(),
-        ['RLO', 'RME'],
-        expect.anything(),
-        undefined,
-        0,
       )
     })
 
@@ -300,20 +274,8 @@ describe('Route Handlers - Allocation dashboard', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/allocation-dashboard/allocation-dashboard',
         expect.objectContaining({
-          filters: expect.objectContaining({
-            riskLevelFilter: 'Low or Medium or High',
-          }),
           suitableForWra: 'Low or Medium or High',
         }),
-      )
-      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
-        1,
-        user,
-        expect.anything(),
-        ['RLO', 'RME', 'RHI'],
-        expect.anything(),
-        undefined,
-        0,
       )
     })
 

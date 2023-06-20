@@ -3463,8 +3463,6 @@ export interface components {
        * @example 2027-01-24
        */
       releaseDate?: string
-      /** @description The qualifications this candidate holds */
-      educationLevels: components['schemas']['Education'][]
     }
     PageActivityCandidate: {
       /** Format: int32 */

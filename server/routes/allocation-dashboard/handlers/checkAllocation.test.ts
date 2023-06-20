@@ -4,7 +4,7 @@ import { when } from 'jest-when'
 import ActivitiesService from '../../../services/activitiesService'
 import PrisonService from '../../../services/prisonService'
 import atLeast from '../../../../jest.setup'
-import { Activity, ActivitySchedule, Allocation } from '../../../@types/activitiesAPI/types'
+import { Activity, ActivitySchedule } from '../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { IepSummary } from '../../../@types/incentivesApi/types'
 import CheckAllocationRoutes from './checkAllocation'
@@ -78,20 +78,6 @@ describe('Route Handlers - Allocation dashboard', () => {
           ],
         } as unknown as ActivitySchedule)
 
-      when(activitiesService.getAllocations)
-        .calledWith(atLeast(1))
-        .mockResolvedValue([
-          {
-            prisonerNumber: 'ABC123',
-            allocatedTime: '2023-02-17T15:22:00',
-            startDate: '2023-02-17',
-          },
-          {
-            prisonerNumber: '321CBA',
-            allocatedTime: '2023-02-16T12:43:00',
-            startDate: '2023-02-16',
-          },
-        ] as Allocation[])
       const prisonerInfo = {
         prisonerNumber: 'ABC123',
         firstName: 'John',

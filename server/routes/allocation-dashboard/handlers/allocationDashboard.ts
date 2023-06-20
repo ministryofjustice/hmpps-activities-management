@@ -51,7 +51,7 @@ export default class AllocationDashboardRoutes {
       !(filters.incentiveLevelFilter || filters.riskLevelFilter || filters.employmentFilter || filters.candidateQuery)
     ) {
       filters.incentiveLevelFilter = suitableForIep
-      filters.riskLevelFilter = suitableForWra
+      filters.riskLevelFilter = 'Any Workplace Risk Assessment'
       filters.employmentFilter = 'Not in work'
     }
 
@@ -137,7 +137,7 @@ export default class AllocationDashboardRoutes {
     const prisonerNumbers = currentlyAllocated.map(allocation => allocation.prisonerNumber)
     const [inmateDetails, prisonerAllocations]: [Prisoner[], PrisonerAllocations[]] = await Promise.all([
       this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
-      this.activitiesService.getPrisonerAllocations(user.activeCaseLoad.caseLoadId, prisonerNumbers, user),
+      this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
     ])
 
     return inmateDetails.map(inmate => {

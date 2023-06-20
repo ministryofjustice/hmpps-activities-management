@@ -37,7 +37,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A5015DY', getCandidateSuitability)
     cy.stubEndpoint('GET', '/schedules/2', getSchedule)
     cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
-    cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=false', getAllocations)
+    cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true', getAllocations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
@@ -92,11 +92,11 @@ context('Allocate to activity', () => {
     const endDatePicker = endDatePage.getDatePicker()
     const endDate = addMonths(new Date(), 8)
     endDatePicker.enterDate(endDate)
-    endDatePage.continue()
+    endDatePage.saveAndContinue()
 
     const payBandPage = Page.verifyOnPage(PayBandPage)
     payBandPage.selectPayBand('Medium (£1.75)')
-    payBandPage.confirmPayAndContinue()
+    payBandPage.saveAndContinue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.cancel()

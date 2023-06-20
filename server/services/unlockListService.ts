@@ -4,7 +4,7 @@ import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
 import { ScheduledEvent } from '../@types/activitiesAPI/types'
-import { convertToTitleCase, toDateString } from '../utils/utils'
+import { toDateString } from '../utils/utils'
 
 export default class UnlockListService {
   constructor(
@@ -92,7 +92,6 @@ export default class UnlockListService {
 
       return {
         ...prisoner,
-        displayName: convertToTitleCase(`${prisoner.lastName}, ${prisoner.firstName}`),
         events: this.unlockListSort(allEventsForPrisoner),
       } as UnlockListItem
     })
