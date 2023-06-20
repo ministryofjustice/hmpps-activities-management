@@ -19,21 +19,18 @@ export default class StartJourneyRoutes {
     if (prisonNumber && typeof prisonNumber === 'string') {
       const { user } = res.locals
 
-      let prisoner
-      try {
-        prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumber, user)
-      } catch {
-        return res.redirect(`select-prisoner?query=${prisonNumber}`)
+      const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumber, user)
+          .catch(_ => null)
+       
+      if (!prisoner) return res.redirect(`select-prisoner?query=${prisonNumber}`)
+      const prisonerData = {
+        number: prisoner.prisonerNumber,
+        name: `${prisoner.firstName} ${prisoner.lastName}`,
+        cellLocation: prisoner.cellLocation,
       }
-      if (prisoner) {
-        const prisonerData = {
-          number: prisoner.prisonerNumber,
-          name: `${prisoner.firstName} ${prisoner.lastName}`,
-          cellLocation: prisoner.cellLocation,
-        }
-        req.session.appointmentJourney.prisoners = [prisonerData]
-        req.session.appointmentJourney.prisonNumber = prisonNumber
-        return res.redirect(`category`)
+      req.session.appointmentJourney.prisoners = [prisonerData]
+      req.session.appointmentJourney.prisonNumber = prisonNumber
+      return res.redirect(`category`)
       }
     }
     return res.redirect(`select-prisoner`)
