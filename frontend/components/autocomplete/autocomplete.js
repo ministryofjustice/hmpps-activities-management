@@ -10,6 +10,10 @@ function AutoComplete(meta) {
       showAllValues: true,
       preserveNullOptions: true,
     })
+
+    // By default accessible-autocomplete creates an input element with type="text".
+    // We want to use type="search" to enable the clear button (cross) on these inputs
+    document.querySelector('#' + el).setAttribute('type', 'search')
   })
 }
 

@@ -12,6 +12,14 @@
     width: 100%;
   }
 }
-.autocomplete__option {
-  font-family: Arial
+.autocomplete {
+  &__option {
+    font-family: Arial
+  }
+
+  &__input {
+    &--show-all-values {
+      padding: 5px;
+    }
+  }
 }
