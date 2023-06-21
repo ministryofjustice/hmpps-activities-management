@@ -49,68 +49,31 @@ describe('Schedule slots to day mapper', () => {
     expect(scheduleTimes).toEqual([
       {
         day: 'Monday',
-        slots: [
-          {
-            id: 123456,
-            startTime: '9:00',
-            endTime: '11:30',
-          },
-          {
-            id: 123457,
-            startTime: '13:00',
-            endTime: '16:30',
-          },
-          {
-            id: 123458,
-            startTime: '18:00',
-            endTime: '20:00',
-          },
-        ],
+        slots: ['am', 'pm', 'ed'],
       },
       {
         day: 'Tuesday',
-        slots: [
-          {
-            id: 123456,
-            startTime: '9:00',
-            endTime: '11:30',
-          },
-          {
-            id: 123457,
-            startTime: '13:00',
-            endTime: '16:30',
-          },
-        ],
+        slots: ['am', 'pm'],
       },
       {
         day: 'Wednesday',
-        slots: [
-          {
-            id: 123456,
-            startTime: '9:00',
-            endTime: '11:30',
-          },
-        ],
+        slots: ['am'],
       },
       {
         day: 'Thursday',
-        slots: [
-          {
-            id: 123457,
-            startTime: '13:00',
-            endTime: '16:30',
-          },
-        ],
+        slots: ['pm'],
+      },
+      {
+        day: 'Friday',
+        slots: [],
+      },
+      {
+        day: 'Saturday',
+        slots: [],
       },
       {
         day: 'Sunday',
-        slots: [
-          {
-            id: 123458,
-            startTime: '18:00',
-            endTime: '20:00',
-          },
-        ],
+        slots: ['ed'],
       },
     ])
   })
