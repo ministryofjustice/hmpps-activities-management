@@ -5,7 +5,7 @@ import UserService from '../../../services/userService'
 
 jest.mock('../../../services/userService')
 
-const userService = new UserService(null, null, null, null) as jest.Mocked<UserService>
+const userService = new UserService(null, null, null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Change location', () => {
   const handler = new ChangeLocationRoutes(userService)

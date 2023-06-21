@@ -13,13 +13,11 @@ import PrisonApiClient from './prisonApiClient'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
 import PrisonRegisterApiClient from './prisonRegisterApiClient'
 import ActivitiesApiClient from './activitiesApiClient'
-import NomisUserApiClient from './nomisUserApiClient'
 import IncentivesApiClient from './incentivesApiClient'
 
 export default function dataAccess() {
   return {
     hmppsAuthClient: new HmppsAuthClient(),
-    nomisUserApiClient: new NomisUserApiClient(),
     prisonApiClient: new PrisonApiClient(),
     prisonerSearchApiClient: new PrisonerSearchApiClient(),
     prisonRegisterApiClient: new PrisonRegisterApiClient(),

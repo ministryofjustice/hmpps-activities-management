@@ -3,6 +3,10 @@ import { PathParams } from 'express-serve-static-core'
 
 const production = process.env.NODE_ENV === 'production'
 
+const Roles = {
+  ACTIVITY_HUB: 'ROLE_ACTIVITY_HUB',
+}
+
 function get<T>(name: string, fallback: T, options = { requireInProduction: false }): T | string {
   if (process.env[name]) {
     return process.env[name]
@@ -105,14 +109,6 @@ export default {
       },
       agent: new AgentConfig(Number(get('PRISON_REGISTER_API_TIMEOUT_RESPONSE', 30000))),
     },
-    nomisUserApi: {
-      url: get('NOMIS_USER_API_URL', 'http://localhost:8080', requiredInProduction),
-      timeout: {
-        response: Number(get('NOMIS_USER_API_TIMEOUT_RESPONSE', 30000)),
-        deadline: Number(get('NOMIS_USER_API_TIMEOUT_DEADLINE', 30000)),
-      },
-      agent: new AgentConfig(Number(get('NOMIS_USER_API_TIMEOUT_RESPONSE', 30000))),
-    },
     incentivesApi: {
       url: get('INCENTIVES_API_URL', 'http://localhost:8080', requiredInProduction),
       timeout: {
@@ -126,12 +122,24 @@ export default {
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
   routeAuth: [
     {
-      route: '/allocate/activities',
-      roles: ['ACTIVITY_HUB'],
+      route: '/activities',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/allocation-dashboard',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/schedule',
+      roles: [Roles.ACTIVITY_HUB],
     },
     {
       route: '/create',
-      roles: ['ACTIVITY_HUB'],
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/change-of-circumstances',
+      roles: [Roles.ACTIVITY_HUB],
     },
   ] as RouteAuth[],
 }

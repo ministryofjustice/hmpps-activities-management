@@ -23,16 +23,18 @@
             }) }}
         </div>
 
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "ManageActivitiesAndAllocations",
-                "href": "/activities",
-                "clickable": "true",
-                "heading": "Manage activities and allocations",
-                "description": "Create and edit activities. Allocate people and edit allocations.",
-                "data-qa": "manage-activities-and-allocations"
-            }) }}
-        </div>
+        {% if 'ROLE_ACTIVITY_HUB' in user.roles %}
+            <div class="govuk-grid-column-one-third card-group__item">
+                {{ card({
+                    "id": "ManageActivitiesAndAllocations",
+                    "href": "/activities",
+                    "clickable": "true",
+                    "heading": "Manage activities and allocations",
+                    "description": "Create and edit activities. Allocate people and edit allocations.",
+                    "data-qa": "manage-activities-and-allocations"
+                }) }}
+            </div>
+        {% endif %}
 
         {% if user.isAppointmentsRolledOut %}
             <div class="govuk-grid-column-one-third card-group__item">

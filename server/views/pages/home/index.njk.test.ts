@@ -13,11 +13,10 @@ describe('Views - Home', () => {
 
   beforeEach(() => {
     compiledTemplate = nunjucks.compile(snippet.toString(), njkEnv)
-    viewContext = {}
+    viewContext = { user: { roles: ['ROLE_ACTIVITY_HUB'] } }
   })
 
   it('should always show the unlock list tile', () => {
-    viewContext = {}
     const $ = cheerio.load(compiledTemplate.render(viewContext))
     expect($('[data-qa=manage-unlock-lists]')).toHaveLength(1)
   })

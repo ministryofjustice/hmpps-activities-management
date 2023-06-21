@@ -6,17 +6,11 @@ import BankHolidayService from './bankHolidayService'
 import UnlockListService from './unlockListService'
 
 export default function services() {
-  const {
-    hmppsAuthClient,
-    nomisUserApiClient,
-    prisonApiClient,
-    prisonerSearchApiClient,
-    incentivesApiClient,
-    activitiesApiClient,
-  } = dataAccess()
+  const { hmppsAuthClient, prisonApiClient, prisonerSearchApiClient, incentivesApiClient, activitiesApiClient } =
+    dataAccess()
 
   return {
-    userService: new UserService(hmppsAuthClient, nomisUserApiClient, prisonApiClient, activitiesApiClient),
+    userService: new UserService(hmppsAuthClient, prisonApiClient, activitiesApiClient),
     prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient),
     activitiesService: new ActivitiesService(activitiesApiClient, prisonerSearchApiClient),
     ukBankHolidayService: new BankHolidayService(),

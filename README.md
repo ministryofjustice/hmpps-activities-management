@@ -75,7 +75,6 @@ PRISON_API_URL=https://api-dev.prison.service.justice.gov.uk
 PRISON_REGISTER_API_URL=https://prison-register-dev.hmpps.service.justice.gov.uk
 PRISONER_SEARCH_API_URL=https://prisoner-offender-search-dev.prison.service.justice.gov.uk
 WHEREABOUTS_API_URL=https://whereabouts-api-dev.service.justice.gov.uk
-NOMIS_USER_API_URL=https://nomis-user-dev.aks-dev-1.studio-hosting.service.justice.gov.uk
 INCENTIVES_API_URL=https://incentives-api-dev.hmpps.service.justice.gov.uk
 API_CLIENT_ID=<ask the team>
 API_CLIENT_SECRET=<ask the team>

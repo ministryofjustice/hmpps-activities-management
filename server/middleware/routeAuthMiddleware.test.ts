@@ -24,14 +24,10 @@ describe('authRoute', () => {
   it('should authorize user and call next if they have required role for route', () => {
     req.path = '/create/activity'
     res.locals.user = {
-      roles: [
-        {
-          code: 'ACTIVITY_HUB',
-        },
-      ],
+      roles: ['ROLE_ACTIVITY_HUB'],
     } as ServiceUser
 
-    authRole(['ACTIVITY_HUB'])(req, res, next)
+    authRole(['ROLE_ACTIVITY_HUB'])(req, res, next)
 
     expect(next).toBeCalledTimes(1)
   })
@@ -39,14 +35,10 @@ describe('authRoute', () => {
   it("should deny user if they don't have required role for route", () => {
     req.path = '/create/activity'
     res.locals.user = {
-      roles: [
-        {
-          code: 'ANOTHER_ROLE',
-        },
-      ],
+      roles: ['ANOTHER_ROLE'],
     } as ServiceUser
 
-    authRole(['ACTIVITY_HUB'])(req, res, next)
+    authRole(['ROLE_ACTIVITY_HUB'])(req, res, next)
 
     expect(res.render).toBeCalledWith(
       'pages/error',
