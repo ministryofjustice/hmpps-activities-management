@@ -105,14 +105,6 @@ export default {
       },
       agent: new AgentConfig(Number(get('PRISON_REGISTER_API_TIMEOUT_RESPONSE', 30000))),
     },
-    nomisUserApi: {
-      url: get('NOMIS_USER_API_URL', 'http://localhost:8080', requiredInProduction),
-      timeout: {
-        response: Number(get('NOMIS_USER_API_TIMEOUT_RESPONSE', 30000)),
-        deadline: Number(get('NOMIS_USER_API_TIMEOUT_DEADLINE', 30000)),
-      },
-      agent: new AgentConfig(Number(get('NOMIS_USER_API_TIMEOUT_RESPONSE', 30000))),
-    },
     incentivesApi: {
       url: get('INCENTIVES_API_URL', 'http://localhost:8080', requiredInProduction),
       timeout: {
