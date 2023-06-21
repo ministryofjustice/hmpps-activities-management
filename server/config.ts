@@ -124,14 +124,5 @@ export default {
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
-  routeAuth: [
-    {
-      route: '/allocate/activities',
-      roles: ['ACTIVITY_HUB'],
-    },
-    {
-      route: '/create',
-      roles: ['ACTIVITY_HUB'],
-    },
-  ] as RouteAuth[],
+  routeAuth: [] as RouteAuth[],
 }
