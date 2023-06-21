@@ -66,18 +66,13 @@ describe('Route Handlers - Edit allocation - End date', () => {
           isUnemployment: false,
           startDate: '2023-01-01',
           endDate: '2023-01-31',
-          payRate: {
+          prisonPayBand: {
             id: 1,
-            incentiveNomisCode: 'STD',
-            incentiveLevel: 'Standard',
-            prisonPayBand: {
-              id: 1,
-              displaySequence: 1,
-              alias: 'Low',
-              description: 'Low',
-              nomisPayBand: 1,
-              prisonCode: 'MDI',
-            },
+            displaySequence: 1,
+            alias: 'Low',
+            description: 'Low',
+            nomisPayBand: 1,
+            prisonCode: 'MDI',
           },
           status: 'ACTIVE',
         })
