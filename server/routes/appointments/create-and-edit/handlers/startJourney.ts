@@ -5,14 +5,33 @@ import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentRepeatPeriod, AppointmentApplyTo } from '../../../../@types/appointments'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import PrisonService from '../../../../services/prisonService'
 
 export default class StartJourneyRoutes {
+  constructor(private readonly prisonService: PrisonService) {}
+
   INDIVIDUAL = async (req: Request, res: Response): Promise<void> => {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.INDIVIDUAL,
     }
-    res.redirect(`select-prisoner`)
+    const { prisonNumber } = req.query
+    if (prisonNumber && typeof prisonNumber === 'string') {
+      const { user } = res.locals
+
+      const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumber, user).catch(_ => null)
+
+      if (!prisoner) return res.redirect(`select-prisoner?query=${prisonNumber}`)
+      const prisonerData = {
+        number: prisoner.prisonerNumber,
+        name: `${prisoner.firstName} ${prisoner.lastName}`,
+        cellLocation: prisoner.cellLocation,
+      }
+      req.session.appointmentJourney.prisoners = [prisonerData]
+      req.session.appointmentJourney.fromPrisonNumberProfile = prisonNumber
+      return res.redirect(`category`)
+    }
+    return res.redirect(`select-prisoner`)
   }
 
   GROUP = async (req: Request, res: Response): Promise<void> => {
