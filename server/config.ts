@@ -3,6 +3,10 @@ import { PathParams } from 'express-serve-static-core'
 
 const production = process.env.NODE_ENV === 'production'
 
+const Roles = {
+  ACTIVITY_HUB: 'ROLE_ACTIVITY_HUB',
+}
+
 function get<T>(name: string, fallback: T, options = { requireInProduction: false }): T | string {
   if (process.env[name]) {
     return process.env[name]
@@ -116,5 +120,26 @@ export default {
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
-  routeAuth: [] as RouteAuth[],
+  routeAuth: [
+    {
+      route: '/activities',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/allocation-dashboard',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/schedule',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/create',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/change-of-circumstances',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+  ] as RouteAuth[],
 }

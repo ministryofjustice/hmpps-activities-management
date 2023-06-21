@@ -41,7 +41,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
   app.use(setUpAuthentication())
-  app.use(authorisationMiddleware(['ROLE_ACTIVITY_HUB']))
+  app.use(authorisationMiddleware())
   app.use(setUpSuccessMessages())
   app.use(setUpChangeLinks())
   app.use(setUpCsrf())
