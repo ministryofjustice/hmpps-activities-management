@@ -98,23 +98,25 @@
             <p class="govuk-body">Check if {{ session.allocateJourney.inmate.prisonerName }}'s current allocation would be compatible with {{ session.allocateJourney.activity.name }}.</p>
 
             <div class="govuk-!-margin-bottom-8 govuk-body">
-                {% if prisonerAllocations %}
+                {% if allocationSuitability.allocations %}
                     {% set currentAllocations = [] %}
-                    {% for prisonerAllocation in prisonerAllocations %}
-                        {% set currentAllocations = (currentAllocations.push([
-                            {
-                                text: prisonerAllocation.activitySummary
-                            },
-                            {
-                                text: prisonerAllocation.startDate | formatDate('dd MMMM yyyy')
-                            },
-                            {
-                                text: prisonerAllocation.endDate | formatDate('dd MMMM yyyy') if prisonerAllocation.endDate else "None set"
-                            },
-                            {
-                                text: prisonerAllocation.payRate.rate | toMoney + " (" + prisonerAllocation.payRate.prisonPayBand.description + ")"
-                            }
-                        ]), currentAllocations) %}
+                    {% for prisonerAllocation in allocationSuitability.allocations %}
+                        {% if prisonerAllocation.allocation.status != "ENDED" %}
+                            {% set currentAllocations = (currentAllocations.push([
+                                {
+                                    text: prisonerAllocation.allocation.activitySummary
+                                },
+                                {
+                                    text: prisonerAllocation.allocation.startDate | formatDate('dd MMMM yyyy')
+                                },
+                                {
+                                    text: prisonerAllocation.allocation.endDate | formatDate('dd MMMM yyyy') if prisonerAllocation.allocation.endDate else "None set"
+                                },
+                                {
+                                    text: prisonerAllocation.payRate.rate | toMoney + " (" + prisonerAllocation.allocation.prisonPayBand.alias + ")"
+                                }
+                            ]), currentAllocations) %}
+                        {% endif %}
                     {% endfor %}
 
                     {{ govukTable({

@@ -71,9 +71,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               prisonerNumber: 'ABC123',
               bookingId: 1,
               activitySummary: 'Maths Level 1',
-              payRate: {
-                prisonPayBand: { id: 1, alias: 'Low' },
-              },
+              prisonPayBand: { id: 1, alias: 'Low' },
             },
           ],
         } as unknown as ActivitySchedule)
@@ -133,9 +131,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           prisonerNumber: 'ABC123',
           bookingId: 1,
           activitySummary: 'Maths Level 1',
-          payRate: {
-            prisonPayBand: { id: 1, alias: 'Low' },
-          },
+          prisonPayBand: { id: 1, alias: 'Low' },
         },
         isOnlyPay: true,
         isStarted: false,
