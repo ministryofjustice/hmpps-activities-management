@@ -32,6 +32,9 @@ export default class BankHolidayOptionRoutes {
       const returnTo = `/schedule/activities/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
-    } else res.redirectOrReturn(`location`)
+    }
+    // If the location has already been set, skip the location page
+    else if (req.session.createJourney.inCell) res.redirectOrReturn('capacity')
+    else res.redirectOrReturn('location')
   }
 }
