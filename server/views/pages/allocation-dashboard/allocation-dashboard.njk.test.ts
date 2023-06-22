@@ -19,11 +19,11 @@ describe('Views - Allocation dashboard', () => {
     viewContext = {
       suitableForIep: 'Basic, Enhanced',
       incentiveLevels: [
-        { iepDescription: 'Basic' },
-        { iepDescription: 'Standard' },
-        { iepDescription: 'Enhanced' },
-        { iepDescription: 'Enhanced 2' },
-        { iepDescription: 'Enhanced 3' },
+        { levelName: 'Basic' },
+        { levelName: 'Standard' },
+        { levelName: 'Enhanced' },
+        { levelName: 'Enhanced 2' },
+        { levelName: 'Enhanced 3' },
       ],
     }
 

@@ -36,7 +36,7 @@ export default class IncentiveLevelPayMappingUtil {
       .map((value: unknown[], key: string) => ({
         incentiveLevel: key,
         pays: _.sortBy(value, 'displaySequence'),
-        sequence: incentiveLevels.find(iep => iep.iepDescription === key)?.sequence,
+        sequence: incentiveLevels.findIndex(iep => iep.levelName === key),
       }))
       .sortBy('sequence')
       .map(

@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import _ from 'lodash'
 import PrisonService from '../../../services/prisonService'
 import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 import { ActivityUpdateRequest } from '../../../@types/activitiesAPI/types'
@@ -31,11 +30,10 @@ export default class CheckPayRoutes {
 
     const minimumIncentiveLevel = await this.prisonService
       .getIncentiveLevels(user.activeCaseLoadId, user)
-      .then(levels => _.sortBy(levels, 'sequence'))
-      .then(levels => levels.find(l => pay.find(p => p.incentiveLevel === l.iepDescription) || flat.length))
+      .then(levels => levels.find(l => pay.find(p => p.incentiveLevel === l.levelName) || flat.length))
 
-    req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.iepLevel
-    req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.iepDescription
+    req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.levelCode
+    req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.levelName
 
     if (req.query && req.query.fromEditActivity) {
       const { activityId } = req.session.createJourney
@@ -55,8 +53,8 @@ export default class CheckPayRoutes {
         req.session.createJourney.flat.forEach(flatRate => {
           incentiveLevels.forEach(iep =>
             activity.pay.push({
-              incentiveNomisCode: iep.iepLevel,
-              incentiveLevel: iep.iepDescription,
+              incentiveNomisCode: iep.levelCode,
+              incentiveLevel: iep.levelName,
               payBandId: flatRate.bandId,
               rate: flatRate.rate,
             }),

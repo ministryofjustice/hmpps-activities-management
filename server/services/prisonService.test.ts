@@ -8,8 +8,8 @@ import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prison
 import { ServiceUser } from '../@types/express'
 import activityLocations from './fixtures/activity_locations_1.json'
 import IncentivesApiClient from '../data/incentivesApiClient'
-import { IepLevel } from '../@types/incentivesApi/types'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
+import { IncentiveLevel } from '../@types/incentivesApi/types'
 
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -40,20 +40,13 @@ describe('Prison Service', () => {
 
   describe('getIncentiveLevels', () => {
     it('should get the prisons incentive levels from incentives API', async () => {
-      const apiResponse = [
-        { id: 1, active: false },
-        { id: 2, active: true, sequence: 1 },
-        { id: 3, active: true, sequence: 0 },
-      ] as unknown as IepLevel[]
+      const apiResponse = [{ id: 1, active: false }] as unknown as IncentiveLevel[]
 
       when(incentivesApiClient.getIncentiveLevels).calledWith(atLeast('MDI')).mockResolvedValue(apiResponse)
 
       const actualResult = await prisonService.getIncentiveLevels('MDI', user)
 
-      expect(actualResult).toEqual([
-        { id: 3, active: true, sequence: 0 },
-        { id: 2, active: true, sequence: 1 },
-      ])
+      expect(actualResult).toEqual([{ id: 1, active: false }])
       expect(incentivesApiClient.getIncentiveLevels).toHaveBeenCalledWith('MDI', user)
     })
   })

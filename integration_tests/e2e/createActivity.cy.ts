@@ -37,7 +37,7 @@ context('Create activity', () => {
     cy.signIn()
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
-    cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
+    cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/EDU_LEVEL/codes', educationLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/STUDY_AREA/codes', studyAreas)
     cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)

@@ -10,7 +10,7 @@ import atLeast from '../../../../jest.setup'
 import { Activity, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../utils/utils'
-import { IepLevel, IepSummary } from '../../../@types/incentivesApi/types'
+import { IepSummary, IncentiveLevel } from '../../../@types/incentivesApi/types'
 
 jest.mock('../../../services/prisonService')
 jest.mock('../../../services/activitiesService')
@@ -61,10 +61,10 @@ describe('Route Handlers - Allocation dashboard', () => {
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValue([
-          { sequence: 0, iepLevel: 'BAS', iepDescription: 'Basic' },
-          { sequence: 1, iepLevel: 'STD', iepDescription: 'Standard' },
-          { sequence: 2, iepLevel: 'ENH', iepDescription: 'Enhanced' },
-        ] as IepLevel[])
+          { levelCode: 'BAS', levelName: 'Basic' },
+          { levelCode: 'STD', levelName: 'Standard' },
+          { levelCode: 'ENH', levelName: 'Enhanced' },
+        ] as IncentiveLevel[])
       when(activitiesService.getAllocations)
         .calledWith(atLeast(1))
         .mockResolvedValue([
@@ -184,9 +184,9 @@ describe('Route Handlers - Allocation dashboard', () => {
           ],
         },
         incentiveLevels: [
-          { sequence: 0, iepLevel: 'BAS', iepDescription: 'Basic' },
-          { sequence: 1, iepLevel: 'STD', iepDescription: 'Standard' },
-          { sequence: 2, iepLevel: 'ENH', iepDescription: 'Enhanced' },
+          { levelCode: 'BAS', levelName: 'Basic' },
+          { levelCode: 'STD', levelName: 'Standard' },
+          { levelCode: 'ENH', levelName: 'Enhanced' },
         ],
         filters: {
           candidateQuery: 'jack',

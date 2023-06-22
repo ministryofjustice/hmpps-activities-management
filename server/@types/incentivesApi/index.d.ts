@@ -13,12 +13,100 @@ export interface paths {
   '/queue-admin/purge-queue/{queueName}': {
     put: operations['purgeQueue']
   }
-  '/iep/sync/booking/{bookingId}': {
+  '/incentive/prison-levels/{prisonId}/reset': {
     /**
-     * Synchronise (NOMIS -> Incentives) an IEP Review for this specific prisoner by booking Id
-     * @description Booking ID is an internal ID for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
+     * Reset all incentive levels for a prison
+     * @description Activates the required set of levels, ensuring that Standard is the default level for admission. This can be used when a new prison is opened. Any levels that are already active will remain active and associated information remains unchanged. Returns all incentive levels in this prison including those that were already active.
+     *
+     * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+     *
+     * Raises HMPPS domain events: "incentives.prison-level.changed"
      */
-    post: operations['syncPostIepReview']
+    put: operations['resetPrisonIncentiveLevels']
+  }
+  '/incentive/prison-levels/{prisonId}/level/{levelCode}': {
+    /**
+     * Returns an incentive level in this prison along with associated information
+     * @description Note that it may be inactive in the prison. For the majority of use cases, inactive levels in a prison should be ignored.
+     */
+    get: operations['getPrisonIncentiveLevel']
+    /**
+     * Updates prison incentive level information
+     * @description Payload must include all required fields. Deactivating a level is only possible if there are no prisoners currently on it.
+     *
+     * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+     *
+     * Raises HMPPS domain event: "incentives.prison-level.changed"
+     */
+    put: operations['updatePrisonIncentiveLevel']
+    /**
+     * Deactivate an incentive level for a prison
+     * @description Deactivating a level is only possible if there are no prisoners currently on it.
+     *
+     * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+     *
+     * Raises HMPPS domain event: "incentives.prison-level.changed"
+     */
+    delete: operations['deactivatePrisonIncentiveLevel']
+    /**
+     * Updates prison incentive level information
+     * @description Partial updates are allowed. Deactivating a level is only possible if there are no prisoners currently on it.
+     *
+     * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+     *
+     * Raises HMPPS domain event: "incentives.prison-level.changed"
+     */
+    patch: operations['partiallyUpdatePrisonIncentiveLevel']
+  }
+  '/incentive/levels/{code}': {
+    /**
+     * Returns an incentive level by code
+     * @description Note that it may be inactive. For the majority of use cases, inactive levels in a prison should be ignored.
+     */
+    get: operations['getIncentiveLevel']
+    /**
+     * Updates an incentive level
+     * @description Payload must include all required fields. A level marked as required must also be active. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
+     *
+     * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+     *
+     * Raises HMPPS domain event: "incentives.level.changed"
+     */
+    put: operations['updateIncentiveLevel']
+    /**
+     * Deactivates an incentive level
+     * @description A required level cannot be deactivated, needs to be updated first to be not required. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
+     *
+     * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+     *
+     * Raises HMPPS domain event: "incentives.level.changed"
+     */
+    delete: operations['deactivateIncentiveLevel']
+    /**
+     * Updates an incentive level
+     * @description Partial updates are allowed. A level marked as required must also be active. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
+     *
+     * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+     *
+     * Raises HMPPS domain event: "incentives.level.changed"
+     */
+    patch: operations['partiallyUpdateIncentiveLevel']
+  }
+  '/incentive/levels': {
+    /**
+     * Lists all incentive levels, optionally including inactive ones
+     * @description For the majority of use cases, inactive levels in a prison should be ignored.
+     */
+    get: operations['getIncentiveLevels']
+    /**
+     * Creates a new incentive level
+     * @description New incentive levels are added to the end of the list.
+     *
+     * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+     *
+     * Raises HMPPS domain event: "incentives.level.changed"
+     */
+    post: operations['createIncentiveLevel']
   }
   '/iep/reviews/prisoner/{prisonerNumber}': {
     /**
@@ -48,41 +136,42 @@ export interface paths {
      */
     post: operations['addIepReview_1']
   }
-  '/iep/migration/booking/{bookingId}': {
+  '/incentive/level-order': {
     /**
-     * Migrates an IEP Review for this specific prisoner by booking Id
-     * @description Booking ID is an internal ID for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
+     * Sets the order of incentive levels
+     * @description All existing incentive level codes must be provided.
+     *
+     * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+     *
+     * Raises HMPPS domain event: "incentives.levels.reordered"
      */
-    post: operations['migrateIepReview']
-  }
-  '/iep/sync/booking/{bookingId}/id/{id}': {
-    /**
-     * Deletes an existing IEP review for this specific prisoner by booking Id
-     * @description Booking ID is an internal ID for a prisoner in NOMIS, ID is the ID of the IEP review. Requires MAINTAIN_IEP role and write scope
-     */
-    delete: operations['syncDeleteIepReview']
-    /**
-     * Update an existing IEP review for this specific prisoner by booking Id
-     * @description Booking ID is an internal ID for a prisoner in NOMIS, ID is the ID of the IEP review. Requires MAINTAIN_IEP role and write scope
-     */
-    patch: operations['syncPatchIepReview']
+    patch: operations['setOrderOfIncentiveLevels']
   }
   '/queue-admin/get-dlq-messages/{dlqName}': {
     get: operations['getDlqMessages']
   }
-  '/incentives-summary/prison/{prisonId}/location/{locationId}': {
-    /**
-     * Summaries IEP Incentive information at a specific location within a prison
-     * @description location should be a Wing, Landing or Cell
-     */
-    get: operations['getIncentiveSummary']
-  }
   '/incentives-reviews/prison/{prisonId}/location/{cellLocationPrefix}/level/{levelCode}': {
     /**
      * List of incentive review information for a given location within a prison and on a given level
-     * @description location should be a cell ID prefix like `MDI-1`
+     * @description Location should be a cell ID prefix like `MDI-1`
      */
     get: operations['getReviews']
+  }
+  '/incentive/prison-levels/{prisonId}': {
+    /**
+     * Lists incentive levels in this prison along with associated information, optionally including inactive ones
+     * @description Inactive incentive levels in the prison were previously active at some point. Not all global inactive incentive levels are necessarily included. For the majority of use cases, inactive levels in a prison should be ignored.
+     */
+    get: operations['getPrisonIncentiveLevels']
+    /**
+     * Deactivate all incentive levels for a prison
+     * @description This can be used when a prison closes. Returns all incentive levels in this prison including those that were already inactive. Deactivating a level is only possible if there are no prisoners currently on it.
+     *
+     * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+     *
+     * Raises HMPPS domain events: "incentives.prison-level.changed"
+     */
+    delete: operations['deactivateAllPrisonIncentiveLevels']
   }
   '/iep/reviews/id/{id}': {
     /** Returns a specified IEP Review */
@@ -90,10 +179,11 @@ export interface paths {
   }
   '/iep/levels/{prisonId}': {
     /**
-     * Returns the valid IEP levels for specified prison
-     * @description prison ID should be a 3 character string e.g. MDI = Moorland
+     * Lists active incentive levels in this prison
+     * @deprecated
+     * @description Not all globally active incentive levels will necessarily be included
      */
-    get: operations['getPrisonIepLevels']
+    get: operations['getPrisonIncentiveLevels_1']
   }
 }
 
@@ -101,105 +191,139 @@ export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
-    Message: {
-      messageId?: string
-      receiptHandle?: string
-      body?: string
-      attributes?: {
-        [key: string]: string | undefined
+    DlqMessage: {
+      body: {
+        [key: string]: Record<string, never> | undefined
       }
-      messageAttributes?: {
-        [key: string]: components['schemas']['MessageAttributeValue'] | undefined
-      }
-      md5OfBody?: string
-      md5OfMessageAttributes?: string
-    }
-    MessageAttributeValue: {
-      stringValue?: string
-      binaryValue?: {
-        /** Format: int32 */
-        short?: number
-        char?: string
-        /** Format: int32 */
-        int?: number
-        /** Format: int64 */
-        long?: number
-        /** Format: float */
-        float?: number
-        /** Format: double */
-        double?: number
-        direct?: boolean
-        readOnly?: boolean
-      }
-      stringListValues?: string[]
-      binaryListValues?: {
-        /** Format: int32 */
-        short?: number
-        char?: string
-        /** Format: int32 */
-        int?: number
-        /** Format: int64 */
-        long?: number
-        /** Format: float */
-        float?: number
-        /** Format: double */
-        double?: number
-        direct?: boolean
-        readOnly?: boolean
-      }[]
-      dataType?: string
+      messageId: string
     }
     RetryDlqResult: {
       /** Format: int32 */
       messagesFoundCount: number
-      messages: components['schemas']['Message'][]
+      messages: components['schemas']['DlqMessage'][]
     }
     PurgeQueueResult: {
       /** Format: int32 */
       messagesFoundCount: number
     }
-    /** @description Error Response */
+    /** @description Error response */
     ErrorResponse: {
       /**
        * Format: int32
-       * @description Status of Error
+       * @description HTTP status code
        * @example 500
        */
       status: number
       /**
        * Format: int32
-       * @description Error Code
-       * @example 500
+       * @description When present, uniquely identifies the type of error making it easier for clients to discriminate without relying on error description; see `uk.gov.justice.digital.hmpps.incentivesapi.config.ErrorResponse` enumeration in hmpps-incentives-api
+       * @example 123
        */
       errorCode?: number
       /**
-       * @description User Message of error
-       * @example Bad Data
+       * @description User message for the error
+       * @example No incentive level found for code `ABC`
        */
       userMessage?: string
       /**
        * @description More detailed error message
-       * @example This is a stack trace
+       * @example [Details, sometimes a stack trace]
        */
       developerMessage?: string
       /**
        * @description More information about the error
-       * @example More info
+       * @example [Rarely used, error-specific]
        */
       moreInfo?: string
     }
-    /** @description IEP Review */
-    SyncPostRequest: {
+    Unit: Record<string, never>
+    PrisonIncentiveLevel: {
       /**
-       * @description Date and time when the review took place
-       * @example 2021-07-05T10:35:17
+       * @description The incentive level code this refers to
+       * @example STD
        */
-      iepTime: string
+      levelCode: string
+      levelName: string
       /**
-       * @description Prison ID
+       * @description The prison this refers to
        * @example MDI
        */
       prisonId: string
+      /**
+       * @description Indicates that this incentive level is enabled in this prison
+       * @default true
+       * @example true
+       */
+      active: boolean
+      /**
+       * @description Indicates that this incentive level is the default for new admissions
+       * @default false
+       * @example true
+       */
+      defaultOnAdmission: boolean
+      /**
+       * Format: int32
+       * @description The amount transferred weekly from the private cash account to the spends account for a remand prisoner to use
+       * @example 5500
+       */
+      remandTransferLimitInPence: number
+      /**
+       * Format: int32
+       * @description The maximum amount allowed in the spends account for a remand prisoner
+       * @example 55000
+       */
+      remandSpendLimitInPence: number
+      /**
+       * Format: int32
+       * @description The amount transferred weekly from the private cash account to the spends account for a convicted prisoner to use
+       * @example 1800
+       */
+      convictedTransferLimitInPence: number
+      /**
+       * Format: int32
+       * @description The maximum amount allowed in the spends account for a convicted prisoner
+       * @example 18000
+       */
+      convictedSpendLimitInPence: number
+      /**
+       * Format: int32
+       * @description The number of weekday visits for a convicted prisoner per fortnight
+       * @example 2
+       */
+      visitOrders: number
+      /**
+       * Format: int32
+       * @description The number of privileged/weekend visits for a convicted prisoner per 4 weeks
+       * @example 1
+       */
+      privilegedVisitOrders: number
+    }
+    IncentiveLevel: {
+      /**
+       * @description Unique id for the incentive level
+       * @example STD
+       */
+      levelCode: string
+      /**
+       * @description Name of the incentive level
+       * @example Standard
+       */
+      levelName: string
+      /**
+       * @description Indicates that the incentive level is active; inactive levels are historic levels no longer in use
+       * @default true
+       * @example true
+       */
+      active: boolean
+      /**
+       * @description Indicates that all prisons must have this level active
+       * @default false
+       * @example true
+       */
+      required: boolean
+    }
+    /** @description IEP Review */
+    IepReview: {
       /**
        * @description IEP Level
        * @example STD
@@ -210,23 +334,14 @@ export interface components {
        * @description Comment about review
        * @example A review took place
        */
-      comment?: string
-      /**
-       * @description NOMIS User Id who performed the review
-       * @example USER_1_GEN
-       */
-      userId?: string
+      comment: string
       /**
        * @description Review Type
+       * @default REVIEW
        * @example REVIEW
        * @enum {string}
        */
-      reviewType: 'INITIAL' | 'REVIEW' | 'TRANSFER' | 'MIGRATED' | 'READMISSION'
-      /**
-       * @description Flag to indicate this is the current review for the prisoner
-       * @example true
-       */
-      current: boolean
+      reviewType?: 'INITIAL' | 'REVIEW' | 'TRANSFER' | 'MIGRATED' | 'READMISSION'
     }
     /** @description Detail IEP review details */
     IepDetail: {
@@ -235,7 +350,7 @@ export interface components {
        * @description Unique ID for this review (new Incentives data model only)
        * @example 12345
        */
-      id?: number
+      id: number
       /**
        * @description IEP Level
        * @example Standard
@@ -245,7 +360,7 @@ export interface components {
        * @description IEP Code
        * @example STD
        */
-      iepCode?: string
+      iepCode: string
       /**
        * @description Review comments
        * @example A review took place
@@ -255,7 +370,7 @@ export interface components {
        * @description Prisoner number (NOMS)
        * @example A1234BC
        */
-      prisonerNumber?: string
+      prisonerNumber: string
       /**
        * Format: int64
        * @description Booking ID
@@ -299,28 +414,7 @@ export interface components {
        * @example INCENTIVES_API
        */
       auditModuleName: string
-      realReview: boolean
-    }
-    /** @description IEP Review */
-    IepReview: {
-      /**
-       * @description IEP Level
-       * @example STD
-       * @enum {string}
-       */
-      iepLevel: 'BAS' | 'STD' | 'ENH' | 'EN2' | 'EN3'
-      /**
-       * @description Comment about review
-       * @example A review took place
-       */
-      comment: string
-      /**
-       * @description Review Type
-       * @default REVIEW
-       * @example REVIEW
-       * @enum {string}
-       */
-      reviewType?: 'INITIAL' | 'REVIEW' | 'TRANSFER' | 'MIGRATED' | 'READMISSION'
+      isRealReview: boolean
     }
     /** @description Current IEP Level */
     CurrentIepLevel: {
@@ -336,29 +430,70 @@ export interface components {
        */
       iepLevel: string
     }
-    /** @description IEP Review changes */
-    SyncPatchRequest: {
+    PrisonIncentiveLevelUpdate: {
       /**
-       * @description Date and time when the review took place
-       * @example 2021-07-05T10:35:17
-       */
-      iepTime?: string
-      /**
-       * @description Comment about review
-       * @example A review took place
-       */
-      comment?: string
-      /**
-       * @description Flag to indicate this is the current review for the prisoner
+       * @description Indicates that this incentive level is enabled in this prison
        * @example true
        */
-      current?: boolean
+      active?: boolean
+      /**
+       * @description Indicates that this incentive level is the default for new admissions
+       * @example true
+       */
+      defaultOnAdmission?: boolean
+      /**
+       * Format: int32
+       * @description The amount transferred weekly from the private cash account to the spends account for a remand prisoner to use
+       * @example 5500
+       */
+      remandTransferLimitInPence?: number
+      /**
+       * Format: int32
+       * @description The maximum amount allowed in the spends account for a remand prisoner
+       * @example 55000
+       */
+      remandSpendLimitInPence?: number
+      /**
+       * Format: int32
+       * @description The amount transferred weekly from the private cash account to the spends account for a convicted prisoner to use
+       * @example 1800
+       */
+      convictedTransferLimitInPence?: number
+      /**
+       * Format: int32
+       * @description The maximum amount allowed in the spends account for a convicted prisoner
+       * @example 18000
+       */
+      convictedSpendLimitInPence?: number
+      /**
+       * Format: int32
+       * @description The number of weekday visits for a convicted prisoner per fortnight
+       * @example 2
+       */
+      visitOrders?: number
+      /**
+       * Format: int32
+       * @description The number of privileged/weekend visits for a convicted prisoner per 4 weeks
+       * @example 1
+       */
+      privilegedVisitOrders?: number
     }
-    DlqMessage: {
-      body: {
-        [key: string]: Record<string, never> | undefined
-      }
-      messageId: string
+    IncentiveLevelUpdate: {
+      /**
+       * @description Name of the incentive level
+       * @example Standard
+       */
+      name?: string
+      /**
+       * @description Indicates that the incentive level is active; inactive levels are historic levels no longer in use
+       * @example true
+       */
+      active?: boolean
+      /**
+       * @description Indicates that all prisons must have this level active
+       * @example true
+       */
+      required?: boolean
     }
     GetDlqResult: {
       /** Format: int32 */
@@ -366,154 +501,6 @@ export interface components {
       /** Format: int32 */
       messagesReturnedCount: number
       messages: components['schemas']['DlqMessage'][]
-    }
-    BehaviourSummary: {
-      /**
-       * @description Prison Id
-       * @example MDI
-       */
-      prisonId: string
-      /**
-       * @description Location within the prison
-       * @example 1
-       */
-      locationId: string
-      /**
-       * @description Location within the prison description
-       * @example Houseblock 1
-       */
-      locationDescription: string
-      /** @description Breakdown of behaviours at this location by IEP level */
-      incentiveLevelSummary: components['schemas']['IncentiveLevelSummary'][]
-      /**
-       * Format: int32
-       * @description Total count of just the negative case note behaviour entries recorded of the sub type  <em>Incentive Warning</em> for this location
-       * @example 14
-       */
-      totalIncentiveWarnings: number
-      /**
-       * Format: int32
-       * @description Average number of days a prisoner at this location has been on their current level
-       * @example 234
-       */
-      averageDaysOnLevel: number
-      /**
-       * Format: int32
-       * @description Total count of all the positive case note behaviour entries recorded for this location
-       * @example 20
-       */
-      totalPositiveBehaviours: number
-      /**
-       * Format: int32
-       * @description Average number time in days a prisoner at this location had their last review
-       * @example 50
-       */
-      averageDaysSinceLastReview: number
-      /**
-       * Format: int32
-       * @description Total count of all the negative case note behaviour entries recorded for this location
-       * @example 35
-       */
-      totalNegativeBehaviours: number
-      /**
-       * Format: int32
-       * @description Total count of just the positive case note behaviour entries recorded of the sub type <em>Incentive Encouragements</em> for this location
-       * @example 6
-       */
-      totalIncentiveEncouragements: number
-      /**
-       * Format: int32
-       * @description Total number of prisoners at this location
-       * @example 150
-       */
-      totalNumberOfPrisoners: number
-    }
-    /** @description Breakdown of behaviours at this location by IEP level */
-    IncentiveLevelSummary: {
-      /**
-       * @description IEP Level Code
-       * @example STD
-       */
-      level: string
-      /**
-       * @description IEP level description
-       * @example Standard
-       */
-      levelDescription: string
-      /** @description List of all prisoners at this location at this IEP level */
-      prisonerBehaviours: components['schemas']['PrisonerIncentiveSummary'][]
-      /**
-       * Format: int32
-       * @description Number of prisoners at this IEP level
-       * @example 70
-       */
-      numberAtThisLevel: number
-    }
-    /** @description List of all prisoners at this location at this IEP level */
-    PrisonerIncentiveSummary: {
-      /**
-       * @description Prisoner Number - Often called NOMS Number/ID
-       * @example A1234BC
-       */
-      prisonerNumber: string
-      /**
-       * Format: int64
-       * @description Internal reference for a period in prison (Not to be confused with the BOOK or Book Number)
-       * @example 1234567
-       */
-      bookingId: number
-      /**
-       * @description Prisoners First Name
-       * @example John
-       */
-      firstName: string
-      /**
-       * @description Prisoners Last Name
-       * @example Smith
-       */
-      lastName: string
-      /**
-       * Format: int32
-       * @description Calculated attribute that determines the number of days the prisoner has been on their current IEP level for their current offender booking. Historical data for a prisoner IEP reviews is only available via the prison API on a per prisoner, prison or prison location (i.e Wing) basis.
-       * @example 10
-       */
-      daysOnLevel: number
-      /**
-       * Format: int32
-       * @description A simple calculation using the current date and calculating the number of elapsed days since the date of the prisoners last IEP review. <br/>Note: Assumption that if an IEP record exist in NOMIS then an IEP review has taken place
-       * @example 50
-       */
-      daysSinceLastReview: number
-      /**
-       * Format: int32
-       * @description Count of all the positive case note behaviour entries recorded
-       * @example 7
-       */
-      positiveBehaviours: number
-      /**
-       * Format: int32
-       * @description Count of just the positive case note behaviour entries recorded of the sub type <em>Incentive Encouragements</em
-       * @example 1
-       */
-      incentiveEncouragements: number
-      /**
-       * Format: int32
-       * @description Count of all the negative case note behaviour entries recorded
-       * @example 5
-       */
-      negativeBehaviours: number
-      /**
-       * Format: int32
-       * @description Count of just the negative case note behaviour entries recorded of the sub type  <em>Incentive Warning</em>
-       * @example 2
-       */
-      incentiveWarnings: number
-      /**
-       * Format: int32
-       * @description A count of the proven adjudications for the offender at the current prison where the hearing result is <em>PROVEN</em>
-       * @example 14
-       */
-      provenAdjudications: number
     }
     /** @description Incentive review information for a prisoner */
     IncentiveReview: {
@@ -561,28 +548,54 @@ export interface components {
        */
       hasAcctOpen: boolean
       /**
+       * @description Whether the prisoner is new to prison, i.e. has never had an incentive review in person
+       * @example false
+       */
+      isNewToPrison: boolean
+      /**
+       * Format: int32
+       * @description Days since last review, null when no real review has taken place
+       * @example 45
+       */
+      daysSinceLastReview?: number
+      /**
        * Format: date
        * @description Date of next review
        * @example 2022-12-31
        */
       nextReviewDate: string
     }
-    /** @description Incentive reviews list for prisoners at a given location */
-    IncentiveReviewResponse: {
-      /** @description Prisoner incentive reviews */
-      reviews: components['schemas']['IncentiveReview'][]
+    /** @description An Incentive level available at the given location, with the total and overdue number of prisoners at this level */
+    IncentiveReviewLevel: {
+      /**
+       * @description Level code
+       * @example STD
+       */
+      levelCode: string
+      /**
+       * @description Level name
+       * @example Standard
+       */
+      levelName: string
       /**
        * Format: int32
-       * @description Total number of reviews at given location
-       * @example 102
+       * @description Number of prisoners at this level
+       * @example 72
        */
       reviewCount: number
       /**
        * Format: int32
-       * @description Total number of overdue prisoner reviews at given location
-       * @example 102
+       * @description Number of overdue prisoners at this level
+       * @example 10
        */
       overdueCount: number
+    }
+    /** @description Incentive reviews list for prisoners at a given location */
+    IncentiveReviewResponse: {
+      /** @description List of levels available at the given location, with the total and overdue number of prisoners at each level */
+      levels: components['schemas']['IncentiveReviewLevel'][]
+      /** @description Prisoner incentive reviews */
+      reviews: components['schemas']['IncentiveReview'][]
       /**
        * @description Description of given location
        * @example Houseblock 1
@@ -596,7 +609,12 @@ export interface components {
        * @description Unique ID for this review (new Incentives data model only)
        * @example 12345
        */
-      id?: number
+      id: number
+      /**
+       * @description IEP Code
+       * @example STD
+       */
+      iepCode: string
       /**
        * @description IEP Level
        * @example Standard
@@ -606,7 +624,7 @@ export interface components {
        * @description Prisoner number (NOMS)
        * @example A1234BC
        */
-      prisonerNumber?: string
+      prisonerNumber: string
       /**
        * Format: int64
        * @description Booking ID
@@ -636,7 +654,7 @@ export interface components {
        * @description Date of next review
        * @example 2022-12-31
        */
-      nextReviewDate?: string
+      nextReviewDate: string
       /**
        * Format: int32
        * @description Days since last review
@@ -644,30 +662,32 @@ export interface components {
        */
       daysSinceReview: number
     }
-    IepLevel: {
+    LegacyPrisonIncentiveLevel: {
       /**
-       * @description IEP Code for an IEP level
+       * @description Code for this incentive level level
        * @example STD
        */
       iepLevel: string
       /**
-       * @description Description of the IEP Level
+       * @description The name of this incentive level
        * @example Standard
        */
       iepDescription: string
       /**
        * Format: int32
-       * @description Sequence to display the IEP Levels for this prison in LOV or other tables
+       * @description Order in which to sort and display incentive levels
        * @example 1
        */
-      sequence?: number
+      sequence: number
       /**
-       * @description Indicates that this IEP level is the default for this prison
-       * @example true
+       * @description Indicates that this incentive level is the default for new admissions
+       * @default false
+       * @example false
        */
       default: boolean
       /**
-       * @description Indicates that this IEP level is the active
+       * @description Indicates that this incentive level is enabled in this prison
+       * @default true
        * @example true
        */
       active: boolean
@@ -723,33 +743,535 @@ export interface operations {
       }
     }
   }
-  syncPostIepReview: {
-    /**
-     * Synchronise (NOMIS -> Incentives) an IEP Review for this specific prisoner by booking Id
-     * @description Booking ID is an internal ID for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
-     */
+  /**
+   * Reset all incentive levels for a prison
+   * @description Activates the required set of levels, ensuring that Standard is the default level for admission. This can be used when a new prison is opened. Any levels that are already active will remain active and associated information remains unchanged. Returns all incentive levels in this prison including those that were already active.
+   *
+   * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+   *
+   * Raises HMPPS domain events: "incentives.prison-level.changed"
+   */
+  resetPrisonIncentiveLevels: {
     parameters: {
-      /**
-       * @description Booking Id
-       * @example 3000002
-       */
       path: {
-        bookingId: number
+        /**
+         * @description Prison id
+         * @example MDI
+         */
+        prisonId: string
       }
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['SyncPostRequest']
+        'application/json': components['schemas']['Unit']
       }
     }
     responses: {
-      /** @description IEP Review Synchronised */
-      201: {
+      /** @description Prison incentive levels reset */
+      200: {
         content: {
-          'application/json': components['schemas']['IepDetail']
+          'application/json': components['schemas']['PrisonIncentiveLevel'][]
         }
       }
-      /** @description Incorrect data specified to add new IEP review */
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Returns an incentive level in this prison along with associated information
+   * @description Note that it may be inactive in the prison. For the majority of use cases, inactive levels in a prison should be ignored.
+   */
+  getPrisonIncentiveLevel: {
+    parameters: {
+      path: {
+        /**
+         * @description Prison id
+         * @example MDI
+         */
+        prisonId: string
+        /**
+         * @description Incentive level code
+         * @example STD
+         */
+        levelCode: string
+      }
+    }
+    responses: {
+      /** @description Prison incentive level returned */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonIncentiveLevel']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Prison incentive level not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Updates prison incentive level information
+   * @description Payload must include all required fields. Deactivating a level is only possible if there are no prisoners currently on it.
+   *
+   * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+   *
+   * Raises HMPPS domain event: "incentives.prison-level.changed"
+   */
+  updatePrisonIncentiveLevel: {
+    parameters: {
+      path: {
+        /**
+         * @description Prison id
+         * @example MDI
+         */
+        prisonId: string
+        /**
+         * @description Incentive level code
+         * @example STD
+         */
+        levelCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PrisonIncentiveLevel']
+      }
+    }
+    responses: {
+      /** @description Prison incentive level updated */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonIncentiveLevel']
+        }
+      }
+      /** @description Invalid payload or level is being deactivated despite having prisoners on it */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incentive level not found globally */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Deactivate an incentive level for a prison
+   * @description Deactivating a level is only possible if there are no prisoners currently on it.
+   *
+   * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+   *
+   * Raises HMPPS domain event: "incentives.prison-level.changed"
+   */
+  deactivatePrisonIncentiveLevel: {
+    parameters: {
+      path: {
+        /**
+         * @description Prison id
+         * @example MDI
+         */
+        prisonId: string
+        /**
+         * @description Incentive level code
+         * @example STD
+         */
+        levelCode: string
+      }
+    }
+    responses: {
+      /** @description Prison incentive level deactivated */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonIncentiveLevel']
+        }
+      }
+      /** @description Incentive level is globally required or there are prisoners on this incentive level at this prison */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incentive level not found globally */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Updates prison incentive level information
+   * @description Partial updates are allowed. Deactivating a level is only possible if there are no prisoners currently on it.
+   *
+   * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+   *
+   * Raises HMPPS domain event: "incentives.prison-level.changed"
+   */
+  partiallyUpdatePrisonIncentiveLevel: {
+    parameters: {
+      path: {
+        /**
+         * @description Prison id
+         * @example MDI
+         */
+        prisonId: string
+        /**
+         * @description Incentive level code
+         * @example STD
+         */
+        levelCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PrisonIncentiveLevelUpdate']
+      }
+    }
+    responses: {
+      /** @description Prison incentive level updated */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonIncentiveLevel']
+        }
+      }
+      /** @description Invalid payload or level is being deactivated despite having prisoners on it */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incentive level not found globally */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Returns an incentive level by code
+   * @description Note that it may be inactive. For the majority of use cases, inactive levels in a prison should be ignored.
+   */
+  getIncentiveLevel: {
+    parameters: {
+      path: {
+        /**
+         * @description Incentive level code
+         * @example STD
+         */
+        code: string
+      }
+    }
+    responses: {
+      /** @description Incentive level returned */
+      200: {
+        content: {
+          'application/json': components['schemas']['IncentiveLevel']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incentive level with this code not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Updates an incentive level
+   * @description Payload must include all required fields. A level marked as required must also be active. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
+   *
+   * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+   *
+   * Raises HMPPS domain event: "incentives.level.changed"
+   */
+  updateIncentiveLevel: {
+    parameters: {
+      path: {
+        /**
+         * @description Incentive level code
+         * @example STD
+         */
+        code: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['IncentiveLevel']
+      }
+    }
+    responses: {
+      /** @description Incentive level updated */
+      200: {
+        content: {
+          'application/json': components['schemas']['IncentiveLevel']
+        }
+      }
+      /** @description Invalid payload or level is being deactivated despite being active in some prison */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incentive level not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Deactivates an incentive level
+   * @description A required level cannot be deactivated, needs to be updated first to be not required. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
+   *
+   * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+   *
+   * Raises HMPPS domain event: "incentives.level.changed"
+   */
+  deactivateIncentiveLevel: {
+    parameters: {
+      path: {
+        /**
+         * @description Incentive level code
+         * @example STD
+         */
+        code: string
+      }
+    }
+    responses: {
+      /** @description Incentive level deactivated */
+      200: {
+        content: {
+          'application/json': components['schemas']['IncentiveLevel']
+        }
+      }
+      /** @description Incentive level is marked as required or is active in some prison */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incentive level not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Updates an incentive level
+   * @description Partial updates are allowed. A level marked as required must also be active. Deactivating a level is only possible if it is not active in any prison (moreInfo field will contain comma-separated prison ids). Deactivated incentive levels remain in the same position with respect to the others.
+   *
+   * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+   *
+   * Raises HMPPS domain event: "incentives.level.changed"
+   */
+  partiallyUpdateIncentiveLevel: {
+    parameters: {
+      path: {
+        /**
+         * @description Incentive level code
+         * @example STD
+         */
+        code: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['IncentiveLevelUpdate']
+      }
+    }
+    responses: {
+      /** @description Incentive level updated */
+      200: {
+        content: {
+          'application/json': components['schemas']['IncentiveLevel']
+        }
+      }
+      /** @description Invalid payload or level is being deactivated despite being active in some prison */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incentive level not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Lists all incentive levels, optionally including inactive ones
+   * @description For the majority of use cases, inactive levels in a prison should be ignored.
+   */
+  getIncentiveLevels: {
+    parameters: {
+      query?: {
+        /**
+         * @description Include inactive incentive levels
+         * @example true
+         */
+        'with-inactive'?: boolean
+      }
+    }
+    responses: {
+      /** @description Incentive levels returned */
+      200: {
+        content: {
+          'application/json': components['schemas']['IncentiveLevel'][]
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Creates a new incentive level
+   * @description New incentive levels are added to the end of the list.
+   *
+   * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+   *
+   * Raises HMPPS domain event: "incentives.level.changed"
+   */
+  createIncentiveLevel: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['IncentiveLevel']
+      }
+    }
+    responses: {
+      /** @description Incentive level created */
+      201: {
+        content: {
+          'application/json': components['schemas']['IncentiveLevel']
+        }
+      }
+      /** @description Invalid payload */
       400: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -769,17 +1291,17 @@ export interface operations {
       }
     }
   }
+  /**
+   * Returns a history of IEP reviews for a prisoner
+   * @description Prisoner Number is an unique reference for a prisoner in NOMIS
+   */
   getPrisonerIepLevelHistory: {
-    /**
-     * Returns a history of IEP reviews for a prisoner
-     * @description Prisoner Number is an unique reference for a prisoner in NOMIS
-     */
     parameters: {
-      /**
-       * @description Prisoner Number
-       * @example A1234AB
-       */
       path: {
+        /**
+         * @description Prisoner Number
+         * @example A1234AB
+         */
         prisonerNumber: string
       }
     }
@@ -810,17 +1332,17 @@ export interface operations {
       }
     }
   }
+  /**
+   * Adds a new IEP Review for this specific prisoner by prisoner number
+   * @description Prisoner Number is an unique reference for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
+   */
   addIepReview: {
-    /**
-     * Adds a new IEP Review for this specific prisoner by prisoner number
-     * @description Prisoner Number is an unique reference for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
-     */
     parameters: {
-      /**
-       * @description Prisoner Number
-       * @example A1234AB
-       */
       path: {
+        /**
+         * @description Prisoner Number
+         * @example A1234AB
+         */
         prisonerNumber: string
       }
     }
@@ -856,8 +1378,8 @@ export interface operations {
       }
     }
   }
+  /** Returns a history of IEP reviews for a list of prisoners */
   getCurrentIEPLevelForPrisoner: {
-    /** Returns a history of IEP reviews for a list of prisoners */
     requestBody: {
       content: {
         'application/json': number[]
@@ -890,24 +1412,24 @@ export interface operations {
       }
     }
   }
+  /**
+   * Returns a history of IEP reviews for a prisoner
+   * @description Booking ID is an internal ID for a prisoner in NOMIS
+   */
   getPrisonerIepLevelHistory_1: {
-    /**
-     * Returns a history of IEP reviews for a prisoner
-     * @description Booking ID is an internal ID for a prisoner in NOMIS
-     */
     parameters: {
-      /**
-       * @description Toggle to return IEP detail entries in response (or not)
-       * @example true
-       */
       query?: {
+        /**
+         * @description Toggle to return IEP detail entries in response (or not)
+         * @example true
+         */
         'with-details'?: boolean
       }
-      /**
-       * @description Booking Id
-       * @example 3000002
-       */
       path: {
+        /**
+         * @description Booking Id
+         * @example 3000002
+         */
         bookingId: number
       }
     }
@@ -938,17 +1460,17 @@ export interface operations {
       }
     }
   }
+  /**
+   * Adds a new IEP Review for this specific prisoner by booking Id
+   * @description Booking ID is an internal ID for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
+   */
   addIepReview_1: {
-    /**
-     * Adds a new IEP Review for this specific prisoner by booking Id
-     * @description Booking ID is an internal ID for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
-     */
     parameters: {
-      /**
-       * @description Booking Id
-       * @example 3000002
-       */
       path: {
+        /**
+         * @description Booking Id
+         * @example 3000002
+         */
         bookingId: number
       }
     }
@@ -984,126 +1506,28 @@ export interface operations {
       }
     }
   }
-  migrateIepReview: {
-    /**
-     * Migrates an IEP Review for this specific prisoner by booking Id
-     * @description Booking ID is an internal ID for a prisoner in NOMIS, requires MAINTAIN_IEP role and write scope
-     */
-    parameters: {
-      /**
-       * @description Booking Id
-       * @example 3000002
-       */
-      path: {
-        bookingId: number
-      }
-    }
+  /**
+   * Sets the order of incentive levels
+   * @description All existing incentive level codes must be provided.
+   *
+   * Requires role: MAINTAIN_INCENTIVE_LEVELS with write scope
+   *
+   * Raises HMPPS domain event: "incentives.levels.reordered"
+   */
+  setOrderOfIncentiveLevels: {
     requestBody: {
       content: {
-        'application/json': components['schemas']['SyncPostRequest']
+        'application/json': string[]
       }
     }
     responses: {
-      /** @description IEP Review Migrated */
-      201: {
-        content: {
-          'application/json': components['schemas']['IepDetail']
-        }
-      }
-      /** @description Incorrect data specified to add new IEP review */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  syncDeleteIepReview: {
-    /**
-     * Deletes an existing IEP review for this specific prisoner by booking Id
-     * @description Booking ID is an internal ID for a prisoner in NOMIS, ID is the ID of the IEP review. Requires MAINTAIN_IEP role and write scope
-     */
-    parameters: {
-      /**
-       * @description Booking Id
-       * @example 1234567
-       */
-      /**
-       * @description ID
-       * @example 12345
-       */
-      path: {
-        bookingId: number
-        id: number
-      }
-    }
-    responses: {
-      /** @description IEP Review deleted */
-      204: never
-      /** @description Incorrect data specified to delete the IEP review */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  syncPatchIepReview: {
-    /**
-     * Update an existing IEP review for this specific prisoner by booking Id
-     * @description Booking ID is an internal ID for a prisoner in NOMIS, ID is the ID of the IEP review. Requires MAINTAIN_IEP role and write scope
-     */
-    parameters: {
-      /**
-       * @description Booking Id
-       * @example 1234567
-       */
-      /**
-       * @description ID
-       * @example 12345
-       */
-      path: {
-        bookingId: number
-        id: number
-      }
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SyncPatchRequest']
-      }
-    }
-    responses: {
-      /** @description IEP Review updated */
+      /** @description Incentive levels reordered */
       200: {
         content: {
-          'application/json': components['schemas']['IepDetail']
+          'application/json': components['schemas']['IncentiveLevel'][]
         }
       }
-      /** @description Incorrect data specified to update the IEP review */
+      /** @description Not enough level codes provided */
       400: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -1117,6 +1541,12 @@ export interface operations {
       }
       /** @description Incorrect permissions to use this endpoint */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incentive level with this code not found */
+      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
@@ -1141,123 +1571,58 @@ export interface operations {
       }
     }
   }
-  getIncentiveSummary: {
-    /**
-     * Summaries IEP Incentive information at a specific location within a prison
-     * @description location should be a Wing, Landing or Cell
-     */
-    parameters: {
-      /**
-       * @description Sort By
-       * @example NAME
-       */
-      /**
-       * @description Sort Direction
-       * @example ASC
-       */
-      query?: {
-        sortBy?:
-          | 'NUMBER'
-          | 'NAME'
-          | 'DAYS_ON_LEVEL'
-          | 'POS_BEHAVIOURS'
-          | 'NEG_BEHAVIOURS'
-          | 'DAYS_SINCE_LAST_REVIEW'
-          | 'INCENTIVE_WARNINGS'
-          | 'INCENTIVE_ENCOURAGEMENTS'
-          | 'PROVEN_ADJUDICATIONS'
-        sortDirection?: string
-      }
-      /**
-       * @description Prison Id
-       * @example MDI
-       */
-      /**
-       * @description Location Id
-       * @example MDI-1
-       */
-      path: {
-        prisonId: string
-        locationId: string
-      }
-    }
-    responses: {
-      /** @description Incentive Information returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['BehaviourSummary']
-        }
-      }
-      /** @description Incorrect data specified to return incentive data */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
+  /**
+   * List of incentive review information for a given location within a prison and on a given level
+   * @description Location should be a cell ID prefix like `MDI-1`
+   */
   getReviews: {
-    /**
-     * List of incentive review information for a given location within a prison and on a given level
-     * @description location should be a cell ID prefix like `MDI-1`
-     */
     parameters: {
-      /**
-       * @description Sort reviews by
-       * @example PRISONER_NUMBER
-       */
-      /**
-       * @description Sort direction
-       * @example ASC
-       */
-      /**
-       * @description Page (starts at 0)
-       * @example 2
-       */
-      /**
-       * @description Page size
-       * @example 20
-       */
       query?: {
+        /**
+         * @description Sort reviews by
+         * @example PRISONER_NUMBER
+         */
         sort?:
           | 'NEXT_REVIEW_DATE'
+          | 'DAYS_SINCE_LAST_REVIEW'
           | 'FIRST_NAME'
           | 'LAST_NAME'
           | 'PRISONER_NUMBER'
           | 'POSITIVE_BEHAVIOURS'
           | 'NEGATIVE_BEHAVIOURS'
           | 'HAS_ACCT_OPEN'
+          | 'IS_NEW_TO_PRISON'
+        /**
+         * @description Sort direction
+         * @example ASC
+         */
         order?: 'ASC' | 'DESC'
+        /**
+         * @description Page (starts at 0)
+         * @example 2
+         */
         page?: number
+        /**
+         * @description Page size
+         * @example 20
+         */
         pageSize?: number
       }
-      /**
-       * @description Prison ID
-       * @example MDI
-       */
-      /**
-       * @description Cell location ID prefix
-       * @example MDI-1
-       */
-      /**
-       * @description Incentive level code
-       * @example STD
-       */
       path: {
+        /**
+         * @description Prison ID
+         * @example MDI
+         */
         prisonId: string
+        /**
+         * @description Cell location ID prefix
+         * @example MDI-1
+         */
         cellLocationPrefix: string
+        /**
+         * @description Incentive level code
+         * @example STD
+         */
         levelCode: string
       }
     }
@@ -1288,14 +1653,107 @@ export interface operations {
       }
     }
   }
-  getReviewById: {
-    /** Returns a specified IEP Review */
+  /**
+   * Lists incentive levels in this prison along with associated information, optionally including inactive ones
+   * @description Inactive incentive levels in the prison were previously active at some point. Not all global inactive incentive levels are necessarily included. For the majority of use cases, inactive levels in a prison should be ignored.
+   */
+  getPrisonIncentiveLevels: {
     parameters: {
-      /**
-       * @description Review ID (internal)
-       * @example 1000
-       */
+      query?: {
+        /**
+         * @description Include inactive prison incentive levels
+         * @example true
+         */
+        'with-inactive'?: boolean
+      }
       path: {
+        /**
+         * @description Prison id
+         * @example MDI
+         */
+        prisonId: string
+      }
+    }
+    responses: {
+      /** @description Prison incentive levels returned */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonIncentiveLevel'][]
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Prison incentive level not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Deactivate all incentive levels for a prison
+   * @description This can be used when a prison closes. Returns all incentive levels in this prison including those that were already inactive. Deactivating a level is only possible if there are no prisoners currently on it.
+   *
+   * Requires role: MAINTAIN_PRISON_IEP_LEVELS with write scope
+   *
+   * Raises HMPPS domain events: "incentives.prison-level.changed"
+   */
+  deactivateAllPrisonIncentiveLevels: {
+    parameters: {
+      path: {
+        /**
+         * @description Prison id
+         * @example MDI
+         */
+        prisonId: string
+      }
+    }
+    responses: {
+      /** @description Prison incentive levels deactivated */
+      200: {
+        content: {
+          'application/json': components['schemas']['PrisonIncentiveLevel'][]
+        }
+      }
+      /** @description There are prisoners on some incentive level at this prison */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Incorrect permissions to use this endpoint */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** Returns a specified IEP Review */
+  getReviewById: {
+    parameters: {
+      path: {
+        /**
+         * @description Review ID (internal)
+         * @example 1000
+         */
         id: number
       }
     }
@@ -1326,31 +1784,26 @@ export interface operations {
       }
     }
   }
-  getPrisonIepLevels: {
-    /**
-     * Returns the valid IEP levels for specified prison
-     * @description prison ID should be a 3 character string e.g. MDI = Moorland
-     */
+  /**
+   * Lists active incentive levels in this prison
+   * @deprecated
+   * @description Not all globally active incentive levels will necessarily be included
+   */
+  getPrisonIncentiveLevels_1: {
     parameters: {
-      /**
-       * @description Prison Id
-       * @example MDI
-       */
       path: {
+        /**
+         * @description Prison id
+         * @example MDI
+         */
         prisonId: string
       }
     }
     responses: {
-      /** @description IEP Level Information returned */
+      /** @description Active prison incentive levels returned */
       200: {
         content: {
-          'application/json': components['schemas']['IepLevel'][]
-        }
-      }
-      /** @description Incorrect data specified to return IEP Level data */
-      400: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
+          'application/json': components['schemas']['LegacyPrisonIncentiveLevel'][]
         }
       }
       /** @description Unauthorized to access this endpoint */
@@ -1361,6 +1814,12 @@ export interface operations {
       }
       /** @description Incorrect permissions to use this endpoint */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Prison incentive level not found */
+      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }

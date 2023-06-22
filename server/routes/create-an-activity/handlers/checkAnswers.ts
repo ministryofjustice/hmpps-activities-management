@@ -78,8 +78,8 @@ export default class CheckAnswersRoutes {
       createJourney.flat.forEach(flatRate => {
         incentiveLevels.forEach(iep =>
           activity.pay.push({
-            incentiveNomisCode: iep.iepLevel,
-            incentiveLevel: iep.iepDescription,
+            incentiveNomisCode: iep.levelCode,
+            incentiveLevel: iep.levelName,
             payBandId: flatRate.bandId,
             rate: flatRate.rate,
           }),
