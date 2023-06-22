@@ -12,6 +12,7 @@ import CancelRoutes, { ConfirmCancelOptions } from './handlers/cancel'
 import StartDateRoutes, { StartDate } from './handlers/startDate'
 import EndDateOptionRoutes, { EndDateOption } from './handlers/endDateOption'
 import EndDateRoutes, { EndDate } from './handlers/endDate'
+import AllocateHomeRoutes from './handlers/home'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -20,6 +21,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
+  const allocateHomeHandler = new AllocateHomeRoutes()
   const startJourneyHandler = new StartJourneyRoutes(prisonService, activitiesService)
   const beforeYouAllocateHandler = new BeforeYouAllocateRoutes(activitiesService)
   const payBandHandler = new PayBandRoutes(activitiesService)
@@ -30,6 +32,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const endDateOptionHandler = new EndDateOptionRoutes()
   const endDateHandler = new EndDateRoutes()
 
+  get('/', allocateHomeHandler.GET)
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
   post('/before-you-allocate', beforeYouAllocateHandler.POST, ConfirmOptions)

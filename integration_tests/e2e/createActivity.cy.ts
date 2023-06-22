@@ -27,6 +27,7 @@ import BankHolidayPage from '../pages/createSchedule/bankHoliday'
 import LocationPage from '../pages/createSchedule/location'
 import CapacityPage from '../pages/createSchedule/capacity'
 import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
+import ActivitiesIndexPage from '../pages/activities'
 
 context('Create activity', () => {
   beforeEach(() => {
@@ -46,8 +47,12 @@ context('Create activity', () => {
 
   it('should click through create activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.manageActivitiesAndAllocationsCard().should('contain.text', 'Manage activities and allocations')
-    indexPage.manageActivitiesAndAllocationsCard().click()
+    indexPage.activitiesCard().should('contain.text', 'Allocate people, unlock and attend')
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.allocateToActivitiesCard().should('contain.text', 'Allocate people to activities')
+    activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
     manageActivitiesPage.cardActivityCard().should('contain.text', 'Create an activity')
