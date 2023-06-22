@@ -885,6 +885,18 @@ export interface components {
        * @example 1
        */
       payBandId: number
+      /**
+       * Format: date
+       * @description The future date when the prisoner will start the activity
+       * @example 2022-09-10
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description The date when the prisoner will stop attending the activity
+       * @example 2023-09-10
+       */
+      endDate?: string
     }
     /** @description Describes a prisons scheduled events */
     PrisonerScheduledEvents: {
@@ -1072,44 +1084,6 @@ export interface components {
        */
       priority: number
     }
-    /** @description Describes the pay rates and bands which apply to an activity */
-    ActivityPay: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity pay
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The NOMIS code for the incentive/earned privilege level
-       * @example BAS
-       */
-      incentiveNomisCode: string
-      /**
-       * @description The incentive/earned privilege level
-       * @example Basic
-       */
-      incentiveLevel: string
-      prisonPayBand: components['schemas']['PrisonPayBand']
-      /**
-       * Format: int32
-       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
-       * @example 150
-       */
-      rate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
-       * @example 150
-       */
-      pieceRate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
-       * @example 10
-       */
-      pieceRateItems?: number
-    }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
       /**
@@ -1135,7 +1109,7 @@ export interface components {
       scheduleDescription: string
       /** @description Indicates whether this allocation is to an activity within the 'Not in work' category */
       isUnemployment: boolean
-      payRate?: components['schemas']['ActivityPay']
+      prisonPayBand: components['schemas']['PrisonPayBand']
       /**
        * Format: date
        * @description The date when the prisoner will start the activity
@@ -2391,6 +2365,44 @@ export interface components {
        */
       studyAreaDescription: string
     }
+    /** @description Describes the pay rates and bands which apply to an activity */
+    ActivityPay: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity pay
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The NOMIS code for the incentive/earned privilege level
+       * @example BAS
+       */
+      incentiveNomisCode: string
+      /**
+       * @description The incentive/earned privilege level
+       * @example Basic
+       */
+      incentiveLevel: string
+      prisonPayBand: components['schemas']['PrisonPayBand']
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
+       * @example 150
+       */
+      pieceRate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
+       * @example 10
+       */
+      pieceRateItems?: number
+    }
     /**
      * @description
      *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
@@ -3117,6 +3129,49 @@ export interface components {
        */
       issuePayment?: boolean
     }
+    /** @description Describes a pay rate applied to an activity */
+    ActivityPayLite: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity pay
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The NOMIS code for the incentive/earned privilege level
+       * @example BAS
+       */
+      incentiveNomisCode: string
+      /**
+       * @description The incentive/earned privilege level
+       * @example Basic
+       */
+      incentiveLevel: string
+      /**
+       * Format: int64
+       * @description The pay band id for this activity pay
+       * @example 123456
+       */
+      prisonPayBandId: number
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
+       * @example 150
+       */
+      pieceRate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
+       * @example 10
+       */
+      pieceRateItems?: number
+    }
     AddressDto: {
       /**
        * @description Primary Address
@@ -3232,6 +3287,11 @@ export interface components {
        */
       activeFlag?: boolean
     }
+    /** @description Allocation details with activity pay rate if applicable */
+    AllocationPayRate: {
+      payRate?: components['schemas']['ActivityPayLite']
+      allocation: components['schemas']['Allocation']
+    }
     /** @description Cross references prisoners details with activity requirements */
     AllocationSuitability: {
       workplaceRiskAssessment?: components['schemas']['WRASuitability']
@@ -3239,6 +3299,8 @@ export interface components {
       education?: components['schemas']['EducationSuitability']
       releaseDate?: components['schemas']['ReleaseDateSuitability']
       nonAssociation?: components['schemas']['NonAssociationSuitability']
+      /** @description The prisoner's allocations with pay rates */
+      allocations: components['schemas']['AllocationPayRate'][]
     }
     /** @description The prisoner's education levels */
     Education: {
@@ -3267,7 +3329,7 @@ export interface components {
        */
       suitable: boolean
       /** @description The prisoner's education levels */
-      education?: components['schemas']['Education'][]
+      education: components['schemas']['Education'][]
     }
     /** @description Prisoner's incentive level suitability */
     IncentiveLevelSuitability: {
@@ -3282,6 +3344,50 @@ export interface components {
        */
       incentiveLevel?: string
     }
+    /** @description Prisoner non-association details */
+    NonAssociationDetails: {
+      /**
+       * @description The non-association reason code
+       * @example VIC
+       */
+      reasonCode: string
+      /**
+       * @description The non-association reason description
+       * @example Victim
+       */
+      reasonDescription: string
+      /**
+       * @description The non-association type code
+       * @example WING
+       */
+      typeCode: string
+      /**
+       * @description The non-association type description
+       * @example Do Not Locate on Same Wing
+       */
+      typeDescription: string
+      /**
+       * Format: date-time
+       * @description Date and time the mom-association is effective from. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
+       */
+      effectiveDate: string
+      /**
+       * Format: date-time
+       * @description Date and time the mom-association expires. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
+       */
+      expiryDate?: string
+      offenderNonAssociation: components['schemas']['OffenderNonAssociation']
+      /**
+       * @description The person who authorised the non-association (free text).
+       * @example null
+       */
+      authorisedBy?: string
+      /**
+       * @description Additional free text comments related to the non-association.
+       * @example null
+       */
+      comments?: string
+    }
     /** @description Prisoner workplace risk assessment suitability */
     NonAssociationSuitability: {
       /**
@@ -3290,9 +3396,12 @@ export interface components {
        */
       suitable: boolean
       /** @description The prisoner's non-associations */
-      nonAssociations?: components['schemas']['OffenderNonAssociationDetail'][]
+      nonAssociations: components['schemas']['NonAssociationDetails'][]
     }
-    /** @example null */
+    /**
+     * @description Offender non-association details
+     * @example null
+     */
     OffenderNonAssociation: {
       /**
        * @description The offenders number
@@ -3335,50 +3444,6 @@ export interface components {
        * @example 123
        */
       assignedLivingUnitId: number
-    }
-    /** @description The prisoner's non-associations */
-    OffenderNonAssociationDetail: {
-      /**
-       * @description The non-association reason code
-       * @example VIC
-       */
-      reasonCode: string
-      /**
-       * @description The non-association reason description
-       * @example Victim
-       */
-      reasonDescription: string
-      /**
-       * @description The non-association type code
-       * @example WING
-       */
-      typeCode: string
-      /**
-       * @description The non-association type description
-       * @example Do Not Locate on Same Wing
-       */
-      typeDescription: string
-      /**
-       * @description Date and time the mom-association is effective from. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
-       * @example 2021-07-05T10:35:17
-       */
-      effectiveDate: string
-      offenderNonAssociation: components['schemas']['OffenderNonAssociation']
-      /**
-       * @description Date and time the mom-association expires. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
-       * @example 2021-07-05T10:35:17
-       */
-      expiryDate?: string
-      /**
-       * @description The person who authorised the non-association (free text).
-       * @example null
-       */
-      authorisedBy?: string
-      /**
-       * @description Additional free text comments related to the non-association.
-       * @example null
-       */
-      comments?: string
     }
     /** @description Prisoner release date suitability */
     ReleaseDateSuitability: {
