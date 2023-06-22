@@ -11,19 +11,19 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ govukPanel({
-                titleText: "Bulk appointment created" if appointment.type == AppointmentType.BULK else "Appointment created"
+                titleText: "Bulk appointment created" if bulkAppointment else "Appointment created"
             }) }}
             <p class="govuk-body" data-qa="message">
                 {% if appointment.appointmentType == AppointmentType.INDIVIDUAL %}
                     You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners[0] | fullName | toTitleCase }}
                 {% elseif appointment.appointmentType == AppointmentType.GROUP %}
                     You have successfully created an appointment{{ (" series" if appointment.repeat != null) }} for {{ appointment.prisoners | length }} {{ "prisoner" if appointment.prisoners.length == 1 else "prisoners" }}
-                {% elseif appointment.type == AppointmentType.BULK %}
-                    You have successfully created appointments for {{ appointment.appointments | length }} prisoners
+                {% elseif bulkAppointment %}
+                    You have successfully created appointments for {{ bulkAppointment.occurrences | length }} prisoners
                 {% endif %}
 
                 {% if not appointment.repeat %}
-                    on {{ appointment.startDate | toDate | formatDate('EEEE, d MMMM yyyy') }}.
+                    on {{ (appointment.startDate or bulkAppointment.startDate) | toDate | formatDate('EEEE, d MMMM yyyy') }}.
                 {% else %}
                     starting on {{ appointment.startDate | toDate | formatDate('EEEE, d MMMM yyyy') }}.
                     It will repeat {{ ("every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
@@ -45,10 +45,9 @@
                 <a href="/appointments" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">Create another appointment</a>
             </p>
 
-            {# TODO: Display bulk appointment details #}
-            {% if appointment.type == AppointmentType.BULK %}
+            {% if bulkAppointment %}
                 <p class="govuk-body">
-                    <a href="#" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and manage the details of the appointments</a>
+                    <a href="/appointments/bulk-appointments/{{ bulkAppointment.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View and manage the details of the appointments</a>
                 </p>
             {% else %}
                 <p class="govuk-body">

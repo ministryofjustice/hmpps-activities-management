@@ -39,6 +39,7 @@ import {
   AppointmentOccurrenceCancelRequest,
   BulkAppointmentsRequest,
   BulkAppointment,
+  BulkAppointmentDetails,
   EventReviewSearchResults,
   DeallocationReason,
   PrisonerDeallocationRequest,
@@ -363,6 +364,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/bulk-appointments`,
       authToken: user.token,
       data: bulkAppointments,
+    })
+  }
+
+  async getBulkAppointmentDetails(bulkAppointmentId: number, user: ServiceUser): Promise<BulkAppointmentDetails> {
+    return this.get({
+      path: `/bulk-appointment-details/${bulkAppointmentId}`,
+      authToken: user.token,
     })
   }
 

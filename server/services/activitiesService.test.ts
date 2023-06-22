@@ -31,6 +31,9 @@ import {
   EventAcknowledgeRequest,
   AllocationSuitability,
   PrisonerAllocations,
+  IndividualAppointment,
+  BulkAppointmentsRequest,
+  BulkAppointmentDetails,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -468,13 +471,13 @@ describe('Activities Service', () => {
         inCell: false,
         startDate: '2023-05-16',
         appointments: [
-          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30' },
-          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00' },
+          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30', comment: '' } as IndividualAppointment,
+          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00', comment: '' } as IndividualAppointment,
         ],
-      }
+      } as BulkAppointmentsRequest
 
       const expectedResponse = {
-        bulkAppointmentId: 10,
+        id: 10,
         appointments: [
           {
             id: 37,
@@ -491,6 +494,20 @@ describe('Activities Service', () => {
 
       expect(activitiesApiClient.postCreateBulkAppointment).toHaveBeenCalledWith(request, user)
       expect(response).toEqual(expectedResponse)
+    })
+  })
+
+  describe('getBulkAppointmentDetail', () => {
+    it('should return bulk appointment detail from api when valid bulk appointment id is used', async () => {
+      const response = {
+        id: 12345,
+      } as BulkAppointmentDetails
+
+      when(activitiesApiClient.getBulkAppointmentDetails).calledWith(12345, user).mockResolvedValue(response)
+
+      const actualResult = await activitiesService.getBulkAppointmentDetails(12345, user)
+
+      expect(actualResult).toEqual(response)
     })
   })
 

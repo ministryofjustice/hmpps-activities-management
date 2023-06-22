@@ -3,9 +3,17 @@ import { when } from 'jest-when'
 import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
-import { Appointment, AppointmentCreateRequest } from '../../../../@types/activitiesAPI/types'
+import {
+  Appointment,
+  AppointmentCreateRequest,
+  BulkAppointment,
+  BulkAppointmentsRequest,
+  IndividualAppointment,
+} from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentType } from '../appointmentJourney'
+import { BulkAppointmentJourney } from '../bulkAppointmentJourney'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -31,7 +39,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     req = {
       session: {
         appointmentJourney: {
-          type: 'INDIVIDUAL',
+          type: AppointmentType.INDIVIDUAL,
           prisoners: [
             {
               number: 'A1234BC',
@@ -65,6 +73,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
           },
           repeat: YesNo.NO,
         },
+        bulkAppointmentJourney: {},
       },
     } as unknown as Request
   })
@@ -155,6 +164,150 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
 
       await handler.POST(req, res)
       expect(activitiesService.createAppointment).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+    })
+  })
+
+  describe('POST bulk', () => {
+    let expectedRequest: BulkAppointmentsRequest
+    let expectedResponse: BulkAppointment
+
+    beforeEach(() => {
+      req.session.appointmentJourney.type = AppointmentType.BULK
+
+      req.session.bulkAppointmentJourney = {
+        appointments: [
+          {
+            startTime: {
+              hour: 13,
+              minute: 30,
+            },
+            endTime: {
+              hour: 14,
+              minute: 0,
+            },
+            prisoner: {
+              number: 'A1234BC',
+              name: 'A Prisoner',
+              cellLocation: '1-2-3',
+            },
+          },
+          {
+            startTime: {
+              hour: 14,
+              minute: 0,
+            },
+            endTime: {
+              hour: 14,
+              minute: 30,
+            },
+            prisoner: {
+              number: 'B2345CD',
+              name: 'B Prisoner',
+              cellLocation: '1-2-4',
+            },
+            comment: 'Extra information for B2345CD',
+          },
+        ],
+      } as BulkAppointmentJourney
+
+      expectedRequest = {
+        prisonCode: 'TPR',
+        categoryCode: 'MEDO',
+        internalLocationId: 32,
+        inCell: false,
+        startDate: '2023-04-23',
+        appointments: [
+          { prisonerNumber: 'A1234BC', startTime: '13:30', endTime: '14:00' } as IndividualAppointment,
+          {
+            prisonerNumber: 'B2345CD',
+            startTime: '14:00',
+            endTime: '14:30',
+            comment: 'Extra information for B2345CD',
+          } as IndividualAppointment,
+        ],
+      } as BulkAppointmentsRequest
+
+      expectedResponse = {
+        id: 14,
+        prisonCode: 'TPR',
+        categoryCode: 'MEDO',
+        internalLocationId: 32,
+        startDate: '2023-04-23',
+        created: '2023-02-07T15:37:59.266Z',
+        createdBy: 'test.user',
+        appointments: [
+          {
+            id: 15,
+            appointmentType: 'INDIVIDUAL',
+            prisonCode: 'TPR',
+            categoryCode: 'MEDO',
+            internalLocationId: 32,
+            startDate: '2023-04-23',
+            startTime: '13:30',
+            endTime: '14:00',
+            comment: '',
+            created: '2023-02-07T15:37:59.266Z',
+            createdBy: 'test.user',
+            occurrences: [
+              {
+                id: 16,
+                internalLocationId: 32,
+                startDate: '2023-04-23',
+                startTime: '13:30',
+                endTime: '14:00',
+                comment: null,
+                allocations: [
+                  {
+                    id: 17,
+                    prisonerNumber: 'A1234BC',
+                    bookingId: 456,
+                  },
+                ],
+              },
+            ],
+          } as Appointment,
+          {
+            id: 16,
+            appointmentType: 'INDIVIDUAL',
+            prisonCode: 'TPR',
+            categoryCode: 'MEDO',
+            internalLocationId: 32,
+            startDate: '2023-04-23',
+            startTime: '14:00',
+            endTime: '14:30',
+            comment: '',
+            created: '2023-02-07T15:37:59.266Z',
+            createdBy: 'test.user',
+            occurrences: [
+              {
+                id: 17,
+                internalLocationId: 32,
+                startDate: '2023-04-23',
+                startTime: '14:00',
+                endTime: '14:30',
+                comment: null,
+                allocations: [
+                  {
+                    id: 18,
+                    prisonerNumber: 'B2345CD',
+                    bookingId: 457,
+                  },
+                ],
+              },
+            ],
+          } as Appointment,
+        ],
+      } as BulkAppointment
+    })
+
+    it('should create the bulk appointment and redirect to confirmation page', async () => {
+      when(activitiesService.createBulkAppointment)
+        .calledWith(atLeast(expectedRequest))
+        .mockResolvedValueOnce(expectedResponse)
+
+      await handler.POST(req, res)
+      expect(activitiesService.createBulkAppointment).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('bulk-appointments-confirmation/14')
     })
   })
 })

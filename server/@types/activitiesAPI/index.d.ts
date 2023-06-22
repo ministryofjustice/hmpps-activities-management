@@ -110,7 +110,10 @@ export interface paths {
   '/job/manage-allocations': {
     /**
      * Trigger the job to manage allocations
-     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     * @description
+     *         One or more operations to trigger for managing allocations.
+     *
+     *         Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
     post: operations['triggerManageAllocationsJob']
   }
@@ -178,12 +181,19 @@ export interface paths {
      */
     patch: operations['updateAppointmentOccurrence']
   }
+  '/allocations/{prisonCode}/allocationId/{allocationId}': {
+    /**
+     * Update an allocation
+     * @description Update an allocation. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     */
+    patch: operations['update']
+  }
   '/activities/{prisonCode}/activityId/{activityId}': {
     /**
      * Update an activity
      * @description Update an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
      */
-    patch: operations['update']
+    patch: operations['update_1']
   }
   '/synchronisation/attendance/{attendanceId}': {
     /**
@@ -270,7 +280,7 @@ export interface paths {
     get: operations['getActivitiesInCategory']
   }
   '/prison/{prisonCode}/activities': {
-    /** Get list of activities at a specified prison */
+    /** Get list of activities running at a specified prison. Optionally and by default, only currently LIVE activities are returned */
     get: operations['getActivities']
   }
   '/prison/prison-regime/{prisonCode}': {
@@ -307,6 +317,15 @@ export interface paths {
      * @description Returns events in the prison which match the search criteria provided.
      */
     get: operations['getEventsForReview']
+  }
+  '/bulk-appointment-details/{bulkAppointmentId}': {
+    /**
+     * Bulk create a set of appointments
+     * @description
+     *     Create a list of appointments and allocate the supplied prisoner or prisoners to them.
+     *     Does not require any specific roles
+     */
+    get: operations['getBulkAppointmentDetailsById']
   }
   '/attendances/{prisonCode}/{sessionDate}': {
     /**
@@ -1393,25 +1412,71 @@ export interface components {
        * @example 10:30
        */
       endTime: string
+      /**
+       * @description
+       *     Notes relating to the appointment.
+       *
+       * @example This appointment will help adjusting to life outside of prison
+       */
+      comment: string
     }
-    /** @description Describes a list of activities created as part of a single bulk operation */
+    /** @description Describes a set of appointments created as part of a single bulk operation */
     BulkAppointment: {
       /**
        * Format: int64
-       * @description The internally generated identifier for this bulk appointment
+       * @description The internally generated identifier for this set of appointments
        * @example 12345
        */
-      bulkAppointmentId: number
-      /** @description The list of appointments created in bulk. */
+      id: number
+      /**
+       * @description The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
+       * @example CHAP
+       */
+      categoryCode: string
+      /**
+       * @description
+       *     Free text description for an appointment.  This is used to add more context to the appointment category.
+       *
+       * @example Meeting with the governor
+       */
+      appointmentDescription?: string
+      /**
+       * Format: int64
+       * @description
+       *     The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
+       *     Will be null if in cell = true
+       *
+       * @example 123
+       */
+      internalLocationId?: number
+      /**
+       * @description
+       *     Flag to indicate if the location of the appointment is in cell rather than an internal prison location.
+       *     Internal location id should be null if in cell = true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * Format: date
+       * @description The date of the appointment or first appointment occurrence in the series
+       */
+      startDate: string
+      /** @description The set of appointments created in bulk */
       appointments: components['schemas']['Appointment'][]
       /**
        * Format: date-time
-       * @description The date and time this appointment was created. Will not change
+       * @description The date and time this set of appointment was created in bulk. Will not change
        */
       created: string
       /**
        * @description
-       *     The username of the user authenticated via HMPPS auth that created the appointment.
+       *     The username of the user authenticated via HMPPS auth that created this set of appointments in bulk.
        *     Usually a NOMIS username
        *
        * @example AAA01U
@@ -2946,6 +3011,45 @@ export interface components {
        */
       applyTo: 'THIS_OCCURRENCE' | 'THIS_AND_ALL_FUTURE_OCCURRENCES' | 'ALL_FUTURE_OCCURRENCES'
     }
+    /** @description The update request with the new allocation details */
+    AllocationUpdateRequest: {
+      /**
+       * Format: date
+       * @description The date when the prisoner will start the activity
+       * @example 2022-09-10
+       */
+      startDate?: string
+      /**
+       * Format: date
+       * @description The date when the prisoner will stop attending the activity
+       * @example 2023-09-10
+       */
+      endDate?: string
+      /**
+       * @description A flag to indicate that the allocation end date is to be removed
+       * @example true
+       */
+      removeEndDate?: boolean
+      /**
+       * @description The reason code for the deallocation
+       * @example RELEASED
+       * @enum {string}
+       */
+      reasonCode?:
+        | 'OTHER'
+        | 'PERSONAL'
+        | 'PROBLEM'
+        | 'REMOVED'
+        | 'SECURITY'
+        | 'UNACCEPTABLE_ATTENDANCE'
+        | 'UNACCEPTABLE_BEHAVIOUR'
+        | 'WITHDRAWN'
+      /**
+       * Format: int64
+       * @description Where a prison uses pay bands to differentiate earnings, this is the pay band given to this prisoner
+       */
+      payBandId?: number
+    }
     /** @description The update request with the new activity details */
     ActivityUpdateRequest: {
       /**
@@ -3024,28 +3128,6 @@ export interface components {
       pay?: components['schemas']['ActivityPayCreateRequest'][]
       /** @description The days and times an activity schedule can take place */
       slots?: components['schemas']['Slot'][]
-    }
-    /** @description The update request with the new allocation details */
-    AllocationUpdateRequest: {
-      /**
-       * Format: date
-       * @description The date on which this allocation will start.
-       * @example 2022-12-23
-       */
-      startDate?: string
-      /**
-       * Format: date
-       * @description The date on which this allocation ends. If null, the allocation has no end date and will be scheduled indefinitely.
-       * @example 2022-12-23
-       */
-      endDate?: string
-      /**
-       * Format: boolean
-       * @description A flag to indicate that the allocation end date is to be removed.
-       * @example true
-       */
-      removeEndDate?: boolean
-      payBandId?: number
     }
     /**
      * @description
@@ -3532,14 +3614,14 @@ export interface components {
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
-      first?: boolean
-      last?: boolean
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
+      first?: boolean
+      last?: boolean
       empty?: boolean
     }
     PageableObject: {
@@ -3921,108 +4003,6 @@ export interface components {
     }
     /**
      * @description
-     *   Represents the key data required to report on attendance
-     */
-    AllAttendance: {
-      /**
-       * Format: int64
-       * @description The attendance primary key
-       * @example 123456
-       */
-      attendanceId: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * Format: date
-       * @description The date of the session for which attendance may have been marked or a planned absence recorded
-       * @example 2023-03-30
-       */
-      sessionDate: string
-      /**
-       * @description AM, PM, ED.
-       * @example AM
-       */
-      timeSlot: string
-      /**
-       * @description WAITING, COMPLETED.
-       * @example WAITING
-       */
-      status: string
-      /** @description The reason for attending or not */
-      attendanceReasonCode?: string
-      /**
-       * @description Should payment be issued for SICK, REST or OTHER
-       * @example true
-       */
-      issuePayment?: boolean
-      /**
-       * @description The prisoner number this attendance record is for
-       * @example A1234AA
-       */
-      prisonerNumber: string
-    }
-    /**
-     * @description
-     *   Represents the key data required to report on daily attendance activity
-     */
-    AllAttendanceSummary: {
-      /**
-       * Format: int64
-       * @description The attendance summary primary key
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * Format: int64
-       * @description The internally-generated ID for the activity
-       * @example 123456
-       */
-      activityId: number
-      /**
-       * @description The name of the activity category
-       * @example Leisure and social
-       */
-      categoryName: string
-      /**
-       * Format: date
-       * @description The date of the session for which attendance may have been marked or a planned absence recorded
-       * @example 2023-03-30
-       */
-      sessionDate: string
-      /**
-       * @description AM, PM, ED.
-       * @example AM
-       */
-      timeSlot: string
-      /**
-       * @description WAITING, COMPLETED.
-       * @example WAITING
-       */
-      status: string
-      /** @description The reason for attending or not */
-      attendanceReasonCode?: string
-      /**
-       * @description Should payment be issued for SICK, REST or OTHER
-       * @example true
-       */
-      issuePayment?: boolean
-      /**
-       * Format: int32
-       * @description The number of attendance records
-       * @example 123456
-       */
-      attendanceCount: number
-    }
-    /**
-     * @description
      *   Details of a specific appointment occurrence. Will contain copies of the parent appointment's properties unless they
      *   have been changed on this appointment occurrence. Contains only properties needed to make additional API calls
      *   and to display.
@@ -4040,6 +4020,7 @@ export interface components {
        * @example 12345
        */
       appointmentId: number
+      bulkAppointment?: components['schemas']['BulkAppointmentSummary']
       /**
        * @description The appointment type (INDIVIDUAL or GROUP)
        * @example INDIVIDUAL
@@ -4147,6 +4128,70 @@ export interface components {
       updated?: string
       updatedBy?: components['schemas']['UserSummary']
     }
+    /** @description Describes a set of appointments created as part of a single bulk operation */
+    BulkAppointmentDetails: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this set of appointments
+       * @example 12345
+       */
+      id: number
+      /**
+       * @description
+       *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
+       *     Note, this property does not exist on the appointment occurrences and is therefore consistent across all occurrences
+       *
+       * @example SKI
+       */
+      prisonCode: string
+      category: components['schemas']['AppointmentCategorySummary']
+      /**
+       * @description
+       *     Free text description used to create the set of appointments in bulk. This is used to add more context to the appointment category.
+       *
+       * @example Meeting with the governor
+       */
+      appointmentDescription?: string
+      internalLocation?: components['schemas']['AppointmentLocationSummary']
+      /**
+       * @description
+       *     Flag to indicate if the location used to create the set of appointments in bulk was in cell rather than an internal prison location.
+       *     Internal location will be null if in cell = true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * Format: date
+       * @description The date used to create the set of appointments in bulk
+       */
+      startDate: string
+      /** @description The details of the set of appointment occurrences created in bulk */
+      occurrences: components['schemas']['AppointmentOccurrenceDetails'][]
+      /**
+       * Format: date-time
+       * @description The date and time this set of appointments was created in bulk. Will not change
+       */
+      created: string
+      createdBy: components['schemas']['UserSummary']
+    }
+    /** @description Summarises a set of appointments created as part of a single bulk operation */
+    BulkAppointmentSummary: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this set of appointments
+       * @example 12345
+       */
+      id: number
+      /**
+       * Format: int32
+       * @description
+       *     The number of appointments in the set created in bulk
+       *
+       * @example 3
+       */
+      appointmentCount: number
+    }
     /**
      * @description
      *     Summary of the prisoner or prisoners allocated to the first future occurrence (or most recent past occurrence if all
@@ -4218,6 +4263,108 @@ export interface components {
        * @example Akbar
        */
       lastName: string
+    }
+    /**
+     * @description
+     *   Represents the key data required to report on attendance
+     */
+    AllAttendance: {
+      /**
+       * Format: int64
+       * @description The attendance primary key
+       * @example 123456
+       */
+      attendanceId: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: date
+       * @description The date of the session for which attendance may have been marked or a planned absence recorded
+       * @example 2023-03-30
+       */
+      sessionDate: string
+      /**
+       * @description AM, PM, ED.
+       * @example AM
+       */
+      timeSlot: string
+      /**
+       * @description WAITING, COMPLETED.
+       * @example WAITING
+       */
+      status: string
+      /** @description The reason for attending or not */
+      attendanceReasonCode?: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description The prisoner number this attendance record is for
+       * @example A1234AA
+       */
+      prisonerNumber: string
+    }
+    /**
+     * @description
+     *   Represents the key data required to report on daily attendance activity
+     */
+    AllAttendanceSummary: {
+      /**
+       * Format: int64
+       * @description The attendance summary primary key
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the activity
+       * @example 123456
+       */
+      activityId: number
+      /**
+       * @description The name of the activity category
+       * @example Leisure and social
+       */
+      categoryName: string
+      /**
+       * Format: date
+       * @description The date of the session for which attendance may have been marked or a planned absence recorded
+       * @example 2023-03-30
+       */
+      sessionDate: string
+      /**
+       * @description AM, PM, ED.
+       * @example AM
+       */
+      timeSlot: string
+      /**
+       * @description WAITING, COMPLETED.
+       * @example WAITING
+       */
+      status: string
+      /** @description The reason for attending or not */
+      attendanceReasonCode?: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * Format: int32
+       * @description The number of attendance records
+       * @example 123456
+       */
+      attendanceCount: number
     }
     /**
      * @description
@@ -4811,7 +4958,7 @@ export interface operations {
    */
   getAllocationsBy: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
       }
@@ -5019,7 +5166,7 @@ export interface operations {
    */
   prisonerAllocations: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
       }
@@ -5092,7 +5239,7 @@ export interface operations {
    */
   triggerManageAttendanceRecordsJob: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will run the attendance expiry process in addition to other features. Defaults to false. */
         withExpiry?: boolean
       }
@@ -5108,9 +5255,20 @@ export interface operations {
   }
   /**
    * Trigger the job to manage allocations
-   * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+   * @description
+   *         One or more operations to trigger for managing allocations.
+   *
+   *         Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
    */
   triggerManageAllocationsJob: {
+    parameters: {
+      query?: {
+        /** @description If true will run the activate pending allocations process. Defaults to false. */
+        withActivate?: boolean
+        /** @description If true will run the deallocate allocations process. Defaults to false. */
+        withDeallocate?: boolean
+      }
+    }
     responses: {
       /** @description Created */
       201: {
@@ -5222,7 +5380,7 @@ export interface operations {
    */
   getAuditRecords: {
     parameters: {
-      query: {
+      query?: {
         page?: number
         size?: number
         sortDirection?: string
@@ -5407,10 +5565,59 @@ export interface operations {
     }
   }
   /**
+   * Update an allocation
+   * @description Update an allocation. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   */
+  update: {
+    parameters: {
+      path: {
+        allocationId: number
+        prisonCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AllocationUpdateRequest']
+      }
+    }
+    responses: {
+      /** @description The allocation was updated. */
+      202: {
+        content: {
+          'application/json': components['schemas']['Allocation']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Allocation ID not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Update an activity
    * @description Update an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
    */
-  update: {
+  update_1: {
     parameters: {
       path: {
         prisonCode: string
@@ -5554,7 +5761,7 @@ export interface operations {
       /** @description Candidate suitability details. */
       200: {
         content: {
-          'application/json': components['schemas']['AllocationSuitability']
+          'application/json': components['schemas']['AllocationSuitability'][]
         }
       }
       /** @description Bad request */
@@ -5589,7 +5796,7 @@ export interface operations {
    */
   candidates: {
     parameters: {
-      query: {
+      query?: {
         suitableIncentiveLevel?: string[]
         suitableRiskLevel?: string[]
         suitableForEmployed?: boolean
@@ -5751,7 +5958,7 @@ export interface operations {
   }
   getDlqMessages: {
     parameters: {
-      query: {
+      query?: {
         maxMessages?: number
       }
       path: {
@@ -5813,7 +6020,7 @@ export interface operations {
    */
   getSchedulesByPrisonCode: {
     parameters: {
-      query: {
+      query?: {
         /** @description Date of activity, default today */
         date?: string
         /** @description AM, PM or ED */
@@ -5883,7 +6090,7 @@ export interface operations {
    */
   getScheduledPrisonLocations: {
     parameters: {
-      query: {
+      query?: {
         /** @description Date of activity, default today */
         date?: string
         /** @description AM, PM or ED */
@@ -5952,7 +6159,7 @@ export interface operations {
   /** Get list of activities running at a specified prison. Optionally and by default, only currently LIVE activities are returned */
   getActivities: {
     parameters: {
-      query: {
+      query?: {
         excludeArchived?: boolean
       }
       path: {
@@ -6192,6 +6399,39 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Bulk create a set of appointments
+   * @description
+   *     Create a list of appointments and allocate the supplied prisoner or prisoners to them.
+   *     Does not require any specific roles
+   */
+  getBulkAppointmentDetailsById: {
+    parameters: {
+      path: {
+        bulkAppointmentId: number
+      }
+    }
+    responses: {
+      /** @description Bulk appointment found */
+      200: {
+        content: {
+          'application/json': components['schemas']['BulkAppointmentDetails']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The bulk appointment for this ID was not found. */
+      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
