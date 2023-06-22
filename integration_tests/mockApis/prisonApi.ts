@@ -41,20 +41,7 @@ const stubCaseload = () =>
     },
   })
 
-const stubUserRoles = () =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: '/users/.*/roles\\?include-nomis-roles=true',
-    },
-    response: {
-      status: 200,
-      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: { dpsRoles: [{ code: 'ACTIVITY_HUB' }], nomisRoles: [{ caseload: { id: 'LEI' }, roles: [] }] },
-    },
-  })
-
 export default {
-  stubPrisonUser: (firstname = 'john', lastname = 'smith'): Promise<[Response, Response, Response]> =>
-    Promise.all([stubUser(firstname, lastname), stubCaseload(), stubUserRoles()]),
+  stubPrisonUser: (firstname = 'john', lastname = 'smith'): Promise<[Response, Response]> =>
+    Promise.all([stubUser(firstname, lastname), stubCaseload()]),
 }

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { when } from 'jest-when'
 import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import StartJourneyRoutes from './startJourney'
 import { AppointmentDetails, AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
@@ -6,9 +7,15 @@ import { parseDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentApplyTo } from '../../../../@types/appointments'
+import PrisonService from '../../../../services/prisonService'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+
+jest.mock('../../../../services/prisonService')
+
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create Appointment - Start', () => {
-  const handler = new StartJourneyRoutes()
+  const handler = new StartJourneyRoutes(prisonService)
   let req: Request
   let res: Response
   const appointment = {
@@ -62,16 +69,26 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
   beforeEach(() => {
     res = {
+      locals: {
+        user: {
+          username: 'test.user',
+          activeCaseLoadId: 'TPR',
+        },
+      },
       redirect: jest.fn(),
     } as unknown as Response
 
     req = {
       session: {},
+      query: {
+        prisonNumber: 'A1234BC',
+      },
     } as unknown as Request
   })
 
   describe('INDIVIDUAL', () => {
     it('should populate the session with individual appointment journey type and redirect to select prisoner page', async () => {
+      when(prisonService.getInmateByPrisonerNumber).calledWith('A1234BC', res.locals.user).mockResolvedValue(null)
       await handler.INDIVIDUAL(req, res)
 
       expect(req.session.appointmentJourney).toEqual({
@@ -80,7 +97,37 @@ describe('Route Handlers - Create Appointment - Start', () => {
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
+      expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
+    })
+
+    it('should populate the session with individual appointment journey type and redirect to select category page', async () => {
+      const prisonerInfo = {
+        prisonerNumber: 'A1234BC',
+        firstName: 'John',
+        lastName: 'Smith',
+        cellLocation: '1-1-1',
+      } as Prisoner
+
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('A1234BC', res.locals.user)
+        .mockResolvedValue(prisonerInfo)
+      await handler.INDIVIDUAL(req, res)
+
+      expect(req.session.appointmentJourney).toEqual({
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.INDIVIDUAL,
+        prisoners: [
+          {
+            cellLocation: '1-1-1',
+            name: 'John Smith',
+            number: 'A1234BC',
+          },
+        ],
+        fromPrisonNumberProfile: 'A1234BC',
+      })
+      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith('category')
     })
   })
 

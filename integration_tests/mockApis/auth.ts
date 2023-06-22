@@ -9,7 +9,7 @@ const createToken = () => {
     user_name: 'USER1',
     scope: ['read'],
     auth_source: 'nomis',
-    authorities: [],
+    authorities: ['ROLE_ACTIVITY_HUB'],
     jti: '83b50a10-cca6-41db-985f-e87efb303ddb',
     client_id: 'clientid',
   }
