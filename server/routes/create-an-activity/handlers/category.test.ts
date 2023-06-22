@@ -44,15 +44,15 @@ describe('Route Handlers - Create an activity - Category', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       when(activitiesService.getActivityCategories).mockResolvedValue([
-        { id: 1, name: 'Services' },
-        { id: 2, name: 'Education' },
+        { id: 1, code: 'SAA_SERVICES', name: 'Services' },
+        { id: 2, code: 'SAA_EDUCATION', name: 'Education' },
       ] as ActivityCategory[])
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/category', {
         categories: [
-          { id: 1, name: 'Services' },
-          { id: 2, name: 'Education' },
+          { id: 1, code: 'SAA_SERVICES', name: 'Services' },
+          { id: 2, code: 'SAA_EDUCATION', name: 'Education' },
         ],
       })
     })
@@ -65,14 +65,15 @@ describe('Route Handlers - Create an activity - Category', () => {
       }
 
       when(activitiesService.getActivityCategories).mockResolvedValue([
-        { id: 1, name: 'Services' },
-        { id: 2, name: 'Education' },
+        { id: 1, code: 'SAA_SERVICES', name: 'Services' },
+        { id: 2, code: 'SAA_EDUCATION', name: 'Education' },
       ] as ActivityCategory[])
 
       await handler.POST(req, res)
 
       expect(req.session.createJourney.category).toEqual({
         id: 2,
+        code: 'SAA_EDUCATION',
         name: 'Education',
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('name')
@@ -84,8 +85,8 @@ describe('Route Handlers - Create an activity - Category', () => {
       }
 
       when(activitiesService.getActivityCategories).mockResolvedValue([
-        { id: 1, name: 'Services' },
-        { id: 2, name: 'Education' },
+        { id: 1, code: 'SAA_SERVICES', name: 'Services' },
+        { id: 2, code: 'SAA_EDUCATION', name: 'Education' },
       ] as ActivityCategory[])
 
       when(activitiesService.updateActivity)
