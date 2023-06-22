@@ -1,0 +1,116 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+
+{% set pageTitle = "Appointments Management - Bulk Appointment Details" %}
+{% set pageId = 'bulk-appointments-view-details-page' %}
+
+{% set occurrenceTableRows = [] %}
+{% for occurrence in bulkAppointment.occurrences %}
+    {% set prisoner = occurrence.prisoners[0] %}
+    {% set occurrenceTableRows = (occurrenceTableRows.push([
+        {
+            html: showProfileLink({
+                name: prisoner | fullName,
+                prisonerNumber: prisoner.prisonerNumber,
+                cellLocation: prisoner.cellLocation,
+                link: true
+            }),
+            attributes: { 'data-qa': 'occurrence-' + occurrence.id + '-prisoner' }
+        }, {
+            text: occurrence.startTime,
+            attributes: {
+                'data-sort-value': occurrence.startDate + occurrence.startTime + prisoner.lastName + prisoner.firstName,
+                'data-qa': 'occurrence-' + occurrence.id + '-start-time'
+            }
+        }, {
+            text: occurrence.endTime,
+            attributes: {
+                'data-sort-value': occurrence.startDate + occurrence.endTime + prisoner.lastName + prisoner.firstName,
+                'data-qa': 'occurrence-' + occurrence.id + '-end-time'
+            }
+        }, {
+            html: (govukTag({ text: "Edited" }) if occurrence.isEdited) +
+            (govukTag({ text: "Cancelled" }) if occurrence.isCancelled),
+            attributes: { 'data-qa': 'occurrence-' + occurrence.id + '-status' }
+        }, {
+            html: '<a href="/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.id + '"
+                class="govuk-link--no-visited-state">
+                View' + (' and manage' if occurrence.isCancelled == false and occurrence.isExpired == false) + '<span class="govuk-visually-hidden"> appointment ' + occurrence.id + '</span>
+            </a>',
+            classes: 'govuk-!-text-align-right',
+            attributes: { 'data-qa': 'view-and-edit-occurrence-' + occurrence.id }
+        }
+    ]), occurrenceTableRows) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+            <h1 class="govuk-heading-l">Edit details of {{ bulkAppointment.category.description }} set of one-to-ones on {{ bulkAppointment.startDate | toDate | formatDate('d MMM yyyy') }}</h1>
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Set history"
+                    }
+                },
+                rows: [
+                    {
+                        key: {
+                            text: "Created by"
+                        },
+                        value: {
+                            text: bulkAppointment.createdBy | fullName | toTitleCase | initialiseName
+                        }
+                    }, {
+                        key: {
+                            text: "Date created"
+                        },
+                        value: {
+                            text: bulkAppointment.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('EEEE, d MMMM yyyy')
+                        }
+                    }
+                ],
+                attributes: { 'data-qa': 'bulk-appointment-details' }
+            }) }}
+
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">{{ bulkAppointment.occurrences.length + " appointment" + ("s" if bulkAppointment.occurrences.length > 0) }}</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    {{ govukTable({
+                        head: [
+                            {
+                                text: "Name of attendee",
+                                attributes: { "aria-sort": "none" }
+                            }, {
+                                text: "Start time",
+                                attributes: { "aria-sort": "ascending" }
+                            }, {
+                                text: "End time",
+                                attributes: { "aria-sort": "none" }
+                            }, {
+                                html: '<span class="govuk-visually-hidden">Status</span>'
+                            }, {
+                                html: '<span class="govuk-visually-hidden">Actions</span>'
+                            }
+                        ],
+                        rows: occurrenceTableRows,
+                        attributes: {
+                            'data-module': 'moj-sortable-table',
+                            'data-qa': 'appointment-occurrences'
+                        }
+                    }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

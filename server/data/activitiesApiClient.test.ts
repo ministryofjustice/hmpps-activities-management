@@ -22,6 +22,9 @@ import {
   EventAcknowledgeRequest,
   EventReview,
   EventReviewSearchResults,
+  BulkAppointmentsRequest,
+  IndividualAppointment,
+  BulkAppointmentDetails,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -681,13 +684,13 @@ describe('activitiesApiClient', () => {
         inCell: false,
         startDate: '2023-05-16',
         appointments: [
-          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30' },
-          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00' },
+          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30', comment: '' } as IndividualAppointment,
+          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00', comment: '' } as IndividualAppointment,
         ],
-      }
+      } as BulkAppointmentsRequest
 
       const response = {
-        bulkAppointmentId: 10,
+        id: 10,
         appointments: [
           {
             id: 37,
@@ -705,6 +708,23 @@ describe('activitiesApiClient', () => {
 
       const output = await activitiesApiClient.postCreateBulkAppointment(request, user)
 
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getBulkAppointmentDetails', () => {
+    it('should return bulk appointment details from api when valid bulk appointment id is used', async () => {
+      const response = {
+        id: 12345,
+      } as BulkAppointmentDetails
+
+      fakeActivitiesApi
+        .get('/bulk-appointment-details/12345')
+        .matchHeader('authorization', `Bearer token`)
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getBulkAppointmentDetails(12345, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })

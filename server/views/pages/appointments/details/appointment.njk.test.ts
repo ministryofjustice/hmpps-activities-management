@@ -119,7 +119,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
     ] as unknown as AppointmentDetails['occurrences']
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
-    expect($('[data-qa=occurrence-edited-1]').text()).not.toContain('Edited')
-    expect($('[data-qa=occurrence-edited-2]').text()).toContain('Edited')
+    expect($('[data-qa=occurrence-status-1]').text()).not.toContain('Edited')
+    expect($('[data-qa=occurrence-status-2]').text()).toContain('Edited')
   })
 })
