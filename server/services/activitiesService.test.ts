@@ -33,6 +33,7 @@ import {
   PrisonerAllocations,
   IndividualAppointment,
   BulkAppointmentsRequest,
+  BulkAppointmentDetails,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -493,6 +494,20 @@ describe('Activities Service', () => {
 
       expect(activitiesApiClient.postCreateBulkAppointment).toHaveBeenCalledWith(request, user)
       expect(response).toEqual(expectedResponse)
+    })
+  })
+
+  describe('getBulkAppointmentDetail', () => {
+    it('should return bulk appointment detail from api when valid bulk appointment id is used', async () => {
+      const response = {
+        id: 12345,
+      } as BulkAppointmentDetails
+
+      when(activitiesApiClient.getBulkAppointmentDetails).calledWith(12345, user).mockResolvedValue(response)
+
+      const actualResult = await activitiesService.getBulkAppointmentDetails(12345, user)
+
+      expect(actualResult).toEqual(response)
     })
   })
 
