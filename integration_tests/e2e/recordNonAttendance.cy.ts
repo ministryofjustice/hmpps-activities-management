@@ -12,6 +12,7 @@ import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForNonAttend
 import NotAttendedReasonPage from '../pages/recordAttendance/notAttendedReason'
 import getCategories from '../fixtures/activitiesApi/getCategories.json'
 import AttendanceDashboardPage from '../pages/recordAttendance/attendanceDashboard'
+import ActivitiesIndexPage from '../pages/activities'
 
 context('Record non attendance', () => {
   beforeEach(() => {
@@ -35,8 +36,12 @@ context('Record non attendance', () => {
 
   it('should click through record non attendance journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.markAndManageAttendanceCard().should('contain.text', 'Record activity attendance')
-    indexPage.markAndManageAttendanceCard().click()
+    indexPage.activitiesCard().should('contain.text', 'Allocate people, unlock and attend')
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().should('contain.text', 'Record activity attendance')
+    activitiesIndexPage.recordAttendanceCard().click()
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().should('contain.text', 'Record attendance and cancel activity sessions')
