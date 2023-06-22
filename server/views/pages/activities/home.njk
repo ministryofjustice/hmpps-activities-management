@@ -3,53 +3,41 @@
 
 {% set pageTitle = applicationName + " - Manage activities" %}
 {% set pageId = 'manage-activities-dashboard' %}
-{% set backLinkHref = "/" %}
-{% set backLinkText = "Activities and appointments home" %}
+{% set backLinkText = "Digital Prison Services" %}
+{% set backLinkHref = dpsUrl %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Manage activities</h1>
+    <h1 class="govuk-heading-l">Allocate people, unlock and attend</h1>
 {% endblock %}
 
 {% block content %}
     <div class="card-group govuk-grid-row">
+        {% if 'ROLE_ACTIVITY_HUB' in user.roles %}
+            <div class="govuk-grid-column-one-third card-group__item">
+                {{ card({
+                    "href": "/allocate",
+                    "clickable": "true",
+                    "heading": "Allocate people to activities",
+                    "description": "Set up and edit activities. Allocate people, remove them, and edit allocations."
+                }) }}
+            </div>
+        {% endif %}
+
         <div class="govuk-grid-column-one-third card-group__item">
             {{ card({
-                "id": "ManageAllocations",
-                "href": "/allocation-dashboard",
+                "href": "/unlock-list",
                 "clickable": "true",
-                "heading": "Manage allocations",
-                "description": "Allocate people to, or take them off an activity. See vacancies, check who is currently allocated, and change allocation start and end dates and pay.",
-                "data-qa": "manage-allocations"
+                "heading": "Manage unlock lists",
+                "description": "Create and print unlock lists."
             }) }}
         </div>
+
         <div class="govuk-grid-column-one-third card-group__item">
             {{ card({
-                "id": "EditActivityDetails",
-                "href": "/schedule/activities?stateFilter=live",
+                "href": "/attendance",
                 "clickable": "true",
-                "heading": "Edit activity details",
-                "description": "Change the details of an existing activity including pay rates, requirements and schedule.",
-                "data-qa": "edit-activity-details"
-            }) }}
-        </div>
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "CreateActivity",
-                "href": "/create/start",
-                "clickable": "true",
-                "heading": "Create an activity",
-                "description": "Set up a new activity including pay rates, requirements and schedule.",
-                "data-qa": "create-an-activity"
-            }) }}
-        </div>
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "ChangeOfCircumstances",
-                "href": "/change-of-circumstances/select-period",
-                "clickable": "true",
-                "heading": "View changes in circumstances",
-                "description": "Review the changes in the prison which may affect allocation decisions.",
-                "data-qa": "change-of-circumstances"
+                "heading": "Record activity attendance",
+                "description": "Mark attendance, cancel activity sessions and see daily attendance summaries."
             }) }}
         </div>
     </div>

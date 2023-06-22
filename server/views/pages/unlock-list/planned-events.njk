@@ -23,14 +23,6 @@
 
             {% set todayOrBefore = unlockFilters.unlockDate | formatDate('yyyy-MM-dd') | todayOrBefore %}
 
-            {% if todayOrBefore %}
-                <div class="govuk-body govuk-!-display-none-print govuk-!-margin-top-2">
-                    <a href="#" class="govuk-link--no-visited-state">
-                        Record refusals and absences
-                    </a>
-                </div>
-            {% endif %}
-
             <div class="govuk-grid-row govuk-!-margin-top-4">
                 <div class="govuk-grid-column-full govuk-body govuk-!-font-weight-bold">
                     {{ unlockListItems.length }} prisoners
