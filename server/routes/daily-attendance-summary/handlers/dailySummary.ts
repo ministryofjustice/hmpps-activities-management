@@ -52,6 +52,7 @@ export default class DailySummaryRoutes {
     const suspendedPrisoners = await this.activitiesService
       .getAllAttendance(activityDate, user)
       .then(attendance => attendance.filter(a => a.attendanceReasonCode === attendanceReason.SUSPENDED))
+
     return res.render('pages/daily-attendance-summary/daily-summary', {
       activityDate,
       ...getDailyAttendanceSummary(attendanceSummary.filter(a => categoryFilters.includes(a.categoryName))),

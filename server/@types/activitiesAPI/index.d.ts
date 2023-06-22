@@ -3898,6 +3898,21 @@ export interface components {
        * @example A1234AA
        */
       prisonerNumber: string
+      /**
+       * @description The id of the activity for this attendance record
+       * @example 1
+       */
+      activityId: number
+      /**
+       * @description The title of the activity for this attendance record
+       * @example Math Level 1
+       */
+      activitySummary: string
+      /**
+       * @description The name of the activity category for this attendance record
+       * @example Education
+       */
+      categoryName: string
     }
     /**
      * @description
