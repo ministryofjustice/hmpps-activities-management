@@ -17,12 +17,9 @@ export default class BeforeYouAllocateRoutes {
     const { prisonerNumber } = req.session.allocateJourney.inmate
     const { scheduleId } = req.session.allocateJourney.activity
 
-    const [allocationSuitability, prisonerAllocations] = await Promise.all([
-      this.activitiesService.allocationSuitability(scheduleId, prisonerNumber, user),
-      this.activitiesService.getActivePrisonPrisonerAllocations([prisonerNumber], user).then(a => a[0]?.allocations),
-    ])
+    const allocationSuitability = await this.activitiesService.allocationSuitability(scheduleId, prisonerNumber, user)
 
-    res.render('pages/allocate-to-activity/before-you-allocate', { allocationSuitability, prisonerAllocations })
+    res.render('pages/allocate-to-activity/before-you-allocate', { allocationSuitability })
   }
 
   POST = async (req: Request, res: Response) => {

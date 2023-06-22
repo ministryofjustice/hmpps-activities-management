@@ -1103,44 +1103,6 @@ export interface components {
        */
       priority: number
     }
-    /** @description Describes the pay rates and bands which apply to an activity */
-    ActivityPay: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity pay
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The NOMIS code for the incentive/earned privilege level
-       * @example BAS
-       */
-      incentiveNomisCode: string
-      /**
-       * @description The incentive/earned privilege level
-       * @example Basic
-       */
-      incentiveLevel: string
-      prisonPayBand: components['schemas']['PrisonPayBand']
-      /**
-       * Format: int32
-       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
-       * @example 150
-       */
-      rate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
-       * @example 150
-       */
-      pieceRate?: number
-      /**
-       * Format: int32
-       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
-       * @example 10
-       */
-      pieceRateItems?: number
-    }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
       /**
@@ -1166,7 +1128,7 @@ export interface components {
       scheduleDescription: string
       /** @description Indicates whether this allocation is to an activity within the 'Not in work' category */
       isUnemployment: boolean
-      payRate?: components['schemas']['ActivityPay']
+      prisonPayBand: components['schemas']['PrisonPayBand']
       /**
        * Format: date
        * @description The date when the prisoner will start the activity
@@ -2468,6 +2430,44 @@ export interface components {
        */
       studyAreaDescription: string
     }
+    /** @description Describes the pay rates and bands which apply to an activity */
+    ActivityPay: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity pay
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The NOMIS code for the incentive/earned privilege level
+       * @example BAS
+       */
+      incentiveNomisCode: string
+      /**
+       * @description The incentive/earned privilege level
+       * @example Basic
+       */
+      incentiveLevel: string
+      prisonPayBand: components['schemas']['PrisonPayBand']
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
+       * @example 150
+       */
+      pieceRate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
+       * @example 10
+       */
+      pieceRateItems?: number
+    }
     /**
      * @description
      *   Describes the weekly schedule for an activity. There can be several of these defined for one activity.
@@ -3211,6 +3211,49 @@ export interface components {
        */
       issuePayment?: boolean
     }
+    /** @description Describes a pay rate applied to an activity */
+    ActivityPayLite: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity pay
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The NOMIS code for the incentive/earned privilege level
+       * @example BAS
+       */
+      incentiveNomisCode: string
+      /**
+       * @description The incentive/earned privilege level
+       * @example Basic
+       */
+      incentiveLevel: string
+      /**
+       * Format: int64
+       * @description The pay band id for this activity pay
+       * @example 123456
+       */
+      prisonPayBandId: number
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to produced amounts of a product, this indicates the payment rate (in pence) per pieceRateItems produced
+       * @example 150
+       */
+      pieceRate?: number
+      /**
+       * Format: int32
+       * @description Where payment is related to the number of items produced in a batch of a product, this is the batch size that attract 1 x pieceRate
+       * @example 10
+       */
+      pieceRateItems?: number
+    }
     AddressDto: {
       /**
        * @description Primary Address
@@ -3326,6 +3369,11 @@ export interface components {
        */
       activeFlag?: boolean
     }
+    /** @description Allocation details with activity pay rate if applicable */
+    AllocationPayRate: {
+      payRate?: components['schemas']['ActivityPayLite']
+      allocation: components['schemas']['Allocation']
+    }
     /** @description Cross references prisoners details with activity requirements */
     AllocationSuitability: {
       workplaceRiskAssessment?: components['schemas']['WRASuitability']
@@ -3333,6 +3381,8 @@ export interface components {
       education?: components['schemas']['EducationSuitability']
       releaseDate?: components['schemas']['ReleaseDateSuitability']
       nonAssociation?: components['schemas']['NonAssociationSuitability']
+      /** @description The prisoner's allocations with pay rates */
+      allocations: components['schemas']['AllocationPayRate'][]
     }
     /** @description The prisoner's education levels */
     Education: {
