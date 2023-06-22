@@ -26,14 +26,14 @@ export default class CategoryRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
 
-    const categoryName = await this.activitiesService
+    const category = await this.activitiesService
       .getActivityCategories(user)
       .then(categories => categories.find(c => c.id === req.body.category))
-      .then(category => category.name)
 
     req.session.createJourney.category = {
       id: req.body.category,
-      name: categoryName,
+      code: category.code,
+      name: category.name,
     }
 
     if (req.query && req.query.fromEditActivity) {
@@ -50,6 +50,11 @@ export default class CategoryRoutes {
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     } else {
+      // If the category is not in work, default to in-cell activity location
+      if (category.code === 'SAA_NOT_IN_WORK' && !req.session.createJourney.location) {
+        req.session.createJourney.inCell = true
+      }
+
       res.redirectOrReturn('name')
     }
   }

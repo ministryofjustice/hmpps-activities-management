@@ -5,6 +5,7 @@ export type CreateAnActivityJourney = {
   activityId?: number
   category?: {
     id: number
+    code: string
     name: string
   }
   name?: string
