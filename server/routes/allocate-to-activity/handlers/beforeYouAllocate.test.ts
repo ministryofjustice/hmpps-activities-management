@@ -5,7 +5,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import BeforeYouAllocate, { ConfirmOptions } from './beforeYouAllocate'
 import ActivitiesService from '../../../services/activitiesService'
-import { AllocationSuitability, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
+import { AllocationSuitability } from '../../../@types/activitiesAPI/types'
 import atLeast from '../../../../jest.setup'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 
@@ -73,51 +73,41 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
           suitable: true,
           nonAssociations: [],
         },
-      } as AllocationSuitability
-
-      const otherAllocations = [
-        {
-          prisonerNumber: 'ABC123',
-          allocations: [
-            {
+        allocations: [
+          {
+            allocation: {
               id: 123456,
               prisonerNumber: 'ABC123',
               activitySummary: 'English 1',
               scheduleId: 1,
-              payRate: {
+              prisonPayBand: {
                 id: 123456,
-                incentiveNomisCode: 'BAS',
-                incentiveLevel: 'Basic',
-                prisonPayBand: {
-                  id: 123456,
-                  alias: 'Low',
-                  description: 'Pay band 1',
-                  nomisPayBand: 1,
-                },
-                rate: 150,
-                pieceRate: 150,
-                pieceRateItems: 10,
+                alias: 'Low',
+                description: 'Pay band 1',
+                nomisPayBand: 1,
               },
               status: 'ACTIVE',
             },
-          ],
-        },
-      ] as PrisonerAllocations[]
+            payRate: {
+              id: 123456,
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              prisonPayBandId: 123456,
+              rate: 150,
+              pieceRate: 150,
+              pieceRateItems: 10,
+            },
+          },
+        ],
+      } as AllocationSuitability
 
       when(activitiesService.allocationSuitability)
         .calledWith(atLeast(1, 'ABC123'))
         .mockResolvedValue(allocationSuitability)
 
-      when(activitiesService.getActivePrisonPrisonerAllocations)
-        .calledWith(atLeast(['ABC123']))
-        .mockResolvedValue(otherAllocations)
-
       await handler.GET(req, res)
 
-      expect(res.render).toBeCalledWith('pages/allocate-to-activity/before-you-allocate', {
-        allocationSuitability,
-        prisonerAllocations: otherAllocations[0].allocations,
-      })
+      expect(res.render).toBeCalledWith('pages/allocate-to-activity/before-you-allocate', { allocationSuitability })
     })
   })
 

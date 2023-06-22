@@ -51,7 +51,7 @@ export default class PayBandRoutes {
       payBands,
       scheduleId,
       allocationId,
-      payBandId: allocation.payRate.prisonPayBand.id,
+      payBandId: allocation.prisonPayBand.id,
     })
   }
 
