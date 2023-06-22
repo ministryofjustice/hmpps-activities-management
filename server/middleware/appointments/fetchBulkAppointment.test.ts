@@ -49,6 +49,20 @@ describe('fetchBulkAppointment', () => {
     expect(next).toBeCalledTimes(1)
   })
 
+  it('should not retrieve bulk appointment if already on request', async () => {
+    const bulkAppointmentDetails = {
+      id: 123,
+    } as BulkAppointmentDetails
+
+    req.bulkAppointment = bulkAppointmentDetails
+
+    await middleware(req, res, next)
+
+    expect(activitiesServiceMock.getBulkAppointmentDetails).not.toBeCalled()
+    expect(req.bulkAppointment).toEqual(bulkAppointmentDetails)
+    expect(next).toBeCalledTimes(1)
+  })
+
   it('should catch errors while retrieving bulk appointment and pass to next', async () => {
     when(activitiesServiceMock.getBulkAppointmentDetails)
       .calledWith(123, res.locals.user)
