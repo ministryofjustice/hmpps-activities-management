@@ -62,7 +62,7 @@ export default class CheckAnswersRoutes {
     const { user } = res.locals
     const { appointmentJourney, bulkAppointmentJourney } = req.session
 
-    const request = {
+    return {
       prisonCode: user.activeCaseLoadId,
       categoryCode: appointmentJourney.category.code,
       appointmentDescription: appointmentJourney.description,
@@ -76,7 +76,5 @@ export default class CheckAnswersRoutes {
         comment: appointment.comment,
       })),
     } as BulkAppointmentsRequest
-
-    return request
   }
 }
