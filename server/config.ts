@@ -122,10 +122,6 @@ export default {
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
   routeAuth: [
     {
-      route: '/activities',
-      roles: [Roles.ACTIVITY_HUB],
-    },
-    {
       route: '/allocation-dashboard',
       roles: [Roles.ACTIVITY_HUB],
     },
@@ -135,6 +131,10 @@ export default {
     },
     {
       route: '/create',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/allocate',
       roles: [Roles.ACTIVITY_HUB],
     },
     {
