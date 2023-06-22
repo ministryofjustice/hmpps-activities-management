@@ -2,7 +2,7 @@
 {% from "components/card.njk" import card %}
 
 {% set pageTitle = applicationName + " - Manage activities" %}
-{% set pageId = 'manage-activities-dashboard' %}
+{% set pageId = 'activities-index-page' %}
 {% set backLinkText = "Digital Prison Services" %}
 {% set backLinkHref = dpsUrl %}
 
@@ -18,7 +18,8 @@
                     "href": "/allocate",
                     "clickable": "true",
                     "heading": "Allocate people to activities",
-                    "description": "Set up and edit activities. Allocate people, remove them, and edit allocations."
+                    "description": "Set up and edit activities. Allocate people, remove them, and edit allocations.",
+                    "data-qa": "allocate-to-activities-card"
                 }) }}
             </div>
         {% endif %}
@@ -37,7 +38,8 @@
                 "href": "/attendance",
                 "clickable": "true",
                 "heading": "Record activity attendance",
-                "description": "Mark attendance, cancel activity sessions and see daily attendance summaries."
+                "description": "Mark attendance, cancel activity sessions and see daily attendance summaries.",
+                "data-qa": "record-attendance-card"
             }) }}
         </div>
     </div>

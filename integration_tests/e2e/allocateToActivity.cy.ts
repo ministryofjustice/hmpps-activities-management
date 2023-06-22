@@ -26,6 +26,7 @@ import ConfirmationPage from '../pages/allocateToActivity/confirmation'
 import AllocationDashboard from '../pages/allocateToActivity/AllocationDashboard'
 import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
 import BeforeYouAllocate from '../pages/allocateToActivity/before-you-allocate'
+import ActivitiesIndexPage from '../pages/activities'
 
 context('Allocate to activity', () => {
   beforeEach(() => {
@@ -52,8 +53,12 @@ context('Allocate to activity', () => {
 
   it('should click through allocate to activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.manageActivitiesAndAllocationsCard().should('contain.text', 'Manage activities and allocations')
-    indexPage.manageActivitiesAndAllocationsCard().click()
+    indexPage.activitiesCard().should('contain.text', 'Allocate people, unlock and attend')
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.allocateToActivitiesCard().should('contain.text', 'Allocate people to activities')
+    activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
     manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')

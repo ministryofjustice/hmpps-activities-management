@@ -1,8 +1,8 @@
 import Page from '../page'
 
-export default class ManageActivitiesDashboardPage extends Page {
+export default class AllocateIndexPage extends Page {
   constructor() {
-    super('manage-activities-dashboard')
+    super('allocate-home')
   }
 
   allocateToActivityCard = (): Cypress.Chainable => cy.get('[data-qa=manage-allocations]')
