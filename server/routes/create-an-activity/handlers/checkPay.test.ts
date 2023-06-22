@@ -4,7 +4,7 @@ import { when } from 'jest-when'
 import PrisonService from '../../../services/prisonService'
 import CheckPayRoutes from './checkPay'
 import atLeast from '../../../../jest.setup'
-import { IepLevel } from '../../../@types/incentivesApi/types'
+import { IncentiveLevel } from '../../../@types/incentivesApi/types'
 import ActivitiesService from '../../../services/activitiesService'
 import activity from '../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../@types/activitiesAPI/types'
@@ -98,10 +98,10 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValueOnce([
-          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
-          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
-          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
-        ] as IepLevel[])
+          { levelCode: 'BAS', levelName: 'Basic' },
+          { levelCode: 'STD', levelName: 'Standard' },
+          { levelCode: 'ENH', levelName: 'Enhanced' },
+        ] as IncentiveLevel[])
 
       await handler.POST(req, res)
       expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Standard')
@@ -123,10 +123,10 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValueOnce([
-          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
-          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
-          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
-        ] as IepLevel[])
+          { levelCode: 'BAS', levelName: 'Basic' },
+          { levelCode: 'STD', levelName: 'Standard' },
+          { levelCode: 'ENH', levelName: 'Enhanced' },
+        ] as IncentiveLevel[])
 
       when(activitiesService.updateActivity)
         .calledWith(atLeast(updatedActivity))

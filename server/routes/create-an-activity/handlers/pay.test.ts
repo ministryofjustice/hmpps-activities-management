@@ -7,7 +7,7 @@ import PayRoutes, { Pay } from './pay'
 import PrisonService from '../../../services/prisonService'
 import ActivitiesService from '../../../services/activitiesService'
 import atLeast from '../../../../jest.setup'
-import { IepLevel } from '../../../@types/incentivesApi/types'
+import { IncentiveLevel } from '../../../@types/incentivesApi/types'
 import { PrisonPayBand } from '../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../utils/utils'
 
@@ -64,10 +64,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
     it('should render page correctly', async () => {
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
-        .mockResolvedValue([
-          { iepDescription: 'Basic', active: false },
-          { iepDescription: 'Standard', active: true },
-        ] as IepLevel[])
+        .mockResolvedValue([{ levelName: 'Standard' }] as IncentiveLevel[])
 
       when(prisonService.getPayProfile).calledWith(atLeast('MDI')).mockResolvedValue({
         agencyId: 'MDI',
@@ -79,7 +76,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/pay', {
-        incentiveLevels: [{ iepDescription: 'Standard', active: true }],
+        incentiveLevels: [{ levelName: 'Standard' }],
         payBands: [
           { id: 1, alias: 'Low', displaySequence: 1 },
           { id: 2, alias: 'High', displaySequence: 2 },
@@ -108,10 +105,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
-        .mockResolvedValue([
-          { iepDescription: 'Basic', active: false },
-          { iepDescription: 'Standard', active: true },
-        ] as IepLevel[])
+        .mockResolvedValue([{ levelName: 'Standard' }] as IncentiveLevel[])
 
       when(prisonService.getPayProfile).calledWith(atLeast('MDI')).mockResolvedValue({
         agencyId: 'MDI',
@@ -124,7 +118,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/pay', {
-        incentiveLevels: [{ iepDescription: 'Standard', active: true }],
+        incentiveLevels: [{ levelName: 'Standard' }],
         payBands: [
           { id: 1, alias: 'Low', displaySequence: 1 },
           { id: 2, alias: 'High', displaySequence: 2 },
@@ -155,10 +149,10 @@ describe('Route Handlers - Create an activity - Pay', () => {
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValueOnce([
-          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
-          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
-          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
-        ] as IepLevel[])
+          { levelCode: 'BAS', levelName: 'Basic' },
+          { levelCode: 'STD', levelName: 'Standard' },
+          { levelCode: 'ENH', levelName: 'Enhanced' },
+        ] as IncentiveLevel[])
 
       await handler.POST(req, res)
 
@@ -179,10 +173,10 @@ describe('Route Handlers - Create an activity - Pay', () => {
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValueOnce([
-          { iepLevel: 'ENH', iepDescription: 'Enhanced', sequence: 3 },
-          { iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 },
-          { iepLevel: 'STD', iepDescription: 'Standard', sequence: 2 },
-        ] as IepLevel[])
+          { levelCode: 'BAS', levelName: 'Basic' },
+          { levelCode: 'STD', levelName: 'Standard' },
+          { levelCode: 'ENH', levelName: 'Enhanced' },
+        ] as IncentiveLevel[])
       req.session.createJourney.pay = [
         {
           incentiveNomisCode: 'BAS',
@@ -244,7 +238,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
-        .mockResolvedValueOnce([{ iepLevel: 'BAS', iepDescription: 'Basic', sequence: 1 }] as IepLevel[])
+        .mockResolvedValueOnce([{ levelCode: 'BAS', levelName: 'Basic' }] as IncentiveLevel[])
 
       await handler.POST(req, res)
 

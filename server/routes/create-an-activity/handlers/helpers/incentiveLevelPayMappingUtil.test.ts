@@ -5,7 +5,7 @@ import PrisonService from '../../../../services/prisonService'
 import IncentiveLevelPayMappingUtil from './incentiveLevelPayMappingUtil'
 import { ServiceUser } from '../../../../@types/express'
 import atLeast from '../../../../../jest.setup'
-import { IepLevel } from '../../../../@types/incentivesApi/types'
+import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 
 jest.mock('../../../../services/prisonService')
 
@@ -45,10 +45,10 @@ describe('Route Handlers - Create an activity - Helper', () => {
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValue([
-          { iepDescription: 'Standard', sequence: 2 },
-          { iepDescription: 'Basic', sequence: 1 },
-          { iepDescription: 'Enhanced', sequence: 3 },
-        ] as IepLevel[])
+          { levelName: 'Basic' },
+          { levelName: 'Standard' },
+          { levelName: 'Enhanced' },
+        ] as IncentiveLevel[])
 
       const result = await helper.getPayGroupedByIncentiveLevel(req, user)
       expect(result).toEqual([

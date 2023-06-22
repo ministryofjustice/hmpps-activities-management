@@ -7,7 +7,7 @@ import { ServiceUser } from '../../../@types/express'
 import { Prisoner } from '../../../@types/prisonerOffenderSearchImport/types'
 import { Activity, ActivityPay, Allocation, PrisonerAllocations } from '../../../@types/activitiesAPI/types'
 import { convertToTitleCase, parseDate } from '../../../utils/utils'
-import { IepLevel, IepSummary } from '../../../@types/incentivesApi/types'
+import { IepSummary, IncentiveLevel } from '../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../validators/hasAtLeastOne'
 
 type Filters = {
@@ -39,7 +39,7 @@ export default class AllocationDashboardRoutes {
     const { activityId } = req.params
     const filters = req.query as Filters
 
-    const [activity, incentiveLevels]: [Activity, IepLevel[]] = await Promise.all([
+    const [activity, incentiveLevels]: [Activity, IncentiveLevel[]] = await Promise.all([
       this.activitiesService.getActivity(+activityId, user),
       this.prisonService.getIncentiveLevels(user.activeCaseLoad.caseLoadId, user),
     ])
@@ -120,10 +120,10 @@ export default class AllocationDashboardRoutes {
     }
   }
 
-  private getSuitableForIep = (pay: ActivityPay[], iepLevels: IepLevel[]) => {
-    const suitableIepLevels = iepLevels.filter(i => pay.map(p => p.incentiveNomisCode).includes(i.iepLevel))
+  private getSuitableForIep = (pay: ActivityPay[], iepLevels: IncentiveLevel[]) => {
+    const suitableIepLevels = iepLevels.filter(i => pay.map(p => p.incentiveNomisCode).includes(i.levelCode))
     if (suitableIepLevels.length === iepLevels.length) return 'All Incentive Levels'
-    return suitableIepLevels.map(i => i.iepDescription).join(', ')
+    return suitableIepLevels.map(i => i.levelName).join(', ')
   }
 
   private getSuitableForWra = (riskLevel: string) => {

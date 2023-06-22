@@ -1,37 +1,22 @@
 [
   {
-    "iepLevel": "BAS",
-    "iepDescription": "Basic",
-    "sequence": 1,
-    "default": false,
-    "active": true
+    "levelCode": "BAS",
+    "levelName": "Basic"
   },
   {
-    "iepLevel": "STD",
-    "iepDescription": "Standard",
-    "sequence": 2,
-    "default": false,
-    "active": true
+    "levelCode": "STD",
+    "levelName": "Standard"
   },
   {
-    "iepLevel": "ENH",
-    "iepDescription": "Enhanced",
-    "sequence": 3,
-    "default": true,
-    "active": true
+    "levelCode": "ENH",
+    "levelName": "Enhanced"
   },
   {
-    "iepLevel": "EN2",
-    "iepDescription": "Enhanced 2",
-    "sequence": 4,
-    "default": false,
-    "active": true
+    "levelCode": "EN2",
+    "levelName": "Enhanced 2"
   },
   {
-    "iepLevel": "EN3",
-    "iepDescription": "Enhanced 3",
-    "sequence": 5,
-    "default": false,
-    "active": true
+    "levelCode": "EN3",
+    "levelName": "Enhanced 3"
   }
 ]

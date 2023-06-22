@@ -335,9 +335,9 @@
                 {% for incentiveLevel in incentiveLevels %}
                     {% set incentiveLevelOptions = (incentiveLevelOptions.push(
                         {
-                            value: incentiveLevel.iepDescription,
-                            text: incentiveLevel.iepDescription,
-                            selected: filters.incentiveLevelFilter == incentiveLevel.iepDescription and incentiveLevel.iepDescription != suitableForIep
+                            value: incentiveLevel.levelName,
+                            text: incentiveLevel.levelName,
+                            selected: filters.incentiveLevelFilter == incentiveLevel.levelName and incentiveLevel.levelName != suitableForIep
                         }
                     ), incentiveLevelOptions) %}
                 {% endfor %}
