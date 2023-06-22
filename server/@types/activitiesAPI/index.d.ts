@@ -1466,6 +1466,45 @@ export interface components {
        * @example 12345
        */
       id: number
+      /**
+       * @description The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
+       * @example CHAP
+       */
+      categoryCode: string
+      /**
+       * @description
+       *     Free text description for an appointment.  This is used to add more context to the appointment category.
+       *
+       * @example Meeting with the governor
+       */
+      appointmentDescription?: string
+      /**
+       * Format: int64
+       * @description
+       *     The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
+       *     Will be null if in cell = true
+       *
+       * @example 123
+       */
+      internalLocationId?: number
+      /**
+       * @description
+       *     Flag to indicate if the location of the appointment is in cell rather than an internal prison location.
+       *     Internal location id should be null if in cell = true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * Format: date
+       * @description The date of the appointment or first appointment occurrence in the series
+       */
+      startDate: string
       /** @description The set of appointments created in bulk */
       appointments: components['schemas']['Appointment'][]
       /**
@@ -3337,6 +3376,50 @@ export interface components {
        */
       incentiveLevel?: string
     }
+    /** @description Prisoner non-association details */
+    NonAssociationDetails: {
+      /**
+       * @description The non-association reason code
+       * @example VIC
+       */
+      reasonCode: string
+      /**
+       * @description The non-association reason description
+       * @example Victim
+       */
+      reasonDescription: string
+      /**
+       * @description The non-association type code
+       * @example WING
+       */
+      typeCode: string
+      /**
+       * @description The non-association type description
+       * @example Do Not Locate on Same Wing
+       */
+      typeDescription: string
+      /**
+       * Format: date-time
+       * @description Date and time the mom-association is effective from. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
+       */
+      effectiveDate: string
+      /**
+       * Format: date-time
+       * @description Date and time the mom-association expires. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
+       */
+      expiryDate?: string
+      offenderNonAssociation: components['schemas']['OffenderNonAssociation']
+      /**
+       * @description The person who authorised the non-association (free text).
+       * @example null
+       */
+      authorisedBy?: string
+      /**
+       * @description Additional free text comments related to the non-association.
+       * @example null
+       */
+      comments?: string
+    }
     /** @description Prisoner workplace risk assessment suitability */
     NonAssociationSuitability: {
       /**
@@ -3345,9 +3428,12 @@ export interface components {
        */
       suitable: boolean
       /** @description The prisoner's non-associations */
-      nonAssociations: components['schemas']['OffenderNonAssociationDetail'][]
+      nonAssociations: components['schemas']['NonAssociationDetails'][]
     }
-    /** @example null */
+    /**
+     * @description Offender non-association details
+     * @example null
+     */
     OffenderNonAssociation: {
       /**
        * @description The offenders number
@@ -3390,50 +3476,6 @@ export interface components {
        * @example 123
        */
       assignedLivingUnitId: number
-    }
-    /** @description The prisoner's non-associations */
-    OffenderNonAssociationDetail: {
-      /**
-       * @description The non-association reason code
-       * @example VIC
-       */
-      reasonCode: string
-      /**
-       * @description The non-association reason description
-       * @example Victim
-       */
-      reasonDescription: string
-      /**
-       * @description The non-association type code
-       * @example WING
-       */
-      typeCode: string
-      /**
-       * @description The non-association type description
-       * @example Do Not Locate on Same Wing
-       */
-      typeDescription: string
-      /**
-       * @description Date and time the mom-association is effective from. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
-       * @example 2021-07-05T10:35:17
-       */
-      effectiveDate: string
-      offenderNonAssociation: components['schemas']['OffenderNonAssociation']
-      /**
-       * @description Date and time the mom-association expires. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
-       * @example 2021-07-05T10:35:17
-       */
-      expiryDate?: string
-      /**
-       * @description The person who authorised the non-association (free text).
-       * @example null
-       */
-      authorisedBy?: string
-      /**
-       * @description Additional free text comments related to the non-association.
-       * @example null
-       */
-      comments?: string
     }
     /** @description Prisoner release date suitability */
     ReleaseDateSuitability: {
@@ -3536,12 +3578,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      paged?: boolean
-      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
+      paged?: boolean
+      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
@@ -4044,6 +4086,14 @@ export interface components {
        * @example 12345
        */
       id: number
+      /**
+       * @description
+       *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
+       *     Note, this property does not exist on the appointment occurrences and is therefore consistent across all occurrences
+       *
+       * @example SKI
+       */
+      prisonCode: string
       category: components['schemas']['AppointmentCategorySummary']
       /**
        * @description
