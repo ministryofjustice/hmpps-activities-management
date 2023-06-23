@@ -113,14 +113,17 @@
         <div class="govuk-grid-column-one-quarter">
             <p class="govuk-body govuk-!-margin-bottom-0">Not yet attended</p>
             <p class="govuk-body govuk-!-margin-bottom-0"><font size="+4">{{ totalNotAttended[timeSlot] }}</font> {{ totalNotAttendedPercentage[timeSlot] }}%</p>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a href="/attendance-summary/attendance?date={{ activityDate | formatDate('yyyy-MM-dd') }}&status=NotAttended">All not yet attended</a></p>
         </div>
         <div class="govuk-grid-column-one-quarter">
             <p class="govuk-body govuk-!-margin-bottom-0">Absences</p>
             <p class="govuk-body govuk-!-margin-bottom-0"><font size="+4">{{ totalAbsences[timeSlot] }}</font> {{ totalAbsencesPercentage[timeSlot] }}%</p>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a href="/attendance-summary/attendance?date={{ activityDate | formatDate('yyyy-MM-dd') }}&status=Absences">All absences</a></p>
         </div>
         <div class="govuk-grid-column-one-quarter">
             <p class="govuk-body govuk-!-margin-bottom-0">Attended</p>
             <p class="govuk-body govuk-!-margin-bottom-0"><font size="+4">{{ totalAttended[timeSlot] }}</font> {{ totalAttendedPercentage[timeSlot] }}%</p>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a href="/attendance-summary/attendance?date={{ activityDate | formatDate('yyyy-MM-dd') }}&status=Attended">All attended</a></p>
         </div>
     </div>
     <hr />
@@ -228,6 +231,7 @@
             </div>
         {% endif %}
     </div>
+    xxx
     <hr />
     <h3 class="govuk-heading-s">Suspended prisoners</h3>
     <div class="govuk-grid-row govuk-!-margin-bottom-1">
