@@ -17,7 +17,7 @@ export default class DailyAttendanceRoutes {
       return res.redirect('select-period')
     }
     let { status } = req.query
-     status ??= ''
+    status ??= ''
 
     let { attendanceSummaryFilters } = req.session
 
@@ -106,8 +106,8 @@ export default class DailyAttendanceRoutes {
 
     req.session.attendanceSummaryFilters = parseFiltersFromPost(
       attendanceSummaryFilters,
-      req.body?.categoryFilters ? req.body?.categoryFilters : undefined,
-      req.body?.activityFilters ? req.body?.activityFilters : undefined,
+      req.body?.categoryFilters,
+      req.body?.activityFilters,
     )
     res.redirect(`attendance?date=${isoDateString}&status=${status}`)
   }

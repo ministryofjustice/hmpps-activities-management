@@ -336,9 +336,9 @@ describe('Route Handlers - Daily Attendance List', () => {
       const { attendanceSummaryFilters } = req.session
 
       // Different from default filter values
-      expect(
-        attendanceSummaryFilters.categoryFilters.includes({ value: 'Education', text: 'Education', checked: true }),
-      )
+      expect(attendanceSummaryFilters.categoryFilters[0].value).toEqual('Education')
+      expect(attendanceSummaryFilters.categoryFilters[0].text).toEqual('Education')
+      expect(attendanceSummaryFilters.categoryFilters[0].checked).toEqual(true)
 
       expect(res.redirect).toHaveBeenCalledWith(
         `attendance?date=${formatDate(attendanceSummaryFilters.activityDate, 'yyyy-MM-dd')}&status=NotAttended`,
@@ -365,9 +365,9 @@ describe('Route Handlers - Daily Attendance List', () => {
       const { attendanceSummaryFilters } = req.session
 
       // Different from default filter values
-      expect(
-        attendanceSummaryFilters.categoryFilters.includes({ value: 'Education', text: 'Education', checked: true }),
-      )
+      expect(attendanceSummaryFilters.categoryFilters[0].value).toEqual('Education')
+      expect(attendanceSummaryFilters.categoryFilters[0].text).toEqual('Education')
+      expect(attendanceSummaryFilters.categoryFilters[0].checked).toEqual(true)
 
       expect(res.redirect).toHaveBeenCalledWith(
         `attendance?date=${formatDate(attendanceSummaryFilters.activityDate, 'yyyy-MM-dd')}`,
@@ -376,9 +376,9 @@ describe('Route Handlers - Daily Attendance List', () => {
   })
 })
 
-const categoryFiltersDefault = [{ value: 'Education', text: 'Education', checked: false }] as FilterItem[]
+const categoryFiltersDefault = [{ value: 'Education', text: 'Education', checked: true }] as FilterItem[]
 
-const activityFiltersDefault = [{ value: 'Maths Level 1', text: 'Maths Level 1', checked: false }] as FilterItem[]
+const activityFiltersDefault = [{ value: 'Maths Level 1', text: 'Maths Level 1', checked: true }] as FilterItem[]
 
 const testAttendanceSummaryFilters = (
   categoryFilters: FilterItem[] = categoryFiltersDefault,
