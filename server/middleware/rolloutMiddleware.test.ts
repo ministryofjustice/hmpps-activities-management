@@ -28,12 +28,22 @@ beforeEach(() => {
 describe('rolloutMiddleware', () => {
   it('should render the correct view if the service is not rolled out for the user', async () => {
     res.locals.user.isActivitiesRolledOut = false
+    res.locals.user.isAppointmentsRolledOut = false
     await middleware(req, res, next)
     expect(res.render).toHaveBeenCalledWith('pages/not-rolled-out', { rolloutPlan: { prisonCode: 'MDI' } })
   })
 
   it('should call next when activities is rolled out to user', async () => {
     res.locals.user.isActivitiesRolledOut = true
+    res.locals.user.isAppointmentsRolledOut = false
+    await middleware(req, res, next)
+    expect(res.render).not.toHaveBeenCalled()
+    expect(next).toHaveBeenCalled()
+  })
+
+  it('should call next when appointments is rolled out to user', async () => {
+    res.locals.user.isActivitiesRolledOut = false
+    res.locals.user.isAppointmentsRolledOut = true
     await middleware(req, res, next)
     expect(res.render).not.toHaveBeenCalled()
     expect(next).toHaveBeenCalled()
