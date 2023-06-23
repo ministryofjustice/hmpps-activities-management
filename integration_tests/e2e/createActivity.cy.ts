@@ -27,6 +27,7 @@ import BankHolidayPage from '../pages/createSchedule/bankHoliday'
 import LocationPage from '../pages/createSchedule/location'
 import CapacityPage from '../pages/createSchedule/capacity'
 import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
+import ActivitiesIndexPage from '../pages/activities'
 
 context('Create activity', () => {
   beforeEach(() => {
@@ -36,7 +37,7 @@ context('Create activity', () => {
     cy.signIn()
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
-    cy.stubEndpoint('GET', '/iep/levels/MDI', moorlandIncentiveLevels)
+    cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/EDU_LEVEL/codes', educationLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/STUDY_AREA/codes', studyAreas)
     cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
@@ -46,8 +47,12 @@ context('Create activity', () => {
 
   it('should click through create activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.manageActivitiesAndAllocationsCard().should('contain.text', 'Manage activities and allocations')
-    indexPage.manageActivitiesAndAllocationsCard().click()
+    indexPage.activitiesCard().should('contain.text', 'Allocate people, unlock and attend')
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.allocateToActivitiesCard().should('contain.text', 'Allocate people to activities')
+    activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
     manageActivitiesPage.cardActivityCard().should('contain.text', 'Create an activity')

@@ -36,7 +36,7 @@ export default class IncentiveLevelPayMappingUtil {
       .map((value: unknown[], key: string) => ({
         incentiveLevel: key,
         pays: _.sortBy(value, 'displaySequence'),
-        sequence: incentiveLevels.find(iep => iep.iepDescription === key)?.sequence,
+        sequence: incentiveLevels.findIndex(iep => iep.levelName === key),
       }))
       .sortBy('sequence')
       .map(
@@ -71,7 +71,7 @@ export default class IncentiveLevelPayMappingUtil {
           activity.schedules.forEach(schedule => {
             let peopleCount = 0
             const allocationsForPayBand = schedule.allocations.filter(
-              allocation => allocation.payRate.prisonPayBand.id === payBand.bandId,
+              allocation => allocation.prisonPayBand.id === payBand.bandId,
             )
             allocationsForPayBand.forEach(allocation => {
               peopleCount += inmates.filter(

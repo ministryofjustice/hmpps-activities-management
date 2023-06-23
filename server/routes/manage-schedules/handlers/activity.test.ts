@@ -110,78 +110,35 @@ describe('Route Handlers - View Activity', () => {
           dailySlots: [
             {
               day: 'Monday',
-              slots: [
-                {
-                  id: 1,
-                  startTime: '10:00',
-                  endTime: '11:00',
-                },
-              ],
+              slots: ['am'],
             },
             {
               day: 'Tuesday',
-              slots: [
-                {
-                  id: 1,
-                  startTime: '10:00',
-                  endTime: '11:00',
-                },
-              ],
+              slots: ['am'],
             },
             {
               day: 'Wednesday',
-              slots: [
-                {
-                  id: 1,
-                  startTime: '10:00',
-                  endTime: '11:00',
-                },
-              ],
+              slots: ['am'],
             },
             {
               day: 'Thursday',
-              slots: [
-                {
-                  id: 1,
-                  startTime: '10:00',
-                  endTime: '11:00',
-                },
-              ],
+              slots: ['am'],
             },
             {
               day: 'Friday',
-              slots: [
-                {
-                  id: 1,
-                  startTime: '10:00',
-                  endTime: '11:00',
-                },
-              ],
+              slots: ['am'],
             },
             {
               day: 'Saturday',
-              slots: [
-                {
-                  id: 1,
-                  startTime: '10:00',
-                  endTime: '11:00',
-                },
-              ],
+              slots: ['am'],
             },
             {
               day: 'Sunday',
-              slots: [
-                {
-                  id: 1,
-                  startTime: '10:00',
-                  endTime: '11:00',
-                },
-              ],
+              slots: ['am'],
             },
           ],
         },
         attendanceCount: 0,
-        week: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
       })
     })
   })

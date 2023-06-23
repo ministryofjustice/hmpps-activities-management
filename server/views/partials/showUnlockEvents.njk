@@ -1,7 +1,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% macro showUnlockEvents(events) %}
-    <div class="govuk-body govuk-!-margin-0 govuk-!-font-size-16">
+    <div class="govuk-body-s govuk-!-margin-0">
         {% for e in events %}
             {% if not loop.first %}<hr class="mid-grey-tint-20-hr" />{% endif %}
 
@@ -17,7 +17,11 @@
                         {{ e.summary | trim }}
                     </a>
                     <div>
-                        {{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}
+                        {% if e.cancelled %}
+                            <div>{{ govukTag({ text: 'Cancelled Appointment', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
+                        {% else %}
+                            <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+                        {% endif %}
                         {% if e.comments %}
                             {{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow' }) }}
                         {% endif %}
@@ -28,7 +32,7 @@
             </div>
 
             {% if e.suspended %}
-                <strong class="govuk-tag govuk-tag--red-border govuk-!-font-size-14">Prisoner suspended</strong>
+                <strong class="govuk-tag govuk-tag--red-border govuk-tag--small">Prisoner suspended</strong>
             {% endif %}
 
             {% if e.eventType != 'EXTERNAL_TRANSFER' and e.eventType != 'COURT_HEARING' %}

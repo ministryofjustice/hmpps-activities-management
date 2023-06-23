@@ -53,7 +53,7 @@ export default function nunjucksSetup(app: express.Express, { ukBankHolidayServi
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
-  app.locals.applicationName = 'Activities Management'
+  app.locals.applicationName = 'Activities and Appointments'
   app.locals.hmppsAuthUrl = config.apis.hmppsAuth.url
   app.locals.dpsUrl = config.dpsUrl
 

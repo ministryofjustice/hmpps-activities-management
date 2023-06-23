@@ -26,12 +26,20 @@
     font-size: 12pt;
   }
 
+  .govuk-body {
+    font-size: 11pt;
+  }
+
+  .govuk-body-s {
+    font-size: 10pt;
+  }
+
   .printed-page {
     background: none;
   }
 
   .govuk-table {
-    font-size: 12pt;
+    font-size: 11pt;
 
     &__header {
       vertical-align: bottom;
@@ -85,7 +93,7 @@
 
   .print-checkbox {
     display: inline-block;
-    $_checkbox-size: 30px;
+    $_checkbox-size: 28px;
     width: $_checkbox-size;
     height: $_checkbox-size;
     border: $govuk-border-width-form-element solid $govuk-input-border-colour;
@@ -93,6 +101,51 @@
     color: govuk-colour("mid-grey");
     line-height: $_checkbox-size;
     text-align: center;
+  }
+}
+
+@include govuk-media-query($until: tablet, $media-type: print) {
+  .govuk-heading-l {
+    font-size: 17pt;
+  }
+
+  .govuk-heading-m {
+    font-size: 14pt;
+  }
+
+  .govuk-heading-s {
+    font-size: 12pt;
+  }
+
+  .govuk-body-l {
+    font-size: 10pt;
+  }
+
+  .govuk-body {
+    font-size: 9pt;
+  }
+
+  .govuk-body-s {
+    font-size: 8pt;
+  }
+
+  .govuk-table {
+    font-size: 9pt;
+  }
+
+  .print-checkbox {
+    $_checkbox-size: 22px;
+    width: $_checkbox-size;
+    height: $_checkbox-size;
+    line-height: $_checkbox-size;
+  }
+
+  .hmpps-table {
+    &__header {
+      &--angled-table-header {
+        width: 34px;
+      }
+    }
   }
 }
 

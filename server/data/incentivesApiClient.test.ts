@@ -29,7 +29,10 @@ describe('incentivesApiClient', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
 
-      fakeIncentivesApi.get('/iep/levels/MDI').matchHeader('authorization', `Bearer accessToken`).reply(200, response)
+      fakeIncentivesApi
+        .get('/incentive/prison-levels/MDI')
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
 
       const output = await incentivesApiClient.getIncentiveLevels('MDI', user)
 

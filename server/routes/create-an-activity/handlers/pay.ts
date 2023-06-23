@@ -43,7 +43,7 @@ export default class PayRoutes {
     const payRateType = req.session.createJourney.payRateTypeOption
 
     const [incentiveLevels, payBands] = await Promise.all([
-      this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user).then(levels => levels.filter(l => l.active)),
+      this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user),
       this.activitiesService.getPayBandsForPrison(user),
     ])
 
@@ -96,7 +96,7 @@ export default class PayRoutes {
 
     if (req.session.createJourney.payRateTypeOption === 'single' || req.query.iep) {
       req.session.createJourney.pay.push({
-        incentiveNomisCode: allIncentiveLevels.find(s2 => s2.iepDescription === incentiveLevel).iepLevel,
+        incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel).levelCode,
         incentiveLevel,
         rate: +rate,
         bandId,

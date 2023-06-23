@@ -3,11 +3,11 @@
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'record-attendance' %}
-{% set backLinkHref = "/" %}
-{% set backLinkText = "Activities and appointments home" %}
+{% set backLinkHref = "/activities" %}
+{% set backLinkText = "Back to all allocate, unlock and attend tasks" %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Record attendance</h1>
+    <h1 class="govuk-heading-l">Record activity attendance</h1>
 {% endblock %}
 
 {% block content %}
@@ -30,17 +30,6 @@
                 "heading": "View daily attendance summary",
                 "description": "See daily attendance figures, including details of who is not attended yet, absent or suspended. Check details of cancelled sessions.",
                 "data-qa": "view-daily-attendance-summary"
-            }) }}
-        </div>
-        {# TODO: Update with page URL once built #}
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "ViewNotAttended",
-                "href": "#",
-                "clickable": "true",
-                "heading": "View lists of people who are not yet attended",
-                "description": "See details of who hasn't had their attendance marked.",
-                "data-qa": "view-not-attended"
             }) }}
         </div>
     </div>

@@ -1,6 +1,5 @@
 import { HmppsAuthUser } from '../hmppsAuth'
 import { CaseLoad, PrisonApiUserDetail } from '../prisonApiImport/types'
-import { RoleDetail } from '../nomisUserApiImport/types'
 import { AllocateToActivityJourney } from '../../routes/allocate-to-activity/journey'
 import { CreateAnActivityJourney } from '../../routes/create-an-activity/journey'
 import { AppointmentJourney } from '../../routes/appointments/create-and-edit/appointmentJourney'
@@ -11,7 +10,7 @@ import { RecordAttendanceRequests } from '../../routes/record-attendance/recordA
 
 // eslint-disable-next-line import/no-cycle
 import { ActivitiesFilters, AttendanceSummaryFilters, UnlockFilters } from '../activities'
-import { AppointmentDetails, AppointmentOccurrenceDetails } from '../activitiesAPI/types'
+import { AppointmentDetails, AppointmentOccurrenceDetails, BulkAppointmentDetails } from '../activitiesAPI/types'
 import { BulkAppointmentJourney } from '../../routes/appointments/create-and-edit/bulkAppointmentJourney'
 import { DeallocateFromActivityJourney } from '../../routes/deallocate-from-activity/journey'
 
@@ -64,6 +63,7 @@ export declare global {
       logout(done: (err: unknown) => void): void
       appointment?: AppointmentDetails
       appointmentOccurrence?: AppointmentOccurrenceDetails
+      bulkAppointment?: BulkAppointmentDetails
     }
   }
 }
@@ -76,5 +76,5 @@ export type ServiceUser = Express.User &
     activeCaseLoad?: CaseLoad
     isActivitiesRolledOut: boolean
     isAppointmentsRolledOut: boolean
-    roles: RoleDetail[]
+    roles: string[]
   }

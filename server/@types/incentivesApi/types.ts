@@ -1,4 +1,4 @@
 import { components } from '.'
 
-export type IepLevel = components['schemas']['IepLevel']
+export type IncentiveLevel = components['schemas']['IncentiveLevel']
 export type IepSummary = components['schemas']['IepSummary']

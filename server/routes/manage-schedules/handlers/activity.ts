@@ -140,14 +140,11 @@ export default class ActivityRoutes {
       })),
     ])
 
-    const week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-
     res.render('pages/manage-schedules/view-activity', {
       activity,
       schedule,
       incentiveLevelPays,
       attendanceCount,
-      week,
     })
   }
 }

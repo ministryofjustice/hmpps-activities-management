@@ -83,9 +83,9 @@
                     {% for incentiveLevel in incentiveLevels %}
                         {% set incentiveLevelOptions = (incentiveLevelOptions.push(
                             {
-                                value: incentiveLevel.iepDescription,
-                                text: incentiveLevel.iepDescription,
-                                checked: incentiveLevel.iepDescription in (formResponses.incentiveLevel if formResponses.incentiveLevel) or incentiveLevel.iepDescription == pay.incentiveLevel
+                                value: incentiveLevel.levelName,
+                                text: incentiveLevel.levelName,
+                                checked: incentiveLevel.levelName in (formResponses.incentiveLevel if formResponses.incentiveLevel) or incentiveLevel.levelName == pay.incentiveLevel
                             }
                         ), incentiveLevelOptions) %}
                     {% endfor %}
