@@ -19,7 +19,24 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% for prisoner in session.appointmentJourney.prisoners %}
+                {% for prisonerSchedule in prisonerSchedules %}
+                    {% set prisoner = prisonerSchedule.prisoner %}
+
+                    {% set scheduledEventRows = [] %}
+                    {% for scheduledEvent in prisonerSchedule.scheduledEvents %}
+                        {% set scheduledEventRows = (scheduledEventRows.push([
+                            {
+                                text: scheduledEvent.startTime
+                            }, {
+                                text: scheduledEvent.summary | trim
+                            }, {
+                                text: scheduledEvent.eventType | trim | title
+                            }, {
+                                text: ("In cell" if scheduledEvent.inCell else scheduledEvent.internalLocationDescription | trim)
+                            }
+                        ]), scheduledEventRows) %}
+                    {% endfor %}
+                    
                     <div class="govuk-summary-card">
                         <div class="govuk-summary-card__title-wrapper">
                             <h2 class="govuk-summary-card__title">{{ prisoner.name | toTitleCase }}, {{ prisoner.number }}</h2>
@@ -48,7 +65,7 @@
                                         attributes: { "aria-sort": "none" }
                                     }
                                 ],
-                                rows: [],
+                                rows: scheduledEventRows,
                                 attributes: {
                                     'data-module': 'moj-sortable-table',
                                     'data-qa': 'prison-number-' + prisoner.number + '-schedule'

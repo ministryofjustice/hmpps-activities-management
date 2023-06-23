@@ -1,9 +1,14 @@
 import { Request, Response } from 'express'
 import ScheduleRoutes from './schedule'
 import { YesNo } from '../../../../@types/activities'
+import ActivitiesService from '../../../../services/activitiesService'
+
+jest.mock('../../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Create Appointment - Comment', () => {
-  const handler = new ScheduleRoutes()
+  const handler = new ScheduleRoutes(activitiesService)
   let req: Request
   let res: Response
 

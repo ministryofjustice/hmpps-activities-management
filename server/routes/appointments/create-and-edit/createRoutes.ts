@@ -73,7 +73,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const uploadBulkAppointment = new UploadBulkAppointment(new PrisonerListCsvParser(), prisonService)
   const bulkAppointmentDate = new BulkAppointmentDateRoutes()
   const reviewBulkAppointment = new ReviewBulkAppointment()
-  const scheduleRoutes = new ScheduleRoutes()
+  const scheduleRoutes = new ScheduleRoutes(activitiesService)
 
   get('/start-individual', startHandler.INDIVIDUAL)
   get('/start-group', startHandler.GROUP)
