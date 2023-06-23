@@ -17,9 +17,7 @@ export default class DailyAttendanceRoutes {
       return res.redirect('select-period')
     }
     let { status } = req.query
-    if (status === undefined) {
-      status = ''
-    }
+     status ??= ''
 
     let { attendanceSummaryFilters } = req.session
 
