@@ -198,18 +198,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getPrisonRolloutPlan(prisonCode: string): Promise<RolloutPrisonPlan> {
     return this.get({
       path: `/rollout/${prisonCode}`,
-    })
-      .then(res => res as RolloutPrisonPlan)
-      .catch(err => {
-        if (err.status === 404) {
-          return {
-            prisonCode,
-            activitiesRolledOut: false,
-            appointmentsRolledOut: false,
-          }
-        }
-        throw err
-      })
+    }).then(res => res as RolloutPrisonPlan)
   }
 
   getScheduledPrisonLocations(

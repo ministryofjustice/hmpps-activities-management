@@ -1,4 +1,4 @@
-import stubEndpoint from '../mockApis/generic'
+import { stubEndpoint } from '../mockApis/wiremock'
 import 'cypress-file-upload'
 
 import rolloutPlan from '../fixtures/activitiesApi/rollout.json'

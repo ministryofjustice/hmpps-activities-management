@@ -18,7 +18,6 @@ context('Edit appointment', () => {
 
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubPrisonUser')
     cy.signIn()
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatGroupAppointmentDetails)
     cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getRepeatGroupOccurrence2Details)
