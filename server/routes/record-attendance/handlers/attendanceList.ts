@@ -146,7 +146,7 @@ export default class AttendanceListRoutes {
       })
     })
 
-    res.redirect(`/attendance/activities/${instanceId}/not-attended-reason`)
+    res.redirect(`/activities/attendance/activities/${instanceId}/not-attended-reason`)
   }
 
   private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {

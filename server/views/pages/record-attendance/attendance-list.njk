@@ -13,7 +13,7 @@
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
-{% set backLinkHref = "/attendance/select-period" %}
+{% set backLinkHref = "/activities/attendance/select-period" %}
 {% set backLinkText = "Back to all activities on " + instance.date | toDate | formatDate('dd MMMM yyyy') %}
 
 {% block content %}
@@ -209,12 +209,12 @@
                 previous: {
                     title: 'Previous session',
                     label: instance.previousScheduledInstanceDate | toDate | formatDate('dd MMMM yyyy'),
-                    href: '/attendance/activities/' + instance.previousScheduledInstanceId + '/attendance-list'
+                    href: '/activities/attendance/activities/' + instance.previousScheduledInstanceId + '/attendance-list'
                 } if instance.previousScheduledInstanceId,
                 next: {
                     title: 'Next session',
                     label: instance.nextScheduledInstanceDate | toDate | formatDate('dd MMMM yyyy'),
-                    href: '/attendance/activities/' + instance.nextScheduledInstanceId + '/attendance-list'
+                    href: '/activities/attendance/activities/' + instance.nextScheduledInstanceId + '/attendance-list'
                 } if instance.nextScheduledInstanceId
             }
         }) }}

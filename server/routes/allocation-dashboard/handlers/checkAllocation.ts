@@ -46,6 +46,6 @@ export default class CheckAllocationRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    res.redirect(`/allocation-dashboard/${req.params.activityId}`)
+    res.redirect(`/activities/allocation-dashboard/${req.params.activityId}`)
   }
 }

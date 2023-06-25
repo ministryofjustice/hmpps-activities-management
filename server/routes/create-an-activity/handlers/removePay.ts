@@ -14,7 +14,12 @@ export default class RemovePayRoutes {
     const bandId = +req.query.bandId
 
     const pay = req.session.createJourney.pay.findIndex(p => p.bandId === bandId && p.incentiveLevel === iep)
-    if (pay < 0) return res.redirect('check-pay')
+    if (pay < 0) {
+      if (req.query && req.query.fromEditActivity) {
+        return res.redirect('/activities/schedule/check-pay?preserveHistory=true')
+      }
+      return res.redirect('check-pay')
+    }
 
     return res.render(`pages/create-an-activity/remove-pay`, { iep, bandId })
   }
@@ -24,7 +29,9 @@ export default class RemovePayRoutes {
     const bandId = +req.body.bandId
 
     if (choice !== 'yes') {
-      if (req.query && req.query.fromEditActivity) return res.redirect('/schedule/check-pay?preserveHistory=true')
+      if (req.query && req.query.fromEditActivity) {
+        return res.redirect('/activities/schedule/check-pay?preserveHistory=true')
+      }
       return res.redirect('check-pay')
     }
 
@@ -37,7 +44,7 @@ export default class RemovePayRoutes {
     req.session.createJourney.pay.splice(payIndex, 1)
 
     if (req.query && req.query.fromEditActivity) {
-      const returnTo = '/schedule/check-pay'
+      const returnTo = '/activities/schedule/check-pay'
       req.session.returnTo = returnTo
       return res.redirectWithSuccess(
         returnTo,

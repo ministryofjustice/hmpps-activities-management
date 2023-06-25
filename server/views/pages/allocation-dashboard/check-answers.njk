@@ -35,7 +35,7 @@
                         classes: "govuk-tag--green"
                       })}}
                     {% else %}
-                      <a href="/allocation-dashboard/{{ allocation.id }}/start-date" class="govuk-link govuk-link--no-visited-state">
+                      <a href="/activities/allocation-dashboard/{{ allocation.id }}/start-date" class="govuk-link govuk-link--no-visited-state">
                         Change
                       </a>
                     {% endif %}
@@ -57,11 +57,11 @@
                     </dd>
                     <dd class="govuk-summary-list__actions">
                     {% if allocation.endDate %}
-                      <a href="/allocation-dashboard/{{ allocation.id }}/end-date-option" class="govuk-link govuk-link--no-visited-state">
+                      <a href="/activities/allocation-dashboard/{{ allocation.id }}/end-date-option" class="govuk-link govuk-link--no-visited-state">
                         Change
                       </a>
                     {% else %}
-                      <a href="/allocation-dashboard/{{ allocation.id }}/end-date" class="govuk-link govuk-link--no-visited-state">
+                      <a href="/activities/allocation-dashboard/{{ allocation.id }}/end-date" class="govuk-link govuk-link--no-visited-state">
                         Change
                       </a>
                     {% endif %}
@@ -82,7 +82,7 @@
                     {% if isOnlyPay %}
                         No alternative pay rates
                     {% else %}
-                      <a href="/allocation-dashboard/{{ allocation.id }}/pay-band" class="govuk-link govuk-link--no-visited-state">
+                      <a href="/activities/allocation-dashboard/{{ allocation.id }}/pay-band" class="govuk-link govuk-link--no-visited-state">
                         Change
                       </a>
                     {% endif %}

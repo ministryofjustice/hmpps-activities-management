@@ -80,7 +80,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/schedule/activities/undefined',
+        '/activities/schedule/activities/undefined',
         'Activity updated',
         "We've updated the capacity for undefined",
       )

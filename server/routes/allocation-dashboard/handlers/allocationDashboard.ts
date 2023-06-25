@@ -83,7 +83,7 @@ export default class AllocationDashboardRoutes {
     if (!activity.pay.map(p => p.incentiveLevel).includes(iepSummary.iepLevel)) {
       return res.validationFailed('selectedAllocation', 'No suitable pay rate exists for this candidate')
     }
-    return res.redirect(`/allocate/prisoner/${selectedAllocation}?scheduleId=${req.params.activityId}`)
+    return res.redirect(`/activities/allocate/prisoner/${selectedAllocation}?scheduleId=${req.params.activityId}`)
   }
 
   DEALLOCATE = async (req: Request, res: Response): Promise<void> => {
@@ -108,7 +108,7 @@ export default class AllocationDashboardRoutes {
         })),
       )
 
-    res.redirect(`/deallocate/date`)
+    res.redirect(`/activities/deallocate/date`)
   }
 
   UPDATE = async (req: Request, res: Response): Promise<void> => {
@@ -116,7 +116,9 @@ export default class AllocationDashboardRoutes {
     if (selectedAllocations.length > 1) {
       res.validationFailed('selectedAllocations', 'You can only select one allocation to edit')
     } else {
-      res.redirect(`/allocation-dashboard/${req.params.activityId}/check-allocation/${selectedAllocations[0]}`)
+      res.redirect(
+        `/activities/allocation-dashboard/${req.params.activityId}/check-allocation/${selectedAllocations[0]}`,
+      )
     }
   }
 

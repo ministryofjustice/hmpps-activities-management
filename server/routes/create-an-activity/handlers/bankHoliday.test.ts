@@ -82,7 +82,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/schedule/activities/1',
+        '/activities/schedule/activities/1',
         'Activity updated',
         "We've updated the bank holiday option for Maths level 1",
       )

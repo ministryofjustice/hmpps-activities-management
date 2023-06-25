@@ -6,7 +6,7 @@
 
 {% set pageTitle = applicationName + " - Activities Dashboard - View activity" %}
 {% set pageId = 'view-activity-page' %}
-{% set backLinkHref = "/schedule/activities" %}
+{% set backLinkHref = "/activities/schedule/activities" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -28,7 +28,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/create/name?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/create/name?fromEditActivity=true&preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change activity name",
                                     classes: "govuk-link--no-visited-state"
@@ -46,7 +46,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/create/category?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/create/category?fromEditActivity=true&preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change category",
                                     classes: "govuk-link--no-visited-state"
@@ -64,7 +64,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/create/location?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/create/location?fromEditActivity=true&preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change location",
                                     classes: "govuk-link--no-visited-state"
@@ -82,7 +82,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/create/capacity?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/create/capacity?fromEditActivity=true&preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change capacity",
                                     classes: "govuk-link--no-visited-state"
@@ -106,7 +106,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/create/risk-level?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/create/risk-level?fromEditActivity=true&preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change risk level",
                                     classes: "govuk-link--no-visited-state"
@@ -124,7 +124,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/create/check-education-level?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/create/check-education-level?fromEditActivity=true&preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change education levels",
                                     classes: "govuk-link--no-visited-state"
@@ -147,7 +147,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/schedule/check-pay?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/schedule/check-pay?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change pay",
                                     classes: "govuk-link--no-visited-state"
@@ -179,7 +179,7 @@
                     actions: {
                         items: [
                             {
-                                href: "/create/start-date?fromEditActivity=true&preserveHistory=true",
+                                href: "/activities/create/start-date?fromEditActivity=true&preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "change start date",
                                 classes: "govuk-link--no-visited-state"
@@ -200,7 +200,7 @@
                     actions: {
                         items: [
                             {
-                                href: "/create/end-date?fromEditActivity=true&preserveHistory=true",
+                                href: "/activities/create/end-date?fromEditActivity=true&preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "change end date",
                                 classes: "govuk-link--no-visited-state"
@@ -219,7 +219,7 @@
                     actions: {
                         items: [
                             {
-                                href: "/create/end-date?fromEditActivity=true&preserveHistory=true",
+                                href: "/activities/create/end-date?fromEditActivity=true&preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "change end date",
                                 classes: "govuk-link--no-visited-state"
@@ -240,7 +240,7 @@
                     actions: {
                         items: [
                             {
-                                href: "/create/days-and-times?fromEditActivity=true&preserveHistory=true",
+                                href: "/activities/create/days-and-times?fromEditActivity=true&preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "change days and times",
                                 classes: "govuk-link--no-visited-state"
@@ -258,7 +258,7 @@
                     actions: {
                         items: [
                             {
-                                href: "/create/bank-holiday-option?fromEditActivity=true&preserveHistory=true",
+                                href: "/activities/create/bank-holiday-option?fromEditActivity=true&preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "change bank holiday",
                                 classes: "govuk-link--no-visited-state"
@@ -273,7 +273,7 @@
             }) }}
 
             <div class="govuk-button-group">
-                <a href="/schedule/activities" class="govuk-link">Return to dashboard</a>
+                <a href="/activities/schedule/activities" class="govuk-link">Return to dashboard</a>
             </div>
 
         </div>

@@ -129,7 +129,7 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('/allocation-dashboard/1#candidates-tab')
+      expect(res.redirect).toHaveBeenCalledWith('/activities/allocation-dashboard/1#candidates-tab')
     })
   })
 

@@ -79,7 +79,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/schedule/activities/undefined',
+        '/activities/schedule/activities/undefined',
         'Activity updated',
         "We've updated the risk assessment level for undefined",
       )

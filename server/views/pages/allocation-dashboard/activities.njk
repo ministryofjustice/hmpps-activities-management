@@ -4,7 +4,7 @@
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Activities" %}
 {% set pageId = 'allocate-to-activity-activities-page' %}
-{% set backLinkHref = "/allocate" %}
+{% set backLinkHref = "/activities/allocate" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -14,8 +14,8 @@
         <div class="govuk-grid-column-one-third">
             <div class='related-tasks'>
                 <ul class='govuk-list'>
-                    <li><a href="/create/start?preserveHistory=true" class="govuk-link govuk-link--no-visited-state">Create an activity</a></li>
-                    <li><a href="/schedule/activities?preserveHistory=true" class="govuk-link govuk-link--no-visited-state">Edit activities</a></li>
+                    <li><a href="/activities/create/start" class="govuk-link govuk-link--no-visited-state" target='_blank'>Create an activity</a></li>
+                    <li><a href="/activities/schedule/activities" class="govuk-link govuk-link--no-visited-state" target='_blank'>Edit activities</a></li>
                 </ul>
             </div>
         </div>
@@ -83,7 +83,7 @@
                         },
                         html: '
                                 <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
-                                    <a href="/allocation-dashboard/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + activity.summary + '</a>
+                                    <a href="/activities/allocation-dashboard/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + activity.summary + '</a>
                                 </h2>
                               '
                     },

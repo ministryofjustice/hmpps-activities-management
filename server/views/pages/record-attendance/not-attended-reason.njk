@@ -216,7 +216,7 @@
         <div class="govuk-body govuk-!-margin-0">
             {{ event.startTime }} to {{ event.endTime }}:
             {% if event.eventType == 'ACTIVITY' and event.eventSource =='SAA' %}
-                <a href="/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list">{{ event.summary }}</a>
+                <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list">{{ event.summary }}</a>
             {% elseif event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
                 <a href="/appointments/{{ event.appointmentId }}/occurrence/{{ event.appointmentOccurrenceId }}">{{ event.summary }}</a>
                 {% if event.cancelled %}

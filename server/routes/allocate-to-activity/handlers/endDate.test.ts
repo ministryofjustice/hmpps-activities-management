@@ -58,7 +58,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('/allocate/pay-band')
+      expect(res.redirect).toHaveBeenCalledWith('/activities/allocate/pay-band')
     })
   })
 

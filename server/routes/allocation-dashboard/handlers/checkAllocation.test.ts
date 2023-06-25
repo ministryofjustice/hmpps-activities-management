@@ -145,7 +145,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     it('should redirect back to the allocation dashboard', async () => {
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/allocation-dashboard/1`)
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocation-dashboard/1`)
     })
   })
 })

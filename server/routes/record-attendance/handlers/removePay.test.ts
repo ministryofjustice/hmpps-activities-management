@@ -119,7 +119,7 @@ describe('Route Handlers - Remove Pay', () => {
         removePayOption: 'yes',
       }
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`/attendance/activities/1/attendance-details/1`)
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/attendance/activities/1/attendance-details/1`)
     })
   })
 })

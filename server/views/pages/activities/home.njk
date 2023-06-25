@@ -15,7 +15,7 @@
         {% if 'ROLE_ACTIVITY_HUB' in user.roles %}
             <div class="govuk-grid-column-one-third card-group__item">
                 {{ card({
-                    "href": "/allocate",
+                    "href": "/activities/allocate",
                     "clickable": "true",
                     "heading": "Allocate people to activities",
                     "description": "Set up and edit activities. Allocate people, remove them, and edit allocations.",
@@ -26,7 +26,7 @@
 
         <div class="govuk-grid-column-one-third card-group__item">
             {{ card({
-                "href": "/unlock-list",
+                "href": "/activities/unlock-list",
                 "clickable": "true",
                 "heading": "Manage unlock lists",
                 "description": "Create and print unlock lists."
@@ -35,7 +35,7 @@
 
         <div class="govuk-grid-column-one-third card-group__item">
             {{ card({
-                "href": "/attendance",
+                "href": "/activities/attendance",
                 "clickable": "true",
                 "heading": "Record activity attendance",
                 "description": "Mark attendance, cancel activity sessions and see daily attendance summaries.",

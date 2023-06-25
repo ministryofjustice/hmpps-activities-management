@@ -6,7 +6,7 @@
 
 {% set pageTitle = applicationName + " - Edit activity - Check pay" %}
 {% set pageId = 'check-pay-page' %}
-{% set backLinkHref = "pay" %}
+{% set backLinkHref = "activities/" + session.createJourney.activityId %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -50,7 +50,7 @@
                     {% set cardItems = [] %}
                     {% set cardItems = (cardItems.push(
                         {
-                            href: "/create/pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true&preserveHistory=true",
+                            href: "/activities/create/pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true&preserveHistory=true",
                             text: "Change",
                             classes: "govuk-link--no-visited-state",
                             attributes: { 'data-qa': 'change-pay' }
@@ -59,7 +59,7 @@
                     {% if not pay.peopleCount %}
                         {% set cardItems = (cardItems.push(
                             {
-                                href: "/create/remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true&preserveHistory=true",
+                                href: "/activities/create/remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true&preserveHistory=true",
                                 text: "Delete pay rate",
                                 classes: "govuk-link--no-visited-state",
                                 attributes: { 'data-qa': 'remove-pay' }
@@ -122,7 +122,7 @@
                     }) }}
                     {{ govukButton({
                         text: "Add another pay rate",
-                        href: '/create/pay-rate-type?fromEditActivity=true&preserveHistory=true',
+                        href: '/activities/create/pay-rate-type?fromEditActivity=true&preserveHistory=true',
                         classes: "govuk-button--secondary"
                     }) }}
                 </div>

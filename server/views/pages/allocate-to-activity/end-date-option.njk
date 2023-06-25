@@ -5,7 +5,7 @@
 
 {% set pageTitle = applicationName + " -  Allocation - End Date option" %}
 {% set pageId = 'allocation-end-date-option-page' %}
-{% set backLinkHref = '/allocate/start-date' %}
+{% set backLinkHref = '/activities/allocate/start-date' %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -23,7 +23,7 @@
                     name: "endDateOption",
                     fieldset: {
                         legend: {
-                            text: "Do you want to set and end date for this allocation?",
+                            text: "Do you want to set an end date for this allocation?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
@@ -47,7 +47,7 @@
                     {{ govukButton({
                         text: "Save and continue"
                     }) }}
-                    <a class="govuk-link js-backlink" href="/allocate/cancel?preserveHistory=true">Cancel</a>
+                    <a class="govuk-link js-backlink" href="/activities/allocate/cancel?preserveHistory=true">Cancel</a>
                 </div>
 
             </form>

@@ -32,6 +32,6 @@ export default class StartJourneyRoutes {
       },
     }
 
-    res.redirect(`/allocate/before-you-allocate`)
+    res.redirect(`/activities/allocate/before-you-allocate`)
   }
 }

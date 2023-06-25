@@ -53,6 +53,6 @@ export default class RemovePayRoutes {
       ]
       await this.activitiesService.updateAttendances(attendances, user)
     }
-    return res.redirect(`/attendance/activities/${id}/attendance-details/${attendanceId}`)
+    return res.redirect(`/activities/attendance/activities/${id}/attendance-details/${attendanceId}`)
   }
 }

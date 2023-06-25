@@ -80,7 +80,7 @@ describe('Route Handlers - Create an activity - Name', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/schedule/activities/undefined',
+        '/activities/schedule/activities/undefined',
         'Activity updated',
         "We've updated the activity name for updated activity name",
       )

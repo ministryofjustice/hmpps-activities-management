@@ -11,7 +11,7 @@
 
 {% set pageTitle = applicationName + " - Daily attendance list" %}
 {% set pageId = 'daily-attendance-detail-page' %}
-{% set backLinkHref = "/attendance-summary/summary?date=" + activityDate | formatDate('yyyy-MM-dd') %}
+{% set backLinkHref = "/activities/attendance-summary/summary?date=" + activityDate | formatDate('yyyy-MM-dd') %}
 
 {% block content %}
     {% set filterOptionsHtml %}
@@ -153,7 +153,7 @@
             },
             {
                 attributes: { id: 'activity-' + loop.index },
-                html: '<a href="/schedule/activities/' + attendee.attendance.activityId + '" class="govuk-link govuk-link--no-visited-state">' + attendee.attendance.activitySummary,
+                html: '<a href="/activities/schedule/activities/' + attendee.attendance.activityId + '" class="govuk-link govuk-link--no-visited-state">' + attendee.attendance.activitySummary,
                 classes: 'govuk-table__cell'
             },
             {
@@ -169,7 +169,7 @@
                 }
             },
             {
-                html: '<a href="/attendance/activities/' + attendee.attendance.activityId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + 'View or edit</a>'
+                html: '<a href="/activities/attendance/activities/' + attendee.attendance.activityId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + 'View or edit</a>'
             }
         ]), attendanceRows) %}
     {% endfor %}

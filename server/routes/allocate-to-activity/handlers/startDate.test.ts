@@ -53,7 +53,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('/allocate/end-date-option')
+      expect(res.redirect).toHaveBeenCalledWith('/activities/allocate/end-date-option')
     })
     it('should save entered start date in session and redirect to the check answers page', async () => {
       const today = new Date()
@@ -65,7 +65,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('/allocate/end-date-option')
+      expect(res.redirect).toHaveBeenCalledWith('/activities/allocate/end-date-option')
     })
   })
 

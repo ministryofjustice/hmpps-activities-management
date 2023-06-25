@@ -65,7 +65,7 @@ export default class CheckPayRoutes {
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
       const successMessage = `We've updated the pay for ${req.session.createJourney.name}`
 
-      const returnTo = `/schedule/activities/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo
       return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }

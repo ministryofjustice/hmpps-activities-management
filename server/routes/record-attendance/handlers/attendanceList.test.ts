@@ -397,7 +397,7 @@ describe('Route Handlers - Attendance List', () => {
 
       await handler.NOT_ATTENDED(req, res)
 
-      expect(res.redirect).toBeCalledWith('/attendance/activities/1/not-attended-reason')
+      expect(res.redirect).toBeCalledWith('/activities/attendance/activities/1/not-attended-reason')
     })
   })
 })

@@ -65,7 +65,7 @@ describe('Route Handlers - Uncancel Session Confirmation', () => {
       })
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/attendance/activities/1/attendance-list',
+        '/activities/attendance/activities/1/attendance-list',
         'Session no longer cancelled',
       )
     })
@@ -75,7 +75,7 @@ describe('Route Handlers - Uncancel Session Confirmation', () => {
       await handler.POST(confirmRequest, res)
 
       expect(activitiesService.uncancelScheduledActivity).toHaveBeenCalledTimes(0)
-      expect(res.redirect).toHaveBeenCalledWith('/attendance/activities/1/attendance-list')
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/1/attendance-list')
     })
   })
 })

@@ -20,7 +20,7 @@ export default class ConfirmCapacityRoutes {
     const successMessage = `We've updated the capacity for ${req.session.createJourney.name}`
 
     res.redirectOrReturnWithSuccess(
-      `/schedule/activities/${req.session.createJourney.activityId}`,
+      `/activities/schedule/activities/${req.session.createJourney.activityId}`,
       'Activity updated',
       successMessage,
     )

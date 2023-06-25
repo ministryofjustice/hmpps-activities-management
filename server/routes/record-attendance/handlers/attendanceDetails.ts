@@ -26,6 +26,6 @@ export default class AttendanceDetailsRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params
     const { attendanceId } = req.params
-    return res.redirect(`/attendance/activities/${id}/attendance-details/${attendanceId}/remove-pay`)
+    return res.redirect(`/activities/attendance/activities/${id}/attendance-details/${attendanceId}/remove-pay`)
   }
 }

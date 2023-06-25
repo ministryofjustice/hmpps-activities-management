@@ -47,9 +47,13 @@ export default class ResetAttendanceRoutes {
       const attendeeName = convertToTitleCase(`${attendee.firstName} ${attendee.lastName}`)
 
       const successMessage = `Attendance for ${attendeeName} has been reset`
-      return res.redirectWithSuccess(`/attendance/activities/${id}/attendance-list`, 'Attendance reset', successMessage)
+      return res.redirectWithSuccess(
+        `/activities/attendance/activities/${id}/attendance-list`,
+        'Attendance reset',
+        successMessage,
+      )
     }
 
-    return res.redirect(`/attendance/activities/${id}/attendance-list`)
+    return res.redirect(`/activities/attendance/activities/${id}/attendance-list`)
   }
 }

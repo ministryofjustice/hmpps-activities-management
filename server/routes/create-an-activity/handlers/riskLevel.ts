@@ -35,7 +35,7 @@ export default class RiskLevelRoutes {
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
       const successMessage = `We've updated the risk assessment level for ${req.session.createJourney.name}`
 
-      const returnTo = `/schedule/activities/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     } else res.redirectOrReturn(`pay-rate-type`)

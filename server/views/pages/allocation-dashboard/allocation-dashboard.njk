@@ -11,7 +11,7 @@
 
 {% set pageTitle = applicationName + " - Allocate" %}
 {% set pageId = 'allocation-dashboard-page' %}
-{% set backLinkHref = "/allocation-dashboard" %}
+{% set backLinkHref = "/activities/allocation-dashboard" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -27,7 +27,7 @@
         <div class="govuk-grid-column-one-third">
             <div class='related-tasks'>
                 <ul class='govuk-list'>
-                    <li><a href="/allocation-dashboard?preserveHistory=true" class="govuk-link govuk-link--no-visited-state">Find other activities with vacancies</a></li>
+                    <li><a href="/activities/allocation-dashboard?preserveHistory=true" class="govuk-link govuk-link--no-visited-state">Find other activities with vacancies</a></li>
                 </ul>
             </div>
         </div>
@@ -83,7 +83,7 @@
 
                 {% set suitableForIepHtml %}
                     <p>{{ suitableForIep }}</p>
-                    <p class='govuk-hint'>You can control which incentive levels are suitable by <a class='govuk-link govuk-link--no-visited-state' href='/schedule/activities/{{ schedule.id }}' target='_blank'>adding or removing corresponding pay rates.</a></p>
+                    <p class='govuk-hint'>You can control which incentive levels are suitable by <a class='govuk-link govuk-link--no-visited-state' href='/activities/schedule/activities/{{ schedule.id }}' target='_blank'>adding or removing corresponding pay rates.</a></p>
                 {% endset %}
 
                 {{ govukTable({
@@ -155,7 +155,7 @@
         {% set otherAllocationsHtml %}
             <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <li><a href='/allocation-dashboard/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName }}</a></li>
+                    <li><a href='/activities/allocation-dashboard/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName }}</a></li>
                 {% else %}
                     <li>None</li>
                 {% endfor %}
@@ -371,7 +371,7 @@
         {% set currentAllocationsHtml %}
             <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <li><a href='/allocation-dashboard/{{ allocation.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
+                    <li><a href='/activities/allocation-dashboard/{{ allocation.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
                 {% else %}
                     <li>None</li>
                 {% endfor %}

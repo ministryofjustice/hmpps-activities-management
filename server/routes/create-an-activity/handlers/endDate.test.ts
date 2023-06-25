@@ -89,7 +89,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/schedule/activities/1',
+        '/activities/schedule/activities/1',
         'Activity updated',
         "We've updated the end date for Maths level 1",
       )

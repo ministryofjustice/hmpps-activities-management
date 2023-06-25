@@ -28,9 +28,9 @@ export default class StartDateRoutes {
     req.session.allocateJourney.startDate = req.body.startDate
 
     if (req.query && req.query.preserveHistory) {
-      res.redirect(`/allocate/check-answers`)
+      res.redirect(`/activities/allocate/check-answers`)
     } else {
-      res.redirect(`/allocate/end-date-option`)
+      res.redirect(`/activities/allocate/end-date-option`)
     }
   }
 }

@@ -108,7 +108,7 @@ describe('Route Handlers - Create an activity - Category', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/schedule/activities/undefined',
+        '/activities/schedule/activities/undefined',
         'Activity updated',
         "We've updated the category for undefined",
       )

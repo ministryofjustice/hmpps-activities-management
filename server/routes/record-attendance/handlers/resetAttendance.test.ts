@@ -106,7 +106,7 @@ describe('Route Handlers - Reset Attendance', () => {
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/attendance/activities/1/attendance-list',
+        '/activities/attendance/activities/1/attendance-list',
         'Attendance reset',
         `Attendance for ${prisoner.firstName} ${prisoner.lastName} has been reset`,
       )
@@ -118,7 +118,7 @@ describe('Route Handlers - Reset Attendance', () => {
       await handler.POST(req, res)
 
       expect(activitiesService.updateAttendances).toBeCalledTimes(0)
-      expect(res.redirect).toHaveBeenCalledWith('/attendance/activities/1/attendance-list')
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/1/attendance-list')
     })
   })
 

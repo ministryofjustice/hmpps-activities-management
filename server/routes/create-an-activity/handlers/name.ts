@@ -30,7 +30,7 @@ export default class NameRoutes {
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
       const successMessage = `We've updated the activity name for ${req.session.createJourney.name}`
 
-      const returnTo = `/schedule/activities/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     } else {

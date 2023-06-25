@@ -24,7 +24,7 @@ export default class CapacityRoutes {
     req.session.createJourney.capacity = req.body.capacity
     if (req.query && req.query.fromEditActivity) {
       if (req.body.capacity < req.session.createJourney.allocationCount) {
-        res.redirectOrReturn('/schedule/confirm-capacity')
+        res.redirectOrReturn('/activities/schedule/confirm-capacity')
       } else {
         const { user } = res.locals
         const { activityId } = req.session.createJourney
@@ -35,7 +35,7 @@ export default class CapacityRoutes {
         await this.activitiesService.updateActivity(prisonCode, activityId, activity)
         const successMessage = `We've updated the capacity for ${req.session.createJourney.name}`
 
-        const returnTo = `/schedule/activities/${req.session.createJourney.activityId}`
+        const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
         req.session.returnTo = returnTo
         res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
       }

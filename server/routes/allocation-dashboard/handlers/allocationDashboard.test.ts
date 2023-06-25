@@ -439,7 +439,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       await handler.ALLOCATE(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/allocate/prisoner/ABC123?scheduleId=1`)
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocate/prisoner/ABC123?scheduleId=1`)
     })
 
     it('should throw validation error if a pay rate doesnt exist to match the inmates iep level', async () => {
@@ -494,7 +494,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       await handler.UPDATE(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/allocation-dashboard/1/check-allocation/ABC123`)
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocation-dashboard/1/check-allocation/ABC123`)
     })
 
     it('validation fails if multiple allocations are selected', async () => {

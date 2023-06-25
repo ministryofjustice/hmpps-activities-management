@@ -55,7 +55,7 @@ export default class EditAttendanceRoutes {
         },
       ]
       await this.activitiesService.updateAttendances(attendances, user)
-      return res.redirect(`/attendance/activities/${id}/attendance-details/${attendanceId}`)
+      return res.redirect(`/activities/attendance/activities/${id}/attendance-details/${attendanceId}`)
     }
 
     if (req.body.attendanceOption === EditAttendanceOptions.NO) {
@@ -86,10 +86,10 @@ export default class EditAttendanceRoutes {
           otherEvents: attendee.otherEvents,
         },
       ]
-      return res.redirect(`/attendance/activities/${id}/not-attended-reason`)
+      return res.redirect(`/activities/attendance/activities/${id}/not-attended-reason`)
     }
 
     // If not "yes" or "no", assume "reset"
-    return res.redirect(`/attendance/activities/${id}/attendance-details/${attendanceId}/reset-attendance`)
+    return res.redirect(`/activities/attendance/activities/${id}/attendance-details/${attendanceId}/reset-attendance`)
   }
 }

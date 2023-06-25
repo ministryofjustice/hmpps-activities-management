@@ -39,9 +39,9 @@ export default class EndDateRoutes {
     req.session.allocateJourney.endDate = req.body.endDate
 
     if (req.query && req.query.preserveHistory) {
-      res.redirect(`/allocate/check-answers`)
+      res.redirect(`/activities/allocate/check-answers`)
     } else {
-      res.redirect(`/allocate/pay-band`)
+      res.redirect(`/activities/allocate/pay-band`)
     }
   }
 }

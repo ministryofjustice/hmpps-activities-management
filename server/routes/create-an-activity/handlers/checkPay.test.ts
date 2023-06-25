@@ -156,7 +156,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/schedule/activities/1',
+        '/activities/schedule/activities/1',
         'Activity updated',
         "We've updated the pay for Maths Level 1",
       )
