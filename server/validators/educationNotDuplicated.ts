@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator'
-import { CreateAnActivityJourney } from '../routes/create-an-activity/journey'
+import { CreateAnActivityJourney } from '../routes/activities/create-an-activity/journey'
 
 export default function EducationNotDuplicated(validationOptions?: ValidationOptions) {
   return (object: unknown, propertyName: string) => {
