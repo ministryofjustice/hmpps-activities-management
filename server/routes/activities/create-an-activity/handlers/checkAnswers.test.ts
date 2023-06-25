@@ -86,7 +86,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
   describe('GET', () => {
     it('should render page with data from session', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/check-answers', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/check-answers', {
         incentiveLevelPays: [
           {
             incentiveLevel: 'Standard',

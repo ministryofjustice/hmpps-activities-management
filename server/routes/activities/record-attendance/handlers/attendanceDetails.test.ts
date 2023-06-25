@@ -81,7 +81,7 @@ describe('Route Handlers - View and Edit Attendance', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/attendance-details', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-details', {
         instance: {
           id: 1,
           date: format(new Date(), 'yyyy-MM-dd'),

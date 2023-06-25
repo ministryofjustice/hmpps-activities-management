@@ -26,7 +26,7 @@ describe('Route Handlers - Select period for changes', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/change-of-circumstances/select-period')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/change-of-circumstances/select-period')
     })
   })
 

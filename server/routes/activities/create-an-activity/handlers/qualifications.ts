@@ -15,7 +15,7 @@ export class Qualification {
 
 export default class QualificationRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render(`pages/create-an-activity/qualification`)
+    res.render(`pages/activities/create-an-activity/qualification`)
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

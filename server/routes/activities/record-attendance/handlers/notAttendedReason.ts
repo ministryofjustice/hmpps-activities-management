@@ -39,7 +39,10 @@ export default class NotAttendedReasonRoutes {
       .then(reasons => reasons.filter(r => r.displayInAbsence))
       .then(reasons => _.sortBy(reasons, 'displaySequence'))
 
-    return res.render('pages/record-attendance/not-attended-reason', { notAttendedReasons, selectedPrisoners })
+    return res.render('pages/activities/record-attendance/not-attended-reason', {
+      notAttendedReasons,
+      selectedPrisoners,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

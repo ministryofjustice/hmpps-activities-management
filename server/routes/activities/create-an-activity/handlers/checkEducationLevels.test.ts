@@ -68,7 +68,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
   describe('GET', () => {
     it('should render page correctly', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/check-education-level', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/check-education-level', {
         educationLevels: [
           {
             educationLevelCode: '1',

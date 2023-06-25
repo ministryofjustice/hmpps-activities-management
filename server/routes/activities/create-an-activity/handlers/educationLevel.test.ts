@@ -72,7 +72,7 @@ describe('Route Handlers - Create an activity - Education Level', () => {
       when(prisonService.getReferenceCodes).calledWith(atLeast('STUDY_AREA')).mockResolvedValue(studyAreas)
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/education-level', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/education-level', {
         eduLevels: [
           {
             domain: 'EDU_LEVEL',

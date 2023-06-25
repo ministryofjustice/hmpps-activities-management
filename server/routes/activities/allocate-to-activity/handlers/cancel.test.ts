@@ -47,7 +47,7 @@ describe('Route Handlers - Allocate - Cancel', () => {
       when(req.get).calledWith('Referrer').mockReturnValue('check-answers')
       await handler.GET(req, res)
       expect(req.session.returnTo).toEqual('check-answers')
-      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/cancel')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/cancel')
     })
   })
 

@@ -34,7 +34,7 @@ describe('Route Handlers - Cancel Session Reason', () => {
   describe('GET', () => {
     it('should render cancel session reasons page', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/cancel-session/cancel-reason', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-session/cancel-reason', {
         cancellationReasons,
       })
     })

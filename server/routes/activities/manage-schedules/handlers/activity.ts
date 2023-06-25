@@ -140,7 +140,7 @@ export default class ActivityRoutes {
       })),
     ])
 
-    res.render('pages/manage-schedules/view-activity', {
+    res.render('pages/activities/manage-schedules/view-activity', {
       activity,
       schedule,
       incentiveLevelPays,

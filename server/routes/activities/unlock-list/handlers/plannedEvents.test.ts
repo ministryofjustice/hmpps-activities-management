@@ -75,7 +75,7 @@ describe('Unlock list routes - planned events', () => {
       const { unlockFilters } = req.session
 
       expect(unlockListService.getFilteredUnlockList).toHaveBeenCalledWith(unlockFilters, res.locals.user)
-      expect(res.render).toHaveBeenCalledWith('pages/unlock-list/planned-events', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         unlockFilters,
         unlockListItems: [],
       })
@@ -110,7 +110,7 @@ describe('Unlock list routes - planned events', () => {
       expect(activitiesService.getLocationPrefix).not.toHaveBeenCalled()
 
       expect(unlockListService.getFilteredUnlockList).toHaveBeenCalledWith(unlockFilters, res.locals.user)
-      expect(res.render).toHaveBeenCalledWith('pages/unlock-list/planned-events', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         unlockFilters,
         unlockListItems: [],
       })

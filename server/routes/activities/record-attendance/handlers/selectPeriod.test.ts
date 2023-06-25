@@ -26,7 +26,7 @@ describe('Route Handlers - Select period', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/select-period')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/select-period')
     })
   })
 

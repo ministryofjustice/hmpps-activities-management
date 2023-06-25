@@ -37,7 +37,7 @@ describe('Route Handlers - Edit an activity - Confirm capacity', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/confirm-capacity')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/confirm-capacity')
     })
   })
 

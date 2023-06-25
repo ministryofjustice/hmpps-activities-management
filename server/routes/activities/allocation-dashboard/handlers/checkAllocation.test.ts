@@ -125,7 +125,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     it('should render the correct view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/check-answers', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/check-answers', {
         allocation: {
           id: 1,
           prisonerNumber: 'ABC123',

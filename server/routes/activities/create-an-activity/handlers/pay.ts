@@ -55,7 +55,7 @@ export default class PayRoutes {
     req.session.createJourney.minimumPayRate = minimumPayRate
     req.session.createJourney.maximumPayRate = maximumPayRate
 
-    res.render(`pages/create-an-activity/pay`, {
+    res.render(`pages/activities/create-an-activity/pay`, {
       incentiveLevels,
       payBands,
       pay,

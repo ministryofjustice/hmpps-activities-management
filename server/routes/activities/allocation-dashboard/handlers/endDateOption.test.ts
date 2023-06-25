@@ -64,7 +64,7 @@ describe('Route Handlers - Edit allocation - End Date option', () => {
     })
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/end-date-option', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/end-date-option', {
         allocationId: 1,
         prisonerNumber: 'ABC123',
         scheduleId: 1,

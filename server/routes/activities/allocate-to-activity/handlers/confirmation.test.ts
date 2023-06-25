@@ -44,7 +44,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
   describe('GET', () => {
     it('should render page with data from session', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/confirmation', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/confirmation', {
         activityId: 1,
         scheduleId: 1,
         prisonerName: 'Joe Bloggs',

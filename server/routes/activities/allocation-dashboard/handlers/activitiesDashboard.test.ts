@@ -54,7 +54,7 @@ describe('Route Handlers - Activities dashboard', () => {
     it('should render activities with their allocation summaries', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/activities', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
         activities: expect.arrayContaining([
           {
             summary: 'English level 1',

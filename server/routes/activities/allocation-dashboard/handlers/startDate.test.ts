@@ -78,7 +78,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
     })
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/start-date', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/start-date', {
         allocationId: 1,
         endDate: '2023-01-31',
         prisonerName: 'John Smith',

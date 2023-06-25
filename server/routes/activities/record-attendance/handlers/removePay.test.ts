@@ -84,7 +84,7 @@ describe('Route Handlers - Remove Pay', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/remove-pay', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/remove-pay', {
         instance: {
           id: 1,
           date: format(new Date(), 'yyyy-MM-dd'),

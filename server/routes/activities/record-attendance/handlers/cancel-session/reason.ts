@@ -16,7 +16,7 @@ export class CancelReasonForm {
 
 export default class CancelSessionRoutes {
   GET = async (req: Request, res: Response) =>
-    res.render('pages/record-attendance/cancel-session/cancel-reason', { cancellationReasons })
+    res.render('pages/activities/record-attendance/cancel-session/cancel-reason', { cancellationReasons })
 
   POST = async (req: Request, res: Response) => {
     const { reason, comment }: CancelReasonForm = req.body

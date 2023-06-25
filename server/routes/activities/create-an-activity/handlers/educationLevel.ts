@@ -23,7 +23,7 @@ export default class EducationLevelRoutes {
     const { user } = res.locals
     const [studyAreas, eduLevels] = await this.getEducation(user)
 
-    res.render('pages/create-an-activity/education-level', { eduLevels, studyAreas })
+    res.render('pages/activities/create-an-activity/education-level', { eduLevels, studyAreas })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

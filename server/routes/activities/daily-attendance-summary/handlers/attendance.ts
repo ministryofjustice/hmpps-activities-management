@@ -81,7 +81,7 @@ export default class DailyAttendanceRoutes {
     )
 
     if (status === 'NotAttended') {
-      return res.render('pages/daily-attendance-summary/not-attended', {
+      return res.render('pages/activities/daily-attendance-summary/not-attended', {
         activityDate,
         status,
         attendees,
@@ -89,7 +89,7 @@ export default class DailyAttendanceRoutes {
       })
     }
 
-    return res.render('pages/daily-attendance-summary/attended', {
+    return res.render('pages/activities/daily-attendance-summary/attended', {
       activityDate,
       status,
       attendees,

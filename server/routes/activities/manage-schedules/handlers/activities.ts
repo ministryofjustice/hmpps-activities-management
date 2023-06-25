@@ -39,7 +39,7 @@ export default class ActivitiesRoutes {
       this.activitiesService.getActivityCategories(user),
     ])
 
-    res.render('pages/manage-schedules/activities-dashboard', {
+    res.render('pages/activities/manage-schedules/activities-dashboard', {
       activities,
       categories,
       filters,

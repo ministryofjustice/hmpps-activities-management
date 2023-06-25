@@ -38,7 +38,7 @@ describe('Route Handlers - Deallocation reason', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/deallocate-from-activity/deallocation-reason', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/deallocate-from-activity/deallocation-reason', {
         deallocationReasons: [{ code: 'OTHER', description: 'OTHER' }],
       })
     })

@@ -11,7 +11,7 @@ export class ConfirmCancelOptions {
 export default class CancelRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     req.session.returnTo = req.get('Referrer')
-    res.render('pages/allocate-to-activity/cancel')
+    res.render('pages/activities/allocate-to-activity/cancel')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

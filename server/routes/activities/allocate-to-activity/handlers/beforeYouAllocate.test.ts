@@ -107,7 +107,9 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toBeCalledWith('pages/allocate-to-activity/before-you-allocate', { allocationSuitability })
+      expect(res.render).toBeCalledWith('pages/activities/allocate-to-activity/before-you-allocate', {
+        allocationSuitability,
+      })
     })
   })
 

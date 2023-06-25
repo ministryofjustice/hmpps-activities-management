@@ -27,7 +27,8 @@ export class TimePeriodForChanges {
 }
 
 export default class SelectPeriodForChangesRoutes {
-  GET = async (req: Request, res: Response): Promise<void> => res.render('pages/change-of-circumstances/select-period')
+  GET = async (req: Request, res: Response): Promise<void> =>
+    res.render('pages/activities/change-of-circumstances/select-period')
 
   POST = async (req: Request, res: Response): Promise<void> => {
     if (req.body.datePresetOption === PresetDateOptions.TODAY) {

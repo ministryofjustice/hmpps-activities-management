@@ -30,7 +30,7 @@ export default class PlannedEventsRoutes {
 
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-    res.render('pages/unlock-list/planned-events', { unlockFilters, unlockListItems })
+    res.render('pages/activities/unlock-list/planned-events', { unlockFilters, unlockListItems })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

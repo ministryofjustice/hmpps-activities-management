@@ -49,7 +49,7 @@ describe('Route Handlers - Create an activity - Category', () => {
       ] as ActivityCategory[])
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/category', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/category', {
         categories: [
           { id: 1, code: 'SAA_SERVICES', name: 'Services' },
           { id: 2, code: 'SAA_EDUCATION', name: 'Education' },

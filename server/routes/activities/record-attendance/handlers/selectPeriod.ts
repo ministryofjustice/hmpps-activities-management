@@ -27,7 +27,8 @@ export class TimePeriod {
 }
 
 export default class SelectPeriodRoutes {
-  GET = async (req: Request, res: Response): Promise<void> => res.render('pages/record-attendance/select-period')
+  GET = async (req: Request, res: Response): Promise<void> =>
+    res.render('pages/activities/record-attendance/select-period')
 
   POST = async (req: Request, res: Response): Promise<void> => {
     if (req.body.datePresetOption === PresetDateOptions.TODAY) {

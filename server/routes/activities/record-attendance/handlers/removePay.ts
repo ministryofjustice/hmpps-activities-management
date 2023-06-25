@@ -32,7 +32,7 @@ export default class RemovePayRoutes {
       .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
       .then(i => ({ name: `${i.firstName} ${i.lastName}` }))
 
-    res.render('pages/record-attendance/remove-pay', { instance, attendance, attendee })
+    res.render('pages/activities/record-attendance/remove-pay', { instance, attendance, attendee })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

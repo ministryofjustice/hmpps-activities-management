@@ -20,7 +20,7 @@ export default class CategoryRoutes {
 
     const categories = await this.activitiesService.getActivityCategories(user)
 
-    res.render(`pages/create-an-activity/category`, { categories })
+    res.render(`pages/activities/create-an-activity/category`, { categories })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

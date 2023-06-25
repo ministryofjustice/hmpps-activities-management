@@ -12,7 +12,7 @@ export class UncancelConfirmForm {
 export default class UncancelSessionRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response) => res.render('pages/record-attendance/uncancel-session/confirm')
+  GET = async (req: Request, res: Response) => res.render('pages/activities/record-attendance/uncancel-session/confirm')
 
   POST = async (req: Request, res: Response) => {
     const { user } = res.locals

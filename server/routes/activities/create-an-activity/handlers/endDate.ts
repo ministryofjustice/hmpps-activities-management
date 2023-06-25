@@ -26,7 +26,7 @@ export default class EndDateRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { session } = req
-    res.render('pages/create-an-activity/end-date', {
+    res.render('pages/activities/create-an-activity/end-date', {
       startDate: session.createJourney.startDate
         ? formatDate(plainToInstance(SimpleDate, session.createJourney.startDate).toRichDate(), 'yyyy-MM-dd')
         : undefined,

@@ -39,7 +39,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/risk-level')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/risk-level')
     })
   })
 

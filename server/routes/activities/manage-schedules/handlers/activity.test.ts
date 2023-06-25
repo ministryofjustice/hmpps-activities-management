@@ -78,7 +78,7 @@ describe('Route Handlers - View Activity', () => {
   describe('GET', () => {
     it('should render page with view activity', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/view-activity', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/view-activity', {
         activity: {
           attendanceRequired: false,
           category: { code: 'EDUCATION', id: 1, name: 'Education' },

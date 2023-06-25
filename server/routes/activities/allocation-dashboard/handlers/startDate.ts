@@ -36,7 +36,7 @@ export default class StartDateRoutes {
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
     const prisonerName = convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)
 
-    res.render(`pages/allocation-dashboard/start-date`, {
+    res.render(`pages/activities/allocation-dashboard/start-date`, {
       startDate,
       endDate: allocation.endDate ? allocation.endDate : undefined,
       scheduleId,

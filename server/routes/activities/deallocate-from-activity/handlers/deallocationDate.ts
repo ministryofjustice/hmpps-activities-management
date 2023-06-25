@@ -16,7 +16,7 @@ export class DeallocationDate {
 
 export default class DeallocationDateRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/deallocate-from-activity/deallocation-date')
+    res.render('pages/activities/deallocate-from-activity/deallocation-date')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

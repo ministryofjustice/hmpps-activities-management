@@ -40,7 +40,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/days-and-times')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/days-and-times')
     })
   })
 

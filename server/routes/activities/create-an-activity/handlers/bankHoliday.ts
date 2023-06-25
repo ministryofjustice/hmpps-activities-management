@@ -14,7 +14,7 @@ export default class BankHolidayOptionRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/create-an-activity/bank-holiday-option')
+    res.render('pages/activities/create-an-activity/bank-holiday-option')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

@@ -60,7 +60,7 @@ export default class AllocationDashboardRoutes {
       this.getCandidates(+activityId, filters, +req.query.page, user),
     ])
 
-    res.render('pages/allocation-dashboard/allocation-dashboard', {
+    res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       schedule: activity.schedules[0],
       currentlyAllocated,
       pagedCandidates,

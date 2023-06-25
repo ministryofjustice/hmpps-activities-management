@@ -42,7 +42,7 @@ describe('Route Handlers - Check deallocation', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/deallocate-from-activity/check-answers', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/deallocate-from-activity/check-answers', {
         deallocationDate: '2023-06-05',
         deallocationReason: 'OTHER',
       })

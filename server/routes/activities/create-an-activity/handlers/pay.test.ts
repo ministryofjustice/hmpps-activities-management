@@ -75,7 +75,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
       })
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/pay', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/pay', {
         incentiveLevels: [{ levelName: 'Standard' }],
         payBands: [
           { id: 1, alias: 'Low', displaySequence: 1 },
@@ -117,7 +117,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/pay', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/pay', {
         incentiveLevels: [{ levelName: 'Standard' }],
         payBands: [
           { id: 1, alias: 'Low', displaySequence: 1 },

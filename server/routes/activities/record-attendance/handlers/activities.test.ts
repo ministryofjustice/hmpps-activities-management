@@ -136,7 +136,7 @@ describe('Route Handlers - Activities', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
         activities: {
           am: [
             {
@@ -236,7 +236,7 @@ describe('Route Handlers - Activities', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
         activities: {
           am: [
             {
@@ -313,7 +313,7 @@ describe('Route Handlers - Activities', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
         activities: {
           am: [
             {
@@ -390,7 +390,7 @@ describe('Route Handlers - Activities', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
         activities: {
           pm: [
             {
@@ -470,7 +470,7 @@ describe('Route Handlers - Activities', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/activities', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
         activities: {
           am: [
             {

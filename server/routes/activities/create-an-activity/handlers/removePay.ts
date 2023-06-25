@@ -21,7 +21,7 @@ export default class RemovePayRoutes {
       return res.redirect('check-pay')
     }
 
-    return res.render(`pages/create-an-activity/remove-pay`, { iep, bandId })
+    return res.render(`pages/activities/create-an-activity/remove-pay`, { iep, bandId })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

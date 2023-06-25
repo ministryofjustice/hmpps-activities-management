@@ -12,7 +12,7 @@ export default class EndDateOptionRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { prisonerName } = req.session.allocateJourney.inmate
 
-    res.render('pages/allocate-to-activity/end-date-option', {
+    res.render('pages/activities/allocate-to-activity/end-date-option', {
       prisonerName,
     })
   }

@@ -34,7 +34,7 @@ describe('Route Handlers - Create an activity - Confirmation', () => {
   describe('GET', () => {
     it('should render the expected page', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/confirmation', { id: '1' })
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/confirmation', { id: '1' })
       expect(req.session.createJourney).toBeNull()
     })
   })

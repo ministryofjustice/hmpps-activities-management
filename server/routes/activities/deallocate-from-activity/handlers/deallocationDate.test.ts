@@ -28,7 +28,7 @@ describe('Route Handlers - Deallocation date', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/deallocate-from-activity/deallocation-date')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/deallocate-from-activity/deallocation-date')
     })
   })
 

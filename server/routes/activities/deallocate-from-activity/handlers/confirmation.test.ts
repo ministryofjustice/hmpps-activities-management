@@ -28,7 +28,7 @@ describe('Route Handlers - Confirm deallocation', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/deallocate-from-activity/confirmation', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/deallocate-from-activity/confirmation', {
         deallocateJourney: { deallocationReason: 'OTHER' },
       })
       expect(req.session.deallocateJourney).toBeNull()

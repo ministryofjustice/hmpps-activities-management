@@ -245,7 +245,7 @@ describe('Route Handlers - Attendance List', () => {
     it('should render with the expected view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/attendance-list', viewContext)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list', viewContext)
     })
 
     it("shouldn't be amendable if session is in the past", async () => {
@@ -275,7 +275,7 @@ describe('Route Handlers - Attendance List', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/attendance-list', viewContext)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list', viewContext)
     })
   })
 

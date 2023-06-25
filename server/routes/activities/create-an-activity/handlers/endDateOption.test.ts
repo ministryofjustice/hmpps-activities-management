@@ -30,7 +30,7 @@ describe('Route Handlers - Create an activity schedule - End date option', () =>
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/end-date-option')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/end-date-option')
     })
   })
 

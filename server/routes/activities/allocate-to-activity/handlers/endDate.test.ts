@@ -40,7 +40,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/end-date', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/end-date', {
         activityName: 'Maths Level 1',
         prisonerName: 'John Smith',
       })

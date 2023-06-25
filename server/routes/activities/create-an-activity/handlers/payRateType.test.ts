@@ -30,7 +30,7 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/pay-rate-type')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/pay-rate-type')
     })
   })
 

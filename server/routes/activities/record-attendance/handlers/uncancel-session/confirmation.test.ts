@@ -39,7 +39,7 @@ describe('Route Handlers - Uncancel Session Confirmation', () => {
   describe('GET', () => {
     it('should render uncancel session confirmation page', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/uncancel-session/confirm')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/uncancel-session/confirm')
     })
   })
 

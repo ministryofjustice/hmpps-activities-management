@@ -48,7 +48,7 @@ describe('Unlock list routes - select date and location', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/unlock-list/select-date-and-location', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/select-date-and-location', {
         locationGroups: mockedLocationGroups,
       })
       expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)

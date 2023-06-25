@@ -72,7 +72,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
   describe('GET', () => {
     it('should render page correctly', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/check-pay', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/check-pay', {
         flatPay: [],
         incentiveLevelPays: [
           {

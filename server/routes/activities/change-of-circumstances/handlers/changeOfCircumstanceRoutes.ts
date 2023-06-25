@@ -39,7 +39,7 @@ export default class ChangeOfCircumstanceRoutes {
 
     // Build view context and render the results
     const viewContext = { date: queryDate, page, changeEvents, pagination }
-    res.render('pages/change-of-circumstances/view-events', viewContext)
+    res.render('pages/activities/change-of-circumstances/view-events', viewContext)
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

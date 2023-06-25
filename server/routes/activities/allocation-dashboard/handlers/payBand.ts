@@ -44,7 +44,7 @@ export default class PayBandRoutes {
         })),
       )
 
-    res.render('pages/allocation-dashboard/pay-band', {
+    res.render('pages/activities/allocation-dashboard/pay-band', {
       prisonerName,
       prisonerNumber: prisoner.prisonerNumber,
       incentiveLevel: iepSummary.iepLevel,

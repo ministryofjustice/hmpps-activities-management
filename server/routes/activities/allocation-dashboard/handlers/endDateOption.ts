@@ -19,7 +19,7 @@ export default class EndDateOptionRoutes {
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
     const { scheduleId } = allocation
     const { prisonerNumber } = allocation
-    res.render('pages/allocation-dashboard/end-date-option', {
+    res.render('pages/activities/allocation-dashboard/end-date-option', {
       scheduleId,
       allocationId,
       prisonerNumber,

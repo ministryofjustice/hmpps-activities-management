@@ -10,7 +10,7 @@ export class PayRateType {
 
 export default class PayRateTypeRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/create-an-activity/pay-rate-type')
+    res.render('pages/activities/create-an-activity/pay-rate-type')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

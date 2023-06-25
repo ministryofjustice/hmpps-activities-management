@@ -35,7 +35,7 @@ describe('Route Handlers - Allocation - End Date option', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/end-date-option', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/end-date-option', {
         prisonerName: 'John Smith',
       })
     })

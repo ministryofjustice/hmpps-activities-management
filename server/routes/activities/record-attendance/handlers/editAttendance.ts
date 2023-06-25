@@ -37,7 +37,7 @@ export default class EditAttendanceRoutes {
       .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
       .then(i => ({ name: `${i.firstName} ${i.lastName}` }))
 
-    res.render('pages/record-attendance/edit-attendance', { instance, attendance, attendee })
+    res.render('pages/activities/record-attendance/edit-attendance', { instance, attendance, attendee })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

@@ -75,7 +75,7 @@ describe('Route Handlers - Reset Attendance', () => {
     it('should render with the expected view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/reset-attendance', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/reset-attendance', {
         attendance,
         attendee: prisoner,
       })

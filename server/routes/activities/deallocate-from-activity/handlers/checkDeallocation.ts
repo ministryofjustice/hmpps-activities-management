@@ -13,7 +13,7 @@ export default class CheckDeallocationRoutes {
 
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
 
-    res.render('pages/deallocate-from-activity/check-answers', {
+    res.render('pages/activities/deallocate-from-activity/check-answers', {
       deallocationDate: formatDate(plainToInstance(SimpleDate, deallocationDate).toRichDate(), 'yyyy-MM-dd'),
       deallocationReason: deallocationReasons.find(r => r.code === deallocationReason).description,
     })

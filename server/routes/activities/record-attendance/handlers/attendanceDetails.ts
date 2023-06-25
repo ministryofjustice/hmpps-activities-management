@@ -20,7 +20,7 @@ export default class AttendanceDetailsRoutes {
 
     const activity = { ...instance.activitySchedule.activity }
 
-    res.render('pages/record-attendance/attendance-details', { instance, attendance, attendee, activity })
+    res.render('pages/activities/record-attendance/attendance-details', { instance, attendance, attendee, activity })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

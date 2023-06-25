@@ -20,7 +20,7 @@ export default class ActivitiesRoutes {
       })),
     )
 
-    res.render('pages/allocation-dashboard/activities', {
+    res.render('pages/activities/allocation-dashboard/activities', {
       total: this.addCalculatedFields(this.calculateTotals(activities)),
       activities,
     })

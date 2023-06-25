@@ -28,7 +28,7 @@ export default class EndDateRoutes {
       ? formatDate(plainToInstance(SimpleDate, req.session.allocateJourney.startDate).toRichDate(), 'yyyy-MM-dd')
       : undefined
 
-    res.render(`pages/allocate-to-activity/end-date`, {
+    res.render(`pages/activities/allocate-to-activity/end-date`, {
       startDate,
       prisonerName,
       activityName: activity.name,

@@ -36,7 +36,7 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
   describe('GET', () => {
     it('should render cancel session confirmation page', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/cancel-session/confirm')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-session/confirm')
     })
   })
 

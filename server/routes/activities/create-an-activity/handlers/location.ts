@@ -33,7 +33,7 @@ export default class LocationRoutes {
     const locations = await this.prisonService.getEventLocations(user.activeCaseLoad.caseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'locationId')
 
-    res.render('pages/create-an-activity/location', {
+    res.render('pages/activities/create-an-activity/location', {
       locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
     })
   }

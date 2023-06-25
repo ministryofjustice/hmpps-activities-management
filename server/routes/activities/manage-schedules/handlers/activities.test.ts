@@ -72,7 +72,7 @@ describe('Route Handlers - Activities dashboard', () => {
       req.query = { categoryFilter: 'all', stateFilter: 'all' }
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/activities-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/activities-dashboard', {
         activities: [
           {
             category: {
@@ -137,7 +137,7 @@ describe('Route Handlers - Activities dashboard', () => {
       req.query = { categoryFilter: '1' }
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/activities-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/activities-dashboard', {
         activities: [
           {
             category: {
@@ -192,7 +192,7 @@ describe('Route Handlers - Activities dashboard', () => {
       req.query = { categoryFilter: '2' }
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/activities-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/activities-dashboard', {
         activities: [
           {
             category: {
@@ -240,7 +240,7 @@ describe('Route Handlers - Activities dashboard', () => {
       req.query = { categoryFilter: '2', stateFilter: 'live' }
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/activities-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/activities-dashboard', {
         activities: [
           {
             category: {
@@ -289,7 +289,7 @@ describe('Route Handlers - Activities dashboard', () => {
       req.query = { categoryFilter: '2', stateFilter: 'archived' }
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/manage-schedules/activities-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/activities-dashboard', {
         activities: [],
         categories: [
           {

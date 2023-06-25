@@ -17,7 +17,7 @@ export default class CheckPayRoutes {
     incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(req, user)
     const flatPay = req.session.createJourney.flat
 
-    res.render(`pages/create-an-activity/check-pay`, { incentiveLevelPays, flatPay })
+    res.render(`pages/activities/create-an-activity/check-pay`, { incentiveLevelPays, flatPay })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

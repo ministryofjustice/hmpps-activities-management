@@ -15,7 +15,7 @@ export default class RemoveFlatRateRoutes {
     const flatRate = req.session.createJourney.flat.findIndex(f => f.bandId === bandId)
     if (flatRate < 0) return res.redirect('check-pay')
 
-    return res.render(`pages/create-an-activity/remove-pay`, { bandId })
+    return res.render(`pages/activities/create-an-activity/remove-pay`, { bandId })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

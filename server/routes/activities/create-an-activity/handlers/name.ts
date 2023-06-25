@@ -15,7 +15,7 @@ export default class NameRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render(`pages/create-an-activity/name`)
+    res.render(`pages/activities/create-an-activity/name`)
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

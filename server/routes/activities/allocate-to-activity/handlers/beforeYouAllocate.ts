@@ -19,7 +19,7 @@ export default class BeforeYouAllocateRoutes {
 
     const allocationSuitability = await this.activitiesService.allocationSuitability(scheduleId, prisonerNumber, user)
 
-    res.render('pages/allocate-to-activity/before-you-allocate', { allocationSuitability })
+    res.render('pages/activities/allocate-to-activity/before-you-allocate', { allocationSuitability })
   }
 
   POST = async (req: Request, res: Response) => {

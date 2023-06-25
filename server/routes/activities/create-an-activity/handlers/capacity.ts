@@ -17,7 +17,7 @@ export default class CapacityRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/create-an-activity/capacity')
+    res.render('pages/activities/create-an-activity/capacity')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

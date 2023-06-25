@@ -6,7 +6,7 @@ export default class ConfirmCapacityRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/manage-schedules/confirm-capacity')
+    res.render('pages/activities/manage-schedules/confirm-capacity')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

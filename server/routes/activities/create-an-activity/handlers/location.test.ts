@@ -48,7 +48,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
       when(prisonService.getEventLocations).mockResolvedValue(eventLocations)
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/location', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/location', {
         locations: eventLocationsFiltered,
       })
     })

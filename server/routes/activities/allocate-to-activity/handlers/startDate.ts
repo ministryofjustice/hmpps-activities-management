@@ -19,7 +19,7 @@ export default class StartDateRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { prisonerName } = req.session.allocateJourney.inmate
 
-    res.render(`pages/allocate-to-activity/start-date`, {
+    res.render(`pages/activities/allocate-to-activity/start-date`, {
       prisonerName,
     })
   }

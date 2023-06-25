@@ -20,7 +20,7 @@ export default class RiskLevelRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render(`pages/create-an-activity/risk-level`)
+    res.render(`pages/activities/create-an-activity/risk-level`)
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

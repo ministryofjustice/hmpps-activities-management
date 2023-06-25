@@ -42,7 +42,13 @@ export default class CheckAllocationRoutes {
       endDate: allocation.endDate ? simpleDateFromDate(new Date(allocation.endDate)) : undefined,
     }
 
-    res.render('pages/allocation-dashboard/check-answers', { allocation, prisonerName, pay, isStarted, isOnlyPay })
+    res.render('pages/activities/allocation-dashboard/check-answers', {
+      allocation,
+      prisonerName,
+      pay,
+      isStarted,
+      isOnlyPay,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

@@ -23,7 +23,7 @@ export default class CheckAnswersRoutes {
       ? formatDate(plainToInstance(SimpleDate, createJourney.endDate).toRichDate(), 'do MMMM yyyy')
       : 'Not set'
     const flatPay = req.session.createJourney.flat
-    res.render(`pages/create-an-activity/check-answers`, {
+    res.render(`pages/activities/create-an-activity/check-answers`, {
       incentiveLevelPays,
       times: {
         monday: createJourney.timeSlotsMonday,

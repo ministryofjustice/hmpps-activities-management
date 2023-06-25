@@ -43,7 +43,7 @@ describe('Route Handlers - Create an activity - Remove flat rate', () => {
     it('should show confirmation page', async () => {
       req.query = { bandId: '1' }
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/create-an-activity/remove-pay', { bandId: 1 })
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/remove-pay', { bandId: 1 })
     })
 
     it("should redirect back to check pay page if pay rate isn't found", async () => {

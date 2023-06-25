@@ -85,7 +85,7 @@ describe('Route Handlers - Non Attendance', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/record-attendance/not-attended-reason', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/not-attended-reason', {
         notAttendedReasons: [
           {
             id: 1,

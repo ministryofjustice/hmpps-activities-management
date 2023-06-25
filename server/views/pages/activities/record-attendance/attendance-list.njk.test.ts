@@ -2,11 +2,11 @@ import * as cheerio from 'cheerio'
 import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { format, startOfToday } from 'date-fns'
-import { registerNunjucks } from '../../../nunjucks/nunjucksSetup'
-import attendanceListCancelledContext from '../../fixtures/pages/record-attendance/attendance-list-cancelled.json'
-import attendanceListContext from '../../fixtures/pages/record-attendance/attendance-list.json'
+import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
+import attendanceListCancelledContext from '../../../fixtures/pages/record-attendance/attendance-list-cancelled.json'
+import attendanceListContext from '../../../fixtures/pages/record-attendance/attendance-list.json'
 
-const snippet = fs.readFileSync('server/views/pages/record-attendance/attendance-list.njk')
+const snippet = fs.readFileSync('server/views/pages/activities/record-attendance/attendance-list.njk')
 
 const today = format(startOfToday(), 'yyyy-MM-dd')
 

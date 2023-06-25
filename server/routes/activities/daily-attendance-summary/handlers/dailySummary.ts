@@ -53,7 +53,7 @@ export default class DailySummaryRoutes {
       .getAllAttendance(activityDate, user)
       .then(attendance => attendance.filter(a => a.attendanceReasonCode === attendanceReason.SUSPENDED))
 
-    return res.render('pages/daily-attendance-summary/daily-summary', {
+    return res.render('pages/activities/daily-attendance-summary/daily-summary', {
       activityDate,
       ...getDailyAttendanceSummary(attendanceSummary.filter(a => categoryFilters.includes(a.categoryName))),
       ...getCancelledActivitySummary(cancelledActivities),

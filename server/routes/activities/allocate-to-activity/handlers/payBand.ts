@@ -31,7 +31,7 @@ export default class PayBandRoutes {
         })),
       )
 
-    res.render('pages/allocate-to-activity/pay-band', {
+    res.render('pages/activities/allocate-to-activity/pay-band', {
       prisonerName: inmate.prisonerName,
       prisonerNumber: inmate.prisonerNumber,
       incentiveLevel: inmate.incentiveLevel,

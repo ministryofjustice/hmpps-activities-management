@@ -143,7 +143,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/daily-attendance-summary/daily-summary', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/daily-summary', {
         activityDate: date,
         totalAbsences: {
           AM: 0,
@@ -338,7 +338,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/daily-attendance-summary/daily-summary', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/daily-summary', {
         activityDate: date,
         totalAbsences: {
           AM: 0,

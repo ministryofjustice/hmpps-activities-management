@@ -124,7 +124,7 @@ describe('Route Handlers - Edit Allocation - Pay band', () => {
         .mockResolvedValue(prisonerInfo)
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/pay-band', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/pay-band', {
         prisonerName: 'John Smith',
         prisonerNumber: 'ABC123',
         incentiveLevel: 'Standard',

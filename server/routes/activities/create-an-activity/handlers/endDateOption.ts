@@ -10,7 +10,7 @@ export class EndDateOption {
 
 export default class EndDateOptionRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/create-an-activity/end-date-option')
+    res.render('pages/activities/create-an-activity/end-date-option')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

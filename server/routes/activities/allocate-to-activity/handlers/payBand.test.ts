@@ -78,7 +78,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
         } as Activity)
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/pay-band', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/pay-band', {
         prisonerName: 'Joe Bloggs',
         prisonerNumber: 'ABC123',
         incentiveLevel: 'Enhanced',

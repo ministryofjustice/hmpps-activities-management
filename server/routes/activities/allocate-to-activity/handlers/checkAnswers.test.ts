@@ -52,7 +52,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
   describe('GET', () => {
     it('should render page with data from session', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/allocate-to-activity/check-answers', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/check-answers', {
         prisonerName: 'Joe Bloggs',
         prisonerNumber: 'ABC123',
         cellLocation: '1-2-001',

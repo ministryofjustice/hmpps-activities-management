@@ -23,7 +23,7 @@ export default class ResetAttendanceRoutes {
     const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId)
     const attendee = await this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user)
 
-    res.render('pages/record-attendance/reset-attendance', { attendance, attendee })
+    res.render('pages/activities/record-attendance/reset-attendance', { attendance, attendee })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

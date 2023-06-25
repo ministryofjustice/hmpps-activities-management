@@ -66,7 +66,7 @@ export default class ActivitiesRoutes {
         ...{ length: scheduledActivities.length },
       }))
 
-    return res.render('pages/record-attendance/activities', {
+    return res.render('pages/activities/record-attendance/activities', {
       activities: activitiesModel,
       activityDate,
       activitiesFilters,

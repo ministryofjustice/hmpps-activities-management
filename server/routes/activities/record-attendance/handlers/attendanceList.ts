@@ -62,7 +62,7 @@ export default class AttendanceListRoutes {
           )
         : []
 
-    return res.render('pages/record-attendance/attendance-list', {
+    return res.render('pages/activities/record-attendance/attendance-list', {
       activity: {
         name: instance.activitySchedule.activity.summary,
         location: instance.activitySchedule.internalLocation?.description,

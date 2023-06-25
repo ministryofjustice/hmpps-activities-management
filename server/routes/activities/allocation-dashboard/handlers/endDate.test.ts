@@ -89,7 +89,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/allocation-dashboard/end-date', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/end-date', {
         activitySummary: 'Maths Level 1',
         allocationId: 1,
         startDate: '2023-01-01',

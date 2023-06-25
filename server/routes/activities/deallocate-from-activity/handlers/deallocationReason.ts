@@ -17,7 +17,7 @@ export default class DeallocationReasonRoutes {
 
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
 
-    res.render('pages/deallocate-from-activity/deallocation-reason', { deallocationReasons })
+    res.render('pages/activities/deallocate-from-activity/deallocation-reason', { deallocationReasons })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
