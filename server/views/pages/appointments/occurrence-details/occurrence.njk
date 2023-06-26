@@ -23,7 +23,7 @@
 
             {% if occurrence.bulkAppointment %}
                 {{ govukInsetText({
-                    html: 'This appointment was scheduled in a <strong>set of ' + occurrence.bulkAppointment.appointmentCount + '</strong>. You can <a href="/appointments/bulk-appointments/' + occurrence.bulkAppointment.id + '">view the set</a> to cancel all ' + occurrence.bulkAppointment.appointmentCount + ' appointments, or print all movement slips at once.'
+                    html: 'This appointment was scheduled in a <strong>set of ' + occurrence.bulkAppointment.appointmentCount + '</strong>. You can <a href="/appointments/bulk-appointments/' + occurrence.bulkAppointment.id + '">view the set</a> to print all movement slips at once.'
                 }) }}
             {% endif %}
 
