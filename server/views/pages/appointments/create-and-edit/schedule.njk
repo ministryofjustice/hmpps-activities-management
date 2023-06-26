@@ -1,9 +1,11 @@
 {% extends "layout.njk" %}
 
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 
 {% set pageTitle = appointmentJourneyTitle("Review scheduled events", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-schedule-page' %}
@@ -18,6 +20,130 @@
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Attendee"
+                            },
+                            value: {
+                                html: appointmentPrisonerSummary(
+                                    session.appointmentJourney.prisoners[0].name,
+                                    session.appointmentJourney.prisoners[0].number,
+                                    session.appointmentJourney.prisoners[0].cellLocation,
+                                    dpsUrl
+                                )
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "select-prisoner?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change attendee",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-prisoner' }
+                                    }
+                                ]
+                            }
+                        } if session.appointmentJourney.type == AppointmentType.INDIVIDUAL, {
+                            key: {
+                                text: "Attendees"
+                            },
+                            value: {
+                                text: session.appointmentJourney.prisoners | length
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "review-prisoners?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change prisoners",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-prisoners' }
+                                    }
+                                ]
+                            }
+                        } if session.appointmentJourney.type == AppointmentType.GROUP, {
+                            key: {
+                                text: "Appointments"
+                            },
+                            value: {
+                                text: session.bulkAppointmentJourney.appointments | length
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "review-prisoners?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change prisoners",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-prisoners' }
+                                    }
+                                ]
+                            }
+                        } if session.appointmentJourney.type == AppointmentType.BULK, {
+                            key: {
+                                text: "Location"
+                            },
+                            value: {
+                                text: session.appointmentJourney.location.description
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "location?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change location",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-location' }
+                                    }
+                                ]
+                            }
+                        }, {
+                            key: {
+                                text: "Date"
+                            },
+                            value: {
+                                text: session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy')
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: 'bulk-appointment-date?preserveHistory=true' if session.appointmentJourney.type == AppointmentType.BULK else 'date-and-time?preserveHistory=true',
+                                        text: "Change",
+                                        visuallyHiddenText: "change date",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-start-date' }
+                                    }
+                                ]
+                            }
+                        }, {
+                            key: {
+                                text: "Time"
+                            },
+                            value: {
+                                text: (session.appointmentJourney.startTime.date | parseISODate | formatDate('HH:mm') + ' to ' + session.appointmentJourney.endTime.date | parseISODate | formatDate('HH:mm'))
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "date-and-time?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change start time",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-start-time' }
+                                    }
+                                ]
+                            }
+                        } if session.appointmentJourney.startTime and session.appointmentJourney.endTime
+                    ],
+                    attributes: { 'data-qa': 'appointment-details' }
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) if session.appointmentJourney.type != AppointmentType.INDIVIDUAL }}
 
                 {% for prisonerSchedule in prisonerSchedules %}
                     {% set prisoner = prisonerSchedule.prisoner %}

@@ -1,7 +1,11 @@
 import { Request, Response } from 'express'
+import { when } from 'jest-when'
+import { addDays } from 'date-fns'
 import ScheduleRoutes from './schedule'
 import { YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
+import { PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
+import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -11,6 +15,8 @@ describe('Route Handlers - Create Appointment - Comment', () => {
   const handler = new ScheduleRoutes(activitiesService)
   let req: Request
   let res: Response
+
+  const tomorrow = addDays(new Date(), 1)
 
   beforeEach(() => {
     res = {
@@ -29,10 +35,24 @@ describe('Route Handlers - Create Appointment - Comment', () => {
 
     req = {
       session: {
-        appointmentJourney: {},
+        appointmentJourney: {
+          startDate: simpleDateFromDate(tomorrow),
+          prisoners: [],
+        },
       },
       flash: jest.fn(),
     } as unknown as Request
+
+    when(activitiesService.getScheduledEventsForPrisoners)
+      // .calledWith(expect.any(Date), ['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
+      .mockResolvedValue({
+        activities: [],
+        appointments: [],
+        courtHearings: [],
+        visits: [],
+        externalTransfers: [],
+        adjudications: [],
+      } as PrisonerScheduledEvents)
   })
 
   afterEach(() => {
@@ -47,6 +67,7 @@ describe('Route Handlers - Create Appointment - Comment', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         backLinkHref: 'repeat',
+        prisonerSchedules: [],
       })
     })
 
@@ -57,6 +78,7 @@ describe('Route Handlers - Create Appointment - Comment', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         backLinkHref: 'repeat-period-and-count',
+        prisonerSchedules: [],
       })
     })
   })

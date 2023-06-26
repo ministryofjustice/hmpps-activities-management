@@ -14,6 +14,8 @@ export default class ScheduleRoutes {
     const defaultBackLinkHref =
       req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
 
+    req.session.returnTo = 'schedule'
+
     const prisonNumbers = appointmentJourney.prisoners.map(p => p.number)
 
     const scheduledEvents = await this.activitiesService
