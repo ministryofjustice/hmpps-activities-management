@@ -3,6 +3,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import SelectPeriodRoutes, { TimePeriod } from './handlers/selectPeriod'
 import DailySummaryRoutes from './handlers/dailySummary'
 import DailyAttendanceRoutes from './handlers/attendance'
+import CancelledSessionsRoutes from './handlers/cancelledSessions'
 import validationMiddleware from '../../middleware/validationMiddleware'
 import { Services } from '../../services'
 
@@ -16,6 +17,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const selectPeriodHandler = new SelectPeriodRoutes()
   const dailySummaryHandler = new DailySummaryRoutes(activitiesService)
   const dailyAttendanceHandler = new DailyAttendanceRoutes(activitiesService, prisonService)
+  const cancelledSessionsHandler = new CancelledSessionsRoutes(activitiesService)
 
   get('/select-period', selectPeriodHandler.GET)
   post('/select-period', selectPeriodHandler.POST, TimePeriod)
@@ -25,6 +27,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/attendance', dailyAttendanceHandler.GET)
   post('/attendance', dailyAttendanceHandler.POST)
   get('/update-attendance-filters', dailyAttendanceHandler.FILTERS)
+  get('/cancelled-sessions', cancelledSessionsHandler.GET)
+  post('/cancelled-sessions', cancelledSessionsHandler.POST)
 
   return router
 }

@@ -3687,6 +3687,11 @@ export interface components {
        */
       cancelledReason?: string
       /**
+       * @description The comment added wehn this scheduled instance was cancelled
+       * @example Staff unavailable
+       */
+      comment?: string
+      /**
        * Format: int64
        * @description The id for the previous scheduled instance
        * @example 123456
