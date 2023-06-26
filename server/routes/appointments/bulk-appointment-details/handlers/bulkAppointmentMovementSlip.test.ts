@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 
 import BulkAppointmentMovementSlipRoutes from './bulkAppointmentMovementSlip'
-import { BulkAppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentOccurrenceDetails, BulkAppointmentDetails } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -9,8 +9,6 @@ describe('Route Handlers - Movement Slip', () => {
   const handler = new BulkAppointmentMovementSlipRoutes()
   let req: Request
   let res: Response
-
-  const bulkAppointment = {} as unknown as BulkAppointmentDetails
 
   beforeEach(() => {
     res = {
@@ -27,7 +25,9 @@ describe('Route Handlers - Movement Slip', () => {
       params: {
         id: '10',
       },
-      bulkAppointment,
+      bulkAppointment: {
+        occurrences: [],
+      } as unknown as BulkAppointmentDetails,
     } as unknown as Request
   })
 
@@ -40,7 +40,37 @@ describe('Route Handlers - Movement Slip', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/bulk-appointment', {
-        bulkAppointment,
+        bulkAppointment: req.bulkAppointment,
+      })
+    })
+
+    it('should only render movement slips for one occurrences that are not cancelled and not expired', async () => {
+      req.bulkAppointment.occurrences = [
+        {
+          isCancelled: false,
+          isExpired: true,
+        } as unknown as AppointmentOccurrenceDetails,
+        {
+          isCancelled: true,
+          isExpired: false,
+        } as unknown as AppointmentOccurrenceDetails,
+        {
+          isCancelled: false,
+          isExpired: false,
+        } as unknown as AppointmentOccurrenceDetails,
+      ]
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/bulk-appointment', {
+        bulkAppointment: {
+          occurrences: [
+            {
+              isCancelled: false,
+              isExpired: false,
+            } as unknown as AppointmentOccurrenceDetails,
+          ],
+        } as unknown as BulkAppointmentDetails,
       })
     })
   })
