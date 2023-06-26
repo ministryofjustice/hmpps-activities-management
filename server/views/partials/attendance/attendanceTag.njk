@@ -40,9 +40,9 @@
 } %}
 
 
-{% macro attendanceTag(attendance) %}
-    {% if attendance.status === 'COMPLETED' %}
-      {{ govukTag(attendanceTags[attendance.attendanceReason.code]) }}
+{% macro attendanceTag(status, code) %}
+    {% if status === 'COMPLETED' %}
+        {{ govukTag(attendanceTags[code]) }}
     {% else %}
       Not recorded yet
     {% endif %}

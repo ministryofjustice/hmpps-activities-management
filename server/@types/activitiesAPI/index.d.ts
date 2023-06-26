@@ -4003,6 +4003,123 @@ export interface components {
     }
     /**
      * @description
+     *   Represents the key data required to report on attendance
+     */
+    AllAttendance: {
+      /**
+       * Format: int64
+       * @description The attendance primary key
+       * @example 123456
+       */
+      attendanceId: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: date
+       * @description The date of the session for which attendance may have been marked or a planned absence recorded
+       * @example 2023-03-30
+       */
+      sessionDate: string
+      /**
+       * @description AM, PM, ED.
+       * @example AM
+       */
+      timeSlot: string
+      /**
+       * @description WAITING, COMPLETED.
+       * @example WAITING
+       */
+      status: string
+      /** @description The reason for attending or not */
+      attendanceReasonCode?: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description The prisoner number this attendance record is for
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * @description The id of the activity for this attendance record
+       * @example 1
+       */
+      activityId: number
+      /**
+       * @description The title of the activity for this attendance record
+       * @example Math Level 1
+       */
+      activitySummary: string
+      /**
+       * @description The name of the activity category for this attendance record
+       * @example Education
+       */
+      categoryName: string
+    }
+    /**
+     * @description
+     *   Represents the key data required to report on daily attendance activity
+     */
+    AllAttendanceSummary: {
+      /**
+       * Format: int64
+       * @description The attendance summary primary key
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the activity
+       * @example 123456
+       */
+      activityId: number
+      /**
+       * @description The name of the activity category
+       * @example Leisure and social
+       */
+      categoryName: string
+      /**
+       * Format: date
+       * @description The date of the session for which attendance may have been marked or a planned absence recorded
+       * @example 2023-03-30
+       */
+      sessionDate: string
+      /**
+       * @description AM, PM, ED.
+       * @example AM
+       */
+      timeSlot: string
+      /**
+       * @description WAITING, COMPLETED.
+       * @example WAITING
+       */
+      status: string
+      /** @description The reason for attending or not */
+      attendanceReasonCode?: string
+      /**
+       * @description Should payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * Format: int32
+       * @description The number of attendance records
+       * @example 123456
+       */
+      attendanceCount: number
+    }
+    /**
+     * @description
      *   Details of a specific appointment occurrence. Will contain copies of the parent appointment's properties unless they
      *   have been changed on this appointment occurrence. Contains only properties needed to make additional API calls
      *   and to display.

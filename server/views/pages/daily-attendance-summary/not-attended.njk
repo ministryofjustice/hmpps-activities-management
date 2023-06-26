@@ -1,0 +1,197 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "components/searchBar.njk" import searchBar %}
+
+{% set pageTitle = applicationName + " - Daily attendance list" %}
+{% set pageId = 'daily-attendance-detail-page' %}
+{% set backLinkHref = "/attendance-summary/summary?date=" + activityDate | formatDate('yyyy-MM-dd') %}
+
+{% block content %}
+    {% set filterOptionsHtml %}
+        {{ govukCheckboxes({
+            idPrefix: 'categoryFilters',
+            name: 'categoryFilters',
+            classes: "govuk-radios--small",
+            hint: {
+                text: "Select all that apply"
+            },
+            fieldset: {
+                legend: {
+                    text: 'Categories',
+                    classes: 'govuk-fieldset__legend--m'
+                }
+            },
+            items: attendanceSummaryFilters.categoryFilters
+        }) }}
+        <div class="govuk-!-margin-bottom-4">
+            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters">Select all</a>
+        </div>
+        {{ govukCheckboxes({
+            idPrefix: 'activityFilters',
+            name: 'activityFilters',
+            classes: "govuk-radios--small",
+            hint: {
+                text: "Select all that apply"
+            },
+            fieldset: {
+                legend: {
+                    text: 'Activities',
+                    classes: 'govuk-fieldset__legend--m'
+                }
+            },
+            items: attendanceSummaryFilters.activityFilters
+        }) }}
+        <div class="govuk-!-margin-bottom-4">
+            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="activityFilters">Select all</a>
+        </div>
+        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
+            Apply filters
+        </button>
+    {% endset %}
+    <div class="moj-filter-layout" data-module="activities-list-filter">
+        <form id="filter-form" method="POST" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            <input type="hidden" name="activityDate" value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
+            {{ searchBar({
+                inputParams: {
+                    id: 'searchTerm',
+                    name: 'searchTerm',
+                    label: {
+                        text: 'Search by name or prison number',
+                        classes: 'govuk-label--s'
+                    },
+                    value: attendanceSummaryFilters.searchTerm
+                },
+                buttonParams: {
+                    text: 'Search'
+                }
+            }) }}
+            <div class="moj-filter-layout__filter govuk-!-display-none-print">
+                {{ mojFilter({
+                    heading: {
+                        text: 'Filter'
+                    },
+                    optionsHtml: filterOptionsHtml
+                }) }}
+            </div>
+            <hr class="print-only"/>
+            <div class="moj-filter-layout__content">
+                <div class="moj-action-bar govuk-!-display-none-print">
+                    <div class="moj-action-bar__filter"></div>
+                </div>
+                {{ govukTabs({
+                    classes: "govuk-tabs--borderless",
+                    items: [
+                        {
+                            label: "Daily summary",
+                            id: "day-tab",
+                            panel: {
+                                html: summaryHtml("DAY", "Daily", activityDate)
+                            }
+                        },
+                        {
+                            label: "AM session",
+                            id: "am-tab",
+                            panel: {
+                                html: summaryHtml("AM", "AM session", activityDate)
+                            }
+                        },
+                        {
+                            label: "PM session",
+                            id: "pm-tab",
+                            panel: {
+                                html: summaryHtml("PM", "PM session", activityDate)
+                            }
+                        },
+                        {
+                            label: "ED session",
+                            id: "ed-tab",
+                            panel: {
+                                html: summaryHtml("ED", "ED session", activityDate)
+                            }
+                        }
+                    ]
+                }) }}
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
+    <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-left">
+        <p class="govuk-body govuk-!-margin-bottom-0">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</p>
+    </div>
+    <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
+        <p class="govuk-body govuk-!-margin-bottom-0">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('dd MMMM yyyy') }} </p>
+    </div>
+    <div>
+        <h1 class="govuk-heading-l">All not attended yet</h1>
+    </div>
+
+    {% set attendanceRows = [] %}
+    {% for attendee in attendees %}
+        {% set attendanceRows = (attendanceRows.push([
+            {
+                attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name },
+                html: showProfileLink({
+                    name: attendee.name,
+                    prisonerNumber: attendee.prisonerNumber,
+                    link: true,
+                    classes: 'hmpps-inline-block'
+                }),
+                classes: 'govuk-table_cell'
+            },
+            {
+                attributes: { id: 'cell-location-' + loop.index, "data-sort-value": attendee.location },
+                text: attendee.location,
+                classes: 'govuk-table_cell'
+            },
+            {
+                attributes: { id: 'activity-' + loop.index },
+                html: '<a href="/schedule/activities/' + attendee.attendance.activityId + '" class="govuk-link govuk-link--no-visited-state">' + attendee.attendance.activitySummary,
+                classes: 'govuk-table__cell'
+            },
+            {
+                classes: 'govuk-table__cell govuk-!-padding-top-2',
+                html: 'Not recorded yet'
+            }
+        ]), attendanceRows) %}
+    {% endfor %}
+
+    {{ govukTable({
+        attributes: {
+            'data-module': 'moj-sortable-table',
+            id: 'attendee-list-table'
+        },
+        classes: "alternating-row-shading fixed-layout-table",
+        captionClasses: "govuk-visually-hidden",
+        head: [
+            {
+                text: "Attendee",
+                attributes: { "aria-sort": "none" },
+                classes: 'govuk-table__header'
+            },
+            {
+                text: "Cell location",
+                attributes: { "aria-sort": "none" },
+                classes: 'govuk-table__header'
+            },
+            {
+                html: "Activity",
+                attributes: { "aria-sort": "ascending" },
+                classes: 'govuk-table__header'
+            },
+            {
+                text: "Attendance details",
+                classes: 'govuk-table__header'
+            }
+        ],
+        rows: attendanceRows
+    }) }}
+
+{% endmacro %}
