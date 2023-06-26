@@ -1,0 +1,53 @@
+{% extends "homepageLayout.njk" %}
+{% from "components/card.njk" import card %}
+
+{% set pageTitle = applicationName + " - Allocate people to activities" %}
+{% set pageId = 'allocate-home' %}
+{% set backLinkHref = "/activities" %}
+{% set backLinkText = "Back to all allocate, unlock and attend tasks" %}
+
+{% block heading %}
+    <h1 class="govuk-heading-l">Allocate people to activities</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="card-group govuk-grid-row">
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/allocation-dashboard",
+                "clickable": "true",
+                "heading": "Manage allocations",
+                "description": "Allocate people to, or take them off an activity. See vacancies, check who is currently allocated, and change allocation start and end dates and pay.",
+                "data-qa": "manage-allocations"
+            }) }}
+        </div>
+
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/schedule/activities?stateFilter=live",
+                "clickable": "true",
+                "heading": "Edit activity details",
+                "description": "Change the details of an existing activity including pay rates, requirements and schedule."
+            }) }}
+        </div>
+
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/create/start",
+                "clickable": "true",
+                "heading": "Create an activity",
+                "description": "Set up a new activity including pay rates, requirements and schedule.",
+                "data-qa": "create-an-activity"
+            }) }}
+        </div>
+
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/change-of-circumstances/select-period",
+                "clickable": "true",
+                "heading": "View changes in circumstances",
+                "description": "Review the changes in the prison which may affect allocation decisions."
+            }) }}
+        </div>
+    </div>
+{% endblock %}

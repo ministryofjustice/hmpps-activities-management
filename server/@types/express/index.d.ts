@@ -1,18 +1,18 @@
 import { HmppsAuthUser } from '../hmppsAuth'
 import { CaseLoad, PrisonApiUserDetail } from '../prisonApiImport/types'
-import { AllocateToActivityJourney } from '../../routes/allocate-to-activity/journey'
-import { CreateAnActivityJourney } from '../../routes/create-an-activity/journey'
+import { AllocateToActivityJourney } from '../../routes/activities/allocate-to-activity/journey'
+import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
 import { AppointmentJourney } from '../../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../../routes/appointments/create-and-edit/editAppointmentJourney'
 import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
-import { NotAttendedJourney } from '../../routes/record-attendance/journey'
-import { RecordAttendanceRequests } from '../../routes/record-attendance/recordAttendanceRequests'
+import { NotAttendedJourney } from '../../routes/activities/record-attendance/journey'
+import { RecordAttendanceRequests } from '../../routes/activities/record-attendance/recordAttendanceRequests'
 
 // eslint-disable-next-line import/no-cycle
 import { ActivitiesFilters, AttendanceSummaryFilters, UnlockFilters } from '../activities'
 import { AppointmentDetails, AppointmentOccurrenceDetails, BulkAppointmentDetails } from '../activitiesAPI/types'
 import { BulkAppointmentJourney } from '../../routes/appointments/create-and-edit/bulkAppointmentJourney'
-import { DeallocateFromActivityJourney } from '../../routes/deallocate-from-activity/journey'
+import { DeallocateFromActivityJourney } from '../../routes/activities/deallocate-from-activity/journey'
 
 export default {}
 
