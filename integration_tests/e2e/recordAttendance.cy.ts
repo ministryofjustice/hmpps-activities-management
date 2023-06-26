@@ -22,7 +22,6 @@ context('Record attendance', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubPrisonUser')
     cy.signIn()
 
     getScheduledInstance.date = today

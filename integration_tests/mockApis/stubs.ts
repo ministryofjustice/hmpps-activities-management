@@ -1,8 +1,6 @@
 import jwt from 'jsonwebtoken'
-import { Response } from 'superagent'
 
 import { stubFor, getMatchingRequests } from './wiremock'
-import tokenVerification from './tokenVerification'
 
 const createToken = () => {
   const payload = {
@@ -38,7 +36,7 @@ const favicon = () =>
     },
   })
 
-const ping = () =>
+const authPing = () =>
   stubFor({
     request: {
       method: 'GET',
@@ -49,7 +47,7 @@ const ping = () =>
     },
   })
 
-const redirect = () =>
+const authRedirect = () =>
   stubFor({
     request: {
       method: 'GET',
@@ -80,7 +78,7 @@ const signOut = () =>
     },
   })
 
-const manageDetails = () =>
+const manageAccountDetails = () =>
   stubFor({
     request: {
       method: 'GET',
@@ -119,7 +117,7 @@ const token = () =>
     },
   })
 
-const stubUser = (name: string) =>
+const stubAuthUser = (name: string) =>
   stubFor({
     request: {
       method: 'GET',
@@ -139,7 +137,7 @@ const stubUser = (name: string) =>
     },
   })
 
-const stubUserRoles = () =>
+const stubAuthUserRoles = () =>
   stubFor({
     request: {
       method: 'GET',
@@ -154,20 +152,101 @@ const stubUserRoles = () =>
     },
   })
 
+const stubTokenVerificationPing = (status = 200) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: '/verification/health/ping',
+    },
+    response: {
+      status,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: { status: 'UP' },
+    },
+  })
+
+const stubVerifyToken = (active = true) =>
+  stubFor({
+    request: {
+      method: 'POST',
+      urlPattern: '/verification/token/verify',
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: { active },
+    },
+  })
+
+const stubNomisUser = (firstName: string, lastName: string) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: '/api/users/me',
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: {
+        accountStatus: 'ACTIVE',
+        active: true,
+        activeCaseLoadId: 'MDI',
+        expiredFlag: false,
+        firstName,
+        lastName,
+        lockedFlag: false,
+        staffId: 231232,
+        username: 'USER1',
+      },
+    },
+  })
+
+const stubCaseload = () =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: '/api/users/me/caseLoads',
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: [
+        { caseLoadId: 'MDI', description: 'Moorland (HMP & YOI)', currentlyActive: true },
+        { caseLoadId: 'LEI', description: 'Leeds (HMP)', currentlyActive: false },
+      ],
+    },
+  })
+
+const stubRolloutPlan = () =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: '/rollout/(.)*',
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: [{ prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true }],
+    },
+  })
+
 export default {
   getSignInUrl,
-  stubAuthPing: ping,
-  stubSignIn: (
-    name = 'john smith',
-  ): Promise<[Response, Response, Response, Response, Response, Response, Response, Response]> =>
+  stubAuthPing: authPing,
+  stubTokenVerificationPing,
+  stubVerifyToken,
+  stubSignIn: (firstname = 'john', lastname = 'smith') =>
     Promise.all([
       favicon(),
-      redirect(),
+      authRedirect(),
       signOut(),
-      manageDetails(),
+      manageAccountDetails(),
       token(),
-      tokenVerification.stubVerifyToken(),
-      stubUser(name),
-      stubUserRoles(),
+      stubVerifyToken(),
+      stubAuthUser(`${firstname} ${lastname}`),
+      stubAuthUserRoles(),
+      stubNomisUser(firstname, lastname),
+      stubCaseload(),
+      stubRolloutPlan(),
     ]),
 }
