@@ -1,0 +1,182 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% set pageTitle = applicationName + " - Manage Schedules - Activities" %}
+{% set pageId = 'manage-schedules-activities-page' %}
+{% set backLinkHref = "/activities/allocate" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-xl">Activities dashboard</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <p class="govuk-body">Select an activity to change details and add schedules.</p>
+            <p class="govuk-body">You can also choose to see lists of live, suspended or archived activities, and change their state.</p>
+        </div>
+        <div class="govuk-grid-column-full">
+            <div class='filter'>
+                <form method='GET'>
+                    <div class="filter__items">
+                        {% set categoryOptions = [
+                            {
+                                value: "all",
+                                text: "All",
+                                selected: filters.categoryFilter == "all"
+                            }
+                        ] %}
+
+                        {% for category in categories %}
+                            {% set categoryOptions = (categoryOptions.push(
+                                {
+                                    value: category.id,
+                                    text: category.name,
+                                    selected: filters.categoryFilter == category.id
+                                }
+                            ), categoryOptions) %}
+                        {% endfor %}
+
+                        {{ govukSelect({
+                            id: "categoryFilter",
+                            name: "categoryFilter",
+                            classes: "govuk-grid-column-one-quarter",
+                            label: {
+                                text: "Show activity category:"
+                            },
+                            items: categoryOptions
+                        }) }}
+
+                        {% set stateOptions = [
+                            {
+                                value: "all",
+                                text: "All",
+                                selected: filters.stateFilter == "all"
+                            },
+                            {
+                                value: "live",
+                                text: "Live",
+                                selected: filters.stateFilter == "live"
+                            },
+                            {
+                                value: "archived",
+                                text: "Archived",
+                                selected: filters.stateFilter == "archived"
+                            }
+                        ] %}
+
+                        {{ govukSelect({
+                            id: "stateFilter",
+                            name: "stateFilter",
+                            classes: "govuk-grid-column-one-quarter",
+                            label: {
+                                text: "Show archived activities:"
+                            },
+                            items: stateOptions
+                        }) }}
+                    </div>
+
+                    {{ govukButton({
+                        text: "Apply filters"
+                    }) }}
+                </form>
+            </div>
+        </div>
+        <div class="govuk-grid-column-full">
+            {% set rows = [] %}
+            {% for activity in activities %}
+                {% set rows = (rows.push([
+                    {
+                        attributes: {
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.summary
+                        },
+                        html: '
+                                <h2 class="govuk-heading-m govuk-!-margin-bottom-3">
+                                    <a href="/activities/schedule/activities/' + activity.id + '" class="govuk-link govuk-link--no-visited-state">' + activity.summary + '</a>
+                                </h2>
+                              '
+                    },
+                    {
+                        attributes: {
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.createdTime
+                        },
+                        text: activity.createdTime | parseISODate | formatDate('d MMM yyyy')
+                    },
+                    {
+                        attributes: {
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.category.name
+                        },
+                        text: activity.category.name
+                    },
+                    {
+                        attributes: {
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.activityState
+                        },
+                        text: renderActivityState(activity.activityState)
+                    }
+                ]), rows) %}
+            {% endfor %}
+
+            {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table'
+                },
+                caption: "Activities",
+                captionClasses: "govuk-visually-hidden",
+                head: [
+                    {
+                        text: "Activity name",
+                        attributes: {
+                            "aria-sort": "ascending"
+                        }
+                    },
+                    {
+                        text: "Date created",
+                        attributes: {
+                            "aria-sort": "none"
+                        }
+                    },
+                    {
+                        text: "Activity category",
+                        attributes: {
+                            "aria-sort": "none"
+                        }
+                    },
+                    {
+                        text: "State",
+                        attributes: {
+                            "aria-sort": "none"
+                        }
+                    }
+                ],
+                rows: rows
+            }) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% macro renderActivityState(activityState) %}
+    {% if activityState === 'LIVE' %}
+        {{ govukTag({
+            text: activityState,
+            classes: "govuk-tag--blue"
+           })
+        }}
+    {% else %}
+        {{ govukTag({
+            text: activityState,
+            classes: "govuk-tag--red"
+           })
+        }}
+    {% endif %}
+{% endmacro %}

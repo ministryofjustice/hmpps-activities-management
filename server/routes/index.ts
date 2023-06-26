@@ -3,15 +3,6 @@ import type { Services } from '../services'
 import homeRoutes from './home'
 import activityRoutes from './activities'
 import changeLocationRoutes from './change-location'
-import createRoutes from './create-an-activity'
-import allocationDashboardRoutes from './allocation-dashboard'
-import scheduleRoutes from './manage-schedules'
-import allocateRoutes from './allocate-to-activity'
-import deallocateRoutes from './deallocate-from-activity'
-import attendanceRoutes from './record-attendance'
-import attendanceSummaryRoutes from './daily-attendance-summary'
-import unlockListRoutes from './unlock-list'
-import changeOfCircumstanceRoutes from './change-of-circumstances'
 import spikeRoutes from './spikes'
 import errorMessageMiddleware from '../middleware/errorMessageMiddleware'
 import successMessageMiddleware from '../middleware/successMessageMiddleware'
@@ -34,17 +25,8 @@ export default function routes(services: Services): Router {
   router.use(rolloutMiddleware(services))
 
   router.use('/', homeRoutes())
-  router.use('/activities', activityRoutes())
-  router.use('/create', createRoutes(services))
-  router.use('/allocation-dashboard', allocationDashboardRoutes(services))
-  router.use('/allocate', allocateRoutes(services))
-  router.use('/deallocate', deallocateRoutes(services))
-  router.use('/schedule', scheduleRoutes(services))
-  router.use('/attendance', attendanceRoutes(services))
-  router.use('/attendance-summary', attendanceSummaryRoutes(services))
-  router.use('/unlock-list', unlockListRoutes(services))
+  router.use('/activities', activityRoutes(services))
   router.use('/appointments', appointmentRoutes(services))
-  router.use('/change-of-circumstances', changeOfCircumstanceRoutes(services))
   // Add more beta build routes here
 
   // Spikes under here spikes

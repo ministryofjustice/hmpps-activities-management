@@ -7,7 +7,7 @@
 
             <div class="govuk-!-font-weight-bold">
                 {% if e.eventType === 'ACTIVITY' and e.eventSource === 'SAA' %}
-                    <a href="/attendance/activities/{{ e.scheduledInstanceId }}/attendance-list?preserveHistory=true"
+                    <a href="/activities/attendance/activities/{{ e.scheduledInstanceId }}/attendance-list?preserveHistory=true"
                     class="govuk-link govuk-link--no-visited-state">
                         {{ e.summary | trim }}
                     </a>
