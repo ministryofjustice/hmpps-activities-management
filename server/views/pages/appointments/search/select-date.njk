@@ -1,0 +1,40 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/datePicker.njk" import datePicker %}
+
+{% set pageTitle = applicationName + " - Create a schedule - Start date" %}
+{% set pageId = 'create-schedule-start-date-page' %}
+{% set backLinkText = "Back to all appointment tasks" %}
+{% set backLinkHref = "/appointments" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <span class="govuk-caption-l" data-qa="caption">Manage existing appointments</span>
+
+                {{ datePicker({
+                    id: 'startDate',
+                    label: {
+                        text: "What date do you want to view appointments for?",
+                        classes: "govuk-fieldset__legend--l",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "For example, 27 3 2021"
+                    },
+                    renderedErrorMessage: validationErrors | findError('startDate'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.startDate or session.createJourney.startDate
+                }) }}
+                
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
