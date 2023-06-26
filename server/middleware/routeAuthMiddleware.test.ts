@@ -22,7 +22,7 @@ beforeEach(() => {
 
 describe('authRoute', () => {
   it('should authorize user and call next if they have required role for route', () => {
-    req.path = '/create/activity'
+    req.path = '/activities/create/activity'
     res.locals.user = {
       roles: ['ROLE_ACTIVITY_HUB'],
     } as ServiceUser
@@ -33,7 +33,7 @@ describe('authRoute', () => {
   })
 
   it("should deny user if they don't have required role for route", () => {
-    req.path = '/create/activity'
+    req.path = '/activities/create/activity'
     res.locals.user = {
       roles: ['ANOTHER_ROLE'],
     } as ServiceUser

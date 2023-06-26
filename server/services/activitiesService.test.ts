@@ -45,7 +45,7 @@ import prisoners from './fixtures/prisoners_1.json'
 import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
-import { DeallocateFromActivityJourney } from '../routes/deallocate-from-activity/journey'
+import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 
 jest.mock('../data/activitiesApiClient')

@@ -1,0 +1,77 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Edit an Activity - Confirm Capacity" %}
+{% set pageId = 'edit-activity-confirm-capacity-page' %}
+{% set backLinkHref = "activities" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
+            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Current capacity"
+                            },
+                            value: {
+                                text: session.createJourney.currentCapacity
+                            }
+                        },
+                        {
+                          key: {
+                              text: "People currently allocated"
+                          },
+                          value: {
+                              html: currentlyAllocated()
+                          }
+                        },
+                        {
+                            key: {
+                                text: "New capacity"
+                            },
+                            value: {
+                                text: session.createJourney.capacity
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "/activities/create/capacity?fromEditActivity=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change capacity",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }) }}
+
+                <div class="govuk-button-group">
+                  {{ govukButton({
+                    text: "Confirm capacity change"
+                  }) }}
+                    <a class="govuk-link js-backlink" href="/">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% macro currentlyAllocated() %}
+    <div class="govuk-!-margin-bottom-0">
+        <div>{{ session.createJourney.allocationCount }}</div>
+        <div>There will be {{ session.createJourney.allocationCount - session.createJourney.capacity }} people more than the capacity of this activity.</div>
+    </div>
+{% endmacro %}
