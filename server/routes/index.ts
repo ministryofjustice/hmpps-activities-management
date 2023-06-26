@@ -9,7 +9,6 @@ import successMessageMiddleware from '../middleware/successMessageMiddleware'
 import timeNowMiddleware from '../middleware/timeNowMiddleware'
 import routeAuthMiddleware from '../middleware/routeAuthMiddleware'
 import appointmentRoutes from './appointments'
-import rolloutMiddleware from '../middleware/rolloutMiddleware'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -20,11 +19,8 @@ export default function routes(services: Services): Router {
   router.use(successMessageMiddleware())
   router.use(timeNowMiddleware())
 
-  router.use('/change-location', changeLocationRoutes(services))
-
-  router.use(rolloutMiddleware(services))
-
   router.use('/', homeRoutes())
+  router.use('/change-location', changeLocationRoutes(services))
   router.use('/activities', activityRoutes(services))
   router.use('/appointments', appointmentRoutes(services))
   // Add more beta build routes here

@@ -1,12 +1,22 @@
 import { RequestHandler } from 'express'
 import { Services } from '../services'
+import ServiceName from '../enum/serviceName'
 
-function rolloutMiddleware({ activitiesService }: Services): RequestHandler {
+function rolloutMiddleware(serviceName: ServiceName, { activitiesService }: Services): RequestHandler {
   return async (req, res, next) => {
     const { user } = res.locals
-    if (!user.isActivitiesRolledOut && !user.isAppointmentsRolledOut) {
+    if (
+      (serviceName === ServiceName.ACTIVITIES && !user.isActivitiesRolledOut) ||
+      (serviceName === ServiceName.APPOINTMENTS && !user.isAppointmentsRolledOut)
+    ) {
       const rolloutPlan = await activitiesService.getPrisonRolloutPlan(user.activeCaseLoadId)
-      return res.render('pages/not-rolled-out', { rolloutPlan })
+      return res.render('pages/not-rolled-out', {
+        serviceName,
+        rolloutDate:
+          serviceName === ServiceName.ACTIVITIES
+            ? rolloutPlan.activitiesRolloutDate
+            : rolloutPlan.appointmentsRolloutDate,
+      })
     }
     return next()
   }
