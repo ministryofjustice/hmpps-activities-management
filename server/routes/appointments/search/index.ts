@@ -1,6 +1,7 @@
 import { RequestHandler, Router } from 'express'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import SearchRoutes, { Search } from './handlers/search'
+import SelectDateRoutes, { SelectDate } from './handlers/select-date'
 import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 
@@ -12,9 +13,13 @@ export default function Index({ activitiesService }: Services): Router {
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const searchHandler = new SearchRoutes(activitiesService)
+  const selectDateHandler = new SelectDateRoutes()
 
   get('/', searchHandler.GET)
   post('/', searchHandler.POST, Search)
+
+  get('/select-date', selectDateHandler.GET)
+  post('/select-date', selectDateHandler.POST, SelectDate)
 
   return router
 }
