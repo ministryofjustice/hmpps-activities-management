@@ -44,7 +44,7 @@ describe('Route Handlers - Movement Slip', () => {
       })
     })
 
-    it('should only render movement slips for one occurrences that are not cancelled and not expired', async () => {
+    it('should only render movement slips for occurrences that are not cancelled and not expired', async () => {
       req.bulkAppointment.occurrences = [
         {
           isCancelled: false,
