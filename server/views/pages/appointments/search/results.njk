@@ -13,7 +13,8 @@
 
 {% set pageTitle = "Appointments Management - Appointment Search Results" %}
 {% set pageId = 'appointments-search-results-page' %}
-{% set backLinkHref = "/appointments" %}
+{% set backLinkText = "Choose a different date" %}
+{% set backLinkHref = "/appointments/search/select-date" %}
 
 {% set resultsTableRows = [] %}
 {% set index = 0 %}
@@ -53,9 +54,11 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l">View and manage an appointment</span>
-            <h1 class="govuk-heading-l">Find and edit an appointment</h1>
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l govuk-!-margin-0">Appointments dashboard</h1>
+            <span class="govuk-caption-l govuk-!-margin-bottom-3" data-qa="start-date-caption">{{ startDate | toDate | formatDate('EEEE, dd MMMM yyyy') }}</span>
+            <p class="govuk-body">Select an appointment to manage details, including printing movement slips, changing location and date, and removing people or cancelling.</p>
+            <p class="govuk-body govuk-!-margin-bottom-6">You can't change details of appointments that have already taken place.</p>
         </div>
     </div>
 
