@@ -30,9 +30,9 @@ import TimeSlot from '../enum/timeSlot'
 import AttendanceStatus from '../enum/attendanceStatus'
 import attendanceReason from '../enum/attendanceReason'
 import AttendanceReason from '../enum/attendanceReason'
-import cancellationReasons from '../routes/record-attendance/cancellationReasons'
+import cancellationReasons from '../routes/activities/record-attendance/cancellationReasons'
 // eslint-disable-next-line import/no-cycle
-import { CreateAnActivityJourney } from '../routes/create-an-activity/journey'
+import { CreateAnActivityJourney } from '../routes/activities/create-an-activity/journey'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word

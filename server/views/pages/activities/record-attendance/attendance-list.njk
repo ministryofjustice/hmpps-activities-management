@@ -1,0 +1,252 @@
+{% extends "layout.njk" %}
+
+{% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
+{% from "components/alertsList.njk" import alertsList %}
+{% from "components/multi-select.njk" import multiSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "partials/attendance/otherEvent.njk" import otherEvent %}
+
+{% set pageTitle = applicationName + " - Record attendance" %}
+{% set pageId = 'attendance-list-page' %}
+{% set backLinkHref = "/activities/attendance/select-period" %}
+{% set backLinkText = "Back to all activities on " + instance.date | toDate | formatDate('dd MMMM yyyy') %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% if instance.cancelled %}
+                {% set cancelledSessionHeadingHtml %}
+                    <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
+                    <p class="govuk-body">This activity session has been cancelled for the following reason:</p>
+                    <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }}</li></ul>
+                {% endset %}
+                {{ govukNotificationBanner({
+                    type: 'important',
+                    html: cancelledSessionHeadingHtml
+                }) }}
+            {% endif %}
+
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+                {{ activity.name }} - record attendance
+                <span class="govuk-caption-l">
+                    {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.startTime | getTimeSlotFromTime | upper }})
+                </span>
+                <span class="govuk-caption-l">
+                    {{ instance.date | toDate | formatDate('EEEE, dd MMMM yyyy') }}
+                </span>
+                <span class="govuk-caption-l">
+                    {{ "In cell" if activity.inCell else activity.location }}
+                </span>
+            </h1>
+
+            <div class="govuk-button-group govuk-!-display-none-print">
+                {{ govukButton({
+                    text: "Print attendance list",
+                    classes: "govuk-button--blue js-print no-js-hidden"
+                }) }}
+                {% if instance.isAmendable %}
+                    {% if instance.cancelled %}
+                        <a href="uncancel" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">Uncancel this session</a>
+                    {% else %}
+                        {{ govukButton({
+                            text: "Cancel this session",
+                            classes: "govuk-button--secondary",
+                            href: 'cancel'
+                        }) }}
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">{{ activity.allocated }} {{ "person" if activity.allocated == 1 else "people" }} allocated</h2>
+            <ul class="govuk-list">
+                <li>
+                    <span>Attended:</span>
+                    <span class="govuk-!-font-weight-bold">{{ activity.attended }}</span> ({{ activity.attendedPercentage }}%)
+                </li>
+                <li>
+                    <span>Absent:</span>
+                    <span class="govuk-!-font-weight-bold">{{ activity.notAttended }}</span> ({{ activity.notAttendedPercentage }}%)
+                </li>
+                <li>
+                    <span>Not recorded:</span>
+                    <span class="govuk-!-font-weight-bold">{{ activity.notRecorded }}</span> ({{ activity.notRecordedPercentage }}%)
+                </li>
+            </ul>
+        </div>
+        <div class="govuk-grid-column-one-third">
+            <div class="print-only">
+                {{ govukTextarea({
+                    attributes: { placeholder: 'Notes' },
+                    id: "notes-textarea"
+                }) }}
+            </div>
+        </div>
+    </div>
+
+    <hr class="print-only"/>
+
+    {% set rows = [] %}
+    {% for attendee in attendees %}
+        {% set rows = (rows.push({
+            visuallyHiddenText: 'Select ' + attendee.name,
+            value: attendee.attendance.id + '-' + attendee.prisonerNumber,
+            selectable: attendee.attendance.status === "WAITING",
+
+            items: [
+                {
+                    html: '<span class="print-checkbox govuk-!-margin-left-3"></span>',
+                    classes: 'govuk-table_cell print-only'
+                },
+                {
+                    html: '
+                            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                                <a href="' + dpsUrl + '/prisoner/' + attendee.prisonerNumber + '"
+                                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + attendee.name | toTitleCase + '
+                                </a>
+                            </h2>
+                            <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + attendee.prisonerNumber + '</div>
+                          ',
+                    attributes: {
+                        "data-qa": "prisoner-details"
+                    }
+                },
+                {
+                    text: attendee.location,
+                    attributes: {
+                        "data-qa": "location"
+                    }
+                },
+                {
+                    html: alertsList({ alerts: attendee.alerts, category: attendee.category }),
+                    classes: 'hmpps-max-width-240',
+                    attributes: {
+                        "data-qa": "alert-list"
+                    }
+                },
+                {
+                    html: renderOtherEvents(attendee.otherEvents),
+                    attributes: {
+                        "data-qa": "other-events"
+                    }
+                },
+                {
+                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code) + ' ' + renderPayStatus(attendee.attendance),
+                    classes: 'govuk-!-display-none-print',
+                    attributes: {
+                        "data-qa": "attendance"
+                    }
+                },
+                {
+                    classes: 'print-only',
+                    html: ''
+                },
+                {
+                    html: renderViewLink(attendee.attendance)
+                }
+            ]
+        }), rows) %}
+    {% endfor %}
+
+    <form method='POST'>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        {{ multiSelect({
+            id: "attendanceList",
+            caption: "Attendance list",
+            captionClasses: "govuk-visually-hidden",
+            name: 'selectedAttendances',
+            head: [
+                {
+                    text: "",
+                    classes: 'print-only'
+                },
+                {
+                    text: "Name"
+                },
+                {
+                    text: "Cell location"
+                },
+                {
+                    text: "Relevant alerts"
+                },
+                {
+                    text: "Clashing events"
+                },
+                {
+                    text: "Attendance and pay",
+                    classes: 'govuk-!-display-none-print',
+                    colspan: 2
+                },
+                {
+                    text: "Notes",
+                    classes: 'govuk-table__header print-only hmpps-width-20-percent'
+                }
+            ],
+            rows: rows,
+            actions: [
+                {
+                    text: 'Mark as attended',
+                    formAction: 'attended'
+                },
+                {
+                    text: 'Mark as not attended',
+                    formAction: 'not-attended'
+                }
+            ],
+            itemsDescription: {
+                singular: 'person',
+                plural: 'people'
+            },
+            pagination: {
+                previous: {
+                    title: 'Previous session',
+                    label: instance.previousScheduledInstanceDate | toDate | formatDate('dd MMMM yyyy'),
+                    href: '/activities/attendance/activities/' + instance.previousScheduledInstanceId + '/attendance-list'
+                } if instance.previousScheduledInstanceId,
+                next: {
+                    title: 'Next session',
+                    label: instance.nextScheduledInstanceDate | toDate | formatDate('dd MMMM yyyy'),
+                    href: '/activities/attendance/activities/' + instance.nextScheduledInstanceId + '/attendance-list'
+                } if instance.nextScheduledInstanceId
+            }
+        }) }}
+    </form>
+
+    <div class="print-only govuk-body-s govuk-!-margin-top-6">Printed at {{ now | formatDate('h:mmbbb \'on\' EEEE, dd MMMM yyyy') }}</div>
+{% endblock %}
+
+{% macro renderOtherEvents(otherEvents) %}
+    {% for event in otherEvents %}
+        {{ otherEvent(event) }}
+    {% endfor %}
+{% endmacro %}
+
+{% macro renderPayStatus(attendance) %}
+    {% if attendance.issuePayment %}
+        {{ govukTag({
+            text: "Pay",
+            classes: "govuk-tag--green"
+           })
+        }}
+    {% elseif attendance.status !=  'WAITING' %}
+        {{ govukTag({
+            text: "No pay",
+            classes: "govuk-tag--red"
+           })
+        }}
+    {% endif %}
+{% endmacro %}
+
+{% macro renderViewLink(attendance) %}
+    {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory|length %}
+        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">{{ "View or edit" if attendance.editable else "View" }}</a>
+    {% endif %}
+{% endmacro %}

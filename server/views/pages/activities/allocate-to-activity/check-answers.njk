@@ -1,0 +1,135 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - Check answers" %}
+{% set pageId = 'check-answers-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-l">Check and confirm your allocation</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <h2 class="govuk-heading-m">Who you're allocating</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Name"
+                        },
+                        value: {
+                            text: prisonerName
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Prisoner number"
+                        },
+                        value: {
+                            text: prisonerNumber
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Cell location"
+                        },
+                        value: {
+                            text: cellLocation
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Start Date"
+                        },
+                        value: {
+                            text: startDate
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "start-date?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change start date"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "End Date"
+                        },
+                        value: {
+                            text: endDate
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "end-date?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change end date"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Pay band"
+                        },
+                        value: {
+                            text: payBand
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "pay-band?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change pay rate"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }) }}
+
+            <h2 class="govuk-heading-m">Activity you're allocating to</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Title"
+                        },
+                        value: {
+                            text: activityName
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: activityLocation
+                        }
+                    }
+                ]
+            }) }}
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Confirm allocation"
+                    }) }}
+                    <a href="/activities/allocate/cancel" class="govuk-link govuk-link--no-visited-state">Cancel and return to the list of candidates</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
