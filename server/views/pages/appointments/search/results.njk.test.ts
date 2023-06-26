@@ -6,7 +6,7 @@ import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import TimeSlot from '../../../../enum/timeSlot'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { toDateString } from '../../../../utils/utils'
+import { toDateString, formatDate } from '../../../../utils/utils'
 
 const view = fs.readFileSync('server/views/pages/appointments/search/results.njk')
 
@@ -177,6 +177,8 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($("[name='startDate[day]']").val()).toEqual(`${tomorrow.getDate()}`)
     expect($("[name='startDate[month]']").val()).toEqual(`${tomorrow.getMonth() + 1}`)
     expect($("[name='startDate[year]']").val()).toEqual(`${tomorrow.getFullYear()}`)
+
+    expect($("[data-qa='start-date-caption']").text()).toEqual(formatDate(tomorrow, 'EEEE, dd MMMM yyyy'))
   })
 
   it.each([
