@@ -3,20 +3,24 @@ import { plainToInstance } from 'class-transformer'
 import { YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
+import { AppointmentType } from '../appointmentJourney'
 
 export default class ScheduleRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { appointmentJourney } = req.session
+    const { appointmentJourney, bulkAppointmentJourney } = req.session
 
     const defaultBackLinkHref =
       req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
 
     req.session.returnTo = 'schedule'
 
-    const prisonNumbers = appointmentJourney.prisoners.map(p => p.number)
+    const prisonNumbers =
+      appointmentJourney.type === AppointmentType.BULK
+        ? bulkAppointmentJourney.appointments.map(a => a.prisoner.number)
+        : appointmentJourney.prisoners.map(p => p.number)
 
     const scheduledEvents = await this.activitiesService
       .getScheduledEventsForPrisoners(
@@ -33,10 +37,18 @@ export default class ScheduleRoutes {
         ...response.adjudications,
       ])
 
-    const prisonerSchedules = appointmentJourney.prisoners.map(prisoner => ({
-      prisoner,
-      scheduledEvents: scheduledEvents.filter(event => event.prisonerNumber === prisoner.number),
-    }))
+    const prisonerSchedules =
+      appointmentJourney.type === AppointmentType.BULK
+        ? bulkAppointmentJourney.appointments.map(appointment => ({
+            prisoner: appointment.prisoner,
+            startTime: appointment.startTime,
+            endTime: appointment.endTime,
+            scheduledEvents: scheduledEvents.filter(event => event.prisonerNumber === appointment.prisoner.number),
+          }))
+        : appointmentJourney.prisoners.map(prisoner => ({
+            prisoner,
+            scheduledEvents: scheduledEvents.filter(event => event.prisonerNumber === prisoner.number),
+          }))
 
     res.render('pages/appointments/create-and-edit/schedule', {
       backLinkHref: defaultBackLinkHref,
@@ -45,6 +57,6 @@ export default class ScheduleRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    res.redirect('comment')
+    res.redirect(req.session.appointmentJourney.type === AppointmentType.BULK ? 'bulk-appointment-comments' : 'comment')
   }
 }
