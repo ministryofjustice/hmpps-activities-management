@@ -320,10 +320,8 @@ export interface paths {
   }
   '/bulk-appointment-details/{bulkAppointmentId}': {
     /**
-     * Bulk create a set of appointments
-     * @description
-     *     Create a list of appointments and allocate the supplied prisoner or prisoners to them.
-     *     Does not require any specific roles
+     * Gets the details of a set of appointments created as part of a single bulk operation for display purposes
+     * @description Returns the displayable details of a set of appointments created as part of a single bulk operation by its unique identifier.
      */
     get: operations['getBulkAppointmentDetailsById']
   }
@@ -2156,6 +2154,7 @@ export interface components {
       friday: boolean
       saturday: boolean
       sunday: boolean
+      daysOfWeek: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[]
     }
     /** @description Describes a top-level activity */
     Activity: {
@@ -3617,9 +3616,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       first?: boolean
       last?: boolean
       empty?: boolean
@@ -4313,8 +4312,8 @@ export interface components {
      * @description
      *     Summary of the prisoner or prisoners allocated to the first future occurrence (or most recent past occurrence if all
      *     occurrences are in the past) of this appointment. Prisoners are allocated at the occurrence level to allow for per
-     *     occurrence allocation changes. The occurrence summary contains a count of allocated prisoners rather than the full
-     *     list as the expected usage is to show a summary of the occurrences then a link to display the full occurrence details.
+     *     occurrence allocation changes. The occurrence summary does not contain any information on the allocated prisoners
+     *     as the expected usage is to show a summary of the occurrences then a link to display the full occurrence details.
      */
     PrisonerSummary: {
       /**
@@ -4649,8 +4648,8 @@ export interface components {
        * @description
        *     Summary of the prisoner or prisoners allocated to the first future occurrence (or most recent past occurrence if all
        *     occurrences are in the past) of this appointment. Prisoners are allocated at the occurrence level to allow for per
-       *     occurrence allocation changes. The occurrence summary contains a count of allocated prisoners rather than the full
-       *     list as the expected usage is to show a summary of the occurrences then a link to display the full occurrence details.
+       *     occurrence allocation changes. The occurrence summary does not contain any information on the allocated prisoners
+       *     as the expected usage is to show a summary of the occurrences then a link to display the full occurrence details.
        */
       prisoners: components['schemas']['PrisonerSummary'][]
       category: components['schemas']['AppointmentCategorySummary']
@@ -4740,14 +4739,6 @@ export interface components {
        * @example 3
        */
       sequenceNumber: number
-      /**
-       * Format: int32
-       * @description
-       *     The number of prisoners allocated to this appointment occurrence
-       *
-       * @example 3
-       */
-      prisonerCount: number
       internalLocation?: components['schemas']['AppointmentLocationSummary']
       /**
        * @description
@@ -5878,7 +5869,7 @@ export interface operations {
       /** @description Candidate suitability details. */
       200: {
         content: {
-          'application/json': components['schemas']['AllocationSuitability'][]
+          'application/json': components['schemas']['AllocationSuitability']
         }
       }
       /** @description Bad request */
@@ -6523,10 +6514,8 @@ export interface operations {
     }
   }
   /**
-   * Bulk create a set of appointments
-   * @description
-   *     Create a list of appointments and allocate the supplied prisoner or prisoners to them.
-   *     Does not require any specific roles
+   * Gets the details of a set of appointments created as part of a single bulk operation for display purposes
+   * @description Returns the displayable details of a set of appointments created as part of a single bulk operation by its unique identifier.
    */
   getBulkAppointmentDetailsById: {
     parameters: {
