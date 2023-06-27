@@ -72,7 +72,6 @@ HMPPS_AUTH_URL=https://sign-in-dev.hmpps.service.justice.gov.uk/auth
 TOKEN_VERIFICATION_API_URL=https://token-verification-api-dev.prison.service.justice.gov.uk
 ACTIVITIES_API_URL=https://activities-api-dev.prison.service.justice.gov.uk
 PRISON_API_URL=https://api-dev.prison.service.justice.gov.uk
-PRISON_REGISTER_API_URL=https://prison-register-dev.hmpps.service.justice.gov.uk
 PRISONER_SEARCH_API_URL=https://prisoner-offender-search-dev.prison.service.justice.gov.uk
 WHEREABOUTS_API_URL=https://whereabouts-api-dev.service.justice.gov.uk
 INCENTIVES_API_URL=https://incentives-api-dev.hmpps.service.justice.gov.uk
@@ -80,6 +79,10 @@ API_CLIENT_ID=<ask the team>
 API_CLIENT_SECRET=<ask the team>
 SYSTEM_CLIENT_ID=<ask the team>
 SYSTEM_CLIENT_SECRET=<ask the team>
+DB_USER=activities-management
+DB_PASS=activities-management
+DPR_USER=dpr_user
+DPR_PASSWORD=dpr_password
 ```
 
 Start the required containers:
