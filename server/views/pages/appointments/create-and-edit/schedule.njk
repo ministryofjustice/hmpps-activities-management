@@ -147,58 +147,27 @@
 
                 {% for prisonerSchedule in prisonerSchedules %}
                     {% set prisoner = prisonerSchedule.prisoner %}
-
-                    {% set scheduledEventRows = [] %}
-                    {% for scheduledEvent in prisonerSchedule.scheduledEvents %}
-                        {% set scheduledEventRows = (scheduledEventRows.push([
-                            {
-                                text: scheduledEvent.startTime
-                            }, {
-                                text: scheduledEvent.summary | trim
-                            }, {
-                                text: scheduledEvent.eventType | trim | title
-                            }, {
-                                text: ("In cell" if scheduledEvent.inCell else scheduledEvent.internalLocationDescription | trim)
-                            }
-                        ]), scheduledEventRows) %}
-                    {% endfor %}
-                    
-                    <div class="govuk-summary-card">
-                        <div class="govuk-summary-card__title-wrapper">
-                            <h2 class="govuk-summary-card__title">{{ prisoner.name | toTitleCase }}, {{ prisoner.number }}</h2>
-                            <ul class="govuk-summary-card__actions">
-                                <li class="govuk-summary-card__action">
-                                    <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule" + prisoner.number + "/remove" }}" data-qa="remove-prison-number-{{ prisoner.number }}">
-                                        Remove attendee<span class="govuk-visually-hidden"> with prison number ' + prisoner.number + '</span>
-                                    </a>
-                                </li>
-                            </ul>
+                    {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
+                        <h2 class="govuk-heading-m">Events for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
+                        {{ prisonerScheduledEvents(prisoner, prisonerSchedule.scheduledEvents) }}
+                    {% else %}
+                        <h2 class="govuk-heading-m">Attendee events on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
+                        <div class="govuk-summary-card">
+                            <div class="govuk-summary-card__title-wrapper">
+                                <h2 class="govuk-summary-card__title">{{ prisoner.name | toTitleCase }}, {{ prisoner.number }}</h2>
+                                <ul class="govuk-summary-card__actions">
+                                    <li class="govuk-summary-card__action">
+                                        <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule" + prisoner.number + "/remove" }}" data-qa="remove-prison-number-{{ prisoner.number }}">
+                                            Remove attendee<span class="govuk-visually-hidden"> with prison number ' + prisoner.number + '</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="govuk-summary-card__content">
+                                {{ prisonerScheduledEvents(prisoner, prisonerSchedule.scheduledEvents) }}
+                            </div>
                         </div>
-                        <div class="govuk-summary-card__content">
-                            {{ govukTable({
-                                head: [
-                                    {
-                                        text: "Time",
-                                        attributes: { "aria-sort": "ascending" }
-                                    }, {
-                                        text: "Event name",
-                                        attributes: { "aria-sort": "ascending" }
-                                    }, {
-                                        text: "Type",
-                                        attributes: { "aria-sort": "none" }
-                                    }, {
-                                        text: "Location",
-                                        attributes: { "aria-sort": "none" }
-                                    }
-                                ],
-                                rows: scheduledEventRows,
-                                attributes: {
-                                    'data-module': 'moj-sortable-table',
-                                    'data-qa': 'prison-number-' + prisoner.number + '-schedule'
-                                }
-                            }) }}
-                        </div>
-                    </div>
+                    {% endif %}
                 {% endfor %}
 
                 {{ govukButton({
@@ -208,3 +177,44 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro prisonerScheduledEvents(prisoner, scheduledEvents) %}
+    {% set scheduledEventRows = [] %}
+    {% for scheduledEvent in scheduledEvents %}
+        {% set scheduledEventRows = (scheduledEventRows.push([
+            {
+                text: scheduledEvent.startTime
+            }, {
+                text: scheduledEvent.summary | trim
+            }, {
+                text: scheduledEvent.eventType | trim | title
+            }, {
+                text: ("In cell" if scheduledEvent.inCell else scheduledEvent.internalLocationDescription | trim)
+            }
+        ]), scheduledEventRows) %}
+    {% endfor %}
+
+    {{ govukTable({
+        head: [
+            {
+                text: "Time",
+                classes: "govuk-!-border-bottom-2",
+                attributes: { "aria-sort": "ascending" }
+            }, {
+                text: "Event name",
+                attributes: { "aria-sort": "none" }
+            }, {
+                text: "Type",
+                attributes: { "aria-sort": "none" }
+            }, {
+                text: "Location",
+                attributes: { "aria-sort": "none" }
+            }
+        ],
+        rows: scheduledEventRows,
+        attributes: {
+            'data-module': 'moj-sortable-table',
+            'data-qa': 'prison-number-' + prisoner.number + '-schedule'
+        }
+    }) }}
+{% endmacro %}
