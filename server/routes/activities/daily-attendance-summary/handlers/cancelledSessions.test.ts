@@ -1,13 +1,13 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { parse } from 'date-fns'
-import ActivitiesService from '../../../services/activitiesService'
-import { ScheduledActivity } from '../../../@types/activitiesAPI/types'
+import ActivitiesService from '../../../../services/activitiesService'
+import { ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import CancelledSessionsRoutes from './cancelledSessions'
-import { formatDate } from '../../../utils/utils'
+import { formatDate } from '../../../../utils/utils'
 
-jest.mock('../../../services/activitiesService')
-jest.mock('../../../services/prisonService')
+jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 

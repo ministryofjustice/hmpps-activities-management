@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import { formatDate, getTimeSlotFromTime, toDate } from '../../../utils/utils'
-import ActivitiesService from '../../../services/activitiesService'
+import { formatDate, getTimeSlotFromTime, toDate } from '../../../../utils/utils'
+import ActivitiesService from '../../../../services/activitiesService'
 
 export default class CancelledSessionsRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
