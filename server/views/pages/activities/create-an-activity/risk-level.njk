@@ -2,6 +2,8 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% set pageTitle = applicationName + " - Create an activity - Risk level" %}
 {% set pageId = 'risk-level-page' %}
@@ -9,27 +11,27 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half">
+        <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-m">{{ session.createJourney.category.name }}</span>
             <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% set pageHeading = "Workplace risk assessment levels: which ones are suitable for this activity?" %}
+                {% if session.req.query.fromEditActivity %}
+                    {% set pageHeading = "Change workplace risk assessment levels" %}
+                {% endif %}
                 {{ govukRadios({
                     fieldset: {
                         legend: {
-                            text: "Workplace risk assessment levels: which ones are suitable for this activity?",
+                            text: pageHeading,
                             isPageHeading: true,
-                            classes: "govuk-fieldset__legend--xl"
+                            classes: "govuk-fieldset__legend--l"
                         }
                     },
                     name: "riskLevel",
                     errorMessage: validationErrors | findError('riskLevel'),
                     hint: {
-                        text: "The risk assessment levels you set on this page will be used to filter the list of people you’ll see when allocating to this activity."
+                        text: "Choose one option to set the requirement for the activity."
                     },
                     items: [
                         {
@@ -53,11 +55,21 @@
                     ]
                 }) }}
 
+                {{ govukDetails({
+                    summaryText: "What is a workplace risk assessment level?",
+                    text: "Each person in your prison should have been given a workplace risk assessment level."
+                }) }}
+
                 {% if session.req.query.fromEditActivity %}
+                    {{ govukWarningText({
+                        text: "If you change the risk assessment level, people who are currently allocated to this activity may no longer meet the requirements.",
+                        iconFallbackText: "Warning"
+                    }) }}
+
                     <div class="govuk-button-group">
-                      {{ govukButton({
-                        text: "Update risk assessment level"
-                      }) }}
+                        {{ govukButton({
+                            text: "Update risk assessment level"
+                        }) }}
                         <a class="govuk-link js-backlink" href="/">Cancel</a>
                     </div>
                 {% else %}
