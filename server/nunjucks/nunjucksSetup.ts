@@ -44,6 +44,7 @@ import { AppointmentType, AppointmentJourneyMode } from '../routes/appointments/
 import { AppointmentCancellationReason, AppointmentRepeatPeriod, AppointmentApplyTo } from '../@types/appointments'
 import TimeSlot from '../enum/timeSlot'
 import { getAppointmentEditMessage } from '../utils/editAppointmentUtils'
+import ServiceName from '../enum/serviceName'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -140,6 +141,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
 
+  njkEnv.addGlobal('ServiceName', ServiceName)
   njkEnv.addGlobal('YesNo', YesNo)
   njkEnv.addGlobal('TimeSlot', TimeSlot)
   njkEnv.addGlobal('AppointmentRepeatPeriod', AppointmentRepeatPeriod)
