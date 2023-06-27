@@ -8,7 +8,6 @@ context('Create group appointment - CSV upload validation', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubPrisonUser')
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', postPrisonerNumbers)
     cy.signIn()
 

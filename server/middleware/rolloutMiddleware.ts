@@ -4,7 +4,7 @@ import { Services } from '../services'
 function rolloutMiddleware({ activitiesService }: Services): RequestHandler {
   return async (req, res, next) => {
     const { user } = res.locals
-    if (!user.isActivitiesRolledOut) {
+    if (!user.isActivitiesRolledOut && !user.isAppointmentsRolledOut) {
       const rolloutPlan = await activitiesService.getPrisonRolloutPlan(user.activeCaseLoadId)
       return res.render('pages/not-rolled-out', { rolloutPlan })
     }

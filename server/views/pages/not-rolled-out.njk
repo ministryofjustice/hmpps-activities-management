@@ -9,9 +9,18 @@
             <h1 class="govuk-heading-xl">The service is not available at {{ user.activeCaseLoad.description }} yet</h1>
 
             <p class="govuk-body">
-                The service will be available at {{ user.activeCaseLoad.description }}
+                The activities service will be available at {{ user.activeCaseLoad.description }}
                 {% if rolloutPlan.activitiesRolloutDate %}
                     on {{ rolloutPlan.activitiesRolloutDate | formatDate('EEEE d MMMM yyyy') }}.
+                {% else %}
+                    soon. We'll let you know when it's coming.
+                {% endif %}
+            </p>
+
+            <p class="govuk-body">
+                The appointments service will be available at {{ user.activeCaseLoad.description }}
+                {% if rolloutPlan.appointmentsRolloutDate %}
+                    on {{ rolloutPlan.appointmentsRolloutDate | formatDate('EEEE d MMMM yyyy') }}.
                 {% else %}
                     soon. We'll let you know when it's coming.
                 {% endif %}

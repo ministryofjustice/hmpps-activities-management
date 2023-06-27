@@ -1,0 +1,46 @@
+{% extends "homepageLayout.njk" %}
+{% from "components/card.njk" import card %}
+
+{% set pageTitle = applicationName + " - Manage activities" %}
+{% set pageId = 'activities-index-page' %}
+{% set backLinkText = "Digital Prison Services" %}
+{% set backLinkHref = dpsUrl %}
+
+{% block heading %}
+    <h1 class="govuk-heading-l">Allocate people, unlock and attend</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="card-group govuk-grid-row">
+        {% if 'ROLE_ACTIVITY_HUB' in user.roles %}
+            <div class="govuk-grid-column-one-third card-group__item">
+                {{ card({
+                    "href": "/activities/allocate",
+                    "clickable": "true",
+                    "heading": "Allocate people to activities",
+                    "description": "Set up and edit activities. Allocate people, remove them, and edit allocations.",
+                    "data-qa": "allocate-to-activities-card"
+                }) }}
+            </div>
+        {% endif %}
+
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/unlock-list",
+                "clickable": "true",
+                "heading": "Manage unlock lists",
+                "description": "Create and print unlock lists."
+            }) }}
+        </div>
+
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/attendance",
+                "clickable": "true",
+                "heading": "Record activity attendance",
+                "description": "Mark attendance, cancel activity sessions and see daily attendance summaries.",
+                "data-qa": "record-attendance-card"
+            }) }}
+        </div>
+    </div>
+{% endblock %}

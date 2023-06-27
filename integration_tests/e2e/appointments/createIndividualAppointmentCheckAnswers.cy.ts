@@ -32,7 +32,6 @@ context('Create individual appointment - check answers change links', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubPrisonUser')
     cy.signIn()
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY', getPrisonPrisonersA8644DY)
     cy.stubEndpoint('GET', '/prisoner/A8644DY', getPrisonerA8644DY)

@@ -12,24 +12,28 @@
 
 {% block content %}
     <div class="card-group govuk-grid-row">
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities",
-                "clickable": "true",
-                "heading": "Allocate people, unlock and attend",
-                "description": "Create and edit activities. Allocate people and edit allocations. Print unlock lists and record attendance.",
-                "data-qa": "activities-card"
-            }) }}
-        </div>
+        {% if user.isActivitiesRolledOut %}
+            <div class="govuk-grid-column-one-third card-group__item">
+                {{ card({
+                    "href": "/activities",
+                    "clickable": "true",
+                    "heading": "Allocate people, unlock and attend",
+                    "description": "Create and edit activities. Allocate people and edit allocations. Print unlock lists and record attendance.",
+                    "data-qa": "activities-card"
+                }) }}
+            </div>
+        {% endif %}
 
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/appointments",
-                "clickable": "true",
-                "heading": "Schedule and edit appointments",
-                "description": "Create one-to-one and group appointments. Edit existing appointments and print movement slips.",
-                "data-qa": "appointments-card"
-            }) }}
-        </div>
+        {% if user.isAppointmentsRolledOut %}
+            <div class="govuk-grid-column-one-third card-group__item">
+                {{ card({
+                    "href": "/appointments",
+                    "clickable": "true",
+                    "heading": "Schedule and edit appointments",
+                    "description": "Create one-to-one and group appointments. Edit existing appointments and print movement slips.",
+                    "data-qa": "appointments-card"
+                }) }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

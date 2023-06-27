@@ -1,0 +1,335 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% set pageTitle = applicationName + " - Activities Dashboard - View activity" %}
+{% set pageId = 'view-activity-page' %}
+{% set backLinkHref = "/activities/schedule/activities" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-l">View or change details for {{ activity.summary }}</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Name"
+                        },
+                        value: {
+                            text: activity.summary
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/create/name?fromEditActivity=true&preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change activity name",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Activity category"
+                        },
+                        value: {
+                            text: activity.category.name
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/create/category?fromEditActivity=true&preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change category",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: "In cell" if schedule.activity.inCell else schedule.internalLocation.description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/create/location?fromEditActivity=true&preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change location",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Capacity"
+                        },
+                        value: {
+                            text: schedule.capacity
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/create/capacity?fromEditActivity=true&preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change capacity",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }) }}
+
+            <h2 class="govuk-heading-m">Requirements and suitability</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Risk assessment level"
+                        },
+                        value: {
+                            text: activity.riskLevel | capitalize
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/create/risk-level?fromEditActivity=true&preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change risk level",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Education requirements"
+                        },
+                        value: {
+                            html: educationRequirementsContent(activity.minimumEducationLevel)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/create/check-education-level?fromEditActivity=true&preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change education levels",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }) }}
+            <h2 class="govuk-heading-m">Pay rates</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Pay rates"
+                        },
+                        value: {
+                            html: paySummary(incentiveLevelPays)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/schedule/check-pay?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change pay",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }) }}
+
+            <h2 class="govuk-heading-m">Dates and schedule</h2>
+            {% if attendanceCount > 0 %}
+                {% set dateAndScheduleRows = [{
+                    key: {
+                        text: "Start date"
+                    },
+                    value: {
+                        text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+                    }
+                }] %}
+            {% else %}
+                {% set dateAndScheduleRows = [{
+                    key: {
+                        text: "Start date"
+                    },
+                    value: {
+                        text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/activities/create/start-date?fromEditActivity=true&preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change start date",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    }
+                }] %}
+            {% endif %}
+
+            {% if schedule.endDate %}
+                {% set dateAndScheduleRows = (dateAndScheduleRows.push({
+                    key: {
+                        text: "End date"
+                    },
+                    value: {
+                        text: schedule.endDate | toDate | formatDate('EEEE d MMMM yyyy')
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/activities/create/end-date?fromEditActivity=true&preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change end date",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    }
+                }), dateAndScheduleRows) %}
+            {% else %}
+                {% set dateAndScheduleRows = (dateAndScheduleRows.push({
+                    key: {
+                        text: "End date"
+                    },
+                    value: {
+                        text: "None set"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/activities/create/end-date?fromEditActivity=true&preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change end date",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    }
+                }), dateAndScheduleRows) %}
+            {% endif %}
+
+            {% set dateAndScheduleRows = (dateAndScheduleRows.push(
+                {
+                    key: {
+                        text: "Schedule"
+                    },
+                    value: {
+                        html: daysAndTimes(schedule.dailySlots)
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/activities/create/days-and-times?fromEditActivity=true&preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change days and times",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    }
+                },
+                {
+                    key: {
+                        text: "Runs on bank holidays"
+                    },
+                    value: {
+                        text: "Yes" if schedule.runsOnBankHoliday else "No"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/activities/create/bank-holiday-option?fromEditActivity=true&preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change bank holiday",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    }
+                }
+            ), dateAndScheduleRows) %}
+
+            {{ govukSummaryList({
+                rows: dateAndScheduleRows
+            }) }}
+
+            <div class="govuk-button-group">
+                <a href="/activities/schedule/activities" class="govuk-link">Return to dashboard</a>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% macro educationRequirementsContent(educationRequirements) %}
+    {% if educationRequirements | length > 0 %}
+        {% for educationRequirement in educationRequirements %}
+            <div class="govuk-!-margin-bottom-2">
+                <div>{{ educationRequirement.studyAreaDescription }}: {{ educationRequirement.educationLevelDescription }}</div>
+            </div>
+        {% endfor %}
+    {% else %}
+        None
+    {% endif %}
+{% endmacro %}
+
+{% macro paySummary(incentiveLevelPays) %}
+    {% for incentiveLevelPay in incentiveLevelPays %}
+        <div class="govuk-!-margin-bottom-2">
+            <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
+            {% for pay in incentiveLevelPay.pays %}
+                <div>{{ pay.bandAlias }}: {{ pay.rate | toMoney }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro daysAndTimes(dailySlots) %}
+    {% set dayRows = [] %}
+    {% for day in dailySlots %}
+        {% set scheduleText %}
+            {% set ands = joiner('and ') %}
+            {% for slot in day.slots %}
+                {{ ands() }}{{ slot | upper }}
+            {% else %}
+                <span class='govuk-hint'>Not scheduled</span>
+            {% endfor %}
+        {% endset %}
+
+        {% set dayRows = (dayRows.push(
+            {
+                key: {
+                    html: '<span' + (' class="govuk-hint"' if not day.slots | length) + '>' + day.day + '</span>'
+                },
+                value: {
+                    html: scheduleText
+                }
+            }
+        ), dayRows) %}
+    {% endfor %}
+
+
+    {{ govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: dayRows
+    }) }}
+{% endmacro %}

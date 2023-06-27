@@ -46,8 +46,8 @@ import {
   EventAcknowledgeRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
-import { SessionCancellationRequest } from '../routes/record-attendance/recordAttendanceRequests'
-import { DeallocateFromActivityJourney } from '../routes/deallocate-from-activity/journey'
+import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
+import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
 import { formatDate } from '../utils/utils'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 

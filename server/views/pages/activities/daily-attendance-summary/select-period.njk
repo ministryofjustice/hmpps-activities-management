@@ -1,0 +1,65 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/datePicker.njk" import datePicker %}
+
+{% set pageTitle = applicationName + " - Daily attendance summary" %}
+{% set pageId = 'select-period-page' %}
+{% set backLinkHref = "/activities/attendance" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    name: "datePresetOption",
+                    fieldset: {
+                        legend: {
+                            text: "What date do you want to see the daily attendance summary for?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--xl"
+                        }
+                    },
+                    hint: {
+                        text: "You can view the summary for any of the last 15 days"
+                    },
+                    errorMessage: validationErrors | findError('datePresetOption'),
+                    items: [
+                        {
+                            value: "today",
+                            text: "Today - " + now | formatDate('dd MMM yyyy'),
+                            checked: formResponses.datePresetOption == 'today'
+                        },
+                        {
+                            value: "yesterday",
+                            text: "Yesterday - " + (now - 86400000) | formatDate('dd MMM yyyy'),
+                            checked: formResponses.datePresetOption == 'yesterday'
+                        },
+                        {
+                            value: "other",
+                            text: "A different date",
+                            checked: formResponses.datePresetOption == 'other',
+                            conditional: { html:
+                                datePicker({
+                                    id: 'date',
+                                    hint: {
+                                        text: "For example, today's date is " + now | formatDate('dd MM yyyy')
+                                    },
+                                    renderedErrorMessage: validationErrors | findError('date'),
+                                    validationErrors: validationErrors,
+                                    formResponses: formResponses.date
+                                })
+                            }
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Submit"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

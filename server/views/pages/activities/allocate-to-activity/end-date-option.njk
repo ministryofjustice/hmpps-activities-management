@@ -1,0 +1,56 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = applicationName + " -  Allocation - End Date option" %}
+{% set pageId = 'allocation-end-date-option-page' %}
+{% set backLinkHref = '/activities/allocate/start-date' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m">Allocation for {{prisonerName }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    classes: "govuk-radios",
+                    name: "endDateOption",
+                    fieldset: {
+                        legend: {
+                            text: "Do you want to set an end date for this allocation?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "yes",
+                            text: "Yes",
+                            checked: endDateOption == "yes"
+                        },
+                        {
+                            value: "no",
+                            text: "No",
+                            checked: endDateOption == "no"
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('endDateOption')
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Save and continue"
+                    }) }}
+                    <a class="govuk-link js-backlink" href="/activities/allocate/cancel?preserveHistory=true">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

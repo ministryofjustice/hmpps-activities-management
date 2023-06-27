@@ -237,14 +237,6 @@ describe('activitiesApiClient', () => {
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
-
-    it('should return default data when 404 encountered', async () => {
-      const response = { activitiesRolledOut: false, appointmentsRolledOut: false, prisonCode: 'MDI' }
-      fakeActivitiesApi.get('/rollout/MDI').matchHeader('authorization', `Bearer accessToken`).reply(404, response)
-      const output = await activitiesApiClient.getPrisonRolloutPlan('MDI')
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
   })
 
   describe('getAttendances', () => {

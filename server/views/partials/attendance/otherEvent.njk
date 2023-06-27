@@ -4,9 +4,9 @@
   <div class="govuk-body govuk-!-margin-0">
       <div class="govuk-!-font-weight-bold">
         {% if event.eventType == 'ACTIVITY' and event.eventSource =='SAA' %}
-          <a href="/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ event.summary }}</a>
+            <a class="govuk-link" href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ event.summary }}</a>
         {% else %}
-          <span>{{ event.summary }}</span>
+            <a class="govuk-link" href="/appointments/{{ event.appointmentId }}/occurrence/{{ event.appointmentOccurrenceId }}">{{ event.summary }}</a>
         {% endif %}
         {% if event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
             {% if event.cancelled %}
