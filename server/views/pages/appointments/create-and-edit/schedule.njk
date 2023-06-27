@@ -155,13 +155,13 @@
                                             </a>
                                         </li>
                                         <li class="govuk-summary-card__action">
-                                            <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" }}" data-qa="remove-appointment-prison-number-{{ prisoner.number }}">
+                                            <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" + ("?preserveHistory=true" if preserveHistory else "") }}" data-qa="remove-appointment-prison-number-{{ prisoner.number }}">
                                                 Remove appointment<span class="govuk-visually-hidden"> for prison number ' + prisoner.number + '</span>
                                             </a>
                                         </li>
                                     {% else %}
                                         <li class="govuk-summary-card__action">
-                                            <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" }}" data-qa="remove-prison-number-{{ prisoner.number }}">
+                                            <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" + ("?preserveHistory=true" if preserveHistory else "") }}" data-qa="remove-prison-number-{{ prisoner.number }}">
                                                 Remove attendee<span class="govuk-visually-hidden"> with prison number ' + prisoner.number + '</span>
                                             </a>
                                         </li>

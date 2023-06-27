@@ -41,7 +41,7 @@
                     }, {
                         text: prisoner.cellLocation
                     }, {
-                        html: '<a href="review-prisoners/' + prisoner.number + '/remove"
+                        html: '<a href="review-prisoners/' + prisoner.number + '/remove' + ('?preserveHistory=true' if preserveHistory else '') + '"
                             class="govuk-link--no-visited-state">
                             Remove<span class="govuk-visually-hidden"> prison number ' + prisoner.number + '</span>
                         </a>',

@@ -11,11 +11,12 @@ export default class ScheduleRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentJourney, bulkAppointmentJourney } = req.session
+    const { preserveHistory } = req.query
 
     const defaultBackLinkHref =
       req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
 
-    req.session.returnTo = 'schedule'
+    req.session.returnTo = `schedule${preserveHistory ? '?preserveHistory=true' : ''}`
 
     const prisonNumbers =
       appointmentJourney.type === AppointmentType.BULK
@@ -52,12 +53,17 @@ export default class ScheduleRoutes {
 
     res.render('pages/appointments/create-and-edit/schedule', {
       backLinkHref: defaultBackLinkHref,
+      preserveHistory,
       prisonerSchedules,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    res.redirect(req.session.appointmentJourney.type === AppointmentType.BULK ? 'bulk-appointment-comments' : 'comment')
+    req.session.returnTo = null
+
+    res.redirectOrReturn(
+      req.session.appointmentJourney.type === AppointmentType.BULK ? 'bulk-appointment-comments' : 'comment',
+    )
   }
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {
@@ -73,6 +79,6 @@ export default class ScheduleRoutes {
       )
     }
 
-    res.redirect('../../schedule')
+    res.redirect(`../../schedule${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 }
