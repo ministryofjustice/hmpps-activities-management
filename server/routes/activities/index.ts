@@ -10,9 +10,15 @@ import attendanceSummaryRoutes from './daily-attendance-summary'
 import unlockListRoutes from './unlock-list'
 import changeOfCircumstanceRoutes from './change-of-circumstances'
 import { Services } from '../../services'
+import rolloutMiddleware from '../../middleware/rolloutMiddleware'
+import ServiceName from '../../enum/serviceName'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
+
+  const serviceName = ServiceName.ACTIVITIES
+
+  router.use(rolloutMiddleware(serviceName, services))
 
   router.use('/', homeRoutes())
   router.use('/create', createRoutes(services))
