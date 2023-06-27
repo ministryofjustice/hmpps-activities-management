@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import BulkAppointmentDetailsRoutes from './bulkAppointmentDetails'
-import { BulkAppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentOccurrenceDetails, BulkAppointmentDetails } from '../../../../@types/activitiesAPI/types'
 
 describe('Route Handlers - Bulk Appointment Details', () => {
   const handler = new BulkAppointmentDetailsRoutes()
@@ -22,7 +22,9 @@ describe('Route Handlers - Bulk Appointment Details', () => {
       params: {
         id: '10',
       },
-      bulkAppointment: {} as unknown as BulkAppointmentDetails,
+      bulkAppointment: {
+        occurrences: [],
+      } as unknown as BulkAppointmentDetails,
     } as unknown as Request
   })
 
@@ -36,6 +38,55 @@ describe('Route Handlers - Bulk Appointment Details', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/bulk-appointment-details/bulk-appointment', {
         bulkAppointment: req.bulkAppointment,
+        showPrintMovementSlipsLink: false,
+      })
+    })
+
+    it('should render print movement slips link when at least one occurrence is not cancelled and not expired', async () => {
+      req.bulkAppointment.occurrences = [
+        {
+          isCancelled: false,
+          isExpired: true,
+        } as unknown as AppointmentOccurrenceDetails,
+        {
+          isCancelled: true,
+          isExpired: false,
+        } as unknown as AppointmentOccurrenceDetails,
+        {
+          isCancelled: false,
+          isExpired: false,
+        } as unknown as AppointmentOccurrenceDetails,
+      ]
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/bulk-appointment-details/bulk-appointment', {
+        bulkAppointment: req.bulkAppointment,
+        showPrintMovementSlipsLink: true,
+      })
+    })
+
+    it('should not render print movement slips link when all occurrences are either cancelled, expired or both', async () => {
+      req.bulkAppointment.occurrences = [
+        {
+          isCancelled: false,
+          isExpired: true,
+        } as unknown as AppointmentOccurrenceDetails,
+        {
+          isCancelled: true,
+          isExpired: false,
+        } as unknown as AppointmentOccurrenceDetails,
+        {
+          isCancelled: true,
+          isExpired: true,
+        } as unknown as AppointmentOccurrenceDetails,
+      ]
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/bulk-appointment-details/bulk-appointment', {
+        bulkAppointment: req.bulkAppointment,
+        showPrintMovementSlipsLink: false,
       })
     })
   })

@@ -18,7 +18,6 @@ context('Record non attendance', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubPrisonUser')
     cy.signIn()
 
     cy.stubEndpoint(

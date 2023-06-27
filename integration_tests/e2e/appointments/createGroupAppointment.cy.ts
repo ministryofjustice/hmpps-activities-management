@@ -36,7 +36,6 @@ context('Create group appointment', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubPrisonUser')
     cy.signIn()
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=lee', getPrisonPrisonersA1351DZ)
     cy.stubEndpoint('GET', '/prisoner/A1351DZ', getPrisonerA1351DZ)
