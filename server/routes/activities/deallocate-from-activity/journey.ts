@@ -11,4 +11,5 @@ export type DeallocateFromActivityJourney = {
   }>
   deallocationDate?: SimpleDate
   deallocationReason?: string
+  earliestAllocationStartDate?: string
 }
