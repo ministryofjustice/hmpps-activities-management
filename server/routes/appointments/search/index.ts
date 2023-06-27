@@ -5,14 +5,14 @@ import SelectDateRoutes, { SelectDate } from './handlers/select-date'
 import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 
-export default function Index({ activitiesService }: Services): Router {
+export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const searchHandler = new SearchRoutes(activitiesService)
+  const searchHandler = new SearchRoutes(activitiesService, prisonService)
   const selectDateHandler = new SelectDateRoutes()
 
   get('/', searchHandler.GET)

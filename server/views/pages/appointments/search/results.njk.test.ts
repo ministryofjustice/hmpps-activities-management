@@ -5,7 +5,6 @@ import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import TimeSlot from '../../../../enum/timeSlot'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
-import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { toDateString, formatDate } from '../../../../utils/utils'
 
 const view = fs.readFileSync('server/views/pages/appointments/search/results.njk')
@@ -24,8 +23,8 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     locationId: 1,
     prisonerNumber: '',
     createdBy: '',
-    type: AppointmentType.INDIVIDUAL,
     results: [{}],
+    prisonersDetails: {},
   }
 
   const njkEnv = registerNunjucks()
@@ -70,13 +69,16 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
       locationId: 26151,
       prisonerNumber: 'A1234BC',
       createdBy: 'all',
-      type: AppointmentType.INDIVIDUAL,
       results: [
         {
           appointmentId: 1,
           appointmentOccurrenceId: 2,
           appointmentType: 'INDIVIDUAL',
-          allocations: [{}],
+          allocations: [
+            {
+              prisonerNumber: 'A1111AA',
+            },
+          ],
           category: {
             code: 'TEST1',
             description: 'Test Category 1',
@@ -91,12 +93,23 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
           sequenceNumber: 1,
           maxSequenceNumber: 1,
           isExpired: false,
+          isCancelled: false,
         },
         {
           appointmentId: 2,
           appointmentOccurrenceId: 3,
           appointmentType: 'GROUP',
-          allocations: [{}, {}, {}],
+          allocations: [
+            {
+              prisonerNumber: 'A1111AA',
+            },
+            {
+              prisonerNumber: 'B2222BB',
+            },
+            {
+              prisonerNumber: 'C3333CC',
+            },
+          ],
           category: {
             code: 'TEST2',
             description: 'Test Category 2',
@@ -110,34 +123,82 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
           isRepeat: true,
           sequenceNumber: 2,
           maxSequenceNumber: 6,
+          isExpired: true,
+          isCancelled: false,
+        },
+        {
+          appointmentId: 3,
+          appointmentOccurrenceId: 4,
+          appointmentType: 'GROUP',
+          allocations: [
+            {
+              prisonerNumber: 'A1111AA',
+            },
+            {
+              prisonerNumber: 'B2222BB',
+            },
+            {
+              prisonerNumber: 'C3333CC',
+            },
+          ],
+          category: {
+            code: 'TEST3',
+            description: 'Test Category 3',
+          },
+          internalLocation: {
+            description: 'Test Location 3',
+          },
+          startDate: '2022-12-01',
+          startTime: '16:00',
+          endTime: '17:30',
+          isRepeat: true,
+          sequenceNumber: 2,
+          maxSequenceNumber: 6,
           isExpired: false,
+          isCancelled: true,
         },
       ],
+      prisonersDetails: {
+        A1111AA: {
+          firstName: 'Lee',
+          lastName: 'Jacobson',
+          prisonerNumber: 'A1111AA',
+          cellLocation: '1-1-1',
+        },
+      },
     }
   })
 
   it('should display results', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    let resultDate = $('[data-qa=result-date-0]')
-    expect(resultDate.text().trim()).toEqual('26 May 2023')
-    expect(resultDate.attr('data-sort-value')).toEqual('2023-05-2609:30')
     expect($('[data-qa=result-time-0]').text().trim()).toEqual('09:30 to 11:00')
     expect($('[data-qa=result-category-0]').text().trim()).toEqual('Test Category 1')
     expect($('[data-qa=result-location-0]').text().trim()).toEqual('Test Location 1')
-    expect($('[data-qa=result-prisoner-count-0]').text().trim()).toEqual('1')
+    expect($('[data-qa=result-prisoner-count-0]').text().trim()).toContain('Jacobson, Lee')
+    expect($('[data-qa=result-prisoner-count-0]').text().trim()).toContain('A1111AA')
+    expect($('[data-qa=result-prisoner-count-0]').text().trim()).toContain('1-1-1')
     expect($('[data-qa=result-sequence-number-0]').text().trim()).toEqual('1 of 1')
+    expect($('[data-qa=view-and-edit-result-0] > a').text()).toContain('View and manage')
     expect($('[data-qa=view-and-edit-result-0] > a').attr('href')).toEqual('/appointments/1/occurrence/2')
 
-    resultDate = $('[data-qa=result-date-1]')
-    expect(resultDate.text().trim()).toEqual('1 Dec 2022')
-    expect(resultDate.attr('data-sort-value')).toEqual('2022-12-0113:00')
     expect($('[data-qa=result-time-1]').text().trim()).toEqual('13:00 to 14:30')
     expect($('[data-qa=result-category-1]').text().trim()).toEqual('Test Category 2')
     expect($('[data-qa=result-location-1]').text().trim()).toEqual('Test Location 2')
     expect($('[data-qa=result-prisoner-count-1]').text().trim()).toEqual('3')
     expect($('[data-qa=result-sequence-number-1]').text().trim()).toEqual('2 of 6')
+    expect($('[data-qa=view-and-edit-result-1] > a').text()).toContain('View')
+    expect($('[data-qa=view-and-edit-result-1] > a').text()).not.toContain('and manage')
     expect($('[data-qa=view-and-edit-result-1] > a').attr('href')).toEqual('/appointments/2/occurrence/3')
+
+    expect($('[data-qa=result-time-2]').text().trim()).toEqual('16:00 to 17:30')
+    expect($('[data-qa=result-category-2]').text().trim()).toEqual('Test Category 3')
+    expect($('[data-qa=result-location-2]').text().trim()).toEqual('Test Location 3')
+    expect($('[data-qa=result-prisoner-count-2]').text().trim()).toEqual('3')
+    expect($('[data-qa=result-sequence-number-2]').text().trim()).toEqual('2 of 6')
+    expect($('[data-qa=view-and-edit-result-2] > a').text()).toContain('View')
+    expect($('[data-qa=view-and-edit-result-2] > a').text()).not.toContain('and manage')
+    expect($('[data-qa=view-and-edit-result-2] > a').attr('href')).toEqual('/appointments/3/occurrence/4')
   })
 
   it('should not display end time when result does not have an end time', () => {
@@ -150,7 +211,6 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('[data-qa=result-date-0]').attr('data-sort-value')).toEqual('2023-05-2610:00')
     expect($('[data-qa=result-time-0]').text().trim()).toEqual('10:00')
   })
 
@@ -196,7 +256,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=all&type=INDIVIDUAL`,
+      )}&timeSlot=&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
     )
 
     const checked = $("[name='timeSlot']:checked")
@@ -218,7 +278,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=am&categoryCode=&locationId=26151&prisonerNumber=A1234BC&createdBy=all&type=INDIVIDUAL`,
+      )}&timeSlot=am&categoryCode=&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
     )
 
     const selected = $("[name='categoryCode'] > option:selected")
@@ -235,7 +295,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=am&categoryCode=MEDO&locationId=&prisonerNumber=A1234BC&createdBy=all&type=INDIVIDUAL`,
+      )}&timeSlot=am&categoryCode=MEDO&locationId=&prisonerNumber=A1234BC&createdBy=all`,
     )
 
     const selected = $("[name='locationId'] > option:selected")
@@ -252,7 +312,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=am&categoryCode=MEDO&locationId=26151&prisonerNumber=&createdBy=all&type=INDIVIDUAL`,
+      )}&timeSlot=am&categoryCode=MEDO&locationId=26151&prisonerNumber=&createdBy=all`,
     )
 
     expect($("[name='prisonerNumber']").val()).toEqual('A1234BC')
@@ -272,39 +332,12 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=am&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=&type=INDIVIDUAL`,
+      )}&timeSlot=am&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=`,
     )
 
     const checked = $("[name='createdBy']:checked")
     expect(checked.length).toEqual(1)
     expect(checked.val()).toEqual(createdBy)
-    expect(
-      $(`label[for='${checked.attr('id')}']`)
-        .text()
-        .trim(),
-    ).toEqual(expectedText)
-  })
-
-  it.each([
-    [AppointmentType.INDIVIDUAL, 'Individual appointment'],
-    [AppointmentType.GROUP, 'Group appointment'],
-  ])('should select correct time period filter %s %s', (type, expectedText) => {
-    viewContext.type = type
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($(".moj-filter__selected > h3:contains('Individual or group')").length).toEqual(1)
-    const removeFilterLink = $(`a.moj-filter__tag:contains('${expectedText}')`)
-    expect(removeFilterLink.text().trim()).toEqual(`Remove this filter ${expectedText}`)
-    expect(removeFilterLink.attr('href')).toEqual(
-      `?startDate=${toDateString(
-        new Date(),
-      )}&timeSlot=am&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=all&type=`,
-    )
-
-    const checked = $("[name='type']:checked")
-    expect(checked.length).toEqual(1)
-    expect(checked.val()).toEqual(type)
     expect(
       $(`label[for='${checked.attr('id')}']`)
         .text()
