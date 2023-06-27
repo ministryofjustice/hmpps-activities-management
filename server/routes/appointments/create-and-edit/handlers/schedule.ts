@@ -59,4 +59,20 @@ export default class ScheduleRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     res.redirect(req.session.appointmentJourney.type === AppointmentType.BULK ? 'bulk-appointment-comments' : 'comment')
   }
+
+  REMOVE = async (req: Request, res: Response): Promise<void> => {
+    const { prisonNumber } = req.params
+
+    if (req.session.appointmentJourney.type === AppointmentType.BULK) {
+      req.session.bulkAppointmentJourney.appointments = req.session.bulkAppointmentJourney.appointments.filter(
+        appointment => appointment.prisoner.number !== prisonNumber,
+      )
+    } else {
+      req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.filter(
+        prisoner => prisoner.number !== prisonNumber,
+      )
+    }
+
+    res.redirect('../../schedule')
+  }
 }

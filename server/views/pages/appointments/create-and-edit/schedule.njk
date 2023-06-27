@@ -16,7 +16,7 @@
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
 
-            <h1 class="govuk-heading-l">Review scheduled events to check for potential clashes</h1>
+            <h1 class="govuk-heading-l">Review scheduled events to avoid clashes</h1>
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -83,24 +83,6 @@
                                 ]
                             }
                         } if session.appointmentJourney.type == AppointmentType.BULK, {
-                            key: {
-                                text: "Location"
-                            },
-                            value: {
-                                text: session.appointmentJourney.location.description
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "location?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "change location",
-                                        classes: "govuk-link--no-visited-state",
-                                        attributes: { 'data-qa': 'change-location' }
-                                    }
-                                ]
-                            }
-                        }, {
                             key: {
                                 text: "Date"
                             },
@@ -173,13 +155,13 @@
                                             </a>
                                         </li>
                                         <li class="govuk-summary-card__action">
-                                            <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule" + prisoner.number + "/remove" }}" data-qa="remove-appointment-prison-number-{{ prisoner.number }}">
+                                            <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" }}" data-qa="remove-appointment-prison-number-{{ prisoner.number }}">
                                                 Remove appointment<span class="govuk-visually-hidden"> for prison number ' + prisoner.number + '</span>
                                             </a>
                                         </li>
                                     {% else %}
                                         <li class="govuk-summary-card__action">
-                                            <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule" + prisoner.number + "/remove" }}" data-qa="remove-prison-number-{{ prisoner.number }}">
+                                            <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" }}" data-qa="remove-prison-number-{{ prisoner.number }}">
                                                 Remove attendee<span class="govuk-visually-hidden"> with prison number ' + prisoner.number + '</span>
                                             </a>
                                         </li>
@@ -206,7 +188,7 @@
     {% for scheduledEvent in scheduledEvents %}
         {% set scheduledEventRows = (scheduledEventRows.push([
             {
-                text: scheduledEvent.startTime
+                text: (scheduledEvent.startTime + " to " + scheduledEvent.endTime)
             }, {
                 text: scheduledEvent.summary | trim
             }, {
