@@ -7,9 +7,15 @@ import appointmentOccurrenceDetailsRoutes from './occurrence-details'
 import appointmentSearchRoutes from './search'
 import bulkAppointmentDetailsRoutes from './bulk-appointment-details'
 import { Services } from '../../services'
+import rolloutMiddleware from '../../middleware/rolloutMiddleware'
+import ServiceName from '../../enum/serviceName'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
+
+  const serviceName = ServiceName.APPOINTMENTS
+
+  router.use(rolloutMiddleware(serviceName, services))
 
   router.use('/', appointmentsHomeRoutes())
   router.use('/create', appointmentsCreateRoutes(services))
