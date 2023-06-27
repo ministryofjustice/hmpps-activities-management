@@ -40,6 +40,7 @@ describe('Route Handlers - Create Appointment - Comment', () => {
           prisoners: [],
         },
       },
+      query: {},
       flash: jest.fn(),
     } as unknown as Request
 
@@ -86,7 +87,7 @@ describe('Route Handlers - Create Appointment - Comment', () => {
   describe('POST', () => {
     it('should redirect to comment page', async () => {
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('comment')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('comment')
     })
   })
 })
