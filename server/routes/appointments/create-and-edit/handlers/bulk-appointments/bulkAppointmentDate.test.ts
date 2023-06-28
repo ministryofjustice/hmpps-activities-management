@@ -46,12 +46,6 @@ describe('Route Handlers - Create Bulk Appointment - Bulk Appointment Date', () 
         'pages/appointments/create-and-edit/bulk-appointments/bulk-appointment-date',
       )
     })
-
-    it('should populate return to with schedule', async () => {
-      req.query = { preserveHistory: 'true' }
-      await handler.GET(req, res)
-      expect(req.session.returnTo).toEqual('schedule?preserveHistory=true')
-    })
   })
 
   describe('POST', () => {
@@ -71,6 +65,16 @@ describe('Route Handlers - Create Bulk Appointment - Bulk Appointment Date', () 
         date: req.body.startDate.toRichDate(),
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`review-bulk-appointment`)
+    })
+
+    it('should populate return to with schedule', async () => {
+      req.query = { preserveHistory: 'true' }
+      const startDate = simpleDateFromDate(tomorrow)
+      req.body = {
+        startDate,
+      }
+      await handler.POST(req, res)
+      expect(req.session.returnTo).toEqual('schedule?preserveHistory=true')
     })
   })
 

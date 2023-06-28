@@ -109,6 +109,24 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('repeat')
     })
+
+    it('should populate return to with schedule', async () => {
+      req.query = { preserveHistory: 'true' }
+      const startDate = simpleDateFromDate(tomorrow)
+      req.body = {
+        startDate,
+        startTime: plainToInstance(SimpleTime, {
+          hour: 11,
+          minute: 30,
+        }),
+        endTime: plainToInstance(SimpleTime, {
+          hour: 13,
+          minute: 0,
+        }),
+      }
+      await handler.CREATE(req, res)
+      expect(req.session.returnTo).toEqual('schedule?preserveHistory=true')
+    })
   })
 
   describe('EDIT', () => {

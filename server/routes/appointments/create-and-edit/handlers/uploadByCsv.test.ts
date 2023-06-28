@@ -46,5 +46,24 @@ describe('Route Handlers - Appointments - Upload by CSV', () => {
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('upload-prisoner-list')
     })
+
+    it('should redirect to upload prisoner list with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('upload-prisoner-list?preserveHistory=true')
+    })
+
+    it('should redirect to upload bulk appointment', async () => {
+      req.session.appointmentJourney.type = AppointmentType.BULK
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('upload-bulk-appointment')
+    })
+
+    it('should redirect to upload bulk appointment with preserve history', async () => {
+      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.query = { preserveHistory: 'true' }
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('upload-bulk-appointment?preserveHistory=true')
+    })
   })
 })

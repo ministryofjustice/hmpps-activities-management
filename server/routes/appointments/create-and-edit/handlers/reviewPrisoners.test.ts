@@ -41,7 +41,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', { prisoners })
     })
 
-    it('should render the how to add prisoners view with preserve history', async () => {
+    it('should render the review prisoners view with preserve history', async () => {
       req.query = { preserveHistory: 'true' }
       const prisoners = [
         {
