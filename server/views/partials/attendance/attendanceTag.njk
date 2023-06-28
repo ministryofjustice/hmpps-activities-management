@@ -44,6 +44,6 @@
     {% if status === 'COMPLETED' %}
         {{ govukTag(attendanceTags[code]) }}
     {% else %}
-      Not recorded yet
+      Not recorded {{ "yet" if attendance.editable }}
     {% endif %}
 {% endmacro %}

@@ -22,7 +22,8 @@
       "payAmount": null,
       "bonusAmount": null,
       "pieces": null,
-      "issuePayment": true
+      "issuePayment": true,
+      "editable": true
     },
     {
       "id": 3,
@@ -39,7 +40,8 @@
       "payAmount": null,
       "bonusAmount": null,
       "pieces": null,
-      "issuePayment": true
+      "issuePayment": true,
+      "editable": true
     },
     {
       "id": 2,
@@ -53,7 +55,8 @@
       "payAmount": null,
       "bonusAmount": null,
       "pieces": null,
-      "issuePayment": true
+      "issuePayment": true,
+      "editable": true
     },
     {
       "id": 5,
@@ -67,7 +70,8 @@
       "payAmount": null,
       "bonusAmount": null,
       "pieces": null,
-      "issuePayment": true
+      "issuePayment": true,
+      "editable": true
     }
   ],
   "activitySchedule": {
