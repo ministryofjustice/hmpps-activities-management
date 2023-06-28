@@ -17,6 +17,10 @@ export class BulkAppointmentDate {
 
 export default class BulkAppointmentDateRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
+    if (req.query.preserveHistory) {
+      req.session.returnTo = 'schedule?preserveHistory=true'
+    }
+
     res.render('pages/appointments/create-and-edit/bulk-appointments/bulk-appointment-date')
   }
 
