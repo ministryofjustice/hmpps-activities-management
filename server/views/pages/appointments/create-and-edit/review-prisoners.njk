@@ -59,8 +59,7 @@
 
                 {{ govukButton({
                     text: "Add someone to the list",
-                    href: "upload-bulk-appointment?preserveHistory=true" if session.appointmentJourney.type == AppointmentType.BULK
-                        else "how-to-add-prisoners?preserveHistory=true",
+                    href: ("upload-bulk-appointment" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners") + "?preserveHistory=true",
                     attributes: { 'data-qa': 'add-prisoner-primary' }
                 }) }}
             {% else %}

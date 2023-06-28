@@ -14,7 +14,7 @@
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
 
-            <form method="POST">
+            <form method="POST" action="how-to-add-prisoners{{ '?preserveHistory=true' if preserveHistory else '' }}">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ govukRadios({
