@@ -27,7 +27,7 @@ import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 context('Create individual appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
-  // To pass validation we must ensure the appointment details start date are set to tomorrow
+  // To pass validation we must ensure the appointment details start date is set to tomorrow
   getAppointmentDetails.startDate = tomorrowFormatted
   getAppointmentDetails.occurrences[0].startDate = getAppointmentDetails.startDate
   getOccurrenceDetails.startDate = tomorrowFormatted

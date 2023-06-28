@@ -31,7 +31,7 @@ import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
-  // To pass validation we must ensure the appointment details start date are set to tomorrow
+  // To pass validation we must ensure the appointment details start date is set to tomorrow
   getGroupAppointmentDetails.startDate = tomorrowFormatted
   getGroupAppointmentDetails.occurrences[0].startDate = getGroupAppointmentDetails.startDate
   getGroupOccurrenceDetails.startDate = tomorrowFormatted

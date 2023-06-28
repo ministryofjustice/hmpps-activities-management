@@ -48,34 +48,32 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       flash: jest.fn(),
     } as unknown as Request
 
-    when(activitiesService.getScheduledEventsForPrisoners)
-      // .calledWith(expect.any(Date), ['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
-      .mockResolvedValue({
-        activities: [
-          { prisonerNumber: 'A1234BC', summary: 'Activity for A1234BC' },
-          { prisonerNumber: 'B2345CD', summary: 'Activity for B2345CD' },
-        ],
-        appointments: [
-          { prisonerNumber: 'A1234BC', summary: 'Appointments for A1234BC' },
-          { prisonerNumber: 'B2345CD', summary: 'Appointments for B2345CD' },
-        ],
-        courtHearings: [
-          { prisonerNumber: 'A1234BC', summary: 'Court hearing for A1234BC' },
-          { prisonerNumber: 'B2345CD', summary: 'Court hearing for B2345CD' },
-        ],
-        visits: [
-          { prisonerNumber: 'A1234BC', summary: 'Visit for A1234BC' },
-          { prisonerNumber: 'B2345CD', summary: 'Visit for B2345CD' },
-        ],
-        externalTransfers: [
-          { prisonerNumber: 'A1234BC', summary: 'External transfer for A1234BC' },
-          { prisonerNumber: 'B2345CD', summary: 'External transfer for B2345CD' },
-        ],
-        adjudications: [
-          { prisonerNumber: 'A1234BC', summary: 'Adjudication for A1234BC' },
-          { prisonerNumber: 'B2345CD', summary: 'Adjudication for B2345CD' },
-        ],
-      } as PrisonerScheduledEvents)
+    when(activitiesService.getScheduledEventsForPrisoners).mockResolvedValue({
+      activities: [
+        { prisonerNumber: 'A1234BC', summary: 'Activity for A1234BC' },
+        { prisonerNumber: 'B2345CD', summary: 'Activity for B2345CD' },
+      ],
+      appointments: [
+        { prisonerNumber: 'A1234BC', summary: 'Appointments for A1234BC' },
+        { prisonerNumber: 'B2345CD', summary: 'Appointments for B2345CD' },
+      ],
+      courtHearings: [
+        { prisonerNumber: 'A1234BC', summary: 'Court hearing for A1234BC' },
+        { prisonerNumber: 'B2345CD', summary: 'Court hearing for B2345CD' },
+      ],
+      visits: [
+        { prisonerNumber: 'A1234BC', summary: 'Visit for A1234BC' },
+        { prisonerNumber: 'B2345CD', summary: 'Visit for B2345CD' },
+      ],
+      externalTransfers: [
+        { prisonerNumber: 'A1234BC', summary: 'External transfer for A1234BC' },
+        { prisonerNumber: 'B2345CD', summary: 'External transfer for B2345CD' },
+      ],
+      adjudications: [
+        { prisonerNumber: 'A1234BC', summary: 'Adjudication for A1234BC' },
+        { prisonerNumber: 'B2345CD', summary: 'Adjudication for B2345CD' },
+      ],
+    } as PrisonerScheduledEvents)
   })
 
   afterEach(() => {

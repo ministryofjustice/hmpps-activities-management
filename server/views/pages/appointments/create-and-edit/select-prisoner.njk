@@ -72,7 +72,7 @@
         {% if prisoners | length >= 1 %}
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
-                    <form method="POST" action="search-prisoner{{ '?preserveHistory=true' if preserveHistory else '' }}">
+                    <form method="POST">
                         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                         {% set prisonerRows = [] %}
                         {% for prisoner in prisoners %}

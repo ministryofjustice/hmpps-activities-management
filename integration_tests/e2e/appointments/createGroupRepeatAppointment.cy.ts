@@ -35,7 +35,7 @@ context('Create group appointment', () => {
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   const weekTomorrow = addWeeks(tomorrow, 1)
   const weekTomorrowFormatted = formatDate(weekTomorrow, 'yyyy-MM-dd')
-  // To pass validation we must ensure the appointment details start date are set to tomorrow
+  // To pass validation we must ensure the appointment details start date is set to tomorrow
   getRepeatGroupAppointmentDetails.startDate = tomorrowFormatted
   getRepeatGroupAppointmentDetails.repeat.period = AppointmentRepeatPeriod.DAILY
   getRepeatGroupAppointmentDetails.repeat.count = 7
