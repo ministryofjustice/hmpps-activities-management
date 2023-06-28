@@ -1,4 +1,4 @@
-import { getDate } from 'date-fns'
+import { addDays } from 'date-fns'
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
@@ -10,6 +10,7 @@ import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrison
 import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
+import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
@@ -18,8 +19,21 @@ import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnsw
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
+import { formatDate } from '../../../server/utils/utils'
+import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
 context('Create individual appointment - back links', () => {
+  const tomorrow = addDays(new Date(), 1)
+  const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
+  // To pass validation we must ensure the appointment details start date are set to tomorrow
+  getAppointmentDetails.startDate = tomorrowFormatted
+  getAppointmentDetails.occurrences[0].startDate = getAppointmentDetails.startDate
+  getScheduledEvents.activities
+    .filter(e => e.prisonerNumber === 'A7789DY')
+    .forEach(e => {
+      e.prisonerNumber = 'A8644DY'
+    })
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -28,6 +42,7 @@ context('Create individual appointment - back links', () => {
     cy.stubEndpoint('GET', '/prisoner/A8644DY', getPrisonerA8644DY)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
   })
@@ -60,8 +75,6 @@ context('Create individual appointment - back links', () => {
     locationPage.continue()
 
     const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
-    const tomorrow = new Date()
-    tomorrow.setDate(getDate(tomorrow) + 1)
     dateAndTimePage.enterStartDate(tomorrow)
     dateAndTimePage.selectStartTime(14, 0)
     dateAndTimePage.selectEndTime(15, 30)
@@ -71,12 +84,18 @@ context('Create individual appointment - back links', () => {
     repeatPage.selectRepeat('No')
     repeatPage.continue()
 
+    const schedulePage = Page.verifyOnPage(SchedulePage)
+    schedulePage.continue()
+
     const commentPage = Page.verifyOnPage(CommentPage)
 
     // Click through back links
     commentPage.back()
+    Page.verifyOnPage(SchedulePage)
+
+    schedulePage.back()
     Page.verifyOnPage(RepeatPage)
-    repeatPage.selectRepeat('No')
+    repeatPage.assertRepeat('No')
 
     repeatPage.back()
     Page.verifyOnPage(DateAndTimePage)
@@ -106,6 +125,7 @@ context('Create individual appointment - back links', () => {
     locationPage.continue()
     dateAndTimePage.continue()
     repeatPage.continue()
+    schedulePage.continue()
 
     Page.verifyOnPage(CommentPage)
     commentPage.continue()

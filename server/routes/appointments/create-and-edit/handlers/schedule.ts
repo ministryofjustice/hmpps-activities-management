@@ -16,8 +16,6 @@ export default class ScheduleRoutes {
     const defaultBackLinkHref =
       req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
 
-    req.session.returnTo = `schedule${preserveHistory ? '?preserveHistory=true' : ''}`
-
     const prisonNumbers =
       appointmentJourney.type === AppointmentType.BULK
         ? bulkAppointmentJourney.appointments.map(a => a.prisoner.number)

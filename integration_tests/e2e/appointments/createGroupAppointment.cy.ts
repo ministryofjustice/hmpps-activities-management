@@ -11,6 +11,7 @@ import getPrisonerA1351DZ from '../../fixtures/prisonerSearchApi/getPrisoner-MDI
 import getPrisonPrisonersA8644DYA1351DZ from '../../fixtures/prisonerSearchApi/postPrisonerNumbers-A1350DZ-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
+import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getGroupAppointmentDetails from '../../fixtures/activitiesApi/getGroupAppointmentDetails.json'
 import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getGroupOccurrenceDetails.json'
@@ -25,13 +26,30 @@ import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/upl
 import UploadByCsvPage from '../../pages/appointments/create-and-edit/uploadbyCsvPage'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
+import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
+  const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   // To pass validation we must ensure the appointment details start date are set to tomorrow
-  getGroupAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getGroupAppointmentDetails.startDate = tomorrowFormatted
   getGroupAppointmentDetails.occurrences[0].startDate = getGroupAppointmentDetails.startDate
-  getGroupOccurrenceDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getGroupOccurrenceDetails.startDate = tomorrowFormatted
+  getScheduledEvents.activities
+    .filter(e => e.prisonerNumber === 'A7789DY')
+    .forEach(e => {
+      e.prisonerNumber = 'A1350DZ'
+    })
+  getScheduledEvents.activities
+    .filter(e => e.prisonerNumber === 'G7218GI')
+    .forEach(e => {
+      e.prisonerNumber = 'A8644DY'
+    })
+  getScheduledEvents.activities
+    .filter(e => e.prisonerNumber === 'G5897GP')
+    .forEach(e => {
+      e.prisonerNumber = 'A1351DZ'
+    })
 
   beforeEach(() => {
     cy.task('reset')
@@ -42,6 +60,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getPrisonPrisonersA8644DYA1351DZ)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getGroupAppointmentDetails)
     cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getGroupOccurrenceDetails)
@@ -120,6 +139,9 @@ context('Create group appointment', () => {
     const repeatPage = Page.verifyOnPage(RepeatPage)
     repeatPage.selectRepeat('No')
     repeatPage.continue()
+
+    const schedulePage = Page.verifyOnPage(SchedulePage)
+    schedulePage.continue()
 
     const commentPage = Page.verifyOnPage(CommentPage)
     commentPage.continue()
