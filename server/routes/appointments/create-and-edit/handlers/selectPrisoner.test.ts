@@ -168,7 +168,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('category')
     })
 
-    it('should populate return to with schedule', async () => {
+    it('should populate return to with schedule (individual)', async () => {
       req.query = { preserveHistory: 'true' }
       req.body = {
         selectedPrisoner: 'X9876YZ',
@@ -243,6 +243,39 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
+    })
+
+    it('should redirect to review prisoners with preserve history (group)', async () => {
+      req.query = { preserveHistory: 'true' }
+      req.body = {
+        selectedPrisoner: 'X9876YZ',
+      }
+      req.session.appointmentJourney = {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        prisoners: [
+          {
+            number: 'X9876YZ',
+            name: 'James Johnson',
+            cellLocation: '2-2-2',
+          },
+        ],
+      }
+
+      const prisonerInfo = {
+        prisonerNumber: 'X9876YZ',
+        firstName: 'James',
+        lastName: 'Johnson',
+        cellLocation: '2-2-2',
+      } as Prisoner
+
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('X9876YZ', res.locals.user)
+        .mockResolvedValue(prisonerInfo)
+
+      await handler.SELECT_PRISONER(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('review-prisoners?preserveHistory=true')
     })
 
     it('should add prisoner to session and redirect if prisoner selected (edit)', async () => {

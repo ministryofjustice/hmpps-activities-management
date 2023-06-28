@@ -51,7 +51,7 @@ export default class SelectPrisonerRoutes {
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT ||
         req.session.appointmentJourney.type === AppointmentType.GROUP
       ) {
-        return res.redirect('review-prisoners')
+        return res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
       }
       if (req.query.preserveHistory) {
         req.session.returnTo = 'schedule?preserveHistory=true'
