@@ -30,7 +30,7 @@ export default class CancelledSessionsRoutes {
       }))
       .filter(c => this.includesSearchTerm(c.summary, attendanceSummaryFilters.searchTerm))
 
-    return res.render('pages/daily-attendance-summary/cancelled-sessions', {
+    return res.render('pages/activities/daily-attendance-summary/cancelled-sessions', {
       activityDate,
       cancelledSessions,
       attendanceSummaryFilters,

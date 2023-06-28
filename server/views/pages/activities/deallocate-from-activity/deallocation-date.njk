@@ -24,6 +24,7 @@
         <div class="govuk-grid-column-full">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" id="startDate" name="startDate" value="{{ session.deallocateJourney.earliestAllocationStartDate }}">
 
                 {{ datePicker({
                     id: 'deallocationDate',

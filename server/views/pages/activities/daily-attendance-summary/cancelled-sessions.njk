@@ -9,7 +9,7 @@
 
 {% set pageTitle = applicationName + " - Cancelled Sessions" %}
 {% set pageId = 'cancelled-sessions-detail-page' %}
-{% set backLinkHref = "/activities/attendance-summary/summary?date=" + activityDate | formatDate('yyyy-MM-dd') %}
+{% set backLinkHref = "summary?date=" + activityDate | formatDate('yyyy-MM-dd') %}
 
 {% block content %}
     <div>
@@ -47,7 +47,7 @@
                     {% set cancelledSessionsRows = (cancelledSessionsRows.push([
                         {
                             attributes: { id: 'activity-' + loop.index, "data-sort-value": cancelledSession.summary },
-                            html: '<a href=/activities/attendance/activities/' + cancelledSession.id + '/attendance-list class="govuk-link govuk-link--no-visited-state">' + cancelledSession.summary + '</a>',
+                            html: '<a href=/activities/' + cancelledSession.id + '/attendance-list class="govuk-link govuk-link--no-visited-state">' + cancelledSession.summary + '</a>',
                             classes: 'govuk-table_cell'
                         },
                         {
