@@ -30,6 +30,7 @@ describe('Route Handlers - Create Bulk Appointment - Bulk Appointment Date', () 
       session: {
         appointmentJourney: {},
       },
+      query: {},
       flash: jest.fn(),
     } as unknown as Request
   })
@@ -64,6 +65,16 @@ describe('Route Handlers - Create Bulk Appointment - Bulk Appointment Date', () 
         date: req.body.startDate.toRichDate(),
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`review-bulk-appointment`)
+    })
+
+    it('should populate return to with schedule', async () => {
+      req.query = { preserveHistory: 'true' }
+      const startDate = simpleDateFromDate(tomorrow)
+      req.body = {
+        startDate,
+      }
+      await handler.POST(req, res)
+      expect(req.session.returnTo).toEqual('schedule?preserveHistory=true')
     })
   })
 

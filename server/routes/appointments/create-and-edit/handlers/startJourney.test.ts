@@ -129,6 +129,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('category')
     })
+
+    it('should null return to', async () => {
+      req.session.returnTo = 'something'
+      await handler.INDIVIDUAL(req, res)
+      expect(req.session.returnTo).toBeNull()
+    })
   })
 
   describe('GROUP', () => {
@@ -143,6 +149,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('how-to-add-prisoners')
+    })
+
+    it('should null return to', async () => {
+      req.session.returnTo = 'something'
+      await handler.GROUP(req, res)
+      expect(req.session.returnTo).toBeNull()
     })
   })
 
@@ -159,6 +171,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
         appointments: [],
       })
       expect(res.redirect).toHaveBeenCalledWith('upload-by-csv')
+    })
+
+    it('should null return to', async () => {
+      req.session.returnTo = 'something'
+      await handler.BULK(req, res)
+      expect(req.session.returnTo).toBeNull()
     })
   })
 
@@ -270,6 +288,15 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(res.redirect).toHaveBeenCalledWith('back')
     })
+
+    it('should null return to', async () => {
+      req.session.returnTo = 'something'
+      req.params = {
+        property: 'location',
+      }
+      await handler.EDIT(req, res)
+      expect(req.session.returnTo).toBeNull()
+    })
   })
 
   describe('REMOVE_PRISONER', () => {
@@ -356,6 +383,15 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/A1234BC/remove/confirm`)
     })
+
+    it('should null return to', async () => {
+      req.session.returnTo = 'something'
+      req.params = {
+        prisonNumber: 'B2345CD',
+      }
+      await handler.REMOVE_PRISONER(req, res)
+      expect(req.session.returnTo).toBeNull()
+    })
   })
 
   describe('ADD_PRISONERS', () => {
@@ -386,6 +422,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/prisoners/add/how-to-add-prisoners`)
     })
+
+    it('should null return to', async () => {
+      req.session.returnTo = 'something'
+      await handler.ADD_PRISONERS(req, res)
+      expect(req.session.returnTo).toBeNull()
+    })
   })
 
   describe('CANCEL', () => {
@@ -414,6 +456,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/cancel/reason`)
+    })
+
+    it('should null return to', async () => {
+      req.session.returnTo = 'something'
+      await handler.CANCEL(req, res)
+      expect(req.session.returnTo).toBeNull()
     })
   })
 })

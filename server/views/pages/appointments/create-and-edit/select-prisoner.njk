@@ -34,7 +34,7 @@
     {% if prisoners %}
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="POST" action='search-prisoner{{ '?preserveHistory=true' if preserveHistory else '' }}'>
+                <form method="POST" action="search-prisoner{{ '?preserveHistory=true' if preserveHistory else '' }}">
                     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                     {{ searchInput({
                         classes: "search-input--inline-search",
@@ -155,7 +155,7 @@
             <div>
         {% endif %}
     {% else %}
-        <form method="POST" action='search-prisoner{{ '?preserveHistory=true' if preserveHistory else '' }}'>
+        <form method="POST" action="search-prisoner{{ '?preserveHistory=true' if preserveHistory else '' }}">
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">

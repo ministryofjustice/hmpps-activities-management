@@ -15,6 +15,7 @@ export default class StartJourneyRoutes {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.INDIVIDUAL,
     }
+    req.session.returnTo = null
     const { prisonNumber } = req.query
     if (prisonNumber && typeof prisonNumber === 'string') {
       const { user } = res.locals
@@ -40,6 +41,7 @@ export default class StartJourneyRoutes {
       type: AppointmentType.GROUP,
       prisoners: [],
     }
+    req.session.returnTo = null
     res.redirect('how-to-add-prisoners')
   }
 
@@ -51,6 +53,7 @@ export default class StartJourneyRoutes {
     req.session.bulkAppointmentJourney = {
       appointments: [],
     }
+    req.session.returnTo = null
     res.redirect('upload-by-csv')
   }
 
@@ -167,5 +170,7 @@ export default class StartJourneyRoutes {
       sequenceNumbers: appointment.occurrences.map(occurrence => occurrence.sequenceNumber),
       sequenceNumber: appointmentOccurrence.sequenceNumber,
     }
+
+    req.session.returnTo = null
   }
 }

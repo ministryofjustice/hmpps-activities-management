@@ -11,6 +11,7 @@ import getPrisonerA1351DZ from '../../fixtures/prisonerSearchApi/getPrisoner-MDI
 import getPrisonPrisonersA8644DYA1351DZ from '../../fixtures/prisonerSearchApi/postPrisonerNumbers-A1350DZ-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
+import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getRepeatGroupAppointmentDetails from '../../fixtures/activitiesApi/getRepeatGroupAppointmentDetails.json'
 import getRepeatGroupOccurrence1Details from '../../fixtures/activitiesApi/getRepeatGroupOccurrence1Details.json'
@@ -27,17 +28,35 @@ import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/oc
 import UploadByCsvPage from '../../pages/appointments/create-and-edit/uploadbyCsvPage'
 import { AppointmentRepeatPeriod } from '../../../server/@types/appointments'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
+import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
+  const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   const weekTomorrow = addWeeks(tomorrow, 1)
-  // To pass validation we must ensure the appointment details start date are set to tomorrow
-  getRepeatGroupAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  const weekTomorrowFormatted = formatDate(weekTomorrow, 'yyyy-MM-dd')
+  // To pass validation we must ensure the appointment details start date is set to tomorrow
+  getRepeatGroupAppointmentDetails.startDate = tomorrowFormatted
   getRepeatGroupAppointmentDetails.repeat.period = AppointmentRepeatPeriod.DAILY
   getRepeatGroupAppointmentDetails.repeat.count = 7
-  getRepeatGroupAppointmentDetails.occurrences[0].startDate = formatDate(tomorrow, 'yyyy-MM-dd')
-  getRepeatGroupAppointmentDetails.occurrences[1].startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
-  getRepeatGroupOccurrence1Details.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
+  getRepeatGroupAppointmentDetails.occurrences[0].startDate = tomorrowFormatted
+  getRepeatGroupAppointmentDetails.occurrences[1].startDate = weekTomorrowFormatted
+  getRepeatGroupOccurrence1Details.startDate = weekTomorrowFormatted
+  getScheduledEvents.activities
+    .filter(e => e.prisonerNumber === 'A7789DY')
+    .forEach(e => {
+      e.prisonerNumber = 'A1350DZ'
+    })
+  getScheduledEvents.activities
+    .filter(e => e.prisonerNumber === 'G7218GI')
+    .forEach(e => {
+      e.prisonerNumber = 'A8644DY'
+    })
+  getScheduledEvents.activities
+    .filter(e => e.prisonerNumber === 'G5897GP')
+    .forEach(e => {
+      e.prisonerNumber = 'A1351DZ'
+    })
 
   beforeEach(() => {
     cy.task('reset')
@@ -48,6 +67,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getPrisonPrisonersA8644DYA1351DZ)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatGroupAppointmentDetails)
     cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getRepeatGroupOccurrence1Details)
@@ -130,6 +150,9 @@ context('Create group appointment', () => {
     repeatPeriodAndCountPage.selectRepeatPeriod('Daily (includes weekends)')
     repeatPeriodAndCountPage.enterRepeatCount('7')
     repeatPeriodAndCountPage.continue()
+
+    const schedulePage = Page.verifyOnPage(SchedulePage)
+    schedulePage.continue()
 
     const commentPage = Page.verifyOnPage(CommentPage)
     commentPage.continue()

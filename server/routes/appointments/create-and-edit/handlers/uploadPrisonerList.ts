@@ -21,7 +21,9 @@ export default class UploadPrisonerListRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/appointments/create-and-edit/upload-prisoner-list')
+    const { preserveHistory } = req.query
+
+    res.render('pages/appointments/create-and-edit/upload-prisoner-list', { preserveHistory })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -30,7 +32,7 @@ export default class UploadPrisonerListRoutes {
 
     req.session.appointmentJourney.prisoners = prisonerList
 
-    res.redirect('review-prisoners')
+    res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {

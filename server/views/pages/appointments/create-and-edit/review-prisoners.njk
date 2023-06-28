@@ -41,7 +41,7 @@
                     }, {
                         text: prisoner.cellLocation
                     }, {
-                        html: '<a href="review-prisoners/' + prisoner.number + '/remove"
+                        html: '<a href="review-prisoners/' + prisoner.number + '/remove' + ('?preserveHistory=true' if preserveHistory else '') + '"
                             class="govuk-link--no-visited-state">
                             Remove<span class="govuk-visually-hidden"> prison number ' + prisoner.number + '</span>
                         </a>',
@@ -59,8 +59,7 @@
 
                 {{ govukButton({
                     text: "Add someone to the list",
-                    href: "upload-bulk-appointment?preserveHistory=true" if session.appointmentJourney.type == AppointmentType.BULK
-                        else "how-to-add-prisoners?preserveHistory=true",
+                    href: ("upload-bulk-appointment" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners") + ('?preserveHistory=true' if preserveHistory else ''),
                     attributes: { 'data-qa': 'add-prisoner-primary' }
                 }) }}
             {% else %}
@@ -91,7 +90,7 @@
                     {{ govukButton({
                         text: "Add another person",
                         classes: "govuk-button--secondary",
-                        href: "how-to-add-prisoners?preserveHistory=true",
+                        href: "how-to-add-prisoners?" + ('?preserveHistory=true' if preserveHistory else ''),
                         attributes: { 'data-qa': 'add-prisoner-secondary' }
                     }) }}
                 </div>
