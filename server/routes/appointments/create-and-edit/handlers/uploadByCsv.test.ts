@@ -31,6 +31,7 @@ describe('Route Handlers - Appointments - Upload by CSV', () => {
         preserveHistory: undefined,
       })
     })
+
     it('should render upload by CSV view with preserve history', async () => {
       req.query = { preserveHistory: 'true' }
       await handler.GET(req, res)
