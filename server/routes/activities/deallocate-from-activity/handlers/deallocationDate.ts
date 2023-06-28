@@ -4,6 +4,7 @@ import { ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import DateIsAfter from '../../../../validators/dateIsAfter'
+import DateIsSameOrAfterOtherProperty from '../../../../validators/dateIsSameOrAfterOtherProperty'
 
 export class DeallocationDate {
   @Expose()
@@ -11,7 +12,13 @@ export class DeallocationDate {
   @ValidateNested()
   @IsValidDate({ message: 'Enter a valid date' })
   @DateIsAfter(new Date(), { message: "Enter a date after today's date" })
+  @DateIsSameOrAfterOtherProperty('startDate', {
+    message: 'Enter a date on or after the earliest allocation start date',
+  })
   deallocationDate: SimpleDate
+
+  @Expose()
+  startDate: string
 }
 
 export default class DeallocationDateRoutes {
