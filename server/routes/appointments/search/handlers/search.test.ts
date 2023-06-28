@@ -13,14 +13,17 @@ import {
   AppointmentOccurrenceSearchResult,
 } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
-import { AppointmentType } from '../../create-and-edit/appointmentJourney'
+import PrisonService from '../../../../services/prisonService'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Appointments Management - Search Results', () => {
-  const handler = new SearchRoutes(activitiesService)
+  const handler = new SearchRoutes(activitiesService, prisonService)
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
   let req: Request
   let res: Response
@@ -58,7 +61,11 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       appointmentId: 1,
       appointmentOccurrenceId: 2,
       appointmentType: 'INDIVIDUAL',
-      allocations: [{}],
+      allocations: [
+        {
+          prisonerNumber: 'A1111AA',
+        },
+      ],
       category: {
         code: 'TEST1',
         description: 'Test Category 1',
@@ -77,7 +84,17 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       appointmentId: 2,
       appointmentOccurrenceId: 3,
       appointmentType: 'GROUP',
-      allocations: [{}, {}, {}],
+      allocations: [
+        {
+          prisonerNumber: 'A1111AA',
+        },
+        {
+          prisonerNumber: 'B2222BB',
+        },
+        {
+          prisonerNumber: 'C3333CC',
+        },
+      ],
       category: {
         code: 'TEST2',
         description: 'Test Category 2',
@@ -120,6 +137,19 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       expect(res.redirect).toHaveBeenCalledWith(`?startDate=${toDateString(new Date())}`)
     })
 
+    it('should populate start date and redirect if start date is invalid', async () => {
+      req.query = {
+        startDate: '2021-10-40',
+      }
+
+      await handler.GET(req, res)
+
+      expect(activitiesService.getAppointmentCategories).not.toHaveBeenCalled()
+      expect(activitiesService.getAppointmentLocations).not.toHaveBeenCalled()
+      expect(activitiesService.searchAppointmentOccurrences).not.toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith(`?startDate=${toDateString(new Date())}`)
+    })
+
     it('should render the default search view with categories, locations and search results', async () => {
       req.query = {
         startDate: toDateString(today),
@@ -131,7 +161,6 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         .calledWith(
           'MDI',
           {
-            appointmentType: null,
             startDate: toDateString(today),
             timeSlot: null,
             categoryCode: null,
@@ -142,6 +171,16 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           user,
         )
         .mockResolvedValue(results)
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1111AA'], user)
+        .mockResolvedValue([
+          {
+            firstName: 'Lee',
+            lastName: 'Jacobson',
+            prisonerNumber: 'A1111AA',
+            cellLocation: '1-1-1',
+          } as Prisoner,
+        ])
 
       await handler.GET(req, res)
 
@@ -154,8 +193,15 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         locationId: '',
         prisonerNumber: '',
         createdBy: '',
-        type: '',
         results,
+        prisonersDetails: {
+          A1111AA: {
+            firstName: 'Lee',
+            lastName: 'Jacobson',
+            prisonerNumber: 'A1111AA',
+            cellLocation: '1-1-1',
+          },
+        },
       })
     })
 
@@ -167,7 +213,6 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         locationId: '26151',
         prisonerNumber: 'A1234BC',
         createdBy: user.username,
-        type: AppointmentType.GROUP,
       }
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -176,7 +221,6 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         .calledWith(
           'MDI',
           {
-            appointmentType: AppointmentType.GROUP,
             startDate: toDateString(today),
             timeSlot: TimeSlot.PM as unknown as 'AM' | 'PM' | 'ED',
             categoryCode: 'MEDO',
@@ -187,6 +231,16 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           user,
         )
         .mockResolvedValue(results)
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1111AA'], user)
+        .mockResolvedValue([
+          {
+            firstName: 'Lee',
+            lastName: 'Jacobson',
+            prisonerNumber: 'A1111AA',
+            cellLocation: '1-1-1',
+          } as Prisoner,
+        ])
 
       await handler.GET(req, res)
 
@@ -199,8 +253,15 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         locationId: '26151',
         prisonerNumber: 'A1234BC',
         createdBy: user.username,
-        type: AppointmentType.GROUP,
         results,
+        prisonersDetails: {
+          A1111AA: {
+            firstName: 'Lee',
+            lastName: 'Jacobson',
+            prisonerNumber: 'A1111AA',
+            cellLocation: '1-1-1',
+          },
+        },
       })
     })
   })
@@ -214,7 +275,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `?startDate=${toDateString(new Date())}&timeSlot=&categoryCode=&locationId=&prisonerNumber=&createdBy=&type=`,
+        `?startDate=${toDateString(new Date())}&timeSlot=&categoryCode=&locationId=&prisonerNumber=&createdBy=`,
       )
     })
 
@@ -226,7 +287,6 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         locationId: '26151',
         prisonerNumber: 'A1234BC',
         createdBy: user.username,
-        type: AppointmentType.GROUP,
       }
 
       await handler.POST(req, res)
@@ -234,9 +294,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       expect(res.redirect).toHaveBeenCalledWith(
         `?startDate=${toDateString(new Date())}&timeSlot=${
           TimeSlot.PM
-        }&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=${user.username}&type=${
-          AppointmentType.GROUP
-        }`,
+        }&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=${user.username}`,
       )
     })
   })
