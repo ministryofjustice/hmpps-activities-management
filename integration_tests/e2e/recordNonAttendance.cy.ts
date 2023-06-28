@@ -55,8 +55,8 @@ context('Record non attendance', () => {
     activitiesPage.selectActivityWithName('English level 1')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.selectPrisoner('Cudmastarie Aborah')
-    attendanceListPage.selectPrisoner('Eeteljan Arianniver')
+    attendanceListPage.selectPrisoner('Aborah, Cudmastarie')
+    attendanceListPage.selectPrisoner('Arianniver, Eeteljan')
     attendanceListPage.markAsNotAttended()
 
     const notAttendedReasonPage = Page.verifyOnPage(NotAttendedReasonPage)

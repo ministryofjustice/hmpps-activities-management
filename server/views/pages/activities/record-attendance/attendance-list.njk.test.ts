@@ -5,6 +5,7 @@ import { format, startOfToday } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import attendanceListCancelledContext from '../../../fixtures/pages/record-attendance/attendance-list-cancelled.json'
 import attendanceListContext from '../../../fixtures/pages/record-attendance/attendance-list.json'
+import attendanceListNotEditableContext from '../../../fixtures/pages/record-attendance/attendance-list-not-editable.json'
 
 const snippet = fs.readFileSync('server/views/pages/activities/record-attendance/attendance-list.njk')
 
@@ -28,6 +29,11 @@ describe('Views - Attendance list', () => {
 
   it('should not be able to mark attendance not WAITING', () => {
     const $ = cheerio.load(compiledTemplate.render(attendanceListContext))
+    expect($('input[name="selectedAttendances"][value="2-G9584VP"]')).toHaveLength(0)
+  })
+
+  it('should not be able to mark attendance `WAITING` but not `editable`', () => {
+    const $ = cheerio.load(compiledTemplate.render(attendanceListNotEditableContext))
     expect($('input[name="selectedAttendances"][value="2-G9584VP"]')).toHaveLength(0)
   })
 
