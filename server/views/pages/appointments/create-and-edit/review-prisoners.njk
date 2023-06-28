@@ -59,7 +59,7 @@
 
                 {{ govukButton({
                     text: "Add someone to the list",
-                    href: ("upload-bulk-appointment" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners") + "?preserveHistory=true",
+                    href: ("upload-bulk-appointment" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners") + ('?preserveHistory=true' if preserveHistory else ''),
                     attributes: { 'data-qa': 'add-prisoner-primary' }
                 }) }}
             {% else %}
@@ -90,7 +90,7 @@
                     {{ govukButton({
                         text: "Add another person",
                         classes: "govuk-button--secondary",
-                        href: "how-to-add-prisoners?preserveHistory=true",
+                        href: "how-to-add-prisoners?" + ('?preserveHistory=true' if preserveHistory else ''),
                         attributes: { 'data-qa': 'add-prisoner-secondary' }
                     }) }}
                 </div>
