@@ -21,6 +21,10 @@ export default class BulkAppointmentDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    if (req.query.preserveHistory) {
+      req.session.returnTo = 'schedule?preserveHistory=true'
+    }
+
     const { startDate } = req.body
 
     req.session.appointmentJourney.startDate = {

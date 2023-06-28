@@ -5,6 +5,8 @@ import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtil
 
 export default class ReviewPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
+    const { preserveHistory } = req.query
+
     let prisoners
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
       prisoners = req.session.editAppointmentJourney.addPrisoners
@@ -14,10 +16,17 @@ export default class ReviewPrisonerRoutes {
       prisoners = req.session.appointmentJourney.prisoners
     }
 
-    res.render('pages/appointments/create-and-edit/review-prisoners', { prisoners })
+    res.render('pages/appointments/create-and-edit/review-prisoners', {
+      preserveHistory,
+      prisoners,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    if (req.query.preserveHistory) {
+      req.session.returnTo = 'schedule?preserveHistory=true'
+    }
+
     res.redirectOrReturn('category')
   }
 
@@ -46,7 +55,7 @@ export default class ReviewPrisonerRoutes {
       )
     }
 
-    res.redirect('../../review-prisoners')
+    res.redirect(`../../review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 
   EDIT_REMOVE = async (req: Request, res: Response): Promise<void> => {

@@ -20,13 +20,24 @@ describe('Route Handlers - Appointments - Upload by CSV', () => {
           type: AppointmentType.GROUP,
         },
       },
+      query: {},
     } as unknown as Request
   })
 
   describe('GET', () => {
     it('should render upload by CSV view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-prisoners-by-csv')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-prisoners-by-csv', {
+        preserveHistory: undefined,
+      })
+    })
+
+    it('should render upload by CSV view with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-prisoners-by-csv', {
+        preserveHistory: 'true',
+      })
     })
   })
 
@@ -34,6 +45,25 @@ describe('Route Handlers - Appointments - Upload by CSV', () => {
     it('should redirect to upload prisoner list', async () => {
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('upload-prisoner-list')
+    })
+
+    it('should redirect to upload prisoner list with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('upload-prisoner-list?preserveHistory=true')
+    })
+
+    it('should redirect to upload bulk appointment', async () => {
+      req.session.appointmentJourney.type = AppointmentType.BULK
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('upload-bulk-appointment')
+    })
+
+    it('should redirect to upload bulk appointment with preserve history', async () => {
+      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.query = { preserveHistory: 'true' }
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('upload-bulk-appointment?preserveHistory=true')
     })
   })
 })

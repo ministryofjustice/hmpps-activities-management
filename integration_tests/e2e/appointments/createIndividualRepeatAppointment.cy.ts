@@ -9,6 +9,7 @@ import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrison
 import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
+import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getRepeatAppointmentDetails from '../../fixtures/activitiesApi/getRepeatAppointmentDetails.json'
 import getRepeatOccurrence1Details from '../../fixtures/activitiesApi/getRepeatOccurrence1Details.json'
@@ -24,16 +25,26 @@ import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/oc
 import OccurrenceMovementSlip from '../../pages/appointments/movementSlip/occurrenceMovementSlip'
 import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
+import getOccurrenceDetails from '../../fixtures/activitiesApi/getOccurrenceDetails.json'
+import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
 context('Individual repeat appointment', () => {
   const tomorrow = addDays(new Date(), 1)
+  const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   const weekTomorrow = addWeeks(tomorrow, 1)
+  const weekTomorrowFormatted = formatDate(weekTomorrow, 'yyyy-MM-dd')
   // To pass validation we must ensure the appointment details start date are set to the future
-  getRepeatAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
-  getRepeatAppointmentDetails.occurrences[0].startDate = formatDate(tomorrow, 'yyyy-MM-dd')
-  getRepeatAppointmentDetails.occurrences[1].startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
-  getRepeatOccurrence1Details.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
-  getRepeatOccurrence2Details.startDate = formatDate(weekTomorrow, 'yyyy-MM-dd')
+  getRepeatAppointmentDetails.startDate = tomorrowFormatted
+  getRepeatAppointmentDetails.occurrences[0].startDate = tomorrowFormatted
+  getRepeatAppointmentDetails.occurrences[1].startDate = weekTomorrowFormatted
+  getRepeatOccurrence1Details.startDate = tomorrowFormatted
+  getRepeatOccurrence2Details.startDate = weekTomorrowFormatted
+  getOccurrenceDetails.startDate = tomorrowFormatted
+  getScheduledEvents.activities
+    .filter(e => e.prisonerNumber === 'A7789DY')
+    .forEach(e => {
+      e.prisonerNumber = 'A8644DY'
+    })
 
   beforeEach(() => {
     cy.task('reset')
@@ -43,6 +54,7 @@ context('Individual repeat appointment', () => {
     cy.stubEndpoint('GET', '/prisoner/A8644DY', getPrisonerA8644DY)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatAppointmentDetails)
     cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getRepeatOccurrence1Details)
@@ -91,6 +103,9 @@ context('Individual repeat appointment', () => {
       repeatPeriodAndCountPage.selectRepeatPeriod('Weekly')
       repeatPeriodAndCountPage.enterRepeatCount('2')
       repeatPeriodAndCountPage.continue()
+
+      const schedulePage = Page.verifyOnPage(SchedulePage)
+      schedulePage.continue()
 
       const commentPage = Page.verifyOnPage(CommentPage)
       commentPage.continue()
@@ -189,6 +204,9 @@ context('Individual repeat appointment', () => {
       repeatPeriodAndCountPage.enterRepeatCount('7')
       repeatPeriodAndCountPage.continue()
 
+      const schedulePage = Page.verifyOnPage(SchedulePage)
+      schedulePage.continue()
+
       const commentPage = Page.verifyOnPage(CommentPage)
       commentPage.continue()
 
@@ -216,6 +234,9 @@ context('Individual repeat appointment', () => {
       const repeatPage = Page.verifyOnPage(RepeatPage)
       repeatPage.selectRepeat('No')
       repeatPage.continue()
+
+      const schedulePage = Page.verifyOnPage(SchedulePage)
+      schedulePage.continue()
 
       const commentPage = Page.verifyOnPage(CommentPage)
       commentPage.continue()

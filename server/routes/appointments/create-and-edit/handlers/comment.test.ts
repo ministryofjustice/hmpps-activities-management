@@ -44,24 +44,13 @@ describe('Route Handlers - Create Appointment - Comment', () => {
   })
 
   describe('GET', () => {
-    it('should render the comment view with back to repeat and continue', async () => {
+    it('should render the comment view with back to schedule and continue', async () => {
       req.session.appointmentJourney.repeat = YesNo.NO
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/comment', {
-        backLinkHref: 'repeat',
-        isCtaAcceptAndSave: false,
-      })
-    })
-
-    it('should render the comment view with back to repeat period and count and continue', async () => {
-      req.session.appointmentJourney.repeat = YesNo.YES
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/comment', {
-        backLinkHref: 'repeat-period-and-count',
+        backLinkHref: 'schedule',
         isCtaAcceptAndSave: false,
       })
     })
