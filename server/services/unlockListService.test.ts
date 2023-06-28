@@ -163,7 +163,7 @@ const testUnlockFilters = (
   stayingOrLeavingFilters: FilterItem[],
 ): UnlockFilters => ({
   location: 'HB1',
-  cellPrefix: 'MDI-1-',
+  cellPrefix: 'MDI-1-.+',
   unlockDate: toDate('2022-01-01'),
   timeSlot: 'am',
   subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
@@ -210,7 +210,7 @@ describe('Unlock list service', () => {
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledTimes(1)
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledWith(
         user.activeCaseLoadId,
-        unlockFilters.cellPrefix,
+        'MDI-1-',
         0,
         1024,
         user,
