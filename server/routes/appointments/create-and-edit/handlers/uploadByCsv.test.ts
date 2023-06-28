@@ -20,13 +20,23 @@ describe('Route Handlers - Appointments - Upload by CSV', () => {
           type: AppointmentType.GROUP,
         },
       },
+      query: {},
     } as unknown as Request
   })
 
   describe('GET', () => {
     it('should render upload by CSV view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-prisoners-by-csv')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-prisoners-by-csv', {
+        preserveHistory: undefined,
+      })
+    })
+    it('should render upload by CSV view with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-prisoners-by-csv', {
+        preserveHistory: 'true',
+      })
     })
   })
 

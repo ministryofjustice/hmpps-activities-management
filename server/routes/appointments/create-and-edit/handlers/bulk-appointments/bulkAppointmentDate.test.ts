@@ -30,6 +30,7 @@ describe('Route Handlers - Create Bulk Appointment - Bulk Appointment Date', () 
       session: {
         appointmentJourney: {},
       },
+      query: {},
       flash: jest.fn(),
     } as unknown as Request
   })

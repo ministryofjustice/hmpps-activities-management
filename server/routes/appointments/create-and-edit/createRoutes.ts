@@ -67,7 +67,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const bulkAppointmentAddCommentHanlder = new BulkAppointmentAddComment()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
-  const howToAddPrisoners = new HowToAddPrisoners(editAppointmentService)
+  const howToAddPrisoners = new HowToAddPrisoners()
   const uploadByCsv = new UploadByCSV()
   const reviewPrisoners = new ReviewPrisoners()
   const uploadBulkAppointment = new UploadBulkAppointment(new PrisonerListCsvParser(), prisonService)

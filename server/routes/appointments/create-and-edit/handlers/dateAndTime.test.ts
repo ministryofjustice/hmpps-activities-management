@@ -41,6 +41,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         appointmentJourney: {},
         editAppointmentJourney: {},
       },
+      query: {},
     } as unknown as Request
 
     jest.resetAllMocks()

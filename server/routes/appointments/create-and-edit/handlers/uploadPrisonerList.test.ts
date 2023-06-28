@@ -44,6 +44,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       session: {
         appointmentJourney: {},
       },
+      query: {},
       flash: jest.fn(),
     } as unknown as Request
   })
@@ -56,7 +57,19 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
     it('should render the upload prisoner list view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-prisoner-list')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-prisoner-list', {
+        preserveHistory: undefined,
+      })
+    })
+
+    it('should render the upload prisoner list view with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/upload-prisoner-list', {
+        preserveHistory: 'true',
+      })
     })
   })
 
