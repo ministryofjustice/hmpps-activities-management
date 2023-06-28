@@ -107,7 +107,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/daily-attendance-summary/cancelled-sessions', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/cancelled-sessions', {
         activityDate: date,
         cancelledSessions: [
           {
@@ -154,7 +154,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/daily-attendance-summary/cancelled-sessions', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/cancelled-sessions', {
         activityDate: date,
         cancelledSessions: [
           {
