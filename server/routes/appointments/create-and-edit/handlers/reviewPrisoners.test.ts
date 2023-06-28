@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import ReviewPrisoners from './reviewPrisoners'
+import { AppointmentType } from '../appointmentJourney'
 
 describe('Route Handlers - Create Appointment - Review Prisoners', () => {
   const handler = new ReviewPrisoners()
@@ -17,6 +18,9 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     req = {
       session: {
         appointmentJourney: {},
+        bulkAppointmentJourney: {
+          appointments: [],
+        },
       },
       query: {},
     } as unknown as Request
@@ -106,6 +110,43 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           number: 'A1234BC',
           name: '',
           cellLocation: '',
+        },
+      ])
+      expect(res.redirect).toBeCalledWith('../../review-prisoners')
+    })
+
+    it('should remove appointment and redirect back to GET', async () => {
+      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.bulkAppointmentJourney.appointments = [
+        {
+          prisoner: {
+            number: 'A1234BC',
+            name: '',
+            cellLocation: '',
+          },
+        },
+        {
+          prisoner: {
+            number: 'B2345CD',
+            name: '',
+            cellLocation: '',
+          },
+        },
+      ]
+
+      req.params = {
+        prisonNumber: 'B2345CD',
+      }
+
+      await handler.REMOVE(req, res)
+
+      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+        {
+          prisoner: {
+            number: 'A1234BC',
+            name: '',
+            cellLocation: '',
+          },
         },
       ])
       expect(res.redirect).toBeCalledWith('../../review-prisoners')

@@ -57,8 +57,6 @@ export default class ScheduleRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.returnTo = null
-
     res.redirectOrReturn(
       req.session.appointmentJourney.type === AppointmentType.BULK ? 'bulk-appointment-comments' : 'comment',
     )
