@@ -45,6 +45,7 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
         appointmentJourney: {},
         bulkAppointmentJourney: {},
       },
+      query: {},
       flash: jest.fn(),
     } as unknown as Request
   })
@@ -58,6 +59,16 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
         'pages/appointments/create-and-edit/bulk-appointments/upload-bulk-appointment',
+        { preserveHistory: undefined },
+      )
+    })
+
+    it('should render the upload bulk appointment view with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/create-and-edit/bulk-appointments/upload-bulk-appointment',
+        { preserveHistory: 'true' },
       )
     })
   })
@@ -196,6 +207,72 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
+    })
+
+    it('should save appointments to session and redirect to review prisoners page with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+      req.file = {
+        path: 'uploads/two-prisoners.csv',
+      } as unknown as Express.Multer.File
+
+      when(prisonerListCsvParser.getAppointments)
+        .calledWith(req.file)
+        .mockReturnValue(
+          Promise.resolve([
+            {
+              prisonerNumber: 'A1234BC',
+              startTime: null,
+              endTime: null,
+            },
+            {
+              prisonerNumber: 'B2345CD',
+              startTime: null,
+              endTime: null,
+            },
+          ]),
+        )
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'A1234BC',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            prisonId: 'TPR',
+            cellLocation: '1-1-1',
+          },
+          {
+            prisonerNumber: 'B2345CD',
+            firstName: 'TEST02',
+            lastName: 'PRISONER02',
+            prisonId: 'TPR',
+            cellLocation: '2-2-2',
+          },
+        ] as Prisoner[])
+
+      await handler.POST(req, res)
+
+      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+        {
+          prisoner: {
+            number: 'A1234BC',
+            name: 'TEST01 PRISONER01',
+            cellLocation: '1-1-1',
+          },
+          startTime: null,
+          endTime: null,
+        },
+        {
+          prisoner: {
+            number: 'B2345CD',
+            name: 'TEST02 PRISONER02',
+            cellLocation: '2-2-2',
+          },
+          startTime: null,
+          endTime: null,
+        },
+      ])
+      expect(res.redirect).toHaveBeenCalledWith('review-prisoners?preserveHistory=true')
     })
 
     it('should replace appointments in session and redirect to review prisoners page', async () => {

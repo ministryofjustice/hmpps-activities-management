@@ -53,7 +53,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
       expect(res.redirect).toBeCalledWith('select-prisoner')
     })
 
-    it('should redirect to select prisoner page', async () => {
+    it('should redirect to select prisoner page with preserve history', async () => {
       req.query = { preserveHistory: 'true' }
       req.body = {
         howToAdd: 'SEARCH',
