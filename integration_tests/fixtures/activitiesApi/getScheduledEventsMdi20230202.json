@@ -187,5 +187,7 @@
       "endTime": "20:00",
       "priority": 5
     }
-  ]
+  ],
+  "externalTransfers": [],
+  "adjudications": []
 }

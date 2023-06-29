@@ -32,7 +32,7 @@ export default class SelectPrisonerRoutes {
       const result = await this.prisonService.searchPrisonInmates(query, user)
       let prisoners: Prisoner[] = []
       if (result && !result.empty) prisoners = result.content
-      return res.render('pages/appointments/create-and-edit/select-prisoner', { prisoners, query })
+      return res.render('pages/appointments/create-and-edit/select-prisoner', { prisoners, query, preserveHistory })
     }
 
     return res.render('pages/appointments/create-and-edit/select-prisoner', { preserveHistory })
@@ -51,8 +51,12 @@ export default class SelectPrisonerRoutes {
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT ||
         req.session.appointmentJourney.type === AppointmentType.GROUP
       ) {
-        return res.redirect('review-prisoners')
+        return res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
       }
+      if (req.query.preserveHistory) {
+        req.session.returnTo = 'schedule?preserveHistory=true'
+      }
+
       return res.redirectOrReturn('category')
     }
     return res.validationFailed('selectedPrisoner', 'You must select one option')

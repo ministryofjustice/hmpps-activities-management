@@ -10,6 +10,7 @@ import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrison
 import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A8644DY.json'
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
+import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
 import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
 import getOccurrenceDetails from '../../fixtures/activitiesApi/getOccurrenceDetails.json'
@@ -21,13 +22,20 @@ import OccurrenceMovementSlip from '../../pages/appointments/movementSlip/occurr
 import { formatDate } from '../../../server/utils/utils'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
+import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
 context('Create individual appointment', () => {
   const tomorrow = addDays(new Date(), 1)
-  // To pass validation we must ensure the appointment details start date are set to tomorrow
-  getAppointmentDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
+  // To pass validation we must ensure the appointment details start date is set to tomorrow
+  getAppointmentDetails.startDate = tomorrowFormatted
   getAppointmentDetails.occurrences[0].startDate = getAppointmentDetails.startDate
-  getOccurrenceDetails.startDate = formatDate(tomorrow, 'yyyy-MM-dd')
+  getOccurrenceDetails.startDate = tomorrowFormatted
+  getScheduledEvents.activities
+    .filter(e => e.prisonerNumber === 'A7789DY')
+    .forEach(e => {
+      e.prisonerNumber = 'A8644DY'
+    })
 
   beforeEach(() => {
     cy.task('reset')
@@ -37,6 +45,7 @@ context('Create individual appointment', () => {
     cy.stubEndpoint('GET', '/prisoner/A8644DY', getPrisonerA8644DY)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/appointments', getAppointment)
     cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
     cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getOccurrenceDetails)
@@ -90,6 +99,9 @@ context('Create individual appointment', () => {
     const repeatPage = Page.verifyOnPage(RepeatPage)
     repeatPage.selectRepeat('No')
     repeatPage.continue()
+
+    const schedulePage = Page.verifyOnPage(SchedulePage)
+    schedulePage.continue()
 
     const commentPage = Page.verifyOnPage(CommentPage)
     commentPage.enterComment('Appointment level comment')

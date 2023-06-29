@@ -35,7 +35,7 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
   })
 
   describe('POST', () => {
-    it('should save repeat = NO in session and redirect to comment page', async () => {
+    it('should save repeat = NO in session and redirect to schedule page', async () => {
       req.body = {
         repeat: YesNo.NO,
       }
@@ -43,7 +43,7 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.NO)
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('comment')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule')
     })
 
     it('should save repeat = YES in session and redirect to repeat period and count page', async () => {
@@ -97,7 +97,7 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       expect(res.redirect).toHaveBeenCalledWith('repeat-period-and-count')
     })
 
-    it('should redirect to comment page when repeat = YES has not changed and repeat period and count are set', async () => {
+    it('should redirect to schedule page when repeat = YES has not changed and repeat period and count are set', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
       req.session.appointmentJourney.repeatPeriod = AppointmentRepeatPeriod.DAILY
       req.session.appointmentJourney.repeatCount = 7
@@ -108,7 +108,7 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('comment')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule')
     })
   })
 
