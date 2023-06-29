@@ -80,27 +80,27 @@ context('Allocate to activity', () => {
 
     const beforeYouAllocatePage = Page.verifyOnPage(BeforeYouAllocate)
     beforeYouAllocatePage.selectConfirmationRadio('yes')
-    beforeYouAllocatePage.getButton('Confirm').click()
+    beforeYouAllocatePage.getButton('Continue').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
     const startDatePicker = startDatePage.getDatePicker()
     const startDate = addMonths(new Date(), 1)
     startDatePicker.enterDate(startDate)
-    startDatePage.saveAndContinue()
+    startDatePage.continue()
 
     const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
     endDateOptionPage.addEndDate('Yes')
-    endDateOptionPage.saveAndContinue()
+    endDateOptionPage.continue()
 
     const endDatePage = Page.verifyOnPage(EndDatePage)
     const endDatePicker = endDatePage.getDatePicker()
     const endDate = addMonths(new Date(), 8)
     endDatePicker.enterDate(endDate)
-    endDatePage.saveAndContinue()
+    endDatePage.continue()
 
     const payBandPage = Page.verifyOnPage(PayBandPage)
     payBandPage.selectPayBand('Medium (£1.75)')
-    payBandPage.saveAndContinue()
+    payBandPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.cancel()
