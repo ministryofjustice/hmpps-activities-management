@@ -33,6 +33,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     it('should redirect back to occurrence details page when the appointment journey data is not in session', async () => {
       req.session.appointmentJourney = null
       req.session.editAppointmentJourney = {
+        appointmentName: 'appointment name',
         repeatCount: 1,
         sequenceNumbers: [1],
         sequenceNumber: 1,
@@ -53,6 +54,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     it('should continue if both journeys data exists in session', async () => {
       req.session.appointmentJourney = { mode: AppointmentJourneyMode.CREATE, type: AppointmentType.INDIVIDUAL }
       req.session.editAppointmentJourney = {
+        appointmentName: 'appointment name',
         repeatCount: 1,
         sequenceNumbers: [1],
         sequenceNumber: 1,

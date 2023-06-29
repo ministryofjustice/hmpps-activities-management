@@ -14,7 +14,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+                {{ appointmentTypeCaption(session) }}
                 <h1 class="govuk-heading-l"><label for="comment">Add extra information for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }}</label></h1>
 
                 <p class='govuk-body'>Give the attendee extra information about their appointment. This will be printed on their movement slip.</p>

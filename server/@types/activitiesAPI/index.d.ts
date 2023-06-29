@@ -4275,6 +4275,11 @@ export interface components {
        * @example SKI
        */
       prisonCode: string
+      /**
+       * @description
+       *     The appointment name
+       */
+      appointmentName: string
       category: components['schemas']['AppointmentCategorySummary']
       /**
        * @description

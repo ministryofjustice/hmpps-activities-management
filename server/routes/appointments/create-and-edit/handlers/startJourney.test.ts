@@ -19,6 +19,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
   let req: Request
   let res: Response
   const appointment = {
+    appointmentName: 'Appointment name (Chaplaincy)',
     occurrences: [
       {
         id: 12,
@@ -255,6 +256,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       } as AppointmentJourney
 
       const editAppointmentJourneySession = {
+        appointmentName: 'Appointment name (Chaplaincy)',
         repeatCount: 3,
         sequenceNumbers: [2, 3],
         sequenceNumber: 2,
@@ -331,6 +333,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       }
 
       const editAppointmentJourneySession = {
+        appointmentName: 'Appointment name (Chaplaincy)',
         repeatCount: 3,
         sequenceNumbers: [2, 3],
         sequenceNumber: 2,
@@ -352,6 +355,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     it('should populate the session with prisoner details and redirect to confirm', async () => {
       req.appointment = {
+        ...appointment,
         occurrences: [
           {
             id: 12,
@@ -364,6 +368,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       }
 
       const editAppointmentJourneySession = {
+        appointmentName: 'Appointment name (Chaplaincy)',
         repeatCount: 3,
         sequenceNumbers: [2],
         sequenceNumber: 2,
@@ -409,6 +414,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     it('should populate the session and redirect to how to add prisoners', async () => {
       const editAppointmentJourneySession = {
+        appointmentName: 'Appointment name (Chaplaincy)',
         repeatCount: 3,
         sequenceNumbers: [2, 3],
         sequenceNumber: 2,
@@ -445,6 +451,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     it('should populate the session and redirect to cancellation reasons', async () => {
       const editAppointmentJourneySession = {
+        appointmentName: 'Appointment name (Chaplaincy)',
         repeatCount: 3,
         sequenceNumbers: [2, 3],
         sequenceNumber: 2,
