@@ -57,7 +57,7 @@ export default class StartDateRoutes {
     const successMessage = `We've updated the start date for this allocation`
 
     res.redirectOrReturnWithSuccess(
-      `/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
+      `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
       'Allocation updated',
       successMessage,
     )
