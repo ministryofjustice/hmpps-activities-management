@@ -99,7 +99,7 @@
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.name,
             value: attendee.attendance.id + '-' + attendee.prisonerNumber,
-            selectable: attendee.attendance.status === "WAITING",
+            selectable: attendee.attendance.status === "WAITING" and attendee.attendance.editable,
 
             items: [
                 {
@@ -107,14 +107,10 @@
                     classes: 'govuk-table_cell print-only'
                 },
                 {
-                    html: '
-                            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                                <a href="' + dpsUrl + '/prisoner/' + attendee.prisonerNumber + '"
-                                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + attendee.name | toTitleCase + '
-                                </a>
-                            </h2>
-                            <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + attendee.prisonerNumber + '</div>
-                          ',
+                    html: '<a href="' + dpsUrl + '/prisoner/' + attendee.prisonerNumber + '"
+                                class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + attendee.name | toTitleCase | prisonerName + '
+                            </a>
+                            <div class="govuk-hint govuk-!-margin-bottom-0 govuk-!-font-size-16">' + attendee.prisonerNumber + '</div>',
                     attributes: {
                         "data-qa": "prisoner-details"
                     }

@@ -94,7 +94,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   post('/:prisonNumber/remove/apply-to', applyToRoutes.POST, ApplyTo)
 
   // Add prisoners routes
-  const howToAddPrisoners = new HowToAddPrisoners(editAppointmentService)
+  const howToAddPrisoners = new HowToAddPrisoners()
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadByCsv = new UploadByCSV()
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)

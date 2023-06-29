@@ -32,6 +32,7 @@ import UploadBulkAppointment, { AppointmentsList } from './handlers/bulk-appoint
 import BulkAppointmentDateRoutes, { BulkAppointmentDate } from './handlers/bulk-appointments/bulkAppointmentDate'
 import ReviewBulkAppointment, { AppointmentTimes } from './handlers/bulk-appointments/reviewBulkAppointment'
 import fetchBulkAppointment from '../../../middleware/appointments/fetchBulkAppointment'
+import ScheduleRoutes from './handlers/schedule'
 
 export default function Create({ prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -66,12 +67,13 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const bulkAppointmentAddCommentHanlder = new BulkAppointmentAddComment()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
-  const howToAddPrisoners = new HowToAddPrisoners(editAppointmentService)
+  const howToAddPrisoners = new HowToAddPrisoners()
   const uploadByCsv = new UploadByCSV()
   const reviewPrisoners = new ReviewPrisoners()
   const uploadBulkAppointment = new UploadBulkAppointment(new PrisonerListCsvParser(), prisonService)
   const bulkAppointmentDate = new BulkAppointmentDateRoutes()
   const reviewBulkAppointment = new ReviewBulkAppointment()
+  const scheduleRoutes = new ScheduleRoutes(activitiesService)
 
   get('/start-individual', startHandler.INDIVIDUAL)
   get('/start-group', startHandler.GROUP)
@@ -107,6 +109,9 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/repeat-period-and-count', repeatPeriodAndCountHandler.GET, true)
   post('/repeat-period-and-count', repeatPeriodAndCountHandler.POST, RepeatPeriodAndCount)
   get('/comment', commentHandler.GET, true)
+  get('/schedule', scheduleRoutes.GET, true)
+  post('/schedule', scheduleRoutes.POST)
+  get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
   get('/bulk-appointment-comments', bulkAppointmentCommentsHandler.GET, true)
   post('/bulk-appointment-comments', bulkAppointmentCommentsHandler.POST)
   get('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.GET, true)

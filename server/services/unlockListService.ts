@@ -27,10 +27,10 @@ export default class UnlockListService {
       }),
     )
 
-    // Get all prisoners located in the main location by cell prefix e.g. MDI-1-
+    // Get all prisoners located in the main location by cell prefix e.g. MDI-1-.+
     const results = await this.prisonerSearchApiClient.searchPrisonersByLocationPrefix(
       prison,
-      unlockFilters.cellPrefix,
+      unlockFilters.cellPrefix.replaceAll('.', '').replaceAll('+', ''),
       0,
       1024,
       user,

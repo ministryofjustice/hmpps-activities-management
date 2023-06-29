@@ -31,7 +31,7 @@
         "issuePayment": null,
         "incentiveLevelWarningIssued": null,
         "otherAbsenceReason": null,
-        "editable": true
+        "editable": false
       },
       {
         "id": 1,
@@ -47,7 +47,7 @@
         "issuePayment": null,
         "incentiveLevelWarningIssued": null,
         "otherAbsenceReason": null,
-        "editable": true
+        "editable": false
       },
       {
         "id": 2,
@@ -76,7 +76,7 @@
         "issuePayment": null,
         "incentiveLevelWarningIssued": null,
         "otherAbsenceReason": null,
-        "editable": true
+        "editable": false
       }
     ],
     "activitySchedule": {
@@ -149,7 +149,7 @@
         "issuePayment": null,
         "incentiveLevelWarningIssued": null,
         "otherAbsenceReason": null,
-        "editable": true
+        "editable": false
       }
     },
     {
@@ -171,7 +171,7 @@
         "issuePayment": null,
         "incentiveLevelWarningIssued": null,
         "otherAbsenceReason": null,
-        "editable": true
+        "editable": false
       }
     },
     {
@@ -195,7 +195,7 @@
           "displayInAbsence": false,
           "displaySequence": null,
           "notes": "Maps to ATT in NOMIS",
-          "editable": true
+          "editable": false
         },
         "comment": null,
         "recordedTime": null,

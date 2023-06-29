@@ -13,7 +13,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session.appointmentJourney.type) }}
-            <form action='upload-prisoner-list?_csrf={{ csrfToken }}' method="POST" enctype="multipart/form-data">
+            <form action="upload-prisoner-list?_csrf={{ csrfToken }}{{ '&preserveHistory=true' if preserveHistory else '' }}" method="POST" enctype="multipart/form-data">
                 {{ govukFileUpload({
                     id: "file",
                     name: "file",

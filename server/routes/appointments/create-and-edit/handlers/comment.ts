@@ -3,7 +3,6 @@ import { Expose } from 'class-transformer'
 import { MaxLength } from 'class-validator'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
-import { YesNo } from '../../../../@types/activities'
 import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class Comment {
@@ -16,11 +15,8 @@ export default class CommentRoutes {
   constructor(private readonly editAppointmentService: EditAppointmentService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const defaultBackLinkHref =
-      req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
-
     res.render('pages/appointments/create-and-edit/comment', {
-      backLinkHref: getAppointmentBackLinkHref(req, defaultBackLinkHref),
+      backLinkHref: getAppointmentBackLinkHref(req, 'schedule'),
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.session.editAppointmentJourney),
