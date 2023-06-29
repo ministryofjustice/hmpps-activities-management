@@ -39,7 +39,7 @@ export default class DeallocationReasonRoutes {
     const successMessage = `We've updated the end date for this allocation`
 
     res.redirectOrReturnWithSuccess(
-      `/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
+      `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
       'Allocation updated',
       successMessage,
     )

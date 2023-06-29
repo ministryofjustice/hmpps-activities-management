@@ -67,7 +67,7 @@ export default class PayBandRoutes {
     const successMessage = `We've updated the pay band for this allocation`
 
     res.redirectOrReturnWithSuccess(
-      `/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
+      `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
       'Allocation updated',
       successMessage,
     )

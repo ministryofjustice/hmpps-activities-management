@@ -104,7 +104,7 @@ describe('Route Handlers - Edit allocation - End Date option', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/allocation-dashboard/1/check-allocation/ABC123',
+        '/activities/allocation-dashboard/1/check-allocation/ABC123',
         'Allocation updated',
         "We've removed the end date for this allocation",
       )

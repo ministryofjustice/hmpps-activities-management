@@ -64,7 +64,7 @@ export default class EndDateRoutes {
       await this.activitiesService.updateAllocation(prisonCode, +allocationId, allocation)
       const successMessage = `We've updated the end date for this allocation`
       res.redirectOrReturnWithSuccess(
-        `/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
+        `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
         'Allocation updated',
         successMessage,
       )
