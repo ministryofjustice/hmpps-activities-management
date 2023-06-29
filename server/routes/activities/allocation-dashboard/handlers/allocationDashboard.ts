@@ -92,10 +92,15 @@ export default class AllocationDashboardRoutes {
 
     const schedule = await this.activitiesService.getActivitySchedule(+req.params.activityId, user)
 
+    const allocations = schedule.allocations
+      .filter(alloc => selectedAllocations.includes(alloc.prisonerNumber))
+      .sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
+
     req.session.deallocateJourney = {
       allocationsToRemove: selectedAllocations,
       scheduleId: schedule.id,
       activityName: schedule.activity.description,
+      earliestAllocationStartDate: allocations[0].startDate,
     }
 
     req.session.deallocateJourney.prisoners = await this.prisonService
