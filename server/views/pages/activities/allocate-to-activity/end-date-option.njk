@@ -10,7 +10,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <span class="govuk-caption-m">Allocation for {{prisonerName }}</span>
+            <span class="govuk-caption-m">Allocate to {{ session.allocateJourney.activity.name }}</span>
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -45,7 +45,7 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Save and continue"
+                        text: "Continue"
                     }) }}
                     <a class="govuk-link js-backlink" href="/activities/allocate/cancel?preserveHistory=true">Cancel</a>
                 </div>
