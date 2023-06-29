@@ -1,17 +1,11 @@
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { Request, Response } from 'express'
-import ActivitiesService from '../../../../services/activitiesService'
-import EditAppointmentService from '../../../../services/editAppointmentService'
 import HowToAddPrisoners, { HowToAddOptions, HowToAddPrisonersForm } from './howToAddPrisoners'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 
-jest.mock('../../../../services/activitiesService')
-
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
-
 describe('Route Handlers - Create Appointment - How to add prisoners', () => {
-  const handler = new HowToAddPrisoners(new EditAppointmentService(activitiesService))
+  const handler = new HowToAddPrisoners()
   let req: Request
   let res: Response
 
@@ -26,6 +20,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
       session: {
         appointmentJourney: {},
       },
+      query: {},
     } as unknown as Request
   })
 
@@ -34,6 +29,16 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/how-to-add-prisoners', {
         backLinkHref: '/appointments',
+        HowToAddOptions,
+      })
+    })
+
+    it('should render the how to add prisoners view with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/how-to-add-prisoners', {
+        backLinkHref: '/appointments',
+        preserveHistory: 'true',
         HowToAddOptions,
       })
     })
@@ -48,12 +53,30 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
       expect(res.redirect).toBeCalledWith('select-prisoner')
     })
 
+    it('should redirect to select prisoner page with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+      req.body = {
+        howToAdd: 'SEARCH',
+      }
+      await handler.POST(req, res)
+      expect(res.redirect).toBeCalledWith('select-prisoner?preserveHistory=true')
+    })
+
     it('should redirect to upload by CSV page', async () => {
       req.body = {
         howToAdd: 'CSV',
       }
       await handler.POST(req, res)
       expect(res.redirect).toBeCalledWith('upload-by-csv')
+    })
+
+    it('should redirect to upload by CSV page with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+      req.body = {
+        howToAdd: 'CSV',
+      }
+      await handler.POST(req, res)
+      expect(res.redirect).toBeCalledWith('upload-by-csv?preserveHistory=true')
     })
   })
 

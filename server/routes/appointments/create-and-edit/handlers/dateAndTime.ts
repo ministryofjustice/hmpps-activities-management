@@ -51,6 +51,10 @@ export default class DateAndTimeRoutes {
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
+    if (req.query.preserveHistory) {
+      req.session.returnTo = 'schedule?preserveHistory=true'
+    }
+
     this.setTimeAndDate(req, 'appointmentJourney')
 
     res.redirectOrReturn(`repeat`)

@@ -23,7 +23,9 @@ export default class UploadBulkAppointment {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/appointments/create-and-edit/bulk-appointments/upload-bulk-appointment')
+    const { preserveHistory } = req.query
+
+    res.render('pages/appointments/create-and-edit/bulk-appointments/upload-bulk-appointment', { preserveHistory })
   }
 
   POST = async (req: Request, res: Response) => {
@@ -68,7 +70,7 @@ export default class UploadBulkAppointment {
 
     req.session.bulkAppointmentJourney.appointments = newInstances
 
-    return res.redirect('review-prisoners')
+    return res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 
   private async getPrisonerDetails(prisonerNumbers: string[], user: ServiceUser) {
