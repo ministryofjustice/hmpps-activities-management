@@ -188,7 +188,7 @@
     {% for scheduledEvent in scheduledEvents %}
         {% set scheduledEventRows = (scheduledEventRows.push([
             {
-                text: (scheduledEvent.startTime + " to " + scheduledEvent.endTime)
+                text: scheduledEvent.startTime + (" to " + scheduledEvent.endTime if scheduledEvent.endTime)
             }, {
                 text: scheduledEvent.summary | trim
             }, {
