@@ -91,23 +91,9 @@
                             text: "Appointment name"
                         },
                         value: {
-                            text: occurrence.category.description
+                            text: occurrence.appointmentName
                         }
                     }, {
-                        key: {
-                            text: "Show appointment name on unlock list"
-                        },
-                        value: {
-                            text: ("Yes" if occurrence.appointmentDescription == null or occurrence.appointmentDescription == '') + ("No" if occurrence.appointmentDescription.length > 0)
-                        }
-                    }, {
-                        key: {
-                            text: "Alternative appointment name"
-                        },
-                        value: {
-                            text: occurrence.appointmentDescription
-                        }
-                    } if occurrence.appointmentDescription != null and occurrence.appointmentDescription != '', {
                         key: {
                             text: "Location"
                         },

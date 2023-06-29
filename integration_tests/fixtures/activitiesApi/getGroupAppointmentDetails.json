@@ -5,6 +5,7 @@
     "description": "Chaplaincy"
   },
   "prisonCode": "MDI",
+  "appointmentName": "Chaplain Meeting (Chaplaincy)",
   "internalLocation": {
     "id": 26152,
     "prisonCode": "MDI",

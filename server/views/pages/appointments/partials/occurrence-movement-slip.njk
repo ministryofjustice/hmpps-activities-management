@@ -14,8 +14,7 @@
 
             <dl class='movement-slip__summary'>
                 {{ labelAndValue('Appointment', '<ul class="govuk-list">' +
-                    '<li>' + appointmentOccurrence.category.description + '</li>' +
-                    ('<li>' + appointmentOccurrence.appointmentDescription + '</li>' if appointmentOccurrence.appointmentDescription) +
+                    '<li>' + appointmentOccurrence.appointmentName + '</li>' +
                 '</ul>') }}
                 {{ labelAndValue('Time', '<ul class="govuk-list">' +
                     '<li>' + appointmentOccurrence.startTime + ' to ' + appointmentOccurrence.endTime + '</li>' +

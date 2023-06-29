@@ -1889,6 +1889,11 @@ export interface components {
       prisonCode: string
       /**
        * @description
+       *     The appointment name
+       */
+      appointmentName: string
+      /**
+       * @description
        *     The prisoner or prisoners attending this appointment occurrence. Appointments of type INDIVIDUAL will have one
        *     prisoner allocated to each appointment occurrence. Appointments of type GROUP can have more than one prisoner
        *     allocated to each appointment occurrence
@@ -4164,6 +4169,11 @@ export interface components {
       prisonCode: string
       /**
        * @description
+       *     The appointment name
+       */
+      appointmentName: string
+      /**
+       * @description
        *     Summary of the prisoner or prisoners allocated to this appointment occurrence. Prisoners are allocated at the
        *     occurrence level to allow for per occurrence allocation changes.
        */
@@ -4649,6 +4659,11 @@ export interface components {
        * @example SKI
        */
       prisonCode: string
+      /**
+       * @description
+       *     The appointment name
+       */
+      appointmentName: string
       /**
        * @description
        *     Summary of the prisoner or prisoners allocated to the first future occurrence (or most recent past occurrence if all
