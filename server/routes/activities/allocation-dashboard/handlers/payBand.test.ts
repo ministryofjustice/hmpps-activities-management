@@ -154,7 +154,7 @@ describe('Route Handlers - Edit Allocation - Pay band', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/allocation-dashboard/1/check-allocation/ABC123',
+        '/activities/allocation-dashboard/1/check-allocation/ABC123',
         'Allocation updated',
         "We've updated the pay band for this allocation",
       )

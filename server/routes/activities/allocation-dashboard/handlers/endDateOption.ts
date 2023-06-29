@@ -40,7 +40,7 @@ export default class EndDateOptionRoutes {
     const successMessage = `We've removed the end date for this allocation`
 
     return res.redirectOrReturnWithSuccess(
-      `/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
+      `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
       'Allocation updated',
       successMessage,
     )

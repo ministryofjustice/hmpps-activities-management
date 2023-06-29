@@ -109,7 +109,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/allocation-dashboard/1/check-allocation/ABC123',
+        '/activities/allocation-dashboard/1/check-allocation/ABC123',
         'Allocation updated',
         "We've updated the start date for this allocation",
       )

@@ -62,7 +62,7 @@ describe('Route Handlers - Deallocation reason', () => {
 
       await handler.POST(req, res)
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        `/allocation-dashboard/1/check-allocation/ABC123`,
+        `/activities/allocation-dashboard/1/check-allocation/ABC123`,
         'Allocation updated',
         "We've updated the end date for this allocation",
       )
