@@ -137,7 +137,7 @@
                         <h2 class="govuk-heading-m">Events for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
                         {{ prisonerScheduledEvents(prisoner, prisonerSchedule.scheduledEvents) }}
                     {% else %}
-                        <div class="govuk-summary-card">
+                        <div class="govuk-summary-card appointment-schedule">
                             <div class="govuk-summary-card__title-wrapper">
                                 <h2 class="govuk-summary-card__title">
                                     <ul class='govuk-list'>
