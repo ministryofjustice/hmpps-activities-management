@@ -13,8 +13,12 @@ export default class ScheduleRoutes {
     const { appointmentJourney, bulkAppointmentJourney } = req.session
     const { preserveHistory } = req.query
 
-    const defaultBackLinkHref =
-      req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
+    let defaultBackLinkHref: string
+    if (req.session.appointmentJourney.type === AppointmentType.BULK) {
+      defaultBackLinkHref = 'review-bulk-appointment'
+    } else {
+      defaultBackLinkHref = req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
+    }
 
     const prisonNumbers =
       appointmentJourney.type === AppointmentType.BULK

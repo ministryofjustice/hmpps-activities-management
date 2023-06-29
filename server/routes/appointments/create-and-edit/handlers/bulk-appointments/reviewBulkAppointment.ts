@@ -90,6 +90,6 @@ export default class ReviewBulkAppointmentRoutes {
 
     req.session.bulkAppointmentJourney.appointments = appointments
 
-    return res.redirectOrReturn(`schedule`)
+    return res.redirect(`schedule${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 }
