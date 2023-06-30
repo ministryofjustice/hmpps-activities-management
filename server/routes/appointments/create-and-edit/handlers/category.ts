@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
+import { AppointmentType } from '../appointmentJourney'
+import config from '../../../../config'
 
 export class Category {
   @Expose()
@@ -14,10 +16,22 @@ export default class CategoryRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { appointmentJourney } = req.session
+
+    let backLinkHref = '/appointments/create/review-prisoners'
+    if (appointmentJourney.type === AppointmentType.INDIVIDUAL) {
+      if (appointmentJourney.fromPrisonNumberProfile) {
+        backLinkHref = `${config.dpsUrl}/prisoner/${appointmentJourney.fromPrisonNumberProfile}`
+      } else if (appointmentJourney.prisoners?.length > 0) {
+        backLinkHref = `/appointments/create/select-prisoner?query=${appointmentJourney.prisoners[0].number}`
+      } else {
+        backLinkHref = '/appointments/create/select-prisoner'
+      }
+    }
 
     const categories = await this.activitiesService.getAppointmentCategories(user)
 
-    res.render(`pages/appointments/create-and-edit/category`, { categories })
+    res.render(`pages/appointments/create-and-edit/category`, { backLinkHref, categories })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
