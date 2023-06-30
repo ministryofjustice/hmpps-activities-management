@@ -19,6 +19,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
   let req: Request
   let res: Response
   const appointment = {
+    appointmentName: 'Appointment name (Chaplaincy)',
     occurrences: [
       {
         id: 12,
@@ -212,6 +213,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       const appointmentJourneySession = {
         mode: AppointmentJourneyMode.EDIT,
         type: AppointmentType.GROUP,
+        appointmentName: 'Appointment name (Chaplaincy)',
         prisoners: [
           {
             number: 'A1234BC',
@@ -352,6 +354,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     it('should populate the session with prisoner details and redirect to confirm', async () => {
       req.appointment = {
+        ...appointment,
         occurrences: [
           {
             id: 12,

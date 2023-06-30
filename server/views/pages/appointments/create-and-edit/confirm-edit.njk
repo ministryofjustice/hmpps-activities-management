@@ -13,7 +13,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            {{ appointmentTypeCaption(session) }}
             <h1 class="govuk-heading-l">Are you sure you want to {{ getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) }} this appointment - {{ startDate | formatDate('EEEE, d MMMM yyyy') }}?</h1>
 
             {{ addPrisonerList(session.editAppointmentJourney.addPrisoners) }}

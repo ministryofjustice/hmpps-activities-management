@@ -12,7 +12,7 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+      {{ appointmentTypeCaption(session) }}
       {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
         <h1 class="govuk-heading-l">
             <label class="govuk-label govuk-label--l" for="comment">Change the extra information for everyone attending the appointment (optional)</label>
