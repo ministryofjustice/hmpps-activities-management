@@ -144,7 +144,7 @@
                         rows: currentAllocations
                     }) }}
 
-                    <a href="https://digital-dev.prison.service.justice.gov.uk/prisoner/A3840DZ/work-and-skills" class="govuk-link" target="_blank">View allocations form the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+                    <a href="{{ dpsUrl }}/prisoner/{{ session.allocateJourney.inmate.prisonerNumber }}/work-and-skills" class="govuk-link" target="_blank">View allocations form the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
                 {% else %}
                     <span class="govuk-!-font-weight-bold">No other allocations</span>
                 {% endif %}
@@ -174,7 +174,7 @@
                 }) }}
 
                 {{ govukButton({
-                    text: "Confirm"
+                    text: "Continue"
                 }) }}
             </form>
         </div>

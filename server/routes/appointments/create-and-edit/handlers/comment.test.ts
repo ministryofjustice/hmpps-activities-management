@@ -1,5 +1,8 @@
 import { Request, Response } from 'express'
-import CommentRoutes from './comment'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
+import CommentRoutes, { Comment } from './comment'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentJourneyMode } from '../appointmentJourney'
@@ -101,6 +104,28 @@ describe('Route Handlers - Create Appointment - Comment', () => {
 
       expect(req.session.editAppointmentJourney.comment).toEqual('Updated appointment level comment')
       expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'comment')
+    })
+  })
+
+  describe('Validation', () => {
+    it.each([
+      { comment: Array(4001).fill('a').join(''), isValid: false },
+      { comment: Array(4000).fill('a').join(''), isValid: true },
+      { comment: Array(3999).fill('a').join(''), isValid: true },
+    ])('should validate comment character length', async ({ comment, isValid }) => {
+      const body = {
+        comment,
+      }
+
+      const requestObject = plainToInstance(Comment, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      if (isValid) {
+        expect(errors).toHaveLength(0)
+      } else {
+        expect(errors).toEqual([
+          { property: 'comment', error: 'You must enter a comment which has no more than 4,000 characters' },
+        ])
+      }
     })
   })
 })
