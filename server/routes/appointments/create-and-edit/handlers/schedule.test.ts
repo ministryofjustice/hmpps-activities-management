@@ -103,6 +103,17 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       })
     })
 
+    it('should render the schedule view with back to review bulk appointment page', async () => {
+      req.session.appointmentJourney.type = AppointmentType.BULK
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
+        backLinkHref: 'review-bulk-appointment',
+        prisonerSchedules: [],
+      })
+    })
+
     it('use appointment journey prisoners for type = INDIVIDUAL', async () => {
       req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
       req.session.appointmentJourney.prisoners = [
@@ -212,7 +223,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       )
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'repeat',
+        backLinkHref: 'review-bulk-appointment',
         prisonerSchedules: [
           {
             prisoner: {

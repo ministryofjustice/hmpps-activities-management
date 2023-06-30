@@ -137,7 +137,7 @@
                         <h2 class="govuk-heading-m">Events for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
                         {{ prisonerScheduledEvents(prisoner, prisonerSchedule.scheduledEvents) }}
                     {% else %}
-                        <div class="govuk-summary-card">
+                        <div class="govuk-summary-card appointment-schedule">
                             <div class="govuk-summary-card__title-wrapper">
                                 <h2 class="govuk-summary-card__title">
                                     <ul class='govuk-list'>
@@ -184,42 +184,46 @@
 {% endblock %}
 
 {% macro prisonerScheduledEvents(prisoner, scheduledEvents) %}
-    {% set scheduledEventRows = [] %}
-    {% for scheduledEvent in scheduledEvents %}
-        {% set scheduledEventRows = (scheduledEventRows.push([
-            {
-                text: (scheduledEvent.startTime + " to " + scheduledEvent.endTime)
-            }, {
-                text: scheduledEvent.summary | trim
-            }, {
-                text: scheduledEvent.eventType | trim | title
-            }, {
-                text: ("In cell" if scheduledEvent.inCell else scheduledEvent.internalLocationDescription | trim)
-            }
-        ]), scheduledEventRows) %}
-    {% endfor %}
+    {% if scheduledEvents.length > 0 %}
+        {% set scheduledEventRows = [] %}
+        {% for scheduledEvent in scheduledEvents %}
+            {% set scheduledEventRows = (scheduledEventRows.push([
+                {
+                    text: scheduledEvent.startTime + (" to " + scheduledEvent.endTime if scheduledEvent.endTime)
+                }, {
+                    text: scheduledEvent.summary | trim
+                }, {
+                    text: scheduledEvent.eventType | trim | title
+                }, {
+                    text: ("In cell" if scheduledEvent.inCell else scheduledEvent.internalLocationDescription | trim)
+                }
+            ]), scheduledEventRows) %}
+        {% endfor %}
 
-    {{ govukTable({
-        head: [
-            {
-                text: "Time",
-                classes: "govuk-!-border-bottom-2",
-                attributes: { "aria-sort": "ascending" }
-            }, {
-                text: "Event name",
-                attributes: { "aria-sort": "none" }
-            }, {
-                text: "Type",
-                attributes: { "aria-sort": "none" }
-            }, {
-                text: "Location",
-                attributes: { "aria-sort": "none" }
+        {{ govukTable({
+            head: [
+                {
+                    text: "Time",
+                    classes: "govuk-!-border-bottom-2",
+                    attributes: { "aria-sort": "ascending" }
+                }, {
+                    text: "Event name",
+                    attributes: { "aria-sort": "none" }
+                }, {
+                    text: "Type",
+                    attributes: { "aria-sort": "none" }
+                }, {
+                    text: "Location",
+                    attributes: { "aria-sort": "none" }
+                }
+            ],
+            rows: scheduledEventRows,
+            attributes: {
+                'data-module': 'moj-sortable-table',
+                'data-qa': 'prison-number-' + prisoner.number + '-schedule'
             }
-        ],
-        rows: scheduledEventRows,
-        attributes: {
-            'data-module': 'moj-sortable-table',
-            'data-qa': 'prison-number-' + prisoner.number + '-schedule'
-        }
-    }) }}
+        }) }}
+    {% else %}
+        <p class="govuk-body">No other events scheduled{{ '.' if session.appointmentJourney.type == AppointmentType.INDIVIDUAL }}</p>
+    {% endif %}
 {% endmacro %}
