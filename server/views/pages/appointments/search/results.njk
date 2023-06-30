@@ -53,8 +53,8 @@
             text: result.startTime + (" to " + result.endTime if result.endTime),
             attributes: { 'data-qa': 'result-time-' + index }
         }, {
-            text: result.category.description,
-            attributes: { 'data-qa': 'result-category-' + index }
+            text: result.appointmentName,
+            attributes: { 'data-qa': 'result-appointment-name-' + index }
         }, {
             text: result.internalLocation.description,
             attributes: { 'data-qa': 'result-location-' + index }
