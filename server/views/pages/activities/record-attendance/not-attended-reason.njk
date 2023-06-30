@@ -41,10 +41,10 @@
             },
             id: "notAttendedData-"  + prisoner.prisonerNumber + "-moreDetail",
             name: "notAttendedData["  + prisoner.prisonerNumber + "][moreDetail]",
+            maxwords: 100,
             classes: "govuk-!-width-one-half",
             errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][moreDetail]"),
-            value: formResponses.notAttendedData[prisoner.prisonerNumber].moreDetail,
-            maxlength: "100"
+            value: formResponses.notAttendedData[prisoner.prisonerNumber].moreDetail
         }) }}
     {% endif %}
     {% if reason.captureCaseNote %}
@@ -121,12 +121,12 @@
             label: {
                 text: "Add an absence reason"
             },
+            maxwords: 100,
             id: "notAttendedData-"  + prisoner.prisonerNumber + "-absenceReason",
             name: "notAttendedData["  + prisoner.prisonerNumber + "][absenceReason]",
             classes: "govuk-!-width-one-half",
             errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][absenceReason]"),
-            value: formResponses.notAttendedData[prisoner.prisonerNumber].absenceReason,
-            maxlength: "100"
+            value: formResponses.notAttendedData[prisoner.prisonerNumber].absenceReason
         }) }}
        {{ govukRadios({
             classes: "govuk-radios--inline",
