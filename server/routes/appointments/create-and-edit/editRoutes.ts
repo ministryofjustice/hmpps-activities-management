@@ -17,11 +17,10 @@ import emptyEditAppointmentJourneyHandler from '../../../middleware/emptyEditApp
 import fetchAppointmentOccurrence from '../../../middleware/appointments/fetchAppointmentOccurrence'
 import EditAppointmentService from '../../../services/editAppointmentService'
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
-import setAppointmentJourneyMode from '../../../middleware/appointments/setAppointmentJourneyMode'
-import { AppointmentJourneyMode } from './appointmentJourney'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import CancellationReasonRoutes, { CancellationReason } from './handlers/cancellationReason'
+import populateJourney from '../../../middleware/populateJourney'
 
 export default function Edit({ prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -29,17 +28,12 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(
       path,
+      populateJourney(),
       emptyEditAppointmentJourneyHandler(stepRequiresSession),
-      setAppointmentJourneyMode(AppointmentJourneyMode.EDIT),
       asyncMiddleware(handler),
     )
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(
-      path,
-      validationMiddleware(type),
-      setAppointmentJourneyMode(AppointmentJourneyMode.EDIT),
-      asyncMiddleware(handler),
-    )
+    router.post(path, validationMiddleware(type), populateJourney(), asyncMiddleware(handler))
 
   const editAppointmentService = new EditAppointmentService(activitiesService)
   const startHandler = new StartJourneyRoutes(prisonService)
@@ -118,7 +112,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
     '/prisoners/add/upload-prisoner-list',
     setUpMultipartFormDataParsing(),
     validationMiddleware(PrisonerList),
-    setAppointmentJourneyMode(AppointmentJourneyMode.CREATE),
+    populateJourney(),
     asyncMiddleware(uploadPrisonerListRoutes.EDIT),
   )
   get('/prisoners/add/review-prisoners', reviewPrisoners.GET, true)

@@ -6,7 +6,7 @@ export default class ConfirmationRoutes {
 
     res.render('pages/appointments/create-and-edit/confirmation', { appointment })
 
-    req.session.appointmentJourney = null
+    req.session.appointmentSessionDataMap.delete(req.params.journeyId)
   }
 
   GET_BULK = async (req: Request, res: Response) => {
@@ -14,7 +14,6 @@ export default class ConfirmationRoutes {
 
     res.render('pages/appointments/create-and-edit/confirmation', { bulkAppointment })
 
-    req.session.appointmentJourney = null
-    req.session.bulkAppointmentJourney = null
+    req.session.appointmentSessionDataMap.delete(req.params.journeyId)
   }
 }

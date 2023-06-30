@@ -178,7 +178,6 @@ export default class EditAppointmentService {
   }
 
   private clearSession(req: Request) {
-    req.session.appointmentJourney = null
-    req.session.editAppointmentJourney = null
+    req.session.appointmentSessionDataMap.delete(req.params.journeyId)
   }
 }

@@ -36,7 +36,14 @@ declare module 'express-session' {
     attendanceSummaryFilters: AttendanceSummaryFilters
     notAttendedJourney: NotAttendedJourney
     recordAttendanceRequests: RecordAttendanceRequests
+    appointmentSessionDataMap: Map<string, AppointmentSessionDatum>
   }
+}
+
+export type AppointmentSessionDatum = {
+  appointmentJourney: AppointmentJourney
+  bulkAppointmentJourney: BulkAppointmentJourney
+  editAppointmentJourney: EditAppointmentJourney
 }
 
 declare module 'express-serve-static-core' {

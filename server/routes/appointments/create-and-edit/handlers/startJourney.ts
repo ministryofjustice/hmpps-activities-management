@@ -11,10 +11,15 @@ export default class StartJourneyRoutes {
   constructor(private readonly prisonService: PrisonService) {}
 
   INDIVIDUAL = async (req: Request, res: Response): Promise<void> => {
-    req.session.appointmentJourney = {
-      mode: AppointmentJourneyMode.CREATE,
-      type: AppointmentType.INDIVIDUAL,
+    const { journeyId } = req.params
+
+    req.session.appointmentSessionDataMap[journeyId] = {
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.INDIVIDUAL,
+      },
     }
+
     req.session.returnTo = null
     const { prisonNumber } = req.query
     if (prisonNumber && typeof prisonNumber === 'string') {
@@ -36,22 +41,30 @@ export default class StartJourneyRoutes {
   }
 
   GROUP = async (req: Request, res: Response): Promise<void> => {
-    req.session.appointmentJourney = {
-      mode: AppointmentJourneyMode.CREATE,
-      type: AppointmentType.GROUP,
-      prisoners: [],
+    const { journeyId } = req.params
+
+    req.session.appointmentSessionDataMap[journeyId] = {
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        prisoners: [],
+      },
     }
     req.session.returnTo = null
     res.redirect('how-to-add-prisoners')
   }
 
   BULK = async (req: Request, res: Response): Promise<void> => {
-    req.session.appointmentJourney = {
-      mode: AppointmentJourneyMode.CREATE,
-      type: AppointmentType.BULK,
-    }
-    req.session.bulkAppointmentJourney = {
-      appointments: [],
+    const { journeyId } = req.params
+
+    req.session.appointmentSessionDataMap[journeyId] = {
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.BULK,
+      },
+      bulkAppointmentJourney: {
+        appointments: [],
+      },
     }
     req.session.returnTo = null
     res.redirect('upload-by-csv')
@@ -102,6 +115,7 @@ export default class StartJourneyRoutes {
   }
 
   private populateEditSession(req: Request) {
+    const { journeyId } = req.params
     const { appointment, appointmentOccurrence } = req
 
     const startDate = parseDate(appointmentOccurrence.startDate)
@@ -114,47 +128,48 @@ export default class StartJourneyRoutes {
       "yyyy-MM-dd'T'HH:mm",
     )
 
-    req.session.appointmentJourney = {
-      mode: AppointmentJourneyMode.EDIT,
-      type: AppointmentType[appointmentOccurrence.appointmentType],
-      appointmentName: appointment.appointmentName,
-      prisoners: appointmentOccurrence.prisoners.map(p => ({
-        number: p.prisonerNumber,
-        name: `${p.firstName} ${p.lastName}`,
-        cellLocation: p.cellLocation,
-      })),
-      category: appointmentOccurrence.category,
-      location: appointmentOccurrence.internalLocation,
-      startDate: {
-        date: startDate,
-        day: +formatDate(startDate, 'dd'),
-        month: +formatDate(startDate, 'MM'),
-        year: +formatDate(startDate, 'yyyy'),
+    req.session.appointmentSessionDataMap[journeyId] = {
+      appointmentJourney: {
+        mode: AppointmentJourneyMode.EDIT,
+        type: AppointmentType[appointmentOccurrence.appointmentType],
+        appointmentName: appointment.appointmentName,
+        prisoners: appointmentOccurrence.prisoners.map(p => ({
+          number: p.prisonerNumber,
+          name: `${p.firstName} ${p.lastName}`,
+          cellLocation: p.cellLocation,
+        })),
+        category: appointmentOccurrence.category,
+        location: appointmentOccurrence.internalLocation,
+        startDate: {
+          date: startDate,
+          day: +formatDate(startDate, 'dd'),
+          month: +formatDate(startDate, 'MM'),
+          year: +formatDate(startDate, 'yyyy'),
+        },
+        startTime: {
+          date: startTime,
+          hour: +formatDate(startTime, 'HH'),
+          minute: +formatDate(startTime, 'mm'),
+        },
+        endTime: null,
+        repeat: appointmentOccurrence.repeat ? YesNo.YES : YesNo.NO,
+        repeatPeriod: appointmentOccurrence.repeat?.period as AppointmentRepeatPeriod,
+        repeatCount: appointmentOccurrence.repeat?.count,
+        comment: appointmentOccurrence.comment,
       },
-      startTime: {
-        date: startTime,
-        hour: +formatDate(startTime, 'HH'),
-        minute: +formatDate(startTime, 'mm'),
+      editAppointmentJourney: {
+        repeatCount: appointmentOccurrence.repeat?.count ?? 1,
+        sequenceNumbers: appointment.occurrences.map(occurrence => occurrence.sequenceNumber),
+        sequenceNumber: appointmentOccurrence.sequenceNumber,
       },
-      endTime: null,
-      repeat: appointmentOccurrence.repeat ? YesNo.YES : YesNo.NO,
-      repeatPeriod: appointmentOccurrence.repeat?.period as AppointmentRepeatPeriod,
-      repeatCount: appointmentOccurrence.repeat?.count,
-      comment: appointmentOccurrence.comment,
     }
 
     if (isValid(endTime)) {
-      req.session.appointmentJourney.endTime = {
+      req.session.appointmentSessionDataMap[journeyId].appointmentJourney.endTime = {
         date: endTime,
         hour: +formatDate(endTime, 'HH'),
         minute: +formatDate(endTime, 'mm'),
       }
-    }
-
-    req.session.editAppointmentJourney = {
-      repeatCount: appointmentOccurrence.repeat?.count ?? 1,
-      sequenceNumbers: appointment.occurrences.map(occurrence => occurrence.sequenceNumber),
-      sequenceNumber: appointmentOccurrence.sequenceNumber,
     }
 
     req.session.returnTo = null

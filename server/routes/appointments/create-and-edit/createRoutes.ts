@@ -25,32 +25,21 @@ import { Services } from '../../../services'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
-import setAppointmentJourneyMode from '../../../middleware/appointments/setAppointmentJourneyMode'
-import { AppointmentJourneyMode } from './appointmentJourney'
 import EditAppointmentService from '../../../services/editAppointmentService'
 import UploadBulkAppointment, { AppointmentsList } from './handlers/bulk-appointments/uploadBulkAppointment'
 import BulkAppointmentDateRoutes, { BulkAppointmentDate } from './handlers/bulk-appointments/bulkAppointmentDate'
 import ReviewBulkAppointment, { AppointmentTimes } from './handlers/bulk-appointments/reviewBulkAppointment'
 import fetchBulkAppointment from '../../../middleware/appointments/fetchBulkAppointment'
 import ScheduleRoutes from './handlers/schedule'
+import populateJourney from '../../../middleware/populateJourney'
 
 export default function Create({ prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(
-      path,
-      emptyAppointmentJourneyHandler(stepRequiresSession),
-      setAppointmentJourneyMode(AppointmentJourneyMode.CREATE),
-      asyncMiddleware(handler),
-    )
+    router.get(path, populateJourney(), emptyAppointmentJourneyHandler(stepRequiresSession), asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(
-      path,
-      validationMiddleware(type),
-      setAppointmentJourneyMode(AppointmentJourneyMode.CREATE),
-      asyncMiddleware(handler),
-    )
+    router.post(path, validationMiddleware(type), populateJourney(), asyncMiddleware(handler))
 
   const editAppointmentService = new EditAppointmentService(activitiesService)
   const startHandler = new StartJourneyRoutes(prisonService)
@@ -86,7 +75,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
     '/upload-prisoner-list',
     setUpMultipartFormDataParsing(),
     validationMiddleware(PrisonerList),
-    setAppointmentJourneyMode(AppointmentJourneyMode.CREATE),
+    populateJourney(),
     asyncMiddleware(uploadPrisonerListRoutes.POST),
   )
   get('/upload-bulk-appointment', uploadBulkAppointment.GET, true)
@@ -122,8 +111,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
   router.get(
     '/confirmation/:appointmentId',
     fetchAppointment(activitiesService),
+    populateJourney(),
     emptyAppointmentJourneyHandler(true),
-    setAppointmentJourneyMode(AppointmentJourneyMode.CREATE),
     asyncMiddleware(confirmationHandler.GET),
   )
   get('/how-to-add-prisoners', howToAddPrisoners.GET, true)
@@ -140,8 +129,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
   router.get(
     '/bulk-appointments-confirmation/:bulkAppointmentId',
     fetchBulkAppointment(activitiesService),
+    populateJourney(),
     emptyAppointmentJourneyHandler(true),
-    setAppointmentJourneyMode(AppointmentJourneyMode.CREATE),
     asyncMiddleware(confirmationHandler.GET_BULK),
   )
 
