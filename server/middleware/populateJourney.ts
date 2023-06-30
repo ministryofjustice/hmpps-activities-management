@@ -1,21 +1,23 @@
 import { RequestHandler } from 'express'
 import { AppointmentSessionDatum } from '../@types/express'
 
+const journeys = ['appointmentJourney', 'bulkAppointmentJourney', 'editAppointmentJourney']
+
 export default function populateJourney(): RequestHandler {
   return async (req, res, next) => {
     req.session.appointmentSessionDataMap ??= new Map<string, AppointmentSessionDatum>()
 
-    const { journeyId } = req.params
-    if (journeyId) {
-      const appointmentSessionData = req.session.appointmentSessionDataMap[journeyId]
-      req.session.appointmentJourney = appointmentSessionData?.appointmentJourney
-      req.session.bulkAppointmentJourney = appointmentSessionData?.bulkAppointmentJourney
-      req.session.editAppointmentJourney = appointmentSessionData?.editAppointmentJourney
-    } else {
-      req.session.appointmentJourney = null
-      req.session.bulkAppointmentJourney = null
-      req.session.editAppointmentJourney = null
-    }
+    journeys.forEach(p => {
+      Object.defineProperty(req.session, p, {
+        get() {
+          return req.session.appointmentSessionDataMap[req.params.journeyId]?.[p]
+        },
+        set(value) {
+          req.session.appointmentSessionDataMap[req.params.journeyId] ??= {} as AppointmentSessionDatum
+          req.session.appointmentSessionDataMap[req.params.journeyId][p] = value
+        },
+      })
+    })
 
     next()
   }

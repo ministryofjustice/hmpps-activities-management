@@ -49,7 +49,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services))
   app.use(trimRequestBody())
   app.use(setUpValidationExtensions())
-  app.use(populateJourney())
+  // app.use(populateJourney())
   app.use(routes(services))
   app.use(formValidationErrorHandler)
   app.use((req, res, next) => next(createError(404, 'Not found')))
