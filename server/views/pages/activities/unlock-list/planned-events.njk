@@ -51,7 +51,7 @@
                 }
             },
             items: unlockFilters.locationFilters
-        }) }}
+        }) if unlockFilters.locationFilters | length }}
 
         {{ govukRadios({
             idPrefix: 'activityFilters',
