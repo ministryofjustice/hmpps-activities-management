@@ -33,7 +33,6 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     it('should redirect back to occurrence details page when the appointment journey data is not in session', async () => {
       req.session.appointmentJourney = null
       req.session.editAppointmentJourney = {
-        appointmentName: 'appointment name',
         repeatCount: 1,
         sequenceNumbers: [1],
         sequenceNumber: 1,
@@ -44,7 +43,11 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     })
 
     it('should redirect back to occurrence details page when the edit appointment journey data is not in session', async () => {
-      req.session.appointmentJourney = { mode: AppointmentJourneyMode.CREATE, type: AppointmentType.INDIVIDUAL }
+      req.session.appointmentJourney = {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.INDIVIDUAL,
+        appointmentName: 'appointment name',
+      }
       req.session.editAppointmentJourney = null
       await middleware(req, res, next)
 
@@ -52,9 +55,12 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     })
 
     it('should continue if both journeys data exists in session', async () => {
-      req.session.appointmentJourney = { mode: AppointmentJourneyMode.CREATE, type: AppointmentType.INDIVIDUAL }
-      req.session.editAppointmentJourney = {
+      req.session.appointmentJourney = {
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.INDIVIDUAL,
         appointmentName: 'appointment name',
+      }
+      req.session.editAppointmentJourney = {
         repeatCount: 1,
         sequenceNumbers: [1],
         sequenceNumber: 1,

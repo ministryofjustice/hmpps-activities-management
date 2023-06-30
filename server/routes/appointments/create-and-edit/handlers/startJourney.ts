@@ -132,6 +132,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.EDIT,
       type: AppointmentType[appointmentOccurrence.appointmentType],
+      appointmentName: appointment.appointmentName,
       prisoners: appointmentOccurrence.prisoners.map(p => ({
         number: p.prisonerNumber,
         name: `${p.firstName} ${p.lastName}`,
@@ -166,7 +167,6 @@ export default class StartJourneyRoutes {
     }
 
     req.session.editAppointmentJourney = {
-      appointmentName: appointment.appointmentName,
       repeatCount: appointmentOccurrence.repeat?.count ?? 1,
       sequenceNumbers: appointment.occurrences.map(occurrence => occurrence.sequenceNumber),
       sequenceNumber: appointmentOccurrence.sequenceNumber,

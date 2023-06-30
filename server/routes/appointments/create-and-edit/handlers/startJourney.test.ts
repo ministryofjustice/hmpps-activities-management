@@ -213,6 +213,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       const appointmentJourneySession = {
         mode: AppointmentJourneyMode.EDIT,
         type: AppointmentType.GROUP,
+        appointmentName: 'Appointment name (Chaplaincy)',
         prisoners: [
           {
             number: 'A1234BC',
@@ -256,7 +257,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
       } as AppointmentJourney
 
       const editAppointmentJourneySession = {
-        appointmentName: 'Appointment name (Chaplaincy)',
         repeatCount: 3,
         sequenceNumbers: [2, 3],
         sequenceNumber: 2,
@@ -333,7 +333,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
       }
 
       const editAppointmentJourneySession = {
-        appointmentName: 'Appointment name (Chaplaincy)',
         repeatCount: 3,
         sequenceNumbers: [2, 3],
         sequenceNumber: 2,
@@ -368,7 +367,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
       }
 
       const editAppointmentJourneySession = {
-        appointmentName: 'Appointment name (Chaplaincy)',
         repeatCount: 3,
         sequenceNumbers: [2],
         sequenceNumber: 2,
@@ -414,7 +412,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     it('should populate the session and redirect to how to add prisoners', async () => {
       const editAppointmentJourneySession = {
-        appointmentName: 'Appointment name (Chaplaincy)',
         repeatCount: 3,
         sequenceNumbers: [2, 3],
         sequenceNumber: 2,
@@ -451,7 +448,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     it('should populate the session and redirect to cancellation reasons', async () => {
       const editAppointmentJourneySession = {
-        appointmentName: 'Appointment name (Chaplaincy)',
         repeatCount: 3,
         sequenceNumbers: [2, 3],
         sequenceNumber: 2,

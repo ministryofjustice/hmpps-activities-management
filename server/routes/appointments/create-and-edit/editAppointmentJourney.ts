@@ -2,7 +2,6 @@ import { PrisonerSummary } from '../../../@types/activitiesAPI/types'
 import { AppointmentCancellationReason, AppointmentApplyTo } from '../../../@types/appointments'
 
 export type EditAppointmentJourney = {
-  appointmentName: string
   repeatCount: number
   sequenceNumbers: number[]
   sequenceNumber: number
