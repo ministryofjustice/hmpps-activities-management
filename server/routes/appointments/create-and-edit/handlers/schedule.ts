@@ -13,11 +13,11 @@ export default class ScheduleRoutes {
     const { appointmentJourney, bulkAppointmentJourney } = req.session
     const { preserveHistory } = req.query
 
-    let defaultBackLinkHref: string
+    let backLinkHref: string
     if (req.session.appointmentJourney.type === AppointmentType.BULK) {
-      defaultBackLinkHref = 'review-bulk-appointment'
+      backLinkHref = 'review-bulk-appointment'
     } else {
-      defaultBackLinkHref = req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
+      backLinkHref = req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
     }
 
     const prisonNumbers =
@@ -54,7 +54,7 @@ export default class ScheduleRoutes {
           }))
 
     res.render('pages/appointments/create-and-edit/schedule', {
-      backLinkHref: defaultBackLinkHref,
+      backLinkHref,
       preserveHistory,
       prisonerSchedules,
     })
