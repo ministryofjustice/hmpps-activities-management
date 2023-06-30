@@ -36,20 +36,19 @@
                     items: [
                         {
                             value: "low",
-                            html: "Only <span class='govuk-!-font-weight-bold'>low workplace
-                                risk assessment</span> is suitable",
+                            html: "Only <span class='govuk-!-font-weight-bold'>low</span> workplace
+                                risk assessment is suitable",
                             checked: formResponses.riskLevel == 'low' or session.createJourney.riskLevel == 'low'
                         },
                         {
                             value: "medium",
-                            html: "<span class='govuk-!-font-weight-bold'>Either low or medium workplace
-                                risk assessment</span> is suitable",
+                            html: "Either <span class='govuk-!-font-weight-bold'>low or medium</span> workplace
+                                risk assessment is suitable",
                             checked: formResponses.riskLevel == 'medium' or session.createJourney.riskLevel == 'medium'
                         },
                         {
                             value: "high",
-                            html: "<span class='govuk-!-font-weight-bold'>Any of low, medium or high workplace
-                                risk assessment</span> is suitable",
+                            html: "Anyone is suitable (<span class='govuk-!-font-weight-bold'>low, medium or high</span> workplace risk assessment)",
                             checked: formResponses.riskLevel == 'high' or session.createJourney.riskLevel == 'high'
                         }
                     ]
@@ -57,7 +56,9 @@
 
                 {{ govukDetails({
                     summaryText: "What is a workplace risk assessment level?",
-                    text: "Each person in your prison should have been given a workplace risk assessment level."
+                    html: '<p class="govuk-body">Each person in your prison should be given a workplace risk assessment level when they are being considered for an activity that takes place off the wing. This level can be low, medium or high.</p>
+
+                    <p class="govuk-body">When you set the requirement for workplace risk assessment for an activity, you\'re indicating to staff which people will be most suitable for allocation. For example, only people with a low workplace risk assessment are likely to be suitable for an activity with multiple risk factors.</p>'
                 }) }}
 
                 {% if session.req.query.fromEditActivity %}

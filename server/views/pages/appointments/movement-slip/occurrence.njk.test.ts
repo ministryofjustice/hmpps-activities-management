@@ -31,6 +31,7 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
       appointmentType: AppointmentType.INDIVIDUAL,
       sequenceNumber: 2,
       prisonCode: 'MDI',
+      appointmentName: 'Doctors appointment (Medical - Other)',
       prisoners: [
         {
           firstName: 'TEST',
@@ -74,18 +75,10 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
     expect($('.movement-slip-header').text().trim()).toEqual('Moorland (HMP & YOI) Movement authorisation slip')
     expect($('[data-qa=prisoner-name-and-number]').text().trim()).toEqual('Test Prisoner, A1234BC')
     expect($('[data-qa=cell-location]').text().trim()).toEqual('MDI-1-2-3')
-    expect($('[data-qa=appointment]').text().trim()).toEqual('Medical - Other')
+    expect($('[data-qa=appointment]').text().trim()).toEqual('Doctors appointment (Medical - Other)')
     expect($('[data-qa=time]').text().trim()).toEqual(`13:00 to 13:15${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
     expect($('[data-qa=location]').text().trim()).toEqual('HB1 Doctors')
     expect($('[data-qa=extra-information]').text().trim()).toEqual('Appointment occurrence level comment')
-  })
-
-  it('should display appointment description', () => {
-    viewContext.appointmentOccurrence.appointmentDescription = 'Choir'
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=appointment]').text().trim()).toEqual('Medical - OtherChoir')
   })
 
   it('should not display comment when there are no comments', () => {

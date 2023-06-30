@@ -17,7 +17,7 @@
 {% endif %}
 
 {% block content %}
-    {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+    {{ appointmentTypeCaption(session) }}
     {% set defaultPrisonerNumber = formResponses.query if formResponses.query != undefined else query %}
     {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
         {% set defaultPrisonerNumber = defaultPrisonerNumber or session.appointmentJourney.prisoners[0].number %}
