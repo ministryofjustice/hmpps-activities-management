@@ -9,41 +9,48 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l">Check and confirm your allocation</h1>
+            <h1 class="govuk-heading-xl">Check and confirm this allocation</h1>
         </div>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
-            <h2 class="govuk-heading-m">Who you're allocating</h2>
+            {% set prisonerDetailsHtml %}
+                <ul class="govuk-list">
+                    <li>{{ prisonerName }}</li>
+                    <li>{{ prisonerNumber }}</li>
+                    <li>{{ cellLocation }}</li>
+                </ul>
+            {% endset %}
+
             {{ govukSummaryList({
                 rows: [
                     {
                         key: {
-                            text: "Name"
+                            text: "Prisoner details"
                         },
                         value: {
-                            text: prisonerName
+                            html: prisonerDetailsHtml
                         }
                     },
                     {
                         key: {
-                            text: "Prisoner number"
+                            text: "Activity"
                         },
                         value: {
-                            text: prisonerNumber
+                            text: activityName
                         }
                     },
                     {
                         key: {
-                            text: "Cell location"
+                            text: "Location"
                         },
                         value: {
-                            text: cellLocation
+                            text: activityLocation
                         }
                     },
                     {
                         key: {
-                            text: "Start Date"
+                            text: "Start of allocation"
                         },
                         value: {
                             text: startDate
@@ -61,7 +68,7 @@
                     },
                     {
                         key: {
-                            text: "End Date"
+                            text: "End of allocation"
                         },
                         value: {
                             text: endDate
@@ -98,34 +105,12 @@
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Activity you're allocating to</h2>
-            {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Title"
-                        },
-                        value: {
-                            text: activityName
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Location"
-                        },
-                        value: {
-                            text: activityLocation
-                        }
-                    }
-                ]
-            }) }}
-
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Confirm allocation"
+                        text: "Confirm and allocate"
                     }) }}
                     <a href="/activities/allocate/cancel" class="govuk-link govuk-link--no-visited-state">Cancel and return to the list of candidates</a>
                 </div>
