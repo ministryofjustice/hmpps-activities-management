@@ -4,6 +4,8 @@
 
 {% from "components/datePicker.njk" import datePicker %}
 
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
 {% set pageTitle = applicationName + " - Create a schedule - End date" %}
 {% set pageId = 'create-schedule-end-date-page' %}
 {% set backLinkHref = "end-date-option" %}
@@ -36,6 +38,9 @@
                 }) }}
                 <input type="hidden" id="startDate" name="startDate" value="{{ startDate }}">
                 {% if session.req.query.fromEditActivity %}
+                    {{ govukInsetText({
+                          text: "Anyone allocated to the activity who was due to be taken off after this date will now finish on this date."
+                     }) }}
                     <div class="govuk-button-group">
                       {{ govukButton({
                         text: "Update end date"
