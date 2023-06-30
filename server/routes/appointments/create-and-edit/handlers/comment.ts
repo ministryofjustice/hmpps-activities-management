@@ -1,11 +1,13 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
+import { MaxLength } from 'class-validator'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class Comment {
   @Expose()
+  @MaxLength(4000, { message: 'You must enter a comment which has no more than 4,000 characters' })
   comment: string
 }
 
