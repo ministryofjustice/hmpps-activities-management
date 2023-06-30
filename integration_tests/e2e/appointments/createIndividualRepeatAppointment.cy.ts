@@ -50,7 +50,7 @@ context('Individual repeat appointment', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
-    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY', getPrisonPrisoners)
+    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY&size=50', getPrisonPrisoners)
     cy.stubEndpoint('GET', '/prisoner/A8644DY', getPrisonerA8644DY)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)

@@ -6,6 +6,7 @@ import {
   Prisoner,
   PrisonerNumbers,
   PrisonerSearchCriteria,
+  PrisonerSearchQuery,
 } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 
@@ -53,11 +54,15 @@ export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
     )
   }
 
-  async searchPrisonInmates(searchQuery: string, prisonCode: string, user: ServiceUser): Promise<PagePrisoner> {
+  async searchPrisonInmates(searchTerm: string, prisonCode: string, user: ServiceUser): Promise<PagePrisoner> {
+    const query: PrisonerSearchQuery = {
+      term: searchTerm,
+      size: 50,
+    }
     return this.get(
       {
         path: `/prison/${prisonCode}/prisoners`,
-        query: { term: searchQuery },
+        query,
       },
       user,
     )
