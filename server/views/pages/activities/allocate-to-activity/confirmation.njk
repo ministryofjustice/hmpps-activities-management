@@ -10,13 +10,14 @@
         <div class="govuk-grid-column-two-thirds">
             {{ govukPanel({
                 titleText: "Allocation complete",
-                text: prisonerName + ' ' + prisonerNumber + ' is now allocated to ' + activityName
+                text: prisonerName + ' (' + prisonerNumber + ') is now allocated to ' + activityName
             }) }}
-            <h2 class="govuk-heading-m">If you want to allocate more people</h2>
-            <p class="govuk-body">
-                View more information for <a href="/activities/allocation-dashboard/{{ scheduleId }}">{{ activityName }}</a> or
-                check the <a href="/activities/allocation-dashboard">activities dashboard</a> to see more activities with vacancies.
-            </p>
+            <h2 class="govuk-heading-m">What you can do next</h2>
+            <p class='govuk-body'>You can either:</p>
+            <ul class='govuk-list govuk-list--bullet'>
+                <li><a href="/activities/allocation-dashboard/{{ scheduleId }}" class='govuk-link'>review the allocations for Addiction Support Group</a> and continue allocating</li>
+                <li><a href="/activities/allocation-dashboard" class='govuk-link'>find other activities with vacancies</a></li>
+            </ul>
         </div>
     </div>
 {% endblock %}

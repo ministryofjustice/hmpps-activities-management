@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
@@ -33,13 +33,14 @@
       </p>
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-        {{ govukTextarea({
-          id: "comment",
-          name: "comment",
-          rows: "5",
-          value: formResponses.comment or session.appointmentJourney.comment,
-          errorMessage: validationErrors | findError('comment')
-        }) }}
+        <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
+          <div class="govuk-form-group">
+            <textarea class="govuk-textarea govuk-js-character-count" id="comment" name="comment" rows="5" aria-describedby="comment-info">{{ formResponses.comment or session.appointmentJourney.comment }}</textarea>
+          </div>
+          <div id="comment-info" class="govuk-hint govuk-character-count__message">
+            You can enter up to 4000 characters
+          </div>
+        </div>
 
         {{ govukButton({
           text: "Confirm and save" if isCtaAcceptAndSave else "Continue"

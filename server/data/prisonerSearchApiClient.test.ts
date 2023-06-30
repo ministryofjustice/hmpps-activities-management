@@ -65,7 +65,7 @@ describe('prisonerSearchApiClient', () => {
       const response = { data: 'data' }
 
       fakePrisonerSearchApi
-        .get(`/prison/MDI/prisoners?term=${query}`)
+        .get(`/prison/MDI/prisoners?term=${query}&size=50`)
         .matchHeader('authorization', `Bearer accessToken`)
         .reply(200, response)
 
