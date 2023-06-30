@@ -28,7 +28,7 @@ export default class SelectPrisonerRoutes {
       query = res.locals.formResponses.query
     }
 
-    if (query && typeof query === 'string' && query !== '') {
+    if (query && typeof query === 'string') {
       const result = await this.prisonService.searchPrisonInmates(query, user)
       let prisoners: Prisoner[] = []
       if (result && !result.empty) prisoners = result.content
@@ -66,12 +66,8 @@ export default class SelectPrisonerRoutes {
     const { selectedPrisoner } = req.body
     const { user } = res.locals
 
-    let prisoner
-    try {
-      prisoner = await this.prisonService.getInmateByPrisonerNumber(selectedPrisoner, user)
-    } catch {
-      return false
-    }
+    const prisoner = await this.prisonService.getInmateByPrisonerNumber(selectedPrisoner, user).catch(_ => null)
+    if (!prisoner) return false
 
     const prisonerData = {
       number: prisoner.prisonerNumber,

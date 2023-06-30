@@ -62,7 +62,7 @@ context('Create group appointment', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
-    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=lee', getPrisonPrisonersA1351DZ)
+    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=lee&size=50', getPrisonPrisonersA1351DZ)
     cy.stubEndpoint('GET', '/prisoner/A1351DZ', getPrisonerA1351DZ)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getPrisonPrisonersA8644DYA1351DZ)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)

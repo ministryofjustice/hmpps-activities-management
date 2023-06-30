@@ -58,12 +58,10 @@
                     }) }}
 
                     <h2 class="govuk-heading-m" id="prisoner-results-text">
-                        {% if prisoners | length == 1 %}
-                            There is 1 result for '{{ query }}'.
-                        {% elseif prisoners | length > 1 %}
-                            There are {{ prisoners | length }} results for '{{ query }}'. Select the correct one from the list.
+                        {% if prisoners | length > 0 %}
+                            Select the correct result from the list (maximum 50 results shown).
                         {% else %}
-                            There are no matching results for '{{ query }}'.
+                            There are no matching search results.
                         {% endif %}
                     </h2>
                 </form>
@@ -112,10 +110,17 @@
                                     attributes: {
                                         id: 'prisoner-actions'
                                     },
-                                    html: '<a href="' + dpsUrl + '/prisoner/' + prisoner.prisonerNumber + '" class="govuk-link govuk-link--no-visited-state" target="_blank">View prisoner profile<span class="govuk-visually-hidden"> (opens in new tab)</span></a>'
+                                    html: '<a href="' + dpsUrl + '/prisoner/' + prisoner.prisonerNumber + '" class="govuk-link govuk-link--no-visited-state" target="_blank">View <span class="govuk-visually-hidden">' + prisoner | firstNameLastName | toTitleCase + '\'s</span> prisoner profile<span class="govuk-visually-hidden"> (opens in new tab)</span></a>'
                                 }
                             ]), prisonerRows) %}
                         {% endfor %}
+
+                        {% if prisoners | length > 10 %}
+                            {{ govukButton({
+                                text: "Select and continue",
+                                id: "continue-button-above-results"
+                            }) }}
+                        {% endif %}
 
                         {{ govukTable({
                             attributes: {
