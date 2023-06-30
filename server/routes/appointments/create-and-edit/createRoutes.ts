@@ -31,15 +31,14 @@ import BulkAppointmentDateRoutes, { BulkAppointmentDate } from './handlers/bulk-
 import ReviewBulkAppointment, { AppointmentTimes } from './handlers/bulk-appointments/reviewBulkAppointment'
 import fetchBulkAppointment from '../../../middleware/appointments/fetchBulkAppointment'
 import ScheduleRoutes from './handlers/schedule'
-import populateJourney from '../../../middleware/populateJourney'
 
 export default function Create({ prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, populateJourney(), emptyAppointmentJourneyHandler(stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyAppointmentJourneyHandler(stepRequiresSession), asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), populateJourney(), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const editAppointmentService = new EditAppointmentService(activitiesService)
   const startHandler = new StartJourneyRoutes(prisonService)
@@ -75,7 +74,6 @@ export default function Create({ prisonService, activitiesService }: Services): 
     '/upload-prisoner-list',
     setUpMultipartFormDataParsing(),
     validationMiddleware(PrisonerList),
-    populateJourney(),
     asyncMiddleware(uploadPrisonerListRoutes.POST),
   )
   get('/upload-bulk-appointment', uploadBulkAppointment.GET, true)
@@ -111,7 +109,6 @@ export default function Create({ prisonService, activitiesService }: Services): 
   router.get(
     '/confirmation/:appointmentId',
     fetchAppointment(activitiesService),
-    populateJourney(),
     emptyAppointmentJourneyHandler(true),
     asyncMiddleware(confirmationHandler.GET),
   )
@@ -129,7 +126,6 @@ export default function Create({ prisonService, activitiesService }: Services): 
   router.get(
     '/bulk-appointments-confirmation/:bulkAppointmentId',
     fetchBulkAppointment(activitiesService),
-    populateJourney(),
     emptyAppointmentJourneyHandler(true),
     asyncMiddleware(confirmationHandler.GET_BULK),
   )
