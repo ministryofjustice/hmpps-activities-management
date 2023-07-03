@@ -96,12 +96,12 @@
                         actions: {
                             items: [
                                 {
-                                    href: "pay?bandId=" + flatRate.bandId + '&preserveHistory=true',
+                                    href: "/activities/create/pay?bandId=" + flatRate.bandId + '&preserveHistory=true&fromEditActivity=true',
                                     text: "Change",
                                     visuallyHiddenText: "change pay rate"
                                 },
                                 {
-                                    href: "remove-flat-rate?bandId=" + flatRate.bandId + fromEditText + '&preserveHistory=true',
+                                    href: "/activities/create/remove-flat-rate?bandId=" + flatRate.bandId + '&preserveHistory=true&fromEditActivity=true',
                                     text: "Remove",
                                     visuallyHiddenText: "remove flat rate"
                                 }
