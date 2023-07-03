@@ -3,6 +3,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% set pageTitle = applicationName + " - Create a schedule - Location" %}
 {% set pageId = 'create-schedule-location-page' %}
@@ -33,7 +34,7 @@
                     name: "inCell",
                     fieldset: {
                         legend: {
-                            text: "Where does this activity take place?",
+                            text: 'Enter the new activity location' if session.req.query.fromEditActivity else 'Where does this activity take place?',
                             classes: "govuk-label--xl",
                             isPageHeading: true
                         }
@@ -68,9 +69,13 @@
                 }) }}
 
                 {% if session.req.query.fromEditActivity %}
+                    {{ govukWarningText({
+                        text: "Changing the location may affect the security risk and the capacity of this activity.",
+                        iconFallbackText: "Warning"
+                    }) }}
                     <div class="govuk-button-group">
                       {{ govukButton({
-                        text: "Update location"
+                        text: "Update activity location"
                       }) }}
                         <a class="govuk-link js-backlink" href="/">Cancel</a>
                     </div>
