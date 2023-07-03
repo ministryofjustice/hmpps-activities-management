@@ -9,7 +9,7 @@ import bulkAppointmentDetailsRoutes from './bulk-appointment-details'
 import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
-import startNewJourney from '../../middleware/startNewJourneyMiddleware'
+import startNewJourney from '../../middleware/startNewJourney'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
