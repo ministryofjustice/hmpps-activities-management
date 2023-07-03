@@ -22,7 +22,12 @@ export default class RemoveFlatRateRoutes {
     const { choice } = req.body
     const bandId = +req.body.bandId
 
-    if (choice !== 'yes') return res.redirect('check-pay')
+    if (choice !== 'yes') {
+      if (req.query && req.query.fromEditActivity) {
+        return res.redirect('/activities/schedule/check-pay')
+      }
+      return res.redirect('check-pay')
+    }
 
     const flatRateIndex = req.session.createJourney.flat.findIndex(f => f.bandId === bandId)
 
@@ -33,7 +38,7 @@ export default class RemoveFlatRateRoutes {
     req.session.createJourney.flat.splice(flatRateIndex, 1)
 
     if (req.query && req.query.fromEditActivity)
-      return res.redirectWithSuccess('check-pay?fromEditActivity=true', `Flat rate ${flatRateInfo.bandAlias} removed`)
+      return res.redirectWithSuccess('/activities/schedule/check-pay', `Flat rate ${flatRateInfo.bandAlias} removed`)
     return res.redirectWithSuccess('check-pay', `Flat rate ${flatRateInfo.bandAlias} removed`)
   }
 }
