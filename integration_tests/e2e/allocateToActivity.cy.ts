@@ -80,7 +80,7 @@ context('Allocate to activity', () => {
 
     const beforeYouAllocatePage = Page.verifyOnPage(BeforeYouAllocate)
     beforeYouAllocatePage.selectConfirmationRadio('yes')
-    beforeYouAllocatePage.getButton('Continue').click()
+    beforeYouAllocatePage.getButton('Confirm and allocate').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
     const startDatePicker = startDatePage.getDatePicker()
