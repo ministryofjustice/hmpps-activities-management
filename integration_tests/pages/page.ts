@@ -57,8 +57,6 @@ export default abstract class Page {
 
   continue = () => cy.get('button').contains('Continue').click()
 
-  confirmPay = () => cy.get('button').contains('Confirm pay').click()
-
   saveAndContinue = () => cy.get('button').contains('Save and continue').click()
 
   back = () => cy.get('.govuk-back-link').contains('Back').click()
