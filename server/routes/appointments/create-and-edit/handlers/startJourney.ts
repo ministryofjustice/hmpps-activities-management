@@ -132,6 +132,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.EDIT,
       type: AppointmentType[appointmentOccurrence.appointmentType],
+      appointmentName: appointment.appointmentName,
       prisoners: appointmentOccurrence.prisoners.map(p => ({
         number: p.prisonerNumber,
         name: `${p.firstName} ${p.lastName}`,

@@ -37,7 +37,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l" data-qa="caption">{{ appointment.category.description }} - {{ ("group" if appointment.appointmentType == AppointmentType.GROUP) + ("individual" if appointment.appointmentType == AppointmentType.INDIVIDUAL) }} series</span>
+            <span class="govuk-caption-l" data-qa="caption">{{ appointment.appointmentName }} - {{ ("group" if appointment.appointmentType == AppointmentType.GROUP) + ("individual" if appointment.appointmentType == AppointmentType.INDIVIDUAL) }} series</span>
             <h1 class="govuk-heading-l">Series overview</h1>
 
             {% if appointment.repeat %}
