@@ -60,8 +60,15 @@ export default class UnlockListService {
     })
 
     // Apply filters for selected sub-locations
-    const locationFilters = unlockFilters.locationFilters.filter(loc => loc.checked === true).map(loc => loc.value)
-    const filteredPrisoners = prisoners.filter(prisoner => locationFilters.includes(prisoner.locationSubGroup) === true)
+    const checkedLocationFilters = unlockFilters.locationFilters
+      .filter(loc => loc.checked === true)
+      .map(loc => loc.value)
+
+    const filteredPrisoners = prisoners.filter(
+      prisoner =>
+        checkedLocationFilters.includes(prisoner.locationSubGroup) === true ||
+        unlockFilters.locationFilters.length === 0,
+    )
 
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       prison,
