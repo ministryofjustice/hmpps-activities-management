@@ -362,5 +362,21 @@ describe('Unlock list service', () => {
       expect(unlockListItems).toHaveLength(1)
       expect(unlockListItems[0].prisonerNumber).toEqual('A1111AA')
     })
+
+    it('filter by sub-location - no-sublocations exist', async () => {
+      const locationFilters = [] as FilterItem[]
+
+      const unlockFilters = testUnlockFilters(locationFilters, defaultActivityFilters, defaultStayingOrLeavingFilters)
+      unlockFilters.subLocations = []
+
+      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
+
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+
+      expect(unlockListItems).toHaveLength(2)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).not.toHaveBeenCalled()
+    })
   })
 })

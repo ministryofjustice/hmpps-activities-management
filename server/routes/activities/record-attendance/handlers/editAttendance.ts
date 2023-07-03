@@ -55,7 +55,7 @@ export default class EditAttendanceRoutes {
         },
       ]
       await this.activitiesService.updateAttendances(attendances, user)
-      return res.redirect(`/activities/attendance/activities/${id}/attendance-details/${attendanceId}`)
+      return res.redirect(`/activities/attendance/activities/${id}/attendance-list`)
     }
 
     if (req.body.attendanceOption === EditAttendanceOptions.NO) {

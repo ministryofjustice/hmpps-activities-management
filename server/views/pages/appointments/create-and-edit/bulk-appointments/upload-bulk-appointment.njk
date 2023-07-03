@@ -12,7 +12,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            {{ appointmentTypeCaption(session) }}
             <form action="upload-bulk-appointment?_csrf={{ csrfToken }}{{ '&preserveHistory=true' if preserveHistory else '' }}" method="POST" enctype="multipart/form-data">
                 {{ govukFileUpload({
                     id: "file",

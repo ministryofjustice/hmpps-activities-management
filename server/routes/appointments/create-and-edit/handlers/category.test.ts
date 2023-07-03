@@ -6,6 +6,7 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import CategoryRoutes, { Category } from './category'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentCategorySummary } from '../../../../@types/activitiesAPI/types'
+import { AppointmentType } from '../appointmentJourney'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -57,12 +58,77 @@ describe('Route Handlers - Create Appointment - Category', () => {
   })
 
   describe('GET', () => {
-    it('should render the category view', async () => {
+    it('should render the category view with back to select prisoner page', async () => {
+      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
+
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', { categories })
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
+        backLinkHref: '/appointments/create/select-prisoner',
+        categories,
+      })
+    })
+
+    it('should render the category view with back to select prisoner page with prisoner selected', async () => {
+      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
+      req.session.appointmentJourney.prisoners = [
+        {
+          number: 'A1234BC',
+          name: 'TEST PRISONER',
+          cellLocation: '1-1-1',
+        },
+      ]
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
+        backLinkHref: '/appointments/create/select-prisoner?query=A1234BC',
+        categories,
+      })
+    })
+
+    it('should render the category view with back to prisoner profile', async () => {
+      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
+      req.session.appointmentJourney.fromPrisonNumberProfile = 'A1234BC'
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
+        backLinkHref: 'https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC',
+        categories,
+      })
+    })
+
+    it('should render the category view with back to review prisoners page', async () => {
+      req.session.appointmentJourney.type = AppointmentType.GROUP
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
+        backLinkHref: '/appointments/create/review-prisoners',
+        categories,
+      })
+    })
+
+    it('should render the category view with back link for type = BULK', async () => {
+      req.session.appointmentJourney.type = AppointmentType.BULK
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
+        backLinkHref: '/appointments/create/review-prisoners',
+        categories,
+      })
     })
   })
 

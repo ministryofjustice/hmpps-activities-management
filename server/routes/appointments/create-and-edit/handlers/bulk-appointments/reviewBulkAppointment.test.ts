@@ -67,6 +67,7 @@ describe('Route Handlers - Create Bulk Appointment - Review Bulk Appointment', (
           ],
         },
       },
+      query: {},
       flash: jest.fn(),
     } as unknown as Request
   })
@@ -201,7 +202,43 @@ describe('Route Handlers - Create Bulk Appointment - Review Bulk Appointment', (
           },
         },
       ])
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule')
+      expect(res.redirect).toHaveBeenCalledWith('schedule')
+    })
+
+    it('should update and save start time and end time in session and redirect to comment page with preserve history', async () => {
+      req.query = { preserveHistory: 'true' }
+
+      await handler.POST(req, res)
+
+      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+        {
+          prisoner: {
+            number: 'ABC1234',
+          },
+          startTime: {
+            hour: 18,
+            minute: 0,
+          },
+          endTime: {
+            hour: 19,
+            minute: 0,
+          },
+        },
+        {
+          prisoner: {
+            number: 'XYZ4321',
+          },
+          startTime: {
+            hour: 19,
+            minute: 30,
+          },
+          endTime: {
+            hour: 20,
+            minute: 30,
+          },
+        },
+      ])
+      expect(res.redirect).toHaveBeenCalledWith('schedule?preserveHistory=true')
     })
   })
 

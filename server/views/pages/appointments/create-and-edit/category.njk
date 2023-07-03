@@ -7,15 +7,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Type", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-category-page' %}
-{% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-    {% if session.appointmentJourney.prisonNumber %}
-        {% set backLinkHref = dpsUrl + '/prisoner/' + session.appointmentJourney.prisonNumber %}
-    {% else %}
-        {% set backLinkHref = "/appointments/create/select-prisoner?query=" + session.appointmentJourney.prisoners[0].number %}
-    {% endif %}
-{% else %}
-    {% set backLinkHref = "/appointments/create/review-prisoners" %}
-{% endif %}
+{% set backLinkHref = backLinkHref %}
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for category in categories %}
@@ -29,7 +21,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ appointmentTypeCaption(session.appointmentJourney.type) }}
+            {{ appointmentTypeCaption(session) }}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukSelect({
