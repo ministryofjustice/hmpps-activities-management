@@ -125,9 +125,7 @@ describe('Edit Appointment Service', () => {
       await service.redirectOrEdit(req, res, 'location')
 
       expect(activitiesService.editAppointmentOccurrence).not.toHaveBeenCalled()
-      expect(res.redirect).toHaveBeenCalledWith(
-        `/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/location/apply-to`,
-      )
+      expect(res.redirect).toHaveBeenCalledWith('location/apply-to')
       expect(req.session.appointmentJourney).not.toBeNull()
       expect(req.session.editAppointmentJourney).not.toBeNull()
     })
