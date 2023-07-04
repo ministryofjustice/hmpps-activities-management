@@ -59,7 +59,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: "In cell" if schedule.activity.inCell else schedule.internalLocation.description
+                            text: locationText(schedule)
                         },
                         actions: {
                             items: [
@@ -332,4 +332,14 @@
         classes: 'govuk-summary-list--no-border',
         rows: dayRows
     }) }}
+{% endmacro %}
+
+{% macro locationText(schedule) %}
+    {% if schedule.activity.inCell %}
+        {{ "In cell" }}
+    {% elseif schedule.activity.onWing %}
+        {{ "On wing" }}
+    {% else %}
+        {{ schedule.internalLocation.description | trim | title }}
+    {% endif %}
 {% endmacro %}
