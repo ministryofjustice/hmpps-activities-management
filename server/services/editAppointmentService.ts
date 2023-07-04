@@ -113,15 +113,11 @@ export default class EditAppointmentService {
     }
 
     if (editAppointmentJourney.addPrisoners?.length > 0) {
-      occurrenceUpdates.prisonerNumbers = appointmentJourney.prisoners
-        .concat(editAppointmentJourney.addPrisoners)
-        .map(prisoner => prisoner.number)
+      occurrenceUpdates.addPrisonerNumbers = editAppointmentJourney.addPrisoners.map(prisoner => prisoner.number)
     }
 
     if (editAppointmentJourney.removePrisoner) {
-      occurrenceUpdates.prisonerNumbers = appointmentJourney.prisoners
-        .filter(prisoner => prisoner.number !== editAppointmentJourney.removePrisoner.prisonerNumber)
-        .map(prisoner => prisoner.number)
+      occurrenceUpdates.removePrisonerNumbers = [editAppointmentJourney.removePrisoner.prisonerNumber]
     }
 
     await this.activitiesService.editAppointmentOccurrence(+occurrenceId, occurrenceUpdates, user)
