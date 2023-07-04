@@ -196,8 +196,6 @@
                     text: scheduledEvent.eventType | trim | title
                 }, {
                     text: ("In cell" if scheduledEvent.inCell else scheduledEvent.internalLocationDescription | trim)
-                }, {
-                    html: appointmentAction(scheduledEvent)
                 }
             ]), scheduledEventRows) %}
         {% endfor %}
@@ -217,8 +215,6 @@
                 }, {
                     text: "Location",
                     attributes: { "aria-sort": "none" }
-                }, {
-                    html: '<span class="govuk-visually-hidden">Actions</span>'
                 }
             ],
             rows: scheduledEventRows,
@@ -230,19 +226,4 @@
     {% else %}
         <p class="govuk-body">No other events scheduled{{ '.' if session.appointmentJourney.type == AppointmentType.INDIVIDUAL }}</p>
     {% endif %}
-{% endmacro %}
-
-{% macro appointmentAction(scheduledEvent) %}
-    {% if scheduledEvent.isCancelled %}
-        <div class="govuk-!-margin-bottom-1">
-            {{ govukTag({
-                text: 'Cancelled',
-                classes: "govuk-tag--red"
-            })}}
-        </div>
-    {% endif %}
-
-    <a href="/appointments/{{ scheduledEvent.appointmentId }}/occurrence/{{ scheduledEvent.appointmentOccurrenceId }}" class="govuk-link--no-visited-state" target='_blank'>
-        View{{ " and manage" if not scheduledEvent.isExpired and not scheduledEvent.isCancelled }} <span class="govuk-visually-hidden"> appointment</span>
-    </a>
 {% endmacro %}
