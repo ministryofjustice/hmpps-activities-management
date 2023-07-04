@@ -1058,6 +1058,11 @@ export interface components {
        */
       inCell: boolean
       /**
+       * @description Flag to indicate if the location of the activity is on wing
+       * @example false
+       */
+      onWing: boolean
+      /**
        * @description Set to true if this event takes place outside the prison
        * @example false
        */
@@ -1984,6 +1989,11 @@ export interface components {
        */
       inCell: boolean
       /**
+       * @description Flag to indicate if the location of the activity is on wing
+       * @example false
+       */
+      onWing: boolean
+      /**
        * @description Flag to indicate if the activity is piece work
        * @example false
        */
@@ -2185,6 +2195,11 @@ export interface components {
        */
       inCell: boolean
       /**
+       * @description Flag to indicate if the location of the activity is on wing
+       * @example false
+       */
+      onWing: boolean
+      /**
        * @description Flag to indicate if the activity is piece work
        * @example false
        */
@@ -2333,6 +2348,11 @@ export interface components {
        * @example false
        */
       inCell: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is on wing
+       * @example false
+       */
+      onWing: boolean
       /**
        * @description Flag to indicate if the activity is piece work
        * @example false
@@ -3121,6 +3141,11 @@ export interface components {
        * @example false
        */
       inCell?: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is on wing
+       * @example false
+       */
+      onWing?: boolean
       /**
        * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
        * @example false

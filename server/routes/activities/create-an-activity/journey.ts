@@ -48,6 +48,7 @@ export type CreateAnActivityJourney = {
   timeSlotsSaturday?: string[]
   timeSlotsSunday?: string[]
   inCell?: boolean
+  onWing?: boolean
   location?: {
     id: number
     name: string
