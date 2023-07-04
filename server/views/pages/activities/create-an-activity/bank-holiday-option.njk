@@ -2,6 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% set pageTitle = applicationName + " - Create a schedule - Bank Holiday option" %}
 {% set pageId = 'create-schedule-bank-holiday-option-page' %}
@@ -12,23 +13,21 @@
         <div class="govuk-grid-column-full">
             <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
             <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
+             <span class="govuk-heading-l">Does this activity run on bank holidays?</span>
         </div>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
+                      {% if session.req.query.fromEditActivity %}
+                        {{ govukInsetText({
+                          text: "Any changes to the schedule will take effect from tomorrow."
+                        }) }}
+                      {% endif %}
                 {{ govukRadios({
                     classes: "govuk-radios--inline",
                     name: "runsOnBankHoliday",
-                    fieldset: {
-                        legend: {
-                            text: "Does this activity run on bank holidays?",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
                     items: [
                         {
                             value: "yes",
