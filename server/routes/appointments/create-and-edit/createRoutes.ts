@@ -19,7 +19,6 @@ import BulkAppointmentAddComment, {
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
-import UploadByCSV from './handlers/uploadByCsv'
 import ReviewPrisoners from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
@@ -68,7 +67,6 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
   const howToAddPrisoners = new HowToAddPrisoners()
-  const uploadByCsv = new UploadByCSV()
   const reviewPrisoners = new ReviewPrisoners()
   const uploadBulkAppointment = new UploadBulkAppointment(new PrisonerListCsvParser(), prisonService)
   const bulkAppointmentDate = new BulkAppointmentDateRoutes()
@@ -128,8 +126,6 @@ export default function Create({ prisonService, activitiesService }: Services): 
   )
   get('/how-to-add-prisoners', howToAddPrisoners.GET, true)
   post('/how-to-add-prisoners', howToAddPrisoners.POST, HowToAddPrisonersForm)
-  get('/upload-by-csv', uploadByCsv.GET, true)
-  post('/upload-by-csv', uploadByCsv.POST)
   get('/review-prisoners', reviewPrisoners.GET, true)
   post('/review-prisoners', reviewPrisoners.POST)
   get('/review-prisoners/:prisonNumber/remove', reviewPrisoners.REMOVE, true)

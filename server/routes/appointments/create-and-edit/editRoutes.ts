@@ -8,7 +8,6 @@ import ApplyToRoutes, { ApplyTo } from './handlers/applyTo'
 import ConfirmEditRoutes, { ConfirmEdit } from './handlers/confirmEdit'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
 import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './handlers/selectPrisoner'
-import UploadByCSV from './handlers/uploadByCsv'
 import UploadPrisonerListRoutes, { PrisonerList } from './handlers/uploadPrisonerList'
 import ReviewPrisoners from './handlers/reviewPrisoners'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
@@ -96,7 +95,6 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   // Add prisoners routes
   const howToAddPrisoners = new HowToAddPrisoners()
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
-  const uploadByCsv = new UploadByCSV()
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const reviewPrisoners = new ReviewPrisoners()
 
@@ -111,8 +109,6 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   get('/prisoners/add/select-prisoner', selectPrisonerHandler.GET, true)
   post('/prisoners/add/select-prisoner', selectPrisonerHandler.SELECT_PRISONER, SelectPrisoner)
   post('/prisoners/add/search-prisoner', selectPrisonerHandler.SEARCH, PrisonerSearch)
-  get('/prisoners/add/upload-by-csv', uploadByCsv.GET, true)
-  post('/prisoners/add/upload-by-csv', uploadByCsv.POST)
   get('/prisoners/add/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
   router.post(
     '/prisoners/add/upload-prisoner-list',

@@ -2,7 +2,7 @@
 
 {% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/accordion/macro.njk" import govukAccordion %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
@@ -27,32 +27,14 @@
 
                     hint: {
                         text: "Your list of prison numbers must be in a CSV file. You can include appointment start
-                        and end times using the 24-hour clock. Fr example 14:00 not 2:00pm"
+                        and end times using the 24-hour clock. For example 14:00 not 2:00pm"
                     },
                     errorMessage: validationErrors | findError('file')
                 }) }}
-
-                {{ govukAccordion({
-                     id: "csv-file-section",
-                     items: [
-                       {
-                         heading: {
-                           text: "How to use a CSV file"
-                         },
-                         content: {
-                           html: '<p class="govuk-body">A CSV file is a type of spreadsheet. Download the template if you need one,</p>
-                                  <p class="govuk-body">then add the relevant prison numbers. When you upload it to this service a</p>
-                                  <p class="govuk-body">list of attendees will be created.</p>
-                                  <p class="govuk-body"> Download the <a href="/assets/downloads/prisoner-list.csv" download>prison number list template</a> [CSV, 1kb]</p>'
-
-                         },
-                         attributes: { 'data-qa': 'csv-file-section' }
-                       }
-                     ]
-                   }) }}
-
-
-
+                {{ govukDetails({
+                  summaryText: "How to use a CSV file",
+                  text: howToUseCSVFile()
+                }) }}
                 {{ govukButton({
                     text: "Continue"
                 }) }}
@@ -60,3 +42,10 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro howToUseCSVFile() %}
+   <p class="govuk-body">A CSV file is a type of spreadsheet. Download the template if you need one,</p>
+   <p class="govuk-body">then add the relevant prison numbers. When you upload it to this service a</p>
+   <p class="govuk-body">list of attendees will be created.</p>
+   <p class="govuk-body"> Download the <a href="/assets/downloads/prisoner-list.csv" download>prison number list template</a> [CSV, 1kb]</p>
+{% endmacro %}

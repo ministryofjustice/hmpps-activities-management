@@ -8,7 +8,5 @@ export default class UploadPrisonerListPage extends Page {
   attatchFile = (filename: string) =>
     this.getInputByName('file').attachFile(`fileUpload/${filename}`, { allowEmpty: true })
 
-  opencsvSection = () => cy.get('button').contains('Show all sections').click()
-
-  selectHowToAdd = (option: string) => this.getInputByLabel(option).click()
+  howToUseCSVSection = () => cy.contains('How to use a CSV file').click()
 }

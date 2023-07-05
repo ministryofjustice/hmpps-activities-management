@@ -88,7 +88,7 @@ context('Create group appointment', () => {
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
-    uploadPrisonerListPage.opencsvSection()
+    uploadPrisonerListPage.howToUseCSVSection()
     uploadPrisonerListPage.getLinkByText('prison number list template').click()
     uploadPrisonerListPage.assertFileDownload('prisoner-list.csv')
     uploadPrisonerListPage.attatchFile('upload-prisoner-list.csv')
