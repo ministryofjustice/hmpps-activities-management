@@ -322,6 +322,8 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockApiResponse)
 
+      when(activitiesService.getScheduledActivitiesAtPrison).mockResolvedValue(mockActivities)
+
       when(activitiesService.getAllAttendance)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockSuspendedResponse)
@@ -503,7 +505,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         attendanceSummaryFilters: {
-          categories: ['Education'],
+          activityDate: date,
           categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
         },
       })
