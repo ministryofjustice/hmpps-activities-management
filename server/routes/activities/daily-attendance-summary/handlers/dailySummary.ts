@@ -22,8 +22,6 @@ export default class DailySummaryRoutes {
       return res.redirect('select-period')
     }
 
-    // req.session.attendanceSummaryFilters.activityFilters = []
-
     let { attendanceSummaryFilters } = req.session
 
     const attendanceSummary = await this.activitiesService.getAllAttendanceSummary(activityDate, user)
@@ -38,6 +36,8 @@ export default class DailySummaryRoutes {
       attendanceSummaryFilters = defaultFilters(activityDate, uniqueCategories)
       req.session.attendanceSummaryFilters = attendanceSummaryFilters
     }
+    req.session.attendanceSummaryFilters.activityFilters = []
+
     const categoryFilters = attendanceSummaryFilters.categoryFilters
       .filter((category: FilterItem) => category.checked === true)
       .map((category: FilterItem) => category.value)

@@ -310,6 +310,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         attendanceSummaryFilters: {
           activityDate: date,
           categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
+          activityFilters: [],
         },
       })
     })
@@ -507,6 +508,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         attendanceSummaryFilters: {
           activityDate: date,
           categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
+          activityFilters: [],
         },
       })
     })
