@@ -187,7 +187,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: "In cell" if session.createJourney.inCell else session.createJourney.location.name
+                            text: locationText(session.createJourney)
                         },
                         actions: {
                             items: [
@@ -255,4 +255,14 @@
     {% else %}
         None set
     {% endfor %}
+{% endmacro %}
+
+{% macro locationText(journey) %}
+    {% if journey.inCell %}
+        {{ "In cell" }}
+    {% elseif journey.onWing %}
+        {{ "On wing" }}
+    {% else %}
+        {{ journey.location.name }}
+    {% endif %}
 {% endmacro %}

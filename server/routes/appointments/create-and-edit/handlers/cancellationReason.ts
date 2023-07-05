@@ -21,17 +21,16 @@ export default class CancellationReasonRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentId, occurrenceId } = req.params
     const { reason } = req.body
 
     req.session.editAppointmentJourney.cancellationReason = reason
 
     if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
-      return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/cancel/apply-to`)
+      return res.redirect('apply-to')
     }
 
     req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_OCCURRENCE
 
-    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/cancel/confirm`)
+    return res.redirect('confirm')
   }
 }

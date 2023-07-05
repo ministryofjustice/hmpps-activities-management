@@ -18,14 +18,14 @@ export default class CategoryRoutes {
     const { user } = res.locals
     const { appointmentJourney } = req.session
 
-    let backLinkHref = '/appointments/create/review-prisoners'
+    let backLinkHref = 'review-prisoners'
     if (appointmentJourney.type === AppointmentType.INDIVIDUAL) {
       if (appointmentJourney.fromPrisonNumberProfile) {
         backLinkHref = `${config.dpsUrl}/prisoner/${appointmentJourney.fromPrisonNumberProfile}`
       } else if (appointmentJourney.prisoners?.length > 0) {
-        backLinkHref = `/appointments/create/select-prisoner?query=${appointmentJourney.prisoners[0].number}`
+        backLinkHref = `select-prisoner?query=${appointmentJourney.prisoners[0].number}`
       } else {
-        backLinkHref = '/appointments/create/select-prisoner'
+        backLinkHref = 'select-prisoner'
       }
     }
 

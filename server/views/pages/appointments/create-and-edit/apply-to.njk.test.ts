@@ -78,7 +78,7 @@ describe('Views - Appointments Management - Apply to', () => {
   it('back link href contains edit property when redirected from property edit page', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('a.govuk-back-link').attr('href')).toEqual('/appointments/1/occurrence/2/edit/location')
+    expect($('a.govuk-back-link').attr('href')).toEqual('../location')
   })
 
   it('back link href does not contain edit property when redirected from cancel, add or remove prisoner', () => {

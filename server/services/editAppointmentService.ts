@@ -29,7 +29,7 @@ export default class EditAppointmentService {
     const { appointmentId, occurrenceId } = req.params
     if (hasAnyAppointmentPropertyChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)) {
       if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
-        return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/${property}/apply-to`)
+        return res.redirect(`${property}/apply-to`)
       }
 
       return this.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)

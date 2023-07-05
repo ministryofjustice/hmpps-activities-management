@@ -37,8 +37,18 @@
 
             {% if e.eventType != 'EXTERNAL_TRANSFER' and e.eventType != 'COURT_HEARING' %}
                 <div>{{ e.startTime }}{% if e.endTime %} - {{ e.endTime }}{% endif %}</div>
-                <div>{{ "In cell" if e.inCell else e.internalLocationDescription | trim | title }}</div>
+                <div>{{ locationText(e) }}</div>
             {% endif %}
         {% endfor %}
     </div>
+{% endmacro %}
+
+{% macro locationText(e) %}
+    {% if e.inCell %}
+        In cell 
+    {% elseif e.onWing %}
+        On wing
+    {% else %}
+        {{ e.internalLocationDescription | trim | title }}
+    {% endif %}
 {% endmacro %}
