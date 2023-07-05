@@ -20,11 +20,11 @@ const user = { activeCaseLoadId: 'MDI' } as ServiceUser
 
 const prisoners = {
   totalPages: 1,
-  totalElements: 2,
+  totalElements: 4,
   pages: 1,
-  size: 2,
+  size: 4,
   first: true,
-  numberOfElements: 2,
+  numberOfElements: 4,
   content: [
     {
       prisonerNumber: 'A1111AA',
@@ -32,11 +32,6 @@ const prisoners = {
       firstName: 'One',
       lastName: 'Onester',
       dateOfBirth: '2002-10-01',
-      gender: 'Male',
-      youthOffender: false,
-      maritalStatus: 'Single',
-      religion: 'None',
-      nationality: 'British',
       status: 'ACTIVE IN',
       inOutStatus: 'IN',
       prisonId: 'MDI',
@@ -44,7 +39,6 @@ const prisoners = {
       cellLocation: '1-1-001',
       category: 'C',
       legalStatus: 'SENTENCED',
-      mostSeriousOffence: 'Driving without due care',
     },
     {
       prisonerNumber: 'A2222AA',
@@ -52,11 +46,6 @@ const prisoners = {
       firstName: 'Two',
       lastName: 'Twoster',
       dateOfBirth: '2002-10-01',
-      gender: 'Male',
-      youthOffender: false,
-      maritalStatus: 'Single',
-      religion: 'None',
-      nationality: 'British',
       status: 'ACTIVE IN',
       inOutStatus: 'IN',
       prisonId: 'MDI',
@@ -64,12 +53,39 @@ const prisoners = {
       cellLocation: '1-2-002',
       category: 'C',
       legalStatus: 'SENTENCED',
-      mostSeriousOffence: 'Driving without due care',
+    },
+    {
+      prisonerNumber: 'A3333AA',
+      bookingId: '333333',
+      firstName: 'John',
+      lastName: 'Smith',
+      dateOfBirth: '2002-10-01',
+      status: 'ACTIVE IN',
+      inOutStatus: 'IN',
+      prisonId: 'MDI',
+      prisonName: 'HMP Moorland',
+      cellLocation: '1-2-003',
+      category: 'C',
+      legalStatus: 'SENTENCED',
+    },
+    {
+      prisonerNumber: 'A4444AA',
+      bookingId: '444444',
+      firstName: 'Joe',
+      lastName: 'Bloggs',
+      dateOfBirth: '2002-10-01',
+      status: 'ACTIVE IN',
+      inOutStatus: 'IN',
+      prisonId: 'MDI',
+      prisonName: 'HMP Moorland',
+      cellLocation: '1-1-004',
+      category: 'C',
+      legalStatus: 'SENTENCED',
     },
   ],
 } as unknown as PagePrisoner
 
-const scheduledEvents = {
+const emptyScheduledEvents = {
   prisonCode: 'MDI',
   startDate: '2022-01-01',
   endDate: '2022-01-01',
@@ -81,38 +97,7 @@ const scheduledEvents = {
   activities: [],
 } as PrisonerScheduledEvents
 
-const scheduledEventsWithActivities = {
-  prisonCode: 'MDI',
-  startDate: '2022-01-01',
-  endDate: '2022-01-01',
-  appointments: [],
-  visits: [],
-  courtHearings: [],
-  adjudications: [],
-  externalTransfers: [],
-  activities: [
-    {
-      prisonCode: 'MDI',
-      eventSource: 'SAA',
-      eventType: 'ACTIVITY',
-      bookingId: 10001,
-      internalLocationId: 10001,
-      internalLocationCode: 'MDI-WORKSHOP-1',
-      internalLocationDescription: 'WORKSHOP 1',
-      scheduledInstanceId: 1001,
-      categoryCode: 'SAA-PRISON_INDUSTRIES',
-      categoryDescription: 'Prison industries',
-      summary: 'Metalwork',
-      prisonerNumber: 'A1111AA',
-      date: '2022-01-01',
-      startTime: '9:00',
-      endTime: '11:30',
-      priority: 4,
-    },
-  ],
-} as PrisonerScheduledEvents
-
-const scheduledEventsWithCourt = {
+const scheduledEvents = {
   prisonCode: 'MDI',
   startDate: '',
   endDate: '',
@@ -136,7 +121,65 @@ const scheduledEventsWithCourt = {
       priority: 1,
     },
   ],
-  activities: [],
+  activities: [
+    {
+      prisonCode: 'MDI',
+      eventSource: 'SAA',
+      eventType: 'ACTIVITY',
+      bookingId: 10001,
+      internalLocationId: 10001,
+      internalLocationCode: 'WOW',
+      internalLocationDescription: 'WORKSHOP 1 WORKERS',
+      onWing: false,
+      scheduledInstanceId: 1001,
+      categoryCode: 'SAA-PRISON_INDUSTRIES',
+      categoryDescription: 'Prison industries',
+      summary: 'Textiles',
+      prisonerNumber: 'A2222AA',
+      date: '2022-01-01',
+      startTime: '9:00',
+      endTime: '11:30',
+      priority: 4,
+    },
+    {
+      prisonCode: 'MDI',
+      eventSource: 'SAA',
+      eventType: 'ACTIVITY',
+      bookingId: 10002,
+      internalLocationId: null,
+      internalLocationCode: null,
+      internalLocationDescription: null,
+      onWing: true,
+      scheduledInstanceId: 1002,
+      categoryCode: 'SAA-PRISON_INDUSTRIES',
+      categoryDescription: 'Prison industries',
+      summary: 'Textiles',
+      prisonerNumber: 'A3333AA',
+      date: '2022-01-01',
+      startTime: '9:00',
+      endTime: '11:30',
+      priority: 4,
+    },
+    {
+      prisonCode: 'MDI',
+      eventSource: 'SAA',
+      eventType: 'ACTIVITY',
+      bookingId: 10003,
+      internalLocationId: 10003,
+      internalLocationCode: 'GYM',
+      internalLocationDescription: 'GYM',
+      onWing: false,
+      scheduledInstanceId: 1003,
+      categoryCode: 'SAA_GYM_SPORTS_FITNESS',
+      categoryDescription: 'Gym, sport, fitness',
+      summary: 'Gym - Weights',
+      prisonerNumber: 'A4444AA',
+      date: '2022-01-01',
+      startTime: '9:00',
+      endTime: '11:30',
+      priority: 4,
+    },
+  ],
 } as PrisonerScheduledEvents
 
 const defaultLocationFilters = [
@@ -181,7 +224,7 @@ describe('Unlock list service', () => {
 
   describe('getUnlockListForLocationGroups', () => {
     it('should get the unlock list items for three sub-locations', async () => {
-      const prisonerNumbers = ['A1111AA', 'A2222AA']
+      const prisonerNumbers = ['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA']
       const unlockFilters = testUnlockFilters(
         defaultLocationFilters,
         defaultActivityFilters,
@@ -196,11 +239,11 @@ describe('Unlock list service', () => {
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(emptyScheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems.length).toBe(2)
+      expect(unlockListItems.length).toBe(4)
 
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(3)
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_A-Wing', user)
@@ -244,7 +287,7 @@ describe('Unlock list service', () => {
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(emptyScheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
@@ -280,12 +323,12 @@ describe('Unlock list service', () => {
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithActivities)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems).toHaveLength(1)
-      expect(unlockListItems[0].prisonerNumber).toEqual('A1111AA')
+      expect(unlockListItems).toHaveLength(4)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'])
     })
 
     it('filter by leaving', async () => {
@@ -305,12 +348,12 @@ describe('Unlock list service', () => {
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems).toHaveLength(1)
-      expect(unlockListItems[0].prisonerNumber).toEqual('A1111AA')
+      expect(unlockListItems).toHaveLength(2)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A4444AA'])
     })
 
     it('filter by staying', async () => {
@@ -330,12 +373,12 @@ describe('Unlock list service', () => {
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems).toHaveLength(1)
-      expect(unlockListItems[0].prisonerNumber).toEqual('A2222AA')
+      expect(unlockListItems).toHaveLength(2)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A2222AA', 'A3333AA'])
     })
 
     it('filter by sub-location', async () => {
@@ -355,12 +398,12 @@ describe('Unlock list service', () => {
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems).toHaveLength(1)
-      expect(unlockListItems[0].prisonerNumber).toEqual('A1111AA')
+      expect(unlockListItems).toHaveLength(2)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A4444AA'])
     })
 
     it('filter by sub-location - no-sublocations exist', async () => {
@@ -371,11 +414,11 @@ describe('Unlock list service', () => {
 
       prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
 
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEventsWithCourt)
+      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-      expect(unlockListItems).toHaveLength(2)
+      expect(unlockListItems).toHaveLength(4)
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).not.toHaveBeenCalled()
     })
   })
