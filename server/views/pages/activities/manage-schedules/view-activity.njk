@@ -3,6 +3,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% set pageTitle = applicationName + " - Activities Dashboard - View activity" %}
 {% set pageId = 'view-activity-page' %}
@@ -17,7 +18,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop">
             {{ govukSummaryList({
-                rows: [
+                  rows: [
                     {
                         key: {
                             text: "Name"
@@ -34,8 +35,9 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        }
-                    },
+                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                    }
+                    ,
                     {
                         key: {
                             text: "Activity category"
@@ -52,7 +54,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        }
+                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
                     },
                     {
                         key: {
@@ -70,7 +72,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        }
+                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
                     },
                     {
                         key: {
@@ -88,7 +90,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        }
+                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
                     }
                 ]
             }) }}
@@ -112,7 +114,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        }
+                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
                     },
                     {
                         key: {
@@ -130,7 +132,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        }
+                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
                     }
                 ]
             }) }}
@@ -153,20 +155,28 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        }
+                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
                     }
                 ]
             }) }}
 
             <h2 class="govuk-heading-m">Dates and schedule</h2>
-            {% if attendanceCount > 0 %}
+            {% if schedule.startDate <= now | toDateString %}
                 {% set dateAndScheduleRows = [{
                     key: {
                         text: "Start date"
                     },
                     value: {
                         text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+                    },
+                    actions: {
+                        items: [
+                            {
+                                text: activityStartedTag()
+                            }
+                        ]
                     }
+
                 }] %}
             {% else %}
                 {% set dateAndScheduleRows = [{
@@ -189,23 +199,13 @@
                 }] %}
             {% endif %}
 
-            {% if schedule.endDate %}
+            {% if schedule.endDate < now | toDateString %}
                 {% set dateAndScheduleRows = (dateAndScheduleRows.push({
                     key: {
                         text: "End date"
                     },
                     value: {
                         text: schedule.endDate | toDate | formatDate('EEEE d MMMM yyyy')
-                    },
-                    actions: {
-                        items: [
-                            {
-                                href: "/activities/create/end-date?fromEditActivity=true&preserveHistory=true",
-                                text: "Change",
-                                visuallyHiddenText: "change end date",
-                                classes: "govuk-link--no-visited-state"
-                            }
-                        ]
                     }
                 }), dateAndScheduleRows) %}
             {% else %}
@@ -246,7 +246,7 @@
                                 classes: "govuk-link--no-visited-state"
                             }
                         ]
-                    }
+                    } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
                 },
                 {
                     key: {
@@ -264,7 +264,7 @@
                                 classes: "govuk-link--no-visited-state"
                             }
                         ]
-                    }
+                    } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
                 }
             ), dateAndScheduleRows) %}
 
@@ -327,7 +327,6 @@
         ), dayRows) %}
     {% endfor %}
 
-
     {{ govukSummaryList({
         classes: 'govuk-summary-list--no-border',
         rows: dayRows
@@ -341,5 +340,21 @@
         {{ "On wing" }}
     {% else %}
         {{ schedule.internalLocation.description | trim | title }}
+    {% endif %}
+{% endmacro %}
+
+{% macro activityStartedTag() %}
+    {{ govukTag({
+        text: "Started",
+        classes: "govuk-tag--green"
+    }) }}
+{% endmacro %}
+
+{% macro activitySummary() %}
+    {% if schedule.endDate >= now | toDateString %}
+        href: "/activities/create/name?fromEditActivity=true&preserveHistory=true",
+        text: "Change",
+        visuallyHiddenText: "change activity name",
+        classes: "govuk-link--no-visited-state"
     {% endif %}
 {% endmacro %}
