@@ -341,8 +341,7 @@
 {% endmacro %}
 
 {% macro activitySummary() %}
-    {% if schedule.endDate < now | toDateString %}
-    {% else %}
+    {% if schedule.endDate >= now | toDateString %}
         href: "/activities/create/name?fromEditActivity=true&preserveHistory=true",
         text: "Change",
         visuallyHiddenText: "change activity name",
