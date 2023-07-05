@@ -138,9 +138,11 @@ export default class UnlockListService {
       return true
     }
 
-    // TODO: Check rules for 'ACTIVITY' and 'APPOINTMENT' event types
-    // If event is not 'inCell' then location id should be checked to confirm if event is on-wing or off-wing
-    // If one or more events are off-wing, then prisoner should appear in off-wing list
+    // If it's not an off-wing event, check if the event location is off-wing
+    const offWingLocations = item.events.filter(e => !e.inCell && !e.onWing && !e.internalLocationCode.includes('WOW'))
+    if (offWingLocations.length > 0) {
+      return true
+    }
 
     return false
   }
