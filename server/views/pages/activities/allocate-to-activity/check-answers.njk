@@ -86,7 +86,7 @@
                     },
                     {
                         key: {
-                            text: "Pay band"
+                            text: "Pay rate"
                         },
                         value: {
                             text: payBand
@@ -104,7 +104,7 @@
                     }
                 ]
             }) }}
-
+            <span class="govuk-heading-m">Confirm that you want to allocate {{ prisonerName }} to {{activityName}}</span>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 

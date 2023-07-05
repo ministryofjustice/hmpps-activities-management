@@ -74,9 +74,7 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
       await handler.POST(req, res)
 
       expect(req.session.editAppointmentJourney.cancellationReason).toEqual(AppointmentCancellationReason.CANCELLED)
-      expect(res.redirect).toHaveBeenCalledWith(
-        `/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/cancel/apply-to`,
-      )
+      expect(res.redirect).toHaveBeenCalledWith('apply-to')
     })
 
     it('should save apply to in session and redirect to confirm', async () => {
@@ -95,9 +93,7 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
       expect(req.session.editAppointmentJourney.cancellationReason).toEqual(
         AppointmentCancellationReason.CREATED_IN_ERROR,
       )
-      expect(res.redirect).toHaveBeenCalledWith(
-        `/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/cancel/confirm`,
-      )
+      expect(res.redirect).toHaveBeenCalledWith('confirm')
     })
   })
 

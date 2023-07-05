@@ -278,7 +278,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual(appointmentJourneySession)
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/location`)
+      expect(res.redirect).toHaveBeenCalledWith('../location')
     })
 
     it('should accept an invalid end date value', async () => {
@@ -369,7 +369,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/B2345CD/remove/apply-to`)
+      expect(res.redirect).toHaveBeenCalledWith('../remove/apply-to')
     })
 
     it('should populate the session with prisoner details and redirect to confirm', async () => {
@@ -410,7 +410,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/A1234BC/remove/confirm`)
+      expect(res.redirect).toHaveBeenCalledWith('../remove/confirm')
     })
 
     it('should null return to', async () => {
@@ -458,7 +458,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/prisoners/add/how-to-add-prisoners`)
+      expect(res.redirect).toHaveBeenCalledWith('../../prisoners/add/how-to-add-prisoners')
     })
 
     it('should null return to', async () => {
@@ -502,7 +502,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12/edit/cancel/reason`)
+      expect(res.redirect).toHaveBeenCalledWith('../cancel/reason')
     })
 
     it('should null return to', async () => {

@@ -8,7 +8,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Apply to", session.appointmentJourney) %}
 {% set pageId = 'appointments-manage-apply-to-page' %}
-{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId + ("/edit/" + property if property) %}
+{% set backLinkHref = ('../' + property if property else "/appointments/" + appointmentId + "/occurrence/" + occurrenceId) %}
 
 {% set applyToItems = [] %}
 {% for applyToOption in applyToOptions %}

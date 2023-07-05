@@ -30,8 +30,8 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
-                    id: "in-cell",
-                    name: "inCell",
+                    id: "location-type",
+                    name: "locationType",
                     fieldset: {
                         legend: {
                             text: 'Enter the new activity location' if session.req.query.fromEditActivity else 'Where does this activity take place?',
@@ -59,6 +59,11 @@
                                     items: options
                                 })
                             }
+                        },
+                        {
+                            value: "ON_WING",
+                            text: "On wing",
+                            checked: formResponses.onWing == true or session.createJourney.onWing == true
                         },
                         {
                             value: "IN_CELL",

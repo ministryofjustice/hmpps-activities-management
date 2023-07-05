@@ -79,9 +79,7 @@ describe('Views - Appointments Management - Confirm Edit', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('a.govuk-back-link').attr('href')).toEqual(
-      '/appointments/1/occurrence/2/edit/prisoners/add/review-prisoners',
-    )
+    expect($('a.govuk-back-link').attr('href')).toEqual('review-prisoners')
   })
 
   it('back link href does not contain review prisoners when redirected from cancel or remove prisoner', () => {
