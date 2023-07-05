@@ -98,7 +98,7 @@
             <p class="govuk-body">Check if {{ session.allocateJourney.inmate.prisonerName }}'s current allocation would be compatible with {{ session.allocateJourney.activity.name }}.</p>
 
             <div class="govuk-!-margin-bottom-8 govuk-body">
-                {% if allocationSuitability.allocations %}
+                {% if allocationSuitability.allocations | length %}
                     {% set currentAllocations = [] %}
                     {% for prisonerAllocation in allocationSuitability.allocations %}
                         {% if prisonerAllocation.allocation.status != "ENDED" %}

@@ -66,6 +66,7 @@ export default class CheckAnswersRoutes {
         ? formatDate(plainToInstance(SimpleDate, createJourney.endDate).toRichDate(), 'yyyy-MM-dd')
         : undefined,
       inCell: createJourney.inCell,
+      onWing: createJourney.onWing,
       locationId: createJourney.location?.id,
       capacity: createJourney.capacity,
       slots,

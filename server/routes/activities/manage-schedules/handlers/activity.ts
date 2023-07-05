@@ -37,6 +37,7 @@ export default class ActivityRoutes {
     req.session.createJourney.category = activity.category
     req.session.createJourney.name = activity.summary
     req.session.createJourney.inCell = activity.inCell
+    req.session.createJourney.onWing = activity.onWing
     req.session.createJourney.riskLevel = activity.riskLevel
     req.session.createJourney.startDate = {
       day: Number(activity.startDate.substring(8, 10)),
