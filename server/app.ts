@@ -24,6 +24,7 @@ import setUpChangeLinks from './middleware/setUpChangeLinks'
 import trimRequestBody from './middleware/trimBodyMiddleware'
 import setUpValidationExtensions from './middleware/setUpValidationExtensions'
 import formValidationErrorHandler from './middleware/formValidationErrorHandler'
+import populateJourney from './middleware/populateJourney'
 
 export default function createApp(services: Services): express.Application {
   const app = express()
@@ -48,6 +49,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services))
   app.use(trimRequestBody())
   app.use(setUpValidationExtensions())
+  app.use(populateJourney())
   app.use(routes(services))
   app.use(formValidationErrorHandler)
   app.use((req, res, next) => next(createError(404, 'Not found')))

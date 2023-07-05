@@ -31,15 +31,13 @@ export default class ReviewPrisonerRoutes {
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentId, occurrenceId } = req.params
-
     if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
-      return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/prisoners/add/apply-to`)
+      return res.redirect('apply-to')
     }
 
     req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_OCCURRENCE
 
-    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}/edit/prisoners/add/confirm`)
+    return res.redirect('confirm')
   }
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {
