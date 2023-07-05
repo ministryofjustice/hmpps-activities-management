@@ -6,7 +6,7 @@ import ApplyToRoutes, { ApplyTo } from './applyTo'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { AppointmentApplyTo, AppointmentRepeatPeriod } from '../../../../@types/appointments'
-import { getAppointmentApplyToOptions } from '../../../../utils/editAppointmentUtils'
+import { getAppointmentApplyToOptions, getRepeatFrequencyText } from '../../../../utils/editAppointmentUtils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 
@@ -84,7 +84,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         occurrenceId,
         property,
         applyToOptions: getAppointmentApplyToOptions(req),
-        frequencyText: 'This appointment repeats every day',
+        frequencyText: getRepeatFrequencyText(req.session.appointmentJourney),
       })
     })
   })

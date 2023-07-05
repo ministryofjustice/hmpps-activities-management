@@ -661,23 +661,26 @@ describe('Edit Appointment Utils', () => {
   })
 
   describe('appointment frequency text', () => {
-    it('should return correct appointment frequency text', () => {
-      req.session.appointmentJourney = {
-        mode: AppointmentJourneyMode.EDIT,
-        type: AppointmentType.GROUP,
-        repeatPeriod: AppointmentRepeatPeriod.FORTNIGHTLY,
-      }
+    it.each([
+      ['null', null, null],
+      ['week day', AppointmentRepeatPeriod.WEEKDAY, 'week day'],
+      ['day', AppointmentRepeatPeriod.DAILY, 'day'],
+      ['week', AppointmentRepeatPeriod.WEEKLY, 'week'],
+      ['fortnight', AppointmentRepeatPeriod.FORTNIGHTLY, 'fortnight'],
+      ['month', AppointmentRepeatPeriod.MONTHLY, 'month'],
+      ['unknown value', 'UNKNOWN', null],
+    ])(
+      'should return correct frequency text for %s',
+      (_: string, repeatPeriod: AppointmentRepeatPeriod, expectedFrequencyNoun: string) => {
+        req.session.appointmentJourney = {
+          mode: AppointmentJourneyMode.EDIT,
+          type: AppointmentType.GROUP,
+          repeatPeriod,
+        }
 
-      expect(getRepeatFrequencyText(req.session.appointmentJourney)).toEqual('This appointment repeats every fortnight')
-    })
-
-    it('should return null appointment frequency text if no repeat period', () => {
-      req.session.appointmentJourney = {
-        mode: AppointmentJourneyMode.EDIT,
-        type: AppointmentType.GROUP,
-      }
-
-      expect(getRepeatFrequencyText(req.session.appointmentJourney)).toEqual(null)
-    })
+        const expectedText = expectedFrequencyNoun ? `This appointment repeats every ${expectedFrequencyNoun}` : null
+        expect(getRepeatFrequencyText(req.session.appointmentJourney)).toEqual(expectedText)
+      },
+    )
   })
 })
