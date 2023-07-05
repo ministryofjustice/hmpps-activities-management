@@ -66,7 +66,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
-        backLinkHref: '/appointments/create/select-prisoner',
+        backLinkHref: 'select-prisoner',
         categories,
       })
     })
@@ -86,7 +86,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
-        backLinkHref: '/appointments/create/select-prisoner?query=A1234BC',
+        backLinkHref: 'select-prisoner?query=A1234BC',
         categories,
       })
     })
@@ -113,7 +113,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
-        backLinkHref: '/appointments/create/review-prisoners',
+        backLinkHref: 'review-prisoners',
         categories,
       })
     })
@@ -126,7 +126,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
-        backLinkHref: '/appointments/create/review-prisoners',
+        backLinkHref: 'review-prisoners',
         categories,
       })
     })
