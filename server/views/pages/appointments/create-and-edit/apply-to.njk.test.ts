@@ -1,14 +1,14 @@
 import * as cheerio from 'cheerio'
 import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
-import { addDays } from 'date-fns'
+import { addDays, format } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import {
   AppointmentJourney,
   AppointmentJourneyMode,
   AppointmentType,
 } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentApplyTo, AppointmentApplyToOption } from '../../../../@types/appointments'
+import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentRepeatPeriod } from '../../../../@types/appointments'
 import { formatDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
 
@@ -43,6 +43,7 @@ describe('Views - Appointments Management - Apply to', () => {
     appointmentId,
     occurrenceId,
     property: '',
+    frequencyText: null as string,
     applyToOptions,
   }
 
@@ -61,16 +62,30 @@ describe('Views - Appointments Management - Apply to', () => {
             year: weekTomorrow.getFullYear(),
             date: weekTomorrow,
           },
+          repeatPeriod: AppointmentRepeatPeriod.DAILY,
         },
         editAppointmentJourney: {
           repeatCount: 3,
-          sequenceNumbers: [1, 2, 3],
-          sequenceNumber: 2,
+          occurrences: [
+            {
+              sequenceNumber: 1,
+              startDate: format(weekTomorrow, 'yyyy-MM-dd'),
+            },
+            {
+              sequenceNumber: 2,
+              startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
+            },
+            {
+              sequenceNumber: 3,
+              startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
+            },
+          ],
         } as EditAppointmentJourney,
       },
       appointmentId,
       occurrenceId,
       property: 'location',
+      frequencyText: 'This appointment repeats every day',
       applyToOptions,
     }
   })
@@ -168,5 +183,18 @@ describe('Views - Appointments Management - Apply to', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('button').text().trim()).toEqual('Confirm and save')
+  })
+
+  it('should show frequency text when set', () => {
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=frequency-text]').text().trim()).toEqual('This appointment repeats every day')
+  })
+
+  it('should show frequency text when set', () => {
+    viewContext.frequencyText = null
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=frequency-text]').length).toEqual(0)
   })
 })

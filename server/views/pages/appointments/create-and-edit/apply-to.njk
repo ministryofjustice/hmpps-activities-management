@@ -16,7 +16,7 @@
         value: applyToOption.applyTo,
         text: applyToOption.description,
         hint: {
-            text: applyToOption.additionalDescription
+            html: applyToOption.additionalDescription
         }
     } ), categoryOptions) %}
 {% endfor %}
@@ -36,6 +36,15 @@
                     errorMessage: validationErrors | findError('applyTo'),
                     items: applyToItems
                 }) }}
+
+                {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+                {% if frequencyText %}
+                    {{ govukInsetText({
+                        text: frequencyText,
+                        attributes: { 'data-qa': 'frequency-text' }
+                    }) }}
+                {% endif %}
 
                 {{ govukButton({
                     text: "Confirm and add" if session.editAppointmentJourney.addPrisoners else ("Confirm and remove" if session.editAppointmentJourney.removePrisoner else "Confirm and save")

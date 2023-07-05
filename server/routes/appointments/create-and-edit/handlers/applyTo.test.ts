@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays } from 'date-fns'
+import { addDays, format } from 'date-fns'
 import ApplyToRoutes, { ApplyTo } from './applyTo'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { AppointmentApplyTo } from '../../../../@types/appointments'
+import { AppointmentApplyTo, AppointmentRepeatPeriod } from '../../../../@types/appointments'
 import { getAppointmentApplyToOptions } from '../../../../utils/editAppointmentUtils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
@@ -29,6 +29,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
+          repeatPeriod: AppointmentRepeatPeriod.DAILY,
           startDate: {
             day: weekTomorrow.getDate(),
             month: weekTomorrow.getMonth() + 1,
@@ -38,7 +39,24 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         },
         editAppointmentJourney: {
           repeatCount: 4,
-          sequenceNumbers: [1, 2, 3, 4],
+          occurrences: [
+            {
+              sequenceNumber: 1,
+              startDate: format(weekTomorrow, 'yyyy-MM-dd'),
+            },
+            {
+              sequenceNumber: 2,
+              startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
+            },
+            {
+              sequenceNumber: 3,
+              startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
+            },
+            {
+              sequenceNumber: 4,
+              startDate: format(addDays(weekTomorrow, 3), 'yyyy-MM-dd'),
+            },
+          ],
           sequenceNumber: 2,
         } as EditAppointmentJourney,
       },
@@ -66,6 +84,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         occurrenceId,
         property,
         applyToOptions: getAppointmentApplyToOptions(req),
+        frequencyText: 'This appointment repeats every day',
       })
     })
   })

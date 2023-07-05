@@ -51,6 +51,5 @@ export type AppointmentJourney = {
   repeatPeriod?: AppointmentRepeatPeriod
   repeatCount?: number
   comment?: string
-
   fromPrisonNumberProfile?: string
 }

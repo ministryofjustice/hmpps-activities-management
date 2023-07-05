@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio'
 import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
-import { addDays } from 'date-fns'
+import { addDays, format } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import {
   AppointmentJourney,
@@ -42,7 +42,20 @@ describe('Views - Appointments Management - Comment', () => {
         },
         editAppointmentJourney: {
           repeatCount: 3,
-          sequenceNumbers: [1, 2, 3],
+          occurrences: [
+            {
+              sequenceNumber: 1,
+              startDate: format(weekTomorrow, 'yyyy-MM-dd'),
+            },
+            {
+              sequenceNumber: 2,
+              startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
+            },
+            {
+              sequenceNumber: 3,
+              startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
+            },
+          ],
           sequenceNumber: 2,
         } as EditAppointmentJourney,
       },

@@ -168,7 +168,10 @@ export default class StartJourneyRoutes {
 
     req.session.editAppointmentJourney = {
       repeatCount: appointmentOccurrence.repeat?.count ?? 1,
-      sequenceNumbers: appointment.occurrences.map(occurrence => occurrence.sequenceNumber),
+      occurrences: appointment.occurrences.map(occurrence => ({
+        sequenceNumber: occurrence.sequenceNumber,
+        startDate: occurrence.startDate,
+      })),
       sequenceNumber: appointmentOccurrence.sequenceNumber,
     }
 
