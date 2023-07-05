@@ -48,15 +48,15 @@
                     ), rows) %}
 
                     {% set cardItems = [] %}
-                    {% set cardItems = (cardItems.push(
-                        {
-                            href: "/activities/create/pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true&preserveHistory=true",
-                            text: "Change",
-                            classes: "govuk-link--no-visited-state",
-                            attributes: { 'data-qa': 'change-pay' }
-                        }
-                    ), cardItems) %}
                     {% if not pay.peopleCount %}
+                        {% set cardItems = (cardItems.push(
+                            {
+                                href: "/activities/create/pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true&preserveHistory=true",
+                                text: "Change",
+                                classes: "govuk-link--no-visited-state",
+                                attributes: { 'data-qa': 'change-pay' }
+                            }
+                        ), cardItems) %}
                         {% set cardItems = (cardItems.push(
                             {
                                 href: "/activities/create/remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true&preserveHistory=true",
