@@ -13,7 +13,7 @@ export default function DateIsAfterOtherProperty(property: string, validationOpt
         validate(value: SimpleDate, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints
           const relatedValue = args.object[relatedPropertyName]
-          return relatedValue ? value.toRichDate() > new Date(relatedValue) : true
+          return relatedValue ? value.toIsoString() >= relatedValue : true
         },
       },
     })
