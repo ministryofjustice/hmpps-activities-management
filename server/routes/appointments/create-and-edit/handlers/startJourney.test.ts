@@ -173,7 +173,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.bulkAppointmentJourney).toEqual({
         appointments: [],
       })
-      expect(res.redirect).toHaveBeenCalledWith('upload-by-csv')
+      expect(res.redirect).toHaveBeenCalledWith('upload-bulk-appointment')
     })
 
     it('should null return to', async () => {

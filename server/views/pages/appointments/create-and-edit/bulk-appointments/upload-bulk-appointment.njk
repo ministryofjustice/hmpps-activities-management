@@ -2,12 +2,13 @@
 
 {% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
 {% set pageTitle = appointmentJourneyTitle("Upload Prisoner List", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-upload-prisoner-list-page' %}
-{% set backLinkHref = "upload-by-csv" %}
+{% set backLinkHref = "/appointments" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -18,13 +19,21 @@
                     id: "file",
                     name: "file",
                     label: {
-                        text: "Upload a CSV file to create appointments",
+                        text: "Upload your list of prison numbers",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
+
+                    hint: {
+                        text: "Your list of prison numbers must be in a CSV file. You can include appointment start
+                        and end times using the 24-hour clock. For example 14:00 not 2:00pm"
+                    },
                     errorMessage: validationErrors | findError('file')
                 }) }}
-
+                {{ govukDetails({
+                  summaryText: "How to use a CSV file",
+                  html: howToUseCSVFile()
+                }) }}
                 {{ govukButton({
                     text: "Continue"
                 }) }}
@@ -32,3 +41,10 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro howToUseCSVFile() %}
+   <p class="govuk-body">A CSV file is a type of spreadsheet. Download the template if you need one,</p>
+   <p class="govuk-body">then add the relevant prison numbers. When you upload it to this service a</p>
+   <p class="govuk-body">list of attendees will be created.</p>
+   <p class="govuk-body"> Download the <a href="/assets/downloads/bulk-appointments.csv" download>prison number list template</a> [CSV, 1kb]</p>
+{% endmacro %}

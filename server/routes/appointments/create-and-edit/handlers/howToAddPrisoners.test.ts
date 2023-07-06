@@ -67,7 +67,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
         howToAdd: 'CSV',
       }
       await handler.POST(req, res)
-      expect(res.redirect).toBeCalledWith('upload-by-csv')
+      expect(res.redirect).toBeCalledWith('upload-prisoner-list')
     })
 
     it('should redirect to upload by CSV page with preserve history', async () => {
@@ -76,7 +76,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
         howToAdd: 'CSV',
       }
       await handler.POST(req, res)
-      expect(res.redirect).toBeCalledWith('upload-by-csv?preserveHistory=true')
+      expect(res.redirect).toBeCalledWith('upload-prisoner-list?preserveHistory=true')
     })
   })
 
