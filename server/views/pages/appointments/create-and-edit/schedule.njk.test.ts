@@ -7,7 +7,7 @@ import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentJourney, AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { BulkAppointmentJourney } from '../../../../routes/appointments/create-and-edit/bulkAppointmentJourney'
 import { EventSource, EventType } from '../../../../@types/activities'
-import { formatDate } from '../../../../utils/utils'
+import { convertToTitleCase, formatDate, padNumber } from '../../../../utils/utils'
 
 let $: CheerioAPI
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/schedule.njk')
@@ -72,7 +72,18 @@ describe('Views - Create Appointment - Schedule', () => {
       appointmentJourney: {} as AppointmentJourney,
       bulkAppointmentJourney: {} as BulkAppointmentJourney,
     },
-    prisonerSchedules: [{}],
+    prisonerSchedules: [] as {
+      prisoner: { number: string; name: string; cellLocation: string }
+      startTime?: { hour: number; minute: number }
+      endTime?: { hour: number; minute: number }
+      scheduledEvents: {
+        prisonerNumber: string
+        eventType: string
+        eventSource: string
+        summary: string
+        internalLocationDescription: string
+      }[]
+    }[],
     formResponses: {},
   }
 
@@ -92,7 +103,7 @@ describe('Views - Create Appointment - Schedule', () => {
         } as unknown as AppointmentJourney,
         bulkAppointmentJourney: {} as BulkAppointmentJourney,
       },
-      prisonerSchedules: [{}],
+      prisonerSchedules: [],
       formResponses: {},
     }
   })
@@ -151,6 +162,26 @@ describe('Views - Create Appointment - Schedule', () => {
 
     it('should not display top call to action', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
+    })
+
+    it('should not use summary card for attendee', () => {
+      expect($('.govuk-summary-card').length).toBe(0)
+    })
+
+    it('should display events for attendee heading', () => {
+      expect($('[data-qa=schedule-heading]').text().trim()).toEqual(
+        `Events for Test Prisoner, A1234BC on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`,
+      )
+    })
+
+    it('should display no other events scheduled', () => {
+      viewContext.prisonerSchedules[0].scheduledEvents = []
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect(
+        $(`[data-qa=no-events-for-prison-number-${viewContext.prisonerSchedules[0].prisoner.number}]`).text().trim(),
+      ).toEqual('No other events scheduled.')
     })
   })
 
@@ -228,6 +259,48 @@ describe('Views - Create Appointment - Schedule', () => {
 
     it('should not display top call to action for fewer than eleven attendees', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
+    })
+
+    it('should use summary cards for attendees', () => {
+      expect($('.govuk-summary-card').length).toBe(10)
+    })
+
+    it('should display events for attendee titles', () => {
+      viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+        expect(
+          $(`[data-qa=schedule-card-title-prison-number-${prisonerSchedule.prisoner.number}]`).text().trim(),
+        ).toEqual(`${convertToTitleCase(prisonerSchedule.prisoner.name)}, ${prisonerSchedule.prisoner.number}`)
+      })
+    })
+
+    it('should display remove attendee links', () => {
+      viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+        const link = $(`[data-qa=remove-prison-number-${prisonerSchedule.prisoner.number}]`)
+        expect(link.text()).toContain('Remove attendee')
+        expect(link.attr('href')).toEqual(`schedule/${prisonerSchedule.prisoner.number}/remove`)
+      })
+    })
+
+    it('should not display change time links', () => {
+      viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+        expect($(`[data-qa=change-appointment-time-prison-number-${prisonerSchedule.prisoner.number}]`).length).toBe(0)
+      })
+    })
+
+    it('should not display remove appointment links', () => {
+      viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+        expect($(`[data-qa=remove-appointment-prison-number-${prisonerSchedule.prisoner.number}]`).length).toBe(0)
+      })
+    })
+
+    it('should display no other events scheduled', () => {
+      viewContext.prisonerSchedules[0].scheduledEvents = []
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect(
+        $(`[data-qa=no-events-for-prison-number-${viewContext.prisonerSchedules[0].prisoner.number}]`).text().trim(),
+      ).toEqual('No other events scheduled')
     })
 
     it('should only display list is empty and someone must be added when attendee list is empty', () => {
@@ -355,6 +428,61 @@ describe('Views - Create Appointment - Schedule', () => {
 
     it('should not display top call to action for fewer than eleven appointments', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
+    })
+
+    it('should use summary cards for appointments', () => {
+      expect($('.govuk-summary-card').length).toBe(10)
+    })
+
+    it('should display events for attendee titles', () => {
+      viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+        expect(
+          $(`[data-qa=schedule-card-title-prison-number-${prisonerSchedule.prisoner.number}] > ul > li:eq(0)`)
+            .text()
+            .trim(),
+        ).toEqual(`${convertToTitleCase(prisonerSchedule.prisoner.name)}, ${prisonerSchedule.prisoner.number}`)
+        expect(
+          $(`[data-qa=schedule-card-title-prison-number-${prisonerSchedule.prisoner.number}] > ul > li:eq(1)`)
+            .text()
+            .trim(),
+        ).toEqual(
+          `${padNumber(prisonerSchedule.startTime.hour)}:${padNumber(prisonerSchedule.startTime.minute)} to ${padNumber(
+            prisonerSchedule.endTime.hour,
+          )}:${padNumber(prisonerSchedule.endTime.minute)}`,
+        )
+      })
+    })
+
+    it('should not display remove attendee links', () => {
+      viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+        expect($(`[data-qa=remove-prison-number-${prisonerSchedule.prisoner.number}]`).length).toBe(0)
+      })
+    })
+
+    it('should display change time links', () => {
+      viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+        const link = $(`[data-qa=change-appointment-time-prison-number-${prisonerSchedule.prisoner.number}]`)
+        expect(link.text()).toContain('Change time')
+        expect(link.attr('href')).toEqual('review-bulk-appointment?preserveHistory=true')
+      })
+    })
+
+    it('should display remove appointment links', () => {
+      viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+        const link = $(`[data-qa=remove-appointment-prison-number-${prisonerSchedule.prisoner.number}]`)
+        expect(link.text()).toContain('Remove appointment')
+        expect(link.attr('href')).toEqual(`schedule/${prisonerSchedule.prisoner.number}/remove`)
+      })
+    })
+
+    it('should display no other events scheduled', () => {
+      viewContext.prisonerSchedules[0].scheduledEvents = []
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect(
+        $(`[data-qa=no-events-for-prison-number-${viewContext.prisonerSchedules[0].prisoner.number}]`).text().trim(),
+      ).toEqual('No other events scheduled')
     })
 
     it('should only display list is empty and someone must be added when attendee list is empty', () => {

@@ -136,12 +136,12 @@
                     {% for prisonerSchedule in prisonerSchedules %}
                         {% set prisoner = prisonerSchedule.prisoner %}
                         {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-                            <h2 class="govuk-heading-m">Events for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
+                            <h2 class="govuk-heading-m" data-qa="schedule-heading">Events for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
                             {{ prisonerScheduledEvents(prisoner, prisonerSchedule.scheduledEvents) }}
                         {% else %}
                             <div class="govuk-summary-card appointment-schedule">
                                 <div class="govuk-summary-card__title-wrapper">
-                                    <h2 class="govuk-summary-card__title">
+                                    <h2 class="govuk-summary-card__title" data-qa="schedule-card-title-prison-number-{{ prisoner.number }}">
                                         <ul class='govuk-list'>
                                             <li><strong>{{ prisoner.name | toTitleCase }}, {{ prisoner.number }}</strong></li>
                                             {% if session.appointmentJourney.type == AppointmentType.BULK %}
@@ -149,22 +149,22 @@
                                             {% endif %}
                                         </ul>
                                     </h2>
-                                    <ul class="govuk-summary-card__actions">
+                                    <ul class="govuk-summary-card__actions" data-qa="schedule-card-actions-prison-number-{{ prisoner.number }}">
                                         {% if session.appointmentJourney.type == AppointmentType.BULK %}
                                             <li class="govuk-summary-card__action">
                                                 <a class="govuk-link govuk-link--no-visited-state" href="review-bulk-appointment?preserveHistory=true" data-qa="change-appointment-time-prison-number-{{ prisoner.number }}">
-                                                    Change time<span class="govuk-visually-hidden"> of appointment for prison number ' + prisoner.number + '</span>
+                                                    Change time<span class="govuk-visually-hidden"> of appointment for prison number {{ prisoner.number }}</span>
                                                 </a>
                                             </li>
                                             <li class="govuk-summary-card__action">
                                                 <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" + ("?preserveHistory=true" if preserveHistory else "") }}" data-qa="remove-appointment-prison-number-{{ prisoner.number }}">
-                                                    Remove appointment<span class="govuk-visually-hidden"> for prison number ' + prisoner.number + '</span>
+                                                    Remove appointment<span class="govuk-visually-hidden"> for prison number {{ prisoner.number }}</span>
                                                 </a>
                                             </li>
                                         {% else %}
                                             <li class="govuk-summary-card__action">
                                                 <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" + ("?preserveHistory=true" if preserveHistory else "") }}" data-qa="remove-prison-number-{{ prisoner.number }}">
-                                                    Remove attendee<span class="govuk-visually-hidden"> with prison number ' + prisoner.number + '</span>
+                                                    Remove attendee<span class="govuk-visually-hidden"> with prison number {{ prisoner.number }}</span>
                                                 </a>
                                             </li>
                                         {% endif %}
@@ -227,7 +227,7 @@
             }
         }) }}
     {% else %}
-        <p class="govuk-body">No other events scheduled{{ '.' if session.appointmentJourney.type == AppointmentType.INDIVIDUAL }}</p>
+        <p class="govuk-body" data-qa="no-events-for-prison-number-{{ prisoner.number }}">No other events scheduled{{ '.' if session.appointmentJourney.type == AppointmentType.INDIVIDUAL }}</p>
     {% endif %}
 {% endmacro %}
 
