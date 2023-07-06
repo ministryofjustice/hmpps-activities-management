@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator'
-import SimpleDate, { simpleDateFromDate } from '../commonValidationTypes/simpleDate'
+import SimpleDate from '../commonValidationTypes/simpleDate'
 
 export default function DateIsSameOrAfterOtherProperty(property: string, validationOptions?: ValidationOptions) {
   return (object: unknown, propertyName: string) => {
@@ -13,7 +13,7 @@ export default function DateIsSameOrAfterOtherProperty(property: string, validat
         validate(value: SimpleDate, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints
           const relatedValue = args.object[relatedPropertyName]
-          return relatedValue ? value >= simpleDateFromDate(new Date(relatedValue)) : true
+          return relatedValue ? value.toIsoString() >= relatedValue : true
         },
       },
     })
