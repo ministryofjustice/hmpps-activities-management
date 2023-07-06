@@ -310,6 +310,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         attendanceSummaryFilters: {
           activityDate: date,
           categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
+          activityFilters: [],
         },
       })
     })
@@ -321,6 +322,8 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       when(activitiesService.getAllAttendanceSummary)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockApiResponse)
+
+      when(activitiesService.getScheduledActivitiesAtPrison).mockResolvedValue(mockActivities)
 
       when(activitiesService.getAllAttendance)
         .calledWith(date, res.locals.user)
@@ -503,8 +506,9 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         attendanceSummaryFilters: {
-          categories: ['Education'],
+          activityDate: date,
           categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
+          activityFilters: [],
         },
       })
     })
