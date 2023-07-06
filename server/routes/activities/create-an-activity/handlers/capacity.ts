@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
-import { IsNumber, Max, Min } from 'class-validator'
+import { IsInt, IsNumber, Max, Min } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
@@ -8,6 +8,7 @@ export class Capacity {
   @Expose()
   @Type(() => Number)
   @IsNumber({}, { message: 'Enter a capacity for the activity' })
+  @IsInt({ message: 'Enter a whole number for the capacity' })
   @Min(1, { message: 'Enter a capacity for the activity more than 0' })
   @Max(999, { message: 'Enter a capacity for the activity less than 1000' })
   capacity: number

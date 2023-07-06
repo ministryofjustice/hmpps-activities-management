@@ -133,5 +133,16 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
 
       expect(errors).toEqual([{ property: 'capacity', error: 'Enter a capacity for the activity less than 1000' }])
     })
+
+    it('validation fails if a decimal number is entered', async () => {
+      const body = {
+        capacity: '10.5',
+      }
+
+      const requestObject = plainToInstance(Capacity, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'capacity', error: 'Enter a whole number for the capacity' }])
+    })
   })
 })
