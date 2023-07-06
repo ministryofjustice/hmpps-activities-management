@@ -3,7 +3,10 @@ import { AppointmentCancellationReason, AppointmentApplyTo } from '../../../@typ
 
 export type EditAppointmentJourney = {
   repeatCount: number
-  sequenceNumbers: number[]
+  occurrences: {
+    sequenceNumber: number
+    startDate: string
+  }[]
   sequenceNumber: number
   location?: {
     id: number

@@ -27,7 +27,6 @@ export default class EndDateRoutes {
     const startDate = req.session.allocateJourney.startDate
       ? formatDate(plainToInstance(SimpleDate, req.session.allocateJourney.startDate).toRichDate(), 'yyyy-MM-dd')
       : undefined
-
     res.render(`pages/activities/allocate-to-activity/end-date`, {
       startDate,
       prisonerName,
@@ -37,7 +36,6 @@ export default class EndDateRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.allocateJourney.endDate = req.body.endDate
-
     if (req.query && req.query.preserveHistory) {
       res.redirect(`/activities/allocate/check-answers`)
     } else {

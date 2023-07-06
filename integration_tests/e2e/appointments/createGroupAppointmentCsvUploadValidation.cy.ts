@@ -2,7 +2,6 @@ import Page from '../../pages/page'
 import postPrisonerNumbers from '../../fixtures/prisonerSearchApi/postPrisonerNumbers-A1350DZ-A8644DY.json'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/uploadPrisonerListPage'
-import UploadByCsvPage from '../../pages/appointments/create-and-edit/uploadbyCsvPage'
 
 context('Create group appointment - CSV upload validation', () => {
   beforeEach(() => {
@@ -19,9 +18,6 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
-    const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
-    uploadByCsvPage.continue()
-
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.continue()
 
@@ -29,19 +25,16 @@ context('Create group appointment - CSV upload validation', () => {
   })
 
   it('Should fail validation when uploading CSV file larger than 100kb', () => {
-    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
-    howToAddPrisonersPage.continue()
-
-    const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
-    uploadByCsvPage.continue()
-
     const largerThan100kbData = ['Prison number']
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < 10000; i++) {
       largerThan100kbData.push('TESTDATA')
     }
     cy.writeFile('integration_tests/fixtures/fileUpload/larger-than-100kb.csv', largerThan100kbData.join('\r\n'))
+
+    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
+    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
+    howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('larger-than-100kb.csv')
@@ -57,9 +50,6 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
-    const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
-    uploadByCsvPage.continue()
-
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('empty-upload-prisoner-list.csv')
     uploadPrisonerListPage.continue()
@@ -71,9 +61,6 @@ context('Create group appointment - CSV upload validation', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
     howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
-
-    const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
-    uploadByCsvPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('non-csv-file.xlsx')
@@ -87,9 +74,6 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
-    const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
-    uploadByCsvPage.continue()
-
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('non-csv-file.csv')
     uploadPrisonerListPage.continue()
@@ -101,9 +85,6 @@ context('Create group appointment - CSV upload validation', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
     howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
-
-    const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
-    uploadByCsvPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('upload-prisoner-list-no-numbers.csv')
@@ -117,9 +98,6 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
-    const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
-    uploadByCsvPage.continue()
-
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('upload-prisoner-list-one-not-found.csv')
     uploadPrisonerListPage.continue()
@@ -131,9 +109,6 @@ context('Create group appointment - CSV upload validation', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
     howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
-
-    const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
-    uploadByCsvPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('upload-prisoner-list-two-not-found.csv')
