@@ -15,7 +15,7 @@ const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/sc
 const tomorrow = addDays(new Date(), 1)
 
 const getAppointmentDetailsValueElement = (heading: string) =>
-  $(`[data-qa=appointment-details] > .govuk-summary-list__row > .govuk-summary-list__key`)
+  $('[data-qa=appointment-details] > .govuk-summary-list__row > .govuk-summary-list__key')
     .filter((index, element) => $(element).text().trim() === heading)
     .parent()
     .find('.govuk-summary-list__value')
@@ -229,6 +229,21 @@ describe('Views - Create Appointment - Schedule', () => {
     it('should not display top call to action for fewer than eleven attendees', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
     })
+
+    it('should only display list is empty and someone must be added when attendee list is empty', () => {
+      viewContext.session.appointmentJourney.prisoners = []
+      viewContext.prisonerSchedules = []
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('form').length).toBe(0)
+      expect($('.govuk-warning-text').text()).toContain(
+        'The list of attendees is empty. You must add at least one person to be able to schedule an appointment.',
+      )
+      const cta = $('.govuk-button')
+      expect(cta.text().trim()).toBe('Add someone to the list')
+      expect(cta.attr('href')).toBe('how-to-add-prisoners?preserveHistory=true')
+    })
   })
 
   describe('Bulk Appointment', () => {
@@ -304,9 +319,9 @@ describe('Views - Create Appointment - Schedule', () => {
       expect(getAppointmentDetailsValueElement('Attendees').length).toEqual(0)
     })
 
-    it('should display appointments count with change link', () => {
+    it('should display appointments count without a change link', () => {
       expect(getAppointmentDetailsValueElement('Appointments').text().trim()).toEqual('10')
-      expect($('[data-qa=change-prisoners]').attr('href')).toEqual('review-prisoners?preserveHistory=true')
+      expect($('[data-qa=change-prisoners]').length).toEqual(0)
     })
 
     it('should display date with change link', () => {
@@ -340,6 +355,21 @@ describe('Views - Create Appointment - Schedule', () => {
 
     it('should not display top call to action for fewer than eleven appointments', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
+    })
+
+    it('should only display list is empty and someone must be added when attendee list is empty', () => {
+      viewContext.session.bulkAppointmentJourney.appointments = []
+      viewContext.prisonerSchedules = []
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('form').length).toBe(0)
+      expect($('.govuk-warning-text').text()).toContain(
+        'The list of attendees is empty. You must add at least one person to be able to schedule an appointment.',
+      )
+      const cta = $('.govuk-button')
+      expect(cta.text().trim()).toBe('Add someone to the list')
+      expect(cta.attr('href')).toBe('/appointments/create/start-bulk')
     })
   })
 })
