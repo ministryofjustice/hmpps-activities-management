@@ -18,8 +18,8 @@ import {
   hasAppointmentStartDateChanged,
   hasAppointmentStartTimeChanged,
   isApplyToQuestionRequired,
-  maxAppointmentSequenceNumber,
-  minAppointmentSequenceNumber,
+  getLastOccurrence,
+  getFirstOccurrence,
 } from '../utils/editAppointmentUtils'
 
 export default class EditAppointmentService {
@@ -113,15 +113,11 @@ export default class EditAppointmentService {
     }
 
     if (editAppointmentJourney.addPrisoners?.length > 0) {
-      occurrenceUpdates.prisonerNumbers = appointmentJourney.prisoners
-        .concat(editAppointmentJourney.addPrisoners)
-        .map(prisoner => prisoner.number)
+      occurrenceUpdates.addPrisonerNumbers = editAppointmentJourney.addPrisoners.map(prisoner => prisoner.number)
     }
 
     if (editAppointmentJourney.removePrisoner) {
-      occurrenceUpdates.prisonerNumbers = appointmentJourney.prisoners
-        .filter(prisoner => prisoner.number !== editAppointmentJourney.removePrisoner.prisonerNumber)
-        .map(prisoner => prisoner.number)
+      occurrenceUpdates.removePrisonerNumbers = [editAppointmentJourney.removePrisoner.prisonerNumber]
     }
 
     await this.activitiesService.editAppointmentOccurrence(+occurrenceId, occurrenceUpdates, user)
@@ -148,13 +144,13 @@ export default class EditAppointmentService {
   private getAppliedToAppointmentMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: AppointmentApplyTo) {
     switch (applyTo) {
       case AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
-        return `appointments ${editAppointmentJourney.sequenceNumber} to ${maxAppointmentSequenceNumber(
-          editAppointmentJourney,
-        )} in the series`
+        return `appointments ${editAppointmentJourney.sequenceNumber} to ${
+          getLastOccurrence(editAppointmentJourney).sequenceNumber
+        } in the series`
       case AppointmentApplyTo.ALL_FUTURE_OCCURRENCES:
-        return `appointments ${minAppointmentSequenceNumber(editAppointmentJourney)} to ${maxAppointmentSequenceNumber(
-          editAppointmentJourney,
-        )} in the series`
+        return `appointments ${getFirstOccurrence(editAppointmentJourney).sequenceNumber} to ${
+          getLastOccurrence(editAppointmentJourney).sequenceNumber
+        } in the series`
       default:
         return 'this appointment'
     }
@@ -163,17 +159,17 @@ export default class EditAppointmentService {
   private getAppliedToSeriesMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: AppointmentApplyTo) {
     switch (applyTo) {
       case AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
-        return `appointments ${editAppointmentJourney.sequenceNumber} to ${maxAppointmentSequenceNumber(
-          editAppointmentJourney,
-        )} in this series`
+        return `appointments ${editAppointmentJourney.sequenceNumber} to ${
+          getLastOccurrence(editAppointmentJourney).sequenceNumber
+        } in this series`
       case AppointmentApplyTo.ALL_FUTURE_OCCURRENCES:
-        return `appointments ${minAppointmentSequenceNumber(editAppointmentJourney)} to ${maxAppointmentSequenceNumber(
-          editAppointmentJourney,
-        )} in this series`
+        return `appointments ${getFirstOccurrence(editAppointmentJourney).sequenceNumber} to ${
+          getLastOccurrence(editAppointmentJourney).sequenceNumber
+        } in this series`
       default:
-        return `appointment ${editAppointmentJourney.sequenceNumber} of ${maxAppointmentSequenceNumber(
-          editAppointmentJourney,
-        )} in this series`
+        return `appointment ${editAppointmentJourney.sequenceNumber} of ${
+          getLastOccurrence(editAppointmentJourney).sequenceNumber
+        } in this series`
     }
   }
 
