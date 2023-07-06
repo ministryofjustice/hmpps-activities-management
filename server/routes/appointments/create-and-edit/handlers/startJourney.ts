@@ -58,16 +58,13 @@ export default class StartJourneyRoutes {
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentOccurrence } = req
     const { property } = req.params
 
     if (!property) return res.redirect('back')
 
     this.populateEditSession(req)
 
-    return res.redirect(
-      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${property}`,
-    )
+    return res.redirect(`../${property}`)
   }
 
   REMOVE_PRISONER = async (req: Request, res: Response): Promise<void> => {
@@ -83,37 +80,25 @@ export default class StartJourneyRoutes {
     req.session.editAppointmentJourney.removePrisoner = prisoner
 
     if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
-      return res.redirect(
-        `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${prisonNumber}/remove/apply-to`,
-      )
+      return res.redirect('../remove/apply-to')
     }
 
     req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_OCCURRENCE
 
-    return res.redirect(
-      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/${prisonNumber}/remove/confirm`,
-    )
+    return res.redirect('../remove/confirm')
   }
 
   ADD_PRISONERS = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentOccurrence } = req
-
     this.populateEditSession(req)
     req.session.editAppointmentJourney.addPrisoners = []
 
-    return res.redirect(
-      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/prisoners/add/how-to-add-prisoners`,
-    )
+    return res.redirect('../../prisoners/add/how-to-add-prisoners')
   }
 
   CANCEL = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentOccurrence } = req
-
     this.populateEditSession(req)
 
-    return res.redirect(
-      `/appointments/${appointmentOccurrence.appointmentId}/occurrence/${appointmentOccurrence.id}/edit/cancel/reason`,
-    )
+    return res.redirect('../cancel/reason')
   }
 
   private populateEditSession(req: Request) {

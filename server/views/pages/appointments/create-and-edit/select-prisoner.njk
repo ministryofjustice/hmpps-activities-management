@@ -9,7 +9,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Select Prisoner", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-select-prisoner-page' %}
-{% set backLinkHref = "/appointments/create/how-to-add-prisoners" if session.appointmentJourney.type == AppointmentType.GROUP else '/appointments' %}
+{% set backLinkHref = "how-to-add-prisoners" if session.appointmentJourney.type == AppointmentType.GROUP else '/appointments' %}
 
 {% set headingText = "Search and add prisoner to the appointment" %}
 {% if session.appointmentJourney.type == AppointmentType.GROUP %}
