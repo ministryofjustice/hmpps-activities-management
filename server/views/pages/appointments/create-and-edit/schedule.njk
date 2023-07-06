@@ -124,10 +124,11 @@
                 }) }}
 
                 {{ govukButton({
-                    text: "Continue"
-                }) if session.appointmentJourney.type != AppointmentType.INDIVIDUAL }}
+                    text: "Continue",
+                    attributes: { 'data-qa': 'top-cta' }
+                }) if prisonerSchedules.length > 10 }}
 
-                {% if session.appointmentJourney.type != AppointmentType.INDIVIDUAL %}
+                {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
                     <h2 class="govuk-heading-m">Attendee events on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
                 {% endif %}
 
@@ -189,13 +190,13 @@
         {% for scheduledEvent in scheduledEvents %}
             {% set scheduledEventRows = (scheduledEventRows.push([
                 {
-                    text: scheduledEvent.startTime + (" to " + scheduledEvent.endTime if scheduledEvent.endTime)
+                    text: timeText(scheduledEvent)
                 }, {
                     text: scheduledEvent.summary | trim
                 }, {
                     text: scheduledEvent.eventType | trim | title
                 }, {
-                    text: ("In cell" if scheduledEvent.inCell else scheduledEvent.internalLocationDescription | trim)
+                    text: locationText(scheduledEvent)
                 }
             ]), scheduledEventRows) %}
         {% endfor %}
@@ -225,5 +226,23 @@
         }) }}
     {% else %}
         <p class="govuk-body">No other events scheduled{{ '.' if session.appointmentJourney.type == AppointmentType.INDIVIDUAL }}</p>
+    {% endif %}
+{% endmacro %}
+
+{% macro timeText(scheduledEvent) %}
+    {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
+        {{ scheduledEvent.startTime + (" to " + scheduledEvent.endTime if scheduledEvent.endTime) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro locationText(scheduledEvent) %}
+    {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
+        {% if scheduledEvent.inCell %}
+            In cell
+        {% elseif scheduledEvent.onWing %}
+            On wing
+        {% elseif scheduledEvent.internalLocationDescription %}
+            {{ scheduledEvent.internalLocationDescription | trim | title }}
+        {% endif %}
     {% endif %}
 {% endmacro %}
