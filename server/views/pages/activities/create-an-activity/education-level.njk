@@ -5,7 +5,9 @@
 
 {% set pageTitle = applicationName + " - Create an activity - education level" %}
 {% set pageId = 'create-activity-education-level-page' %}
-{% set backLinkHref = "qualification" %}
+
+{% set backLinkHref = "/activities/schedule/activities/" + session.createJourney.activityId if session.req.query.fromEditActivity else "qualification" %}
+
 
 {% set studyAreaOptions = [{ value: '', text: '' }] %}
 {% for studyArea in studyAreas %}
