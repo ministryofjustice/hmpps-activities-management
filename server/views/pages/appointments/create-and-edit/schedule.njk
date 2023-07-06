@@ -196,7 +196,7 @@
                 }, {
                     text: scheduledEvent.summary | trim
                 }, {
-                    text: scheduledEvent.eventType | trim | title
+                    text: eventTypeText(scheduledEvent)
                 }, {
                     text: locationText(scheduledEvent)
                 }
@@ -234,6 +234,22 @@
 {% macro timeText(scheduledEvent) %}
     {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
         {{ scheduledEvent.startTime + (" to " + scheduledEvent.endTime if scheduledEvent.endTime) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro eventTypeText(scheduledEvent) %}
+    {% if scheduledEvent.eventType == EventType.ACTIVITY %}
+        Activity
+    {% elseif scheduledEvent.eventType == EventType.APPOINTMENT %}
+        Appointment
+    {% elseif scheduledEvent.eventType == EventType.COURT_HEARING %}
+        Court hearing
+    {% elseif scheduledEvent.eventType == EventType.VISIT %}
+        Visit
+    {% elseif scheduledEvent.eventType == EventType.EXTERNAL_TRANSFER %}
+        External transfer
+    {% elseif scheduledEvent.eventType == EventType.ADJUDICATION_HEARING %}
+        Adjudication hearing
     {% endif %}
 {% endmacro %}
 

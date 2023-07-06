@@ -20,20 +20,43 @@ const getAppointmentDetailsValueElement = (heading: string) =>
     .parent()
     .find('.govuk-summary-list__value')
 
-const getScheduledEventsForPrisoner = (prisoner: { number: string; name: string; cellLocation: string }) => [
+const getDisplayedEventsForPrisoner = (prisoner: { number: string }) => {
+  const displayedEvents: { time: string; eventName: string; type: string; location: string }[] = []
+
+  $(`[data-qa=prison-number-${prisoner.number}-schedule] > tbody > tr`).map((index, element) =>
+    displayedEvents.push({
+      time: $(element).children('td:eq(0)').text().trim(),
+      eventName: $(element).children('td:eq(1)').text().trim(),
+      type: $(element).children('td:eq(2)').text().trim(),
+      location: $(element).children('td:eq(3)').text().trim(),
+    }),
+  )
+
+  return displayedEvents
+}
+
+const getScheduledEventsForPrisoner = (prisoner: { number: string }) => [
   {
     prisonerNumber: prisoner.number,
     eventType: EventType.ACTIVITY,
     eventSource: EventSource.SCHEDULING_AND_ALLOCATION,
     summary: `Activity for ${prisoner.number}`,
     internalLocationDescription: 'Activity location',
+    inCell: false,
+    onWing: false,
+    startTime: '09:00',
+    endTime: '12:00',
   },
   {
     prisonerNumber: prisoner.number,
     eventType: EventType.APPOINTMENT,
     eventSource: EventSource.SCHEDULING_AND_ALLOCATION,
-    summary: `Appointments for ${prisoner.number}`,
+    summary: `Appointment for ${prisoner.number}`,
     internalLocationDescription: 'Appointment location',
+    inCell: false,
+    onWing: false,
+    startTime: '13:00',
+    endTime: '14:30',
   },
   {
     prisonerNumber: prisoner.number,
@@ -41,6 +64,10 @@ const getScheduledEventsForPrisoner = (prisoner: { number: string; name: string;
     eventSource: EventSource.NOMIS,
     summary: `Court hearing for ${prisoner.number}`,
     internalLocationDescription: 'Court hearing location',
+    inCell: false,
+    onWing: false,
+    startTime: '10:30',
+    endTime: '11:00',
   },
   {
     prisonerNumber: prisoner.number,
@@ -48,6 +75,10 @@ const getScheduledEventsForPrisoner = (prisoner: { number: string; name: string;
     eventSource: EventSource.NOMIS,
     summary: `Visit for ${prisoner.number}`,
     internalLocationDescription: 'Visit location',
+    inCell: false,
+    onWing: false,
+    startTime: '15:00',
+    endTime: '15:30',
   },
   {
     prisonerNumber: prisoner.number,
@@ -55,6 +86,9 @@ const getScheduledEventsForPrisoner = (prisoner: { number: string; name: string;
     eventSource: EventSource.NOMIS,
     summary: `External transfer for ${prisoner.number}`,
     internalLocationDescription: 'External transfer location',
+    inCell: false,
+    onWing: false,
+    startTime: '08:00',
   },
   {
     prisonerNumber: prisoner.number,
@@ -62,6 +96,10 @@ const getScheduledEventsForPrisoner = (prisoner: { number: string; name: string;
     eventSource: EventSource.NOMIS,
     summary: `Adjudication for ${prisoner.number}`,
     internalLocationDescription: 'Adjudication location',
+    inCell: false,
+    onWing: false,
+    startTime: '10:00',
+    endTime: '11:00',
   },
 ]
 
@@ -82,6 +120,10 @@ describe('Views - Create Appointment - Schedule', () => {
         eventSource: string
         summary: string
         internalLocationDescription: string
+        inCell: boolean
+        onWing: boolean
+        startTime: string
+        endTime?: string
       }[]
     }[],
     formResponses: {},
@@ -182,6 +224,107 @@ describe('Views - Create Appointment - Schedule', () => {
       expect(
         $(`[data-qa=no-events-for-prison-number-${viewContext.prisonerSchedules[0].prisoner.number}]`).text().trim(),
       ).toEqual('No other events scheduled.')
+    })
+
+    it('should display scheduled events', () => {
+      const displayedEvents = getDisplayedEventsForPrisoner(viewContext.prisonerSchedules[0].prisoner)
+
+      expect(displayedEvents).toEqual([
+        {
+          time: '09:00 to 12:00',
+          eventName: 'Activity for A1234BC',
+          type: 'Activity',
+          location: 'Activity Location',
+        },
+        {
+          time: '13:00 to 14:30',
+          eventName: 'Appointment for A1234BC',
+          type: 'Appointment',
+          location: 'Appointment Location',
+        },
+        {
+          time: '',
+          eventName: 'Court hearing for A1234BC',
+          type: 'Court hearing',
+          location: '',
+        },
+        {
+          time: '15:00 to 15:30',
+          eventName: 'Visit for A1234BC',
+          type: 'Visit',
+          location: 'Visit Location',
+        },
+        {
+          time: '',
+          eventName: 'External transfer for A1234BC',
+          type: 'External transfer',
+          location: '',
+        },
+        {
+          time: '10:00 to 11:00',
+          eventName: 'Adjudication for A1234BC',
+          type: 'Adjudication hearing',
+          location: 'Adjudication Location',
+        },
+      ])
+    })
+
+    it('should display in cell event', () => {
+      viewContext.prisonerSchedules[0].scheduledEvents = [
+        {
+          prisonerNumber: viewContext.prisonerSchedules[0].prisoner.number,
+          eventType: EventType.APPOINTMENT,
+          eventSource: EventSource.SCHEDULING_AND_ALLOCATION,
+          summary: `Appointment for ${viewContext.prisonerSchedules[0].prisoner.number}`,
+          internalLocationDescription: 'Appointment location',
+          inCell: true,
+          onWing: false,
+          startTime: '13:00',
+          endTime: '14:30',
+        },
+      ]
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      const displayedEvents = getDisplayedEventsForPrisoner(viewContext.prisonerSchedules[0].prisoner)
+
+      expect(displayedEvents).toEqual([
+        {
+          time: '13:00 to 14:30',
+          eventName: 'Appointment for A1234BC',
+          type: 'Appointment',
+          location: 'In cell',
+        },
+      ])
+    })
+
+    it('should display on wing event', () => {
+      viewContext.prisonerSchedules[0].scheduledEvents = [
+        {
+          prisonerNumber: viewContext.prisonerSchedules[0].prisoner.number,
+          eventType: EventType.APPOINTMENT,
+          eventSource: EventSource.SCHEDULING_AND_ALLOCATION,
+          summary: `Appointment for ${viewContext.prisonerSchedules[0].prisoner.number}`,
+          internalLocationDescription: 'Appointment location',
+          inCell: false,
+          onWing: true,
+          startTime: '13:00',
+          endTime: '14:30',
+        },
+      ]
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      const displayedEvents = getDisplayedEventsForPrisoner(viewContext.prisonerSchedules[0].prisoner)
+
+      expect(displayedEvents).toEqual([
+        {
+          time: '13:00 to 14:30',
+          eventName: 'Appointment for A1234BC',
+          type: 'Appointment',
+          location: 'On wing',
+        },
+      ])
     })
   })
 
@@ -316,6 +459,107 @@ describe('Views - Create Appointment - Schedule', () => {
       const cta = $('.govuk-button')
       expect(cta.text().trim()).toBe('Add someone to the list')
       expect(cta.attr('href')).toBe('how-to-add-prisoners?preserveHistory=true')
+    })
+
+    it('should display scheduled events', () => {
+      const displayedEvents = getDisplayedEventsForPrisoner(viewContext.prisonerSchedules[0].prisoner)
+
+      expect(displayedEvents).toEqual([
+        {
+          time: '09:00 to 12:00',
+          eventName: 'Activity for A1234BC',
+          type: 'Activity',
+          location: 'Activity Location',
+        },
+        {
+          time: '13:00 to 14:30',
+          eventName: 'Appointment for A1234BC',
+          type: 'Appointment',
+          location: 'Appointment Location',
+        },
+        {
+          time: '',
+          eventName: 'Court hearing for A1234BC',
+          type: 'Court hearing',
+          location: '',
+        },
+        {
+          time: '15:00 to 15:30',
+          eventName: 'Visit for A1234BC',
+          type: 'Visit',
+          location: 'Visit Location',
+        },
+        {
+          time: '',
+          eventName: 'External transfer for A1234BC',
+          type: 'External transfer',
+          location: '',
+        },
+        {
+          time: '10:00 to 11:00',
+          eventName: 'Adjudication for A1234BC',
+          type: 'Adjudication hearing',
+          location: 'Adjudication Location',
+        },
+      ])
+    })
+
+    it('should display in cell event', () => {
+      viewContext.prisonerSchedules[0].scheduledEvents = [
+        {
+          prisonerNumber: viewContext.prisonerSchedules[0].prisoner.number,
+          eventType: EventType.APPOINTMENT,
+          eventSource: EventSource.SCHEDULING_AND_ALLOCATION,
+          summary: `Appointment for ${viewContext.prisonerSchedules[0].prisoner.number}`,
+          internalLocationDescription: 'Appointment location',
+          inCell: true,
+          onWing: false,
+          startTime: '13:00',
+          endTime: '14:30',
+        },
+      ]
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      const displayedEvents = getDisplayedEventsForPrisoner(viewContext.prisonerSchedules[0].prisoner)
+
+      expect(displayedEvents).toEqual([
+        {
+          time: '13:00 to 14:30',
+          eventName: 'Appointment for A1234BC',
+          type: 'Appointment',
+          location: 'In cell',
+        },
+      ])
+    })
+
+    it('should display on wing event', () => {
+      viewContext.prisonerSchedules[0].scheduledEvents = [
+        {
+          prisonerNumber: viewContext.prisonerSchedules[0].prisoner.number,
+          eventType: EventType.APPOINTMENT,
+          eventSource: EventSource.SCHEDULING_AND_ALLOCATION,
+          summary: `Appointment for ${viewContext.prisonerSchedules[0].prisoner.number}`,
+          internalLocationDescription: 'Appointment location',
+          inCell: false,
+          onWing: true,
+          startTime: '13:00',
+          endTime: '14:30',
+        },
+      ]
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      const displayedEvents = getDisplayedEventsForPrisoner(viewContext.prisonerSchedules[0].prisoner)
+
+      expect(displayedEvents).toEqual([
+        {
+          time: '13:00 to 14:30',
+          eventName: 'Appointment for A1234BC',
+          type: 'Appointment',
+          location: 'On wing',
+        },
+      ])
     })
   })
 
@@ -498,6 +742,107 @@ describe('Views - Create Appointment - Schedule', () => {
       const cta = $('.govuk-button')
       expect(cta.text().trim()).toBe('Add someone to the list')
       expect(cta.attr('href')).toBe('/appointments/create/start-bulk')
+    })
+
+    it('should display scheduled events', () => {
+      const displayedEvents = getDisplayedEventsForPrisoner(viewContext.prisonerSchedules[0].prisoner)
+
+      expect(displayedEvents).toEqual([
+        {
+          time: '09:00 to 12:00',
+          eventName: 'Activity for A1234BC',
+          type: 'Activity',
+          location: 'Activity Location',
+        },
+        {
+          time: '13:00 to 14:30',
+          eventName: 'Appointment for A1234BC',
+          type: 'Appointment',
+          location: 'Appointment Location',
+        },
+        {
+          time: '',
+          eventName: 'Court hearing for A1234BC',
+          type: 'Court hearing',
+          location: '',
+        },
+        {
+          time: '15:00 to 15:30',
+          eventName: 'Visit for A1234BC',
+          type: 'Visit',
+          location: 'Visit Location',
+        },
+        {
+          time: '',
+          eventName: 'External transfer for A1234BC',
+          type: 'External transfer',
+          location: '',
+        },
+        {
+          time: '10:00 to 11:00',
+          eventName: 'Adjudication for A1234BC',
+          type: 'Adjudication hearing',
+          location: 'Adjudication Location',
+        },
+      ])
+    })
+
+    it('should display in cell event', () => {
+      viewContext.prisonerSchedules[0].scheduledEvents = [
+        {
+          prisonerNumber: viewContext.prisonerSchedules[0].prisoner.number,
+          eventType: EventType.APPOINTMENT,
+          eventSource: EventSource.SCHEDULING_AND_ALLOCATION,
+          summary: `Appointment for ${viewContext.prisonerSchedules[0].prisoner.number}`,
+          internalLocationDescription: 'Appointment location',
+          inCell: true,
+          onWing: false,
+          startTime: '13:00',
+          endTime: '14:30',
+        },
+      ]
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      const displayedEvents = getDisplayedEventsForPrisoner(viewContext.prisonerSchedules[0].prisoner)
+
+      expect(displayedEvents).toEqual([
+        {
+          time: '13:00 to 14:30',
+          eventName: 'Appointment for A1234BC',
+          type: 'Appointment',
+          location: 'In cell',
+        },
+      ])
+    })
+
+    it('should display on wing event', () => {
+      viewContext.prisonerSchedules[0].scheduledEvents = [
+        {
+          prisonerNumber: viewContext.prisonerSchedules[0].prisoner.number,
+          eventType: EventType.APPOINTMENT,
+          eventSource: EventSource.SCHEDULING_AND_ALLOCATION,
+          summary: `Appointment for ${viewContext.prisonerSchedules[0].prisoner.number}`,
+          internalLocationDescription: 'Appointment location',
+          inCell: false,
+          onWing: true,
+          startTime: '13:00',
+          endTime: '14:30',
+        },
+      ]
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      const displayedEvents = getDisplayedEventsForPrisoner(viewContext.prisonerSchedules[0].prisoner)
+
+      expect(displayedEvents).toEqual([
+        {
+          time: '13:00 to 14:30',
+          eventName: 'Appointment for A1234BC',
+          type: 'Appointment',
+          location: 'On wing',
+        },
+      ])
     })
   })
 })
