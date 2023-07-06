@@ -18,7 +18,24 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
       session: {
         editAppointmentJourney: {
           repeatCount: 4,
-          sequenceNumbers: [1, 2, 3, 4],
+          occurrences: [
+            {
+              sequenceNumber: 1,
+              startDate: '2023-01-01',
+            },
+            {
+              sequenceNumber: 2,
+              startDate: '2023-01-02',
+            },
+            {
+              sequenceNumber: 3,
+              startDate: '2023-01-03',
+            },
+            {
+              sequenceNumber: 4,
+              startDate: '2023-01-04',
+            },
+          ],
           sequenceNumber: 2,
         } as EditAppointmentJourney,
       },
@@ -61,7 +78,12 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
     })
 
     it('should save apply to in session and redirect to confirm', async () => {
-      req.session.editAppointmentJourney.sequenceNumbers = [2]
+      req.session.editAppointmentJourney.occurrences = [
+        {
+          sequenceNumber: 2,
+          startDate: '2023-01-02',
+        },
+      ]
       req.body = {
         reason: AppointmentCancellationReason.CREATED_IN_ERROR,
       }

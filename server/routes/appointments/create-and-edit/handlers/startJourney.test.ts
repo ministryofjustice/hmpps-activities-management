@@ -24,10 +24,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
       {
         id: 12,
         sequenceNumber: 2,
+        startDate: '2023-04-20',
       },
       {
         id: 13,
         sequenceNumber: 3,
+        startDate: '2023-04-27',
       },
     ],
   } as unknown as AppointmentDetails
@@ -258,7 +260,16 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       const editAppointmentJourneySession = {
         repeatCount: 3,
-        sequenceNumbers: [2, 3],
+        occurrences: [
+          {
+            sequenceNumber: 2,
+            startDate: '2023-04-20',
+          },
+          {
+            sequenceNumber: 3,
+            startDate: '2023-04-27',
+          },
+        ],
         sequenceNumber: 2,
       } as EditAppointmentJourney
 
@@ -334,7 +345,16 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       const editAppointmentJourneySession = {
         repeatCount: 3,
-        sequenceNumbers: [2, 3],
+        occurrences: [
+          {
+            sequenceNumber: 2,
+            startDate: '2023-04-20',
+          },
+          {
+            sequenceNumber: 3,
+            startDate: '2023-04-27',
+          },
+        ],
         sequenceNumber: 2,
         removePrisoner: {
           prisonerNumber: 'B2345CD',
@@ -359,6 +379,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
           {
             id: 12,
             sequenceNumber: 2,
+            startDate: '2023-04-20',
           },
         ],
       } as unknown as AppointmentDetails
@@ -368,7 +389,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       const editAppointmentJourneySession = {
         repeatCount: 3,
-        sequenceNumbers: [2],
+        occurrences: [
+          {
+            sequenceNumber: 2,
+            startDate: '2023-04-20',
+          },
+        ],
         sequenceNumber: 2,
         removePrisoner: {
           prisonerNumber: 'A1234BC',
@@ -413,7 +439,16 @@ describe('Route Handlers - Create Appointment - Start', () => {
     it('should populate the session and redirect to how to add prisoners', async () => {
       const editAppointmentJourneySession = {
         repeatCount: 3,
-        sequenceNumbers: [2, 3],
+        occurrences: [
+          {
+            sequenceNumber: 2,
+            startDate: '2023-04-20',
+          },
+          {
+            sequenceNumber: 3,
+            startDate: '2023-04-27',
+          },
+        ],
         sequenceNumber: 2,
         addPrisoners: [],
       } as EditAppointmentJourney
@@ -449,7 +484,16 @@ describe('Route Handlers - Create Appointment - Start', () => {
     it('should populate the session and redirect to cancellation reasons', async () => {
       const editAppointmentJourneySession = {
         repeatCount: 3,
-        sequenceNumbers: [2, 3],
+        occurrences: [
+          {
+            sequenceNumber: 2,
+            startDate: '2023-04-20',
+          },
+          {
+            sequenceNumber: 3,
+            startDate: '2023-04-27',
+          },
+        ],
         sequenceNumber: 2,
       } as EditAppointmentJourney
 

@@ -34,7 +34,12 @@ describe('emptyEditAppointmentJourneyHandler', () => {
       req.session.appointmentJourney = null
       req.session.editAppointmentJourney = {
         repeatCount: 1,
-        sequenceNumbers: [1],
+        occurrences: [
+          {
+            sequenceNumber: 1,
+            startDate: '2023-01-01',
+          },
+        ],
         sequenceNumber: 1,
       }
       await middleware(req, res, next)
@@ -62,7 +67,12 @@ describe('emptyEditAppointmentJourneyHandler', () => {
       }
       req.session.editAppointmentJourney = {
         repeatCount: 1,
-        sequenceNumbers: [1],
+        occurrences: [
+          {
+            sequenceNumber: 1,
+            startDate: '2023-01-01',
+          },
+        ],
         sequenceNumber: 1,
       }
       await middleware(req, res, next)

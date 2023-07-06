@@ -3018,12 +3018,19 @@ export interface components {
        */
       comment?: string
       /**
+       * @description The prisoner or prisoners to deallocate from the appointment occurrence
+       * @example [
+       *   "A1234BC"
+       * ]
+       */
+      removePrisonerNumbers?: string[]
+      /**
        * @description The replacement prisoner or prisoners to allocate to the appointment occurrence
        * @example [
        *   "A1234BC"
        * ]
        */
-      prisonerNumbers?: string[]
+      addPrisonerNumbers?: string[]
       /**
        * @description
        *     Specifies which appointment occurrence or occurrences this update should apply to.
@@ -3640,23 +3647,23 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
-      /** Format: int32 */
-      size?: number
-      content?: components['schemas']['ActivityCandidate'][]
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
-      numberOfElements?: number
+      size?: number
+      content?: components['schemas']['ActivityCandidate'][]
       pageable?: components['schemas']['PageableObject']
-      first?: boolean
-      last?: boolean
+      /** Format: int32 */
+      numberOfElements?: number
       empty?: boolean
     }
     PageableObject: {
+      sort?: components['schemas']['SortObject']
       /** Format: int64 */
       offset?: number
-      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
@@ -3666,8 +3673,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -3716,8 +3723,8 @@ export interface components {
        */
       cancelledReason?: string
       /**
-       * @description The comment added wehn this scheduled instance was cancelled
-       * @example Staff unavailable
+       * @description Comment on cancelling
+       * @example Teacher unavailable
        */
       comment?: string
       /**
@@ -4037,123 +4044,6 @@ export interface components {
     }
     /**
      * @description
-     *   Represents the key data required to report on attendance
-     */
-    AllAttendance: {
-      /**
-       * Format: int64
-       * @description The attendance primary key
-       * @example 123456
-       */
-      attendanceId: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * Format: date
-       * @description The date of the session for which attendance may have been marked or a planned absence recorded
-       * @example 2023-03-30
-       */
-      sessionDate: string
-      /**
-       * @description AM, PM, ED.
-       * @example AM
-       */
-      timeSlot: string
-      /**
-       * @description WAITING, COMPLETED.
-       * @example WAITING
-       */
-      status: string
-      /** @description The reason for attending or not */
-      attendanceReasonCode?: string
-      /**
-       * @description Should payment be issued for SICK, REST or OTHER
-       * @example true
-       */
-      issuePayment?: boolean
-      /**
-       * @description The prisoner number this attendance record is for
-       * @example A1234AA
-       */
-      prisonerNumber: string
-      /**
-       * @description The id of the activity for this attendance record
-       * @example 1
-       */
-      activityId: number
-      /**
-       * @description The title of the activity for this attendance record
-       * @example Math Level 1
-       */
-      activitySummary: string
-      /**
-       * @description The name of the activity category for this attendance record
-       * @example Education
-       */
-      categoryName: string
-    }
-    /**
-     * @description
-     *   Represents the key data required to report on daily attendance activity
-     */
-    AllAttendanceSummary: {
-      /**
-       * Format: int64
-       * @description The attendance summary primary key
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * Format: int64
-       * @description The internally-generated ID for the activity
-       * @example 123456
-       */
-      activityId: number
-      /**
-       * @description The name of the activity category
-       * @example Leisure and social
-       */
-      categoryName: string
-      /**
-       * Format: date
-       * @description The date of the session for which attendance may have been marked or a planned absence recorded
-       * @example 2023-03-30
-       */
-      sessionDate: string
-      /**
-       * @description AM, PM, ED.
-       * @example AM
-       */
-      timeSlot: string
-      /**
-       * @description WAITING, COMPLETED.
-       * @example WAITING
-       */
-      status: string
-      /** @description The reason for attending or not */
-      attendanceReasonCode?: string
-      /**
-       * @description Should payment be issued for SICK, REST or OTHER
-       * @example true
-       */
-      issuePayment?: boolean
-      /**
-       * Format: int32
-       * @description The number of attendance records
-       * @example 123456
-       */
-      attendanceCount: number
-    }
-    /**
-     * @description
      *   Details of a specific appointment occurrence. Will contain copies of the parent appointment's properties unless they
      *   have been changed on this appointment occurrence. Contains only properties needed to make additional API calls
      *   and to display.
@@ -4465,10 +4355,31 @@ export interface components {
        */
       issuePayment?: boolean
       /**
-       * @description The prisoner number this attendance record is for
+       * @description The prisoner number for this attendance record
        * @example A1234AA
        */
       prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The id of the activity for this attendance record
+       * @example 1
+       */
+      activityId: number
+      /**
+       * @description The title of the activity for this attendance record
+       * @example Math Level 1
+       */
+      activitySummary: string
+      /**
+       * @description The name of the activity category for this attendance record
+       * @example Education
+       */
+      categoryName: string
+      /**
+       * Format: date-time
+       * @description The date and time the attendance was updated
+       */
+      recordedTime?: string
     }
     /**
      * @description
@@ -6106,12 +6017,6 @@ export interface operations {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** @description The prison for this code was not found. */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
     }
   }
   getDlqMessages: {
@@ -6462,12 +6367,6 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Requested resource not found */
-      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
