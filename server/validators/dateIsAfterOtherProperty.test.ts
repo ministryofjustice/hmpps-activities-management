@@ -29,7 +29,7 @@ describe('dateIsAfterOtherProperty', () => {
     expect(errors).toEqual([{ property: 'date', error: 'Enter date after the other date' }])
   })
 
-  it('should fail validation for a date equal to the other date', async () => {
+  it('should pass validation for a date equal to the other date', async () => {
     const body = {
       date: plainToInstance(SimpleDate, {
         day: 21,
@@ -42,7 +42,7 @@ describe('dateIsAfterOtherProperty', () => {
     const requestObject = plainToInstance(DummyForm, body)
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-    expect(errors).toEqual([{ property: 'date', error: 'Enter date after the other date' }])
+    expect(errors).toHaveLength(0)
   })
 
   it('should pass validation for a date after to the other date', async () => {
