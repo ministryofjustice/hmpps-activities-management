@@ -206,14 +206,18 @@ describe('Views - Create Appointment - Schedule', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
     })
 
-    it('should not use summary card for attendee', () => {
-      expect($('.govuk-summary-card').length).toBe(0)
-    })
-
     it('should display events for attendee heading', () => {
       expect($('[data-qa=schedule-heading]').text().trim()).toEqual(
         `Events for Test Prisoner, A1234BC on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`,
       )
+    })
+
+    it('should not display attendee events heading', () => {
+      expect($('[data-qa=schedules-heading]').length).toEqual(0)
+    })
+
+    it('should not use summary card for attendee', () => {
+      expect($('.govuk-summary-card').length).toBe(0)
     })
 
     it('should display no other events scheduled', () => {
@@ -402,6 +406,16 @@ describe('Views - Create Appointment - Schedule', () => {
 
     it('should not display top call to action for fewer than eleven attendees', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
+    })
+
+    it('should not display events for attendee heading', () => {
+      expect($('[data-qa=schedule-heading]').length).toEqual(0)
+    })
+
+    it('should not display attendee events heading', () => {
+      expect($('[data-qa=schedules-heading]').text().trim()).toEqual(
+        `Attendee events on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`,
+      )
     })
 
     it('should use summary cards for attendees', () => {
@@ -672,6 +686,16 @@ describe('Views - Create Appointment - Schedule', () => {
 
     it('should not display top call to action for fewer than eleven appointments', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
+    })
+
+    it('should not display events for attendee heading', () => {
+      expect($('[data-qa=schedule-heading]').length).toEqual(0)
+    })
+
+    it('should not display attendee events heading', () => {
+      expect($('[data-qa=schedules-heading]').text().trim()).toEqual(
+        `Attendee events on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`,
+      )
     })
 
     it('should use summary cards for appointments', () => {

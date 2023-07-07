@@ -129,8 +129,8 @@
                         attributes: { 'data-qa': 'top-cta' }
                     }) if prisonerSchedules.length > 10 }}
 
-                    {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-                        <h2 class="govuk-heading-m">Attendee events on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
+                    {% if session.appointmentJourney.type != AppointmentType.INDIVIDUAL %}
+                        <h2 class="govuk-heading-m" data-qa="schedules-heading">Attendee events on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
                     {% endif %}
 
                     {% for prisonerSchedule in prisonerSchedules %}
