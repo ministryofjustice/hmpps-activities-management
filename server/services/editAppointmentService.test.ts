@@ -10,7 +10,11 @@ import {
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { AppointmentCancellationReason, AppointmentApplyTo } from '../@types/appointments'
 import { formatDate, parseDate } from '../utils/utils'
-import { AppointmentOccurrenceCancelRequest, AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
+import {
+  AppointmentOccurrenceCancelRequest,
+  AppointmentOccurrenceUpdateRequest,
+  BulkAppointmentSummary,
+} from '../@types/activitiesAPI/types'
 import { YesNo } from '../@types/activities'
 
 jest.mock('./activitiesService')
@@ -36,6 +40,7 @@ describe('Edit Appointment Service', () => {
             code: 'TEST',
             description: 'Category',
           },
+          appointmentName: 'Category',
           location: {
             id: 1,
             description: 'Location',
@@ -56,6 +61,7 @@ describe('Edit Appointment Service', () => {
             minute: 0,
             date: weekTomorrow.setHours(13, 0),
           },
+          repeat: YesNo.NO,
         } as unknown as AppointmentJourney,
         editAppointmentJourney: {
           repeatCount: 4,
@@ -177,7 +183,6 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when deleting', async () => {
-        req.session.appointmentJourney.repeat = YesNo.NO
         req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
         await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
@@ -194,6 +199,59 @@ describe('Edit Appointment Service', () => {
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments`,
           `You've deleted the Category appointment - ${weekTomorrowFormatted}`,
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+      })
+
+      it('when deleting appointment from set', async () => {
+        req.session.appointmentJourney.prisoners = [
+          {
+            number: 'A1111A',
+          },
+        ] as AppointmentJourney['prisoners']
+        req.session.editAppointmentJourney.bulkAppointment = {
+          id: 1,
+        } as BulkAppointmentSummary
+        req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
+
+        await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
+
+        expect(activitiesService.cancelAppointmentOccurrence).toHaveBeenCalledWith(
+          2,
+          {
+            cancellationReasonId: +AppointmentCancellationReason.CREATED_IN_ERROR,
+            applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          } as AppointmentOccurrenceCancelRequest,
+          res.locals.user,
+        )
+        expect(activitiesService.editAppointmentOccurrence).not.toHaveBeenCalled()
+        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+          `/appointments/bulk-appointments/1`,
+          `You've deleted appointment for A1111A from this set`,
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+      })
+
+      it('when deleting appointment from series', async () => {
+        req.session.appointmentJourney.repeat = YesNo.YES
+        req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
+
+        await service.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
+
+        expect(activitiesService.cancelAppointmentOccurrence).toHaveBeenCalledWith(
+          2,
+          {
+            cancellationReasonId: +AppointmentCancellationReason.CREATED_IN_ERROR,
+            applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          } as AppointmentOccurrenceCancelRequest,
+          res.locals.user,
+        )
+        expect(activitiesService.editAppointmentOccurrence).not.toHaveBeenCalled()
+        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+          `/appointments/1`,
+          `You've deleted appointment 2 of 4 in this series`,
         )
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
@@ -488,6 +546,10 @@ describe('Edit Appointment Service', () => {
     })
 
     describe('apply to this and all future occurrence', () => {
+      beforeEach(() => {
+        req.session.appointmentJourney.repeat = YesNo.YES
+      })
+
       it('when cancelling', async () => {
         req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
 
@@ -500,7 +562,6 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when deleting', async () => {
-        req.session.appointmentJourney.repeat = YesNo.YES
         req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES)
@@ -555,6 +616,10 @@ describe('Edit Appointment Service', () => {
     })
 
     describe('apply to all future occurrence', () => {
+      beforeEach(() => {
+        req.session.appointmentJourney.repeat = YesNo.YES
+      })
+
       it('when cancelling', async () => {
         req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
 
@@ -567,7 +632,6 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when deleting', async () => {
-        req.session.appointmentJourney.repeat = YesNo.YES
         req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_OCCURRENCES)
