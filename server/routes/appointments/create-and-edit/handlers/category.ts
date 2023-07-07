@@ -3,7 +3,6 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentType } from '../appointmentJourney'
-import config from '../../../../config'
 
 export class Category {
   @Expose()
