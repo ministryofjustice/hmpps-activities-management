@@ -3,6 +3,7 @@
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Daily attendance summary" %}
 {% set pageId = 'daily-attendance-summary-page' %}
@@ -103,9 +104,19 @@
         <p class="govuk-body govuk-!-margin-bottom-0">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('dd MMMM yyyy') }} </p>
     </div>
     <div>
-        <h1 class="govuk-heading-l">{{ timeSlotDescription }} attendance summary</h1>
+        <h1 class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0">{{ timeSlotDescription }} attendance summary</h1>
     </div>
     <div>
+        <div class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
+              <div class="govuk-button-group float-right">
+                    {{ govukButton({
+                        text: "Refresh",
+                        classes: "govuk-button--secondary"
+                    }) }}
+              </div>
+        </div>
+    </div>
+    <div class="govuk-grid-column-full">
         <h2 class="govuk-heading-s">{{ totalAllocated[timeSlot] }} total allocation{% if totalAllocated[timeSlot] != 1 %}s{% endif %} for
         <a href="/activities/attendance/activities?date={{ activityDate | formatDate('yyyy-MM-dd') }}&preserveHistory=true" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">{{ totalActivities[timeSlot] }} session{% if totalActivities[timeSlot] != 1 %}s{% endif %}</a></h2>
     </div>

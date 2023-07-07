@@ -6,6 +6,7 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "components/searchBar.njk" import searchBar %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Cancelled Sessions" %}
 {% set pageId = 'cancelled-sessions-detail-page' %}
@@ -13,7 +14,7 @@
 
 {% block content %}
     <div>
-            <h1 class="govuk-heading-l">Sessions cancelled</h1>
+         <h1 class="govuk-heading-l">Sessions cancelled</h1>
     </div>
     <div class="moj-filter-layout" data-module="activities-list-filter">
         <form id="filter-form" method="POST" novalidate>
@@ -122,8 +123,18 @@
                         {% endif %}
                     {% endfor %}
                       <div>
-                        <h3 class="govuk-heading-s">{{ cancelledSessionsRows | length }} session{% if cancelledSessionsRows | length != 1 %}s{% endif %} cancelled</h3>
+                        <h3 class="govuk-heading-s govuk-grid-column-one-half govuk-!-padding-0">{{ cancelledSessionsRows | length }} session{% if cancelledSessionsRows | length != 1 %}s{% endif %} cancelled</h3>
                       </div>
+                       <div>
+                              <div class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
+                                    <div class="govuk-button-group float-right">
+                                          {{ govukButton({
+                                              text: "Refresh",
+                                              classes: "govuk-button--secondary"
+                                          }) }}
+                                    </div>
+                              </div>
+                          </div>
 
                     {{ govukTable({
                         attributes: {

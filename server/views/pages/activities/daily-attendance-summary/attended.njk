@@ -8,6 +8,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "components/searchBar.njk" import searchBar %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Daily attendance list" %}
 {% set pageId = 'daily-attendance-detail-page' %}
@@ -176,10 +177,20 @@
 
     <div>
         {% if status === 'Attended' %}
-            <h1 class="govuk-heading-l">All attended</h1>
+            <h1 class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0">All attended</h1>
         {% else %}
-            <h1 class="govuk-heading-l"> {{ attendanceRows | length }} {{ "absence" if attendanceRows.length == 1 else "absences" }}</h1>
+            <h1 class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0"> {{ attendanceRows | length }} {{ "absence" if attendanceRows.length == 1 else "absences" }}</h1>
         {% endif %}
+    </div>
+   <div>
+        <div class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
+              <div class="govuk-button-group float-right">
+                    {{ govukButton({
+                        text: "Refresh",
+                        classes: "govuk-button--secondary"
+                    }) }}
+              </div>
+        </div>
     </div>
 
     {{ govukTable({
