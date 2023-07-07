@@ -12,15 +12,25 @@
   html: 'This is a new service – your feedback will help us to improve it.'
 }) }}
 
-{% if backLinkHref %}
+{% if backLinkHref or (returnLinkHref and returnLinkText) %}
   <nav class="govuk-!-display-none-print">
-    {{ govukBackLink({
-      text: backLinkText or "Back",
-      href: backLinkHref,
-      classes: 'js-backlink'
-    }) }}
+    {% if backLinkHref %}
+      {{ govukBackLink({
+        text: backLinkText or "Back",
+        href: backLinkHref,
+        classes: 'js-backlink'
+      }) }}
+    {% endif %}
+
+    {% if serviceReturnLinkHref and serviceReturnLinkText %}
+      <a href="{{ serviceReturnLinkHref }}"
+        class="govuk-link govuk-link--no-visited-state govuk-!-margin-top-3 govuk-!-margin-bottom-3 float-right">
+        {{ serviceReturnLinkText }}
+      </a>
+    {% endif %}
   </nav>
 {% endif %}
+
 {% include './formErrorSummary.njk' %}
 {% include './successMessage.njk' %}
 <span class="govuk-visually-hidden" id="{{ pageId }}"></span>
