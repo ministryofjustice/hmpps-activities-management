@@ -2,10 +2,18 @@ import { Request, Response } from 'express'
 import { AppointmentApplyTo } from '../../../../@types/appointments'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import config from '../../../../config'
 
 export default class ReviewPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentJourney } = req.session
     const { preserveHistory } = req.query
+
+    let backLinkHref =
+      appointmentJourney.type === AppointmentType.BULK ? 'upload-bulk-appointment' : 'how-to-add-prisoners'
+    if (appointmentJourney.fromPrisonNumberProfile) {
+      backLinkHref = `${config.dpsUrl}/prisoner/${appointmentJourney.fromPrisonNumberProfile}`
+    }
 
     let prisoners
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
@@ -17,6 +25,7 @@ export default class ReviewPrisonerRoutes {
     }
 
     res.render('pages/appointments/create-and-edit/review-prisoners', {
+      backLinkHref,
       preserveHistory,
       prisoners,
     })

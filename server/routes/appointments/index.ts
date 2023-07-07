@@ -10,6 +10,7 @@ import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
 import startNewJourney from '../../middleware/startNewJourney'
+import addServiceReturnLink from '../../middleware/addServiceReturnLink'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -17,6 +18,7 @@ export default function routes(services: Services): Router {
   const serviceName = ServiceName.APPOINTMENTS
 
   router.use(rolloutMiddleware(serviceName, services))
+  router.use(/\/.+/, addServiceReturnLink('Go to all appointments tasks', '/appointments'))
 
   // Appointments tiles route
   router.use('/', appointmentsHomeRoutes())
@@ -33,6 +35,7 @@ export default function routes(services: Services): Router {
   router.get('/create/start-individual', startNewJourney('/create/'))
   router.get('/create/start-group', startNewJourney('/create/'))
   router.get('/create/start-bulk', startNewJourney('/create/'))
+  router.get('/create/start-prisoner/:prisonNumber', startNewJourney('/create/'))
   // All create routes include the unique journeyId which is used by the populateJourney middleware to associate a
   // distinct mapped session datum with the journey. This prevents journeys in different browser tabs from conflicting
   // with each other. N.B. all subsequent redirects need to be relative or include the journeyId to maintain the per

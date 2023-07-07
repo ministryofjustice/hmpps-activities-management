@@ -1,4 +1,4 @@
-import { PrisonerSummary } from '../../../@types/activitiesAPI/types'
+import { BulkAppointmentSummary, PrisonerSummary } from '../../../@types/activitiesAPI/types'
 import { AppointmentCancellationReason, AppointmentApplyTo } from '../../../@types/appointments'
 
 export type EditAppointmentJourney = {
@@ -8,6 +8,7 @@ export type EditAppointmentJourney = {
     startDate: string
   }[]
   sequenceNumber: number
+  bulkAppointment?: BulkAppointmentSummary
   location?: {
     id: number
     description: string

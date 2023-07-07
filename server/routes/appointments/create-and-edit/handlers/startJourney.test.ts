@@ -83,15 +83,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     req = {
       session: {},
-      query: {
-        prisonNumber: 'A1234BC',
-      },
+      params: {},
     } as unknown as Request
   })
 
   describe('INDIVIDUAL', () => {
     it('should populate the session with individual appointment journey type and redirect to select prisoner page', async () => {
-      when(prisonService.getInmateByPrisonerNumber).calledWith('A1234BC', res.locals.user).mockResolvedValue(null)
       await handler.INDIVIDUAL(req, res)
 
       expect(req.session.appointmentJourney).toEqual({
@@ -100,43 +97,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
-    })
-
-    it('should populate the session with individual appointment journey type and redirect to select category page', async () => {
-      const prisonerInfo = {
-        prisonerNumber: 'A1234BC',
-        firstName: 'John',
-        lastName: 'Smith',
-        cellLocation: '1-1-1',
-      } as Prisoner
-
-      when(prisonService.getInmateByPrisonerNumber)
-        .calledWith('A1234BC', res.locals.user)
-        .mockResolvedValue(prisonerInfo)
-      await handler.INDIVIDUAL(req, res)
-
-      expect(req.session.appointmentJourney).toEqual({
-        mode: AppointmentJourneyMode.CREATE,
-        type: AppointmentType.INDIVIDUAL,
-        prisoners: [
-          {
-            cellLocation: '1-1-1',
-            name: 'John Smith',
-            number: 'A1234BC',
-          },
-        ],
-        fromPrisonNumberProfile: 'A1234BC',
-      })
-      expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith('category')
-    })
-
-    it('should null return to', async () => {
-      req.session.returnTo = 'something'
-      await handler.INDIVIDUAL(req, res)
-      expect(req.session.returnTo).toBeNull()
+      expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
   })
 
@@ -152,12 +113,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('how-to-add-prisoners')
-    })
-
-    it('should null return to', async () => {
-      req.session.returnTo = 'something'
-      await handler.GROUP(req, res)
-      expect(req.session.returnTo).toBeNull()
     })
   })
 
@@ -175,11 +130,55 @@ describe('Route Handlers - Create Appointment - Start', () => {
       })
       expect(res.redirect).toHaveBeenCalledWith('upload-bulk-appointment')
     })
+  })
 
-    it('should null return to', async () => {
-      req.session.returnTo = 'something'
-      await handler.BULK(req, res)
-      expect(req.session.returnTo).toBeNull()
+  describe('PRISONER', () => {
+    beforeEach(() => {
+      req.params.prisonNumber = 'A1234BC'
+    })
+
+    it('should populate the session with group appointment journey type and redirect to select prisoner page', async () => {
+      when(prisonService.getInmateByPrisonerNumber).calledWith('A1234BC', res.locals.user).mockResolvedValue(null)
+      await handler.PRISONER(req, res)
+
+      expect(req.session.appointmentJourney).toEqual({
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        prisoners: [],
+      })
+      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
+    })
+
+    it('should populate the session with individual appointment journey type and redirect to select category page', async () => {
+      const prisonerInfo = {
+        prisonerNumber: 'A1234BC',
+        firstName: 'John',
+        lastName: 'Smith',
+        cellLocation: '1-1-1',
+      } as Prisoner
+
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('A1234BC', res.locals.user)
+        .mockResolvedValue(prisonerInfo)
+      await handler.PRISONER(req, res)
+
+      expect(req.session.appointmentJourney).toEqual({
+        mode: AppointmentJourneyMode.CREATE,
+        type: AppointmentType.GROUP,
+        prisoners: [
+          {
+            cellLocation: '1-1-1',
+            name: 'John Smith',
+            number: 'A1234BC',
+          },
+        ],
+        fromPrisonNumberProfile: 'A1234BC',
+      })
+      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
     })
   })
 
@@ -301,15 +300,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(res.redirect).toHaveBeenCalledWith('back')
     })
-
-    it('should null return to', async () => {
-      req.session.returnTo = 'something'
-      req.params = {
-        property: 'location',
-      }
-      await handler.EDIT(req, res)
-      expect(req.session.returnTo).toBeNull()
-    })
   })
 
   describe('REMOVE_PRISONER', () => {
@@ -412,15 +402,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../remove/confirm')
     })
-
-    it('should null return to', async () => {
-      req.session.returnTo = 'something'
-      req.params = {
-        prisonNumber: 'B2345CD',
-      }
-      await handler.REMOVE_PRISONER(req, res)
-      expect(req.session.returnTo).toBeNull()
-    })
   })
 
   describe('ADD_PRISONERS', () => {
@@ -460,12 +441,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../../prisoners/add/how-to-add-prisoners')
     })
-
-    it('should null return to', async () => {
-      req.session.returnTo = 'something'
-      await handler.ADD_PRISONERS(req, res)
-      expect(req.session.returnTo).toBeNull()
-    })
   })
 
   describe('CANCEL', () => {
@@ -503,12 +478,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../cancel/reason')
-    })
-
-    it('should null return to', async () => {
-      req.session.returnTo = 'something'
-      await handler.CANCEL(req, res)
-      expect(req.session.returnTo).toBeNull()
     })
   })
 })
