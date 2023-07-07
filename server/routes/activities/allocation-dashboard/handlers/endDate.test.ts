@@ -178,7 +178,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       const requestObject = plainToInstance(EndDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date after the start date' }])
+      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date on or after the start date' }])
     })
   })
 })
