@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import ReviewPrisoners from './reviewPrisoners'
-import { AppointmentType } from '../appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 
 describe('Route Handlers - Create Appointment - Review Prisoners', () => {
   const handler = new ReviewPrisoners()
@@ -17,7 +17,12 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     req = {
       session: {
-        appointmentJourney: {},
+        appointmentJourney: {
+          prisoners: [],
+        },
+        editAppointmentJourney: {
+          addPrisoners: [],
+        },
         bulkAppointmentJourney: {
           appointments: [],
         },
@@ -27,7 +32,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
   })
 
   describe('GET', () => {
-    it('should render the review prisoners view', async () => {
+    it('should render the review prisoners view with back to how to add prisoners', async () => {
       const prisoners = [
         {
           number: 'A1234BC',
@@ -42,7 +47,77 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       ]
       req.session.appointmentJourney.prisoners = prisoners
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', { prisoners })
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+        backLinkHref: 'how-to-add-prisoners',
+        prisoners,
+      })
+    })
+
+    it('should render the review prisoners view with back to upload bulk appointment', async () => {
+      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.bulkAppointmentJourney.appointments = [
+        {
+          prisoner: {
+            number: 'A1234BC',
+            name: '',
+            cellLocation: '',
+          },
+        },
+        {
+          prisoner: {
+            number: 'B2345CD',
+            name: '',
+            cellLocation: '',
+          },
+        },
+      ]
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+        backLinkHref: 'upload-bulk-appointment',
+        prisoners: [
+          {
+            number: 'A1234BC',
+            name: '',
+            cellLocation: '',
+          },
+          {
+            number: 'B2345CD',
+            name: '',
+            cellLocation: '',
+          },
+        ],
+      })
+    })
+
+    it('should render the review prisoners view with back to prisoner profile', async () => {
+      req.session.appointmentJourney.fromPrisonNumberProfile = 'A1234BC'
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+        backLinkHref: 'https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC',
+        prisoners: [],
+      })
+    })
+
+    it('should render the review prisoners view with added prisoners and back to how to add prisoners', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      const prisoners = [
+        {
+          number: 'A1234BC',
+          name: '',
+          cellLocation: '',
+        },
+        {
+          number: 'B2345CD',
+          name: '',
+          cellLocation: '',
+        },
+      ]
+      req.session.editAppointmentJourney.addPrisoners = prisoners
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+        backLinkHref: 'how-to-add-prisoners',
+        prisoners,
+      })
     })
 
     it('should render the review prisoners view with preserve history', async () => {
@@ -62,8 +137,9 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       req.session.appointmentJourney.prisoners = prisoners
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
-        prisoners,
+        backLinkHref: 'how-to-add-prisoners',
         preserveHistory: 'true',
+        prisoners,
       })
     })
   })

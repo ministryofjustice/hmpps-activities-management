@@ -35,6 +35,7 @@ export default function routes(services: Services): Router {
   router.get('/create/start-individual', startNewJourney('/create/'))
   router.get('/create/start-group', startNewJourney('/create/'))
   router.get('/create/start-bulk', startNewJourney('/create/'))
+  router.get('/create/start-prisoner/:prisonNumber', startNewJourney('/create/'))
   // All create routes include the unique journeyId which is used by the populateJourney middleware to associate a
   // distinct mapped session datum with the journey. This prevents journeys in different browser tabs from conflicting
   // with each other. N.B. all subsequent redirects need to be relative or include the journeyId to maintain the per
