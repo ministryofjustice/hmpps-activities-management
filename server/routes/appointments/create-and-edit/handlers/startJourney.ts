@@ -164,6 +164,7 @@ export default class StartJourneyRoutes {
         startDate: occurrence.startDate,
       })),
       sequenceNumber: appointmentOccurrence.sequenceNumber,
+      bulkAppointment: appointmentOccurrence.bulkAppointment,
     }
   }
 }
