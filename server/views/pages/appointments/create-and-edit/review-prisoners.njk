@@ -12,7 +12,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Review Prisoners", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-review-prisoners-page' %}
-{% set backLinkHref = "upload-bulk-appointment" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners" %}
+{% set backLinkHref = backLinkHref %}
 
 {% block content %}
     <div class="govuk-grid-row">

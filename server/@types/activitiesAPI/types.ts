@@ -33,6 +33,7 @@ export type BulkAppointmentsRequest = components['schemas']['BulkAppointmentsReq
 export type IndividualAppointment = components['schemas']['IndividualAppointment']
 export type BulkAppointment = components['schemas']['BulkAppointment']
 export type BulkAppointmentDetails = components['schemas']['BulkAppointmentDetails']
+export type BulkAppointmentSummary = components['schemas']['BulkAppointmentSummary']
 export type AppointmentDetails = components['schemas']['AppointmentDetails']
 export type AppointmentOccurrenceDetails = components['schemas']['AppointmentOccurrenceDetails']
 export type UncancelScheduledInstanceRequest = components['schemas']['UncancelScheduledInstanceRequest']

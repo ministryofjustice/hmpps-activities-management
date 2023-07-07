@@ -15,6 +15,7 @@ const nextWeek = addDays(new Date(), 7)
 context('Edit appointment', () => {
   beforeEach(() => {
     getRepeatGroupOccurrence2Details.startDate = formatDate(nextWeek, 'yyyy-MM-dd')
+    getRepeatGroupAppointmentDetails.occurrences[0].startDate = formatDate(nextWeek, 'yyyy-MM-dd')
 
     cy.task('reset')
     cy.task('stubSignIn')

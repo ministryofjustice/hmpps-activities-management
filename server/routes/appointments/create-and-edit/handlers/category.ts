@@ -3,7 +3,6 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentType } from '../appointmentJourney'
-import config from '../../../../config'
 
 export class Category {
   @Expose()
@@ -20,9 +19,7 @@ export default class CategoryRoutes {
 
     let backLinkHref = 'review-prisoners'
     if (appointmentJourney.type === AppointmentType.INDIVIDUAL) {
-      if (appointmentJourney.fromPrisonNumberProfile) {
-        backLinkHref = `${config.dpsUrl}/prisoner/${appointmentJourney.fromPrisonNumberProfile}`
-      } else if (appointmentJourney.prisoners?.length > 0) {
+      if (appointmentJourney.prisoners?.length > 0) {
         backLinkHref = `select-prisoner?query=${appointmentJourney.prisoners[0].number}`
       } else {
         backLinkHref = 'select-prisoner'
