@@ -10,6 +10,7 @@ import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
 import startNewJourney from '../../middleware/startNewJourney'
+import addServiceReturnLink from '../../middleware/addServiceReturnLink'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -17,6 +18,7 @@ export default function routes(services: Services): Router {
   const serviceName = ServiceName.APPOINTMENTS
 
   router.use(rolloutMiddleware(serviceName, services))
+  router.use(/\/.+/, addServiceReturnLink('Go to all appointments tasks', '/appointments'))
 
   // Appointments tiles route
   router.use('/', appointmentsHomeRoutes())
