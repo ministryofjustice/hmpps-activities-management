@@ -29,7 +29,7 @@ declare module 'express-session' {
     deallocateJourney: DeallocateFromActivityJourney
     // The following three session data properties; appointmentJourney, editAppointmentJourney and bulkAppointmentJourney
     // are overridden by the populateJourney middleware. That middleware redirects the getter and setter to use the
-    // appointmentSessionDataMap below. As a result, these properties are virtual and are not directly set. They exist
+    // sessionDataMap below. As a result, these properties are virtual and are not directly set. They exist
     // to allow pre-existing access as if there was only one journey per session e.g. req.session.appointmentJourney
     appointmentJourney: AppointmentJourney
     // See comment above
@@ -44,11 +44,12 @@ declare module 'express-session' {
     recordAttendanceRequests: RecordAttendanceRequests
     // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
     // middlewares and the appointment routes in index.ts
-    appointmentSessionDataMap: Map<string, AppointmentSessionDatum>
+    sessionDataMap: Map<string, SessionDatum>
   }
 }
 
-export type AppointmentSessionDatum = {
+export type SessionDatum = {
+  instanceUnixEpoch: number
   appointmentJourney: AppointmentJourney
   bulkAppointmentJourney: BulkAppointmentJourney
   editAppointmentJourney: EditAppointmentJourney
