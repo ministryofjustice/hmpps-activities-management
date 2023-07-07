@@ -47,39 +47,53 @@ export default class EditAppointmentService {
 
     if (editAppointmentJourney.cancellationReason) {
       const { repeat } = appointmentJourney
-      const { cancellationReason } = editAppointmentJourney
+      const { cancellationReason, bulkAppointment } = editAppointmentJourney
 
-      const cancelRequest = {
+      const cancelRequest: AppointmentOccurrenceCancelRequest = {
         cancellationReasonId: +cancellationReason,
         applyTo,
-      } as AppointmentOccurrenceCancelRequest
+      }
 
       await this.activitiesService.cancelAppointmentOccurrence(+occurrenceId, cancelRequest, user)
 
+      // For delete requests we can't redirect back to the occurrence page. Instead we should provide a more specific
+      // error message and redirect back to a relevent page
       if (cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
-        if (repeat === YesNo.NO) {
-          const successHeading = `You've ${this.getEditedMessage(appointmentJourney, editAppointmentJourney)} the ${
-            appointmentJourney.category.description
-          } appointment - ${formatDate(new Date(appointmentJourney.startDate.date), 'EEEE, d MMMM yyyy')}`
+        if (bulkAppointment) {
+          const successHeading = `You've ${this.getEditedMessage(
+            appointmentJourney,
+            editAppointmentJourney,
+          )} appointment for ${appointmentJourney.prisoners[0].number} from this set`
+
+          const bulkAppointmentId = bulkAppointment.id
 
           this.clearSession(req)
 
-          return res.redirectWithSuccess(`/appointments`, successHeading)
+          return res.redirectWithSuccess(`/appointments/bulk-appointments/${bulkAppointmentId}`, successHeading)
         }
-        const successHeading = `You've ${this.getEditedMessage(
-          appointmentJourney,
-          editAppointmentJourney,
-        )} ${this.getAppliedToSeriesMessage(editAppointmentJourney, applyTo)}`
+        if (repeat === YesNo.YES) {
+          const successHeading = `You've ${this.getEditedMessage(
+            appointmentJourney,
+            editAppointmentJourney,
+          )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo, true)}`
+
+          this.clearSession(req)
+
+          return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
+        }
+        const successHeading = `You've ${this.getEditedMessage(appointmentJourney, editAppointmentJourney)} the ${
+          appointmentJourney.appointmentName
+        } appointment - ${formatDate(new Date(appointmentJourney.startDate.date), 'EEEE, d MMMM yyyy')}`
 
         this.clearSession(req)
 
-        return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
+        return res.redirectWithSuccess(`/appointments`, successHeading)
       }
 
       const successHeading = `You've ${this.getEditedMessage(
         appointmentJourney,
         editAppointmentJourney,
-      )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, applyTo)}`
+      )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`
 
       this.clearSession(req)
 
@@ -125,7 +139,7 @@ export default class EditAppointmentService {
     const successHeading = `You've ${this.getEditedMessage(
       appointmentJourney,
       editAppointmentJourney,
-    )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, applyTo)}`
+    )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`
 
     this.clearSession(req)
 
@@ -141,36 +155,31 @@ export default class EditAppointmentService {
       .replace('change', 'changed')
   }
 
-  private getAppliedToAppointmentMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: AppointmentApplyTo) {
-    switch (applyTo) {
-      case AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
-        return `appointments ${editAppointmentJourney.sequenceNumber} to ${
-          getLastOccurrence(editAppointmentJourney).sequenceNumber
-        } in the series`
-      case AppointmentApplyTo.ALL_FUTURE_OCCURRENCES:
-        return `appointments ${getFirstOccurrence(editAppointmentJourney).sequenceNumber} to ${
-          getLastOccurrence(editAppointmentJourney).sequenceNumber
-        } in the series`
-      default:
-        return 'this appointment'
+  private getAppliedToAppointmentMessage(
+    editAppointmentJourney: EditAppointmentJourney,
+    appointmentJourney: AppointmentJourney,
+    applyTo: AppointmentApplyTo,
+    backToSeries = false,
+  ) {
+    if (appointmentJourney.repeat === YesNo.YES) {
+      switch (applyTo) {
+        case AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
+          return `appointments ${editAppointmentJourney.sequenceNumber} to ${
+            getLastOccurrence(editAppointmentJourney).sequenceNumber
+          } in ${backToSeries ? 'this' : 'the'} series`
+        case AppointmentApplyTo.ALL_FUTURE_OCCURRENCES:
+          return `appointments ${getFirstOccurrence(editAppointmentJourney).sequenceNumber} to ${
+            getLastOccurrence(editAppointmentJourney).sequenceNumber
+          } in ${backToSeries ? 'this' : 'the'} series`
+        default:
+          if (backToSeries) {
+            return `appointment ${editAppointmentJourney.sequenceNumber} of ${
+              getLastOccurrence(editAppointmentJourney).sequenceNumber
+            } in this series`
+          }
+      }
     }
-  }
-
-  private getAppliedToSeriesMessage(editAppointmentJourney: EditAppointmentJourney, applyTo: AppointmentApplyTo) {
-    switch (applyTo) {
-      case AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
-        return `appointments ${editAppointmentJourney.sequenceNumber} to ${
-          getLastOccurrence(editAppointmentJourney).sequenceNumber
-        } in this series`
-      case AppointmentApplyTo.ALL_FUTURE_OCCURRENCES:
-        return `appointments ${getFirstOccurrence(editAppointmentJourney).sequenceNumber} to ${
-          getLastOccurrence(editAppointmentJourney).sequenceNumber
-        } in this series`
-      default:
-        return `appointment ${editAppointmentJourney.sequenceNumber} of ${
-          getLastOccurrence(editAppointmentJourney).sequenceNumber
-        } in this series`
-    }
+    return 'this appointment'
   }
 
   private clearSession(req: Request) {
