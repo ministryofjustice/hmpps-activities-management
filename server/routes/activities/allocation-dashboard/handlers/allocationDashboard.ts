@@ -101,7 +101,7 @@ export default class AllocationDashboardRoutes {
       scheduleId: schedule.id,
       activityName: schedule.activity.description,
       earliestAllocationStartDate: allocations[0].startDate,
-      latestAllocationStartDate: allocations[schedule.allocations.length - 1].startDate,
+      latestAllocationStartDate: allocations[allocations.length - 1].startDate,
     }
 
     req.session.deallocateJourney.prisoners = await this.prisonService
