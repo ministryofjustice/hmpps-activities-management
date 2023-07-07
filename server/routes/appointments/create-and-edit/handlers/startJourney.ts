@@ -15,23 +15,6 @@ export default class StartJourneyRoutes {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.INDIVIDUAL,
     }
-    req.session.returnTo = null
-    const { prisonNumber } = req.query
-    if (prisonNumber && typeof prisonNumber === 'string') {
-      const { user } = res.locals
-
-      const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumber, user).catch(_ => null)
-
-      if (!prisoner) return res.redirect(`select-prisoner?query=${prisonNumber}`)
-      const prisonerData = {
-        number: prisoner.prisonerNumber,
-        name: `${prisoner.firstName} ${prisoner.lastName}`,
-        cellLocation: prisoner.cellLocation,
-      }
-      req.session.appointmentJourney.prisoners = [prisonerData]
-      req.session.appointmentJourney.fromPrisonNumberProfile = prisonNumber
-      return res.redirect(`category`)
-    }
     return res.redirect(`select-prisoner`)
   }
 
@@ -41,7 +24,6 @@ export default class StartJourneyRoutes {
       type: AppointmentType.GROUP,
       prisoners: [],
     }
-    req.session.returnTo = null
     res.redirect('how-to-add-prisoners')
   }
 
@@ -53,8 +35,32 @@ export default class StartJourneyRoutes {
     req.session.bulkAppointmentJourney = {
       appointments: [],
     }
-    req.session.returnTo = null
     res.redirect('upload-bulk-appointment')
+  }
+
+  PRISONER = async (req: Request, res: Response): Promise<void> => {
+    const { prisonNumber } = req.params
+    const { user } = res.locals
+
+    req.session.appointmentJourney = {
+      mode: AppointmentJourneyMode.CREATE,
+      type: AppointmentType.GROUP,
+      prisoners: [],
+    }
+
+    const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumber, user).catch(_ => null)
+    if (!prisoner) return res.redirect(`select-prisoner?query=${prisonNumber}`)
+
+    req.session.appointmentJourney.prisoners = [
+      {
+        number: prisoner.prisonerNumber,
+        name: `${prisoner.firstName} ${prisoner.lastName}`,
+        cellLocation: prisoner.cellLocation,
+      },
+    ]
+    req.session.appointmentJourney.fromPrisonNumberProfile = prisonNumber
+
+    return res.redirect('../review-prisoners')
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
@@ -159,7 +165,5 @@ export default class StartJourneyRoutes {
       })),
       sequenceNumber: appointmentOccurrence.sequenceNumber,
     }
-
-    req.session.returnTo = null
   }
 }
