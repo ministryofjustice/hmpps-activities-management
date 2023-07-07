@@ -25,7 +25,6 @@ import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmat
 import { formatDate } from '../../../server/utils/utils'
 import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/uploadPrisonerListPage'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
-import UploadByCsvPage from '../../pages/appointments/create-and-edit/uploadbyCsvPage'
 import { AppointmentRepeatPeriod } from '../../../server/@types/appointments'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
@@ -95,12 +94,10 @@ context('Create group appointment', () => {
     howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
     howToAddPrisonersPage.continue()
 
-    const uploadByCsvPage = Page.verifyOnPage(UploadByCsvPage)
-    uploadByCsvPage.getLinkByText('Download CSV file template').click()
-    uploadByCsvPage.assertFileDownload('prisoner-list.csv')
-    uploadByCsvPage.continue()
-
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
+    uploadPrisonerListPage.howToUseCSVSection()
+    uploadPrisonerListPage.getLinkByText('prison number list template').click()
+    uploadPrisonerListPage.assertFileDownload('prisoner-list.csv')
     uploadPrisonerListPage.attatchFile('upload-prisoner-list.csv')
     uploadPrisonerListPage.continue()
 

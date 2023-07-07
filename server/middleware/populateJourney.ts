@@ -1,12 +1,13 @@
 import { RequestHandler } from 'express'
-import { AppointmentSessionDatum } from '../@types/express'
+import { SessionDatum } from '../@types/express'
 
 const journeys = ['appointmentJourney', 'bulkAppointmentJourney', 'editAppointmentJourney']
+const MAX_CONCURRENT_JOURNEYS = 50
 
 export default function populateJourney(): RequestHandler {
   return async (req, res, next) => {
     // Will create a new session data map if the existing map is undefined or null
-    req.session.appointmentSessionDataMap ??= new Map<string, AppointmentSessionDatum>()
+    req.session.sessionDataMap ??= new Map<string, SessionDatum>()
 
     // This loop redefines the existing session properties, intercepting their getter and setters and replacing the
     // implementation with the usage of the session data map. In this way, we can have journey specific session data
@@ -17,12 +18,22 @@ export default function populateJourney(): RequestHandler {
       Object.defineProperty(req.session, p, {
         get() {
           // Will return either the found, mapped, non-undefined session data journey or null
-          return req.session.appointmentSessionDataMap[req.params.journeyId]?.[p] ?? null
+          return req.session.sessionDataMap[req.params.journeyId]?.[p] ?? null
         },
         set(value) {
           // Will create a new session datum if one is not mapped, or it is undefined or null
-          req.session.appointmentSessionDataMap[req.params.journeyId] ??= {} as AppointmentSessionDatum
-          req.session.appointmentSessionDataMap[req.params.journeyId][p] = value
+          req.session.sessionDataMap[req.params.journeyId] ??= { instanceUnixEpoch: Date.now() } as SessionDatum
+          req.session.sessionDataMap[req.params.journeyId][p] = value
+
+          if (Object.keys(req.session.sessionDataMap).length > MAX_CONCURRENT_JOURNEYS) {
+            const oldestKey = Object.keys(req.session.sessionDataMap).reduce((key, v) =>
+              req.session.sessionDataMap[v].instanceUnixEpoch < req.session.sessionDataMap[key].instanceUnixEpoch
+                ? v
+                : key,
+            )
+
+            delete req.session.sessionDataMap[oldestKey]
+          }
         },
       })
     })

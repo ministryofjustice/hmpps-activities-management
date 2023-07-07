@@ -27,10 +27,17 @@ export default class DailySummaryRoutes {
     const attendanceSummary = await this.activitiesService.getAllAttendanceSummary(activityDate, user)
     const uniqueCategories = attendanceSummary.map(c => c.categoryName).filter((v, k, arr) => arr.indexOf(v) === k)
 
-    if (!attendanceSummaryFilters || attendanceSummaryFilters.categoryFilters.length === 0) {
+    if (
+      !attendanceSummaryFilters ||
+      attendanceSummaryFilters.categoryFilters.length === 0 ||
+      attendanceSummaryFilters.categoryFilters.length !== uniqueCategories.length ||
+      attendanceSummaryFilters.categoryFilters.join('').length !== uniqueCategories.join('').length
+    ) {
       attendanceSummaryFilters = defaultFilters(activityDate, uniqueCategories)
       req.session.attendanceSummaryFilters = attendanceSummaryFilters
     }
+    req.session.attendanceSummaryFilters.activityFilters = []
+
     const categoryFilters = attendanceSummaryFilters.categoryFilters
       .filter((category: FilterItem) => category.checked === true)
       .map((category: FilterItem) => category.value)

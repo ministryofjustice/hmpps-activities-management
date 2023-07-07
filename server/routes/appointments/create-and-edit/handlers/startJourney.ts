@@ -54,7 +54,7 @@ export default class StartJourneyRoutes {
       appointments: [],
     }
     req.session.returnTo = null
-    res.redirect('upload-by-csv')
+    res.redirect('upload-bulk-appointment')
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
