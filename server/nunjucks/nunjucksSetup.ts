@@ -39,7 +39,7 @@ import {
   sortActivitiesByStartTime,
 } from '../utils/calendarUtilities'
 import { Services } from '../services'
-import { YesNo } from '../@types/activities'
+import { EventSource, EventType, YesNo } from '../@types/activities'
 import { AppointmentType, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentCancellationReason, AppointmentRepeatPeriod, AppointmentApplyTo } from '../@types/appointments'
 import TimeSlot from '../enum/timeSlot'
@@ -143,6 +143,8 @@ export function registerNunjucks(app?: express.Express): Environment {
 
   njkEnv.addGlobal('ServiceName', ServiceName)
   njkEnv.addGlobal('YesNo', YesNo)
+  njkEnv.addGlobal('EventType', EventType)
+  njkEnv.addGlobal('EventSource', EventSource)
   njkEnv.addGlobal('TimeSlot', TimeSlot)
   njkEnv.addGlobal('AppointmentRepeatPeriod', AppointmentRepeatPeriod)
   njkEnv.addGlobal('AppointmentType', AppointmentType)
