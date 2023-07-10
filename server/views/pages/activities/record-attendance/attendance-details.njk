@@ -7,7 +7,6 @@
 {% set pageId = 'attendance-view-details-page' %}
 
 {% set summaryListRows = [] %}
-
 {% set summaryListRows = (summaryListRows.push(
      {
         key: {
@@ -19,12 +18,13 @@
         actions: {
             items: [{
                 href: attendance.id + "/edit-attendance",
-                text: "" if attendance.status === 'WAITING' else "Change",
+                text: "Change",
                 visuallyHiddenText: "Change attendance option"
             }]
-        } if attendance.editable
+        } if attendance.editable and attendance.status !== 'WAITING'
      }
 ), summaryListRows) %}
+
 {% if attendance.attendanceReason.code == 'CANCELLED' %}
     {% set summaryListRows = (summaryListRows.push(
         {
