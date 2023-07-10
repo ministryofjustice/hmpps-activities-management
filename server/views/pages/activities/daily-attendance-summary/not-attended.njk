@@ -151,32 +151,34 @@
 
     {% set attendanceRows = [] %}
     {% for attendee in attendees %}
-        {% set attendanceRows = (attendanceRows.push([
-            {
-                attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name },
-                html: showProfileLink({
-                    name: attendee.name,
-                    prisonerNumber: attendee.prisonerNumber,
-                    link: true,
-                    classes: 'hmpps-inline-block'
-                }),
-                classes: 'govuk-table_cell'
-            },
-            {
-                attributes: { id: 'cell-location-' + loop.index, "data-sort-value": attendee.location },
-                text: attendee.location,
-                classes: 'govuk-table_cell'
-            },
-            {
-                attributes: { id: 'activity-' + loop.index },
-                html: '<a href="/activities/schedule/activities/' + attendee.attendance.activityId + '" class="govuk-link govuk-link--no-visited-state">' + attendee.attendance.activitySummary,
-                classes: 'govuk-table__cell'
-            },
-            {
-                classes: 'govuk-table__cell govuk-!-padding-top-2',
-                html: 'Not recorded yet'
-            }
-        ]), attendanceRows) %}
+        {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
+            {% set attendanceRows = (attendanceRows.push([
+                {
+                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name },
+                    html: showProfileLink({
+                        name: attendee.name,
+                        prisonerNumber: attendee.prisonerNumber,
+                        link: true,
+                        classes: 'hmpps-inline-block'
+                    }),
+                    classes: 'govuk-table_cell'
+                },
+                {
+                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": attendee.location },
+                    text: attendee.location,
+                    classes: 'govuk-table_cell'
+                },
+                {
+                    attributes: { id: 'activity-' + loop.index },
+                    html: '<a href="/activities/schedule/activities/' + attendee.attendance.activityId + '" class="govuk-link govuk-link--no-visited-state">' + (attendee.attendance.activitySummary | safe),
+                    classes: 'govuk-table__cell'
+                },
+                {
+                    classes: 'govuk-table__cell govuk-!-padding-top-2',
+                    html: 'Not recorded yet'
+                }
+            ]), attendanceRows) %}
+        {% endif %}
     {% endfor %}
 
     {{ govukTable({
