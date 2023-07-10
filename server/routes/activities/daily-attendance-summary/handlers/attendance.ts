@@ -60,25 +60,21 @@ export default class DailyAttendanceRoutes {
       .filter(a => categoryFilters.includes(a.categoryName) && activityFilters.includes(a.activitySummary))
       .map(a => a.prisonerNumber)
 
-    const inmates =
-      prisonerNumbers?.length > 0 ? await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user) : []
+    const unfilteredAttendees =
+      prisonerNumbers?.length > 0
+        ? await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
+            inmates.map(i => ({
+              name: `${i.firstName} ${i.lastName}`,
+              prisonerNumber: i.prisonerNumber,
+              location: i.cellLocation,
+              attendance: attendances
+                .filter(a => categoryFilters.includes(a.categoryName) && activityFilters.includes(a.activitySummary))
+                .find(a => a.prisonerNumber === i.prisonerNumber),
+            })),
+          )
+        : []
 
-    const unfilteredAttendees = attendances
-      .filter(a => categoryFilters.includes(a.categoryName) && activityFilters.includes(a.activitySummary))
-      .map(a => ({
-        inmate: inmates.find(i => i.prisonerNumber === a.prisonerNumber),
-        prisonerNumber: a.prisonerNumber,
-        attendance: a,
-      }))
-
-    const filteredAttendees = unfilteredAttendees.map(a => ({
-      name: `${a.inmate.firstName} ${a.inmate.lastName}`,
-      prisonerNumber: a.prisonerNumber,
-      location: a.inmate.cellLocation,
-      attendance: a.attendance,
-    }))
-
-    const attendees = filteredAttendees.filter(
+    const attendees = unfilteredAttendees.filter(
       a =>
         this.includesSearchTerm(a.name, attendanceSummaryFilters.searchTerm) ||
         this.includesSearchTerm(a.prisonerNumber, attendanceSummaryFilters.searchTerm),
