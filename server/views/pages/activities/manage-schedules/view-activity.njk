@@ -199,7 +199,8 @@
                 }] %}
             {% endif %}
 
-            {% if schedule.endDate < now | toDateString %}
+            {% if schedule.endDate %}
+            {% if schedule.endDate <= now | toDateString %}
                 {% set dateAndScheduleRows = (dateAndScheduleRows.push({
                     key: {
                         text: "End date"
@@ -214,7 +215,7 @@
                         text: "End date"
                     },
                     value: {
-                        text: schedule.endDate | toDate | formatDate('EEEE d MMMM yyyy') or "None set"
+                        text: schedule.endDate | toDate | formatDate('EEEE d MMMM yyyy')
                     },
                     actions: {
                         items: [
@@ -228,6 +229,28 @@
                     }
                 }), dateAndScheduleRows) %}
             {% endif %}
+            {% else %}
+            {% set dateAndScheduleRows = (dateAndScheduleRows.push({
+                key: {
+                    text: "End date"
+                },
+                value: {
+                    text: "None set"
+                },
+                actions: {
+                    items: [
+                        {
+                            href: "/activities/create/end-date?fromEditActivity=true&preserveHistory=true",
+                            text: "Change",
+                            visuallyHiddenText: "change end date",
+                            classes: "govuk-link--no-visited-state"
+                        }
+                    ]
+                }
+            }), dateAndScheduleRows) %}
+            {% endif %}
+
+
 
             {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                 {
