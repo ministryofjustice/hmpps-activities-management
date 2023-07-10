@@ -7,18 +7,19 @@
 {% set pageId = 'attendance-view-details-page' %}
 
 {% set summaryListRows = [] %}
+
 {% set summaryListRows = (summaryListRows.push(
      {
         key: {
             text: "Attendance"
         },
         value: {
-            text: attendance.attendanceReason.description
+            text: attendance.attendanceReason.description or "Not recorded yet"
         },
         actions: {
             items: [{
                 href: attendance.id + "/edit-attendance",
-                text: "Change",
+                text: "" if attendance.status === 'WAITING' else "Change",
                 visuallyHiddenText: "Change attendance option"
             }]
         } if attendance.editable
@@ -96,7 +97,7 @@
 {% set summaryListRows = (summaryListRows.push(
     {
         key: {
-         text: "Recorded by"
+         text: "Reset by" if attendance.status === 'WAITING' else "Recorded by"
         },
         value: {
          text: attendance.recordedBy
@@ -123,14 +124,14 @@
                     <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a>
                     on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.startTime | getTimeSlotFromTime | upper }}) 
                </div>
-
-                {% if attendance.status !== 'WAITING' %}
-                    {{ govukSummaryList({
-                        rows: summaryListRows,
-                        classes: "govuk-!-margin-bottom-9",
-                        attributes: { 'data-qa': 'appointment-details' }
-                    }) }}
-                {% endif %}
+               {% if attendance.status === 'WAITING' %}
+                   <h2 class="govuk-heading-m">Attendance record reset</h2>
+               {% endif %}
+                {{ govukSummaryList({
+                    rows: summaryListRows,
+                    classes: "govuk-!-margin-bottom-9",
+                    attributes: { 'data-qa': 'appointment-details' }
+                }) }}
 
                 {% if attendance.attendanceHistory | length %}
                     <h2 class="govuk-heading-m" data-qa="history-heading">Change history for this attendance record</h2>
