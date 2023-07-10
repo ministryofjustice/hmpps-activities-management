@@ -12,6 +12,7 @@ import changeOfCircumstanceRoutes from './change-of-circumstances'
 import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
+import addServiceReturnLink from '../../middleware/addServiceReturnLink'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -19,6 +20,7 @@ export default function Index(services: Services): Router {
   const serviceName = ServiceName.ACTIVITIES
 
   router.use(rolloutMiddleware(serviceName, services))
+  router.use(/\/.+/, addServiceReturnLink('Go to all activities tasks', '/activities'))
 
   router.use('/', homeRoutes())
   router.use('/create', createRoutes(services))

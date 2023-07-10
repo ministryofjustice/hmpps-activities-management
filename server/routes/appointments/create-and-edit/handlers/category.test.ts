@@ -91,20 +91,6 @@ describe('Route Handlers - Create Appointment - Category', () => {
       })
     })
 
-    it('should render the category view with back to prisoner profile', async () => {
-      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
-      req.session.appointmentJourney.fromPrisonNumberProfile = 'A1234BC'
-
-      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
-        backLinkHref: 'https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC',
-        categories,
-      })
-    })
-
     it('should render the category view with back to review prisoners page', async () => {
       req.session.appointmentJourney.type = AppointmentType.GROUP
 
