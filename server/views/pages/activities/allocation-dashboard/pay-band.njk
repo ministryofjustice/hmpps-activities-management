@@ -6,6 +6,7 @@
 {% set pageTitle = applicationName + " - Edit Allocation - Pay band" %}
 {% set pageId = 'pay-band-page' %}
 {% set backLinkHref = "/" %}
+{% set backLinkHref = '/activities/allocation-dashboard/'+ scheduleId + '/check-allocation/' +prisonerNumber %}
 
 {% set bandOptions = [] %}
 {% for pay in payBands %}
