@@ -178,7 +178,43 @@ describe('Route Handlers - Edit allocation - End date', () => {
       const requestObject = plainToInstance(EndDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date after the start date' }])
+      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date on or after the start date' }])
+    })
+
+    it('validation passes if end date is same as start date', async () => {
+      const today = new Date()
+      const endDate = simpleDateFromDate(today)
+
+      const body = {
+        endDate,
+        startDate: formatDate(today, 'yyyy-MM-dd'),
+        allocationId: 1,
+        scheduleId: 1,
+        prisonerNumber: 'ABC123',
+      }
+
+      const requestObject = plainToInstance(EndDate, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
+
+    it('validation passes if end date is after start date', async () => {
+      const today = new Date()
+      const endDate = simpleDateFromDate(addDays(today, 1))
+
+      const body = {
+        endDate,
+        startDate: formatDate(today, 'yyyy-MM-dd'),
+        allocationId: 1,
+        scheduleId: 1,
+        prisonerNumber: 'ABC123',
+      }
+
+      const requestObject = plainToInstance(EndDate, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
     })
   })
 })

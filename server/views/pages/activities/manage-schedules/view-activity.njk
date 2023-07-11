@@ -162,23 +162,21 @@
             }) }}
 
             <h2 class="govuk-heading-m">Dates and schedule</h2>
+            {% set dateAndScheduleRows = [] %}
             {% if schedule.startDate <= now | toDateString %}
-                {% set dateAndScheduleRows = [{
-                    key: {
-                        text: "Start date"
-                    },
-                    value: {
-                        text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
-                    },
-                    actions: {
-                        items: [
-                            {
-                                text: activityStartedTag()
-                            }
-                        ]
-                    }
-
-                }] %}
+                <dl class="govuk-summary-list">
+                  <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                      Start date
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                      <p class="govuk-body">{{ schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}</p>
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        {{ govukTag({ text: 'Started', classes: 'govuk-tag--small govuk-tag--green' }) }}
+                    </dd>
+                  </div>
+                </dl>
             {% else %}
                 {% set dateAndScheduleRows = [{
                     key: {

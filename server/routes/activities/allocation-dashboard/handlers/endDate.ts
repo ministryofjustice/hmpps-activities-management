@@ -6,8 +6,8 @@ import IsValidDate from '../../../../validators/isValidDate'
 import { convertToTitleCase, formatDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import DateIsAfterOtherProperty from '../../../../validators/dateIsAfterOtherProperty'
 import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import DateIsSameOrAfterOtherProperty from '../../../../validators/dateIsSameOrAfterOtherProperty'
 
 export class EndDate {
   @Expose()
@@ -15,7 +15,7 @@ export class EndDate {
   @ValidateNested()
   @IsNotEmpty({ message: 'Enter a valid end date' })
   @IsValidDate({ message: 'Enter a valid end date' })
-  @DateIsAfterOtherProperty('startDate', { message: 'Enter a date after the start date' })
+  @DateIsSameOrAfterOtherProperty('startDate', { message: 'Enter a date on or after the start date' })
   endDate: SimpleDate
 
   @Expose()
