@@ -4,6 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create an activity - Risk level" %}
 {% set pageId = 'risk-level-page' %}
@@ -12,14 +13,13 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-m">{{ session.createJourney.category.name }}</span>
-            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {% set pageHeading = "Workplace risk assessment levels: which ones are suitable for this activity?" %}
                 {% if session.req.query.fromEditActivity %}
                     {% set pageHeading = "Change workplace risk assessment levels" %}
                 {% endif %}
+                {{ activityJourneyCaption(session.createJourney) }}
                 {{ govukRadios({
                     fieldset: {
                         legend: {
