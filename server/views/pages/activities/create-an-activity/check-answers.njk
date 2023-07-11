@@ -2,8 +2,8 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "components/scheduleSummary.njk" import scheduleSummary %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
 
 {% set pageTitle = applicationName + " - Create an activity - Check answers" %}
 {% set pageId = 'check-answers-page' %}
@@ -155,7 +155,7 @@
                         key: {
                             text: "Days and times"
                         },
-                        value: { html: scheduleSummary(session.createJourney.days, times) },
+                        value: { html: daysAndTimes(dailySlots) },
                         actions: {
                             items: [{
                                 href: "days-and-times?preserveHistory=true",

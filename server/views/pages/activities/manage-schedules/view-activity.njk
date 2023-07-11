@@ -4,6 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "../../../partials/activities/days-and-times.njk" import daysAndTimes %}
 
 {% set pageTitle = applicationName + " - Activities Dashboard - View activity" %}
 {% set pageId = 'view-activity-page' %}
@@ -301,36 +302,6 @@
             {% endfor %}
         </div>
     {% endfor %}
-{% endmacro %}
-
-{% macro daysAndTimes(dailySlots) %}
-    {% set dayRows = [] %}
-    {% for day in dailySlots %}
-        {% set scheduleText %}
-            {% set ands = joiner('and ') %}
-            {% for slot in day.slots %}
-                {{ ands() }}{{ slot | upper }}
-            {% else %}
-                <span class='govuk-hint'>Not scheduled</span>
-            {% endfor %}
-        {% endset %}
-
-        {% set dayRows = (dayRows.push(
-            {
-                key: {
-                    html: '<span' + (' class="govuk-hint"' if not day.slots | length) + '>' + day.day + '</span>'
-                },
-                value: {
-                    html: scheduleText
-                }
-            }
-        ), dayRows) %}
-    {% endfor %}
-
-    {{ govukSummaryList({
-        classes: 'govuk-summary-list--no-border',
-        rows: dayRows
-    }) }}
 {% endmacro %}
 
 {% macro locationText(schedule) %}
