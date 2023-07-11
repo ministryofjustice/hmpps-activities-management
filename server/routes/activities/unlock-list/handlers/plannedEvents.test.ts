@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { FilterItem, UnlockFilters } from '../../../../@types/activities'
+import { FilterItem, UnlockFilters, UnlockListItem } from '../../../../@types/activities'
 import { toDate, formatDate } from '../../../../utils/utils'
 import PlannedEventRoutes from './plannedEvents'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -65,10 +65,25 @@ describe('Unlock list routes - planned events', () => {
         session: {}, // No filters supplied in session
       } as unknown as Request
 
+      const unlockListItems = [
+        {
+          prisonerNumber: 'A1111AA',
+          isLeavingWing: true,
+        },
+        {
+          prisonerNumber: 'B2222BB',
+          isLeavingWing: true,
+        },
+        {
+          prisonerNumber: 'C3333CC',
+          isLeavingWing: false,
+        },
+      ] as UnlockListItem[]
+
       // Mocked responses
       activitiesService.getLocationPrefix.mockResolvedValue({ locationPrefix: 'MDI-1-' })
       activitiesService.getLocationGroups.mockResolvedValue(locationsAtPrison)
-      unlockListService.getFilteredUnlockList.mockResolvedValue([])
+      unlockListService.getFilteredUnlockList.mockResolvedValue(unlockListItems)
 
       await handler.GET(req, res)
 
@@ -77,7 +92,11 @@ describe('Unlock list routes - planned events', () => {
       expect(unlockListService.getFilteredUnlockList).toHaveBeenCalledWith(unlockFilters, res.locals.user)
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         unlockFilters,
-        unlockListItems: [],
+        unlockListItems,
+        movementCounts: {
+          leavingWing: 2,
+          stayingOnWing: 1,
+        },
       })
     })
 
@@ -113,6 +132,10 @@ describe('Unlock list routes - planned events', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         unlockFilters,
         unlockListItems: [],
+        movementCounts: {
+          leavingWing: 0,
+          stayingOnWing: 0,
+        },
       })
     })
   })

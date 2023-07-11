@@ -8,6 +8,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "components/searchBar.njk" import searchBar %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Daily attendance list" %}
 {% set pageId = 'daily-attendance-detail-page' %}
@@ -135,51 +136,63 @@
 
     {% set attendanceRows = [] %}
     {% for attendee in attendees %}
-        {% set attendanceRows = (attendanceRows.push([
-            {
-                attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name },
-                html: showProfileLink({
-                    name: attendee.name,
-                    prisonerNumber: attendee.prisonerNumber,
-                    link: true,
-                    classes: 'hmpps-inline-block'
-                }),
-                classes: 'govuk-table_cell'
-            },
-            {
-                attributes: { id: 'cell-location-' + loop.index, "data-sort-value": attendee.location },
-                text: attendee.location,
-                classes: 'govuk-table_cell'
-            },
-            {
-                attributes: { id: 'activity-' + loop.index },
-                html: '<a href="/activities/schedule/activities/' + attendee.attendance.activityId + '" class="govuk-link govuk-link--no-visited-state">' + attendee.attendance.activitySummary,
-                classes: 'govuk-table__cell'
-            },
-            {
-                attributes: { id: 'recorded-time-' + loop.index, "data-sort-value": attendee.location },
-                text: attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('HH:mm:ss') + ' on ' + attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMM yyyy'),
-                classes: 'govuk-table_cell'
-            },
-            {
-                html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + renderPayStatus(attendee.attendance),
-                classes: 'govuk-!-display-none-print',
-                attributes: {
-                    "data-qa": "attendance"
+        {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
+            {% set attendanceRows = (attendanceRows.push([
+                {
+                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name },
+                    html: showProfileLink({
+                        name: attendee.name,
+                        prisonerNumber: attendee.prisonerNumber,
+                        link: true,
+                        classes: 'hmpps-inline-block'
+                    }),
+                    classes: 'govuk-table_cell'
+                },
+                {
+                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": attendee.location },
+                    text: attendee.location,
+                    classes: 'govuk-table_cell'
+                },
+                {
+                    attributes: { id: 'activity-' + loop.index },
+                    html: '<a href="/activities/schedule/activities/' + attendee.attendance.activityId + '" class="govuk-link govuk-link--no-visited-state">' + attendee.attendance.activitySummary,
+                    classes: 'govuk-table__cell'
+                },
+                {
+                    attributes: { id: 'recorded-time-' + loop.index, "data-sort-value": attendee.location },
+                    text: attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('HH:mm:ss') + ' on ' + attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMM yyyy'),
+                    classes: 'govuk-table_cell'
+                },
+                {
+                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + renderPayStatus(attendee.attendance),
+                    classes: 'govuk-!-display-none-print',
+                    attributes: {
+                        "data-qa": "attendance"
+                    }
+                },
+                {
+                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.activityId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + 'View or edit</a>'
                 }
-            },
-            {
-                html: '<a href="/activities/attendance/activities/' + attendee.attendance.activityId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + 'View or edit</a>'
-            }
-        ]), attendanceRows) %}
+            ]), attendanceRows) %}
+        {% endif %}
     {% endfor %}
 
     <div>
         {% if status === 'Attended' %}
-            <h1 class="govuk-heading-l">All attended</h1>
+            <h1 class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0">All attended</h1>
         {% else %}
-            <h1 class="govuk-heading-l"> {{ attendanceRows | length }} {{ "absence" if attendanceRows.length == 1 else "absences" }}</h1>
+            <h1 class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0"> {{ attendanceRows | length }} {{ "absence" if attendanceRows.length == 1 else "absences" }}</h1>
         {% endif %}
+    </div>
+   <div>
+        <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
+              <div class="govuk-button-group float-right">
+                    {{ govukButton({
+                        text: "Refresh",
+                        classes: "govuk-button--secondary"
+                    }) }}
+              </div>
+        </div>
     </div>
 
     {{ govukTable({

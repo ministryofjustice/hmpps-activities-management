@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
+import { addDays } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import EndDateRoutes, { EndDate } from './endDate'
@@ -131,7 +132,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
     })
 
-    it('validation fails if end date is not after start date', async () => {
+    it('validation passes if end date is same as start date', async () => {
       const today = new Date()
       const endDate = simpleDateFromDate(today)
 
@@ -143,7 +144,37 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       const requestObject = plainToInstance(EndDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date after the start date' }])
+      expect(errors).toHaveLength(0)
+    })
+
+    it('validation fails if end date is before start date', async () => {
+      const today = new Date()
+      const endDate = simpleDateFromDate(addDays(today, -1))
+
+      const body = {
+        endDate,
+        startDate: formatDate(today, 'yyyy-MM-dd'),
+      }
+
+      const requestObject = plainToInstance(EndDate, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date on or after the start date' }])
+    })
+
+    it('validation passes if end date is after start date', async () => {
+      const today = new Date()
+      const endDate = simpleDateFromDate(addDays(today, 1))
+
+      const body = {
+        endDate,
+        startDate: formatDate(today, 'yyyy-MM-dd'),
+      }
+
+      const requestObject = plainToInstance(EndDate, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
     })
   })
 })

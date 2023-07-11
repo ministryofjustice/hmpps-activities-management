@@ -3,11 +3,11 @@ import { Expose, plainToInstance, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
-import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import DateIsBeforeOtherProperty from '../../../../validators/dateIsBeforeOtherProperty'
 import { formatDate } from '../../../../utils/utils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
+import DateIsAfter from '../../../../validators/dateIsAfter'
 
 export class StartDate {
   @Expose()
@@ -15,8 +15,8 @@ export class StartDate {
   @ValidateNested()
   @IsNotEmpty({ message: 'Enter a valid start date' })
   @IsValidDate({ message: 'Enter a valid start date' })
-  @DateIsSameOrAfter(new Date(), { message: "Enter a date on or after today's date" })
   @DateIsBeforeOtherProperty('endDate', { message: 'Enter a date before the end date' })
+  @DateIsAfter(new Date(), { message: 'Activity start date must be in the future' })
   startDate: SimpleDate
 
   @Expose()
