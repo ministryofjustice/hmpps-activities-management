@@ -198,35 +198,24 @@
                 }] %}
             {% endif %}
 
-            {% if schedule.endDate < now | toDateString %}
-                {% set dateAndScheduleRows = (dateAndScheduleRows.push({
-                    key: {
-                        text: "End date"
-                    },
-                    value: {
-                        text: schedule.endDate | toDate | formatDate('EEEE d MMMM yyyy')
-                    }
-                }), dateAndScheduleRows) %}
-            {% else %}
-                {% set dateAndScheduleRows = (dateAndScheduleRows.push({
-                    key: {
-                        text: "End date"
-                    },
-                    value: {
-                        text: "None set"
-                    },
-                    actions: {
-                        items: [
-                            {
-                                href: "/activities/create/end-date?fromEditActivity=true&preserveHistory=true",
-                                text: "Change",
-                                visuallyHiddenText: "change end date",
-                                classes: "govuk-link--no-visited-state"
-                            }
-                        ]
-                    }
-                }), dateAndScheduleRows) %}
-            {% endif %}
+            {% set dateAndScheduleRows = (dateAndScheduleRows.push({
+                key: {
+                    text: "End date"
+                },
+                value: {
+                    text: schedule.endDate | toDate | formatDate('EEEE d MMMM yyyy') if schedule.endDate else "None set"
+                },
+                actions: {
+                    items: [
+                        {
+                            href: "/activities/create/end-date?fromEditActivity=true&preserveHistory=true",
+                            text: "Change",
+                            visuallyHiddenText: "change end date",
+                            classes: "govuk-link--no-visited-state"
+                        }
+                    ]
+                } if (not schedule.endDate) or (schedule.endDate >= now | toDateString)
+            }), dateAndScheduleRows) %}
 
             {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                 {
