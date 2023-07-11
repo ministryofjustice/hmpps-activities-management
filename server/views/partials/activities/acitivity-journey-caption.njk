@@ -1,7 +1,0 @@
-{% macro activityJourneyCaption(createJourney) %}
-  {% if createJourney.activityId and createJourney.name  %}
-    <span class="govuk-caption-l" data-qa="caption">{{ createJourney.name }}</span>
-  {% else %}
-    <span class="govuk-caption-l" data-qa="caption">Create an activity</span>
-  {% endif %}
-{% endmacro %}

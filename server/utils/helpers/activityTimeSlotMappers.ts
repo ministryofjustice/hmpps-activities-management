@@ -6,9 +6,9 @@ import { getTimeSlotFromTime } from '../utils'
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 const timeSlotOrder = {
-  [TimeSlot.AM]: -1,
-  [TimeSlot.PM]: 0,
-  [TimeSlot.ED]: 1,
+  [TimeSlot.AM]: 0,
+  [TimeSlot.PM]: 1,
+  [TimeSlot.ED]: 2,
 }
 
 const toTimeSlot = (timeslot: string): TimeSlot => TimeSlot[timeslot]
