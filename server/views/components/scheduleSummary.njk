@@ -1,5 +1,0 @@
-{% macro scheduleSummary(days, times) %}
-    <ul class="govuk-list">
-    {% for day in days %}<li>{{ day | capitalize }} ({{ times[day] | join(", ") }})</li>{% endfor %}
-    </ul>
-{% endmacro %}
