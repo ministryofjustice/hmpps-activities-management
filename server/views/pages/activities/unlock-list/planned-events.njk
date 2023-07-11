@@ -16,24 +16,28 @@
 
 {% block content %}
     <div class="govuk-grid-row govuk-!-margin-bottom-2">
-        <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-two-thirds govuk-!-margin-bottom-2">
             <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ unlockFilters.location }} - Unlock list</h1>
-            <div class="govuk-body govuk-!-margin-top-1">{{ unlockFilters.timeSlot | upper }} session</div>
-            <div class="govuk-body govuk-!-margin-top-1">{{ unlockFilters.unlockDate|formatDate('cccc d LLLL y') }}</div>
-
-            {% set todayOrBefore = unlockFilters.unlockDate | formatDate('yyyy-MM-dd') | todayOrBefore %}
-
-            <div class="govuk-grid-row govuk-!-margin-top-4">
-                <div class="govuk-grid-column-full govuk-body govuk-!-font-weight-bold">
-                    {{ unlockListItems.length }} prisoners
+            <div class="govuk-body govuk-!-margin-top-1">
+                {{ unlockFilters.unlockDate|formatDate('cccc d LLLL y') }} - {{ unlockFilters.timeSlot | upper }}
+            </div>
+            <div class="govuk-!-margin-top-4">
+                <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">
+                    {{ unlockListItems.length }} prisoners to unlock
                 </div>
+                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.leavingWing }} leaving wing</div>
+                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.stayingOnWing }} staying on wing</div>
             </div>
         </div>
-        <div class="govuk-grid-column-one-third">
+        <div class="govuk-grid-column-one-third govuk-!-print-grid-column-one-third">
             <div class="print-only">
                 {{ govukTextarea({
                     attributes: { placeholder: 'Notes' },
-                    id: "notes-textarea"
+                    id: "notes-textarea",
+                    formGroup: {
+                        classes: "govuk-!-margin-bottom-3"
+                    },
+                    classes: "govuk-!-margin-bottom-2"
                 }) }}
             </div>
         </div>
@@ -197,7 +201,7 @@
                             classes: 'govuk-table_cell govuk-!-padding-top-2 govuk-!-padding-bottom-2 print-only'
                         },
                         {
-                            html: '<span class="print-checkbox">S</span>',
+                            html: '<span class="print-checkbox">C</span>',
                             classes: 'govuk-table__cell govuk-!-padding-top-2 govuk-!-padding-bottom-2 print-only'
                         },
                         {
@@ -210,53 +214,60 @@
                         }
                     ]), rows) %}
                 {% endfor %}
-                {{ govukTable({
-                    attributes: {
-                        'data-module': 'moj-sortable-table',
-                        id: 'unlock-list-table'
-                    },
-                    caption: "Prisoners",
-                    classes: "alternating-row-shading fixed-layout-table",
-                    captionClasses: "govuk-visually-hidden",
-                    head: [
-                        {
-                            text: "Name",
-                            attributes: { "aria-sort": "none" },
-                            classes: 'govuk-table__header'
+                <table>
+                    <tbody><tr><td>
+                    {{ govukTable({
+                        attributes: {
+                            'data-module': 'moj-sortable-table',
+                            id: 'unlock-list-table'
                         },
-                        {
-                            text: "Cell location",
-                            attributes: { "aria-sort": "ascending" },
-                            classes: 'govuk-table__header'
-                        },
-                        {
-                            text: "Relevant alerts",
-                            classes: 'govuk-table__header'
-                        },
-                        {
-                            html: "Activity",
-                            attributes: { "aria-sort": "none" },
-                            classes: 'govuk-table__header'
-                        },
-                        {
-                            html: "<span>Refused</span>",
-                            classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
-                        },
-                        {
-                            html: "<span>Sick</span>",
-                            classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
-                        },
-                        {
-                            html: "<span>Gone</span>",
-                            classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
-                        },
-                        {
-                            text: "Notes",
-                            classes: 'govuk-table__header print-only hmpps-width-20-percent'
-                        }
-                    ],
-                    rows: rows
-                }) }}
+                        caption: "Prisoners",
+                        classes: "alternating-row-shading fixed-layout-table",
+                        captionClasses: "govuk-visually-hidden",
+                        head: [
+                            {
+                                text: "Name",
+                                attributes: { "aria-sort": "none" },
+                                classes: 'govuk-table__header'
+                            },
+                            {
+                                text: "Cell location",
+                                attributes: { "aria-sort": "ascending" },
+                                classes: 'govuk-table__header'
+                            },
+                            {
+                                text: "Relevant alerts",
+                                classes: 'govuk-table__header'
+                            },
+                            {
+                                html: "Activity",
+                                attributes: { "aria-sort": "none" },
+                                classes: 'govuk-table__header'
+                            },
+                            {
+                                html: "<span><span class=\"text-underline\">R</span>efused</span>",
+                                classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
+                            },
+                            {
+                                html: "<span>Rest in <span class=\"text-underline\">C</span>ell</span>",
+                                classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
+                            },
+                            {
+                                html: "<span><span class=\"text-underline\">G</span>one</span>",
+                                classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
+                            },
+                            {
+                                text: "Notes",
+                                classes: 'govuk-table__header print-only hmpps-width-20-percent'
+                            }
+                        ],
+                        rows: rows
+                    }) }}
+                    </td></tr></tbody>
+                    <tfoot class="print-only"><tr><td class="govuk-!-padding-top-4 govuk-!-padding-bottom-2 govuk-body">
+                        Printed at {{ now | formatDate('h:mmbbb \'on\' EEEE, dd MMMM yyyy') }}
+                    </td></tr></tfoot>
+                </table>
             </div>
         </form>
     </div>

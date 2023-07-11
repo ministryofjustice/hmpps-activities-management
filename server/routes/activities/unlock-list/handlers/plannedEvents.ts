@@ -18,8 +18,10 @@ export default class PlannedEventsRoutes {
     let { unlockFilters } = req.session
 
     if (!unlockFilters) {
-      const prefix = await this.activitiesService.getLocationPrefix(locationName, user)
-      const locationsAtPrison = await this.activitiesService.getLocationGroups(user)
+      const [prefix, locationsAtPrison] = await Promise.all([
+        this.activitiesService.getLocationPrefix(locationName, user),
+        this.activitiesService.getLocationGroups(user),
+      ])
       const subLocations = locationsAtPrison.filter(loc => loc.name === locationName)[0].children.map(loc => loc.name)
       unlockFilters = defaultFilters(locationName, prefix.locationPrefix, unlockDate, slot as string, subLocations)
       req.session.unlockFilters = unlockFilters
@@ -30,7 +32,13 @@ export default class PlannedEventsRoutes {
 
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(unlockFilters, user)
 
-    res.render('pages/activities/unlock-list/planned-events', { unlockFilters, unlockListItems })
+    const leavingWingCount = unlockListItems.filter(item => item.isLeavingWing).length
+    const movementCounts = {
+      leavingWing: leavingWingCount,
+      stayingOnWing: unlockListItems.length - leavingWingCount,
+    }
+
+    res.render('pages/activities/unlock-list/planned-events', { unlockFilters, unlockListItems, movementCounts })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
