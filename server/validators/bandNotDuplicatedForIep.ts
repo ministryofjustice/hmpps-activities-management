@@ -29,7 +29,7 @@ export default function IsNotDuplicatedForIep(validationOptions?: ValidationOpti
           if (
             args.object['pathParams'].payRateType === 'flat' &&
             existingPayWithSamePayBand.find((p: any) => p.incentiveLevel === undefined) &&
-            +args.object['query'].bandId !== bandId
+            +args.object['queryParams'].bandId !== bandId
           ) {
             return false
           }
@@ -46,7 +46,8 @@ export default function IsNotDuplicatedForIep(validationOptions?: ValidationOpti
           return !(
             args.object['pathParams'].payRateType === 'single' &&
             existingPayWithSamePayBand.find((p: any) => p.incentiveLevel === args.object['incentiveLevel']) &&
-            (+args.object['query'].bandId !== bandId || args.object['query'].iep !== args.object['incentiveLevel'])
+            (+args.object['queryParams'].bandId !== bandId ||
+              args.object['queryParams'].iep !== args.object['incentiveLevel'])
           )
         },
       },

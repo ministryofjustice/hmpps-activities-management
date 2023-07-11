@@ -13,7 +13,7 @@ function validationMiddleware(type: new () => object): RequestHandler {
     const requestObject = plainToInstance(type, {
       ...req.body,
       pathParams: req.params,
-      query: req.query,
+      queryParams: req.query,
       file: req.file,
       createJourney: req.session.createJourney,
       notAttendedJourney: req.session.notAttendedJourney,
