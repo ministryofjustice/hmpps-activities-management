@@ -53,7 +53,10 @@
 
     // Remove styling from MOJ sortable table colum headers
     [aria-sort] button {
+      // Fallback to `inline` since `contents` isn't well supported
       display: inline;
+      // This fixes an issue where table headers will not span multiple print
+      // pages when the heading is a button (as required by MoJ table sort)
       display: contents;
       position: static;
       color: black;
