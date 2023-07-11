@@ -7,7 +7,7 @@ import activity from '../../../../services/fixtures/activity_1.json'
 import atLeast from '../../../../../jest.setup'
 import PrisonService from '../../../../services/prisonService'
 import { Activity } from '../../../../@types/activitiesAPI/types'
-import { activitySessionToDailyTimeslots } from '../../../../utils/helpers/activityTimeSlotMappers'
+import { activitySessionToDailyTimeSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -96,7 +96,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         ],
         endDate: '18th January 2023',
         startDate: '17th January 2023',
-        dailySlots: activitySessionToDailyTimeslots(req.session.createJourney),
+        dailySlots: activitySessionToDailyTimeSlots(req.session.createJourney),
       })
     })
   })

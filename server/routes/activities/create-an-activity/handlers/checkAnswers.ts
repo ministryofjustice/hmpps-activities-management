@@ -6,7 +6,7 @@ import PrisonService from '../../../../services/prisonService'
 import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { formatDate, mapSlots } from '../../../../utils/utils'
-import { activitySessionToDailyTimeslots } from '../../../../utils/helpers/activityTimeSlotMappers'
+import { activitySessionToDailyTimeSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
 
 export default class CheckAnswersRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -26,7 +26,7 @@ export default class CheckAnswersRoutes {
     const flatPay = req.session.createJourney.flat
     res.render(`pages/activities/create-an-activity/check-answers`, {
       incentiveLevelPays,
-      dailySlots: activitySessionToDailyTimeslots(createJourney),
+      dailySlots: activitySessionToDailyTimeSlots(createJourney),
       startDate,
       endDate,
       flatPay,

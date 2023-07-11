@@ -11,9 +11,9 @@ const timeSlotOrder = {
   [TimeSlot.ED]: 2,
 }
 
-const toTimeSlot = (timeslot: string): TimeSlot => TimeSlot[timeslot]
+const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot]
 
-export const activitySessionToDailyTimeslots = (createJourney: CreateAnActivityJourney) =>
+export const activitySessionToDailyTimeSlots = (createJourney: CreateAnActivityJourney) =>
   daysOfWeek.map(v => ({
     day: v,
     slots: (createJourney[`timeSlots${v}`] as string[])

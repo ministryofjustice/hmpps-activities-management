@@ -1,8 +1,8 @@
 import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
-import { scheduleSlotsToDailyTimeSlots, activitySessionToDailyTimeslots } from './activityTimeSlotMappers'
+import { scheduleSlotsToDailyTimeSlots, activitySessionToDailyTimeSlots } from './activityTimeSlotMappers'
 
 describe('Schedule slots to daily time slots mapper', () => {
-  it("should map a schedule's slots to daily timeslots", () => {
+  it("should map a schedule's slots to daily time slots", () => {
     const slots = [
       {
         id: 123456,
@@ -81,7 +81,7 @@ describe('Schedule slots to daily time slots mapper', () => {
 })
 
 describe('Activity session slots to daily time slots mapper', () => {
-  it("should map a activity session's slots to daily timeslots", () => {
+  it("should map a activity session's slots to daily time slots", () => {
     const createJourney = {
       timeSlotsMonday: ['AM', 'PM', 'ED'],
       timeSlotsTuesday: ['AM', 'PM'],
@@ -92,7 +92,7 @@ describe('Activity session slots to daily time slots mapper', () => {
       timeSlotsSunday: ['ED'],
     } as CreateAnActivityJourney
 
-    const scheduleTimes = activitySessionToDailyTimeslots(createJourney)
+    const scheduleTimes = activitySessionToDailyTimeSlots(createJourney)
 
     expect(scheduleTimes).toEqual([
       {
