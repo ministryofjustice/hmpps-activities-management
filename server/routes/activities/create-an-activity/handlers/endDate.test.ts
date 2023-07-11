@@ -131,7 +131,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
     })
 
-    it('validation fails if end date is not after start date', async () => {
+    it('validation passes if end date is same as start date', async () => {
       const today = new Date()
       const endDate = simpleDateFromDate(today)
 
@@ -143,7 +143,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       const requestObject = plainToInstance(EndDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date after the start date' }])
+      expect(errors).toHaveLength(0)
     })
   })
 })
