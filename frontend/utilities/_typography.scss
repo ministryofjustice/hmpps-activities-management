@@ -17,8 +17,13 @@
         &--angled-table-header {
             &, &[aria-sort] {
                 position: relative;
-                width: 46px;
-                height: 60px;
+                width: 55px;
+                height: 64px;
+
+                @include govuk-media-query($until: tablet, $media-type: print) {
+                    width: 44px;
+                    height: 52px;
+                }
 
                 > *, button {
                     position: absolute;
@@ -26,10 +31,7 @@
                     bottom: govuk-spacing(2);
                     transform: rotate(-45deg);
                     transform-origin: 3px center;
-
-                    &:first-letter { 
-                        text-decoration: underline;
-                    }
+                    white-space: nowrap;
                 }
             }
         }
@@ -38,4 +40,8 @@
 
 .preserve-line-breaks {
     white-space: pre-line;
+}
+
+.text-underline {
+    text-decoration: underline;
 }
