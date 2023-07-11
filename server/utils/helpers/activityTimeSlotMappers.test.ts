@@ -1,7 +1,8 @@
-import scheduleSlotsToDayMapper from './scheduleSlotsToDayMapper'
+import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
+import { scheduleSlotsToDailyTimeSlots, activitySessionToDailyTimeSlots } from './activityTimeSlotMappers'
 
-describe('Schedule slots to day mapper', () => {
-  it("should map a schedule's slots to days", () => {
+describe('Schedule slots to daily time slots mapper', () => {
+  it("should map a schedule's slots to daily time slots", () => {
     const slots = [
       {
         id: 123456,
@@ -44,7 +45,54 @@ describe('Schedule slots to day mapper', () => {
       },
     ]
 
-    const scheduleTimes = scheduleSlotsToDayMapper(slots)
+    const scheduleTimes = scheduleSlotsToDailyTimeSlots(slots)
+
+    expect(scheduleTimes).toEqual([
+      {
+        day: 'Monday',
+        slots: ['am', 'pm', 'ed'],
+      },
+      {
+        day: 'Tuesday',
+        slots: ['am', 'pm'],
+      },
+      {
+        day: 'Wednesday',
+        slots: ['am'],
+      },
+      {
+        day: 'Thursday',
+        slots: ['pm'],
+      },
+      {
+        day: 'Friday',
+        slots: [],
+      },
+      {
+        day: 'Saturday',
+        slots: [],
+      },
+      {
+        day: 'Sunday',
+        slots: ['ed'],
+      },
+    ])
+  })
+})
+
+describe('Activity session slots to daily time slots mapper', () => {
+  it("should map a activity session's slots to daily time slots", () => {
+    const createJourney = {
+      timeSlotsMonday: ['AM', 'PM', 'ED'],
+      timeSlotsTuesday: ['AM', 'PM'],
+      timeSlotsWednesday: ['AM'],
+      timeSlotsThursday: ['PM'],
+      timeSlotsFriday: [],
+      timeSlotsSaturday: [],
+      timeSlotsSunday: ['ED'],
+    } as CreateAnActivityJourney
+
+    const scheduleTimes = activitySessionToDailyTimeSlots(createJourney)
 
     expect(scheduleTimes).toEqual([
       {
