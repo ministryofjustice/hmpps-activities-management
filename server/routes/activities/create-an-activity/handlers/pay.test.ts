@@ -43,7 +43,6 @@ describe('Route Handlers - Create an activity - Pay', () => {
           },
           riskLevel: 'High',
           incentiveLevels: ['Basic', 'Standard'],
-          payRateTypeOption: 'single',
           pay: [],
         },
       },
@@ -276,11 +275,35 @@ describe('Route Handlers - Create an activity - Pay', () => {
       )
     })
 
+    it('validation fails for no selected incentiveLevel if payRateType is single', async () => {
+      const body = { payRateType: 'single' }
+
+      const requestObject = plainToInstance(Pay, { ...body, ...{ createJourney: {} } })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'Enter a pay rate',
+            property: 'rate',
+          },
+          {
+            error: 'Select a pay band',
+            property: 'bandId',
+          },
+          {
+            error: 'Select an incentive level for the pay rate',
+            property: 'incentiveLevel',
+          },
+        ]),
+      )
+    })
+
     it('validation fails if iep and band combo is selected which already exists in session', async () => {
       const body = {
         rate: 1,
         bandId: 1,
-        incentiveLevels: ['Basic'],
+        incentiveLevel: 'Basic',
       }
 
       const requestObject = plainToInstance(Pay, {
@@ -304,7 +327,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
       const body = {
         rate: 1,
         bandId: 1,
-        incentiveLevels: ['Basic'],
+        payRateType: 'flat',
       }
 
       const requestObject = plainToInstance(Pay, {

@@ -34,7 +34,7 @@
                             actions: {
                                 items: [
                                     {
-                                        href: "pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText + "&preserveHistory=true",
+                                        href: "pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText + "&preserveHistory=true",
                                         text: "Change",
                                         visuallyHiddenText: "change pay rate"
                                     },
@@ -69,7 +69,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "pay?bandId=" + flatRate.bandId,
+                                    href: "pay/flat?bandId=" + flatRate.bandId,
                                     text: "Change",
                                     visuallyHiddenText: "change pay rate"
                                 },

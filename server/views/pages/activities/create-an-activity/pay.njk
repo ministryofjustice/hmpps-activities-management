@@ -18,10 +18,6 @@
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% if pay.bandId %}<input type="hidden" name="currentPayBand" value="{{ pay.bandId }}" />{% endif %}
-                {% if flat.bandId %}<input type="hidden" name="currentPayBand" value="{{ flat.bandId }}" />{% endif %}
-                {% if pay.incentiveLevel %}<input type="hidden" name="currentIncentiveLevel" value="{{ pay.incentiveLevel }}" />{% endif %}
-
                 <p class="govuk-body">Add all the pay rates available for this activity.</p>
                 <p class="govuk-body">You can add up to {{ payBands | length }} rates for each incentive level. Each time you add one you'll have the option to add another.</p>
                 <p class="govuk-body">When you come to allocate someone to this activity, all the rates that can be paid will be displayed.</p>
@@ -41,7 +37,7 @@
                     },
                     classes: "govuk-input--width-5",
                     errorMessage: validationErrors | findError('rate'),
-                    value: formResponses.rate or (pay.rate / 100) | toFixed or (flat.rate / 100) | toFixed or ''
+                    value: formResponses.rate or (rate / 100) | toFixed
                 }) }}
 
                 {% set payBandOptions = [
@@ -55,7 +51,7 @@
                         {
                             value: payBand.id,
                             text: payBand.alias,
-                            selected: payBand.id == (formResponses.bandId or pay.bandId or flat.bandId)
+                            selected: payBand.id == formResponses.bandId or (payBand.id == bandId and not formResponses)
                         }
                     ), payBandOptions) %}
                 {% endfor %}
@@ -71,14 +67,14 @@
                     items: payBandOptions
                 }) }}
 
-                {% if payRateType === "single" or session.req.query.iep %}
+                {% if payRateType === "single" %}
                     {% set incentiveLevelOptions = [] %}
                     {% for incentiveLevel in incentiveLevels %}
                         {% set incentiveLevelOptions = (incentiveLevelOptions.push(
                             {
                                 value: incentiveLevel.levelName,
                                 text: incentiveLevel.levelName,
-                                checked: incentiveLevel.levelName in (formResponses.incentiveLevel if formResponses.incentiveLevel) or incentiveLevel.levelName == pay.incentiveLevel
+                                checked: incentiveLevel.levelName == formResponses.incentiveLevel or (incentiveLevel.levelName == iep and not formResponses)
                             }
                         ), incentiveLevelOptions) %}
                     {% endfor %}
@@ -94,7 +90,7 @@
                           text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
                         },
                         items: incentiveLevelOptions,
-                        errorMessage: validationErrors | findError('incentiveLevels')
+                        errorMessage: validationErrors | findError('incentiveLevel')
                     }) }}
                 {% endif %}
 
