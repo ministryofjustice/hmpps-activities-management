@@ -43,6 +43,7 @@ export type UnlockListItem = {
   alerts?: Alert[]
   events?: ScheduledEvent[]
   status: string
+  isLeavingWing: boolean
 }
 
 export type FilterItem = {

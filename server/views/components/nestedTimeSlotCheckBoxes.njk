@@ -4,6 +4,7 @@
         name: "timeSlots" + index,
         errorMessage: validationErrors | findError('timeSlots' + index),
         values: formResponses['timeSlots' + index] or sessionValues['timeSlots' + index],
+        classes: 'govuk-checkboxes--small',
         items: [
             {
                 value: "AM",

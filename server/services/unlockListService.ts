@@ -97,6 +97,7 @@ export default class UnlockListService {
 
       return {
         ...prisoner,
+        isLeavingWing: this.isLeaving(allEventsForPrisoner),
         events: this.unlockListSort(allEventsForPrisoner),
       } as UnlockListItem
     })
@@ -117,34 +118,30 @@ export default class UnlockListService {
     let filteredItems: UnlockListItem[]
     if (stayingOrLeavingFilters.includes('Both')) {
       filteredItems = activityFilteredItems
-    } else if (stayingOrLeavingFilters.includes('Leaving')) {
-      filteredItems = activityFilteredItems.filter(item => this.isLeaving(item))
     } else {
-      filteredItems = activityFilteredItems.filter(item => !this.isLeaving(item))
+      filteredItems = activityFilteredItems.filter(
+        item => item.isLeavingWing === stayingOrLeavingFilters.includes('Leaving'),
+      )
     }
 
     return filteredItems
   }
 
-  private isLeaving = (item: UnlockListItem): boolean => {
-    if (item.events.length === 0) {
+  private isLeaving = (events: UnlockListItem['events']): boolean => {
+    if (events.length === 0) {
       return false
     }
 
     // TODO: Check rules - event types which are always off-wing?
     const leavingEventTypes = ['COURT_HEARING', 'EXTERNAL_TRANSFER', 'ADJUDICATION_HEARING', 'VISIT']
-    const eventsOffWing = item.events.filter(ev => leavingEventTypes.includes(ev.eventType))
+    const eventsOffWing = events.filter(ev => leavingEventTypes.includes(ev.eventType))
     if (eventsOffWing.length > 0) {
       return true
     }
 
     // If it's not an off-wing event, check if the event location is off-wing
-    const offWingLocations = item.events.filter(e => !e.inCell && !e.onWing && !e.internalLocationCode.includes('WOW'))
-    if (offWingLocations.length > 0) {
-      return true
-    }
-
-    return false
+    const offWingLocations = events.filter(e => !e.inCell && !e.onWing && !e.internalLocationCode.includes('WOW'))
+    return offWingLocations.length > 0
   }
 
   private getSubLocationFromCell = (

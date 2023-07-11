@@ -1,10 +1,9 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-
 {% from "components/datePicker.njk" import datePicker %}
-
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create a schedule - End date" %}
 {% set pageId = 'create-schedule-end-date-page' %}
@@ -12,16 +11,11 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
-            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
+                {{ activityJourneyCaption(session.createJourney) }}
                 {{ datePicker({
                     id: 'endDate',
                     label: {
