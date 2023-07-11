@@ -2,7 +2,8 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "components/scheduleSummary.njk" import scheduleSummary %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
 
 {% set pageTitle = applicationName + " - Create an activity - Check answers" %}
 {% set pageId = 'check-answers-page' %}
@@ -10,12 +11,10 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
+        <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
             <h1 class="govuk-heading-l">Check details for {{ session.createJourney.name }}</h1>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds-from-desktop">
+
             <h2 class="govuk-heading-m">Activity details</h2>
             {{ govukSummaryList({
                 rows: [
@@ -156,7 +155,7 @@
                         key: {
                             text: "Days and times"
                         },
-                        value: { html: scheduleSummary(session.createJourney.days, times) },
+                        value: { html: daysAndTimes(dailySlots) },
                         actions: {
                             items: [{
                                 href: "days-and-times?preserveHistory=true",

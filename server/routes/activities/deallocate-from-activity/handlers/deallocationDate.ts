@@ -13,7 +13,7 @@ export class DeallocationDate {
   @IsValidDate({ message: 'Enter a valid date' })
   @DateIsAfter(new Date(), { message: "Enter a date after today's date" })
   @DateIsSameOrAfterOtherProperty('startDate', {
-    message: 'Enter a date on or after the earliest allocation start date',
+    message: 'Enter a date on or after the latest allocation start date',
   })
   deallocationDate: SimpleDate
 

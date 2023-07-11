@@ -2,6 +2,7 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create an activity - Category" %}
 {% set pageId = 'category-page' %}
@@ -23,15 +24,16 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ activityJourneyCaption(session.createJourney) }}
                 {{ govukRadios({
                     fieldset: {
                         legend: {
                             text: "Select a category for the new activity",
                             isPageHeading: true,
-                            classes: "govuk-fieldset__legend--xl"
+                            classes: "govuk-fieldset__legend--l"
                         }
                     },
                     name: "category",

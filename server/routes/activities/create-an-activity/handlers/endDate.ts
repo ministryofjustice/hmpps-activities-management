@@ -3,10 +3,10 @@ import { Expose, plainToInstance, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
-import DateIsAfterOtherProperty from '../../../../validators/dateIsAfterOtherProperty'
 import { formatDate } from '../../../../utils/utils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
+import DateIsSameOrAfterOtherProperty from '../../../../validators/dateIsSameOrAfterOtherProperty'
 
 export class EndDate {
   @Expose()
@@ -14,7 +14,7 @@ export class EndDate {
   @ValidateNested()
   @IsNotEmpty({ message: 'Enter a valid end date' })
   @IsValidDate({ message: 'Enter a valid end date' })
-  @DateIsAfterOtherProperty('startDate', { message: 'Enter a date after the start date' })
+  @DateIsSameOrAfterOtherProperty('startDate', { message: 'Enter a date on or after the start date' })
   endDate: SimpleDate
 
   @Expose()
