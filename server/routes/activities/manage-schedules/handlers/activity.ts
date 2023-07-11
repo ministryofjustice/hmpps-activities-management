@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 import PrisonService from '../../../../services/prisonService'
-import scheduleSlotsToDayMapper from '../../../../utils/helpers/scheduleSlotsToDayMapper'
+import { scheduleSlotsToDailyTimeSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { getTimeSlotFromTime } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 
@@ -137,7 +137,7 @@ export default class ActivityRoutes {
       this.helper.getPayGroupedByIncentiveLevel(req.session.createJourney.pay, user, activity),
       this.activitiesService.getDefaultScheduleOfActivity(activity, user).then(s => ({
         ...s,
-        dailySlots: scheduleSlotsToDayMapper(s.slots),
+        dailySlots: scheduleSlotsToDailyTimeSlots(s.slots),
       })),
     ])
 
