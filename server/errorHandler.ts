@@ -9,7 +9,10 @@ interface BadRequest extends HTTPError {
 export default function createErrorHandler(production: boolean) {
   // next() is not used here but is required for the middleware to be discovered
   return (error: HTTPError, req: Request, res: Response, next: NextFunction): void => {
-    logger.error(`Error handling request for '${req.originalUrl}', user '${res.locals.user?.username}'`, error)
+    logger.error(
+      `Error handling ${req.method} request for '${req.originalUrl}', user '${res.locals.user?.username}'`,
+      error,
+    )
 
     if (error.status === 401) {
       logger.info('Logging user out')
