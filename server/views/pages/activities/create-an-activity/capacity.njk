@@ -3,6 +3,7 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "../../../partials/activities/acitivity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create a schedule - Capacity" %}
 {% set pageId = 'create-schedule-capacity-page' %}
@@ -10,26 +11,21 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
-            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ activityJourneyCaption(session.createJourney) }}
                 {{ govukInput({
                     label: {
                         text: "How many people can be allocated to this activity?",
-                        classes: "govuk-label--xl",
+                        classes: "govuk-label--l",
                         isPageHeading: true
                     },
                     hint: {
-                        html: "
-                            <p>Enter the maximum number (known as capacity) of people who can be allocated.</p>
-                            <p>You’ll be able to overallocate to ensure the activity is not short-handed.</p>
-                        "
+                        html: '
+                            <p class="govuk-hint">Enter the maximum number (known as capacity) of people who can be allocated.</p>
+                            <p class="govuk-hint">You\'ll be able to overallocate to ensure the activity is not short-handed.</p>
+                        '
                     },
                     id: "capacity",
                     name: "capacity",

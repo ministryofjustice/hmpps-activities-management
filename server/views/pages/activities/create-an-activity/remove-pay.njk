@@ -1,8 +1,8 @@
 {% extends "layout.njk" %}
 
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../../../partials/activities/acitivity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create an activity - Remove pay confirmation" %}
 {% set pageId = 'create-activity-remove-pay-confirmation-page' %}
@@ -15,6 +15,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <input type="hidden" name="iep" value="{{ iep }}" />
                 <input type="hidden" name="bandId" value="{{ bandId }}" />
+                {{ activityJourneyCaption(session.createJourney) }}
                 {{ govukRadios({
                     classes: "govuk-radios--inline",
                     name: "choice",

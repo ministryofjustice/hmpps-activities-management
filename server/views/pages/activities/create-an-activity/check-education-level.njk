@@ -2,6 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../../../partials/activities/acitivity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create an activity - Check education levels" %}
 {% set pageId = 'check-education-levels-page' %}
@@ -9,14 +10,12 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
-            <h1 class="govuk-heading-m">{{ session.createJourney.name }}</span>
+        <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
+            <h1 class='govuk-heading-l'>Review education levels and qualifications</h2>
 
-            <h2 class='govuk-heading-l'>Review education levels and qualifications</h2>
-            
             {% if educationLevels | length %}
-                <h3 class='govuk-heading-m'>Level or qualification</h3>
+                <h2 class='govuk-heading-m'>Level or qualification</h2>
             {% else %}
                 <p class="govuk-body">No levels or qualifications added</p>
             {% endif %}

@@ -3,6 +3,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "partials/characterCountInput.njk" import characterCountInput %}
+{% from "../../../partials/activities/acitivity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create an activity - Name" %}
 {% set pageId = 'name-page' %}
@@ -10,14 +11,15 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
+                {{ activityJourneyCaption(session.createJourney) }}
                 {{ characterCountInput({
                     label: {
                         text: "What's the new activity called?",
-                        classes: "govuk-label--xl",
+                        classes: "govuk-label--l",
                         isPageHeading: true
                     },
                     hint: {
@@ -25,7 +27,6 @@
                     },
                     id: "name",
                     name: "name",
-                    classes: "govuk-!-width-one-half",
                     formGroup: {
                         classes: "form-group-with-bottom-hint"
                     },
