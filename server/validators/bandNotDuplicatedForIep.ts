@@ -43,15 +43,11 @@ export default function IsNotDuplicatedForIep(validationOptions?: ValidationOpti
           }
 
           // Fails if trying to add a single rate and the same single rate already exists
-          if (
+          return !(
             args.object['pathParams'].payRateType === 'single' &&
             existingPayWithSamePayBand.find((p: any) => p.incentiveLevel === args.object['incentiveLevel']) &&
             (+args.object['query'].bandId !== bandId || args.object['query'].iep !== args.object['incentiveLevel'])
-          ) {
-            return false
-          }
-
-          return true
+          )
         },
       },
     })
