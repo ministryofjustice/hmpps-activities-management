@@ -42,8 +42,7 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.payRateTypeOption).toEqual('single')
-      expect(res.redirect).toHaveBeenCalledWith('pay')
+      expect(res.redirect).toHaveBeenCalledWith('pay/single')
     })
   })
 

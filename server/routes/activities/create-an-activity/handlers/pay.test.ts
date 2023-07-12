@@ -35,6 +35,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
     } as unknown as Response
 
     req = {
+      params: { payRateType: 'single' },
       session: {
         createJourney: {
           name: 'Maths level 1',
@@ -43,8 +44,8 @@ describe('Route Handlers - Create an activity - Pay', () => {
           },
           riskLevel: 'High',
           incentiveLevels: ['Basic', 'Standard'],
-          payRateTypeOption: 'single',
           pay: [],
+          flat: [],
         },
       },
       query: {},
@@ -126,14 +127,9 @@ describe('Route Handlers - Create an activity - Pay', () => {
         payRateType: 'single',
         minimumPayRate: 10,
         maximumPayRate: 300,
-        pay: {
-          incentiveNomisCode: 'BAS',
-          incentiveLevel: 'Basic',
-          bandId: 1,
-          rate: 1,
-          bandAlias: 'High',
-          displaySequence: 2,
-        },
+        rate: 1,
+        bandId: '1',
+        iep: 'Basic',
       })
     })
   })
@@ -166,7 +162,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           displaySequence: 2,
         },
       ])
-      expect(res.redirect).toHaveBeenCalledWith('check-pay')
+      expect(res.redirect).toHaveBeenCalledWith('../check-pay')
     })
 
     it('should add to existing pay in session', async () => {
@@ -214,17 +210,18 @@ describe('Route Handlers - Create an activity - Pay', () => {
           displaySequence: 2,
         },
       ])
-      expect(res.redirect).toHaveBeenCalledWith('check-pay')
+      expect(res.redirect).toHaveBeenCalledWith('../check-pay')
     })
 
     it('should allow existing pay rate to be modified', async () => {
+      req.query = { bandId: '1', iep: 'Basic' }
+
       req.body = {
         rate: 2,
         bandId: 2,
         incentiveLevel: 'Basic',
-        currentPayBand: 1,
-        currentIncentiveLevel: 'Basic',
       }
+
       req.session.createJourney.pay = [
         {
           incentiveNomisCode: 'BAS',
@@ -256,10 +253,18 @@ describe('Route Handlers - Create an activity - Pay', () => {
   })
 
   describe('type validation', () => {
+    let createJourney: unknown
+
+    beforeEach(() => {
+      createJourney = { pay: [], flat: [] }
+    })
+
     it('validation fails if values are not entered', async () => {
+      const pathParams = { payRateType: 'flat' }
+      const queryParams = {}
       const body = {}
 
-      const requestObject = plainToInstance(Pay, { ...body, ...{ createJourney: {} } })
+      const requestObject = plainToInstance(Pay, { createJourney, pathParams, queryParams, ...body })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
@@ -276,40 +281,111 @@ describe('Route Handlers - Create an activity - Pay', () => {
       )
     })
 
+    it('validation fails for no selected incentiveLevel if payRateType is single', async () => {
+      const pathParams = { payRateType: 'single' }
+      const queryParams = {}
+      const body = { payRateType: 'single' }
+
+      const requestObject = plainToInstance(Pay, { createJourney, pathParams, queryParams, ...body })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'Enter a pay rate',
+            property: 'rate',
+          },
+          {
+            error: 'Select a pay band',
+            property: 'bandId',
+          },
+          {
+            error: 'Select an incentive level for the pay rate',
+            property: 'incentiveLevel',
+          },
+        ]),
+      )
+    })
+
     it('validation fails if iep and band combo is selected which already exists in session', async () => {
+      createJourney = { pay: [{ incentiveLevel: 'Basic', bandId: 1 }], flat: [] }
+      const pathParams = { payRateType: 'single' }
+      const queryParams = {}
       const body = {
         rate: 1,
         bandId: 1,
-        incentiveLevels: ['Basic'],
+        incentiveLevel: 'Basic',
+      }
+
+      const requestObject = plainToInstance(Pay, { createJourney, pathParams, queryParams, ...body })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          { property: 'bandId', error: 'A rate for the selected band and incentive level combination already exists' },
+        ]),
+      )
+    })
+
+    it('fails validation if the entered rate is below the minimum rate for the prison', async () => {
+      createJourney = { pay: [], flat: [], minimumPayRate: 70, maximumPayRate: 100 }
+      const pathParams = { payRateType: 'flat' }
+      const queryParams = {}
+      const body = {
+        rate: 0.5,
+        bandId: 1,
       }
 
       const requestObject = plainToInstance(Pay, {
+        createJourney,
+        pathParams,
+        queryParams,
         ...body,
-        ...{
-          createJourney: {
-            minimumPayRate: 60,
-            maximumPayRate: 275,
-            pay: [{ incentiveLevel: 'Basic', bandId: 1 }],
-          },
-        },
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'bandId', error: 'A rate for the selected band and incentive level already exists' },
+        { error: 'Enter a pay amount that is at least the minimum pay and no more than maximum pay', property: 'rate' },
+      ])
+    })
+
+    it('fails validation if the entered rate is above the maximum rate for the prison', async () => {
+      createJourney = { pay: [], flat: [], minimumPayRate: 70, maximumPayRate: 100 }
+      const pathParams = { payRateType: 'flat' }
+      const queryParams = {}
+      const body = {
+        rate: 1.5,
+        bandId: 1,
+      }
+
+      const requestObject = plainToInstance(Pay, {
+        createJourney,
+        pathParams,
+        queryParams,
+        ...body,
+      })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        { error: 'Enter a pay amount that is at least the minimum pay and no more than maximum pay', property: 'rate' },
       ])
     })
 
     it('passes validation', async () => {
+      createJourney = { pay: [], flat: [], minimumPayRate: 70, maximumPayRate: 100 }
+      const pathParams = { payRateType: 'single' }
+      const queryParams = {}
       const body = {
-        rate: 1,
+        rate: 0.7,
         bandId: 1,
-        incentiveLevels: ['Basic'],
+        incentiveLevel: 'Basic',
       }
 
       const requestObject = plainToInstance(Pay, {
+        createJourney,
+        pathParams,
+        queryParams,
         ...body,
-        ...{ createJourney: { minimumPayRate: 60, maximumPayRate: 275 } },
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 

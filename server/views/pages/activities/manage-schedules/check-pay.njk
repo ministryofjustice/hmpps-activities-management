@@ -51,7 +51,7 @@
                     {% if not pay.peopleCount %}
                         {% set cardItems = (cardItems.push(
                             {
-                                href: "/activities/create/pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true&preserveHistory=true",
+                                href: "/activities/create/pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&fromEditActivity=true&preserveHistory=true",
                                 text: "Change",
                                 classes: "govuk-link--no-visited-state",
                                 attributes: { 'data-qa': 'change-pay' }
@@ -96,7 +96,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/create/pay?bandId=" + flatRate.bandId + '&preserveHistory=true&fromEditActivity=true',
+                                    href: "/activities/create/pay/flat?bandId=" + flatRate.bandId + '&preserveHistory=true&fromEditActivity=true',
                                     text: "Change",
                                     visuallyHiddenText: "change pay rate"
                                 },

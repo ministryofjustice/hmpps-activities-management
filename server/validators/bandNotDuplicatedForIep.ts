@@ -1,4 +1,5 @@
 /* eslint-disable dot-notation */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator'
 
 export default function IsNotDuplicatedForIep(validationOptions?: ValidationOptions) {
@@ -11,17 +12,42 @@ export default function IsNotDuplicatedForIep(validationOptions?: ValidationOpti
       options: validationOptions,
       validator: {
         validate(bandId: number, args: ValidationArguments) {
-          const existingPay = args.object['createJourney'].pay
+          const existingPayWithSamePayBand = [
+            ...args.object['createJourney'].pay,
+            ...args.object['createJourney'].flat,
+          ].filter((pay: any) => pay.bandId === bandId)
 
-          return (
-            existingPay?.find(
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (pay: any) =>
-                pay.bandId === bandId &&
-                (args.object['incentiveLevel'] === pay.incentiveLevel || args.object['incentiveLevel'] === undefined) &&
-                (pay.bandId !== parseInt(args.object['currentPayBand'], 10) ||
-                  pay.incentiveLevel !== args.object['currentIncentiveLevel']),
-            ) === undefined
+          // Fails if trying to add a flat rate and a single rate for that pay band already exists
+          if (
+            args.object['pathParams'].payRateType === 'flat' &&
+            existingPayWithSamePayBand.find((p: any) => p.incentiveLevel !== undefined)
+          ) {
+            return false
+          }
+
+          // Fails if trying to add a flat rate and the same flat rate already exists
+          if (
+            args.object['pathParams'].payRateType === 'flat' &&
+            existingPayWithSamePayBand.find((p: any) => p.incentiveLevel === undefined) &&
+            +args.object['queryParams'].bandId !== bandId
+          ) {
+            return false
+          }
+
+          // Fails if trying to add a single rate and a flat rate for that pay band already exists
+          if (
+            args.object['pathParams'].payRateType === 'single' &&
+            existingPayWithSamePayBand.find((p: any) => p.incentiveLevel === undefined)
+          ) {
+            return false
+          }
+
+          // Fails if trying to add a single rate and the same single rate already exists
+          return !(
+            args.object['pathParams'].payRateType === 'single' &&
+            existingPayWithSamePayBand.find((p: any) => p.incentiveLevel === args.object['incentiveLevel']) &&
+            (+args.object['queryParams'].bandId !== bandId ||
+              args.object['queryParams'].iep !== args.object['incentiveLevel'])
           )
         },
       },

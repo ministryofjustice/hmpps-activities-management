@@ -11,9 +11,7 @@ export default function PayRateBetweenMinAndMax(validationOptions?: ValidationOp
       options: validationOptions,
       validator: {
         validate(payRate: number, args: ValidationArguments) {
-          const { minimumPayRate } = args.object['createJourney']
-          const { maximumPayRate } = args.object['createJourney']
-
+          const { minimumPayRate, maximumPayRate } = args.object['createJourney']
           return payRate !== undefined ? payRate >= minimumPayRate && payRate <= maximumPayRate : true
         },
       },
