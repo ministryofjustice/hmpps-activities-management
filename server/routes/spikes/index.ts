@@ -14,7 +14,9 @@ export default function Index({ activitiesService }: Services): Router {
 
   // Spike routes are only accessible when running locally or when feature toggle is provided
   router.use((req, res, next) =>
-    process.env.NODE_ENV === 'production' && !config.spikesFeatureToggle ? next(createHttpError.NotFound()) : next(),
+    process.env.NODE_ENV === 'production' && !config.spikesFeatureToggleEnabled
+      ? next(createHttpError.NotFound())
+      : next(),
   )
 
   get('/calendar-spike', calendarSpikeHandler.GET)
