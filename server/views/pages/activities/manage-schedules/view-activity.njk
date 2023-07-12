@@ -162,41 +162,27 @@
             }) }}
 
             <h2 class="govuk-heading-m">Dates and schedule</h2>
-            {% set dateAndScheduleRows = [] %}
-            {% if schedule.startDate <= now | toDateString %}
-                <dl class="govuk-summary-list">
-                  <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                      Start date
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                      <p class="govuk-body">{{ schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy') }}</p>
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        {{ govukTag({ text: 'Started', classes: 'govuk-tag--small govuk-tag--green' }) }}
-                    </dd>
-                  </div>
-                </dl>
-            {% else %}
-                {% set dateAndScheduleRows = [{
-                    key: {
-                        text: "Start date"
-                    },
-                    value: {
-                        text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
-                    },
-                    actions: {
-                        items: [
-                            {
-                                href: "/activities/create/start-date?fromEditActivity=true&preserveHistory=true",
-                                text: "Change",
-                                visuallyHiddenText: "change start date",
-                                classes: "govuk-link--no-visited-state"
-                            }
-                        ]
-                    }
-                }] %}
-            {% endif %}
+            {% set dateAndScheduleRows = [{
+                key: {
+                    text: "Start date"
+                },
+                value: {
+                    text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+                },
+                actions: {
+                    items: [
+                        {
+                            html: govukTag({ text: 'Started', classes: 'govuk-tag--small govuk-tag--green' })
+                        } if schedule.startDate <= now | toDateString else
+                        {
+                            href: "/activities/create/start-date?fromEditActivity=true&preserveHistory=true",
+                            text: "Change",
+                            visuallyHiddenText: "change start date",
+                            classes: "govuk-link--no-visited-state"
+                        }
+                    ]
+                }
+            }] %}
 
             {% set dateAndScheduleRows = (dateAndScheduleRows.push({
                 key: {
