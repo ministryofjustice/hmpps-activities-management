@@ -32,5 +32,15 @@
                 "data-qa": "view-daily-attendance-summary"
             }) }}
         </div>
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "id": "ViewNotAttended",
+                "href": "/activities/attendance-summary/not-attended-select-date",
+                "clickable": "true",
+                "heading": "View people who are not attended yet",
+                "description": "See details of who has not had their attendance recorded yet.",
+                "data-qa": "view-not-attended"
+            }) }}
+        </div>
     </div>
 {% endblock %}

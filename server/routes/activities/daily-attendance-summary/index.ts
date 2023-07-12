@@ -4,8 +4,9 @@ import SelectPeriodRoutes, { TimePeriod } from './handlers/selectPeriod'
 import DailySummaryRoutes from './handlers/dailySummary'
 import DailyAttendanceRoutes from './handlers/attendance'
 import validationMiddleware from '../../../middleware/validationMiddleware'
-import { Services } from '../../../services'
 import CancelledSessionsRoutes from './handlers/cancelledSessions'
+import NotAttendedSelectDateRoutes, { NotAttendedDate } from './handlers/notAttendedSelectDate'
+import { Services } from '../../../services'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -18,6 +19,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const dailySummaryHandler = new DailySummaryRoutes(activitiesService)
   const dailyAttendanceHandler = new DailyAttendanceRoutes(activitiesService, prisonService)
   const cancelledSessionsHandler = new CancelledSessionsRoutes(activitiesService)
+  const notAttendedSelectDateHandler = new NotAttendedSelectDateRoutes()
 
   get('/select-period', selectPeriodHandler.GET)
   post('/select-period', selectPeriodHandler.POST, TimePeriod)
@@ -29,6 +31,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/update-attendance-filters', dailyAttendanceHandler.FILTERS)
   get('/cancelled-sessions', cancelledSessionsHandler.GET)
   post('/cancelled-sessions', cancelledSessionsHandler.POST)
+  get('/not-attended-select-date', notAttendedSelectDateHandler.GET)
+  post('/not-attended-select-date', notAttendedSelectDateHandler.POST, NotAttendedDate)
 
   return router
 }
