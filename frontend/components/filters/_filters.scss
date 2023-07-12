@@ -32,3 +32,9 @@
     display: inherit;
   }
 }
+
+.moj-action-bar__filter--no-actions {
+  &:after {
+    content: none;
+  }
+}
