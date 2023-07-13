@@ -340,7 +340,7 @@ export const getAttendanceSummary = (attendance: Attendance[]) => {
 }
 
 export const toFixed = (num: number, decimals = 2) => {
-  if (!num) return null
+  if (!num && num !== 0) return null
   return num.toFixed(decimals)
 }
 
