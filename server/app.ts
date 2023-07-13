@@ -1,8 +1,8 @@
 import 'reflect-metadata'
 import express from 'express'
-import createError from 'http-errors'
 
 import flash from 'connect-flash'
+import createHttpError from 'http-errors'
 import nunjucksSetup from './nunjucks/nunjucksSetup'
 import errorHandler from './errorHandler'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
@@ -52,7 +52,7 @@ export default function createApp(services: Services): express.Application {
   app.use(populateJourney())
   app.use(routes(services))
   app.use(formValidationErrorHandler)
-  app.use((req, res, next) => next(createError(404, 'Not found')))
+  app.use((req, res, next) => next(createHttpError.NotFound()))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
 
   return app

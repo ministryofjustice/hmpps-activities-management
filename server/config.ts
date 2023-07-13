@@ -134,4 +134,5 @@ export default {
       roles: [Roles.ACTIVITY_HUB],
     },
   ] as RouteAuth[],
+  spikesFeatureToggleEnabled: Boolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', false)),
 }
