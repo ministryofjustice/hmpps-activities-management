@@ -33,6 +33,7 @@
         "plugin:prettier/recommended"
       ],
       "rules": {
+        "no-empty-function": ["error", { "allow": ["constructors"] }],
         "no-underscore-dangle": "off",
         "unused-imports/no-unused-imports": "warn",
         "no-shadow": "off",
