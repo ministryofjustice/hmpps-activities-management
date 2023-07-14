@@ -8,7 +8,7 @@
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% set pageTitle = appointmentJourneyTitle("Check Answers", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Check and confirm appointment details", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-check-answers-page' %}
 
 {% set summaryListRows = [] %}
@@ -307,7 +307,7 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Confirm and save",
+                        text: "Confirm",
                         preventDoubleClick: true
                     }) }}
                 </div>
