@@ -1,13 +1,13 @@
 {% extends "homepageLayout.njk" %}
 {% from "components/card.njk" import card %}
 
-{% set pageTitle = applicationName + " - Create and manage appointments" %}
+{% set pageTitle = "Schedule and edit appointments" %}
 {% set pageId = 'appointments-management-page' %}
 {% set backLinkText = "Digital Prison Services" %}
 {% set backLinkHref = dpsUrl %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Create and manage appointments</h1>
+    <h1 class="govuk-heading-l">Schedule and edit appointments</h1>
 {% endblock %}
 
 {% block content %}
@@ -16,12 +16,12 @@
             <div class="card-group govuk-grid-row">
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
-                        "id": "createIndividualAppointmentCard",
-                        "href": "appointments/create/start-individual",
+                        "id": "createGroupAppointmentCard",
+                        "href": "appointments/create/start-group",
                         "clickable": "true",
-                        "heading": "Create individual appointments",
-                        "description": "Add an appointment for an individual.",
-                        "data-qa": "create-individual-appointment-card"
+                        "heading": "Schedule an appointment",
+                        "description": "Set up a one-off or repeating appointment for one or more people.",
+                        "data-qa": "create-group-appointment-card"
                     }) }}
                 </div>
                 <div class="govuk-grid-column-one-third card-group__item">
@@ -29,19 +29,9 @@
                         "id": "createBulkAppointmentCard",
                         "href": "appointments/create/start-bulk",
                         "clickable": "true",
-                        "heading": "Create a bulk appointment",
-                        "description": "Add multiple appointments for a number of people.",
+                        "heading": "Schedule a set of back-to-back appointments for the same day",
+                        "description": "Set up a set of appointments for a pre-prepared list of people to attend on the same day.",
                         "data-qa": "create-bulk-appointment-card"
-                    }) }}
-                </div>
-                <div class="govuk-grid-column-one-third card-group__item">
-                    {{ card({
-                        "id": "createGroupAppointmentCard",
-                        "href": "appointments/create/start-group",
-                        "clickable": "true",
-                        "heading": "Create a group appointment",
-                        "description": "Add a one-off or repeat appointment for a group of people.",
-                        "data-qa": "create-group-appointment-card"
                     }) }}
                 </div>
                 <div class="govuk-grid-column-one-third card-group__item">
@@ -49,8 +39,8 @@
                         "id": "searchAppointmentsCard",
                         "href": "appointments/search/select-date",
                         "clickable": "true",
-                        "heading": "View and manage an appointment",
-                        "description": "Find and edit an existing appointment.",
+                        "heading": "Manage existing appointments",
+                        "description": "Change the details for an existing appointment including cancelling the whole appointment, adding and removing people, and printing movement slips.",
                         "data-qa": "search-appointments-card"
                     }) }}
                 </div>

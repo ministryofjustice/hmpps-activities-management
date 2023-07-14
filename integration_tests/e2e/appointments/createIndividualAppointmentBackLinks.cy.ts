@@ -52,8 +52,8 @@ context('Create individual appointment - back links', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
 
-    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage.createIndividualAppointmentCard().click()
+    Page.verifyOnPage(AppointmentsManagementPage)
+    cy.visit('/appointments/create/start-individual')
 
     let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')

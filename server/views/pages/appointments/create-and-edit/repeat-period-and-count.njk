@@ -6,7 +6,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Repeat Period and Count", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Repeat appointment details", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-repeat-period-and-count-page' %}
 {% set backLinkHref = "repeat" %}
 
@@ -48,7 +48,7 @@
                                 value: AppointmentRepeatPeriod.MONTHLY,
                                 text: "Monthly",
                                 hint: {
-                                    text: "On the same date every month, or the last day if there is no matching date in the month."
+                                    text: "On the same date every month or on the last day if there is no matching date"
                                 },
                                 checked: repeatPeriod == AppointmentRepeatPeriod.MONTHLY
                             }
@@ -59,11 +59,11 @@
                         id: "repeatCount",
                         name: "repeatCount",
                         label: {
-                            text: "How many appointments are there altogether?",
+                            text: "How many times will the appointment repeat?",
                             classes: "govuk-label--m"
                         },
                         hint: {
-                            text: "Enter the total number of appointments, including the first appointment, up to a maximum of one year."
+                            text: "Enter the number of times the appointment will repeat up to a maximum of one year"
                         },
                         classes: "govuk-input--width-3",
                         inputmode: "numeric",

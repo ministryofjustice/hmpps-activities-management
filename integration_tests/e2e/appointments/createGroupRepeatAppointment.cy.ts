@@ -84,14 +84,14 @@ context('Create group appointment', () => {
     indexPage.appointmentsManagementCard().click()
 
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage.createGroupAppointmentCard().should('contain.text', 'Create a group appointment')
+    appointmentsManagementPage.createGroupAppointmentCard().should('contain.text', 'Schedule an appointment')
     appointmentsManagementPage
       .createGroupAppointmentCard()
-      .should('contain.text', 'Add a one-off or repeat appointment for a group of people.')
+      .should('contain.text', 'Set up a one-off or repeating appointment for one or more people.')
     appointmentsManagementPage.createGroupAppointmentCard().click()
 
     let howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
+    howToAddPrisonersPage.selectHowToAdd('Add a group of people using a CSV file')
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
@@ -99,7 +99,7 @@ context('Create group appointment', () => {
     uploadPrisonerListPage.getLinkByText('prison number list template').click()
     uploadPrisonerListPage.assertFileDownload('prisoner-list.csv')
     uploadPrisonerListPage.attatchFile('upload-prisoner-list.csv')
-    uploadPrisonerListPage.continue()
+    uploadPrisonerListPage.uploadFile()
 
     let reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
@@ -107,7 +107,7 @@ context('Create group appointment', () => {
     reviewPrisonersPage.addAnotherPrisoner()
 
     howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Search by name or prison number to add people to the list of attendees')
+    howToAddPrisonersPage.selectHowToAdd('Search for them one by one')
     howToAddPrisonersPage.continue()
 
     let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
@@ -169,7 +169,7 @@ context('Create group appointment', () => {
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    const successMessage = `You have successfully created an appointment series for 3 prisoners starting on ${formatDate(
+    const successMessage = `You have successfully scheduled an appointment for 3 people starting on ${formatDate(
       tomorrow,
       'EEEE, d MMMM yyyy',
     )}. It will repeat daily (includes weekends) for 7 appointments`

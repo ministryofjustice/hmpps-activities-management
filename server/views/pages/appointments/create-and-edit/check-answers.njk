@@ -8,7 +8,7 @@
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% set pageTitle = appointmentJourneyTitle("Check Answers", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Check and confirm set" if session.appointmentJourney.type == AppointmentType.BULK else "Check and confirm appointment details", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-check-answers-page' %}
 
 {% set summaryListRows = [] %}
@@ -307,7 +307,7 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Confirm and save",
+                        text: "Confirm",
                         preventDoubleClick: true
                     }) }}
                 </div>
@@ -361,12 +361,12 @@
 {% macro bulkAppointments() %}
     <div class="govuk-button-group">
         {{ govukButton({
-            text: "Confirm and save",
+            text: "Confirm",
             preventDoubleClick: true
         }) }}
     </div>
 
-    <h2 class="govuk-heading-m">You are creating {{ session.bulkAppointmentJourney.appointments | length }} appointments</h2>
+    <h2 class="govuk-heading-m">{{ ("Attendee details" if session.bulkAppointmentJourney.appointments.length == 1 else "Details of attendees") }}</h2>
 
     {% for appointment in session.bulkAppointmentJourney.appointments %}
         {{ govukSummaryList({
@@ -377,7 +377,7 @@
             },
             rows: [{
                 key: {
-                    text: "Prisoner"
+                    text: "Attendee"
                 },
                 value: {
                     html: appointmentPrisonerSummary(

@@ -5,7 +5,7 @@ import { YesNo } from '../../../../@types/activities'
 
 export class Repeat {
   @Expose()
-  @IsEnum(YesNo, { message: 'Select yes if the appointment will repeat' })
+  @IsEnum(YesNo, { message: 'Select an option' })
   repeat: YesNo
 }
 

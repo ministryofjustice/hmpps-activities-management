@@ -9,8 +9,8 @@ export default class ConfirmationPage extends Page {
 
   assertMessageEquals = (message: string) => cy.get('[data-qa=message]').contains(message)
 
-  assertCreateAnotherLinkExists = () => cy.get('[data-qa=create-another-link]').contains('Create another appointment')
+  assertCreateAnotherLinkExists = () => cy.get('[data-qa=create-another-link]').contains('Schedule another appointment')
 
   assertViewAppointmentLinkExists = () =>
-    this.viewAppointmentLink().contains('View and manage the details of this appointment')
+    this.viewAppointmentLink().contains('View, print movement slips and manage this appointment')
 }

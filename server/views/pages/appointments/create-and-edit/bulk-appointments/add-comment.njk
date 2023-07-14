@@ -5,7 +5,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Add Appointment Comment", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Add extra information individual", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-bulk-appointment-add-comment-page' %}
 {% set backLinkHref = 'bulk-appointment-comments' %}
 
@@ -15,7 +15,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ appointmentTypeCaption(session) }}
-                <h1 class="govuk-heading-l"><label for="comment">Add extra information for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }}</label></h1>
+                <h1 class="govuk-heading-l"><label for="comment">Add extra information for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }} (optional)</label></h1>
 
                 <p class='govuk-body'>Give the attendee extra information about their appointment. This will be printed on their movement slip.</p>
 

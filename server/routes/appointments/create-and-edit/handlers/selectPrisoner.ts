@@ -13,7 +13,7 @@ export class SelectPrisoner {
 
 export class PrisonerSearch {
   @Expose()
-  @IsNotEmpty({ message: 'Enter a name or prison number to search by' })
+  @IsNotEmpty({ message: 'You must enter a name or prison number in the format A1234CD' })
   query: string
 }
 

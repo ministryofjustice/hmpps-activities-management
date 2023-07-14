@@ -5,7 +5,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Appointment Extra information", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Add extra information", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-comment-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -22,14 +22,14 @@
         </p>
       {% else %}
         <h1 class="govuk-heading-l">
-            <label class="govuk-label govuk-label--l" for="comment">Add extra information for everyone attending the appointment (optional)</label>
+            <label class="govuk-label govuk-label--l" for="comment">Add extra information (optional)</label>
         </h1>
         <p class="govuk-body" data-qa="first-paragraph">
-          Attendees may need information about how to prepare for their appointment. You can add this as extra information which will be printed on their movement slips.
+            Add any important information about how to prepare for the appointment. It will be printed on the movement slip.
         </p>
       {% endif %}
       <p class="govuk-body">
-        Wing staff will be notified there is extra information on the printed unlock list, but for confidentiality the full text will only be visible when you view the details of the appointment in this service.
+          Wing staff will be notified there is extra information on the printed unlock list, but for confidentiality the full text will only be visible when you view the details of the appointment in this service.
       </p>
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

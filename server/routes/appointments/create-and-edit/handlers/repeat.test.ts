@@ -119,9 +119,7 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       const requestObject = plainToInstance(Repeat, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(
-        expect.arrayContaining([{ error: 'Select yes if the appointment will repeat', property: 'repeat' }]),
-      )
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'Select an option', property: 'repeat' }]))
     })
 
     it('validation fails when invalid repeat value is selected', async () => {
@@ -132,9 +130,7 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       const requestObject = plainToInstance(Repeat, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(
-        expect.arrayContaining([{ error: 'Select yes if the appointment will repeat', property: 'repeat' }]),
-      )
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'Select an option', property: 'repeat' }]))
     })
 
     it('passes validation when valid repeat value is selected', async () => {

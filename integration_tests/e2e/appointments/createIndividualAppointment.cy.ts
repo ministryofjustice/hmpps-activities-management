@@ -62,14 +62,8 @@ context('Create individual appointment', () => {
       )
     indexPage.appointmentsManagementCard().click()
 
-    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage
-      .createIndividualAppointmentCard()
-      .should('contain.text', 'Create individual appointments')
-    appointmentsManagementPage
-      .createIndividualAppointmentCard()
-      .should('contain.text', 'Add an appointment for an individual.')
-    appointmentsManagementPage.createIndividualAppointmentCard().click()
+    Page.verifyOnPage(AppointmentsManagementPage)
+    cy.visit('/appointments/create/start-individual')
 
     let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')
@@ -120,7 +114,10 @@ context('Create individual appointment', () => {
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.assertMessageEquals(
-      `You have successfully created an appointment for Stephen Gregs on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}.`,
+      `You have successfully scheduled an appointment for Stephen Gregs on ${formatDate(
+        tomorrow,
+        'EEEE, d MMMM yyyy',
+      )}.`,
     )
     confirmationPage.assertCreateAnotherLinkExists()
     confirmationPage.assertViewAppointmentLinkExists()

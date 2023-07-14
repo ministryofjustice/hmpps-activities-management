@@ -7,7 +7,7 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
-{% set pageTitle = appointmentJourneyTitle("Date and Time", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Date and time of appointment", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-date-and-time-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -22,7 +22,7 @@
                     id: 'startDate',
                     name: 'startDate',
                     label: {
-                        text: "Appointment date",
+                        text: "Date",
                         classes: "govuk-fieldset__legend--m"
                     },
                     hint: {

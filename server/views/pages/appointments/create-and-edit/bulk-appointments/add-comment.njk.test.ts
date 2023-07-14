@@ -39,6 +39,6 @@ describe('Views - Create Bulk Appointment - Add Comment', () => {
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toEqual('Add extra information for John Smith, A1234AA')
+    expect($('h1').text()).toEqual('Add extra information for John Smith, A1234AA (optional)')
   })
 })

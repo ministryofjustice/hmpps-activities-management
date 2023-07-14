@@ -8,9 +8,9 @@ import PrisonerListCsvParser from '../../../../utils/prisonerListCsvParser'
 
 export class PrisonerList {
   @Expose()
-  @IsNotEmpty({ message: "Select a CSV file of prisoners' numbers" })
+  @IsNotEmpty({ message: 'You must select a file' })
   @IsNotEmptyFile({ message: 'The selected file is empty' })
-  @IsValidCsvFile({ message: 'The selected file must be a CSV' })
+  @IsValidCsvFile({ message: 'You must upload a CSV file' })
   file: Express.Multer.File
 }
 
@@ -80,8 +80,8 @@ export default class UploadPrisonerListRoutes {
     if (prisonerNumbersNotFound.length > 0) {
       const message =
         prisonerNumbersNotFound.length === 1
-          ? `Prisoner with number ${prisonerNumbersNotFound[0]} was not found`
-          : `Prisoners with numbers ${prisonerNumbersNotFound.join(', ')} were not found`
+          ? `The prison number '${prisonerNumbersNotFound[0]}' was not recognised`
+          : `The following prison numbers '${prisonerNumbersNotFound.join("', '")}' were not recognised`
       res.validationFailed('file', message)
       return false
     }

@@ -39,7 +39,7 @@ describe('Views - Create Appointment - Check Answers', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
-      `You have successfully created an appointment for Test Prisoner on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
+      `You have successfully scheduled an appointment for Test Prisoner on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
     )
   })
 
@@ -70,7 +70,7 @@ describe('Views - Create Appointment - Check Answers', () => {
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
       expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
-        `You have successfully created an appointment series for Test Prisoner starting on ${format(
+        `You have successfully scheduled an appointment for Test Prisoner starting on ${format(
           tomorrow,
           'EEEE, d MMMM yyyy',
         )}. It will repeat ${expectedText} for 6 appointments`,
@@ -103,7 +103,7 @@ describe('Views - Create Appointment - Check Answers', () => {
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
       expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
-        `You have successfully created an appointment for 3 prisoners on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
+        `You have successfully scheduled an appointment for 3 people on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
       )
     })
   })
