@@ -2,7 +2,7 @@
   {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     <span class="govuk-caption-l" data-qa="caption">{{ session.appointmentJourney.appointmentName }}</span>
   {% elseif session.appointmentJourney.type == AppointmentType.BULK %}
-    <span class="govuk-caption-l" data-qa="caption">Bulk appointments</span>
+    <span class="govuk-caption-l" data-qa="caption">Schedule a set of back-to-backs</span>
   {% else %}
     <span class="govuk-caption-l" data-qa="caption">Schedule an appointment</span>
   {% endif %}

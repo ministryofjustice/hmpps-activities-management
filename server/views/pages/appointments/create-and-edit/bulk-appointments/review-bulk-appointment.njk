@@ -11,7 +11,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Review Bulk Appointment", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Review appointment start and end times", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-review-bulk-appointment-page' %}
 {% set backLinkHref = "bulk-appointment-date" %}
 
@@ -20,7 +20,7 @@
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
             <h1 class="govuk-heading-l">Review appointment start and end times</h1>
-            <p class="govuk-body">You can edit the start time and end time for each individual appointment if you need to.</p>
+            <p class="govuk-body">You can edit the start time and end time for each appointment.</p>
         </div>
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">

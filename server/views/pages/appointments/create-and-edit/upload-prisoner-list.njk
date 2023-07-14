@@ -33,7 +33,7 @@
                                   html: howToUseCSVFile()
                                 }) }}
                 {{ govukButton({
-                    text: "Continue"
+                    text: "Upload file"
                 }) }}
             </form>
         </div>
@@ -42,6 +42,6 @@
 
 {% macro howToUseCSVFile() %}
    <p class="govuk-body">A CSV file is a type of spreadsheet. Download the template if you need one, then add the relevant prison numbers. When you upload it to this service a list of attendees will be created.</p>
-   <p class="govuk-body">Download the <a href="/assets/downloads/prisoner-list.csv" download>prison number list template</a> [CSV, 1kb]</p>
+   <p class="govuk-body">Download the <a href="/assets/downloads/prisoner-list.csv" download>prison number list template</a> (CSV, 1kb)</p>
 {% endmacro %}
 
