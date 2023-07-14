@@ -10,7 +10,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Review Prisoners", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("No attendees" if prisoners.length == 0 else "Review attendee list", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-review-prisoners-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -18,11 +18,18 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
-            {% if session.appointmentJourney.type == AppointmentType.BULK %}
-                <h1 class="govuk-heading-l">Review prisoner details</h1>
-                <p class="govuk-body">You can select and remove prisoners if you need to.</p>
+            {% if prisoners.length == 0 %}
+                <h1 class="govuk-heading-l">There are no attendees for this appointment</h1>
+                <p class="govuk-body">You’ve removed the last attendee for this appointment.</p>
+                <p class="govuk-body">You need to add someone to continue scheduling it.</p>
             {% else %}
-                <h1 class="govuk-heading-l">Review and add more people to the list of attendees</h1>
+                {% if session.appointmentJourney.type == AppointmentType.BULK %}
+                    <h1 class="govuk-heading-l">Review prisoner details</h1>
+                    <p class="govuk-body">You can select and remove prisoners if you need to.</p>
+                {% else %}
+                    <h1 class="govuk-heading-l">Review who’s attending the appointment</h1>
+                    <p class="govuk-body">Add or remove people, or continue with the current {{ "attendee" if prisoners.length == 1 else "list of attendees" }}.</p>
+                {% endif %}
             {% endif %}
         </div>
         <div class="govuk-grid-column-two-thirds">
@@ -52,11 +59,6 @@
             {% endfor %}
 
             {% if prisoners.length == 0 %}
-                {{ govukWarningText({
-                    text: "The list of attendees is empty. You must add at least one person to continue." if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "The list of attendees is empty. You must add at least one person to be able to schedule an appointment.",
-                    iconFallbackText: "Warning"
-                }) }}
-
                 {{ govukButton({
                     text: "Add someone to the list",
                     href: ("upload-bulk-appointment" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners") + ('?preserveHistory=true' if preserveHistory else ''),
