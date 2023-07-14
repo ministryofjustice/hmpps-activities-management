@@ -386,7 +386,9 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'query', error: 'Enter a name or prison number to search by' }]),
+        expect.arrayContaining([
+          { property: 'query', error: 'You must enter a name or prison number in the format A1234CD' },
+        ]),
       )
     })
 

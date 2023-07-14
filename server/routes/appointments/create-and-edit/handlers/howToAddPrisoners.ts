@@ -9,7 +9,7 @@ export enum HowToAddOptions {
 }
 export class HowToAddPrisonersForm {
   @Expose()
-  @IsEnum(HowToAddOptions, { message: 'Select how to add prisoners' })
+  @IsEnum(HowToAddOptions, { message: 'You must select one option' })
   howToAdd: HowToAddOptions
 }
 

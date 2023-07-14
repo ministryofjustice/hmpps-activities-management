@@ -1,11 +1,9 @@
 {% macro appointmentTypeCaption(session) %}
   {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     <span class="govuk-caption-l" data-qa="caption">{{ session.appointmentJourney.appointmentName }}</span>
-  {% elseif session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-    <span class="govuk-caption-l" data-qa="caption">Individual appointment</span>
-  {% elseif session.appointmentJourney.type == AppointmentType.GROUP %}
-    <span class="govuk-caption-l" data-qa="caption">Group appointment</span>
   {% elseif session.appointmentJourney.type == AppointmentType.BULK %}
     <span class="govuk-caption-l" data-qa="caption">Bulk appointments</span>
+  {% else %}
+    <span class="govuk-caption-l" data-qa="caption">Schedule an appointment</span>
   {% endif %}
 {% endmacro %}
