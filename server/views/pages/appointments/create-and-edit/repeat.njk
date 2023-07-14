@@ -5,7 +5,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Repeat", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Will the appointment repeat?", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-repeat-page' %}
 {% set backLinkHref = "date-and-time" %}
 

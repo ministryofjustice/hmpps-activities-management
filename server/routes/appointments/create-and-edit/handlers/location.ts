@@ -9,8 +9,8 @@ import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../
 export class Location {
   @Expose()
   @Type(() => Number)
-  @IsNotEmpty({ message: 'Select a location' })
-  @IsNumber({ allowNaN: false }, { message: 'Select a location' })
+  @IsNotEmpty({ message: 'Start typing the appointment location and select it from the list' })
+  @IsNumber({ allowNaN: false }, { message: 'Start typing the appointment location and select it from the list' })
   locationId: number
 }
 
@@ -72,7 +72,7 @@ export default class LocationRoutes {
       .then(locations => locations.find(l => l.id === locationId))
 
     if (!location) {
-      res.validationFailed('locationId', `Selected location not found`)
+      res.validationFailed('locationId', `Start typing the appointment location and select it from the list`)
       return false
     }
 

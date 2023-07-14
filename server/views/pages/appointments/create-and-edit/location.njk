@@ -5,7 +5,7 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
-{% set pageTitle = appointmentJourneyTitle("Location", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Appointment location", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-location-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -28,7 +28,7 @@
                     id: "locationId",
                     name: "locationId",
                     label: {
-                        text: "Where is the appointment?",
+                        text: "Where will the appointment take place?",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },

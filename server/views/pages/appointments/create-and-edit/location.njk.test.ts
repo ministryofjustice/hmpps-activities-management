@@ -83,7 +83,7 @@ describe('Views - Appointments Management - Location', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text().trim()).toEqual('Where is the appointment?')
+    expect($('h1').text().trim()).toEqual('Where will the appointment take place?')
   })
 
   it('edit content', () => {
@@ -91,7 +91,7 @@ describe('Views - Appointments Management - Location', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text().trim()).toEqual('Where is the appointment?')
+    expect($('h1').text().trim()).toEqual('Where will the appointment take place?')
   })
 
   it('call to action is continue when creating', () => {
