@@ -65,8 +65,8 @@ context('Create individual appointment - check answers change links', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
 
-    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage.createIndividualAppointmentCard().click()
+    Page.verifyOnPage(AppointmentsManagementPage)
+    cy.visit('/appointments/create/start-individual')
 
     const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')
@@ -196,7 +196,7 @@ context('Create individual appointment - check answers change links', () => {
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.assertMessageEquals(
-      `You have successfully created an appointment for David Winchurch on ${formatDate(
+      `You have successfully scheduled an appointment for David Winchurch on ${formatDate(
         dayAfterTomorrow,
         'EEEE, d MMMM yyyy',
       )}.`,

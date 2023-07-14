@@ -60,5 +60,5 @@ export default class CheckAnswersPage extends Page {
 
   changeComment = () => cy.get('[data-qa=change-comment]').click()
 
-  createAppointment = () => cy.get('button').contains('Confirm and save').click()
+  createAppointment = () => cy.get('button').contains('Confirm').click()
 }

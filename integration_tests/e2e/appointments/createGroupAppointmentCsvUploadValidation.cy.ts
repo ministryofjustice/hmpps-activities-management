@@ -15,13 +15,13 @@ context('Create group appointment - CSV upload validation', () => {
 
   it('Should fail validation when no file is selected', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
+    howToAddPrisonersPage.selectHowToAdd('Add a group of people using a CSV file')
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
-    uploadPrisonerListPage.continue()
+    uploadPrisonerListPage.uploadFile()
 
-    uploadPrisonerListPage.assertValidationError('file', "Select a CSV file of prisoners' numbers")
+    uploadPrisonerListPage.assertValidationError('file', 'You must select a file')
   })
 
   it('Should fail validation when uploading CSV file larger than 100kb', () => {
@@ -33,12 +33,12 @@ context('Create group appointment - CSV upload validation', () => {
     cy.writeFile('integration_tests/fixtures/fileUpload/larger-than-100kb.csv', largerThan100kbData.join('\r\n'))
 
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
+    howToAddPrisonersPage.selectHowToAdd('Add a group of people using a CSV file')
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('larger-than-100kb.csv')
-    uploadPrisonerListPage.continue()
+    uploadPrisonerListPage.uploadFile()
 
     cy.writeFile('integration_tests/fixtures/fileUpload/larger-than-100kb.csv', '')
 
@@ -47,73 +47,76 @@ context('Create group appointment - CSV upload validation', () => {
 
   it('Should fail validation when uploading an empty CSV file', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
+    howToAddPrisonersPage.selectHowToAdd('Add a group of people using a CSV file')
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('empty-upload-prisoner-list.csv')
-    uploadPrisonerListPage.continue()
+    uploadPrisonerListPage.uploadFile()
 
     uploadPrisonerListPage.assertValidationError('file', 'The selected file is empty')
   })
 
   it('Should fail validation when uploading a non CSV file', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
+    howToAddPrisonersPage.selectHowToAdd('Add a group of people using a CSV file')
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('non-csv-file.xlsx')
-    uploadPrisonerListPage.continue()
+    uploadPrisonerListPage.uploadFile()
 
-    uploadPrisonerListPage.assertValidationError('file', 'The selected file must be a CSV')
+    uploadPrisonerListPage.assertValidationError('file', 'You must upload a CSV file')
   })
 
   it('Should fail validation when uploading a non CSV file with the .csv extension', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
+    howToAddPrisonersPage.selectHowToAdd('Add a group of people using a CSV file')
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('non-csv-file.csv')
-    uploadPrisonerListPage.continue()
+    uploadPrisonerListPage.uploadFile()
 
-    uploadPrisonerListPage.assertValidationError('file', 'The selected file must be a CSV')
+    uploadPrisonerListPage.assertValidationError('file', 'You must upload a CSV file')
   })
 
   it('Should fail validation when CSV file does not contain any prisoner numbers', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
+    howToAddPrisonersPage.selectHowToAdd('Add a group of people using a CSV file')
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('upload-prisoner-list-no-numbers.csv')
-    uploadPrisonerListPage.continue()
+    uploadPrisonerListPage.uploadFile()
 
     uploadPrisonerListPage.assertValidationError('file', 'The selected file does not contain any prison numbers')
   })
 
   it('Should fail validation when one prisoner not found', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
+    howToAddPrisonersPage.selectHowToAdd('Add a group of people using a CSV file')
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('upload-prisoner-list-one-not-found.csv')
-    uploadPrisonerListPage.continue()
+    uploadPrisonerListPage.uploadFile()
 
-    uploadPrisonerListPage.assertValidationError('file', 'Prisoner with number NOTFOUND was not found')
+    uploadPrisonerListPage.assertValidationError('file', "The prison number 'NOTFOUND' was not recognised")
   })
 
   it('Should fail validation when two prisoners not found', () => {
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Upload a CSV file of prison numbers to add to the list of attendees')
+    howToAddPrisonersPage.selectHowToAdd('Add a group of people using a CSV file')
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attatchFile('upload-prisoner-list-two-not-found.csv')
-    uploadPrisonerListPage.continue()
+    uploadPrisonerListPage.uploadFile()
 
-    uploadPrisonerListPage.assertValidationError('file', 'Prisoners with numbers NOTFOUND1, NOTFOUND2 were not found')
+    uploadPrisonerListPage.assertValidationError(
+      'file',
+      "The following prison numbers 'NOTFOUND1', 'NOTFOUND2' were not recognised",
+    )
   })
 })
