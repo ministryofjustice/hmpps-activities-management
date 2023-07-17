@@ -99,7 +99,7 @@ describe('Views - Create Appointment - Repeat Period and Count', () => {
     it('should display journey title', () => {
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-      expect($('[data-qa=caption]').text()).toBe('Individual appointment')
+      expect($('[data-qa=caption]').text()).toBe('Schedule an appointment')
     })
   })
 
@@ -111,7 +111,7 @@ describe('Views - Create Appointment - Repeat Period and Count', () => {
     it('should display journey title', () => {
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-      expect($('[data-qa=caption]').text()).toBe('Group appointment')
+      expect($('[data-qa=caption]').text()).toBe('Schedule an appointment')
     })
   })
 })

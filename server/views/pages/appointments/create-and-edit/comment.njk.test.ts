@@ -85,7 +85,7 @@ describe('Views - Appointments Management - Comment', () => {
 
     expect($('h1').text()).toContain('Add extra information')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'Attendees may need information about how to prepare for their appointment. You can add this as extra information which will be printed on their movement slips.',
+      'Add any important information about how to prepare for the appointment. It will be printed on the movement slip.',
     )
   })
 

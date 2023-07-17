@@ -9,6 +9,10 @@ export type FieldValidationError = {
 
 function validationMiddleware(type: new () => object): RequestHandler {
   return async (req, res, next) => {
+    if (!type) {
+      return next()
+    }
+
     // Build an object which is used by validators to check things against
     const requestObject = plainToInstance(type, {
       ...req.body,
@@ -19,7 +23,7 @@ function validationMiddleware(type: new () => object): RequestHandler {
       notAttendedJourney: req.session.notAttendedJourney,
     })
 
-    const errors: ValidationError[] = await validate(requestObject)
+    const errors: ValidationError[] = await validate(requestObject, { stopAtFirstError: true })
 
     if (errors.length === 0) {
       req.body = requestObject

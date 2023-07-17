@@ -10,11 +10,11 @@ export class DeallocationDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @IsValidDate({ message: 'Enter a valid date' })
   @DateIsAfter(new Date(), { message: "Enter a date after today's date" })
   @DateIsSameOrAfterOtherProperty('startDate', {
     message: 'Enter a date on or after the latest allocation start date',
   })
+  @IsValidDate({ message: 'Enter a valid date' })
   deallocationDate: SimpleDate
 
   @Expose()

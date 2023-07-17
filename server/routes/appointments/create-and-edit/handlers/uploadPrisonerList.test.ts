@@ -146,7 +146,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       await handler.POST(req, res)
 
-      expect(res.validationFailed).toHaveBeenCalledWith('file', 'Prisoner with number A1234BC was not found')
+      expect(res.validationFailed).toHaveBeenCalledWith('file', "The prison number 'A1234BC' was not recognised")
     })
 
     it('validation fails when two prisoners not found', async () => {
@@ -165,7 +165,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       expect(res.validationFailed).toHaveBeenCalledWith(
         'file',
-        'Prisoners with numbers A1234BC, B2345CD were not found',
+        "The following prison numbers 'A1234BC', 'B2345CD' were not recognised",
       )
     })
 
@@ -198,7 +198,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       await handler.POST(req, res)
 
-      expect(res.validationFailed).toHaveBeenCalledWith('file', 'Prisoner with number B2345CD was not found')
+      expect(res.validationFailed).toHaveBeenCalledWith('file', "The prison number 'B2345CD' was not recognised")
     })
 
     it('should save found prisoners in session and redirect to review prisoners', async () => {
@@ -439,9 +439,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       const requestObject = plainToInstance(PrisonerList, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'file', error: "Select a CSV file of prisoners' numbers" }]),
-      )
+      expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'You must select a file' }]))
     })
 
     it('validation fails when empty CSV file is uploaded', async () => {
@@ -480,7 +478,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
 
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'The selected file must be a CSV' }]))
+      expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'You must upload a CSV file' }]))
     })
 
     it('passes validation when valid CSV file is uploaded', async () => {

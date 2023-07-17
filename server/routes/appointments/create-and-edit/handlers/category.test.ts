@@ -144,7 +144,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
 
       await handler.POST(req, res)
 
-      expect(res.validationFailed).toHaveBeenCalledWith('categoryCode', `Selected type not found`)
+      expect(res.validationFailed).toHaveBeenCalledWith('categoryCode', `Start typing a name and select from the list`)
     })
   })
 
@@ -155,7 +155,9 @@ describe('Route Handlers - Create Appointment - Category', () => {
       const requestObject = plainToInstance(Category, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ property: 'categoryCode', error: 'Select a type' }]))
+      expect(errors).toEqual(
+        expect.arrayContaining([{ property: 'categoryCode', error: 'Start typing a name and select from the list' }]),
+      )
     })
 
     it('passes validation when valid category code is selected', async () => {

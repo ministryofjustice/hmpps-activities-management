@@ -5,7 +5,7 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
-{% set pageTitle = appointmentJourneyTitle("Type", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Appointment name set" if session.appointmentJourney.type == AppointmentType.BULK else "Appointment name", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-category-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -29,12 +29,12 @@
                     name: "categoryCode",
                     type: "search",
                     label: {
-                        text: "What is the appointment?",
+                        text: ("What are the appointments?" if session.appointmentJourney.type == AppointmentType.BULK else "What’s the appointment?"),
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
                     hint: {
-                        text: "Start typing a name and select from the list of options"
+                        text: "Start typing the appointment name and select from the list."
                     },
                     errorMessage: validationErrors | findError('categoryCode'),
                     items: options,

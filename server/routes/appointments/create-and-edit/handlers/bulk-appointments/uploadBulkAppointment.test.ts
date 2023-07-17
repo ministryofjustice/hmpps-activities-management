@@ -368,9 +368,7 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
       const requestObject = plainToInstance(AppointmentsList, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'file', error: "Select a CSV file of prisoners' numbers" }]),
-      )
+      expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'You must select a file' }]))
     })
 
     it('validation fails when empty CSV file is uploaded', async () => {
@@ -409,7 +407,7 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
 
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'The selected file must be a CSV' }]))
+      expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'You must upload a CSV file' }]))
     })
 
     it('passes validation when valid CSV file is uploaded', async () => {

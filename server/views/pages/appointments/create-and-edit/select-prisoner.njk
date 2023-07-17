@@ -2,18 +2,19 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {%- from "moj/components/search/macro.njk" import mojSearch -%}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "partials/searchInput.njk" import searchInput %}
 
-{% set pageTitle = appointmentJourneyTitle("Select Prisoner", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Add person", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-select-prisoner-page' %}
 {% set backLinkHref = "how-to-add-prisoners" if session.appointmentJourney.type == AppointmentType.GROUP else '/appointments' %}
 
 {% set headingText = "Search and add prisoner to the appointment" %}
 {% if session.appointmentJourney.type == AppointmentType.GROUP %}
-    {% set headingText = "Search for an individual to add to the list of attendees" %}
+    {% set headingText = "Who is the appointment for?" %}
 {% endif %}
 
 {% block content %}
@@ -57,13 +58,16 @@
                         }
                     }) }}
 
-                    <h2 class="govuk-heading-m" id="prisoner-results-text">
-                        {% if prisoners | length > 0 %}
-                            Select the correct result from the list (maximum 50 results shown).
-                        {% else %}
-                            There are no matching search results.
-                        {% endif %}
-                    </h2>
+                    {% if prisoners | length > 0 %}
+                        <h2 class="govuk-heading-m" id="prisoner-results-text">
+                            {{ ("There is 1 matching result" if prisoners.length == 1 else "Select the correct result from the list (maximum 50 results shown)") }}
+                        </h2>
+                    {% else %}
+                        {{ govukWarningText({
+                            text: "There are no matching search results.",
+                            iconFallbackText: "Warning"
+                        }) }}
+                    {% endif %}
                 </form>
             </div>
         </div>
@@ -92,7 +96,6 @@
                                         id: 'prisoner-name',
                                         "data-sort-value": prisoner | firstNameLastName | toTitleCase | prisonerName
                                     },
-                                    classes: 'govuk-!-font-weight-bold',
                                     html: prisonerName
                                 }, {
                                     attributes: {

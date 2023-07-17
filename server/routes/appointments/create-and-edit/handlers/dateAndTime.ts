@@ -24,17 +24,17 @@ export class DateAndTime {
   @Expose()
   @Type(() => SimpleTime)
   @ValidateNested()
+  @TimeAndDateIsAfterNow('startDate', { message: 'Select a start time that is in the future' })
   @IsNotEmpty({ message: 'Select a start time for the appointment' })
   @IsValidTime({ message: 'Select a valid start time for the appointment' })
-  @TimeAndDateIsAfterNow('startDate', { message: 'Select a start time that is in the future' })
   startTime: SimpleTime
 
   @Expose()
   @Type(() => SimpleTime)
   @ValidateNested()
+  @TimeIsAfter('startTime', { message: 'Select an end time after the start time' })
   @IsNotEmpty({ message: 'Select an end time for the appointment' })
   @IsValidTime({ message: 'Select a valid end time for the appointment' })
-  @TimeIsAfter('startTime', { message: 'Select an end time after the start time' })
   endTime: SimpleTime
 }
 

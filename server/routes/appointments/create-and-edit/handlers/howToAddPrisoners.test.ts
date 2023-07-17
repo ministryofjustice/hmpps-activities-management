@@ -100,7 +100,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
       const requestObject = plainToInstance(HowToAddPrisonersForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ error: 'Select how to add prisoners', property: 'howToAdd' }]))
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'You must select one option', property: 'howToAdd' }]))
     })
   })
 })

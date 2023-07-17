@@ -6,7 +6,7 @@ import { AppointmentType } from '../appointmentJourney'
 
 export class Category {
   @Expose()
-  @IsNotEmpty({ message: 'Select a type' })
+  @IsNotEmpty({ message: 'Start typing a name and select from the list' })
   categoryCode: string
 }
 
@@ -40,7 +40,7 @@ export default class CategoryRoutes {
       .then(categories => categories.find(c => c.code === categoryCode))
 
     if (!category) {
-      return res.validationFailed('categoryCode', `Selected type not found`)
+      return res.validationFailed('categoryCode', `Start typing a name and select from the list`)
     }
 
     req.session.appointmentJourney.category = {

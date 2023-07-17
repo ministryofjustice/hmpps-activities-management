@@ -141,7 +141,10 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.CREATE(req, res)
 
-      expect(res.validationFailed).toHaveBeenCalledWith('locationId', `Selected location not found`)
+      expect(res.validationFailed).toHaveBeenCalledWith(
+        'locationId',
+        `Start typing the appointment location and select it from the list`,
+      )
     })
   })
 
@@ -183,7 +186,10 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       await handler.EDIT(req, res)
 
-      expect(res.validationFailed).toHaveBeenCalledWith('locationId', `Selected location not found`)
+      expect(res.validationFailed).toHaveBeenCalledWith(
+        'locationId',
+        `Start typing the appointment location and select it from the list`,
+      )
     })
   })
 
@@ -194,7 +200,11 @@ describe('Route Handlers - Create Appointment - Location', () => {
       const requestObject = plainToInstance(Location, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ property: 'locationId', error: 'Select a location' }]))
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          { property: 'locationId', error: 'Start typing the appointment location and select it from the list' },
+        ]),
+      )
     })
 
     it('validation fails when selected location id is not a number', async () => {
@@ -205,7 +215,11 @@ describe('Route Handlers - Create Appointment - Location', () => {
       const requestObject = plainToInstance(Location, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ property: 'locationId', error: 'Select a location' }]))
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          { property: 'locationId', error: 'Start typing the appointment location and select it from the list' },
+        ]),
+      )
     })
 
     it('passes validation when valid location id is selected', async () => {

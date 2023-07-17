@@ -5,7 +5,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("How to add prisoners", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Add attendees", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-how-to-add-prisoners-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -21,7 +21,7 @@
                     name: "howToAdd",
                     fieldset: {
                         legend: {
-                            text: "How do you want to add people to the list of attendees?",
+                            text: "How do you want to select attendees?",
                             classes: "govuk-label--l",
                             isPageHeading: true
                         }
@@ -30,12 +30,12 @@
                     items: [
                         {
                             value: HowToAddOptions.SEARCH,
-                            text: "Search by name or prison number to add people to the list of attendees",
+                            text: "Search for them one by one",
                             checked: formResponses.howToAdd == HowToAddOptions.SEARCH
                         },
                         {
                             value: HowToAddOptions.CSV,
-                            text: "Upload a CSV file of prison numbers to add to the list of attendees",
+                            text: "Add a group of people using a CSV file",
                             checked: formResponses.howToAdd == HowToAddOptions.CSV
                         }
                     ]

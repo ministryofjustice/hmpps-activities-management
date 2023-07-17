@@ -64,8 +64,8 @@ context('Individual repeat appointment', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
 
-    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage.createIndividualAppointmentCard().click()
+    Page.verifyOnPage(AppointmentsManagementPage)
+    cy.visit('/appointments/create/start-individual')
 
     let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')
@@ -118,7 +118,7 @@ context('Individual repeat appointment', () => {
 
       const confirmationPage = Page.verifyOnPage(ConfirmationPage)
       confirmationPage.assertMessageEquals(
-        `You have successfully created an appointment series for Stephen Gregs starting on ${formatDate(
+        `You have successfully scheduled an appointment for Stephen Gregs starting on ${formatDate(
           tomorrow,
           'EEEE, d MMMM yyyy',
         )}. It will repeat weekly for 2 appointments`,

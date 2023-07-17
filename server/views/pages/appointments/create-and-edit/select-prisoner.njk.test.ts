@@ -45,7 +45,7 @@ describe('Views - Appointments - Selected prisoners', () => {
     expect($('#prisoner-search-list input[name="selectedPrisoner"][type="radio"]').length).toBe(2)
     expect($('#prisoner-search-list input[name="selectedPrisoner"][type="hidden"]').length).toBe(0)
     expect($('#prisoner-results-text').text().trim()).toEqual(
-      'Select the correct result from the list (maximum 50 results shown).',
+      'Select the correct result from the list (maximum 50 results shown)',
     )
     expect($('#continue-button-above-results').length).toBe(0)
     expect($('#continue-button').text().trim()).toEqual('Select and continue')
@@ -69,9 +69,7 @@ describe('Views - Appointments - Selected prisoners', () => {
     expect($('#prisoner-search-list tbody tr').length).toBe(1)
     expect($('#prisoner-search-list input[name="selectedPrisoner"][type="radio"]').length).toBe(0)
     expect($('#prisoner-search-list input[name="selectedPrisoner"][type="hidden"]').length).toBe(1)
-    expect($('#prisoner-results-text').text().trim()).toEqual(
-      'Select the correct result from the list (maximum 50 results shown).',
-    )
+    expect($('#prisoner-results-text').text().trim()).toEqual('There is 1 matching result')
     expect($('#continue-button').text().trim()).toEqual('Continue')
   })
 
@@ -84,7 +82,7 @@ describe('Views - Appointments - Selected prisoners', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('#prisoner-search-list').length).toBe(0)
-    expect($('#prisoner-results-text').text().trim()).toEqual('There are no matching search results.')
+    expect($('.govuk-warning-text').text()).toContain('There are no matching search results.')
     expect($('#prisoner-search-list').length).toBe(0)
     expect($('#continue-button-above-results').length).toBe(0)
     expect($('#continue-button').length).toBe(0)
