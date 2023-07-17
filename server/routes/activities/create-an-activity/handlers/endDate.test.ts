@@ -98,7 +98,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
   })
 
   describe('type validation', () => {
-    it('validation fails if a value is not entered', async () => {
+    it('validation passes if a value is not entered', async () => {
       const endDate = {
         day: '',
         month: '',
@@ -112,7 +112,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       const requestObject = plainToInstance(EndDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
+      expect(errors).toHaveLength(0)
     })
 
     it('validation fails if a bad value is entered', async () => {

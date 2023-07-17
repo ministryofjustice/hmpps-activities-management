@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, plainToInstance, Type } from 'class-transformer'
-import { IsNotEmpty, ValidateNested } from 'class-validator'
+import { ValidateIf, ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import { formatDate } from '../../../../utils/utils'
@@ -11,10 +11,10 @@ import DateIsSameOrAfterOtherProperty from '../../../../validators/dateIsSameOrA
 export class EndDate {
   @Expose()
   @Type(() => SimpleDate)
+  @ValidateIf(o => !o.endDate.isEmpty())
   @ValidateNested()
-  @IsNotEmpty({ message: 'Enter a valid end date' })
-  @IsValidDate({ message: 'Enter a valid end date' })
   @DateIsSameOrAfterOtherProperty('startDate', { message: 'Enter a date on or after the start date' })
+  @IsValidDate({ message: 'Enter a valid end date' })
   endDate: SimpleDate
 
   @Expose()
@@ -34,13 +34,16 @@ export default class EndDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createJourney.endDate = req.body.endDate
+    req.session.createJourney.endDate = req.body.endDate.isEmpty() ? undefined : req.body.endDate
     if (req.query && req.query.fromEditActivity) {
       const { user } = res.locals
       const { activityId } = req.session.createJourney
       const prisonCode = user.activeCaseLoadId
       const activity = {
-        endDate: formatDate(plainToInstance(SimpleDate, req.session.createJourney.endDate).toRichDate(), 'yyyy-MM-dd'),
+        endDate: req.body.endDate.isEmpty()
+          ? null
+          : formatDate(plainToInstance(SimpleDate, req.session.createJourney.endDate).toRichDate(), 'yyyy-MM-dd'),
+        removeEndDate: req.body.endDate.isEmpty(),
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
       const successMessage = `We've updated the end date for ${req.session.createJourney.name}`

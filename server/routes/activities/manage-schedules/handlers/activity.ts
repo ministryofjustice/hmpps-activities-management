@@ -5,6 +5,7 @@ import PrisonService from '../../../../services/prisonService'
 import { scheduleSlotsToDailyTimeSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { getTimeSlotFromTime } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
+import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 
 export default class ActivityRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -43,31 +44,13 @@ export default class ActivityRoutes {
       day: Number(activity.startDate.substring(8, 10)),
       month: Number(activity.startDate.substring(5, 7)),
       year: Number(activity.startDate.substring(0, 4)),
-      toIsoString(): string {
-        return undefined
-      },
-      toRichDate(): Date {
-        return undefined
-      },
-      toString(): string {
-        return ''
-      },
-    }
+    } as unknown as SimpleDate
     if (activity.endDate) {
       req.session.createJourney.endDate = {
         day: Number(activity.endDate.substring(8, 10)),
         month: Number(activity.endDate.substring(5, 7)),
         year: Number(activity.endDate.substring(0, 4)),
-        toIsoString(): string {
-          return undefined
-        },
-        toRichDate(): Date {
-          return undefined
-        },
-        toString(): string {
-          return ''
-        },
-      }
+      } as unknown as SimpleDate
     }
     req.session.createJourney.minimumIncentiveLevel = activity.minimumIncentiveLevel
     req.session.createJourney.days = []

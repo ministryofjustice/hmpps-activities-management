@@ -10,9 +10,9 @@ import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/typ
 
 export class AppointmentsList {
   @Expose()
-  @IsNotEmpty({ message: 'You must select a file' })
-  @IsNotEmptyFile({ message: 'The selected file is empty' })
   @IsValidCsvFile({ message: 'You must upload a CSV file' })
+  @IsNotEmptyFile({ message: 'The selected file is empty' })
+  @IsNotEmpty({ message: 'You must select a file' })
   file: Express.Multer.File
 }
 
