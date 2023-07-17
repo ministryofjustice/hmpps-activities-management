@@ -10,8 +10,8 @@ export class Description {
   descriptionOption: string
 
   @Expose()
-  @DescriptionRequired({ message: 'Please enter an appointment description' })
   @DescriptionMaxLength({ message: 'You must enter a description which has no more than 40 characters' })
+  @DescriptionRequired({ message: 'Please enter an appointment description' })
   description: string
 }
 

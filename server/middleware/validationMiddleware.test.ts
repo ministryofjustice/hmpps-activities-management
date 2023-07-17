@@ -13,8 +13,8 @@ describe('validationMiddleware', () => {
 
     class DummyChild {
       @Expose()
-      @IsNotEmpty({ message: notEmptyMessage })
       @IsIn(['valid'], { message: notValidMessage })
+      @IsNotEmpty({ message: notEmptyMessage })
       name: string
     }
 

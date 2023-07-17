@@ -35,6 +35,8 @@ export default class SimpleDate {
   toString = () => `${this.year}-${this.month}-${this.day}`
 
   toIsoString = () => formatDate(this.toRichDate(), 'yyyy-MM-dd')
+
+  isEmpty = () => this.year + this.month + this.day === 0
 }
 
 export const simpleDateFromDate = (date: Date) => {
