@@ -79,8 +79,8 @@
                     classes: 'govuk-table_cell'
                 },
                 {
-                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.location },
-                    text: cancelledSession.location,
+                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": ("In cell" if cancelledSession.inCell) or ("On wing" if cancelledSession.onWing) or cancelledSession.location },
+                    text: ("In cell" if cancelledSession.inCell) or ("On wing" if cancelledSession.onWing) or cancelledSession.location,
                     classes: 'govuk-table_cell'
                 },
                 {

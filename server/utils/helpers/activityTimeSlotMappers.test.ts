@@ -5,6 +5,7 @@ describe('Schedule slots to daily time slots mapper', () => {
   it("should map a schedule's slots to daily time slots", () => {
     const slots = [
       {
+        weekNumber: 1,
         id: 123456,
         startTime: '9:00',
         endTime: '11:30',
@@ -18,6 +19,7 @@ describe('Schedule slots to daily time slots mapper', () => {
         sundayFlag: false,
       },
       {
+        weekNumber: 1,
         id: 123457,
         startTime: '13:00',
         endTime: '16:30',
@@ -31,6 +33,7 @@ describe('Schedule slots to daily time slots mapper', () => {
         sundayFlag: false,
       },
       {
+        weekNumber: 1,
         id: 123458,
         startTime: '18:00',
         endTime: '20:00',

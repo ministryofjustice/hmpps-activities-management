@@ -800,3 +800,5 @@ export const setAttribute = (object: { [key: string]: string }, key: string, val
   const newObject = { ...object, [key]: value }
   return newObject
 }
+
+export const removeUndefined = (arr: object[]) => arr.filter(Boolean)

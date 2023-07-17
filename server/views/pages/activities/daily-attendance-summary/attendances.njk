@@ -32,7 +32,8 @@
             items: attendanceSummaryFilters.categoryFilters
         }) }}
         <div class="govuk-!-margin-bottom-4">
-            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters">Select all</a>
+            <a href="#" class="govuk-link govuk-link--no-visited-state"
+               data-module="select-all-link" data-checkbox-name="categoryFilters">Select all</a>
         </div>
 
         {{ govukCheckboxes({
@@ -51,7 +52,8 @@
             items: attendanceSummaryFilters.activityFilters
         }) }}
         <div class="govuk-!-margin-bottom-4">
-            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="activityFilters">Select all</a>
+            <a href="#" class="govuk-link govuk-link--no-visited-state"
+               data-module="select-all-link" data-checkbox-name="activityFilters">Select all</a>
         </div>
         <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters
@@ -59,8 +61,9 @@
     {% endset %}
     <div class="moj-filter-layout" data-module="activities-list-filter">
         <form id="filter-form" method="POST" novalidate>
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-            <input type="hidden" name="activityDate" value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <input type="hidden" name="activityDate"
+                   value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
             <div class="moj-filter-layout__filter">
                 {{ mojFilter({
                     heading: {
@@ -94,28 +97,28 @@
                             label: "Daily summary",
                             id: "day-tab",
                             panel: {
-                                html: summaryHtml("DAY", "Daily", activityDate)
+                                html: summaryHtml("DAY", "daily", activityDate)
                             }
                         },
                         {
                             label: "AM session",
                             id: "am-tab",
                             panel: {
-                                html: summaryHtml("AM", "AM session", activityDate)
+                                html: summaryHtml("AM", "morning", activityDate)
                             }
                         },
                         {
                             label: "PM session",
                             id: "pm-tab",
                             panel: {
-                                html: summaryHtml("PM", "PM session", activityDate)
+                                html: summaryHtml("PM", "afternoon", activityDate)
                             }
                         },
                         {
                             label: "ED session",
                             id: "ed-tab",
                             panel: {
-                                html: summaryHtml("ED", "ED session", activityDate)
+                                html: summaryHtml("ED", "evening", activityDate)
                             }
                         }
                     ]
@@ -126,13 +129,6 @@
 {% endblock %}
 
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
-    <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-left">
-        <p class="govuk-body govuk-!-margin-bottom-0">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</p>
-    </div>
-    <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
-        <p class="govuk-body govuk-!-margin-bottom-0">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('dd MMMM yyyy') }} </p>
-    </div>
-
     {% set attendanceRows = [] %}
     {% for attendee in attendees %}
         {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
@@ -154,14 +150,14 @@
                 },
                 {
                     attributes: { id: 'activity-' + loop.index },
-                    html: '<a href="/activities/schedule/activities/' + attendee.attendance.activityId + '" class="govuk-link govuk-link--no-visited-state">' + attendee.attendance.activitySummary,
+                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state">' + attendee.attendance.activitySummary,
                     classes: 'govuk-table__cell'
                 },
                 {
                     attributes: { id: 'recorded-time-' + loop.index, "data-sort-value": attendee.location },
                     text: attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('HH:mm:ss') + ' on ' + attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMM yyyy'),
                     classes: 'govuk-table_cell'
-                },
+                } if status != "NotAttended",
                 {
                     html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + renderPayStatus(attendee.attendance),
                     attributes: {
@@ -169,27 +165,29 @@
                     }
                 },
                 {
-                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.activityId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + 'View or edit</a>'
-                }
-            ]), attendanceRows) %}
+                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + 'View or edit</a>'
+                } if status != "NotAttended"
+            ] | removeUndefined), attendanceRows) %}
         {% endif %}
     {% endfor %}
 
-    <div>
-        {% if status === 'Attended' %}
-            <h1 class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0">All attended</h1>
-        {% else %}
-            <h1 class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0">{{ attendanceRows | length }} {{ "absence" if attendanceRows.length == 1 else "absences" }}</h1>
-        {% endif %}
-    </div>
-   <div>
-        <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
-              <div class="govuk-button-group float-right">
-                    {{ govukButton({
-                        text: "Refresh",
-                        classes: "govuk-button--secondary"
-                    }) }}
-              </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-l">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</span>
+            {% if status == 'Attended' %}
+                <h1 class="govuk-heading-xl">{{ attendanceRows | length }} attended</h1>
+            {% elseif status == 'NotAttended' %}
+                <h1 class="govuk-heading-xl">{{ attendanceRows | length }} not attended yet</h1>
+            {% elseif status == 'Absences' %}
+                <h1 class="govuk-heading-xl">{{ attendanceRows | length }} absence{% if attendanceRows | length != 1 %}s{% endif %}</h1>
+            {% endif %}
+        </div>
+        <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
+            <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('dd MMMM yyyy') }}</div>
+            {{ govukButton({
+                text: "Refresh",
+                classes: "govuk-button--secondary"
+            }) }}
         </div>
     </div>
 
@@ -203,34 +201,28 @@
         head: [
             {
                 text: "Attendee",
-                attributes: { "aria-sort": "none" },
-                classes: 'govuk-table__header'
+                attributes: { "aria-sort": "none" }
             },
             {
                 text: "Cell location",
-                attributes: { "aria-sort": "none" },
-                classes: 'govuk-table__header'
+                attributes: { "aria-sort": "none" }
             },
             {
                 html: "Session",
-                attributes: { "aria-sort": "ascending" },
-                classes: 'govuk-table__header'
+                attributes: { "aria-sort": "ascending" }
             },
             {
                 html: "Time recorded",
-                attributes: { "aria-sort": "none" },
-                classes: 'govuk-table__header'
-            },
+                attributes: { "aria-sort": "none" }
+            }  if status != "NotAttended",
             {
                 text: "Attendance details",
-                attributes: { "aria-sort": "none" },
-                classes: 'govuk-table__header'
+                attributes: { "aria-sort": "none" }
             },
             {
-                text: "",
-                classes: 'govuk-table__header'
-            }
-        ],
+                text: ""
+            } if status != "NotAttended"
+        ] | removeUndefined,
         rows: attendanceRows
     }) }}
 {% endmacro %}
@@ -240,13 +232,11 @@
         {{ govukTag({
             text: "Pay",
             classes: "govuk-tag--green"
-           })
-        }}
+        }) }}
     {% elseif attendance.status !=  'WAITING' %}
         {{ govukTag({
             text: "No pay",
             classes: "govuk-tag--red"
-           })
-        }}
+        }) }}
     {% endif %}
 {% endmacro %}
