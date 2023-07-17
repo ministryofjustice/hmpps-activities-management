@@ -30,7 +30,9 @@ export class TimePeriod {
 
 export default class SelectPeriodRoutes {
   GET = async (req: Request, res: Response): Promise<void> =>
-    res.render('pages/activities/daily-attendance-summary/select-period')
+    res.render('pages/activities/daily-attendance-summary/select-period', {
+      title: 'What date do you want to see the daily attendance summary for?',
+    })
 
   POST = async (req: Request, res: Response): Promise<void> => {
     if (req.body.datePresetOption === PresetDateOptions.TODAY) {

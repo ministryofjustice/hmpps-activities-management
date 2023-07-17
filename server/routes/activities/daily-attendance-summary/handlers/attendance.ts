@@ -84,16 +84,7 @@ export default class DailyAttendanceRoutes {
         this.includesSearchTerm(a.prisonerNumber, attendanceSummaryFilters.searchTerm),
     )
 
-    if (status === 'NotAttended') {
-      return res.render('pages/activities/daily-attendance-summary/not-attended', {
-        activityDate,
-        status,
-        attendees,
-        attendanceSummaryFilters,
-      })
-    }
-
-    return res.render('pages/activities/daily-attendance-summary/attended', {
+    return res.render('pages/activities/daily-attendance-summary/attendances', {
       activityDate,
       status,
       attendees,

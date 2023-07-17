@@ -61,7 +61,7 @@
         <form id="filter-form" method="POST" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
             <input type="hidden" name="activityDate" value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
-            <div class="moj-filter-layout__filter govuk-!-display-none-print">
+            <div class="moj-filter-layout__filter">
                 {{ mojFilter({
                     heading: {
                         text: 'Filter'
@@ -83,10 +83,9 @@
                     text: 'Search'
                 }
             }) }}
-            <hr class="print-only"/>
             <div class="moj-filter-layout__content">
-                <div class="moj-action-bar govuk-!-display-none-print">
-                    <div class="moj-action-bar__filter"></div>
+                <div class="moj-action-bar">
+                    <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
                 </div>
                 {{ govukTabs({
                     classes: "govuk-tabs--borderless",
@@ -165,7 +164,6 @@
                 },
                 {
                     html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + renderPayStatus(attendee.attendance),
-                    classes: 'govuk-!-display-none-print',
                     attributes: {
                         "data-qa": "attendance"
                     }
@@ -181,7 +179,7 @@
         {% if status === 'Attended' %}
             <h1 class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0">All attended</h1>
         {% else %}
-            <h1 class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0"> {{ attendanceRows | length }} {{ "absence" if attendanceRows.length == 1 else "absences" }}</h1>
+            <h1 class="govuk-heading-l govuk-grid-column-one-half govuk-!-padding-0">{{ attendanceRows | length }} {{ "absence" if attendanceRows.length == 1 else "absences" }}</h1>
         {% endif %}
     </div>
    <div>
