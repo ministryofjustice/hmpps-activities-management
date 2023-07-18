@@ -43,6 +43,7 @@ export default class CategoryRoutes {
       return res.validationFailed('categoryCode', `Start typing a name and select from the list`)
     }
 
+    req.session.appointmentJourney.appointmentName = category.description
     req.session.appointmentJourney.category = {
       code: category.code,
       description: category.description,

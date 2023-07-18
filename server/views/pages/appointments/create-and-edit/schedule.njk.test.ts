@@ -467,9 +467,10 @@ describe('Views - Create Appointment - Schedule', () => {
       $ = cheerio.load(compiledTemplate.render(viewContext))
 
       expect($('form').length).toBe(0)
-      expect($('.govuk-warning-text').text()).toContain(
-        'The list of attendees is empty. You must add at least one person to be able to schedule an appointment.',
-      )
+      expect($('h1').text().trim()).toEqual('There are no attendees for this appointment')
+      const paragraphs = $('p')
+      expect(paragraphs.text()).toContain('You’ve removed the last attendee for this appointment.')
+      expect(paragraphs.text()).toContain('You need to add someone to continue scheduling it.')
       const cta = $('.govuk-button')
       expect(cta.text().trim()).toBe('Add someone to the list')
       expect(cta.attr('href')).toBe('how-to-add-prisoners?preserveHistory=true')
@@ -760,12 +761,15 @@ describe('Views - Create Appointment - Schedule', () => {
       $ = cheerio.load(compiledTemplate.render(viewContext))
 
       expect($('form').length).toBe(0)
-      expect($('.govuk-warning-text').text()).toContain(
-        'The list of attendees is empty. You must add at least one person to be able to schedule an appointment.',
+      expect($('h1').text().trim()).toEqual('There are no attendees for this set')
+      const paragraphs = $('p')
+      expect(paragraphs.text()).toContain('You’ve removed the last attendee for this set of appointments.')
+      expect(paragraphs.text()).toContain(
+        'You need to add a new list of prison numbers to continue scheduling the set of back-to-backs.',
       )
       const cta = $('.govuk-button')
-      expect(cta.text().trim()).toBe('Add someone to the list')
-      expect(cta.attr('href')).toBe('/appointments/create/start-bulk')
+      expect(cta.text().trim()).toBe('Add a new list')
+      expect(cta.attr('href')).toBe('upload-bulk-appointment?preserveHistory=true')
     })
 
     it('should display scheduled events', () => {
