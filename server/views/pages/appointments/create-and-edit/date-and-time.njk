@@ -7,7 +7,14 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
-{% set pageTitle = appointmentJourneyTitle("Date and time of appointment", session.appointmentJourney) %}
+{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("change date and time", session.appointmentJourney) %}
+    {% set pageHeading = "Enter the new date and time" %}
+{% else %}
+    {% set pageTitle = appointmentJourneyTitle("Date and time of appointment", session.appointmentJourney) %}
+    {% set pageHeading = "When is the appointment?" %}
+{% endif %}
+
 {% set pageId = 'appointments-create-date-and-time-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -15,7 +22,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
-            <h1 class="govuk-heading-l">When is the appointment?</h1>
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ datePicker({
@@ -55,7 +62,7 @@
                     formResponses: formResponses.endTime or session.appointmentJourney.endTime
                 }) }}
                 {{ govukButton({
-                    text: "Confirm and save" if isCtaAcceptAndSave else "Continue"
+                    text: "Update appointment" if isCtaAcceptAndSave else "Continue"
                 }) }}
             </form>
         </div>

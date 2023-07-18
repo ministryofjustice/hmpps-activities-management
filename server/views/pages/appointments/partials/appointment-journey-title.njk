@@ -1,3 +1,7 @@
 {% macro appointmentJourneyTitle(pageName, appointmentJourney) -%}
-  {{ pageName }}
+  {% if appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {{ ("Repeating " if appointmentJourney.repeat == YesNo.YES else "One-off ") + pageName }}
+  {% else %}
+    {{ pageName }}
+  {% endif %}
 {%- endmacro %}

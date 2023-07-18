@@ -96,7 +96,7 @@ describe('Views - Appointments Management - Comment', () => {
 
     expect($('h1').text()).toContain('Change the extra information')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'You can edit information for attendees about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.',
+      'You can change the information about how to prepare for the appointment. Note that changes will not appear on any movement slips that have already been printed.',
     )
   })
 
@@ -113,6 +113,6 @@ describe('Views - Appointments Management - Comment', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('button').text().trim()).toEqual('Confirm and save')
+    expect($('button').text().trim()).toEqual('Update extra information')
   })
 })
