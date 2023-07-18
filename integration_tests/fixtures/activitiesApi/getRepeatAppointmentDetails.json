@@ -1,5 +1,6 @@
 {
   "id": 10,
+  "appointmentName": "Chaplaincy",
   "category": {
     "code": "CHAP",
     "description": "Chaplaincy"

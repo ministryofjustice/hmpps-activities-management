@@ -7,7 +7,7 @@ export default class AppointmentDetailsPage extends Page {
   }
 
   viewEditOccurrenceLink = (sequenceNumber: number) =>
-    cy.get(`[data-qa=view-and-edit-occurrence-${sequenceNumber}]`).contains('View and manage')
+    cy.get(`[data-qa=view-and-edit-occurrence-${sequenceNumber}]`).contains('Manage details')
 
   printMovementSlipLink = () => cy.get('[data-qa=print-movement-slip-link]')
 

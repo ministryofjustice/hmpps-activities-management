@@ -5,7 +5,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
-{% set pageTitle = "Appointments Management - Appointment Series Details" %}
+{% set pageTitle = appointment.appointmentName + ' series overview' %}
 {% set pageId = 'appointments-view-details-page' %}
 
 {% set occurrenceTableRows = [] %}
@@ -25,8 +25,9 @@
             attributes: { 'data-qa': 'occurrence-status-' + occurrence.sequenceNumber }
         }, {
             html: '<a href="/appointments/' + appointment.id + '/occurrence/' + occurrence.id + '"
-                class="govuk-link--no-visited-state">
-                View and manage<span class="govuk-visually-hidden"> appointment ' + occurrence.sequenceNumber + '</span>
+                class="govuk-link--no-visited-state">' +
+                ('Manage details' if not occurrence.isExpired and not occurrence.isCancelled else 'View') +
+                '<span class="govuk-visually-hidden">' + (' of' if not occurrence.isExpired and not occurrence.isCancelled) + ' appointment on ' + (occurrenceDate | formatDate('d MMM yyyy')) + '</span>
             </a>',
             classes: 'govuk-!-text-align-right',
             attributes: { 'data-qa': 'view-and-edit-occurrence-' + occurrence.sequenceNumber }
@@ -37,8 +38,8 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l" data-qa="caption">{{ appointment.appointmentName }} - {{ ("group" if appointment.appointmentType == AppointmentType.GROUP) + ("individual" if appointment.appointmentType == AppointmentType.INDIVIDUAL) }} series</span>
-            <h1 class="govuk-heading-l">Series overview</h1>
+            <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+            <h1 class="govuk-heading-l">{{ appointment.appointmentName }} - series overview</h1>
 
             {% if appointment.repeat %}
                 {{ govukSummaryList({

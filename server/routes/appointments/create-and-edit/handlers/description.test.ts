@@ -24,7 +24,13 @@ describe('Route Handlers - Create Appointment - Description', () => {
 
     req = {
       session: {
-        appointmentJourney: {},
+        appointmentJourney: {
+          appointmentName: 'Chaplaincy',
+          category: {
+            code: 'CHAP',
+            description: 'Chaplaincy',
+          },
+        },
       },
     } as unknown as Request
   })
@@ -49,9 +55,15 @@ describe('Route Handlers - Create Appointment - Description', () => {
       expect(req.session.appointmentJourney.descriptionOption).toEqual(YesNo.YES)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
-  })
 
-  describe('POST', () => {
+    it('should not change appointment name when description option is yes', async () => {
+      req.body = {
+        descriptionOption: YesNo.YES,
+      }
+      await handler.POST(req, res)
+      expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
+    })
+
     it('redirect as expected when the description option is no', async () => {
       req.body = {
         descriptionOption: YesNo.NO,
@@ -61,6 +73,15 @@ describe('Route Handlers - Create Appointment - Description', () => {
       expect(req.session.appointmentJourney.descriptionOption).toEqual(YesNo.NO)
       expect(req.session.appointmentJourney.description).toEqual('Appointment description')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+    })
+
+    it('should change appointment name when the description option is no', async () => {
+      req.body = {
+        descriptionOption: YesNo.NO,
+        description: 'Appointment description',
+      }
+      await handler.POST(req, res)
+      expect(req.session.appointmentJourney.appointmentName).toEqual('Appointment description (Chaplaincy)')
     })
   })
 

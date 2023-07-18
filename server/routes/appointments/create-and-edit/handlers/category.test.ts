@@ -119,7 +119,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
   })
 
   describe('POST', () => {
-    it('should save selected category in session and redirect to location page', async () => {
+    it('should save selected category in session, use category description as appointment name and redirect to location page', async () => {
       req.body = {
         categoryCode: 'MEDO',
       }
@@ -128,6 +128,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
 
       await handler.POST(req, res)
 
+      expect(req.session.appointmentJourney.appointmentName).toEqual('Medical - Doctor')
       expect(req.session.appointmentJourney.category).toEqual({
         code: 'MEDO',
         description: 'Medical - Doctor',

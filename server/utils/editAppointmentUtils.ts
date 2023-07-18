@@ -65,11 +65,113 @@ export const getAppointmentEditMessage = (
   }
 
   if (editAppointmentJourney.addPrisoners?.length > 1) {
-    return 'add the people to'
+    return 'add these people to'
   }
 
   if (editAppointmentJourney.removePrisoner) {
     return `remove ${convertToTitleCase(fullName(editAppointmentJourney.removePrisoner))} from`
+  }
+
+  return ''
+}
+
+export const getConfirmAppointmentEditCta = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
+    return 'Cancel appointment'
+  }
+
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+    return 'Delete appointment'
+  }
+
+  const updateProperties = []
+  if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('location')
+  }
+
+  if (hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('date')
+  }
+
+  if (
+    hasAppointmentStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
+    hasAppointmentEndTimeChanged(appointmentJourney, editAppointmentJourney)
+  ) {
+    updateProperties.push('time')
+  }
+
+  if (hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('extra information')
+  }
+
+  if (updateProperties.length > 0) {
+    return `Update ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')}`
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length === 1) {
+    return 'Confirm'
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length > 1) {
+    return 'Confirm'
+  }
+
+  if (editAppointmentJourney.removePrisoner) {
+    return 'Confirm removal'
+  }
+
+  return ''
+}
+
+export const getAppointmentEditApplyToCta = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
+    return 'Confirm'
+  }
+
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+    return 'Confirm'
+  }
+
+  const updateProperties = []
+  if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('location')
+  }
+
+  if (hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('date')
+  }
+
+  if (
+    hasAppointmentStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
+    hasAppointmentEndTimeChanged(appointmentJourney, editAppointmentJourney)
+  ) {
+    updateProperties.push('time')
+  }
+
+  if (hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('extra information')
+  }
+
+  if (updateProperties.length > 0) {
+    return `Update ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')}`
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length === 1) {
+    return 'Confirm'
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length > 1) {
+    return 'Confirm'
+  }
+
+  if (editAppointmentJourney.removePrisoner) {
+    return 'Confirm'
   }
 
   return ''

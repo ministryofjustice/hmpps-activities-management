@@ -2,6 +2,7 @@
   "id": 11,
   "appointmentId": 10,
   "sequenceNumber": 1,
+  "appointmentName": "Chaplaincy",
   "category": {
     "code": "CHAP",
     "description": "Chaplaincy"

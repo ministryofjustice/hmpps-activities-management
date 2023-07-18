@@ -5,7 +5,12 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Add extra information", session.appointmentJourney) %}
+{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("change extra information", session.appointmentJourney) %}
+{% else %}
+    {% set pageTitle = appointmentJourneyTitle("Add extra information", session.appointmentJourney) %}
+{% endif %}
+
 {% set pageId = 'appointments-create-comment-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -15,10 +20,10 @@
       {{ appointmentTypeCaption(session) }}
       {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
         <h1 class="govuk-heading-l">
-            <label class="govuk-label govuk-label--l" for="comment">Change the extra information for everyone attending the appointment (optional)</label>
+            <label class="govuk-label govuk-label--l" for="comment">Change the extra information (optional)</label>
         </h1>
         <p class="govuk-body" data-qa="first-paragraph">
-          You can edit information for attendees about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.
+            You can change the information about how to prepare for the appointment. Note that changes will not appear on any movement slips that have already been printed.
         </p>
       {% else %}
         <h1 class="govuk-heading-l">
@@ -43,7 +48,7 @@
         </div>
 
         {{ govukButton({
-          text: "Confirm and save" if isCtaAcceptAndSave else "Continue"
+          text: "Update extra information" if isCtaAcceptAndSave else "Continue"
         }) }}
       </form>
     </div>

@@ -23,8 +23,10 @@ export default class DescriptionRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { descriptionOption, description } = req.body
     req.session.appointmentJourney.descriptionOption = descriptionOption
-    if (descriptionOption === YesNo.NO) req.session.appointmentJourney.description = description
-    else req.session.appointmentJourney.description = null
+    if (descriptionOption === YesNo.NO) {
+      req.session.appointmentJourney.appointmentName = `${description} (${req.session.appointmentJourney.category.description})`
+      req.session.appointmentJourney.description = description
+    } else req.session.appointmentJourney.description = null
     res.redirectOrReturn(`location`)
   }
 }

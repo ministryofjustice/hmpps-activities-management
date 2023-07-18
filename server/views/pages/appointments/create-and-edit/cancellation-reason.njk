@@ -6,7 +6,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Cancellation Reason", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("show cancelled appointment", session.appointmentJourney) %}
 {% set pageId = 'appointments-cancel-reason-page' %}
 {% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId %}
 

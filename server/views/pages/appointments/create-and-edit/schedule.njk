@@ -3,12 +3,15 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 
-{% set pageTitle = appointmentJourneyTitle("Avoid clashes", session.appointmentJourney) %}
+{% if session.appointmentJourney.type == AppointmentType.BULK %}
+    {% set pageTitle = appointmentJourneyTitle("No attendees for set" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
+{% else %}
+    {% set pageTitle = appointmentJourneyTitle("No attendees" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
+{% endif %}
 {% set pageId = 'appointments-schedule-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -17,25 +20,37 @@
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
 
-            <h1 class="govuk-heading-l">Review scheduled events to avoid clashes</h1>
-
             {% if prisonerSchedules.length == 0 %}
-                {{ govukWarningText({
-                    text: "The list of attendees is empty. You must add at least one person to be able to schedule an appointment.",
-                    iconFallbackText: "Warning"
-                }) }}
+                {% if session.appointmentJourney.type == AppointmentType.BULK %}
+                    <h1 class="govuk-heading-l">There are no attendees for this set</h1>
+                    <p class="govuk-body">You’ve removed the last attendee for this set of appointments.</p>
+                    <p class="govuk-body">You need to add a new list of prison numbers to continue scheduling the set of back-to-backs.</p>
+                {% else %}
+                    <h1 class="govuk-heading-l">There are no attendees for this appointment</h1>
+                    <p class="govuk-body">You’ve removed the last attendee for this appointment.</p>
+                    <p class="govuk-body">You need to add someone to continue scheduling it.</p>
+                {% endif %}
 
                 {{ govukButton({
-                    text: "Add someone to the list",
-                    href: ("/appointments/create/start-bulk" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners?preserveHistory=true")
+                    text: ("Add a new list" if session.appointmentJourney.type == AppointmentType.BULK else "Add someone to the list"),
+                    href: ("upload-bulk-appointment?preserveHistory=true" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners?preserveHistory=true")
                 }) }}
             {% else %}
+                <h1 class="govuk-heading-l">Review scheduled events to avoid clashes</h1>
+
                 <form method="POST">
                     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                     {{ govukSummaryList({
                         rows: [
                             {
+                                key: {
+                                    text: "Appointment name"
+                                },
+                                value: {
+                                    text: session.appointmentJourney.appointmentName
+                                }
+                            }, {
                                 key: {
                                     text: "Attendee"
                                 },

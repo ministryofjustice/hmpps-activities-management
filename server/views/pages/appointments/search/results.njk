@@ -41,7 +41,7 @@
     {% endif %}
 
     <a href="/appointments/{{ result.appointmentId }}/occurrence/{{ result.appointmentOccurrenceId }}" class="govuk-link--no-visited-state">
-        View{{ " and manage" if not result.isExpired and not result.isCancelled }} <span class="govuk-visually-hidden"> appointment</span>
+        {{ "Manage details" if not result.isExpired and not result.isCancelled else "View" }} <span class="govuk-visually-hidden"> appointment</span>
     </a>
 {% endmacro %}
 

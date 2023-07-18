@@ -6,7 +6,8 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/add-prisoner-list.njk" import addPrisonerList %}
 
-{% set pageTitle = appointmentJourneyTitle("Apply to", session.appointmentJourney) %}
+{% set editMessage = getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle(editMessage + ' which appointments', session.appointmentJourney) %}
 {% set pageId = 'appointments-manage-apply-to-page' %}
 {% set backLinkHref = ('../' + property if property else "/appointments/" + appointmentId + "/occurrence/" + occurrenceId) %}
 
@@ -25,7 +26,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
-            <h1 class="govuk-heading-l">Which appointments do you want to {{ getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) }}?</h1>
+            <h1 class="govuk-heading-l">Which appointments do you want to {{ editMessage }}?</h1>
 
             {{ addPrisonerList(session.editAppointmentJourney.addPrisoners) }}
 
@@ -47,7 +48,7 @@
                 {% endif %}
 
                 {{ govukButton({
-                    text: "Confirm and add" if session.editAppointmentJourney.addPrisoners else ("Confirm and remove" if session.editAppointmentJourney.removePrisoner else "Confirm and save")
+                    text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney)
                 }) }}
             </form>
         </div>
