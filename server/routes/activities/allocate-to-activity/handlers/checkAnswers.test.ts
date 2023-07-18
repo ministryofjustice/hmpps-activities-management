@@ -1,8 +1,11 @@
 import { Request, Response } from 'express'
 
+import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import CheckAnswersRoutes from './checkAnswers'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import atLeast from '../../../../../jest.setup'
+import { Activity } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -34,6 +37,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
             payBand: { id: 1, alias: 'A' },
           },
           activity: {
+            activityId: 1,
             scheduleId: 1,
             name: 'Maths',
             location: 'Education room 1',
@@ -51,6 +55,10 @@ describe('Route Handlers - Allocate - Check answers', () => {
 
   describe('GET', () => {
     it('should render page with data from session', async () => {
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ inCell: false, onWing: false } as Activity)
+
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/check-answers', {
         prisonerName: 'Joe Bloggs',
@@ -61,6 +69,8 @@ describe('Route Handlers - Allocate - Check answers', () => {
         activityLocation: 'Education room 1',
         startDate: '1st January 2023',
         endDate: 'Not set',
+        inCell: false,
+        onWing: false,
       })
     })
   })

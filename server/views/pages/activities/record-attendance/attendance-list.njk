@@ -40,7 +40,7 @@
                     {{ instance.date | toDate | formatDate('EEEE, dd MMMM yyyy') }}
                 </span>
                 <span class="govuk-caption-l">
-                    {{ "In cell" if activity.inCell else activity.location }}
+                    {{ ("In cell" if activity.inCell) or ("On wing" if activity.onWing) or activity.location }}
                 </span>
             </h1>
 

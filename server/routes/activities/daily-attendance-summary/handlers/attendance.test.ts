@@ -129,7 +129,7 @@ describe('Route Handlers - Daily Attendance List', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/not-attended', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
         activityDate: date,
         status: 'NotAttended',
         attendees: [
@@ -208,7 +208,7 @@ describe('Route Handlers - Daily Attendance List', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attended', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
         activityDate: date,
         status: 'Attended',
         attendees: [
@@ -265,7 +265,7 @@ describe('Route Handlers - Daily Attendance List', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/not-attended', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
         activityDate: date,
         status: 'NotAttended',
         attendees: [

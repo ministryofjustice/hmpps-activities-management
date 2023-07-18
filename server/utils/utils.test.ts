@@ -777,6 +777,7 @@ describe('utils', () => {
           attendanceReasonCode: AttendanceReason.SUSPENDED,
           issuePayment: false,
           prisonerNumber: 'A12345A',
+          scheduledInstanceId: 1,
           activityId: 1,
           activitySummary: 'Maths Level 1',
           categoryName: 'Education',

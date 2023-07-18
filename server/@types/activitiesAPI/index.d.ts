@@ -412,6 +412,20 @@ export interface paths {
     /** Get the capacity and number of allocated slots in an activity */
     get: operations['getActivitySchedules']
   }
+  '/activities/{activityId}/filtered': {
+    /**
+     * Get an activity by its ID with limited instances (by date)
+     * @description Returns a single activity by activity ID with limited instances.
+     */
+    get: operations['getActivityByIdWithFilters']
+  }
+  '/activities/{activityId}/basic': {
+    /**
+     * DO NOT USE:  Get an activity key ids - testing only
+     * @description DO NOT USEL: Returns keys ids - testing only
+     */
+    get: operations['getActivityKeyIds']
+  }
 }
 
 export type webhooks = Record<string, never>
@@ -2058,10 +2072,10 @@ export interface components {
       minimumIncentiveLevel: string
       /**
        * Format: date
-       * @description The date on which this activity will start. From this date, any schedules will be created as real, planned instances
+       * @description The future date on which this activity will start. From this date, any schedules will be created as real, planned instances
        * @example 2022-12-23
        */
-      startDate?: string
+      startDate: string
       /**
        * Format: date
        * @description The date on which this activity ends. From this date, there will be no more planned instances of the activity. If null, the activity has no end date and will be scheduled indefinitely.
@@ -2525,6 +2539,12 @@ export interface components {
        */
       capacity: number
       activity: components['schemas']['ActivityLite']
+      /**
+       * Format: int32
+       * @description The number of weeks in the schedule
+       * @example 1
+       */
+      scheduleWeeks: number
       /** @description The slots associated with this activity schedule */
       slots: components['schemas']['ActivityScheduleSlot'][]
       /**
@@ -2568,6 +2588,12 @@ export interface components {
        * @example 123456
        */
       id: number
+      /**
+       * Format: int32
+       * @description The week of the schedule this slot relates to
+       * @example 1
+       */
+      weekNumber: number
       /**
        * Format: partial-time
        * @description The time that any instances of this schedule slot will start
@@ -3650,20 +3676,20 @@ export interface components {
       first?: boolean
       last?: boolean
       /** Format: int32 */
-      number?: number
-      sort?: components['schemas']['SortObject']
-      /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
+      /** Format: int32 */
+      number?: number
+      sort?: components['schemas']['SortObject']
       pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
       empty?: boolean
     }
     PageableObject: {
-      sort?: components['schemas']['SortObject']
       /** Format: int64 */
       offset?: number
+      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
@@ -3673,8 +3699,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -3783,6 +3809,12 @@ export interface components {
        */
       capacity: number
       activity: components['schemas']['ActivityLite']
+      /**
+       * Format: int32
+       * @description The number of weeks in the schedule
+       * @example 1
+       */
+      scheduleWeeks: number
       /** @description The slots associated with this activity schedule */
       slots: components['schemas']['ActivityScheduleSlot'][]
       /**
@@ -4361,6 +4393,12 @@ export interface components {
       prisonerNumber: string
       /**
        * Format: int64
+       * @description The id of the particular session instance for this attendance record
+       * @example 1
+       */
+      scheduledInstanceId: number
+      /**
+       * Format: int64
        * @description The id of the activity for this attendance record
        * @example 1
        */
@@ -4758,6 +4796,59 @@ export interface components {
        */
       updated?: string
       updatedBy?: components['schemas']['UserSummary']
+    }
+    /** @description A basic activity, schedule and category for use where limited IDs only are required */
+    ActivityBasic: {
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      activityId: number
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity schedule (assumes 1-2-1 with activity)
+       * @example 7654321
+       */
+      activityScheduleId: number
+      /**
+       * @description A brief summary description of this activity for use in forms and lists
+       * @example Maths level 1
+       */
+      summary?: string
+      /**
+       * Format: date
+       * @description The start date for this activity
+       * @example 2023-10-11
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description The end date for this activity (can be null)
+       * @example 2024-12-01
+       */
+      endDate?: string
+      /**
+       * Format: int64
+       * @description The internally generated category ID associated with this activity
+       * @example 1
+       */
+      categoryId: number
+      /**
+       * @description The category code that matches NOMIS program service code for this activity category
+       * @example SAA-EDUCATION
+       */
+      categoryCode: string
+      /**
+       * @description The category name
+       * @example Education
+       */
+      categoryName: string
     }
   }
   responses: never
@@ -6927,6 +7018,84 @@ export interface operations {
         }
       }
       /** @description Activity ID not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Get an activity by its ID with limited instances (by date)
+   * @description Returns a single activity by activity ID with limited instances.
+   */
+  getActivityByIdWithFilters: {
+    parameters: {
+      query?: {
+        /** @description The date of the earliest scheduled instances to include. Defaults to newer than 1 month ago. */
+        earliestSessionDate?: string
+      }
+      path: {
+        activityId: number
+      }
+    }
+    responses: {
+      /** @description Activity found */
+      200: {
+        content: {
+          'application/json': components['schemas']['Activity']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The activity for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * DO NOT USE:  Get an activity key ids - testing only
+   * @description DO NOT USEL: Returns keys ids - testing only
+   */
+  getActivityKeyIds: {
+    parameters: {
+      path: {
+        activityId: number
+      }
+    }
+    responses: {
+      /** @description Activity found */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivityBasic']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The activity for this ID was not found. */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']

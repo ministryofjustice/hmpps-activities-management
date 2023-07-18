@@ -13,174 +13,160 @@
 {% set backLinkHref = "summary?date=" + activityDate | formatDate('yyyy-MM-dd') %}
 
 {% block content %}
-    <div>
-         <h1 class="govuk-heading-l">Sessions cancelled</h1>
-    </div>
-    <div class="moj-filter-layout" data-module="activities-list-filter">
-        <form id="filter-form" method="POST" novalidate>
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-            <input type="hidden" name="activityDate" value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
-            {{ searchBar({
-                inputParams: {
-                    id: 'searchTerm',
-                    name: 'searchTerm',
-                    label: {
-                        text: 'Search by session name',
-                        classes: 'govuk-label--s'
-                    },
-                    value: attendanceSummaryFilters.searchTerm
+    <form id="filter-form" method="POST" novalidate>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="activityDate"
+               value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
+        {{ searchBar({
+            inputParams: {
+                id: 'searchTerm',
+                name: 'searchTerm',
+                label: {
+                    text: 'Search by session name',
+                    classes: 'govuk-label--s'
                 },
-                buttonParams: {
-                    text: 'Search'
-                }
+                value: attendanceSummaryFilters.searchTerm
+            },
+            buttonParams: {
+                text: 'Search'
+            }
+        }) }}
+        <div>
+            {{ govukTabs({
+                classes: "govuk-tabs--borderless",
+                items: [
+                    {
+                        label: "Daily summary",
+                        id: "day-tab",
+                        panel: {
+                            html: summaryHtml("DAY", "daily", activityDate)
+                        }
+                    },
+                    {
+                        label: "AM session",
+                        id: "am-tab",
+                        panel: {
+                            html: summaryHtml("AM", "morning", activityDate)
+                        }
+                    },
+                    {
+                        label: "PM session",
+                        id: "pm-tab",
+                        panel: {
+                            html: summaryHtml("PM", "afternoon", activityDate)
+                        }
+                    },
+                    {
+                        label: "ED session",
+                        id: "ed-tab",
+                        panel: {
+                            html: summaryHtml("ED", "evening", activityDate)
+                        }
+                    }
+                ]
             }) }}
-
-            <hr class="print-only"/>
-             <div class="moj-filter-layout__content">
-
-                            {{ govukTabs({
-                                classes: "govuk-tabs--borderless",
-                                items: [
-                                    {
-                                        label: "Daily summary",
-                                        id: "day-tab",
-                                        panel: {
-                                            html: summaryHtml("DAY", "Daily", activityDate)
-                                        }
-                                    },
-                                    {
-                                        label: "AM session",
-                                        id: "am-tab",
-                                        panel: {
-
-                                            html: summaryHtml("AM", "AM session", activityDate)
-                                        }
-                                    },
-                                    {
-                                        label: "PM session",
-                                        id: "pm-tab",
-                                        panel: {
-                                            html: summaryHtml("PM", "PM session", activityDate)
-                                        }
-                                    },
-                                    {
-                                        label: "ED session",
-                                        id: "ed-tab",
-                                        panel: {
-                                            html: summaryHtml("ED", "ED session", activityDate)
-                                        }
-                                    }
-                                ]
-                            }) }}
-
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
 {% endblock %}
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
-    <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-left">
-                        <p class="govuk-body govuk-!-margin-bottom-0">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</p>
-                    </div>
-                    <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
-                        <p class="govuk-body govuk-!-margin-bottom-0">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('dd MMMM yyyy') }} </p>
-                    </div>
+    {% set cancelledSessionsRows = [] %}
+    {% for cancelledSession in cancelledSessions %}
+        {% if timeSlot === 'DAY' or timeSlot === cancelledSession.timeSlot %}
+            {% set cancelledSessionsRows = (cancelledSessionsRows.push([
+                {
+                    attributes: { id: 'activity-' + loop.index, "data-sort-value": cancelledSession.summary },
+                    html: '<a href=/activities/attendance/activities/' + cancelledSession.id + '/attendance-list class="govuk-link govuk-link--no-visited-state">' + cancelledSession.summary + '</a>',
+                    classes: 'govuk-table_cell'
+                },
+                {
+                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": ("In cell" if cancelledSession.inCell) or ("On wing" if cancelledSession.onWing) or cancelledSession.location },
+                    text: ("In cell" if cancelledSession.inCell) or ("On wing" if cancelledSession.onWing) or cancelledSession.location,
+                    classes: 'govuk-table_cell'
+                },
+                {
+                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.timeSlot },
+                    text: cancelledSession.timeSlot,
+                    classes: 'govuk-table_cell'
+                },
+                {
+                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.reason },
+                    text: cancelledSession.reason,
+                    classes: 'govuk-table_cell'
+                },
+                {
+                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.allocated  },
+                    text: cancelledSession.allocated,
+                    classes: 'govuk-table__cell'
+                },
+                {
+                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.comment },
+                    text: cancelledSession.comment,
+                    classes: 'govuk-table_cell'
+                }
+            ]), cancelledSessionsRows) %}
+        {% endif %}
+    {% endfor %}
 
-                    {% set cancelledSessionsRows = [] %}
-                    {% for cancelledSession in cancelledSessions %}
-                        {% if timeSlot === 'DAY' or timeSlot === cancelledSession.timeSlot %}
-                            {% set cancelledSessionsRows = (cancelledSessionsRows.push([
-                                {
-                                    attributes: { id: 'activity-' + loop.index, "data-sort-value": cancelledSession.summary },
-                                    html: '<a href=/activities/attendance/activities/' + cancelledSession.id + '/attendance-list class="govuk-link govuk-link--no-visited-state">' + cancelledSession.summary + '</a>',
-                                    classes: 'govuk-table_cell'
-                                },
-                                {
-                                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.location },
-                                    text: cancelledSession.location,
-                                    classes: 'govuk-table_cell'
-                                },
-                                {
-                                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.timeSlot },
-                                    text: cancelledSession.timeSlot,
-                                    classes: 'govuk-table_cell'
-                                },
-                                {
-                                   attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.reason },
-                                   text: cancelledSession.reason,
-                                   classes: 'govuk-table_cell'
-                                },
-                                {
-                                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.allocated  },
-                                    text: cancelledSession.allocated,
-                                    classes: 'govuk-table__cell'
-                                },
-                                {
-                                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.comment },
-                                    text: cancelledSession.comment,
-                                    classes: 'govuk-table_cell'
-                                }
-                            ]), cancelledSessionsRows) %}
-                        {% endif %}
-                    {% endfor %}
-                      <div>
-                        <h3 class="govuk-heading-s govuk-grid-column-one-half govuk-!-padding-0">{{ cancelledSessionsRows | length }} session{% if cancelledSessionsRows | length != 1 %}s{% endif %} cancelled</h3>
-                      </div>
-                       <div>
-                              <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-!-text-align-right">
-                                    <div class="govuk-button-group float-right">
-                                          {{ govukButton({
-                                              text: "Refresh",
-                                              classes: "govuk-button--secondary"
-                                          }) }}
-                                    </div>
-                              </div>
-                          </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-l">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</span>
+            <h1 class="govuk-heading-xl">{{ cancelledSessionsRows | length }} {{ timeSlotDescription }}
+                session{% if cancelledSessionsRows | length != 1 %}s{% endif %} cancelled</h1>
+        </div>
+        <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
+            <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }}
+                on {{ now | formatDate('dd MMMM yyyy') }}</div>
+            {{ govukButton({
+                text: "Refresh",
+                classes: "govuk-button--secondary"
+            }) }}
+        </div>
+    </div>
 
-                    {{ govukTable({
-                        attributes: {
-                            'data-module': 'moj-sortable-table',
-                            id: 'attendee-list-table'
-                        },
-                        classes: "alternating-row-shading fixed-layout-table",
-                        captionClasses: "govuk-visually-hidden",
-                        head: [
-                            {
-                                text: "Activity",
-                                attributes: { "aria-sort": "ascending" },
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                text: "Location",
-                                attributes: { "aria-sort": "none" },
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                html: "Session",
-                                attributes: { "aria-sort": "none" },
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                text: "Reason",
-                                attributes: { "aria-sort": "none" },
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                text: "Allocated",
-                                attributes: { "aria-sort": "none" },
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                html: "Comments",
-                                attributes: { "aria-sort": "none" },
-                                classes: 'govuk-table__header'
-                            }
+    {{ govukTable({
+        attributes: {
+            'data-module': 'moj-sortable-table',
+            id: 'attendee-list-table'
+        },
+        classes: "alternating-row-shading fixed-layout-table",
+        captionClasses: "govuk-visually-hidden",
+        head: [
+            {
+                text: "Activity",
+                attributes: { "aria-sort": "ascending" },
+                classes: 'govuk-table__header'
+            },
+            {
+                text: "Location",
+                attributes: { "aria-sort": "none" },
+                classes: 'govuk-table__header'
+            },
+            {
+                html: "Session",
+                attributes: { "aria-sort": "none" },
+                classes: 'govuk-table__header'
+            },
+            {
+                text: "Reason",
+                attributes: { "aria-sort": "none" },
+                classes: 'govuk-table__header'
+            },
+            {
+                text: "Allocated",
+                attributes: { "aria-sort": "none" },
+                classes: 'govuk-table__header'
+            },
+            {
+                html: "Comments",
+                attributes: { "aria-sort": "none" },
+                classes: 'govuk-table__header'
+            }
 
-                        ],
-                        rows: cancelledSessionsRows
-                    }) }}
+        ],
+        rows: cancelledSessionsRows if cancelledSessionsRows | length > 0 else [[{
+            html: "No cancelled sessions",
+            attributes: { "colspan": "6" },
+            classes: 'govuk-table_cell govuk-!-text-align-centre'
+        }]]
+    }) }}
 {% endmacro %}
-
-
-
-
-

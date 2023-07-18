@@ -22,6 +22,8 @@ export default class CancelledSessionsRoutes {
       .map(session => ({
         id: session.id,
         summary: session.activitySchedule.activity.summary,
+        inCell: session.activitySchedule.activity.inCell,
+        onWing: session.activitySchedule.activity.onWing,
         location: session.activitySchedule.internalLocation?.description,
         timeSlot: getTimeSlotFromTime(session.startTime).toUpperCase(),
         reason: session.cancelledReason,

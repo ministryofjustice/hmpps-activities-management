@@ -26,7 +26,9 @@ describe('Route Handlers - Select period', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/select-period')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/select-period', {
+        title: 'What date do you want to see the daily attendance summary for?',
+      })
     })
   })
 

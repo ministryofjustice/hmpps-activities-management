@@ -40,7 +40,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
         startTime: '10:00',
         endTime: '11:00',
         activitySchedule: {
-          activity: { summary: 'Maths level 1', category: { code: 'SAA_EDUCATION' }, inCell: true, allocated: 4 },
+          activity: { summary: 'Maths level 1', category: { code: 'SAA_EDUCATION' }, inCell: false, allocated: 4 },
           description: 'Houseblock 1',
           internalLocation: { description: 'Classroom' },
         },
@@ -113,6 +113,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
           {
             id: 1,
             summary: 'Maths level 1',
+            inCell: false,
             location: 'Classroom',
             timeSlot: 'AM',
             reason: 'Teacher unavailable',
@@ -122,6 +123,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
           {
             id: 3,
             summary: 'Packing',
+            inCell: false,
             location: 'Classroom 2',
             timeSlot: 'PM',
             reason: 'Teacher unavailable',
@@ -160,6 +162,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
           {
             id: 1,
             summary: 'Maths level 1',
+            inCell: false,
             location: 'Classroom',
             timeSlot: 'AM',
             reason: 'Teacher unavailable',
