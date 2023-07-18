@@ -27,7 +27,8 @@
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
-                    html: cancelledSessionHeadingHtml
+                    html: cancelledSessionHeadingHtml,
+                    classes: 'govuk-!-display-none-print'
                 }) }}
             {% endif %}
 
@@ -146,7 +147,8 @@
                     html: ''
                 },
                 {
-                    html: renderViewLink(attendee.attendance)
+                    html: renderViewLink(attendee.attendance),
+                    classes: 'govuk-!-display-none-print'
                 }
             ]
         }), rows) %}
