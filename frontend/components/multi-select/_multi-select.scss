@@ -1,5 +1,9 @@
 .multi-select {
   .govuk-table__head {
+    @media print {
+      position: revert;
+    }
+
     position: sticky;
     z-index: 999;
     top: -1px;
