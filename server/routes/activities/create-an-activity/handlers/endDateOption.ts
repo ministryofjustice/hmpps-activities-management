@@ -18,7 +18,7 @@ export default class EndDateOptionRoutes {
     if (req.body.endDateOption && req.body.endDateOption === 'yes') {
       res.redirectOrReturn(`end-date`)
     } else {
-      res.redirectOrReturn(`days-and-times`)
+      res.redirectOrReturn('schedule-frequency')
     }
   }
 }

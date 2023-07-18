@@ -51,6 +51,6 @@ export default class EndDateRoutes {
       const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
-    } else res.redirectOrReturn(`days-and-times`)
+    } else res.redirectOrReturn('schedule-frequency')
   }
 }
