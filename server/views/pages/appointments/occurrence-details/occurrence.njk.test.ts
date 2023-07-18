@@ -43,17 +43,18 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     }
   })
 
-  it('should display category and date in heading', () => {
-    viewContext.occurrence.category = {
-      code: 'TS1',
-      description: 'Test Category',
-    }
+  it('should display name in heading', () => {
+    viewContext.occurrence.appointmentName = 'Test Category'
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('[data-qa=heading]').text().trim()).toBe(
-      `Test Category appointment - ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`,
-    )
+    expect($('[data-qa=heading]').text().trim()).toBe('Test Category')
+  })
+
+  it('should display date in sub heading', () => {
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=sub-heading]').text().trim()).toBe(formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
   })
 
   it('print movement slip link should open in new tab', () => {

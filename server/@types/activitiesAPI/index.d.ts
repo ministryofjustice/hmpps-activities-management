@@ -4173,6 +4173,13 @@ export interface components {
        */
       updated?: string
       updatedBy?: components['schemas']['UserSummary']
+      /**
+       * Format: date-time
+       * @description
+       *     The date and time this appointment occurrence was cancelled
+       */
+      cancelled?: string
+      cancelledBy?: components['schemas']['UserSummary']
     }
     /** @description Describes a set of appointments created as part of a single bulk operation */
     BulkAppointmentDetails: {

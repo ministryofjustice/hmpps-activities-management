@@ -182,7 +182,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($('[data-qa=result-prisoner-count-0]').text().trim()).toContain('A1111AA')
     expect($('[data-qa=result-prisoner-count-0]').text().trim()).toContain('1-1-1')
     expect($('[data-qa=result-sequence-number-0]').text().trim()).toEqual('1 of 1')
-    expect($('[data-qa=view-and-edit-result-0] > a').text()).toContain('View and manage')
+    expect($('[data-qa=view-and-edit-result-0] > a').text()).toContain('Manage details')
     expect($('[data-qa=view-and-edit-result-0] > a').attr('href')).toEqual('/appointments/1/occurrence/2')
 
     expect($('[data-qa=result-time-1]').text().trim()).toEqual('13:00 to 14:30')
@@ -191,7 +191,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($('[data-qa=result-prisoner-count-1]').text().trim()).toEqual('3')
     expect($('[data-qa=result-sequence-number-1]').text().trim()).toEqual('2 of 6')
     expect($('[data-qa=view-and-edit-result-1] > a').text()).toContain('View')
-    expect($('[data-qa=view-and-edit-result-1] > a').text()).not.toContain('and manage')
+    expect($('[data-qa=view-and-edit-result-1] > a').text()).not.toContain('Manage details')
     expect($('[data-qa=view-and-edit-result-1] > a').attr('href')).toEqual('/appointments/2/occurrence/3')
 
     expect($('[data-qa=result-time-2]').text().trim()).toEqual('16:00 to 17:30')
@@ -200,7 +200,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($('[data-qa=result-prisoner-count-2]').text().trim()).toEqual('3')
     expect($('[data-qa=result-sequence-number-2]').text().trim()).toEqual('2 of 6')
     expect($('[data-qa=view-and-edit-result-2] > a').text()).toContain('View')
-    expect($('[data-qa=view-and-edit-result-2] > a').text()).not.toContain('and manage')
+    expect($('[data-qa=view-and-edit-result-2] > a').text()).not.toContain('Manage details')
     expect($('[data-qa=view-and-edit-result-2] > a').attr('href')).toEqual('/appointments/3/occurrence/4')
   })
 

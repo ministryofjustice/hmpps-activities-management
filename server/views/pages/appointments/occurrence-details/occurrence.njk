@@ -4,12 +4,11 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
 
-{% set headingAndTitle = occurrence.category.description + ' appointment - ' + occurrence.startDate | toDate | formatDate("EEEE, d MMMM yyyy") %}
-
-{% set pageTitle = headingAndTitle %}
+{% set pageTitle = occurrence.appointmentName + (' single' if occurrence.repeat) + ' appointment details' %}
 {% set pageId = 'appointment-occurrence-view-details-page' %}
 
 {% set occurenceLink = '/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.id  %}
@@ -17,11 +16,20 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-            <h1 class="govuk-heading-l" data-qa='heading'>{{ headingAndTitle }}</h1>
             {% if occurrence.isCancelled %}
-                <p>{{ govukTag({ text: "Cancelled" }) if occurrence.isCancelled }}</p>
+                {% set cancelledAppointmentHeadingHtml %}
+                    <h3 class="govuk-notification-banner__heading">Appointment cancelled</h3>
+                    <p class="govuk-body">This appointment was cancelled by {{ occurrence.cancelledBy | fullName | toTitleCase | initialiseName }} on {{ occurrence.cancelled | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate("EEEE, d MMMM yyyy") }}</p>
+                {% endset %}
+                {{ govukNotificationBanner({
+                    type: 'important',
+                    html: cancelledAppointmentHeadingHtml
+                }) }}
             {% endif %}
+
+            <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ occurrence.appointmentName }}</h1>
+            <p class="govuk-body govuk-!-margin-top-1" data-qa='sub-heading'>{{ occurrence.startDate | toDate | formatDate("EEEE, d MMMM yyyy") }}</p>
 
             {% if occurrence.bulkAppointment %}
                 {{ govukInsetText({
