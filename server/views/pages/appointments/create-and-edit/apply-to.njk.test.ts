@@ -56,6 +56,10 @@ describe('Views - Appointments Management - Apply to', () => {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
+          location: {
+            id: 123,
+            description: 'Original location',
+          },
           startDate: {
             day: weekTomorrow.getDate(),
             month: weekTomorrow.getMonth() + 1,
@@ -150,7 +154,7 @@ describe('Views - Appointments Management - Apply to', () => {
     expect($('[data-qa=prisoner-cell-location-1]').text().trim()).toEqual('2-2-2')
   })
 
-  it('call to action is confirm and add when adding prisoners', () => {
+  it('call to action is add attendee when adding prisoners', () => {
     viewContext.session.editAppointmentJourney.addPrisoners = [
       {
         number: 'A1234BC',
@@ -161,10 +165,10 @@ describe('Views - Appointments Management - Apply to', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('button').text().trim()).toEqual('Confirm and add')
+    expect($('button').text().trim()).toEqual('Add attendee')
   })
 
-  it('call to action is confirm and add when removing a prisoner', () => {
+  it('call to action is remove attendee when removing a prisoner', () => {
     viewContext.session.editAppointmentJourney.removePrisoner = {
       prisonerNumber: 'A1234BC',
       bookingId: 1,
@@ -176,13 +180,18 @@ describe('Views - Appointments Management - Apply to', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('button').text().trim()).toEqual('Confirm and remove')
+    expect($('button').text().trim()).toEqual('Remove attendee')
   })
 
   it('call to action is confirm and save when changing a property', () => {
+    viewContext.session.editAppointmentJourney.location = {
+      id: 456,
+      description: 'Updated location',
+    }
+
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('button').text().trim()).toEqual('Confirm and save')
+    expect($('button').text().trim()).toEqual('Update location')
   })
 
   it('should show frequency text when set', () => {

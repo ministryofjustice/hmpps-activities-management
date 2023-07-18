@@ -75,6 +75,108 @@ export const getAppointmentEditMessage = (
   return ''
 }
 
+export const getConfirmAppointmentEditCta = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
+    return 'Cancel appointment'
+  }
+
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+    return 'Delete appointment'
+  }
+
+  const updateProperties = []
+  if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('location')
+  }
+
+  if (hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('date')
+  }
+
+  if (
+    hasAppointmentStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
+    hasAppointmentEndTimeChanged(appointmentJourney, editAppointmentJourney)
+  ) {
+    updateProperties.push('time')
+  }
+
+  if (hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('extra information')
+  }
+
+  if (updateProperties.length > 0) {
+    return `Update ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')}`
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length === 1) {
+    return 'Confirm add attendee'
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length > 1) {
+    return 'Confirm add attendees'
+  }
+
+  if (editAppointmentJourney.removePrisoner) {
+    return 'Confirm removal'
+  }
+
+  return ''
+}
+
+export const getAppointmentEditApplyToCta = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
+    return 'Cancel selection'
+  }
+
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+    return 'Delete selection'
+  }
+
+  const updateProperties = []
+  if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('location')
+  }
+
+  if (hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('date')
+  }
+
+  if (
+    hasAppointmentStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
+    hasAppointmentEndTimeChanged(appointmentJourney, editAppointmentJourney)
+  ) {
+    updateProperties.push('time')
+  }
+
+  if (hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('extra information')
+  }
+
+  if (updateProperties.length > 0) {
+    return `Update ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')}`
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length === 1) {
+    return 'Add attendee'
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length > 1) {
+    return 'Add attendees'
+  }
+
+  if (editAppointmentJourney.removePrisoner) {
+    return 'Remove attendee'
+  }
+
+  return ''
+}
+
 export const getAppointmentApplyToOptions = (req: Request) => {
   const { appointmentJourney, editAppointmentJourney } = req.session
 

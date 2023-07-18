@@ -6,7 +6,8 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/add-prisoner-list.njk" import addPrisonerList %}
 
-{% set pageTitle = appointmentJourneyTitle("Confirm Edit", session.appointmentJourney) %}
+{% set editMessage = getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle(editMessage + ' this appointment', session.appointmentJourney) %}
 {% set pageId = 'appointments-confirm-edit-page' %}
 {% set backLinkHref = ("review-prisoners" if session.editAppointmentJourney.addPrisoners else "/appointments/" + appointmentId + "/occurrence/" + occurrenceId) %}
 
@@ -14,7 +15,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
-            <h1 class="govuk-heading-l">Are you sure you want to {{ getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) }} this appointment - {{ startDate | formatDate('EEEE, d MMMM yyyy') }}?</h1>
+            <h1 class="govuk-heading-l">Are you sure you want to {{ editMessage }} this appointment - {{ startDate | formatDate('EEEE, d MMMM yyyy') }}?</h1>
 
             {{ addPrisonerList(session.editAppointmentJourney.addPrisoners) }}
 
@@ -36,7 +37,7 @@
                 }) }}
 
                 {{ govukButton({
-                    text: "Continue"
+                    text: getConfirmAppointmentEditCta(session.appointmentJourney, session.editAppointmentJourney)
                 }) }}
             </form>
         </div>

@@ -5,7 +5,14 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Add attendees", session.appointmentJourney) %}
+{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("add more attendees", session.appointmentJourney) %}
+    {% set pageHeading = "How do you want to select additional attendees?" %}
+{% else %}
+    {% set pageTitle = appointmentJourneyTitle("Add attendees", session.appointmentJourney) %}
+    {% set pageHeading = "How do you want to select attendees?" %}
+{% endif %}
+
 {% set pageId = 'appointments-create-how-to-add-prisoners-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -21,7 +28,7 @@
                     name: "howToAdd",
                     fieldset: {
                         legend: {
-                            text: "How do you want to select attendees?",
+                            text: pageHeading,
                             classes: "govuk-label--l",
                             isPageHeading: true
                         }

@@ -7,7 +7,11 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 
-{% set pageTitle = appointmentJourneyTitle("Avoid clashes", session.appointmentJourney) %}
+{% if session.appointmentJourney.type == AppointmentType.BULK %}
+    {% set pageTitle = appointmentJourneyTitle("No attendees for set" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
+{% else %}
+    {% set pageTitle = appointmentJourneyTitle("No attendees" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
+{% endif %}
 {% set pageId = 'appointments-schedule-page' %}
 {% set backLinkHref = backLinkHref %}
 

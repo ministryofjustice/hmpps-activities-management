@@ -43,7 +43,11 @@ import { EventSource, EventType, YesNo } from '../@types/activities'
 import { AppointmentType, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentCancellationReason, AppointmentRepeatPeriod, AppointmentApplyTo } from '../@types/appointments'
 import TimeSlot from '../enum/timeSlot'
-import { getAppointmentEditMessage } from '../utils/editAppointmentUtils'
+import {
+  getAppointmentEditApplyToCta,
+  getAppointmentEditMessage,
+  getConfirmAppointmentEditCta,
+} from '../utils/editAppointmentUtils'
 import ServiceName from '../enum/serviceName'
 
 const production = process.env.NODE_ENV === 'production'
@@ -152,6 +156,8 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('AppointmentApplyTo', AppointmentApplyTo)
   njkEnv.addGlobal('AppointmentCancellationReason', AppointmentCancellationReason)
   njkEnv.addGlobal('getAppointmentEditMessage', getAppointmentEditMessage)
+  njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)
+  njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)
 
   return njkEnv
