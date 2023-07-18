@@ -15,7 +15,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% set pageHeading = "Workplace risk assessment levels: which ones are suitable for this activity?" %}
+                {% set pageHeading = "Workplace risk assessment levels: who is suitable for this activity?" %}
                 {% if session.req.query.fromEditActivity %}
                     {% set pageHeading = "Change workplace risk assessment levels" %}
                 {% endif %}
