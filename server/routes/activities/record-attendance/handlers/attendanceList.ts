@@ -67,6 +67,7 @@ export default class AttendanceListRoutes {
         name: instance.activitySchedule.activity.summary,
         location: instance.activitySchedule.internalLocation?.description,
         inCell: instance.activitySchedule.activity.inCell,
+        onWing: instance.activitySchedule.activity.onWing,
         ...getAttendanceSummary(instance.attendances),
       },
       instance,

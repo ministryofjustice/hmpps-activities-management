@@ -340,7 +340,7 @@ export const getAttendanceSummary = (attendance: Attendance[]) => {
 }
 
 export const toFixed = (num: number, decimals = 2) => {
-  if (!num) return null
+  if (!num && num !== 0) return null
   return num.toFixed(decimals)
 }
 
@@ -800,3 +800,5 @@ export const setAttribute = (object: { [key: string]: string }, key: string, val
   const newObject = { ...object, [key]: value }
   return newObject
 }
+
+export const removeUndefined = (arr: object[]) => arr.filter(Boolean)

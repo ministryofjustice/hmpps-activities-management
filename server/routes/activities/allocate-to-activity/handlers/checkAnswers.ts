@@ -9,6 +9,9 @@ export default class CheckAnswersRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { inmate, activity } = req.session.allocateJourney
+    const { user } = res.locals
+
+    const activityEntity = await this.activitiesService.getActivity(activity.activityId, user)
 
     const startDate = formatDate(
       plainToInstance(SimpleDate, req.session.allocateJourney.startDate).toRichDate(),
@@ -24,6 +27,8 @@ export default class CheckAnswersRoutes {
       cellLocation: inmate.cellLocation,
       payBand: inmate.payBand.alias,
       activityName: activity.name,
+      inCell: activityEntity.inCell,
+      onWing: activityEntity.onWing,
       activityLocation: activity.location,
       startDate,
       endDate,

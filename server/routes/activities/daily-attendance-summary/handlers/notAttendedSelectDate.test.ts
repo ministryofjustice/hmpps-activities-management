@@ -30,7 +30,9 @@ describe('Not attended routes - select date', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/not-attended/select-date')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/select-period', {
+        title: 'Not attended yet list: select a date',
+      })
     })
   })
 
@@ -39,7 +41,7 @@ describe('Not attended routes - select date', () => {
       const today = simpleDateFromDate(new Date())
 
       req.body = {
-        dateOption: DateOptions.TODAY,
+        datePresetOption: DateOptions.TODAY,
       }
 
       await handler.POST(req, res)
@@ -53,7 +55,7 @@ describe('Not attended routes - select date', () => {
       const yesterday = simpleDateFromDate(addDays(new Date(), -1))
 
       req.body = {
-        dateOption: DateOptions.YESTERDAY,
+        datePresetOption: DateOptions.YESTERDAY,
       }
 
       await handler.POST(req, res)
@@ -67,7 +69,7 @@ describe('Not attended routes - select date', () => {
       const selectedDate = simpleDateFromDate(addDays(new Date(), -14))
 
       req.body = {
-        dateOption: DateOptions.OTHER,
+        datePresetOption: DateOptions.OTHER,
         date: selectedDate,
       }
 
@@ -86,23 +88,23 @@ describe('Not attended routes - select date', () => {
       const requestObject = plainToInstance(NotAttendedDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'dateOption', error: 'Select a date option' }])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date option' }])
     })
 
     it('validation fails if invalid values are entered', async () => {
       const body = {
-        dateOption: 'invalid',
+        datePresetOption: 'invalid',
       }
 
       const requestObject = plainToInstance(NotAttendedDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'dateOption', error: 'Select a date option' }])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date option' }])
     })
 
     it('validation fails if date option is other and a date is not provided', async () => {
       const body = {
-        dateOption: DateOptions.OTHER,
+        datePresetOption: DateOptions.OTHER,
         date: {},
       }
 
@@ -118,7 +120,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation fails if preset option is other and a bad date is provided', async () => {
       const body = {
-        dateOption: DateOptions.OTHER,
+        datePresetOption: DateOptions.OTHER,
         date: { day: 31, month: 2, year: 2022 },
       }
 
@@ -130,7 +132,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation fails if date is more than 60 days into the future', async () => {
       const body = {
-        dateOption: DateOptions.OTHER,
+        datePresetOption: DateOptions.OTHER,
         date: simpleDateFromDate(addDays(new Date(), 61)),
       }
 
@@ -142,7 +144,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation fails if date is more than 14 days into the past', async () => {
       const body = {
-        dateOption: DateOptions.OTHER,
+        datePresetOption: DateOptions.OTHER,
         date: simpleDateFromDate(addDays(new Date(), -15)),
       }
 
@@ -154,7 +156,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation passes if validate date option selected', async () => {
       const body = {
-        dateOption: DateOptions.TODAY,
+        datePresetOption: DateOptions.TODAY,
       }
 
       const requestObject = plainToInstance(NotAttendedDate, body)
@@ -165,7 +167,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation passes if validate date option is other and valid date entered', async () => {
       const body = {
-        dateOption: DateOptions.OTHER,
+        datePresetOption: DateOptions.OTHER,
         date: simpleDateFromDate(addDays(new Date(), -14)),
       }
 

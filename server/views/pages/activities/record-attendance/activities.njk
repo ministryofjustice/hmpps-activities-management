@@ -174,7 +174,7 @@
                         id: 'location-' + tableNumber + '-' + loop.index,
                         "data-sort-value": activity.location
                     },
-                    text: "In cell" if activity.inCell else activity.location
+                    text: ("In cell" if activity.inCell) or ("On wing" if activity.onWing) or activity.location
                 },
                 {
                     attributes: {

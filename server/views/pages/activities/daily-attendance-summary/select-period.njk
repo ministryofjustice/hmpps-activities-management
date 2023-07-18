@@ -4,7 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "components/datePicker.njk" import datePicker %}
 
-{% set pageTitle = applicationName + " - Daily attendance summary" %}
+{% set pageTitle = applicationName + " - " + title %}
 {% set pageId = 'select-period-page' %}
 {% set backLinkHref = "/activities/attendance" %}
 
@@ -17,7 +17,7 @@
                     name: "datePresetOption",
                     fieldset: {
                         legend: {
-                            text: "What date do you want to see the daily attendance summary for?",
+                            text: title,
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--xl"
                         }

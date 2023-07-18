@@ -15,9 +15,9 @@ export enum DateOptions {
 
 export class NotAttendedDate {
   @IsEnum(DateOptions, { message: 'Select a date option' })
-  dateOption: DateOptions
+  datePresetOption: DateOptions
 
-  @ValidateIf(o => o.dateOption === DateOptions.OTHER)
+  @ValidateIf(o => o.datePresetOption === DateOptions.OTHER)
   @Type(() => SimpleDate)
   @ValidateNested()
   @IsValidDate({ message: 'Enter a valid date' })
@@ -28,22 +28,18 @@ export class NotAttendedDate {
 
 export default class SelectDateRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/activities/not-attended/select-date')
+    res.render('pages/activities/daily-attendance-summary/select-period', {
+      title: 'Not attended yet list: select a date',
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const {
-      dateOption,
-      date,
-    }: {
-      dateOption: DateOptions
-      date: SimpleDate
-    } = req.body
+    const { datePresetOption, date } = req.body
 
     let selectedDate
-    if (dateOption === DateOptions.OTHER) {
+    if (datePresetOption === DateOptions.OTHER) {
       selectedDate = date
-    } else if (dateOption === DateOptions.YESTERDAY) {
+    } else if (datePresetOption === DateOptions.YESTERDAY) {
       selectedDate = simpleDateFromDate(addDays(new Date(), -1))
     } else {
       selectedDate = simpleDateFromDate(new Date())
