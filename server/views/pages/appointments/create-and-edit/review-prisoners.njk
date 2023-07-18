@@ -30,8 +30,8 @@
             {% if prisoners.length == 0 %}
                 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
                     <h1 class="govuk-heading-l">There are no attendees to add</h1>
-                    <p class="govuk-body">You’ve removed the last attendee to add.</p>
-                    <p class="govuk-body">You need to add someone to continue updating.</p>
+                    <p class="govuk-body">You’ve removed the last new attendee.</p>
+                    <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}/occurrence/{{ occurrenceId }}" class="govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
                 {% elseif session.appointmentJourney.type == AppointmentType.BULK %}
                     <h1 class="govuk-heading-l">There are no attendees for this set</h1>
                     <p class="govuk-body">You’ve removed the last attendee for this set of appointments.</p>
@@ -44,7 +44,6 @@
             {% else %}
                 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
                     <h1 class="govuk-heading-l">{{ "Review the additional attendee" + ("s" if prisoners.length > 1) }}</h1>
-                    <p class="govuk-body">You can remove anyone who is not required.</p>
                 {% elseif session.appointmentJourney.type == AppointmentType.BULK %}
                     <h1 class="govuk-heading-l">Review who you’re scheduling appointments for</h1>
                     <p class="govuk-body">You can remove anyone who is not required. If you want to add someone, change the list of prison numbers in the CSV file and <a href="upload-bulk-appointment" class="govuk-link--no-visited-state">upload it again</a>.</p>

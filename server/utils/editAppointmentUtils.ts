@@ -65,7 +65,7 @@ export const getAppointmentEditMessage = (
   }
 
   if (editAppointmentJourney.addPrisoners?.length > 1) {
-    return 'add the people to'
+    return 'add these people to'
   }
 
   if (editAppointmentJourney.removePrisoner) {
@@ -112,11 +112,11 @@ export const getConfirmAppointmentEditCta = (
   }
 
   if (editAppointmentJourney.addPrisoners?.length === 1) {
-    return 'Confirm add attendee'
+    return 'Confirm'
   }
 
   if (editAppointmentJourney.addPrisoners?.length > 1) {
-    return 'Confirm add attendees'
+    return 'Confirm'
   }
 
   if (editAppointmentJourney.removePrisoner) {
@@ -131,11 +131,11 @@ export const getAppointmentEditApplyToCta = (
   editAppointmentJourney: EditAppointmentJourney,
 ) => {
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
-    return 'Cancel selection'
+    return 'Confirm'
   }
 
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
-    return 'Delete selection'
+    return 'Confirm'
   }
 
   const updateProperties = []
@@ -163,15 +163,15 @@ export const getAppointmentEditApplyToCta = (
   }
 
   if (editAppointmentJourney.addPrisoners?.length === 1) {
-    return 'Add attendee'
+    return 'Confirm'
   }
 
   if (editAppointmentJourney.addPrisoners?.length > 1) {
-    return 'Add attendees'
+    return 'Confirm'
   }
 
   if (editAppointmentJourney.removePrisoner) {
-    return 'Remove attendee'
+    return 'Confirm'
   }
 
   return ''

@@ -6,6 +6,7 @@ import config from '../../../../config'
 
 export default class ReviewPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentId, occurrenceId } = req.params
     const { appointmentJourney } = req.session
     const { preserveHistory } = req.query
 
@@ -25,6 +26,8 @@ export default class ReviewPrisonerRoutes {
     }
 
     res.render('pages/appointments/create-and-edit/review-prisoners', {
+      appointmentId,
+      occurrenceId,
       backLinkHref,
       preserveHistory,
       prisoners,

@@ -165,7 +165,7 @@ describe('Views - Appointments Management - Apply to', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('button').text().trim()).toEqual('Add attendee')
+    expect($('button').text().trim()).toEqual('Confirm')
   })
 
   it('call to action is remove attendee when removing a prisoner', () => {
@@ -180,7 +180,7 @@ describe('Views - Appointments Management - Apply to', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('button').text().trim()).toEqual('Remove attendee')
+    expect($('button').text().trim()).toEqual('Confirm')
   })
 
   it('call to action is confirm and save when changing a property', () => {

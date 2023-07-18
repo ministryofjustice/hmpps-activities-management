@@ -27,6 +27,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           appointments: [],
         },
       },
+      params: {},
       query: {},
     } as unknown as Request
   })

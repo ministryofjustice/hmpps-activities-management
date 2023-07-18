@@ -90,14 +90,9 @@ export default class EditAppointmentService {
         return res.redirectWithSuccess(`/appointments`, successHeading)
       }
 
-      const successHeading = `You've ${this.getEditedMessage(
-        appointmentJourney,
-        editAppointmentJourney,
-      )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`
-
       this.clearSession(req)
 
-      return res.redirectWithSuccess(`/appointments/${appointmentId}/occurrence/${occurrenceId}`, successHeading)
+      return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
     }
 
     const occurrenceUpdates = { applyTo } as AppointmentOccurrenceUpdateRequest

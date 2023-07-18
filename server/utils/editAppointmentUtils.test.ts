@@ -377,7 +377,7 @@ describe('Edit Appointment Utils', () => {
       ]
 
       expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'add the people to',
+        'add these people to',
       )
     })
 
