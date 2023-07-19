@@ -9,7 +9,7 @@ export class Name {
   @IsNotEmpty({ message: 'Start typing a name and select from the list' })
   categoryCode: string
 
-  @MaxLength(40, { message: 'You must enter a description which has no more than 40 characters' })
+  @MaxLength(40, { message: 'You must enter a custom name which has no more than 40 characters' })
   description: string
 }
 

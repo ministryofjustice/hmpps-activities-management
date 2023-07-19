@@ -50,7 +50,7 @@
                         classes: "govuk-label--m"
                     },
                     hint: {
-                        text: "Use the custom name to add detail about what the appointment is for. It will be displayed in this service and on unlock lists and movement slips."
+                        text: ("Use the custom name to add detail about what the appointments are for. It will be displayed in this service and on unlock lists and movement slips." if session.appointmentJourney.type == AppointmentType.BULK else "Use the custom name to add detail about what the appointment is for. It will be displayed in this service and on unlock lists and movement slips.")
                     },
                     classes: "govuk-input--width-20",
                     value: formResponses.description or session.appointmentJourney.description,

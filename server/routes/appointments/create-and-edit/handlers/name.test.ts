@@ -263,7 +263,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
       expect(errors).toEqual(
         expect.arrayContaining([
-          { property: 'description', error: 'You must enter a description which has no more than 40 characters' },
+          { property: 'description', error: 'You must enter a custom name which has no more than 40 characters' },
         ]),
       )
     })
