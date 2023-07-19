@@ -122,6 +122,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
     it('should save selected category in session, use category description as appointment name and redirect to location page', async () => {
       req.body = {
         categoryCode: 'MEDO',
+        description: '',
       }
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -133,7 +134,97 @@ describe('Route Handlers - Create Appointment - Name', () => {
         code: 'MEDO',
         description: 'Medical - Doctor',
       })
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('description')
+      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+    })
+
+    it('should save selected category and description in session, use description and category description as appointment name and redirect to location page', async () => {
+      req.body = {
+        categoryCode: 'CHAP',
+        description: 'Bible studies',
+      }
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.POST(req, res)
+
+      expect(req.session.appointmentJourney.appointmentName).toEqual('Bible studies (Chaplaincy)')
+      expect(req.session.appointmentJourney.category).toEqual({
+        code: 'CHAP',
+        description: 'Chaplaincy',
+      })
+      expect(req.session.appointmentJourney.description).toEqual('Bible studies')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+    })
+
+    it('should trim description', async () => {
+      req.body = {
+        categoryCode: 'CHAP',
+        description: '    Bible studies   ',
+      }
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.POST(req, res)
+
+      expect(req.session.appointmentJourney.appointmentName).toEqual('Bible studies (Chaplaincy)')
+      expect(req.session.appointmentJourney.description).toEqual('Bible studies')
+    })
+
+    it('should set description to null when undefined', async () => {
+      req.body = {
+        categoryCode: 'CHAP',
+        description: undefined,
+      }
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.POST(req, res)
+
+      expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
+      expect(req.session.appointmentJourney.description).toBeNull()
+    })
+
+    it('should set description to null when null', async () => {
+      req.body = {
+        categoryCode: 'CHAP',
+        description: null,
+      }
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.POST(req, res)
+
+      expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
+      expect(req.session.appointmentJourney.description).toBeNull()
+    })
+
+    it('should set description to null when empty string', async () => {
+      req.body = {
+        categoryCode: 'CHAP',
+        description: '',
+      }
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.POST(req, res)
+
+      expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
+      expect(req.session.appointmentJourney.description).toBeNull()
+    })
+
+    it('should set description to null when whitespace', async () => {
+      req.body = {
+        categoryCode: 'CHAP',
+        description: '   ',
+      }
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+
+      await handler.POST(req, res)
+
+      expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
+      expect(req.session.appointmentJourney.description).toBeNull()
     })
 
     it('validation fails when selected category is not found', async () => {
@@ -161,9 +252,38 @@ describe('Route Handlers - Create Appointment - Name', () => {
       )
     })
 
+    it('validation fails when description is 41 characters', async () => {
+      const body = {
+        categoryCode: 'GYMW',
+        description: 'a'.repeat(41),
+      }
+
+      const requestObject = plainToInstance(Name, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          { property: 'description', error: 'You must enter a description which has no more than 40 characters' },
+        ]),
+      )
+    })
+
     it('passes validation when valid category code is selected', async () => {
       const body = {
         categoryCode: 'GYMW',
+        description: '',
+      }
+
+      const requestObject = plainToInstance(Name, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
+
+    it('passes validation when valid category code is selected and description is less than 41 characters', async () => {
+      const body = {
+        categoryCode: 'GYMW',
+        description: 'a'.repeat(40),
       }
 
       const requestObject = plainToInstance(Name, body)

@@ -6,7 +6,6 @@ import StartJourneyRoutes from './handlers/startJourney'
 import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './handlers/selectPrisoner'
 import UploadPrisonerListRoutes, { PrisonerList } from './handlers/uploadPrisonerList'
 import NameRoutes, { Name } from './handlers/name'
-import DescriptionRoutes, { Description } from './handlers/description'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import RepeatRoutes, { Repeat } from './handlers/repeat'
@@ -44,7 +43,6 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const nameHandler = new NameRoutes(activitiesService)
-  const descriptionHandler = new DescriptionRoutes()
   const locationHandler = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeHandler = new DateAndTimeRoutes(editAppointmentService)
   const repeatHandler = new RepeatRoutes()
@@ -84,8 +82,6 @@ export default function Create({ prisonService, activitiesService }: Services): 
   )
   get('/name', nameHandler.GET, true)
   post('/name', nameHandler.POST, Name)
-  get('/description', descriptionHandler.GET, true)
-  post('/description', descriptionHandler.POST, Description)
   get('/location', locationHandler.GET, true)
   post('/location', locationHandler.CREATE, Location)
   get('/date-and-time', dateAndTimeHandler.GET, true)
