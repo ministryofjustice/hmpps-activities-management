@@ -7,7 +7,7 @@
 
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% set pageTitle = "Appointments Management - Bulk Appointment Details" %}
+{% set pageTitle = "Set of back-to-backs overview" %}
 {% set pageId = 'bulk-appointments-view-details-page' %}
 
 {% set occurrenceTableRows = [] %}
@@ -53,7 +53,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-            <h1 class="govuk-heading-l">Edit details of {{ bulkAppointment.category.description }} set of one-to-ones on {{ bulkAppointment.startDate | toDate | formatDate('d MMM yyyy') }}</h1>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ bulkAppointment.appointmentName }} - set of back-to-backs overview</h1>
+            <p class="govuk-body govuk-!-margin-top-1" data-qa='sub-heading'>{{ bulkAppointment.startDate | toDate | formatDate("d MMM yyyy") }}</p>
 
             {{ govukSummaryList({
                 card: {
