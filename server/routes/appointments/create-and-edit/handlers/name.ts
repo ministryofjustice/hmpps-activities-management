@@ -4,13 +4,13 @@ import { IsNotEmpty } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentType } from '../appointmentJourney'
 
-export class Category {
+export class Name {
   @Expose()
   @IsNotEmpty({ message: 'Start typing a name and select from the list' })
   categoryCode: string
 }
 
-export default class CategoryRoutes {
+export default class NameRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -28,7 +28,7 @@ export default class CategoryRoutes {
 
     const categories = await this.activitiesService.getAppointmentCategories(user)
 
-    res.render(`pages/appointments/create-and-edit/category`, { backLinkHref, categories })
+    res.render(`pages/appointments/create-and-edit/name`, { backLinkHref, categories })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

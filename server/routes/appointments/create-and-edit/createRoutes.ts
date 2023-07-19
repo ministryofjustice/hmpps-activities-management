@@ -5,7 +5,7 @@ import validationMiddleware from '../../../middleware/validationMiddleware'
 import StartJourneyRoutes from './handlers/startJourney'
 import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './handlers/selectPrisoner'
 import UploadPrisonerListRoutes, { PrisonerList } from './handlers/uploadPrisonerList'
-import CategoryRoutes, { Category } from './handlers/category'
+import NameRoutes, { Name } from './handlers/name'
 import DescriptionRoutes, { Description } from './handlers/description'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
@@ -43,7 +43,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const startHandler = new StartJourneyRoutes(prisonService)
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const categoryHandler = new CategoryRoutes(activitiesService)
+  const nameHandler = new NameRoutes(activitiesService)
   const descriptionHandler = new DescriptionRoutes()
   const locationHandler = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeHandler = new DateAndTimeRoutes(editAppointmentService)
@@ -82,8 +82,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
     validationMiddleware(AppointmentsList),
     asyncMiddleware(uploadBulkAppointment.POST),
   )
-  get('/category', categoryHandler.GET, true)
-  post('/category', categoryHandler.POST, Category)
+  get('/name', nameHandler.GET, true)
+  post('/name', nameHandler.POST, Name)
   get('/description', descriptionHandler.GET, true)
   post('/description', descriptionHandler.POST, Description)
   get('/location', locationHandler.GET, true)

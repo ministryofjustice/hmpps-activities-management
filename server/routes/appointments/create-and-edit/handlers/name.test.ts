@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import CategoryRoutes, { Category } from './category'
+import NameRoutes, { Name } from './name'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentCategorySummary } from '../../../../@types/activitiesAPI/types'
 import { AppointmentType } from '../appointmentJourney'
@@ -12,8 +12,8 @@ jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 
-describe('Route Handlers - Create Appointment - Category', () => {
-  const handler = new CategoryRoutes(activitiesService)
+describe('Route Handlers - Create Appointment - Name', () => {
+  const handler = new NameRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -58,20 +58,20 @@ describe('Route Handlers - Create Appointment - Category', () => {
   })
 
   describe('GET', () => {
-    it('should render the category view with back to select prisoner page', async () => {
+    it('should render the name view with back to select prisoner page', async () => {
       req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
         backLinkHref: 'select-prisoner',
         categories,
       })
     })
 
-    it('should render the category view with back to select prisoner page with prisoner selected', async () => {
+    it('should render the name view with back to select prisoner page with prisoner selected', async () => {
       req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
       req.session.appointmentJourney.prisoners = [
         {
@@ -85,33 +85,33 @@ describe('Route Handlers - Create Appointment - Category', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
         backLinkHref: 'select-prisoner?query=A1234BC',
         categories,
       })
     })
 
-    it('should render the category view with back to review prisoners page', async () => {
+    it('should render the name view with back to review prisoners page', async () => {
       req.session.appointmentJourney.type = AppointmentType.GROUP
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
         backLinkHref: 'review-prisoners',
         categories,
       })
     })
 
-    it('should render the category view with back link for type = BULK', async () => {
+    it('should render the name view with back link for type = BULK', async () => {
       req.session.appointmentJourney.type = AppointmentType.BULK
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/category', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
         backLinkHref: 'review-prisoners',
         categories,
       })
@@ -153,7 +153,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
     it('validation fails when no category code is selected', async () => {
       const body = {}
 
-      const requestObject = plainToInstance(Category, body)
+      const requestObject = plainToInstance(Name, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
@@ -166,7 +166,7 @@ describe('Route Handlers - Create Appointment - Category', () => {
         categoryCode: 'GYMW',
       }
 
-      const requestObject = plainToInstance(Category, body)
+      const requestObject = plainToInstance(Name, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)

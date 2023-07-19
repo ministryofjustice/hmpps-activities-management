@@ -39,7 +39,7 @@ export default class ReviewPrisonerRoutes {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
 
-    res.redirectOrReturn('category')
+    res.redirectOrReturn('name')
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {

@@ -6,7 +6,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
 {% set pageTitle = appointmentJourneyTitle("Appointment name set" if session.appointmentJourney.type == AppointmentType.BULK else "Appointment name", session.appointmentJourney) %}
-{% set pageId = 'appointments-create-category-page' %}
+{% set pageId = 'appointments-create-name-page' %}
 {% set backLinkHref = backLinkHref %}
 
 {% set options = [{ value: "-", text: "" }] %}
