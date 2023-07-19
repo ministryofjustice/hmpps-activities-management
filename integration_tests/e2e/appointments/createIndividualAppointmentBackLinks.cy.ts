@@ -3,8 +3,7 @@ import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
 import SelectPrisonerPage from '../../pages/appointments/create-and-edit/selectPrisonerPage'
-import CategoryPage from '../../pages/appointments/create-and-edit/categoryPage'
-import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
+import NamePage from '../../pages/appointments/create-and-edit/namePage'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A8644DY.json'
 import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A8644DY.json'
@@ -62,13 +61,9 @@ context('Create individual appointment - back links', () => {
     selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.continueButton().click()
 
-    const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.selectCategory('Chaplaincy')
-    categoryPage.continue()
-
-    const descriptionPage = Page.verifyOnPage(DescriptionPage)
-    descriptionPage.descriptionOption('Yes')
-    descriptionPage.continue()
+    const namePage = Page.verifyOnPage(NamePage)
+    namePage.selectCategory('Chaplaincy')
+    namePage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')
@@ -108,20 +103,16 @@ context('Create individual appointment - back links', () => {
     locationPage.assertSelectedLocation('Chapel')
 
     locationPage.back()
-    Page.verifyOnPage(DescriptionPage)
+    Page.verifyOnPage(NamePage)
+    namePage.assertSelectedCategory('Chaplaincy')
 
-    descriptionPage.back()
-    Page.verifyOnPage(CategoryPage)
-    categoryPage.assertSelectedCategory('Chaplaincy')
-
-    categoryPage.back()
+    namePage.back()
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
 
     // Continue to comment page
     selectPrisonerPage.continue()
-    categoryPage.continue()
-    descriptionPage.continue()
+    namePage.continue()
     locationPage.continue()
     dateAndTimePage.continue()
     repeatPage.continue()
@@ -139,9 +130,9 @@ context('Create individual appointment - back links', () => {
     selectPrisonerPage.back()
     Page.verifyOnPage(CheckAnswersPage)
 
-    checkAnswersPage.changeCategory()
-    Page.verifyOnPage(CategoryPage)
-    categoryPage.back()
+    checkAnswersPage.changeName()
+    Page.verifyOnPage(NamePage)
+    namePage.back()
     Page.verifyOnPage(CheckAnswersPage)
 
     checkAnswersPage.changeLocation()

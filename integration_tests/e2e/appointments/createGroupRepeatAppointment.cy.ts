@@ -3,8 +3,7 @@ import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
 import SelectPrisonerPage from '../../pages/appointments/create-and-edit/selectPrisonerPage'
-import CategoryPage from '../../pages/appointments/create-and-edit/categoryPage'
-import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
+import NamePage from '../../pages/appointments/create-and-edit/namePage'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisonersA1351DZ from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1351DZ.json'
 import getPrisonerA1351DZ from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A1351DZ.json'
@@ -121,13 +120,9 @@ context('Create group appointment', () => {
     reviewPrisonersPage.assertPrisonerInList('Jacobson, Lee')
     reviewPrisonersPage.continue()
 
-    const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.selectCategory('Chaplaincy')
-    categoryPage.continue()
-
-    const descriptionPage = Page.verifyOnPage(DescriptionPage)
-    descriptionPage.descriptionOption('Yes')
-    descriptionPage.continue()
+    const namePage = Page.verifyOnPage(NamePage)
+    namePage.selectCategory('Chaplaincy')
+    namePage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')

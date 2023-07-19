@@ -3,7 +3,7 @@ import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
 import SelectPrisonerPage from '../../pages/appointments/create-and-edit/selectPrisonerPage'
-import CategoryPage from '../../pages/appointments/create-and-edit/categoryPage'
+import NamePage from '../../pages/appointments/create-and-edit/namePage'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A8644DY.json'
 import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A8644DY.json'
@@ -23,7 +23,6 @@ import { formatDate } from '../../../server/utils/utils'
 import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 import OccurrenceMovementSlip from '../../pages/appointments/movementSlip/occurrenceMovementSlip'
-import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 import getOccurrenceDetails from '../../fixtures/activitiesApi/getOccurrenceDetails.json'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
@@ -74,13 +73,9 @@ context('Individual repeat appointment', () => {
     selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.continueButton().click()
 
-    const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.selectCategory('Chaplaincy')
-    categoryPage.continue()
-
-    const descriptionPage = Page.verifyOnPage(DescriptionPage)
-    descriptionPage.descriptionOption('Yes')
-    descriptionPage.continue()
+    const namePage = Page.verifyOnPage(NamePage)
+    namePage.selectCategory('Chaplaincy')
+    namePage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')

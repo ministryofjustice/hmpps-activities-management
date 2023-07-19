@@ -3,7 +3,7 @@ import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
 import SelectPrisonerPage from '../../pages/appointments/create-and-edit/selectPrisonerPage'
-import CategoryPage from '../../pages/appointments/create-and-edit/categoryPage'
+import NamePage from '../../pages/appointments/create-and-edit/namePage'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import getPrisonPrisonersA8644DY from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A8644DY.json'
 import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A8644DY.json'
@@ -19,7 +19,6 @@ import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
-import DescriptionPage from '../../pages/appointments/create-and-edit/descriptionPage'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
@@ -75,13 +74,9 @@ context('Create individual appointment - check answers change links', () => {
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.continueButton().click()
 
-    const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.selectCategory('Chaplaincy')
-    categoryPage.continue()
-
-    const descriptionPage = Page.verifyOnPage(DescriptionPage)
-    descriptionPage.descriptionOption('Yes')
-    descriptionPage.continue()
+    const namePage = Page.verifyOnPage(NamePage)
+    namePage.selectCategory('Chaplaincy')
+    namePage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')
@@ -129,11 +124,11 @@ context('Create individual appointment - check answers change links', () => {
 
     checkAnswersPage.assertPrisonerSummary('David Winchurch', 'A1350DZ', '2-2-024')
 
-    checkAnswersPage.changeCategory()
-    Page.verifyOnPage(CategoryPage)
-    categoryPage.assertSelectedCategory('Chaplaincy')
-    categoryPage.selectCategory('Gym - Weights')
-    categoryPage.continue()
+    checkAnswersPage.changeName()
+    Page.verifyOnPage(NamePage)
+    namePage.assertSelectedCategory('Chaplaincy')
+    namePage.selectCategory('Gym - Weights')
+    namePage.continue()
     checkAnswersPage.assertCategory('Gym - Weights')
 
     checkAnswersPage.changeLocation()
