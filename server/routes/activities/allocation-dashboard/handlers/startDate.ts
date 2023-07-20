@@ -14,10 +14,10 @@ export class StartDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @IsNotEmpty({ message: 'Enter a valid start date' })
-  @IsValidDate({ message: 'Enter a valid start date' })
   @DateIsSameOrAfter(new Date(), { message: "Enter a date on or after today's date" })
   @DateIsBeforeOtherProperty('endDate', { message: 'Enter a date before the end date' })
+  @IsNotEmpty({ message: 'Enter a valid start date' })
+  @IsValidDate({ message: 'Enter a valid start date' })
   startDate: SimpleDate
 
   @Expose()
