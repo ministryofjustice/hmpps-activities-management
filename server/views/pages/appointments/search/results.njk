@@ -298,7 +298,7 @@
         </div>
         <div class="moj-filter-layout__content">
             <div class="moj-action-bar govuk-!-display-none-print">
-                <div class="moj-action-bar__filter"></div>
+                <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
             </div>
 
             {{ govukTable({
@@ -329,7 +329,8 @@
                     attributes: { "aria-sort": "none" }
                 },
                 {
-                    html: '<span class="govuk-visually-hidden">Actions</span>'
+                    html: '<span class="govuk-visually-hidden">Actions</span>',
+                    classes: 'action-column'
                 }],
                 rows: resultsTableRows
             }) }}
