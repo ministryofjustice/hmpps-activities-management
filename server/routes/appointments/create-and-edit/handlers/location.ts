@@ -25,7 +25,7 @@ export default class LocationRoutes {
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     res.render('pages/appointments/create-and-edit/location', {
-      backLinkHref: getAppointmentBackLinkHref(req, 'description'),
+      backLinkHref: getAppointmentBackLinkHref(req, 'name'),
       locations,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&

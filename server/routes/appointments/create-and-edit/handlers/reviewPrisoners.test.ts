@@ -154,12 +154,12 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
   })
 
   describe('POST', () => {
-    it('should redirect or return to category page', async () => {
+    it('should redirect or return to name page', async () => {
       req.body = {
         howToAdd: 'SEARCH',
       }
       await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('category')
+      expect(res.redirectOrReturn).toBeCalledWith('name')
     })
 
     it('should populate return to with schedule', async () => {

@@ -99,21 +99,21 @@ describe('Edit Appointment Utils', () => {
   describe('getAppointmentBackLinkHref', () => {
     it('create mode', () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
-      expect(getAppointmentBackLinkHref(req, 'category')).toEqual('category')
+      expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
     })
 
     it('edit mode null appointment id', () => {
       req.params.appointmentId = null
-      expect(getAppointmentBackLinkHref(req, 'category')).toEqual('category')
+      expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
     })
 
     it('edit mode null occurrence id', () => {
       req.params.occurrenceId = null
-      expect(getAppointmentBackLinkHref(req, 'category')).toEqual('category')
+      expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
     })
 
     it('edit', () => {
-      expect(getAppointmentBackLinkHref(req, 'category')).toEqual(
+      expect(getAppointmentBackLinkHref(req, 'name')).toEqual(
         `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
       )
     })

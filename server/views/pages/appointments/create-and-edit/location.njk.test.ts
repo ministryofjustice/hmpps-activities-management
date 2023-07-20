@@ -59,7 +59,7 @@ describe('Views - Appointments Management - Location', () => {
           sequenceNumber: 2,
         } as EditAppointmentJourney,
       },
-      backLinkHref: 'category',
+      backLinkHref: 'name',
       isCtaAcceptAndSave: false,
     }
   })
@@ -67,7 +67,7 @@ describe('Views - Appointments Management - Location', () => {
   it('back link href contains default view context back link href', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('a.govuk-back-link').attr('href')).toEqual('category')
+    expect($('a.govuk-back-link').attr('href')).toEqual('name')
   })
 
   it('back link href contains view context back link href', () => {

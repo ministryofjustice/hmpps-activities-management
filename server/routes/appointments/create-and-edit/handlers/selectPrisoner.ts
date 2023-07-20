@@ -57,7 +57,7 @@ export default class SelectPrisonerRoutes {
         req.session.returnTo = 'schedule?preserveHistory=true'
       }
 
-      return res.redirectOrReturn('category')
+      return res.redirectOrReturn('name')
     }
     return res.validationFailed('selectedPrisoner', 'You must select one option')
   }

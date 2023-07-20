@@ -59,6 +59,14 @@ describe('Views - Create Appointment - Check Answers', () => {
     $ = cheerio.load(compiledTemplate.render(viewContext))
   })
 
+  it('should display appointment name', () => {
+    viewContext.session.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getAppointmentDetailsValueElement('Appointment name').text().trim()).toBe('Bible studies (Chaplaincy)')
+  })
+
   it('should not display repeat frequency or occurrences when repeat = NO', () => {
     viewContext.session.appointmentJourney.repeat = YesNo.NO
     $ = cheerio.load(compiledTemplate.render(viewContext))

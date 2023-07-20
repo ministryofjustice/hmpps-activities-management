@@ -151,7 +151,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
     })
 
-    it('should populate the session with individual appointment journey type and redirect to select category page', async () => {
+    it('should populate the session with individual appointment journey type and redirect to review prisoners page', async () => {
       const prisonerInfo = {
         prisonerNumber: 'A1234BC',
         firstName: 'John',

@@ -1,16 +1,19 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
-import { IsNotEmpty } from 'class-validator'
+import { IsNotEmpty, MaxLength } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentType } from '../appointmentJourney'
 
-export class Category {
+export class Name {
   @Expose()
   @IsNotEmpty({ message: 'Start typing a name and select from the list' })
   categoryCode: string
+
+  @MaxLength(40, { message: 'You must enter a custom name which has no more than 40 characters' })
+  description: string
 }
 
-export default class CategoryRoutes {
+export default class NameRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -28,11 +31,11 @@ export default class CategoryRoutes {
 
     const categories = await this.activitiesService.getAppointmentCategories(user)
 
-    res.render(`pages/appointments/create-and-edit/category`, { backLinkHref, categories })
+    res.render(`pages/appointments/create-and-edit/name`, { backLinkHref, categories })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { categoryCode } = req.body
+    const { categoryCode, description } = req.body
     const { user } = res.locals
 
     const category = await this.activitiesService
@@ -43,12 +46,19 @@ export default class CategoryRoutes {
       return res.validationFailed('categoryCode', `Start typing a name and select from the list`)
     }
 
-    req.session.appointmentJourney.appointmentName = category.description
     req.session.appointmentJourney.category = {
       code: category.code,
       description: category.description,
     }
 
-    return res.redirectOrReturn('description')
+    if (description?.trim()) {
+      req.session.appointmentJourney.description = description.trim()
+      req.session.appointmentJourney.appointmentName = `${req.session.appointmentJourney.description} (${req.session.appointmentJourney.category.description})`
+    } else {
+      req.session.appointmentJourney.description = null
+      req.session.appointmentJourney.appointmentName = category.description
+    }
+
+    return res.redirectOrReturn('location')
   }
 }

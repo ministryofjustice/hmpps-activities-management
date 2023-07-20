@@ -165,7 +165,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
           cellLocation: '1-1-1',
         },
       ])
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('category')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('name')
     })
 
     it('should populate return to with schedule (individual)', async () => {

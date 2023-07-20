@@ -5,8 +5,7 @@ import validationMiddleware from '../../../middleware/validationMiddleware'
 import StartJourneyRoutes from './handlers/startJourney'
 import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './handlers/selectPrisoner'
 import UploadPrisonerListRoutes, { PrisonerList } from './handlers/uploadPrisonerList'
-import CategoryRoutes, { Category } from './handlers/category'
-import DescriptionRoutes, { Description } from './handlers/description'
+import NameRoutes, { Name } from './handlers/name'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import RepeatRoutes, { Repeat } from './handlers/repeat'
@@ -43,8 +42,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const startHandler = new StartJourneyRoutes(prisonService)
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const categoryHandler = new CategoryRoutes(activitiesService)
-  const descriptionHandler = new DescriptionRoutes()
+  const nameHandler = new NameRoutes(activitiesService)
   const locationHandler = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeHandler = new DateAndTimeRoutes(editAppointmentService)
   const repeatHandler = new RepeatRoutes()
@@ -82,10 +80,8 @@ export default function Create({ prisonService, activitiesService }: Services): 
     validationMiddleware(AppointmentsList),
     asyncMiddleware(uploadBulkAppointment.POST),
   )
-  get('/category', categoryHandler.GET, true)
-  post('/category', categoryHandler.POST, Category)
-  get('/description', descriptionHandler.GET, true)
-  post('/description', descriptionHandler.POST, Description)
+  get('/name', nameHandler.GET, true)
+  post('/name', nameHandler.POST, Name)
   get('/location', locationHandler.GET, true)
   post('/location', locationHandler.CREATE, Location)
   get('/date-and-time', dateAndTimeHandler.GET, true)

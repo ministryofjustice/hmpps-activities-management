@@ -4,9 +4,10 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "partials/characterCountInput.njk" import characterCountInput %}
 
 {% set pageTitle = appointmentJourneyTitle("Appointment name set" if session.appointmentJourney.type == AppointmentType.BULK else "Appointment name", session.appointmentJourney) %}
-{% set pageId = 'appointments-create-category-page' %}
+{% set pageId = 'appointments-create-name-page' %}
 {% set backLinkHref = backLinkHref %}
 
 {% set options = [{ value: "-", text: "" }] %}
@@ -39,6 +40,22 @@
                     errorMessage: validationErrors | findError('categoryCode'),
                     items: options,
                     value: formResponses.categoryCode or session.appointmentJourney.category.code
+                }) }}
+
+                {{ characterCountInput({
+                    id: "description",
+                    name: "description",
+                    label: {
+                        text: "Add an optional custom name",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        text: ("Use the custom name to add detail about what the appointments are for. It will be displayed in this service and on unlock lists and movement slips." if session.appointmentJourney.type == AppointmentType.BULK else "Use the custom name to add detail about what the appointment is for. It will be displayed in this service and on unlock lists and movement slips.")
+                    },
+                    classes: "govuk-input--width-20",
+                    value: formResponses.description or session.appointmentJourney.description,
+                    errorMessage: validationErrors | findError('description'),
+                    maxlength: "40"
                 }) }}
 
                 {{ govukButton({

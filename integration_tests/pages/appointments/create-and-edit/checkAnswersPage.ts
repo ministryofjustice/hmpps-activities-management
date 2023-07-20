@@ -42,7 +42,7 @@ export default class CheckAnswersPage extends Page {
 
   changePrisoner = () => cy.get('[data-qa=change-prisoner]').click()
 
-  changeCategory = () => cy.get('[data-qa=change-category]').click()
+  changeName = () => cy.get('[data-qa=change-name]').click()
 
   changeLocation = () => cy.get('[data-qa=change-location]').click()
 

@@ -49,65 +49,21 @@
             text: "Appointment name"
         },
         value: {
-            text: session.appointmentJourney.category.description
+            text: session.appointmentJourney.appointmentName
         },
         actions: {
             items: [
                 {
-                    href: "category?preserveHistory=true",
+                    href: "name?preserveHistory=true",
                     text: "Change",
                     visuallyHiddenText: "change appointment name",
                     classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-category' }
-                }
-            ]
-        }
-    },
-    {
-        key: {
-            text: "Show appointment name on unlock list"
-        },
-        value: {
-            text: ("Yes" if session.appointmentJourney.descriptionOption == YesNo.YES) +
-                  ("No" if session.appointmentJourney.descriptionOption == YesNo.NO)
-        },
-        actions: {
-            items: [
-                {
-                    href: "description?preserveHistory=true",
-                    text: "Change",
-                    visuallyHiddenText: "change show appointment name option",
-                    classes: "govuk-link--no-visited-state",
-                    attributes: { 'data-qa': 'change-description-option' }
+                    attributes: { 'data-qa': 'change-name' }
                 }
             ]
         }
     }
 ), summaryListRows) %}
-
-{% if session.appointmentJourney.descriptionOption == YesNo.NO %}
-    {% set summaryListRows = (summaryListRows.push(
-        {
-            key: {
-                text: "Alternative appointment name"
-            },
-            value: {
-                text: session.appointmentJourney.description
-            },
-            actions: {
-                items: [
-                    {
-                        href: "description?preserveHistory=true",
-                        text: "Change",
-                        visuallyHiddenText: "change alternative appointment name",
-                        classes: "govuk-link--no-visited-state",
-                        attributes: { 'data-qa': 'change-description' }
-                    }
-                ]
-            }
-        }
-    ), summaryListRows) %}
-{% endif %}
 
 {% set summaryListRows = (summaryListRows.push(
     {
