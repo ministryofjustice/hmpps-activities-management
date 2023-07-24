@@ -11,7 +11,6 @@ import AttendanceStatus from '../../../../enum/attendanceStatus'
 
 export class AttendanceList {
   @Expose()
-  @Expose()
   @Transform(({ value }) => [value].flat()) // Transform to an array if only one value is provided
   @HasAtLeastOne({ message: 'Select at least one prisoner' })
   selectedAttendances: number[]

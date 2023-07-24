@@ -13,10 +13,8 @@
 {% set backLinkHref = "summary?date=" + activityDate | formatDate('yyyy-MM-dd') %}
 
 {% block content %}
-    <form id="filter-form" method="POST" novalidate>
+    <form id="filter-form" method="POST" action="update-filters" novalidate>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-        <input type="hidden" name="activityDate"
-               value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
         {{ searchBar({
             inputParams: {
                 id: 'searchTerm',
@@ -25,7 +23,7 @@
                     text: 'Search by session name',
                     classes: 'govuk-label--s'
                 },
-                value: attendanceSummaryFilters.searchTerm
+                value: session.attendanceSummaryJourney.searchTerm
             },
             buttonParams: {
                 text: 'Search'

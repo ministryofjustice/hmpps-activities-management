@@ -13,7 +13,7 @@ function validationMiddleware(type: new () => object): RequestHandler {
       return next()
     }
 
-    // Build an object which is used by validators to check things against
+    // Build an object which ins used by validators to check things against
     const requestObject = plainToInstance(type, {
       ...req.body,
       pathParams: req.params,
@@ -23,7 +23,10 @@ function validationMiddleware(type: new () => object): RequestHandler {
       notAttendedJourney: req.session.notAttendedJourney,
     })
 
-    const errors: ValidationError[] = await validate(requestObject, { stopAtFirstError: true })
+    const errors: ValidationError[] = await validate(requestObject, {
+      stopAtFirstError: true,
+      forbidUnknownValues: false,
+    })
 
     if (errors.length === 0) {
       req.body = requestObject

@@ -3,10 +3,11 @@ import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import SelectPeriodRoutes, { TimePeriod } from './handlers/selectPeriod'
 import DailySummaryRoutes from './handlers/dailySummary'
 import DailyAttendanceRoutes from './handlers/attendance'
-import validationMiddleware from '../../../middleware/validationMiddleware'
 import CancelledSessionsRoutes from './handlers/cancelledSessions'
+import validationMiddleware from '../../../middleware/validationMiddleware'
 import NotAttendedSelectDateRoutes, { NotAttendedDate } from './handlers/notAttendedSelectDate'
 import { Services } from '../../../services'
+import ApplyFiltersRoutes, { Filters } from './handlers/applyFilters'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -16,6 +17,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const selectPeriodHandler = new SelectPeriodRoutes()
+  const applyFiltersHandler = new ApplyFiltersRoutes()
   const dailySummaryHandler = new DailySummaryRoutes(activitiesService)
   const dailyAttendanceHandler = new DailyAttendanceRoutes(activitiesService, prisonService)
   const cancelledSessionsHandler = new CancelledSessionsRoutes(activitiesService)
@@ -24,15 +26,11 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/select-period', selectPeriodHandler.GET)
   post('/select-period', selectPeriodHandler.POST, TimePeriod)
   get('/summary', dailySummaryHandler.GET)
-  post('/summary', dailySummaryHandler.POST)
-  get('/update-filters', dailySummaryHandler.FILTERS)
   get('/attendance', dailyAttendanceHandler.GET)
-  post('/attendance', dailyAttendanceHandler.POST)
-  get('/update-attendance-filters', dailyAttendanceHandler.FILTERS)
   get('/cancelled-sessions', cancelledSessionsHandler.GET)
-  post('/cancelled-sessions', cancelledSessionsHandler.POST)
   get('/not-attended-select-date', notAttendedSelectDateHandler.GET)
   post('/not-attended-select-date', notAttendedSelectDateHandler.POST, NotAttendedDate)
+  post('/update-filters', applyFiltersHandler.APPLY, Filters)
 
   return router
 }
