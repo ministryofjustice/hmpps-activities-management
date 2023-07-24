@@ -1,7 +1,4 @@
-// eslint-disable-next-line import/no-duplicates
-import { addDays, format, formatISO, parseISO, subDays } from 'date-fns'
-// eslint-disable-next-line import/no-duplicates
-import enGBLocale from 'date-fns/locale/en-GB'
+import enGBLocale, { addDays, format, formatISO, parseISO, subDays } from 'date-fns'
 import {
   compare,
   comparePrisoners,

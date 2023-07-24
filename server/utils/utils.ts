@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,dot-notation */
-/* eslint-disable import/no-duplicates */
-import {
+import enGBLocale, {
   areIntervalsOverlapping,
   endOfDay,
   format,
@@ -14,7 +13,6 @@ import {
   parse,
   parseISO,
 } from 'date-fns'
-import enGBLocale from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'

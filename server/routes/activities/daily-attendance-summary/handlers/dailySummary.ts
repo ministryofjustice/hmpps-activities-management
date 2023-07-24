@@ -6,7 +6,7 @@ import cancellationReasons from '../../record-attendance/cancellationReasons'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import TimeSlot from '../../../../enum/timeSlot'
-import { AllAttendanceSummary } from '../../../../@types/activitiesAPI/types'
+import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../../../@types/express'
 
 type CancelledActivity = {
@@ -29,8 +29,8 @@ export default class DailySummaryRoutes {
 
     const activityDate = toDate(req.query.date as string)
 
-    const attendanceSummary = await this.activitiesService.getAllAttendanceSummary(activityDate, user)
-    const uniqueCategories = _.uniq(attendanceSummary.map(c => c.categoryName))
+    const allAttendances = await this.activitiesService.getAllAttendance(activityDate, user)
+    const uniqueCategories = _.uniq(allAttendances.map(c => c.categoryName))
 
     // Set the default filter values if they are not set
     req.session.attendanceSummaryJourney ??= {}
@@ -41,14 +41,14 @@ export default class DailySummaryRoutes {
     const cancelledSessionsForFilters = await this.getCancelledActivitiesAtPrison(activityDate, user).then(r =>
       r.filter(a => categoryFilters.includes(a.category)),
     )
-    const attendanceSummaryForFilters = attendanceSummary.filter(a => categoryFilters.includes(a.categoryName))
+    const attendancesForFilters = allAttendances.filter(a => categoryFilters.includes(a.categoryName))
 
     return res.render('pages/activities/daily-attendance-summary/daily-summary', {
       activityDate,
       uniqueCategories,
       ...this.getCancelledActivitySummary(cancelledSessionsForFilters),
-      ...this.getDailyAttendanceSummary(attendanceSummaryForFilters),
-      ...this.getSuspendedPrisonerCount(attendanceSummaryForFilters),
+      ...this.getDailyAttendanceSummary(attendancesForFilters),
+      ...this.getSuspendedPrisonerCount(attendancesForFilters),
     })
   }
 
@@ -91,7 +91,7 @@ export default class DailySummaryRoutes {
     }
   }
 
-  private getDailyAttendanceSummary = (attendanceSummary: AllAttendanceSummary[]) => {
+  private getDailyAttendanceSummary = (attendances: AllAttendance[]) => {
     const totalActivities = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalAllocated = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalNotAttended = { DAY: 0, AM: 0, PM: 0, ED: 0 }
@@ -110,67 +110,75 @@ export default class DailySummaryRoutes {
     const totalUnpaidRest = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnpaidOther = { DAY: 0, AM: 0, PM: 0, ED: 0 }
 
-    attendanceSummary.forEach(attendance => {
-      totalActivities.DAY += 1
-      totalActivities[attendance.timeSlot] += 1
-      totalAllocated.DAY += attendance.attendanceCount
-      totalAllocated[attendance.timeSlot] += attendance.attendanceCount
+    _.uniqBy(attendances, 'scheduledInstanceId')
+      .map(s => ({
+        scheduledInstanceId: s.scheduledInstanceId,
+        timeSlot: s.timeSlot,
+      }))
+      .forEach(a => {
+        totalActivities.DAY += 1
+        totalActivities[a.timeSlot] += 1
+      })
+
+    attendances.forEach(attendance => {
+      totalAllocated.DAY += 1
+      totalAllocated[attendance.timeSlot] += 1
       if (attendance.status === AttendanceStatus.WAITING) {
-        totalNotAttended.DAY += attendance.attendanceCount
-        totalNotAttended[attendance.timeSlot] += attendance.attendanceCount
+        totalNotAttended.DAY += 1
+        totalNotAttended[attendance.timeSlot] += 1
       } else if (attendance.attendanceReasonCode !== AttendanceReason.ATTENDED) {
-        totalAbsences.DAY += attendance.attendanceCount
-        totalAbsences[attendance.timeSlot] += attendance.attendanceCount
+        totalAbsences.DAY += 1
+        totalAbsences[attendance.timeSlot] += 1
         if (attendance.issuePayment) {
-          totalPaidAbsences.DAY += attendance.attendanceCount
-          totalPaidAbsences[attendance.timeSlot] += attendance.attendanceCount
+          totalPaidAbsences.DAY += 1
+          totalPaidAbsences[attendance.timeSlot] += 1
           if (attendance.attendanceReasonCode === AttendanceReason.CANCELLED) {
-            totalCancelled.DAY += attendance.attendanceCount
-            totalCancelled[attendance.timeSlot] += attendance.attendanceCount
+            totalCancelled.DAY += 1
+            totalCancelled[attendance.timeSlot] += 1
           }
           if (attendance.attendanceReasonCode === AttendanceReason.SICK) {
-            totalPaidSick.DAY += attendance.attendanceCount
-            totalPaidSick[attendance.timeSlot] += attendance.attendanceCount
+            totalPaidSick.DAY += 1
+            totalPaidSick[attendance.timeSlot] += 1
           }
           if (attendance.attendanceReasonCode === AttendanceReason.NOT_REQUIRED) {
-            totalNotRequired.DAY += attendance.attendanceCount
-            totalNotRequired[attendance.timeSlot] += attendance.attendanceCount
+            totalNotRequired.DAY += 1
+            totalNotRequired[attendance.timeSlot] += 1
           }
           if (attendance.attendanceReasonCode === AttendanceReason.REST) {
-            totalPaidRest.DAY += attendance.attendanceCount
-            totalPaidRest[attendance.timeSlot] += attendance.attendanceCount
+            totalPaidRest.DAY += 1
+            totalPaidRest[attendance.timeSlot] += 1
           }
           if (attendance.attendanceReasonCode === AttendanceReason.CLASH) {
-            totalClash.DAY += attendance.attendanceCount
-            totalClash[attendance.timeSlot] += attendance.attendanceCount
+            totalClash.DAY += 1
+            totalClash[attendance.timeSlot] += 1
           }
           if (attendance.attendanceReasonCode === AttendanceReason.OTHER) {
-            totalPaidOther.DAY += attendance.attendanceCount
-            totalPaidOther[attendance.timeSlot] += attendance.attendanceCount
+            totalPaidOther.DAY += 1
+            totalPaidOther[attendance.timeSlot] += 1
           }
         } else {
-          totalUnPaidAbsences.DAY += attendance.attendanceCount
-          totalUnPaidAbsences[attendance.timeSlot] += attendance.attendanceCount
+          totalUnPaidAbsences.DAY += 1
+          totalUnPaidAbsences[attendance.timeSlot] += 1
           if (attendance.attendanceReasonCode === AttendanceReason.SICK) {
-            totalUnpaidSick.DAY += attendance.attendanceCount
-            totalUnpaidSick[attendance.timeSlot] += attendance.attendanceCount
+            totalUnpaidSick.DAY += 1
+            totalUnpaidSick[attendance.timeSlot] += 1
           }
           if (attendance.attendanceReasonCode === AttendanceReason.REFUSED) {
-            totalRefused.DAY += attendance.attendanceCount
-            totalRefused[attendance.timeSlot] += attendance.attendanceCount
+            totalRefused.DAY += 1
+            totalRefused[attendance.timeSlot] += 1
           }
           if (attendance.attendanceReasonCode === AttendanceReason.REST) {
-            totalUnpaidRest.DAY += attendance.attendanceCount
-            totalUnpaidRest[attendance.timeSlot] += attendance.attendanceCount
+            totalUnpaidRest.DAY += 1
+            totalUnpaidRest[attendance.timeSlot] += 1
           }
           if (attendance.attendanceReasonCode === AttendanceReason.OTHER) {
-            totalUnpaidOther.DAY += attendance.attendanceCount
-            totalUnpaidOther[attendance.timeSlot] += attendance.attendanceCount
+            totalUnpaidOther.DAY += 1
+            totalUnpaidOther[attendance.timeSlot] += 1
           }
         }
       } else {
-        totalAttended.DAY += attendance.attendanceCount
-        totalAttended[attendance.timeSlot] += attendance.attendanceCount
+        totalAttended.DAY += 1
+        totalAttended[attendance.timeSlot] += 1
       }
     })
 
@@ -195,13 +203,13 @@ export default class DailySummaryRoutes {
     }
   }
 
-  private getSuspendedPrisonerCount = (attendanceSummary: AllAttendanceSummary[]) => {
-    const suspendedPrisoners = attendanceSummary.filter(a => a.attendanceReasonCode === AttendanceReason.SUSPENDED)
+  private getSuspendedPrisonerCount = (attendances: AllAttendance[]) => {
+    const suspendedPrisoners = attendances.filter(a => a.attendanceReasonCode === AttendanceReason.SUSPENDED)
 
     const suspendedPrisonerCount = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     suspendedPrisoners.forEach(attendance => {
       suspendedPrisonerCount.DAY += 1
-      suspendedPrisonerCount[attendance.timeSlot.toUpperCase()] += attendance.attendanceCount
+      suspendedPrisonerCount[attendance.timeSlot.toUpperCase()] += 1
     })
 
     return {
