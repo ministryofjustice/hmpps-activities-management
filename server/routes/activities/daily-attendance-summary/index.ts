@@ -8,6 +8,7 @@ import validationMiddleware from '../../../middleware/validationMiddleware'
 import NotAttendedSelectDateRoutes, { NotAttendedDate } from './handlers/notAttendedSelectDate'
 import { Services } from '../../../services'
 import ApplyFiltersRoutes, { Filters } from './handlers/applyFilters'
+import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -23,14 +24,15 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const cancelledSessionsHandler = new CancelledSessionsRoutes(activitiesService)
   const notAttendedSelectDateHandler = new NotAttendedSelectDateRoutes()
 
-  get('/select-period', selectPeriodHandler.GET)
-  post('/select-period', selectPeriodHandler.POST, TimePeriod)
-  get('/summary', dailySummaryHandler.GET)
-  get('/attendance', dailyAttendanceHandler.GET)
-  get('/cancelled-sessions', cancelledSessionsHandler.GET)
-  get('/not-attended-select-date', notAttendedSelectDateHandler.GET)
-  post('/not-attended-select-date', notAttendedSelectDateHandler.POST, NotAttendedDate)
-  post('/update-filters', applyFiltersHandler.APPLY, Filters)
+  router.use(insertJourneyIdentifier())
+  get('/:journeyId/select-period', selectPeriodHandler.GET)
+  post('/:journeyId/select-period', selectPeriodHandler.POST, TimePeriod)
+  get('/:journeyId/summary', dailySummaryHandler.GET)
+  get('/:journeyId/attendance', dailyAttendanceHandler.GET)
+  get('/:journeyId/cancelled-sessions', cancelledSessionsHandler.GET)
+  get('/:journeyId/not-attended-select-date', notAttendedSelectDateHandler.GET)
+  post('/:journeyId/not-attended-select-date', notAttendedSelectDateHandler.POST, NotAttendedDate)
+  post('/:journeyId/update-filters', applyFiltersHandler.APPLY, Filters)
 
   return router
 }

@@ -12,7 +12,6 @@ export default class DailyAttendanceRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { date, status } = req.query
-    const { attendanceSummaryJourney } = req.session
 
     if (!date) {
       return res.redirect('select-period')
@@ -36,7 +35,7 @@ export default class DailyAttendanceRoutes {
     req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
     req.session.attendanceSummaryJourney.activityFilters ??= uniqueActivities
 
-    const { categoryFilters, activityFilters } = req.session.attendanceSummaryJourney
+    const { categoryFilters, activityFilters, searchTerm } = req.session.attendanceSummaryJourney
 
     const attendancesMatchingFilter = attendancesForStatus.filter(
       a => categoryFilters.includes(a.categoryName) && activityFilters.includes(a.activitySummary),
@@ -59,9 +58,9 @@ export default class DailyAttendanceRoutes {
       }))
       .filter(
         a =>
-          !attendanceSummaryJourney.searchTerm ||
-          this.includesSearchTerm(a.name, attendanceSummaryJourney.searchTerm) ||
-          this.includesSearchTerm(a.prisonerNumber, attendanceSummaryJourney.searchTerm),
+          !searchTerm ||
+          this.includesSearchTerm(a.name, searchTerm) ||
+          this.includesSearchTerm(a.prisonerNumber, searchTerm),
       )
 
     return res.render('pages/activities/daily-attendance-summary/attendances', {

@@ -3,11 +3,11 @@ import { Expose, Transform } from 'class-transformer'
 
 export class Filters {
   @Expose()
-  @Transform(({ value }) => (value ? [value].flat() : [])) // Transform to an array if only one value is provided
+  @Transform(({ value }) => (value ? [value].flat() : undefined)) // Transform to an array if only one value is provided
   categoryFilters?: string[]
 
   @Expose()
-  @Transform(({ value }) => (value ? [value].flat() : [])) // Transform to an array if only one value is provided
+  @Transform(({ value }) => (value ? [value].flat() : undefined)) // Transform to an array if only one value is provided
   activityFilters?: string[]
 
   @Expose()

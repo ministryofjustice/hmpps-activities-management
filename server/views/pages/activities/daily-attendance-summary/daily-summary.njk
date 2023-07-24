@@ -7,7 +7,7 @@
 
 {% set pageTitle = applicationName + " - Daily attendance summary" %}
 {% set pageId = 'daily-attendance-summary-page' %}
-{% set backLinkHref = "/activities/attendance-summary/select-period" %}
+{% set backLinkHref = "select-period" %}
 
 {% block content %}
     {% set filterOptionsHtml %}
@@ -125,7 +125,7 @@
             visuallyHiddenText: 'prisoners, which is',
             percentage: totalNotAttendedPercentage[timeSlot],
             link: {
-                href: '/activities/attendance-summary/attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=NotAttended#' + timeSlot | lower + '-tab',
+                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=NotAttended#' + timeSlot | lower + '-tab',
                 text: 'All not yet attended'
             }
         }) }}
@@ -136,7 +136,7 @@
             visuallyHiddenText: 'prisoners, which is',
             percentage: totalAbsencesPercentage[timeSlot],
             link: {
-                href: '/activities/attendance-summary/attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Absences#' + timeSlot | lower + '-tab',
+                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Absences#' + timeSlot | lower + '-tab',
                 text: 'All absences'
             }
         }) }}
@@ -147,7 +147,7 @@
             visuallyHiddenText: 'prisoners, which is',
             percentage: totalAttendedPercentage[timeSlot],
             link: {
-                href: '/activities/attendance-summary/attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended#' + timeSlot | lower + '-tab',
+                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended#' + timeSlot | lower + '-tab',
                 text: 'All attended'
             }
         }) }}
