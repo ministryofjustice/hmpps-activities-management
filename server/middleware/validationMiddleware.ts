@@ -13,7 +13,7 @@ function validationMiddleware(type: new () => object): RequestHandler {
       return next()
     }
 
-    // Build an object which ins used by validators to check things against
+    // Build an object which is used by validators to check things against
     const requestObject = plainToInstance(type, {
       ...req.body,
       pathParams: req.params,
