@@ -4,7 +4,6 @@ import { parse } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import CancelledSessionsRoutes from './cancelledSessions'
-import { formatDate } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -30,6 +29,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
 
     req = {
       query: {},
+      session: { attendanceSummaryJourney: {} },
     } as unknown as Request
   })
 
@@ -95,7 +95,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
           date: dateString,
         },
         session: {
-          attendanceSummaryFilters: {
+          attendanceSummaryJourney: {
             searchTerm: '',
           },
         },
@@ -131,9 +131,6 @@ describe('Route Handlers - Cancelled Sessions List', () => {
             comment: 'Stuff training',
           },
         ],
-        attendanceSummaryFilters: {
-          searchTerm: '',
-        },
       })
     })
 
@@ -148,7 +145,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
       req = {
         query: { date: dateString },
         session: {
-          attendanceSummaryFilters: {
+          attendanceSummaryJourney: {
             searchTerm: 'math',
           },
         },
@@ -170,38 +167,6 @@ describe('Route Handlers - Cancelled Sessions List', () => {
             comment: 'Stuff training',
           },
         ],
-        attendanceSummaryFilters: {
-          searchTerm: 'math',
-        },
-      })
-    })
-
-    describe('POST', () => {
-      it('should persist search term into session object', async () => {
-        req = {
-          query: {
-            date: '2022-10-10',
-          },
-          body: {
-            searchTerm: 'math',
-          },
-          session: {
-            attendanceSummaryFilters: {
-              activityDate: '2022-10-10',
-            },
-          },
-        } as unknown as Request
-
-        await handler.POST(req, res)
-
-        const { attendanceSummaryFilters } = req.session
-
-        // Different from default filter values
-        expect(attendanceSummaryFilters.searchTerm).toEqual('math')
-
-        expect(res.redirect).toHaveBeenCalledWith(
-          `cancelled-sessions?date=${formatDate(attendanceSummaryFilters.activityDate, 'yyyy-MM-dd')}`,
-        )
       })
     })
   })

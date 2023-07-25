@@ -33,7 +33,6 @@ import {
   AppointmentLocationSummary,
   AppointmentOccurrenceSearchRequest,
   AllAttendance,
-  AllAttendanceSummary,
   ActivityUpdateRequest,
   AllocationUpdateRequest,
   AppointmentOccurrenceCancelRequest,
@@ -332,10 +331,6 @@ export default class ActivitiesService {
 
   async getAllAttendance(sessionDate: Date, user: ServiceUser): Promise<AllAttendance[]> {
     return this.activitiesApiClient.getAllAttendance(sessionDate, user)
-  }
-
-  async getAllAttendanceSummary(sessionDate: Date, user: ServiceUser): Promise<AllAttendanceSummary[]> {
-    return this.activitiesApiClient.getAllAttendanceSummary(sessionDate, user)
   }
 
   async searchAppointmentOccurrences(

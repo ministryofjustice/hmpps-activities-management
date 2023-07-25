@@ -9,7 +9,7 @@ import bulkAppointmentDetailsRoutes from './bulk-appointment-details'
 import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
-import startNewJourney from '../../middleware/startNewJourney'
+import appointmentsStartNewJourney from '../../middleware/appointmentsStartNewJourney'
 import addServiceReturnLink from '../../middleware/addServiceReturnLink'
 
 export default function routes(services: Services): Router {
@@ -32,10 +32,10 @@ export default function routes(services: Services): Router {
   // Create appointment journey routes. These are the starting points for the three appointment type creation journeys.
   // They use the startNewJourney middleware which adds a unique journeyId into the url after the /create/ path segment
   // then redirects to that new url
-  router.get('/create/start-individual', startNewJourney('/create/'))
-  router.get('/create/start-group', startNewJourney('/create/'))
-  router.get('/create/start-bulk', startNewJourney('/create/'))
-  router.get('/create/start-prisoner/:prisonNumber', startNewJourney('/create/'))
+  router.get('/create/start-individual', appointmentsStartNewJourney('/create/'))
+  router.get('/create/start-group', appointmentsStartNewJourney('/create/'))
+  router.get('/create/start-bulk', appointmentsStartNewJourney('/create/'))
+  router.get('/create/start-prisoner/:prisonNumber', appointmentsStartNewJourney('/create/'))
   // All create routes include the unique journeyId which is used by the populateJourney middleware to associate a
   // distinct mapped session datum with the journey. This prevents journeys in different browser tabs from conflicting
   // with each other. N.B. all subsequent redirects need to be relative or include the journeyId to maintain the per
@@ -46,10 +46,10 @@ export default function routes(services: Services): Router {
   // They use the startNewJourney middleware which adds a unique journeyId into the url after the /edit/ path segment
   // then redirects to that new url
   const editAppointmentBaseUrl = '/:appointmentId(\\d+)/occurrence/:occurrenceId(\\d+)/edit'
-  router.get(`${editAppointmentBaseUrl}/start/cancel`, startNewJourney('/edit/'))
-  router.get(`${editAppointmentBaseUrl}/start/:property`, startNewJourney('/edit/'))
-  router.get(`${editAppointmentBaseUrl}/start/:prisonNumber/remove`, startNewJourney('/edit/'))
-  router.get(`${editAppointmentBaseUrl}/start/prisoners/add`, startNewJourney('/edit/'))
+  router.get(`${editAppointmentBaseUrl}/start/cancel`, appointmentsStartNewJourney('/edit/'))
+  router.get(`${editAppointmentBaseUrl}/start/:property`, appointmentsStartNewJourney('/edit/'))
+  router.get(`${editAppointmentBaseUrl}/start/:prisonNumber/remove`, appointmentsStartNewJourney('/edit/'))
+  router.get(`${editAppointmentBaseUrl}/start/prisoners/add`, appointmentsStartNewJourney('/edit/'))
   // All edit routes include the unique journeyId which is used by the populateJourney middleware to associate a
   // distinct mapped session datum with the journey. This prevents journeys in different browser tabs from conflicting
   // with each other. N.B. all subsequent redirects need to be relative or include the journeyId to maintain the per

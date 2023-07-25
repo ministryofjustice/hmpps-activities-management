@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import { SessionDatum } from '../@types/express'
 
-const journeys = ['appointmentJourney', 'bulkAppointmentJourney', 'editAppointmentJourney']
+const journeys = ['appointmentJourney', 'bulkAppointmentJourney', 'editAppointmentJourney', 'attendanceSummaryJourney']
 const MAX_CONCURRENT_JOURNEYS = 50
 
 export default function populateJourney(): RequestHandler {
