@@ -30,7 +30,7 @@ import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
 
-const user = { token: 'token' } as ServiceUser
+const user = { token: 'token', activeCaseLoadId: 'MDI' } as ServiceUser
 
 jest.mock('./tokenStore')
 
@@ -53,7 +53,11 @@ describe('activitiesApiClient', () => {
   describe('getActivity', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/activities/1').matchHeader('authorization', `Bearer token`).reply(200, response)
+      fakeActivitiesApi
+        .get('/activities/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
       const output = await activitiesApiClient.getActivity(1, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
@@ -63,7 +67,11 @@ describe('activitiesApiClient', () => {
   describe('getActivityCategories', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/activity-categories').matchHeader('authorization', `Bearer token`).reply(200, response)
+      fakeActivitiesApi
+        .get('/activity-categories')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
       const output = await activitiesApiClient.getActivityCategories(user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
@@ -76,6 +84,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .get('/prison/MDI/activity-categories/1/activities')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
       const output = await activitiesApiClient.getActivitiesInCategory('MDI', 1, user)
       expect(output).toEqual(response)
@@ -89,6 +98,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .get('/prison/MDI/activities?excludeArchived=true')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
       const output = await activitiesApiClient.getActivities('MDI', true, user)
       expect(output).toEqual(response)
@@ -99,7 +109,11 @@ describe('activitiesApiClient', () => {
   describe('getSchedulesOfActivity', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/activities/1/schedules').matchHeader('authorization', `Bearer token`).reply(200, response)
+      fakeActivitiesApi
+        .get('/activities/1/schedules')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
       const output = await activitiesApiClient.getSchedulesOfActivity(1, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
@@ -109,7 +123,11 @@ describe('activitiesApiClient', () => {
   describe('getActivitySchedule', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/schedules/1').matchHeader('authorization', `Bearer token`).reply(200, response)
+      fakeActivitiesApi
+        .get('/schedules/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
       const output = await activitiesApiClient.getActivitySchedule(1, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
@@ -123,6 +141,7 @@ describe('activitiesApiClient', () => {
         .get('/prisons/MDI/scheduled-instances')
         .query({ startDate: '2022-08-01', endDate: '2022-08-01', slot: 'am' })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getScheduledActivitiesAtPrison(
@@ -141,7 +160,11 @@ describe('activitiesApiClient', () => {
   describe('getScheduledActivity', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/scheduled-instances/1').matchHeader('authorization', `Bearer token`).reply(200, response)
+      fakeActivitiesApi
+        .get('/scheduled-instances/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
 
       const output = await activitiesApiClient.getScheduledActivity(1, user)
 
@@ -158,6 +181,7 @@ describe('activitiesApiClient', () => {
           summary: 'Maths level 1',
         })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200)
 
       await activitiesApiClient.postActivityCreation(
@@ -179,6 +203,7 @@ describe('activitiesApiClient', () => {
           endDate: null,
         })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(204)
 
       await activitiesApiClient.postAllocation(1, 'ABC123', 1, user, '2023-01-01', null)
@@ -189,7 +214,11 @@ describe('activitiesApiClient', () => {
 
   describe('getPayBandsForPrison', () => {
     it('should return data from api', async () => {
-      fakeActivitiesApi.get('/prison/MDI/prison-pay-bands').matchHeader('authorization', `Bearer token`).reply(204)
+      fakeActivitiesApi
+        .get('/prison/MDI/prison-pay-bands')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(204)
 
       await activitiesApiClient.getPayBandsForPrison('MDI', user)
 
@@ -205,6 +234,7 @@ describe('activitiesApiClient', () => {
         .get('/prison/MDI/locations')
         .query({ date: '2022-08-01', timeSlot: 'AM' })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getScheduledPrisonLocations('MDI', '2022-08-01', 'AM', user)
@@ -221,6 +251,7 @@ describe('activitiesApiClient', () => {
         .get('/prison/MDI/schedules')
         .query({ locationId: 'LOC', date: '2022-08-01', timeSlot: 'AM' })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getActivitySchedules('MDI', 'LOC', '2022-08-01', 'AM', user)
@@ -246,6 +277,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .get('/scheduled-instances/123/attendances')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getAttendances(123, user)
@@ -267,6 +299,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .get('/locations/prison/MDI/location-groups')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getPrisonLocationGroups('MDI', user)
@@ -284,6 +317,7 @@ describe('activitiesApiClient', () => {
         .get('/locations/prison/MDI/location-prefix')
         .query({ groupName: 'Houseblock 1' })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getPrisonLocationPrefixByGroup('MDI', 'Houseblock 1', user)
@@ -305,6 +339,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .get('/schedules/1/allocations?activeOnly=true')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getAllocations(1, user)
@@ -331,6 +366,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .post('/prisons/MDI/prisoner-allocations')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getPrisonerAllocations('MDI', ['1234567'], user)
@@ -362,6 +398,7 @@ describe('activitiesApiClient', () => {
         .get(`/scheduled-events/prison/${prisonCode}`)
         .query({ prisonerNumber, startDate, endDate })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const result = await activitiesApiClient.getScheduledEvents(prisonCode, prisonerNumber, startDate, endDate, user)
@@ -393,6 +430,7 @@ describe('activitiesApiClient', () => {
         .post(`/scheduled-events/prison/${prisonCode}`, prisonerNumbers)
         .query({ date, timeSlot })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const result = await activitiesApiClient.getScheduledEventsByPrisonerNumbers(
@@ -444,7 +482,11 @@ describe('activitiesApiClient', () => {
         ],
       } as Appointment
 
-      fakeActivitiesApi.get('/appointments/12345').matchHeader('authorization', `Bearer token`).reply(200, response)
+      fakeActivitiesApi
+        .get('/appointments/12345')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
 
       const output = await activitiesApiClient.getAppointment(12345, user)
       expect(output).toEqual(response)
@@ -461,6 +503,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .get('/appointment-details/12345')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getAppointmentDetails(12345, user)
@@ -478,6 +521,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .get('/appointment-occurrence-details/123456')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getAppointmentOccurrenceDetails(123456, user)
@@ -503,7 +547,11 @@ describe('activitiesApiClient', () => {
         },
       ] as AppointmentCategorySummary[]
 
-      fakeActivitiesApi.get('/appointment-categories').matchHeader('authorization', `Bearer token`).reply(200, response)
+      fakeActivitiesApi
+        .get('/appointment-categories')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
 
       const output = await activitiesApiClient.getAppointmentCategories(user)
       expect(output).toEqual(response)
@@ -534,6 +582,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .get('/appointment-locations/MDI')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getAppointmentLocations('MDI', user)
@@ -592,7 +641,11 @@ describe('activitiesApiClient', () => {
         ],
       } as Appointment
 
-      fakeActivitiesApi.post('/appointments', request).matchHeader('authorization', `Bearer token`).reply(200, response)
+      fakeActivitiesApi
+        .post('/appointments', request)
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
 
       const output = await activitiesApiClient.postCreateAppointment(request, user)
       expect(output).toEqual(response)
@@ -602,7 +655,11 @@ describe('activitiesApiClient', () => {
 
   describe('putCancelScheduledActivity', () => {
     it('should cancel scheduled activity', async () => {
-      fakeActivitiesApi.put('/scheduled-instances/1/cancel').matchHeader('authorization', `Bearer token`).reply(200)
+      fakeActivitiesApi
+        .put('/scheduled-instances/1/cancel')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
 
       const body = {
         reason: 'Cancellation reason',
@@ -616,7 +673,11 @@ describe('activitiesApiClient', () => {
 
   describe('putUncancelScheduledActivity', () => {
     it('should uncancel scheduled activity', async () => {
-      fakeActivitiesApi.put('/scheduled-instances/1/uncancel').matchHeader('authorization', `Bearer token`).reply(200)
+      fakeActivitiesApi
+        .put('/scheduled-instances/1/uncancel')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
 
       const body = {
         username: 'USER1',
@@ -630,7 +691,11 @@ describe('activitiesApiClient', () => {
 
   describe('patchAppointmentOccurrence', () => {
     it('should update an appointment occurrence', async () => {
-      fakeActivitiesApi.patch('/appointment-occurrences/1').matchHeader('authorization', `Bearer token`).reply(200)
+      fakeActivitiesApi
+        .patch('/appointment-occurrences/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
 
       const body = {
         startDate: '2023-02-07',
@@ -658,6 +723,7 @@ describe('activitiesApiClient', () => {
           size: 5,
         })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getActivityCandidates(1, user, ['Basic'], ['RHI'], true, 'test', 2)
@@ -696,6 +762,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .post('/bulk-appointments', request)
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.postCreateBulkAppointment(request, user)
@@ -714,6 +781,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .get('/bulk-appointment-details/12345')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
       const output = await activitiesApiClient.getBulkAppointmentDetails(12345, user)
@@ -728,6 +796,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .get('/allocations/deallocation-reasons')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
       const output = await activitiesApiClient.getDeallocationReasons(user)
       expect(output).toEqual(response)
@@ -737,7 +806,11 @@ describe('activitiesApiClient', () => {
 
   describe('putDeallocateFromActivity', () => {
     it('should deallocation prisoners', async () => {
-      fakeActivitiesApi.put('/schedules/1/deallocate').matchHeader('authorization', `Bearer token`).reply(204)
+      fakeActivitiesApi
+        .put('/schedules/1/deallocate')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(204)
 
       const body: PrisonerDeallocationRequest = {
         prisonerNumbers: ['123456'],
@@ -768,6 +841,7 @@ describe('activitiesApiClient', () => {
         .get('/event-review/prison/MDI')
         .query({ date: '2023-01-01', page: 0, size: 10 })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
       const output = await activitiesApiClient.getChangeEvents('MDI', '2023-01-01', 0, 10, user)
       expect(output).toEqual(response)
@@ -781,6 +855,7 @@ describe('activitiesApiClient', () => {
       fakeActivitiesApi
         .post('/event-review/prison/MDI/acknowledge')
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(204)
       await activitiesApiClient.acknowledgeChangeEvents('MDI', request, user)
       expect(nock.isDone()).toBe(true)
@@ -793,6 +868,7 @@ describe('activitiesApiClient', () => {
         .get(`/schedules/1/suitability`)
         .query({ prisonerNumber: 'AA1234BC' })
         .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
         .reply(200)
       await activitiesApiClient.allocationSuitability(1, 'AA1234BC', user)
       expect(nock.isDone()).toBe(true)
