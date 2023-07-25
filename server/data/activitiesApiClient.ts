@@ -49,6 +49,8 @@ import {
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
 
+const CASELOAD_HEADER = (caseloadId: string) => ({ 'Caseload-Id': caseloadId })
+
 export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   constructor() {
     super('Activities Management API', config.apis.activitiesApi as ApiConfig)
@@ -58,6 +60,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/activities/${activityId}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -65,6 +68,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/activity-categories`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -72,6 +76,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/attendance-reasons`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -79,6 +84,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/prison/${prisonCode}/activity-categories/${categoryId}/activities`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -87,6 +93,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/prison/${prisonCode}/activities`,
       query: { excludeArchived },
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -94,6 +101,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/activities/${activityId}/schedules`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -112,6 +120,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
         slot,
       },
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -119,11 +128,17 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/scheduled-instances/${id}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
   postActivityCreation(createBody: ActivityCreateRequest, user: ServiceUser): Promise<Activity> {
-    return this.post({ path: `/activities`, authToken: user.token, data: createBody })
+    return this.post({
+      path: `/activities`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: createBody,
+    })
   }
 
   patchActivityUpdate(prisonCode: string, activityId: number, updateBody: ActivityUpdateRequest): Promise<Activity> {
@@ -155,6 +170,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.post({
       path: `/schedules/${scheduleId}/allocations`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: { prisonerNumber, payBandId, startDate, endDate },
     })
   }
@@ -163,6 +179,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/prison/${prisonCode}/prison-pay-bands`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -177,6 +194,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/scheduled-events/prison/${prisonCode}`,
       query: { prisonerNumber, startDate, endDate },
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -192,6 +210,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       query: { date, timeSlot },
       data: prisonerNumbers,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -211,6 +230,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/prison/${prisonCode}/locations`,
       query: { date, timeSlot: period },
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -225,6 +245,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/prison/${prisonCode}/schedules`,
       query: { locationId, date, timeSlot: period },
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -232,6 +253,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/schedules/${id}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -239,6 +261,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/scheduled-instances/${id}/attendances`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -256,6 +279,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/locations/prison/${prisonCode}/location-groups`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -268,6 +292,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/locations/prison/${prisonCode}/location-prefix`,
       query: { groupName: locationGroup },
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -276,6 +301,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/schedules/${scheduleId}/allocations`,
       query: { activeOnly: true },
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -283,6 +309,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/allocations/id/${allocationId}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -296,6 +323,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/prisons/${prisonCode}/prisoner-allocations`,
       data: prisonerNumbers,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -303,6 +331,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/appointments/${appointmentId}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -310,6 +339,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/appointment-details/${appointmentId}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -320,6 +350,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/appointment-occurrence-details/${appointmentOccurrenceId}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -327,6 +358,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/appointment-categories`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -334,6 +366,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/appointment-locations/${prisonCode}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -341,6 +374,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.post({
       path: `/appointments`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: appointment,
     })
   }
@@ -352,6 +386,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.post({
       path: `/bulk-appointments`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: bulkAppointments,
     })
   }
@@ -360,6 +395,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/bulk-appointment-details/${bulkAppointmentId}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -371,6 +407,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.put({
       path: `/scheduled-instances/${scheduleInstanceId}/cancel`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: cancelRequest,
     })
   }
@@ -383,6 +420,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.put({
       path: `/scheduled-instances/${scheduleInstanceId}/uncancel`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: uncancelRequest,
     })
   }
@@ -401,6 +439,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.patch({
       path: `/appointment-occurrences/${occurrenceId}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: occurrenceDetails,
     })
   }
@@ -425,6 +464,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
         size: 5,
       },
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -432,6 +472,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/attendances/${user.activeCaseLoadId}/${toDateString(sessionDate)}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -439,6 +480,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/attendances/summary/${user.activeCaseLoadId}/${toDateString(sessionDate)}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -450,6 +492,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.post({
       path: `/appointment-occurrences/${prisonCode}/search`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: searchRequest,
     })
   }
@@ -462,6 +505,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.put({
       path: `/appointment-occurrences/${occurrenceId}/cancel`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: cancelRequest,
     })
   }
@@ -476,6 +520,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/event-review/prison/${prison}`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       query: { date, page, size: pageSize },
     })
   }
@@ -485,6 +530,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/event-review/prison/${prison}/acknowledge`,
       data: request,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -492,6 +538,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/allocations/deallocation-reasons`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
@@ -503,6 +550,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.put({
       path: `/schedules/${scheduleId}/deallocate`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: request,
     })
   }
@@ -515,6 +563,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/schedules/${scheduleId}/suitability`,
       authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       query: { prisonerNumber },
     })
   }
