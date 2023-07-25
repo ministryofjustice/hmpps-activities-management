@@ -17,7 +17,7 @@ context('Change location', () => {
     indexPage.headerChangeLocation().click()
 
     const changeLocationPage = Page.verifyOnPage(ChangeLocationPage)
-    changeLocationPage.locationOptions().should('deep.equal', ['Leeds (HMP)', 'Moorland (HMP & YOI)'])
+    changeLocationPage.locationOptions().should('equal', ['Leeds (HMP)', 'Moorland (HMP & YOI)'])
     changeLocationPage.selectedLocation().should('equal', 'Moorland (HMP & YOI)')
     changeLocationPage.submit().click()
 

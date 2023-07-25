@@ -196,7 +196,6 @@ describe('Route Handlers - Attendance List', () => {
             alerts: [{ alertCode: 'HA' }],
             location: 'MDI-1-001',
             name: 'Joe Bloggs',
-            lastName: 'Bloggs',
             otherEvents: [
               {
                 eventSource: 'NOMIS',
@@ -216,7 +215,6 @@ describe('Route Handlers - Attendance List', () => {
             alerts: [],
             location: 'MDI-1-002',
             name: 'Alan Key',
-            lastName: 'Key',
             otherEvents: [
               {
                 eventId: 4,
@@ -236,7 +234,6 @@ describe('Route Handlers - Attendance List', () => {
             alerts: [],
             location: 'MDI-1-003',
             name: 'Mr Blobby',
-            lastName: 'Blobby',
             otherEvents: [],
             prisonerNumber: 'ZXY123',
             attendance: { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },

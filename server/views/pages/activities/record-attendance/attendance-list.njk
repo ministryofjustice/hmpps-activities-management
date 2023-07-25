@@ -96,7 +96,7 @@
     <hr class="print-only"/>
 
     {% set rows = [] %}
-    {% for attendee in attendees | sort('lastName') %}
+    {% for attendee in attendees | sort('location') %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.name,
             value: attendee.attendance.id + '-' + attendee.prisonerNumber,
