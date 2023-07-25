@@ -52,6 +52,7 @@ export default class AttendanceListRoutes {
         ? await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
             inmates.map(i => ({
               name: `${i.firstName} ${i.lastName}`,
+              lastName: i.lastName,
               prisonerNumber: i.prisonerNumber,
               location: i.cellLocation,
               alerts: i.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),

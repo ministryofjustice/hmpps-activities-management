@@ -31,6 +31,7 @@ import {
   firstNameLastName,
   setAttribute,
   removeUndefined,
+  sort,
 } from '../utils/utils'
 import config from '../config'
 import {
@@ -116,6 +117,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('buildErrorSummaryList', buildErrorSummaryList)
   njkEnv.addFilter('formatDate', formatDate)
   njkEnv.addFilter('filterActivitiesForDay', filterActivitiesForDay)
+  njkEnv.addFilter('sort', sort)
   njkEnv.addFilter('sortActivitiesByStartTime', sortActivitiesByStartTime)
   njkEnv.addFilter('dateInList', dateInList)
   njkEnv.addFilter('subDays', subDays)
