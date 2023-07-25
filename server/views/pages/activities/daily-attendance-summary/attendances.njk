@@ -16,6 +16,15 @@
 
 {% block content %}
     {% set filterOptionsHtml %}
+        {% set categoryFilters = [] %}
+        {% for category in uniqueCategories %}
+            {% set categoryFilters = (categoryFilters.push({
+                value: category,
+                text: category,
+                checked: category in session.attendanceSummaryJourney.categoryFilters
+            }), categoryFilters) %}
+        {% endfor %}
+
         {{ govukCheckboxes({
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
@@ -29,12 +38,20 @@
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
-            items: attendanceSummaryFilters.categoryFilters
+            items: categoryFilters
         }) }}
         <div class="govuk-!-margin-bottom-4">
-            <a href="#" class="govuk-link govuk-link--no-visited-state"
-               data-module="select-all-link" data-checkbox-name="categoryFilters">Select all</a>
+            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters">Select all</a>
         </div>
+
+        {% set activityFilters = [] %}
+        {% for activity in uniqueActivities %}
+            {% set activityFilters = (activityFilters.push({
+                value: activity,
+                text: activity,
+                checked: activity in session.attendanceSummaryJourney.activityFilters
+            }), activityFilters) %}
+        {% endfor %}
 
         {{ govukCheckboxes({
             idPrefix: 'activityFilters',
@@ -49,21 +66,20 @@
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
-            items: attendanceSummaryFilters.activityFilters
+            items: activityFilters
         }) }}
         <div class="govuk-!-margin-bottom-4">
             <a href="#" class="govuk-link govuk-link--no-visited-state"
                data-module="select-all-link" data-checkbox-name="activityFilters">Select all</a>
         </div>
+
         <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters
         </button>
     {% endset %}
     <div class="moj-filter-layout" data-module="activities-list-filter">
-        <form id="filter-form" method="POST" novalidate>
+        <form id="filter-form" method="POST" action="update-filters" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-            <input type="hidden" name="activityDate"
-                   value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
             <div class="moj-filter-layout__filter">
                 {{ mojFilter({
                     heading: {
@@ -80,7 +96,7 @@
                         text: 'Search by name or prison number',
                         classes: 'govuk-label--s'
                     },
-                    value: attendanceSummaryFilters.searchTerm
+                    value: session.attendanceSummaryJourney.searchTerm
                 },
                 buttonParams: {
                     text: 'Search'
@@ -150,7 +166,7 @@
                 },
                 {
                     attributes: { id: 'activity-' + loop.index },
-                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state">' + attendee.attendance.activitySummary,
+                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + attendee.attendance.activitySummary + '</a>',
                     classes: 'govuk-table__cell'
                 },
                 {

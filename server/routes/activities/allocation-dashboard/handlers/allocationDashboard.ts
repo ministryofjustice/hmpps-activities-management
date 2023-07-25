@@ -25,7 +25,6 @@ export class SelectedAllocation {
 
 export class SelectedAllocations {
   @Expose()
-  @Expose()
   @Transform(({ value }) => [value].flat()) // Transform to an array if only one value is provided
   @HasAtLeastOne({ message: 'Select at least one prisoner' })
   selectedAllocations: string[]

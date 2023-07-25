@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { formatDate, getTimeSlotFromTime, toDate } from '../../../../utils/utils'
+import { getTimeSlotFromTime, toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 
 export default class CancelledSessionsRoutes {
@@ -7,12 +7,13 @@ export default class CancelledSessionsRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const activityDate = req.query.date ? toDate(req.query.date as string) : undefined
-    if (activityDate === undefined) {
+    const { date } = req.query
+    const { attendanceSummaryJourney } = req.session
+
+    if (!date) {
       return res.redirect('select-period')
     }
-
-    const { attendanceSummaryFilters } = req.session
+    const activityDate = toDate(req.query.date as string)
 
     const scheduledActivities = await this.activitiesService.getScheduledActivitiesAtPrison(activityDate, user)
 
@@ -30,22 +31,12 @@ export default class CancelledSessionsRoutes {
         allocated: session.activitySchedule.activity.allocated,
         comment: session.comment,
       }))
-      .filter(c => this.includesSearchTerm(c.summary, attendanceSummaryFilters.searchTerm))
+      .filter(c => this.includesSearchTerm(c.summary, attendanceSummaryJourney.searchTerm))
 
     return res.render('pages/activities/daily-attendance-summary/cancelled-sessions', {
       activityDate,
       cancelledSessions,
-      attendanceSummaryFilters,
     })
-  }
-
-  POST = async (req: Request, res: Response): Promise<void> => {
-    const { attendanceSummaryFilters } = req.session
-    const activityDate = req.query.date ? toDate(req.query.date as string) : undefined
-    const isoDateString = formatDate(new Date(activityDate), 'yyyy-MM-dd')
-    attendanceSummaryFilters.searchTerm = req.body?.searchTerm ? (req.body?.searchTerm as string) : ''
-
-    res.redirect(`cancelled-sessions?date=${isoDateString}`)
   }
 
   private includesSearchTerm = (propertyValue: string, searchTerm: string) =>

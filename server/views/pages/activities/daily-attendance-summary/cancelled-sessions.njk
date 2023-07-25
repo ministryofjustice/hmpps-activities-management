@@ -13,10 +13,8 @@
 {% set backLinkHref = "summary?date=" + activityDate | formatDate('yyyy-MM-dd') %}
 
 {% block content %}
-    <form id="filter-form" method="POST" novalidate>
+    <form id="filter-form" method="POST" action="update-filters" novalidate>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-        <input type="hidden" name="activityDate"
-               value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
         {{ searchBar({
             inputParams: {
                 id: 'searchTerm',
@@ -25,7 +23,7 @@
                     text: 'Search by session name',
                     classes: 'govuk-label--s'
                 },
-                value: attendanceSummaryFilters.searchTerm
+                value: session.attendanceSummaryJourney.searchTerm
             },
             buttonParams: {
                 text: 'Search'
@@ -75,7 +73,7 @@
             {% set cancelledSessionsRows = (cancelledSessionsRows.push([
                 {
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": cancelledSession.summary },
-                    html: '<a href=/activities/attendance/activities/' + cancelledSession.id + '/attendance-list class="govuk-link govuk-link--no-visited-state">' + cancelledSession.summary + '</a>',
+                    html: '<a href=/activities/attendance/activities/' + cancelledSession.id + '/attendance-list class="govuk-link govuk-link--no-visited-state" target="_blank">' + cancelledSession.summary + '</a>',
                     classes: 'govuk-table_cell'
                 },
                 {

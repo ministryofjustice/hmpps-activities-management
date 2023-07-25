@@ -3,9 +3,7 @@ import { when } from 'jest-when'
 import { parse } from 'date-fns'
 import DailySummaryRoutes from './dailySummary'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AllAttendance, AllAttendanceSummary, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
-import { formatDate, toDate } from '../../../../utils/utils'
-import { AttendanceSummaryFilters, FilterItem } from '../../../../@types/activities'
+import { AllAttendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -41,41 +39,43 @@ describe('Route Handlers - Daily Attendance Summary', () => {
   describe('GET', () => {
     const mockApiResponse = [
       {
-        id: 1,
-        prisonCode: 'MDI',
-        activityId: 1,
-        categoryName: 'Education',
-        sessionDate: '2022-10-10',
-        timeSlot: 'AM',
-        status: 'WAITING',
-        attendanceReasonCode: null,
-        issuePayment: null,
-        attendanceCount: 3,
-      },
-      {
-        id: 6,
-        prisonCode: 'MDI',
-        activityId: 1,
-        categoryName: 'Education',
-        sessionDate: '2022-10-10',
-        timeSlot: 'ED',
-        status: 'WAITING',
-        attendanceReasonCode: null,
-        issuePayment: null,
-        attendanceCount: 1,
-      },
-    ] as AllAttendanceSummary[]
-
-    const mockSuspendedResponse = [
-      {
         attendanceId: 1,
         prisonCode: 'MDI',
         sessionDate: '2022-10-10',
         timeSlot: 'AM',
-        status: 'COMPLETED',
-        attendanceReasonCode: 'SUSPENDED',
+        status: 'WAITING',
+        attendanceReasonCode: null,
         issuePayment: null,
-        prisonerNumber: 'A12345A',
+        prisonerNumber: 'ABC123',
+        activityId: 1,
+        activitySummary: 'Maths Level 1',
+        categoryName: 'Education',
+      },
+      {
+        attendanceId: 2,
+        prisonCode: 'MDI',
+        sessionDate: '2022-10-10',
+        timeSlot: 'AM',
+        status: 'WAITING',
+        attendanceReasonCode: null,
+        issuePayment: null,
+        prisonerNumber: 'ABC321',
+        activityId: 2,
+        activitySummary: 'Woodworking',
+        categoryName: 'Prison Jobs',
+      },
+      {
+        attendanceId: 3,
+        prisonCode: 'MDI',
+        sessionDate: '2022-10-10',
+        timeSlot: 'AM',
+        status: 'COMPLETED',
+        attendanceReasonCode: 'ATTENDED',
+        issuePayment: true,
+        prisonerNumber: 'ZXY123',
+        activityId: 2,
+        activitySummary: 'Woodworking',
+        categoryName: 'Prison Jobs',
       },
     ] as AllAttendance[]
 
@@ -85,7 +85,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         startTime: '10:00',
         endTime: '11:00',
         activitySchedule: {
-          activity: { summary: 'Maths level 1', category: { code: 'Maths' } },
+          activity: { summary: 'Maths level 1', category: { name: 'Education' } },
           description: 'Houseblock 1',
           internalLocation: { description: 'Classroom' },
         },
@@ -101,7 +101,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         startTime: '13:00',
         endTime: '14:00',
         activitySchedule: {
-          activity: { summary: 'English level 1', category: { code: 'English' } },
+          activity: { summary: 'English level 1', category: { name: 'Education' } },
           description: 'Houseblock 2',
           internalLocation: { description: 'Classroom 2' },
         },
@@ -110,6 +110,21 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           { status: 'WAITING' },
           { status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
           { status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+        ],
+      },
+      {
+        id: 3,
+        startTime: '10:00',
+        endTime: '11:00',
+        activitySchedule: {
+          activity: { summary: 'Woodworking', category: { name: 'Prison Jobs' } },
+          description: 'Houseblock 1',
+          internalLocation: { description: 'Workshop' },
+        },
+        cancelled: true,
+        attendances: [
+          { status: 'COMPLETED', attendanceReason: { code: 'CANCELLED' } },
+          { status: 'COMPLETED', attendanceReason: { code: 'CANCELLED' } },
         ],
       },
     ] as ScheduledActivity[]
@@ -129,29 +144,18 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         session: {},
       } as unknown as Request
 
-      when(activitiesService.getAllAttendanceSummary)
-        .calledWith(date, res.locals.user)
-        .mockResolvedValue(mockApiResponse)
+      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
 
       when(activitiesService.getScheduledActivitiesAtPrison)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockActivities)
 
-      when(activitiesService.getAllAttendance)
-        .calledWith(date, res.locals.user)
-        .mockResolvedValue(mockSuspendedResponse)
-
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/daily-summary', {
         activityDate: date,
+        uniqueCategories: ['Education', 'Prison Jobs'],
         totalAbsences: {
-          AM: 0,
-          DAY: 0,
-          ED: 0,
-          PM: 0,
-        },
-        totalAbsencesPercentage: {
           AM: 0,
           DAY: 0,
           ED: 0,
@@ -159,25 +163,19 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         },
         totalActivities: {
           AM: 1,
-          DAY: 2,
-          ED: 1,
+          DAY: 1,
+          ED: 0,
           PM: 0,
         },
         totalAllocated: {
           AM: 3,
-          DAY: 4,
-          ED: 1,
-          PM: 0,
-        },
-        totalAttended: {
-          AM: 0,
-          DAY: 0,
+          DAY: 3,
           ED: 0,
           PM: 0,
         },
-        totalAttendedPercentage: {
-          AM: 0,
-          DAY: 0,
+        totalAttended: {
+          AM: 1,
+          DAY: 1,
           ED: 0,
           PM: 0,
         },
@@ -188,8 +186,8 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalCancelledSessions: {
-          AM: 0,
-          DAY: 0,
+          AM: 1,
+          DAY: 1,
           ED: 0,
           PM: 0,
         },
@@ -200,15 +198,9 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalNotAttended: {
-          AM: 3,
-          DAY: 4,
-          ED: 1,
-          PM: 0,
-        },
-        totalNotAttendedPercentage: {
-          AM: 100,
-          DAY: 100,
-          ED: 100,
+          AM: 2,
+          DAY: 2,
+          ED: 0,
           PM: 0,
         },
         totalNotRequired: {
@@ -302,15 +294,10 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         suspendedPrisonerCount: {
-          AM: 1,
-          DAY: 1,
+          AM: 0,
+          DAY: 0,
           ED: 0,
           PM: 0,
-        },
-        attendanceSummaryFilters: {
-          activityDate: date,
-          categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
-          activityFilters: [],
         },
       })
     })
@@ -319,22 +306,15 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       const dateString = '2022-10-10'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
 
-      when(activitiesService.getAllAttendanceSummary)
-        .calledWith(date, res.locals.user)
-        .mockResolvedValue(mockApiResponse)
+      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
 
       when(activitiesService.getScheduledActivitiesAtPrison).mockResolvedValue(mockActivities)
-
-      when(activitiesService.getAllAttendance)
-        .calledWith(date, res.locals.user)
-        .mockResolvedValue(mockSuspendedResponse)
 
       req = {
         query: { date: dateString },
         session: {
-          attendanceSummaryFilters: {
-            categories: ['Education'],
-            categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
+          attendanceSummaryJourney: {
+            categoryFilters: ['Education'],
           },
         },
       } as unknown as Request
@@ -343,13 +323,8 @@ describe('Route Handlers - Daily Attendance Summary', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/daily-summary', {
         activityDate: date,
+        uniqueCategories: ['Education', 'Prison Jobs'],
         totalAbsences: {
-          AM: 0,
-          DAY: 0,
-          ED: 0,
-          PM: 0,
-        },
-        totalAbsencesPercentage: {
           AM: 0,
           DAY: 0,
           ED: 0,
@@ -357,23 +332,17 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         },
         totalActivities: {
           AM: 1,
-          DAY: 2,
-          ED: 1,
-          PM: 0,
-        },
-        totalAllocated: {
-          AM: 3,
-          DAY: 4,
-          ED: 1,
-          PM: 0,
-        },
-        totalAttended: {
-          AM: 0,
-          DAY: 0,
+          DAY: 1,
           ED: 0,
           PM: 0,
         },
-        totalAttendedPercentage: {
+        totalAllocated: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
+        },
+        totalAttended: {
           AM: 0,
           DAY: 0,
           ED: 0,
@@ -398,15 +367,9 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalNotAttended: {
-          AM: 3,
-          DAY: 4,
-          ED: 1,
-          PM: 0,
-        },
-        totalNotAttendedPercentage: {
-          AM: 100,
-          DAY: 100,
-          ED: 100,
+          AM: 1,
+          DAY: 1,
+          ED: 0,
           PM: 0,
         },
         totalNotRequired: {
@@ -500,110 +463,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         suspendedPrisonerCount: {
-          AM: 1,
-          DAY: 1,
+          AM: 0,
+          DAY: 0,
           ED: 0,
           PM: 0,
-        },
-        attendanceSummaryFilters: {
-          activityDate: date,
-          categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
-          activityFilters: [],
         },
       })
     })
   })
-
-  describe('POST', () => {
-    it('should update category filter to Education', async () => {
-      req = {
-        query: {
-          date: '2022-10-10',
-        },
-        body: {
-          categoryFilters: ['Education'],
-        },
-        session: {
-          attendanceSummaryFilters: testAttendanceSummaryFilters(),
-        },
-      } as unknown as Request
-
-      await handler.POST(req, res)
-
-      const { attendanceSummaryFilters } = req.session
-
-      // Different from default filter values
-      expect(
-        attendanceSummaryFilters.categoryFilters.includes({ value: 'Education', text: 'Education', checked: true }),
-      )
-
-      expect(res.redirect).toHaveBeenCalledWith(
-        `summary?date=${formatDate(attendanceSummaryFilters.activityDate, 'yyyy-MM-dd')}`,
-      )
-    })
-  })
-
-  describe('FILTERS', () => {
-    it('should update category filter to All', async () => {
-      req = {
-        query: {
-          date: '2022-10-10',
-        },
-        body: {
-          categoryFilters: ['Education'],
-        },
-        session: {
-          attendanceSummaryFilters: testAttendanceSummaryFilters(),
-        },
-      } as unknown as Request
-
-      await handler.FILTERS(req, res)
-
-      const { attendanceSummaryFilters } = req.session
-
-      // Different from default filter values
-      expect(
-        attendanceSummaryFilters.categoryFilters.includes({ value: 'Education', text: 'Education', checked: true }),
-      )
-
-      expect(res.redirect).toHaveBeenCalledWith(
-        `summary?date=${formatDate(attendanceSummaryFilters.activityDate, 'yyyy-MM-dd')}`,
-      )
-    })
-
-    it('Clear a category filter', async () => {
-      req = {
-        query: { clearCategory: 'Education' },
-        session: { attendanceSummaryFilters: testAttendanceSummaryFilters() },
-      } as unknown as Request
-
-      await handler.FILTERS(req, res)
-
-      const { attendanceSummaryFilters } = req.session
-
-      expect(attendanceSummaryFilters).toBeDefined()
-      // All is added back in whenever a radio option is cleared
-      expect(
-        attendanceSummaryFilters.categoryFilters
-          .filter((cat: FilterItem) => cat.checked === true)
-          .filter((cat: FilterItem) => cat.value === 'ALL'),
-      ).toHaveLength(1)
-      const { activityDate } = attendanceSummaryFilters
-      expect(res.redirect).toHaveBeenCalledWith(`summary?date=${formatDate(activityDate, 'yyyy-MM-dd')}`)
-    })
-  })
 })
-
-const categoryFiltersDefault = [
-  { value: 'ALL', text: 'All categories', checked: true },
-  { value: 'Education', text: 'Education', checked: false },
-] as FilterItem[]
-
-const testAttendanceSummaryFilters = (
-  categoryFilters: FilterItem[] = categoryFiltersDefault,
-): AttendanceSummaryFilters => {
-  return {
-    activityDate: toDate('2022-10-10'),
-    categoryFilters,
-  } as AttendanceSummaryFilters
-}
