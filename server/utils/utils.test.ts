@@ -22,7 +22,6 @@ import {
   exampleDateOneWeekAhead,
   parseDate,
   toFixed,
-  sort,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
@@ -387,13 +386,6 @@ describe('utils', () => {
       const number: number = null
       const fixedPointString = toFixed(number, 2)
       expect(fixedPointString).toEqual(null)
-    })
-  })
-
-  describe('sort', () => {
-    it('should sort a list of objects by property', () => {
-      const arr = [{ a: 'one' }, { a: 'two' }, { a: 'three' }]
-      expect(sort(arr, 'a')).toStrictEqual([{ a: 'one' }, { a: 'three' }, { a: 'two' }])
     })
   })
 })

@@ -284,18 +284,6 @@ export const dateInList = (date: Date, dates: Date[]) => {
   return dates.some(d => isSameDay(date, d))
 }
 
-export const sort = (items: object[], sortableField: string) => {
-  return items.sort((a, b) => {
-    if (a[sortableField] < b[sortableField]) {
-      return -1
-    }
-    if (a[sortableField] > b[sortableField]) {
-      return 1
-    }
-    return 0
-  })
-}
-
 export const associateErrorsWithProperty = (error: ValidationError) => {
   return Object.values(error.constraints).map(err => ({
     property: error.property,
