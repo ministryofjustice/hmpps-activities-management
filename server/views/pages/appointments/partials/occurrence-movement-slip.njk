@@ -13,7 +13,7 @@
             <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="cell-location">{{ prisoner.prisonCode + '-' + prisoner.cellLocation }}</span>
 
             <dl class='movement-slip__summary'>
-                {{ labelAndValue('Appointment', appointmentOccurrence.appointmentName) }}
+                {{ labelAndValue('Appointment', appointmentOccurrence.appointmentName | escape) }}
                 {{ labelAndValue('Time', '<ul class="govuk-list">' +
                     '<li>' + appointmentOccurrence.startTime + ' to ' + appointmentOccurrence.endTime + '</li>' +
                     '<li>' + (appointmentOccurrence.startDate | toDate | formatDate('EEEE, d MMMM yyyy')) + '</li>' +
