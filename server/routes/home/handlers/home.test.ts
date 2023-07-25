@@ -17,7 +17,6 @@ describe('Route Handlers - Home', () => {
         },
       },
       render: jest.fn(),
-      redirect: jest.fn(),
     } as unknown as Response
   })
 
@@ -27,11 +26,13 @@ describe('Route Handlers - Home', () => {
       expect(res.render).toHaveBeenCalledWith('pages/home/index')
     })
 
-    it('redirects to DPS if neither service rolled out', async () => {
+    it('renders not-rolled-out template if neither service rolled out', async () => {
       res.locals.user.isAppointmentsRolledOut = false
       res.locals.user.isActivitiesRolledOut = false
       await handler.GET(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('https://digital-dev.prison.service.justice.gov.uk')
+      expect(res.render).toHaveBeenCalledWith('pages/not-rolled-out', {
+        serviceName: 'Activities and Appointments',
+      })
     })
   })
 })
