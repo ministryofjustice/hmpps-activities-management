@@ -7,10 +7,19 @@
 
 {% set pageTitle = applicationName + " - Daily attendance summary" %}
 {% set pageId = 'daily-attendance-summary-page' %}
-{% set backLinkHref = "/activities/attendance-summary/select-period" %}
+{% set backLinkHref = "select-period" %}
 
 {% block content %}
     {% set filterOptionsHtml %}
+        {% set categoryFilters = [] %}
+        {% for category in uniqueCategories %}
+            {% set categoryFilters = (categoryFilters.push({
+                value: category,
+                text: category,
+                checked: category in session.attendanceSummaryJourney.categoryFilters
+            }), categoryFilters) %}
+        {% endfor %}
+
         {{ govukCheckboxes({
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
@@ -24,7 +33,7 @@
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
-            items: attendanceSummaryFilters.categoryFilters
+            items: categoryFilters
         }) }}
         <div class="govuk-!-margin-bottom-4">
             <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters">Select all</a>
@@ -35,18 +44,9 @@
     {% endset %}
 
     <div class="moj-filter-layout" data-module="activities-list-filter">
-        <form id="filter-form" method="POST" novalidate>
+        <form id="filter-form" method="POST" action="update-filters" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-            <input type="hidden" name="activityDate" value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
             <div class="moj-filter-layout__filter">
-                {% set selectedCategories = [] %}
-                {% for category in attendanceSummaryFilters.categoryFilters %}
-                    {% if (category.checked === true) %}
-                        {% set selectedCategories = (selectedCategories.push({
-                           href: 'update-filters?clearCategory=' + category.value, text: category.value
-                       }), selectedCategories) %}
-                    {% endif %}
-                {% endfor %}
                 {{ mojFilter({
                     heading: {
                         text: 'Filter'
@@ -115,7 +115,7 @@
         <div class="govuk-grid-column-full">
             <div class="govuk-body-l">
                 {{ totalAllocated[timeSlot] }} total allocation{% if totalAllocated[timeSlot] != 1 %}s{% endif %} for
-                <a href="/activities/attendance/activities?date={{ activityDate | formatDate('yyyy-MM-dd') }}&preserveHistory=true" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">{{ totalActivities[timeSlot] }} session{% if totalActivities[timeSlot] != 1 %}s{% endif %}</a>
+                <a href="/activities/attendance/activities?date={{ activityDate | formatDate('yyyy-MM-dd') }}&preserveHistory=true" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link" target='_blank'>{{ totalActivities[timeSlot] }} session{% if totalActivities[timeSlot] != 1 %}s{% endif %}</a>
             </div>
         </div>
 
@@ -125,7 +125,7 @@
             visuallyHiddenText: 'prisoners, which is',
             percentage: totalNotAttendedPercentage[timeSlot],
             link: {
-                href: '/activities/attendance-summary/attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=NotAttended#' + timeSlot | lower + '-tab',
+                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=NotAttended#' + timeSlot | lower + '-tab',
                 text: 'All not yet attended'
             }
         }) }}
@@ -136,7 +136,7 @@
             visuallyHiddenText: 'prisoners, which is',
             percentage: totalAbsencesPercentage[timeSlot],
             link: {
-                href: '/activities/attendance-summary/attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Absences#' + timeSlot | lower + '-tab',
+                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Absences#' + timeSlot | lower + '-tab',
                 text: 'All absences'
             }
         }) }}
@@ -147,7 +147,7 @@
             visuallyHiddenText: 'prisoners, which is',
             percentage: totalAttendedPercentage[timeSlot],
             link: {
-                href: '/activities/attendance-summary/attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended#' + timeSlot | lower + '-tab',
+                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended#' + timeSlot | lower + '-tab',
                 text: 'All attended'
             }
         }) }}

@@ -23,7 +23,10 @@ function validationMiddleware(type: new () => object): RequestHandler {
       notAttendedJourney: req.session.notAttendedJourney,
     })
 
-    const errors: ValidationError[] = await validate(requestObject, { stopAtFirstError: true })
+    const errors: ValidationError[] = await validate(requestObject, {
+      stopAtFirstError: true,
+      forbidUnknownValues: false,
+    })
 
     if (errors.length === 0) {
       req.body = requestObject

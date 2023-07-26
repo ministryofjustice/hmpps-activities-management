@@ -3,8 +3,6 @@ import { when } from 'jest-when'
 import { parse } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
-import { formatDate, toDate } from '../../../../utils/utils'
-import { AttendanceSummaryFilters, FilterItem } from '../../../../@types/activities'
 import DailyAttendanceRoutes from './attendance'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -35,9 +33,7 @@ describe('Route Handlers - Daily Attendance List', () => {
     req = {
       query: {},
       session: {
-        attendanceSummaryFilters: {
-          categoryFilters: ['Education'],
-        },
+        attendanceSummaryJourney: {},
       },
     } as unknown as Request
   })
@@ -66,9 +62,9 @@ describe('Route Handlers - Daily Attendance List', () => {
         attendanceReasonCode: null,
         issuePayment: null,
         prisonerNumber: 'ABC321',
-        activityId: 1,
-        activitySummary: 'Maths Level 1',
-        categoryName: 'Education',
+        activityId: 2,
+        activitySummary: 'Woodworking',
+        categoryName: 'Prison Jobs',
       },
       {
         attendanceId: 3,
@@ -79,9 +75,9 @@ describe('Route Handlers - Daily Attendance List', () => {
         attendanceReasonCode: 'ATTENDED',
         issuePayment: true,
         prisonerNumber: 'ZXY123',
-        activityId: 1,
-        activitySummary: 'Maths Level 1',
-        categoryName: 'Education',
+        activityId: 2,
+        activitySummary: 'Woodworking',
+        categoryName: 'Prison Jobs',
       },
     ] as AllAttendance[]
 
@@ -132,6 +128,8 @@ describe('Route Handlers - Daily Attendance List', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
         activityDate: date,
         status: 'NotAttended',
+        uniqueActivities: ['Maths Level 1', 'Woodworking'],
+        uniqueCategories: ['Education', 'Prison Jobs'],
         attendees: [
           {
             name: 'Joe Bloggs',
@@ -156,11 +154,11 @@ describe('Route Handlers - Daily Attendance List', () => {
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
             attendance: {
-              activityId: 1,
-              activitySummary: 'Maths Level 1',
+              activityId: 2,
+              activitySummary: 'Woodworking',
               attendanceId: 2,
               attendanceReasonCode: null,
-              categoryName: 'Education',
+              categoryName: 'Prison Jobs',
               issuePayment: null,
               prisonCode: 'MDI',
               prisonerNumber: 'ABC321',
@@ -170,12 +168,6 @@ describe('Route Handlers - Daily Attendance List', () => {
             },
           },
         ],
-        attendanceSummaryFilters: {
-          activityDate: date,
-          categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
-          activityFilters: [{ value: 'Maths Level 1', text: 'Maths Level 1', checked: true }],
-          searchTerm: '',
-        },
       })
     })
 
@@ -217,11 +209,11 @@ describe('Route Handlers - Daily Attendance List', () => {
             prisonerNumber: 'ZXY123',
             location: 'MDI-1-001',
             attendance: {
-              activityId: 1,
-              activitySummary: 'Maths Level 1',
+              activityId: 2,
+              activitySummary: 'Woodworking',
               attendanceId: 3,
               attendanceReasonCode: 'ATTENDED',
-              categoryName: 'Education',
+              categoryName: 'Prison Jobs',
               issuePayment: true,
               prisonCode: 'MDI',
               prisonerNumber: 'ZXY123',
@@ -231,12 +223,8 @@ describe('Route Handlers - Daily Attendance List', () => {
             },
           },
         ],
-        attendanceSummaryFilters: {
-          activityDate: date,
-          categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
-          activityFilters: [{ value: 'Maths Level 1', text: 'Maths Level 1', checked: true }],
-          searchTerm: '',
-        },
+        uniqueActivities: ['Woodworking'],
+        uniqueCategories: ['Prison Jobs'],
       })
     })
 
@@ -247,7 +235,7 @@ describe('Route Handlers - Daily Attendance List', () => {
       when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['ZXY123'], res.locals.user)
+        .calledWith(['ABC321'], res.locals.user)
         .mockResolvedValue(mockPrisonApiResponse)
 
       req = {
@@ -256,9 +244,8 @@ describe('Route Handlers - Daily Attendance List', () => {
           status: 'NotAttended',
         },
         session: {
-          attendanceSummaryFilters: {
-            categories: ['Education'],
-            categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
+          attendanceSummaryJourney: {
+            categoryFilters: ['Prison Jobs'],
           },
         },
       } as unknown as Request
@@ -270,33 +257,15 @@ describe('Route Handlers - Daily Attendance List', () => {
         status: 'NotAttended',
         attendees: [
           {
-            name: 'Joe Bloggs',
-            prisonerNumber: 'ABC123',
-            location: 'MDI-1-001',
-            attendance: {
-              activityId: 1,
-              activitySummary: 'Maths Level 1',
-              attendanceId: 1,
-              attendanceReasonCode: null,
-              categoryName: 'Education',
-              issuePayment: null,
-              prisonCode: 'MDI',
-              prisonerNumber: 'ABC123',
-              sessionDate: '2022-10-10',
-              status: 'WAITING',
-              timeSlot: 'AM',
-            },
-          },
-          {
             name: 'Alan Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
             attendance: {
-              activityId: 1,
-              activitySummary: 'Maths Level 1',
+              activityId: 2,
+              activitySummary: 'Woodworking',
               attendanceId: 2,
               attendanceReasonCode: null,
-              categoryName: 'Education',
+              categoryName: 'Prison Jobs',
               issuePayment: null,
               prisonCode: 'MDI',
               prisonerNumber: 'ABC321',
@@ -306,87 +275,61 @@ describe('Route Handlers - Daily Attendance List', () => {
             },
           },
         ],
-        attendanceSummaryFilters: {
-          activityDate: date,
-          categoryFilters: [{ value: 'Education', text: 'Education', checked: true }],
-          activityFilters: [{ value: 'Maths Level 1', text: 'Maths Level 1', checked: true }],
-          searchTerm: '',
+        uniqueActivities: ['Maths Level 1', 'Woodworking'],
+        uniqueCategories: ['Education', 'Prison Jobs'],
+      })
+    })
+
+    it('should filter the activities based on the category', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC321'], res.locals.user)
+        .mockResolvedValue(mockPrisonApiResponse)
+
+      req = {
+        query: {
+          date: dateString,
+          status: 'NotAttended',
         },
+        session: {
+          attendanceSummaryJourney: {
+            activityFilters: ['Woodworking'],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
+        activityDate: date,
+        status: 'NotAttended',
+        attendees: [
+          {
+            name: 'Alan Key',
+            prisonerNumber: 'ABC321',
+            location: 'MDI-1-002',
+            attendance: {
+              activityId: 2,
+              activitySummary: 'Woodworking',
+              attendanceId: 2,
+              attendanceReasonCode: null,
+              categoryName: 'Prison Jobs',
+              issuePayment: null,
+              prisonCode: 'MDI',
+              prisonerNumber: 'ABC321',
+              sessionDate: '2022-10-10',
+              status: 'WAITING',
+              timeSlot: 'AM',
+            },
+          },
+        ],
+        uniqueActivities: ['Maths Level 1', 'Woodworking'],
+        uniqueCategories: ['Education', 'Prison Jobs'],
       })
     })
   })
-
-  describe('POST', () => {
-    it('should update category filter to Education', async () => {
-      req = {
-        query: {
-          date: '2022-10-10',
-          status: 'NotAttended',
-        },
-        body: {
-          categoryFilters: ['Education'],
-        },
-        session: {
-          attendanceSummaryFilters: testAttendanceSummaryFilters(),
-        },
-      } as unknown as Request
-
-      await handler.POST(req, res)
-
-      const { attendanceSummaryFilters } = req.session
-
-      // Different from default filter values
-      expect(attendanceSummaryFilters.categoryFilters[0].value).toEqual('Education')
-      expect(attendanceSummaryFilters.categoryFilters[0].text).toEqual('Education')
-      expect(attendanceSummaryFilters.categoryFilters[0].checked).toEqual(true)
-
-      expect(res.redirect).toHaveBeenCalledWith(
-        `attendance?date=${formatDate(attendanceSummaryFilters.activityDate, 'yyyy-MM-dd')}&status=NotAttended`,
-      )
-    })
-  })
-
-  describe('FILTERS', () => {
-    it('should update category filter to Education', async () => {
-      req = {
-        query: {
-          date: '2022-10-10',
-        },
-        body: {
-          categoryFilters: ['Education'],
-        },
-        session: {
-          attendanceSummaryFilters: testAttendanceSummaryFilters(),
-        },
-      } as unknown as Request
-
-      await handler.FILTERS(req, res)
-
-      const { attendanceSummaryFilters } = req.session
-
-      // Different from default filter values
-      expect(attendanceSummaryFilters.categoryFilters[0].value).toEqual('Education')
-      expect(attendanceSummaryFilters.categoryFilters[0].text).toEqual('Education')
-      expect(attendanceSummaryFilters.categoryFilters[0].checked).toEqual(true)
-
-      expect(res.redirect).toHaveBeenCalledWith(
-        `attendance?date=${formatDate(attendanceSummaryFilters.activityDate, 'yyyy-MM-dd')}`,
-      )
-    })
-  })
 })
-
-const categoryFiltersDefault = [{ value: 'Education', text: 'Education', checked: true }] as FilterItem[]
-
-const activityFiltersDefault = [{ value: 'Maths Level 1', text: 'Maths Level 1', checked: true }] as FilterItem[]
-
-const testAttendanceSummaryFilters = (
-  categoryFilters: FilterItem[] = categoryFiltersDefault,
-  activityFilters: FilterItem[] = activityFiltersDefault,
-): AttendanceSummaryFilters => {
-  return {
-    activityDate: toDate('2022-10-10'),
-    categoryFilters,
-    activityFilters,
-  } as AttendanceSummaryFilters
-}

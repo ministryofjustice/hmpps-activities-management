@@ -1,148 +1,233 @@
 import { Request, Response } from 'express'
-import {
-  convertToArray,
-  formatDate,
-  getDailyAttendanceSummary,
-  getTimeSlotFromTime,
-  toDate,
-  getCancelledActivitySummary,
-  getSuspendedPrisonerCount,
-} from '../../../../utils/utils'
+import _ from 'lodash'
+import { getTimeSlotFromTime, toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AttendanceSummaryFilters, FilterItem } from '../../../../@types/activities'
-import attendanceReason from '../../../../enum/attendanceReason'
+import cancellationReasons from '../../record-attendance/cancellationReasons'
+import AttendanceStatus from '../../../../enum/attendanceStatus'
+import AttendanceReason from '../../../../enum/attendanceReason'
+import TimeSlot from '../../../../enum/timeSlot'
+import { AllAttendance } from '../../../../@types/activitiesAPI/types'
+import { ServiceUser } from '../../../../@types/express'
+
+type CancelledActivity = {
+  id: number
+  category: string
+  timeSlot: TimeSlot
+  cancelledReason: string
+}
 
 export default class DailySummaryRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const activityDate = req.query.date ? toDate(req.query.date as string) : undefined
-    if (activityDate === undefined) {
+    const { date } = req.query
+
+    if (!date) {
       return res.redirect('select-period')
     }
 
-    let { attendanceSummaryFilters } = req.session
+    const activityDate = toDate(req.query.date as string)
 
-    const attendanceSummary = await this.activitiesService.getAllAttendanceSummary(activityDate, user)
-    const uniqueCategories = attendanceSummary.map(c => c.categoryName).filter((v, k, arr) => arr.indexOf(v) === k)
+    const allAttendances = await this.activitiesService.getAllAttendance(activityDate, user)
+    const uniqueCategories = _.uniq(allAttendances.map(c => c.categoryName))
 
-    if (
-      !attendanceSummaryFilters ||
-      attendanceSummaryFilters.categoryFilters.length === 0 ||
-      attendanceSummaryFilters.categoryFilters.length !== uniqueCategories.length ||
-      attendanceSummaryFilters.categoryFilters.join('').length !== uniqueCategories.join('').length
-    ) {
-      attendanceSummaryFilters = defaultFilters(activityDate, uniqueCategories)
-      req.session.attendanceSummaryFilters = attendanceSummaryFilters
-    }
-    req.session.attendanceSummaryFilters.activityFilters = []
+    // Set the default filter values if they are not set
+    req.session.attendanceSummaryJourney ??= {}
+    req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
 
-    const categoryFilters = attendanceSummaryFilters.categoryFilters
-      .filter((category: FilterItem) => category.checked === true)
-      .map((category: FilterItem) => category.value)
+    const { categoryFilters } = req.session.attendanceSummaryJourney
 
-    const cancelledActivities = await this.activitiesService
-      .getScheduledActivitiesAtPrison(activityDate, user)
-      .then(scheduledActivities =>
-        scheduledActivities.map(activity => ({
-          id: activity.id,
-          category: activity.activitySchedule.activity.category.name,
-          timeSlot: getTimeSlotFromTime(activity.startTime),
-          cancelled: activity.cancelled,
-          cancelledReason: activity.cancelledReason,
-        })),
-      )
-      .then(scheduledActivities => scheduledActivities.filter(a => categoryFilters.includes(a.category)))
-      .then(scheduledActivities => scheduledActivities.filter(a => a.cancelled))
-
-    const suspendedPrisoners = await this.activitiesService
-      .getAllAttendance(activityDate, user)
-      .then(attendance => attendance.filter(a => a.attendanceReasonCode === attendanceReason.SUSPENDED))
+    const cancelledSessionsForFilters = await this.getCancelledActivitiesAtPrison(activityDate, user).then(r =>
+      r.filter(a => categoryFilters.includes(a.category)),
+    )
+    const attendancesForFilters = allAttendances.filter(a => categoryFilters.includes(a.categoryName))
 
     return res.render('pages/activities/daily-attendance-summary/daily-summary', {
       activityDate,
-      ...getDailyAttendanceSummary(attendanceSummary.filter(a => categoryFilters.includes(a.categoryName))),
-      ...getCancelledActivitySummary(cancelledActivities),
-      ...getSuspendedPrisonerCount(suspendedPrisoners),
-      attendanceSummaryFilters,
+      uniqueCategories,
+      ...this.getCancelledActivitySummary(cancelledSessionsForFilters),
+      ...this.getDailyAttendanceSummary(attendancesForFilters),
+      ...this.getSuspendedPrisonerCount(attendancesForFilters),
     })
   }
 
-  POST = async (req: Request, res: Response): Promise<void> => {
-    const { attendanceSummaryFilters } = req.session
-    const activityDate = req.query.date ? toDate(req.query.date as string) : undefined
-    const isoDateString = formatDate(new Date(activityDate), 'yyyy-MM-dd')
+  private getCancelledActivitySummary = (cancelledEvents: CancelledActivity[]) => {
+    const totalCancelledSessions = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalStaffUnavailable = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalStaffTraining = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalActivityNotRequired = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalLocationUnavailable = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalOperationalIssue = { DAY: 0, AM: 0, PM: 0, ED: 0 }
 
-    req.session.attendanceSummaryFilters = parseFiltersFromPost(
-      attendanceSummaryFilters,
-      req.body?.categoryFilters ? req.body?.categoryFilters : undefined,
-    )
-    res.redirect(`summary?date=${isoDateString}`)
+    cancelledEvents.forEach(activity => {
+      totalCancelledSessions.DAY += 1
+      totalCancelledSessions[activity.timeSlot.toUpperCase()] += 1
+      if (activity.cancelledReason === cancellationReasons.STAFF_UNAVAILABLE) {
+        totalStaffUnavailable.DAY += 1
+        totalStaffUnavailable[activity.timeSlot.toUpperCase()] += 1
+      } else if (activity.cancelledReason === cancellationReasons.STAFF_TRAINING) {
+        totalStaffTraining.DAY += 1
+        totalStaffTraining[activity.timeSlot.toUpperCase()] += 1
+      } else if (activity.cancelledReason === cancellationReasons.NOT_REQUIRED) {
+        totalActivityNotRequired.DAY += 1
+        totalActivityNotRequired[activity.timeSlot.toUpperCase()] += 1
+      } else if (activity.cancelledReason === cancellationReasons.LOCATION_UNAVAILABLE) {
+        totalLocationUnavailable.DAY += 1
+        totalLocationUnavailable[activity.timeSlot.toUpperCase()] += 1
+      } else if (activity.cancelledReason === cancellationReasons.OPERATIONAL_ISSUE) {
+        totalOperationalIssue.DAY += 1
+        totalOperationalIssue[activity.timeSlot.toUpperCase()] += 1
+      }
+    })
+
+    return {
+      totalCancelledSessions,
+      totalStaffUnavailable,
+      totalStaffTraining,
+      totalActivityNotRequired,
+      totalLocationUnavailable,
+      totalOperationalIssue,
+    }
   }
 
-  FILTERS = async (req: Request, res: Response): Promise<void> => {
-    const { clearFilters, clearCategory } = req.query
-    let { attendanceSummaryFilters } = req.session
+  private getDailyAttendanceSummary = (attendances: AllAttendance[]) => {
+    const totalActivities = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalAllocated = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalNotAttended = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalAbsences = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalAttended = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalPaidAbsences = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalUnPaidAbsences = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalCancelled = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalPaidSick = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalNotRequired = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalPaidRest = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalClash = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalPaidOther = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalUnpaidSick = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalRefused = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalUnpaidRest = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalUnpaidOther = { DAY: 0, AM: 0, PM: 0, ED: 0 }
 
-    attendanceSummaryFilters = amendFilters(attendanceSummaryFilters, clearFilters as string, clearCategory as string)
-    req.session.attendanceSummaryFilters = attendanceSummaryFilters
+    _.uniqBy(attendances, 'scheduledInstanceId')
+      .map(s => ({
+        scheduledInstanceId: s.scheduledInstanceId,
+        timeSlot: s.timeSlot,
+      }))
+      .forEach(a => {
+        totalActivities.DAY += 1
+        totalActivities[a.timeSlot] += 1
+      })
 
-    // Reconstruct the query parameters from the amended filters
-    const { activityDate } = attendanceSummaryFilters
+    attendances.forEach(attendance => {
+      totalAllocated.DAY += 1
+      totalAllocated[attendance.timeSlot] += 1
+      if (attendance.status === AttendanceStatus.WAITING) {
+        totalNotAttended.DAY += 1
+        totalNotAttended[attendance.timeSlot] += 1
+      } else if (attendance.attendanceReasonCode !== AttendanceReason.ATTENDED) {
+        totalAbsences.DAY += 1
+        totalAbsences[attendance.timeSlot] += 1
+        if (attendance.issuePayment) {
+          totalPaidAbsences.DAY += 1
+          totalPaidAbsences[attendance.timeSlot] += 1
+          if (attendance.attendanceReasonCode === AttendanceReason.CANCELLED) {
+            totalCancelled.DAY += 1
+            totalCancelled[attendance.timeSlot] += 1
+          }
+          if (attendance.attendanceReasonCode === AttendanceReason.SICK) {
+            totalPaidSick.DAY += 1
+            totalPaidSick[attendance.timeSlot] += 1
+          }
+          if (attendance.attendanceReasonCode === AttendanceReason.NOT_REQUIRED) {
+            totalNotRequired.DAY += 1
+            totalNotRequired[attendance.timeSlot] += 1
+          }
+          if (attendance.attendanceReasonCode === AttendanceReason.REST) {
+            totalPaidRest.DAY += 1
+            totalPaidRest[attendance.timeSlot] += 1
+          }
+          if (attendance.attendanceReasonCode === AttendanceReason.CLASH) {
+            totalClash.DAY += 1
+            totalClash[attendance.timeSlot] += 1
+          }
+          if (attendance.attendanceReasonCode === AttendanceReason.OTHER) {
+            totalPaidOther.DAY += 1
+            totalPaidOther[attendance.timeSlot] += 1
+          }
+        } else {
+          totalUnPaidAbsences.DAY += 1
+          totalUnPaidAbsences[attendance.timeSlot] += 1
+          if (attendance.attendanceReasonCode === AttendanceReason.SICK) {
+            totalUnpaidSick.DAY += 1
+            totalUnpaidSick[attendance.timeSlot] += 1
+          }
+          if (attendance.attendanceReasonCode === AttendanceReason.REFUSED) {
+            totalRefused.DAY += 1
+            totalRefused[attendance.timeSlot] += 1
+          }
+          if (attendance.attendanceReasonCode === AttendanceReason.REST) {
+            totalUnpaidRest.DAY += 1
+            totalUnpaidRest[attendance.timeSlot] += 1
+          }
+          if (attendance.attendanceReasonCode === AttendanceReason.OTHER) {
+            totalUnpaidOther.DAY += 1
+            totalUnpaidOther[attendance.timeSlot] += 1
+          }
+        }
+      } else {
+        totalAttended.DAY += 1
+        totalAttended[attendance.timeSlot] += 1
+      }
+    })
 
-    // Important - during serialization to/from session storage the date object is altered to a string
-    const isoDateString = formatDate(new Date(activityDate), 'yyyy-MM-dd')
-
-    res.redirect(`summary?date=${isoDateString}`)
+    return {
+      totalActivities,
+      totalAllocated,
+      totalNotAttended,
+      totalAbsences,
+      totalAttended,
+      totalPaidAbsences,
+      totalUnPaidAbsences,
+      totalCancelled,
+      totalPaidSick,
+      totalNotRequired,
+      totalPaidRest,
+      totalClash,
+      totalPaidOther,
+      totalUnpaidSick,
+      totalRefused,
+      totalUnpaidRest,
+      totalUnpaidOther,
+    }
   }
-}
 
-const defaultFilters = (activityDate: Date, categories: string[]): AttendanceSummaryFilters => {
-  const categoryFilters: FilterItem[] = []
-  categories.forEach(category => categoryFilters.push({ value: category, text: category, checked: true }))
-  return {
-    activityDate,
-    categoryFilters,
-  } as AttendanceSummaryFilters
-}
+  private getSuspendedPrisonerCount = (attendances: AllAttendance[]) => {
+    const suspendedPrisoners = attendances.filter(a => a.attendanceReasonCode === AttendanceReason.SUSPENDED)
 
-const amendFilters = (
-  attendanceSummaryFilters: AttendanceSummaryFilters,
-  clearFilters: string,
-  clearCategory: string,
-): AttendanceSummaryFilters => {
-  let newFilters = attendanceSummaryFilters
-  if (clearFilters) {
-    newFilters = defaultFilters(attendanceSummaryFilters.activityDate, attendanceSummaryFilters.categories)
-  } else if (clearCategory) {
-    newFilters = clearCategoryItem(attendanceSummaryFilters, clearCategory)
+    const suspendedPrisonerCount = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    suspendedPrisoners.forEach(attendance => {
+      suspendedPrisonerCount.DAY += 1
+      suspendedPrisonerCount[attendance.timeSlot.toUpperCase()] += 1
+    })
+
+    return {
+      suspendedPrisonerCount,
+    }
   }
-  return newFilters
-}
 
-const clearCategoryItem = (
-  attendanceSummaryFilters: AttendanceSummaryFilters,
-  category: string,
-): AttendanceSummaryFilters => {
-  const newCategoryFilters = attendanceSummaryFilters.categoryFilters.map(c => {
-    return { value: c.value, text: c.text, checked: c.value === category ? false : c.checked }
-  })
-  const newFilters = attendanceSummaryFilters
-  newFilters.categoryFilters = newCategoryFilters
-  return newFilters
-}
-
-const parseFiltersFromPost = (oldFilters: AttendanceSummaryFilters, categories: string[]): AttendanceSummaryFilters => {
-  const newFilters = oldFilters
-
-  const categoryFilters = oldFilters.categoryFilters.map(category => {
-    const checked = convertToArray(categories).includes(category.value)
-    return { value: category.value, text: category.text, checked } as FilterItem
-  })
-
-  // Only override filter values if something was provided in the POST body
-  if (convertToArray(categories).length > 0) newFilters.categoryFilters = categoryFilters
-
-  return newFilters
+  private getCancelledActivitiesAtPrison = (activityDate: Date, user: ServiceUser): Promise<CancelledActivity[]> => {
+    return this.activitiesService
+      .getScheduledActivitiesAtPrison(activityDate, user)
+      .then(scheduledActivities => scheduledActivities.filter(a => a.cancelled))
+      .then(cancelledActivities =>
+        cancelledActivities.map(a => ({
+          id: a.id,
+          category: a.activitySchedule.activity.category.name,
+          timeSlot: getTimeSlotFromTime(a.startTime),
+          cancelledReason: a.cancelledReason,
+        })),
+      )
+  }
 }

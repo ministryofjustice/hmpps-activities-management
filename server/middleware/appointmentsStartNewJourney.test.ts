@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import startNewJourney from './startNewJourney'
+import appointmentsStartNewJourney from './appointmentsStartNewJourney'
 
 let req: Request
 let res: Response
@@ -14,9 +14,9 @@ beforeEach(() => {
   } as unknown as Request
 })
 
-describe('startNewJourney', () => {
+describe('appointmentsStartNewJourney', () => {
   it('should generate a new journey id, replace supplied create url segment and redirect', async () => {
-    const middleware = startNewJourney('/create/')
+    const middleware = appointmentsStartNewJourney('/create/')
     req.originalUrl = '/appointments/create/start-individual'
 
     middleware(req, res)
@@ -29,7 +29,7 @@ describe('startNewJourney', () => {
   })
 
   it('should generate a new journey id, replace supplied / url segment and redirect', async () => {
-    const middleware = startNewJourney('/')
+    const middleware = appointmentsStartNewJourney('/')
     req.originalUrl = '/appointments/create/start-individual'
 
     middleware(req, res)
@@ -42,7 +42,7 @@ describe('startNewJourney', () => {
   })
 
   it('should redirect to original url without adding a journey id if url segment not found', async () => {
-    const middleware = startNewJourney('/not-create/')
+    const middleware = appointmentsStartNewJourney('/not-create/')
     req.originalUrl = '/appointments/create/start-individual'
 
     middleware(req, res)
@@ -51,7 +51,7 @@ describe('startNewJourney', () => {
   })
 
   it('should redirect to original url without adding a journey id if url segment undefined', async () => {
-    const middleware = startNewJourney(undefined)
+    const middleware = appointmentsStartNewJourney(undefined)
     req.originalUrl = '/appointments/create/start-individual'
 
     middleware(req, res)
@@ -60,7 +60,7 @@ describe('startNewJourney', () => {
   })
 
   it('should redirect to original url without adding a journey id if url segment null', async () => {
-    const middleware = startNewJourney(null)
+    const middleware = appointmentsStartNewJourney(null)
     req.originalUrl = '/appointments/create/start-individual'
 
     middleware(req, res)
@@ -69,7 +69,7 @@ describe('startNewJourney', () => {
   })
 
   it('should redirect to original url without adding a journey id if url segment empty', async () => {
-    const middleware = startNewJourney('')
+    const middleware = appointmentsStartNewJourney('')
     req.originalUrl = '/appointments/create/start-individual'
 
     middleware(req, res)

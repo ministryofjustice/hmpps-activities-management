@@ -9,10 +9,11 @@ import { NotAttendedJourney } from '../../routes/activities/record-attendance/jo
 import { RecordAttendanceRequests } from '../../routes/activities/record-attendance/recordAttendanceRequests'
 
 // eslint-disable-next-line import/no-cycle
-import { ActivitiesFilters, AttendanceSummaryFilters, UnlockFilters } from '../activities'
+import { ActivitiesFilters, UnlockFilters } from '../activities'
 import { AppointmentDetails, AppointmentOccurrenceDetails, BulkAppointmentDetails } from '../activitiesAPI/types'
 import { BulkAppointmentJourney } from '../../routes/appointments/create-and-edit/bulkAppointmentJourney'
 import { DeallocateFromActivityJourney } from '../../routes/activities/deallocate-from-activity/journey'
+import { AttendanceSummaryJourney } from '../../routes/activities/daily-attendance-summary/journey'
 
 export default {}
 
@@ -37,9 +38,9 @@ declare module 'express-session' {
     // See comment above
     bulkAppointmentJourney: BulkAppointmentJourney
     calendarSpikeJourney: CalendarSpikeJourney
+    attendanceSummaryJourney: AttendanceSummaryJourney
     unlockFilters: UnlockFilters
     activitiesFilters: ActivitiesFilters
-    attendanceSummaryFilters: AttendanceSummaryFilters
     notAttendedJourney: NotAttendedJourney
     recordAttendanceRequests: RecordAttendanceRequests
     // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
