@@ -7,7 +7,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
-{% from "components/searchBar.njk" import searchBar %}
+{%- from "moj/components/search/macro.njk" import mojSearch -%}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Daily attendance list" %}
@@ -88,20 +88,20 @@
                     optionsHtml: filterOptionsHtml
                 }) }}
             </div>
-            {{ searchBar({
-                inputParams: {
-                    id: 'searchTerm',
-                    name: 'searchTerm',
-                    label: {
-                        text: 'Search by name or prison number',
-                        classes: 'govuk-label--s'
-                    },
-                    value: session.attendanceSummaryJourney.searchTerm
-                },
-                buttonParams: {
-                    text: 'Search'
-                }
-            }) }}
+                {{ mojSearch({
+                   input: {
+                       id: 'searchTerm',
+                       name: 'searchTerm'
+                     },
+                     label: {
+                       text: 'Search by name or prison number',
+                       classes: 'govuk-!-font-weight-bold'
+                     },
+                     value: attendanceSummaryFilters.searchTerm,
+                     button: {
+                       text: 'Search'
+                     }
+                }) }}
             <div class="moj-filter-layout__content">
                 <div class="moj-action-bar">
                     <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
