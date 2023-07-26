@@ -17,16 +17,20 @@
 {% block content %}
     <div class="govuk-grid-row govuk-!-margin-bottom-2">
         <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-two-thirds govuk-!-margin-bottom-2">
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ unlockFilters.location }} - Unlock list</h1>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ location }} - Unlock list</h1>
             <div class="govuk-body govuk-!-margin-top-1">
-                {{ unlockFilters.unlockDate|formatDate('cccc d LLLL y') }} - {{ unlockFilters.timeSlot | upper }}
+                {{ date |formatDate('cccc d LLLL y') }} - {{ timeSlot | upper }}
             </div>
             <div class="govuk-!-margin-top-4">
                 <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">
                     {{ unlockListItems.length }} prisoners to unlock
                 </div>
-                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.leavingWing }} leaving wing</div>
-                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.stayingOnWing }} staying on wing</div>
+                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.leavingWing }}
+                    leaving wing
+                </div>
+                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.stayingOnWing }}
+                    staying on wing
+                </div>
             </div>
         </div>
         <div class="govuk-grid-column-one-third govuk-!-print-grid-column-one-third">
@@ -44,6 +48,15 @@
     </div>
 
     {% set filterOptionsHtml %}
+        {% set locationFilters = [] %}
+        {% for location in subLocations %}
+            {% set locationFilters = (locationFilters.push({
+                value: location,
+                text: location,
+                checked: location in session.unlockListJourney.subLocationFilters
+            }), locationFilters) %}
+        {% endfor %}
+
         {{ govukCheckboxes({
             idPrefix: 'locationFilters',
             name: 'locationFilters',
@@ -54,12 +67,16 @@
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
-            items: unlockFilters.locationFilters
-        }) if unlockFilters.locationFilters | length }}
+            items: locationFilters
+        }) }}
+        <div class="govuk-!-margin-bottom-4">
+            <a href="#" class="govuk-link govuk-link--no-visited-state"
+               data-module="select-all-link" data-checkbox-name="locationFilters">Select all</a>
+        </div>
 
         {{ govukRadios({
-            idPrefix: 'activityFilters',
-            name: 'activityFilters',
+            idPrefix: 'activityFilter',
+            name: 'activityFilter',
             classes: "govuk-radios--small",
             fieldset: {
                 legend: {
@@ -67,12 +84,28 @@
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
-            items: unlockFilters.activityFilters
+            items:[
+                {
+                    value: 'With',
+                    text: 'With',
+                    checked: 'With' == session.unlockListJourney.activityFilter
+                },
+                {
+                    value: 'Without',
+                    text: 'Without',
+                    checked: 'Without' == session.unlockListJourney.activityFilter
+                },
+                {
+                    value: 'Both',
+                    text: 'Both',
+                    checked: 'Both' == session.unlockListJourney.activityFilter
+                }
+            ]
         }) }}
 
         {{ govukRadios({
-            idPrefix: 'stayingOrLeavingFilters',
-            name: 'stayingOrLeavingFilters',
+            idPrefix: 'stayingOrLeavingFilter',
+            name: 'stayingOrLeavingFilter',
             classes: "govuk-radios--small",
             fieldset: {
                 legend: {
@@ -80,7 +113,23 @@
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
-            items: unlockFilters.stayingOrLeavingFilters
+            items:[
+                {
+                    value: 'Staying',
+                    text: 'Staying',
+                    checked: 'Staying' == session.unlockListJourney.stayingOrLeavingFilter
+                },
+                {
+                    value: 'Leaving',
+                    text: 'Leaving',
+                    checked: 'Leaving' == session.unlockListJourney.stayingOrLeavingFilter
+                },
+                {
+                    value: 'Both',
+                    text: 'Both',
+                    checked: 'Both' == session.unlockListJourney.stayingOrLeavingFilter
+                }
+            ]
         }) }}
 
         <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
@@ -89,75 +138,20 @@
     {% endset %}
 
     <div class="moj-filter-layout" data-module="activities-list-filter">
-        <form id="filter-form" method="POST" novalidate>
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-            <div
-                class="moj-filter-layout__filter govuk-!-display-none-print">
-                {# Set the selected filter items and links to remove them #}
-                {% set selectedLocations = [] %}
-                {% for location in unlockFilters.locationFilters %}
-                    {% if (location.checked === true) %}
-                        {% set selectedLocations = (selectedLocations.push({
-                           href: 'update-filters?clearLocation=' + location.value, text: location.value }), selectedLocations) %}
-                    {% endif %}
-                {% endfor %}
-                {% set selectedActivities = [] %}
-                {% for activity in unlockFilters.activityFilters %}
-                    {% if (activity.checked === true) %}
-                        {% set selectedActivities = (selectedActivities.push({
-                           href: 'update-filters?clearActivity=' + activity.value, text: activity.value
-                       }), selectedActivities) %}
-                    {% endif %}
-                {% endfor %}
-                {% set selectedStayingOrLeaving = [] %}
-                {% for stayingOrLeaving in unlockFilters.stayingOrLeavingFilters %}
-                    {% if stayingOrLeaving.checked === true %}
-                        {% set selectedStayingOrLeaving = (selectedStayingOrLeaving.push({
-                            href: 'update-filters?clearStaying=' + stayingOrLeaving.value, text: stayingOrLeaving.value
-                        }), selectedStayingOrLeaving) %}
-                    {% endif %}
-                {% endfor %}
+        <form id="filter-form" method="POST" action="update-filters" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <div class="moj-filter-layout__filter govuk-!-display-none-print">
                 {{ mojFilter({
                     heading: {
-                        text: 'Filter'
-                    },
-                    selectedFilters: {
-                        heading: {
-                            text: 'Selected filters'
-                        },
-                        clearLink: {
-                            text: 'Clear filters',
-                            href: 'update-filters?clearFilters=true'
-                        },
-                        categories: [
-                            {
-                                heading: {
-                                    text: 'Residential location'
-                                },
-                                items: selectedLocations
-                            },
-                            {
-                                heading: {
-                                    text: 'Activity'
-                                },
-                                items: selectedActivities
-                            },
-                            {
-                                heading: {
-                                    text: 'Staying or leaving wing'
-                                },
-                                items: selectedStayingOrLeaving
-                            }
-                        ]
+                        text: 'Filters'
                     },
                     optionsHtml: filterOptionsHtml
                 }) }}
             </div>
-            <hr class="print-only"/>
+            <hr class="print-only" />
             <div class="moj-filter-layout__content">
                 <div class="moj-action-bar govuk-!-display-none-print">
                     <div class="moj-action-bar__filter"></div>
-
                     {{ mojButtonMenu({
                         items: [{
                             attributes: { id: 'print-unlock' },
@@ -168,18 +162,18 @@
                     }) }}
                 </div>
 
-                
+
                 {% set rows = [] %}
                 {% for item in unlockListItems %}
                     {% set rows = (rows.push([
                         {
                             attributes: { id: 'activity-' + loop.index, "data-sort-value": item.displayName },
                             html: showProfileLink({
-                                name: item.firstName + " " + item.lastName,
-                                prisonerNumber: item.prisonerNumber,
-                                link: true,
-                                classes: 'hmpps-inline-block'
-                            }),
+                            name: item.firstName + " " + item.lastName,
+                            prisonerNumber: item.prisonerNumber,
+                            link: true,
+                            classes: 'hmpps-inline-block'
+                        }),
                             classes: 'govuk-table_cell'
                         },
                         {
@@ -215,58 +209,66 @@
                     ]), rows) %}
                 {% endfor %}
                 <table>
-                    <tbody><tr><td>
-                    {{ govukTable({
-                        attributes: {
-                            'data-module': 'moj-sortable-table',
-                            id: 'unlock-list-table'
-                        },
-                        caption: "Prisoners",
-                        classes: "alternating-row-shading fixed-layout-table",
-                        captionClasses: "govuk-visually-hidden",
-                        head: [
-                            {
-                                text: "Name",
-                                attributes: { "aria-sort": "none" },
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                text: "Cell location",
-                                attributes: { "aria-sort": "ascending" },
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                text: "Relevant alerts",
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                html: "Activity",
-                                attributes: { "aria-sort": "none" },
-                                classes: 'govuk-table__header'
-                            },
-                            {
-                                html: "<span><span class=\"text-underline\">R</span>efused</span>",
-                                classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
-                            },
-                            {
-                                html: "<span>Rest in <span class=\"text-underline\">C</span>ell</span>",
-                                classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
-                            },
-                            {
-                                html: "<span><span class=\"text-underline\">G</span>one</span>",
-                                classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
-                            },
-                            {
-                                text: "Notes",
-                                classes: 'govuk-table__header print-only hmpps-width-20-percent'
-                            }
-                        ],
-                        rows: rows
-                    }) }}
-                    </td></tr></tbody>
-                    <tfoot class="print-only"><tr><td class="govuk-!-padding-top-4 govuk-!-padding-bottom-2 govuk-body">
-                        Printed at {{ now | formatDate('h:mmbbb \'on\' EEEE, dd MMMM yyyy') }}
-                    </td></tr></tfoot>
+                    <tbody>
+                    <tr>
+                        <td>
+                            {{ govukTable({
+                                attributes: {
+                                    'data-module': 'moj-sortable-table',
+                                    id: 'unlock-list-table'
+                                },
+                                caption: "Prisoners",
+                                classes: "alternating-row-shading fixed-layout-table",
+                                captionClasses: "govuk-visually-hidden",
+                                head: [
+                                    {
+                                        text: "Name",
+                                        attributes: { "aria-sort": "none" },
+                                        classes: 'govuk-table__header'
+                                    },
+                                    {
+                                        text: "Cell location",
+                                        attributes: { "aria-sort": "ascending" },
+                                        classes: 'govuk-table__header'
+                                    },
+                                    {
+                                        text: "Relevant alerts",
+                                        classes: 'govuk-table__header'
+                                    },
+                                    {
+                                        html: "Activity",
+                                        attributes: { "aria-sort": "none" },
+                                        classes: 'govuk-table__header'
+                                    },
+                                    {
+                                        html: "<span><span class=\"text-underline\">R</span>efused</span>",
+                                        classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
+                                    },
+                                    {
+                                        html: "<span>Rest in <span class=\"text-underline\">C</span>ell</span>",
+                                        classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
+                                    },
+                                    {
+                                        html: "<span><span class=\"text-underline\">G</span>one</span>",
+                                        classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
+                                    },
+                                    {
+                                        text: "Notes",
+                                        classes: 'govuk-table__header print-only hmpps-width-20-percent'
+                                    }
+                                ],
+                                rows: rows
+                            }) }}
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot class="print-only">
+                    <tr>
+                        <td class="govuk-!-padding-top-4 govuk-!-padding-bottom-2 govuk-body">
+                            Printed at {{ now | formatDate('h:mmbbb \'on\' EEEE, dd MMMM yyyy') }}
+                        </td>
+                    </tr>
+                    </tfoot>
                 </table>
             </div>
         </form>

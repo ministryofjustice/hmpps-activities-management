@@ -1,4 +1,4 @@
-import { SubLocationCellPattern, UnlockFilters, UnlockListItem } from '../@types/activities'
+import { SubLocationCellPattern, UnlockListItem } from '../@types/activities'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
@@ -15,22 +15,32 @@ export default class UnlockListService {
 
   private RELEVANT_ALERT_CODES = ['HA', 'PEEP', 'XEL', 'XCU']
 
-  async getFilteredUnlockList(unlockFilters: UnlockFilters, user: ServiceUser): Promise<UnlockListItem[]> {
+  async getFilteredUnlockList(
+    date: Date,
+    timeSlot: string,
+    location: string,
+    subLocationFilters: string[],
+    activityFilter: string,
+    stayingOrLeavingFilter: string,
+    user: ServiceUser,
+  ): Promise<UnlockListItem[]> {
     const prison = user.activeCaseLoadId
 
     // Get the cell-matching regexp for each sub-location of the main location e.g [A-Wing, B-Wing C-Wing]
     const subLocationCellPatterns = await Promise.all(
-      unlockFilters.subLocations.map(async sub => {
-        const locGroup = `${unlockFilters.location}_${sub}`
+      subLocationFilters.map(async sub => {
+        const locGroup = `${location}_${sub}`
         const prefix = await this.activitiesApiClient.getPrisonLocationPrefixByGroup(prison, locGroup, user)
         return { subLocation: sub, locationPrefix: prefix.locationPrefix } as SubLocationCellPattern
       }),
     )
 
+    const { locationPrefix } = await this.activitiesApiClient.getPrisonLocationPrefixByGroup(prison, location, user)
+
     // Get all prisoners located in the main location by cell prefix e.g. MDI-1-.+
     const results = await this.prisonerSearchApiClient.searchPrisonersByLocationPrefix(
       prison,
-      unlockFilters.cellPrefix.replaceAll('.', '').replaceAll('+', ''),
+      locationPrefix.replaceAll('.', '').replaceAll('+', ''),
       0,
       1024,
       user,
@@ -54,28 +64,19 @@ export default class UnlockListService {
         alerts: prisoner?.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
         status: prisoner?.inOutStatus,
         prisonCode: prisoner?.prisonId,
-        locationGroup: unlockFilters.location,
+        locationGroup: location,
         locationSubGroup: this.getSubLocationFromCell(prison, subLocationCellPatterns, prisoner?.cellLocation),
       } as unknown as UnlockListItem
     })
 
-    // Apply filters for selected sub-locations
-    const checkedLocationFilters = unlockFilters.locationFilters
-      .filter(loc => loc.checked === true)
-      .map(loc => loc.value)
-
-    const filteredPrisoners = prisoners.filter(
-      prisoner =>
-        checkedLocationFilters.includes(prisoner.locationSubGroup) === true ||
-        unlockFilters.locationFilters.length === 0,
-    )
+    const filteredPrisoners = prisoners.filter(prisoner => subLocationFilters.includes(prisoner.locationSubGroup))
 
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       prison,
-      toDateString(unlockFilters.unlockDate),
+      toDateString(date),
       filteredPrisoners.map(p => p.prisonerNumber),
       user,
-      unlockFilters.timeSlot,
+      timeSlot,
     )
 
     // Match the prisoners with their events by prisonerNumber
@@ -102,29 +103,19 @@ export default class UnlockListService {
       } as UnlockListItem
     })
 
-    // Apply filter for with or without activities
-    const selectedActivityFilters = unlockFilters.activityFilters
-      .filter(act => act.checked === true)
-      .map(act => act.value)
-
-    const activityFilteredItems = selectedActivityFilters.includes('Both')
-      ? unlockListItems
-      : unlockListItems.filter(item =>
-          selectedActivityFilters.includes('With') ? item.events.length > 0 : item.events.length === 0,
-        )
-
-    // Apply filter for staying or leaving the wing
-    const stayingOrLeavingFilters = unlockFilters.stayingOrLeavingFilters.filter(s => s.checked).map(s => s.value)
-    let filteredItems: UnlockListItem[]
-    if (stayingOrLeavingFilters.includes('Both')) {
-      filteredItems = activityFilteredItems
-    } else {
-      filteredItems = activityFilteredItems.filter(
-        item => item.isLeavingWing === stayingOrLeavingFilters.includes('Leaving'),
+    return unlockListItems
+      .filter(
+        i =>
+          activityFilter === 'Both' ||
+          (activityFilter === 'With' && i.events.length > 0) ||
+          (activityFilter === 'Without' && i.events.length === 0),
       )
-    }
-
-    return filteredItems
+      .filter(
+        i =>
+          stayingOrLeavingFilter === 'Both' ||
+          (stayingOrLeavingFilter === 'Leaving' && i.isLeavingWing) ||
+          (stayingOrLeavingFilter === 'Staying' && !i.isLeavingWing),
+      )
   }
 
   private isLeaving = (events: UnlockListItem['events']): boolean => {
