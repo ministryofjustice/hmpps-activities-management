@@ -9,7 +9,7 @@ export class BulkAppointmentDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @DateIsSameOrAfter(new Date(), { message: "Enter a date on or after today's date" })
+  @DateIsSameOrAfter(() => new Date(), { message: "Enter a date on or after today's date" })
   @IsValidDate({ message: 'Enter a valid date for the appointment' })
   @IsNotEmpty({ message: 'Enter a date for the appointment' })
   startDate: SimpleDate
