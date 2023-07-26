@@ -270,7 +270,7 @@ describe('populateJourney', () => {
     it('should replace the oldest session datum if MAX_CONCURRENT_JOURNEYS is exceeded', async () => {
       const epoch = Date.now() - 100000 // Reduced by 100 seconds to avoid clash of epoch
 
-      req.session.sessionDataMap = Array(50)
+      req.session.sessionDataMap = Array(100)
         .fill({} as SessionDatum)
         .reduce((map, obj, i) => {
           // eslint-disable-next-line no-param-reassign
@@ -287,7 +287,7 @@ describe('populateJourney', () => {
       expect(req.session.sessionDataMap[journeyId]).toMatchObject({
         appointmentJourney: updatedJourney,
       } as SessionDatum)
-      expect(Object.keys(req.session.sessionDataMap).length).toEqual(50)
+      expect(Object.keys(req.session.sessionDataMap).length).toEqual(100)
       expect(Object.values(req.session.sessionDataMap).find(j => j.instanceUnixEpoch === epoch)).toBeUndefined()
     })
   })

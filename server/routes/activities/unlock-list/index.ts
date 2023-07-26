@@ -5,6 +5,8 @@ import PlannedEventsRoutes from './handlers/plannedEvents'
 import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import HomeRoutes from './handlers/home'
+import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
+import ApplyFiltersRoutes, { Filters } from './handlers/applyFilters'
 
 export default function Index({ unlockListService, activitiesService }: Services): Router {
   const router = Router()
@@ -16,13 +18,15 @@ export default function Index({ unlockListService, activitiesService }: Services
   const homeHandler = new HomeRoutes()
   const dateAndLocationHandler = new SelectDateAndLocationRoutes(activitiesService)
   const plannedEventsHandler = new PlannedEventsRoutes(activitiesService, unlockListService)
+  const applyFiltersHandler = new ApplyFiltersRoutes()
 
   get('/', homeHandler.GET)
-  get('/select-date-and-location', dateAndLocationHandler.GET)
-  post('/select-date-and-location', dateAndLocationHandler.POST, DateAndLocation)
-  get('/planned-events', plannedEventsHandler.GET)
-  post('/planned-events', plannedEventsHandler.POST)
-  get('/update-filters', plannedEventsHandler.FILTERS)
+
+  router.use(insertJourneyIdentifier())
+  get('/:journeyId/select-date-and-location', dateAndLocationHandler.GET)
+  post('/:journeyId/select-date-and-location', dateAndLocationHandler.POST, DateAndLocation)
+  get('/:journeyId/planned-events', plannedEventsHandler.GET)
+  post('/:journeyId/update-filters', applyFiltersHandler.APPLY, Filters)
 
   return router
 }

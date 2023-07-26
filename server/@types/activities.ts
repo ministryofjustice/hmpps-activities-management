@@ -52,17 +52,6 @@ export type FilterItem = {
   checked: boolean
 }
 
-export type UnlockFilters = {
-  location: string
-  cellPrefix: string
-  unlockDate: Date
-  timeSlot: string
-  subLocations: string[]
-  locationFilters: FilterItem[]
-  activityFilters: FilterItem[]
-  stayingOrLeavingFilters: FilterItem[]
-}
-
 export type ActivitiesFilters = {
   activityDate: Date
   searchTerm: string
