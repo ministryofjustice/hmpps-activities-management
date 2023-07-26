@@ -78,11 +78,7 @@ describe('Route Handlers - Allocate - Start', () => {
           scheduleId: 1,
           name: 'Maths',
           location: 'Education room 1',
-          startDate: expect.objectContaining({
-            day: 26,
-            month: 7,
-            year: 2023,
-          }),
+          startDate: new Date('2023-07-26'),
         },
       })
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocate/before-you-allocate')

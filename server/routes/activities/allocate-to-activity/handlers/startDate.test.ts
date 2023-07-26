@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays } from 'date-fns'
-import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 import StartDateRoutes, { StartDate } from './startDate'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 
@@ -28,9 +28,6 @@ describe('Route Handlers - Edit allocation - Start date', () => {
           inmate: {
             prisonerName: 'John Smith',
           },
-          activity: {
-            startDate: simpleDateFromDate(new Date('2023-07-26')),
-          },
         },
       },
     } as unknown as Request
@@ -41,7 +38,6 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/start-date', {
         prisonerName: 'John Smith',
-        activityStartDate: '2023-07-26',
       })
     })
   })
@@ -116,21 +112,34 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         startDate,
       }
 
-      const requestObject = plainToInstance(StartDate, body)
+      const requestObject = plainToInstance(StartDate, {
+        ...body,
+        allocateJourney: {
+          activity: {
+            startDate: new Date('2022-04-04'),
+          },
+        },
+      })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'startDate', error: "Enter a date after today's date" }])
     })
 
-    it.skip('validation fails if start date is before activity start date', async () => {
+    it('validation fails if start date is before activity start date', async () => {
       const tomorrow = addDays(new Date(), 1)
 
       const body = {
         startDate: simpleDateFromDate(addDays(tomorrow, 1)),
-        activityStartDate: formatDate(tomorrow, 'yyyy-MM-dd'),
       }
 
-      const requestObject = plainToInstance(StartDate, body)
+      const requestObject = plainToInstance(StartDate, {
+        ...body,
+        allocateJourney: {
+          activity: {
+            startDate: new Date('2024-04-04'),
+          },
+        },
+      })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date on or after the activity start date' }])
