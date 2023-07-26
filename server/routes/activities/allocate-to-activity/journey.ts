@@ -16,6 +16,7 @@ export type AllocateToActivityJourney = {
     scheduleId: number
     name: string
     location?: string
+    startDate: SimpleDate
   }
   startDate?: SimpleDate
   endDate?: SimpleDate
