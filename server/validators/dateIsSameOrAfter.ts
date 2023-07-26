@@ -6,7 +6,7 @@ import SimpleDate from '../commonValidationTypes/simpleDate'
 export default function DateIsSameOrAfter(dateToCompare: (o: any) => Date, validationOptions?: ValidationOptions) {
   const dateIsSameOrAfter = (date: SimpleDate, args: ValidationArguments) =>
     date !== undefined && isValid(date.toRichDate())
-      ? startOfDay(date.toRichDate()) >= startOfDay(dateToCompare(args.object))
+      ? startOfDay(date.toRichDate()) >= startOfDay(new Date(dateToCompare(args.object)))
       : true
 
   return (object: unknown, propertyName: string) => {

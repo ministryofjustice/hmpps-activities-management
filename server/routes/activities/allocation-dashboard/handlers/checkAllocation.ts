@@ -37,7 +37,7 @@ export default class CheckAllocationRoutes {
         activityId: schedule.activity.id,
         scheduleId: schedule.id,
         name: schedule.description,
-        startDate: new Date(schedule.startDate),
+        startDate: schedule.startDate,
       },
       startDate: simpleDateFromDate(new Date(allocation.startDate)),
       endDate: allocation.endDate ? simpleDateFromDate(new Date(allocation.endDate)) : undefined,

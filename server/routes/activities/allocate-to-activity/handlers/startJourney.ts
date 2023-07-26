@@ -29,7 +29,7 @@ export default class StartJourneyRoutes {
         scheduleId: schedule.id,
         name: schedule.description,
         location: schedule.internalLocation?.description,
-        startDate: new Date(schedule.startDate),
+        startDate: schedule.startDate,
       },
     }
 
