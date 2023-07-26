@@ -61,6 +61,7 @@ describe('Route Handlers - Allocate - Start', () => {
           activity: { id: 1 },
           description: 'Maths',
           internalLocation: { description: 'Education room 1' },
+          startDate: '2023-07-26',
         } as unknown as ActivitySchedule)
 
       await handler.GET(req, res)
@@ -77,6 +78,7 @@ describe('Route Handlers - Allocate - Start', () => {
           scheduleId: 1,
           name: 'Maths',
           location: 'Education room 1',
+          startDate: '2023-07-26',
         },
       })
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocate/before-you-allocate')
