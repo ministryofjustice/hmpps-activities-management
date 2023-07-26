@@ -123,7 +123,7 @@
             heading: 'Not yet attended',
             number: totalNotAttended[timeSlot],
             visuallyHiddenText: 'prisoners, which is',
-            percentage: totalNotAttendedPercentage[timeSlot],
+            percentage: (totalNotAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
             link: {
                 href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=NotAttended#' + timeSlot | lower + '-tab',
                 text: 'All not yet attended'
@@ -134,7 +134,7 @@
             heading: 'Absences',
             number: totalAbsences[timeSlot],
             visuallyHiddenText: 'prisoners, which is',
-            percentage: totalAbsencesPercentage[timeSlot],
+            percentage: (totalAbsences[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
             link: {
                 href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Absences#' + timeSlot | lower + '-tab',
                 text: 'All absences'
@@ -145,7 +145,7 @@
             heading: 'Attended',
             number: totalAttended[timeSlot],
             visuallyHiddenText: 'prisoners, which is',
-            percentage: totalAttendedPercentage[timeSlot],
+            percentage: (totalAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
             link: {
                 href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended#' + timeSlot | lower + '-tab',
                 text: 'All attended'
