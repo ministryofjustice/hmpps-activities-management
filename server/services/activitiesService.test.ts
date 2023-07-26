@@ -12,7 +12,6 @@ import {
   ActivityLite,
   ActivityScheduleLite,
   LocationGroup,
-  LocationPrefix,
   ScheduledActivity,
   PrisonPayBand,
   PrisonerScheduledEvents,
@@ -59,8 +58,6 @@ describe('Activities Service', () => {
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
 
   const mockedLocationGroups = [{ name: 'Houseblock 1', key: 'Houseblock 1', children: [] }] as LocationGroup[]
-
-  const mockedLocationPrefix = { locationPrefix: 'MDI-1-2' } as LocationPrefix
 
   describe('getActivity', () => {
     it('should get the activity from activities API', async () => {
@@ -249,17 +246,6 @@ describe('Activities Service', () => {
       const result = await activitiesService.getActivitySchedule(1, user)
       expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(1, user)
       expect(result).toEqual(activitySchedule1)
-    })
-  })
-
-  describe('getLocationPrefix', () => {
-    it('should fetch the location cell prefix for a group', async () => {
-      when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-        .calledWith(atLeast(user))
-        .mockResolvedValueOnce(mockedLocationPrefix)
-      const results = await activitiesService.getLocationPrefix('Houseblock 1', user)
-      expect(results).toEqual(mockedLocationPrefix)
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'Houseblock 1', user)
     })
   })
 
@@ -561,7 +547,6 @@ describe('Activities Service', () => {
 
   describe('acknowledgeChangeEvents', () => {
     it('should acknowledge a list of change event IDS', async () => {
-      when(activitiesApiClient.acknowledgeChangeEvents).mockResolvedValue()
       const eventReviewIds = [1, 2, 3]
       const request = { eventReviewIds } as EventAcknowledgeRequest
 
