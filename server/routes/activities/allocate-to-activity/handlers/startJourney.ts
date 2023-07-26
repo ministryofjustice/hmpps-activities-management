@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import PrisonService from '../../../../services/prisonService'
 import { convertToTitleCase } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 
 export default class StartJourneyRoutes {
   constructor(private readonly prisonService: PrisonService, private readonly activitiesService: ActivitiesService) {}
@@ -30,7 +29,7 @@ export default class StartJourneyRoutes {
         scheduleId: schedule.id,
         name: schedule.description,
         location: schedule.internalLocation?.description,
-        startDate: simpleDateFromDate(new Date(schedule.startDate)),
+        startDate: new Date(schedule.startDate),
       },
     }
 

@@ -18,7 +18,7 @@ export class DateAndTime {
   @ValidateNested()
   @IsNotEmpty({ message: 'Enter a date for the appointment' })
   @IsValidDate({ message: 'Enter a valid date for the appointment' })
-  @DateIsSameOrAfter(new Date(), { message: "Enter a date on or after today's date" })
+  @DateIsSameOrAfter(() => new Date(), { message: "Enter a date on or after today's date" })
   startDate: SimpleDate
 
   @Expose()
