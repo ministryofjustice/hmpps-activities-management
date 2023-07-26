@@ -20,7 +20,6 @@ import {
   PrisonerScheduledEvents,
   Appointment,
   AppointmentCategorySummary,
-  LocationPrefix,
   AppointmentCreateRequest,
   AttendanceReason,
   AppointmentDetails,
@@ -218,11 +217,6 @@ export default class ActivitiesService {
 
   async updateAttendances(attendanceUpdates: AttendanceUpdateRequest[], user: ServiceUser): Promise<void> {
     return this.activitiesApiClient.updateAttendances(attendanceUpdates, user)
-  }
-
-  async getLocationPrefix(loc: string, user: ServiceUser): Promise<LocationPrefix> {
-    const { activeCaseLoadId } = user
-    return this.activitiesApiClient.getPrisonLocationPrefixByGroup(activeCaseLoadId, loc, user)
   }
 
   async getLocationGroups(user: ServiceUser): Promise<LocationGroup[]> {

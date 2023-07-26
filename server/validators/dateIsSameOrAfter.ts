@@ -1,10 +1,13 @@
-import { registerDecorator, ValidationOptions } from 'class-validator'
+import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator'
 import { isValid, startOfDay } from 'date-fns'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 
-export default function DateIsSameOrAfter(dateToCompare: Date, validationOptions?: ValidationOptions) {
-  const dateIsSameOrAfter = (date: SimpleDate) =>
-    date !== undefined && isValid(date.toRichDate()) ? startOfDay(date.toRichDate()) >= startOfDay(dateToCompare) : true
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function DateIsSameOrAfter(dateToCompare: (o: any) => Date, validationOptions?: ValidationOptions) {
+  const dateIsSameOrAfter = (date: SimpleDate, args: ValidationArguments) =>
+    date !== undefined && isValid(date.toRichDate())
+      ? startOfDay(date.toRichDate()) >= startOfDay(new Date(dateToCompare(args.object)))
+      : true
 
   return (object: unknown, propertyName: string) => {
     registerDecorator({
