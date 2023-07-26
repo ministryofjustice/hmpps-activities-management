@@ -46,31 +46,32 @@ export default class SelectDateAndLocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    if (req.session?.unlockFilters) {
-      delete req.session.unlockFilters
-    }
-    // Uses the user's activeCaseLoadId to get the prison location groups
+
     const locationGroups = await this.activitiesService.getLocationGroups(user)
+    req.session.unlockListJourney ??= {}
 
     res.render('pages/activities/unlock-list/select-date-and-location', { locationGroups })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const selectedDate = this.getDateValue(req.body)
-    return res.redirect(
-      `planned-events?date=${selectedDate}&slot=${req.body.activitySlot}&location=${req.body.location}`,
-    )
+    const { activitySlot, location, datePresetOption, date } = req.body
+
+    req.session.unlockListJourney.timeSlot = activitySlot
+    req.session.unlockListJourney.location = location
+
+    const selectedDate = this.getDateValue(datePresetOption, date)
+    return res.redirect(`planned-events?date=${selectedDate}`)
   }
 
-  private getDateValue = (body: DateAndLocation): string => {
-    if (body.datePresetOption === PresetDateOptions.TODAY) {
+  private getDateValue = (datePresetOption: string, date: SimpleDate): string => {
+    if (datePresetOption === PresetDateOptions.TODAY) {
       return this.formatDate(new Date())
     }
-    if (body.datePresetOption === PresetDateOptions.TOMORROW) {
+    if (datePresetOption === PresetDateOptions.TOMORROW) {
       return this.formatDate(addDays(new Date(), 1)).toString()
     }
     // Use the POSTed date, which is a SimpleDate.
-    return this.formatDate(body.date.toRichDate())
+    return this.formatDate(date.toRichDate())
   }
 
   private formatDate = (date: Date) => format(date, 'yyyy-MM-dd')
