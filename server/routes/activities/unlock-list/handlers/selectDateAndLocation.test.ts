@@ -36,7 +36,9 @@ describe('Unlock list routes - select date and location', () => {
       redirect: jest.fn(),
     } as unknown as Response
 
-    req = {} as unknown as Request
+    req = {
+      session: {},
+    } as unknown as Request
     jest.resetAllMocks()
   })
 
@@ -53,10 +55,15 @@ describe('Unlock list routes - select date and location', () => {
       })
       expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)
       expect(activitiesService.getLocationGroups).toHaveBeenCalledWith(res.locals.user)
+      expect(req.session.unlockListJourney).not.toBeNull()
     })
   })
 
   describe('POST', () => {
+    beforeEach(() => {
+      req.session.unlockListJourney = {}
+    })
+
     it("redirect with the expected query params for when today's date is selected", async () => {
       req.body = {
         datePresetOption: 'today',
@@ -67,7 +74,9 @@ describe('Unlock list routes - select date and location', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${todaysDate}&slot=am&location=here`)
+      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${todaysDate}`)
+      expect(req.session.unlockListJourney.timeSlot).toEqual('am')
+      expect(req.session.unlockListJourney.location).toEqual('here')
     })
 
     it("redirect with the expected query params for when tomorrow's date is selected", async () => {
@@ -80,7 +89,9 @@ describe('Unlock list routes - select date and location', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${tomorrowsDate}&slot=am&location=here`)
+      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${tomorrowsDate}`)
+      expect(req.session.unlockListJourney.timeSlot).toEqual('am')
+      expect(req.session.unlockListJourney.location).toEqual('here')
     })
 
     it('redirects with the expected query params for when a custom date is selected', async () => {
@@ -99,7 +110,9 @@ describe('Unlock list routes - select date and location', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=2022-12-01&slot=am&location=here`)
+      expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=2022-12-01`)
+      expect(req.session.unlockListJourney.timeSlot).toEqual('am')
+      expect(req.session.unlockListJourney.location).toEqual('here')
     })
   })
 

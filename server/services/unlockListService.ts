@@ -69,7 +69,9 @@ export default class UnlockListService {
       } as unknown as UnlockListItem
     })
 
-    const filteredPrisoners = prisoners.filter(prisoner => subLocationFilters.includes(prisoner.locationSubGroup))
+    const filteredPrisoners = prisoners.filter(
+      prisoner => subLocationFilters.includes(prisoner.locationSubGroup) || subLocationFilters.length === 0,
+    )
 
     const scheduledEvents = await this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
       prison,

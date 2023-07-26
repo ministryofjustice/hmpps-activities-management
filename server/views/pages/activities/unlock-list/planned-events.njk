@@ -48,31 +48,33 @@
     </div>
 
     {% set filterOptionsHtml %}
-        {% set locationFilters = [] %}
-        {% for location in subLocations %}
-            {% set locationFilters = (locationFilters.push({
-                value: location,
-                text: location,
-                checked: location in session.unlockListJourney.subLocationFilters
-            }), locationFilters) %}
-        {% endfor %}
+        {% if subLocations | length %}
+            {% set locationFilters = [] %}
+            {% for location in subLocations %}
+                {% set locationFilters = (locationFilters.push({
+                    value: location,
+                    text: location,
+                    checked: location in session.unlockListJourney.subLocationFilters
+                }), locationFilters) %}
+            {% endfor %}
 
-        {{ govukCheckboxes({
-            idPrefix: 'locationFilters',
-            name: 'locationFilters',
-            classes: "govuk-checkboxes--small",
-            fieldset: {
-                legend: {
-                    text: 'Residential location',
-                    classes: 'govuk-fieldset__legend--m'
-                }
-            },
-            items: locationFilters
-        }) }}
-        <div class="govuk-!-margin-bottom-4">
-            <a href="#" class="govuk-link govuk-link--no-visited-state"
-               data-module="select-all-link" data-checkbox-name="locationFilters">Select all</a>
-        </div>
+            {{ govukCheckboxes({
+                idPrefix: 'locationFilters',
+                name: 'locationFilters',
+                classes: "govuk-checkboxes--small",
+                fieldset: {
+                    legend: {
+                        text: 'Residential location',
+                        classes: 'govuk-fieldset__legend--m'
+                    }
+                },
+                items: locationFilters
+            }) }}
+            <div class="govuk-!-margin-bottom-4">
+                <a href="#" class="govuk-link govuk-link--no-visited-state"
+                   data-module="select-all-link" data-checkbox-name="locationFilters">Select all</a>
+            </div>
+        {% endif %}
 
         {{ govukRadios({
             idPrefix: 'activityFilter',
