@@ -12,7 +12,6 @@ import {
   ActivityLite,
   ActivityScheduleLite,
   LocationGroup,
-  LocationPrefix,
   ScheduledActivity,
   PrisonPayBand,
   PrisonerScheduledEvents,
@@ -59,8 +58,6 @@ describe('Activities Service', () => {
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
 
   const mockedLocationGroups = [{ name: 'Houseblock 1', key: 'Houseblock 1', children: [] }] as LocationGroup[]
-
-  const mockedLocationPrefix = { locationPrefix: 'MDI-1-2' } as LocationPrefix
 
   describe('getActivity', () => {
     it('should get the activity from activities API', async () => {
