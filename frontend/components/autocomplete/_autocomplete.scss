@@ -2,10 +2,6 @@
   @include govuk-media-query($until: desktop) {
     width: available;
   }
-
-  @include govuk-media-query($from: desktop) {
-    width: 50%;
-  }
 }
 .moj-filter {
   .autocomplete__wrapper {

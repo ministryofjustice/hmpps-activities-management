@@ -1,0 +1,41 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% set pageTitle = applicationName + " - Waitlist - Confirmation" %}
+{% set pageId = 'confirmation-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukPanel({
+                titleText: 'You\'ve successfully logged ' + waitListApplicationJourney.prisoner.name + '\'s application for ' + waitListApplicationJourney.activity.activityName,
+                text: 'The application status is ' + waitListApplicationJourney.status | toTitleCase
+            }) }}
+
+            {% if waitlistSize > 1 %}
+                <p class='govuk-body'>There are now {{ waitlistSize }} people on the waitlist for {{ waitListApplicationJourney.activity.activityName }}</p>
+            {% else %}
+                <p class='govuk-body'>There is now 1 person on the waitlist for {{ waitListApplicationJourney.activity.activityName }}</p>
+            {% endif %}
+
+            <h2 class='govuk-heading-m'>Current allocation for {{ waitListApplicationJourney.activity.activityName }}</h2>
+            <ul class="govuk-list">
+                <li>Vacancies: {{ vacancies }}</li>
+                <li>Currently allocated: {{ currentlyAllocated }}</li>
+                <li>Capacity: {{ capacity }}</li>
+            </ul>
+
+            <h2 class='govuk-heading-l'>What you can do next</h2>
+
+            <p class='govuk-body'>You can either:</p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-3">
+                <li><a href="/activities/waitlist/{{ waitListApplicationJourney.prisoner.prisonerNumber }}/apply" class="govuk-link--no-visited-state">log another activity application for {{ waitListApplicationJourney.prisoner.name }}</a></li>
+                <li><a href="/activities/allocation-dashboard/{{ waitListApplicationJourney.activity.activityId }}" class="govuk-link--no-visited-state">allocate someone to {{ waitListApplicationJourney.activity.activityName }}</a></li>
+            </ul>
+            <p class='govuk-body'>
+                You can also <a href="/activities/allocation-dashboard/{{ waitListApplicationJourney.activity.activityId }}#waitlist" class="govuk-link--no-visited-state">view the waitlist for {{ waitListApplicationJourney.activity.activityName }}</a>.
+            </p>
+        </div>
+    </div>
+{% endblock %}

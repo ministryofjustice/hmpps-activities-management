@@ -1,0 +1,67 @@
+import { Request, Response } from 'express'
+import { parse } from 'date-fns'
+import CheckAnswersRoutes from './checkAnswers'
+
+describe('Route Handlers - Waitlist application - Check answers', () => {
+  const handler = new CheckAnswersRoutes()
+  let req: Request
+  let res: Response
+
+  beforeEach(() => {
+    res = {
+      locals: {
+        user: {
+          username: 'joebloggs',
+        },
+      },
+      render: jest.fn(),
+      redirect: jest.fn(),
+    } as unknown as Response
+
+    req = {
+      session: {
+        waitListApplicationJourney: {
+          prisoner: {
+            name: 'Alan Key',
+            prisonerNumber: 'ABC123',
+          },
+          requestDate: {
+            day: 31,
+            month: 7,
+            year: 2023,
+          },
+          activity: {
+            activityName: 'Test activity',
+          },
+          requester: 'Alan Key',
+          comment: 'test comment',
+          status: 'PENDING',
+        },
+      },
+    } as unknown as Request
+  })
+
+  describe('GET', () => {
+    it('should render the activity template', async () => {
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/check-answers`, {
+        prisoner: {
+          name: 'Alan Key',
+          prisonerNumber: 'ABC123',
+        },
+        requestDate: parse('2023-07-31', 'yyyy-MM-dd', new Date()),
+        activityName: 'Test activity',
+        requester: 'Alan Key',
+        comment: 'test comment',
+        status: 'PENDING',
+      })
+    })
+  })
+
+  describe('POST', () => {
+    it('should set the activity in session and redirect to the requester route', async () => {
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith(`confirmation`)
+    })
+  })
+})

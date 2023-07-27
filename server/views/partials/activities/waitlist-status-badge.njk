@@ -1,0 +1,14 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% macro waitlistStatusBadge(status) %}
+    {% set class =
+        ('govuk-tag--green' if status == 'APPROVED') or
+        ('govuk-tag--red' if status == 'DECLINED') or
+        ('govuk-tag--yellow' if status == 'PENDING')
+    %}
+
+    {{govukTag({
+        text: status,
+        classes: class
+    })}}
+{% endmacro %}

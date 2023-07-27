@@ -1,4 +1,5 @@
 import accessibleAutocomplete from 'accessible-autocomplete'
+import _ from 'lodash'
 
 function AutoComplete(meta) {
   this.meta = meta
@@ -9,6 +10,9 @@ function AutoComplete(meta) {
       selectElement: document.querySelector('#' + el),
       showAllValues: true,
       preserveNullOptions: true,
+      templates: {
+        suggestion: (option) => _.escape(option), // escape html which may have been injected to the component
+      }
     })
 
     // By default accessible-autocomplete creates an input element with type="text".

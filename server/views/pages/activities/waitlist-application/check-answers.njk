@@ -1,0 +1,133 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Waitlist - Check answers" %}
+{% set pageId = 'check-answers-page' %}
+{% set backLinkHref = '#' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-xl">Log an activity application</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <h1 class='govuk-heading-xl'>Check and confirm application details</h1>
+
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Applicant"
+                            },
+                            value: {
+                                html: '
+                                        <div>'+ prisoner.name +'</div>
+                                        <div class="govuk-hint">'+ prisoner.prisonerNumber +'</div>
+                                      '
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Activity requested"
+                            },
+                            value: {
+                                text: activityName
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "activity?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "activity requested"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Request date"
+                            },
+                            value: {
+                                text: requestDate | formatDate('do MMMM yyyy')
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "request-date?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "request date"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Requester"
+                            },
+                            value: {
+                                text: requester
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "requester?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "requester"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Status"
+                            },
+                            value: {
+                                html: waitlistStatusBadge(status)
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "status?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "status"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Comment"
+                            },
+                            value: {
+                                text: comment
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "status?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "comment"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

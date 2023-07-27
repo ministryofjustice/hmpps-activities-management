@@ -15,6 +15,7 @@ import { BulkAppointmentJourney } from '../../routes/appointments/create-and-edi
 import { DeallocateFromActivityJourney } from '../../routes/activities/deallocate-from-activity/journey'
 import { AttendanceSummaryJourney } from '../../routes/activities/daily-attendance-summary/journey'
 import { UnlockListJourney } from '../../routes/activities/unlock-list/journey'
+import { WaitListApplicationJourney } from '../../routes/activities/waitlist-application/journey'
 
 export default {}
 
@@ -41,6 +42,7 @@ declare module 'express-session' {
     calendarSpikeJourney: CalendarSpikeJourney
     attendanceSummaryJourney: AttendanceSummaryJourney
     unlockListJourney: UnlockListJourney
+    waitListApplicationJourney: WaitListApplicationJourney
     notAttendedJourney: NotAttendedJourney
     activitiesFilters: ActivitiesFilters
     recordAttendanceRequests: RecordAttendanceRequests
