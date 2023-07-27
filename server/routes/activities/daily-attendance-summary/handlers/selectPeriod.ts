@@ -24,7 +24,7 @@ export class TimePeriod {
   @ValidateNested()
   @IsValidDate({ message: 'Enter a valid date' })
   @DateIsSameOrAfter(() => subDays(new Date(), 14), { message: 'Enter a date within the last 14 days' })
-  @DateIsSameOrBefore(addDays(new Date(), 60), { message: 'Enter a date within the next 60 days' })
+  @DateIsSameOrBefore(() => addDays(new Date(), 60), { message: 'Enter a date within the next 60 days' })
   date: SimpleDate
 }
 

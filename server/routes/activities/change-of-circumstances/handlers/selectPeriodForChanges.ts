@@ -22,7 +22,7 @@ export class TimePeriodForChanges {
   @Type(() => SimpleDate)
   @ValidateNested()
   @IsValidDate({ message: 'Enter a valid date' })
-  @DateIsSameOrBefore(new Date(), { message: 'Enter a date on or before today' })
+  @DateIsSameOrBefore(() => new Date(), { message: 'Enter a date on or before today' })
   date: SimpleDate
 }
 
