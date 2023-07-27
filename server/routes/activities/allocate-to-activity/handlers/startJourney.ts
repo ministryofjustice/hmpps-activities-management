@@ -30,6 +30,7 @@ export default class StartJourneyRoutes {
         name: schedule.description,
         location: schedule.internalLocation?.description,
         startDate: schedule.startDate,
+        endDate: schedule?.endDate,
       },
     }
 

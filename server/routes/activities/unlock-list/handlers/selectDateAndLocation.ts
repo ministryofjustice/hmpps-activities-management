@@ -28,7 +28,7 @@ export class DateAndLocation {
   @ValidateIf(o => o.datePresetOption === PresetDateOptions.OTHER)
   @Type(() => SimpleDate)
   @ValidateNested()
-  @DateIsSameOrBefore(addDays(new Date(), 60), { message: 'Enter a date up to 60 days in the future' })
+  @DateIsSameOrBefore(() => addDays(new Date(), 60), { message: 'Enter a date up to 60 days in the future' })
   @IsValidDate({ message: 'Enter a valid date' })
   date: SimpleDate
 

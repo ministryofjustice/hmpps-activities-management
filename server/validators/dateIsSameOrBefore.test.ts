@@ -7,7 +7,13 @@ import DateIsSameOrBefore from './dateIsSameOrBefore'
 describe('dateIsSameOrBefore', () => {
   class DummyForm {
     @Expose()
-    @DateIsSameOrBefore(toDate('2022-12-22'), { message: "Enter date on or before today's date" })
+    @DateIsSameOrBefore(() => toDate('2022-12-22'), { message: "Enter date on or before today's date" })
+    date: SimpleDate
+  }
+
+  class DummyFormWithNullDate {
+    @Expose()
+    @DateIsSameOrBefore(() => null, { message: "Enter date on or before today's date" })
     date: SimpleDate
   }
 
@@ -51,6 +57,21 @@ describe('dateIsSameOrBefore', () => {
     }
 
     const requestObject = plainToInstance(DummyForm, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    expect(errors).toHaveLength(0)
+  })
+
+  it('should pass validation for a null date', async () => {
+    const body = {
+      date: plainToInstance(SimpleDate, {
+        day: 21,
+        month: 12,
+        year: 2022,
+      }),
+    }
+
+    const requestObject = plainToInstance(DummyFormWithNullDate, body)
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
     expect(errors).toHaveLength(0)
