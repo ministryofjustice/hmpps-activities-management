@@ -157,6 +157,7 @@
     <form method='POST'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         {{ multiSelect({
+            type: 'check',
             id: "attendanceList",
             caption: "Attendance list",
             captionClasses: "govuk-visually-hidden",
@@ -199,10 +200,8 @@
                     formAction: 'not-attended'
                 }
             ],
-            itemsDescription: {
-                singular: 'person',
-                plural: 'people'
-            },
+            itemsDescription: 'person',
+            itemsDescriptionPlural: 'people',
             pagination: {
                 previous: {
                     title: 'Previous session',

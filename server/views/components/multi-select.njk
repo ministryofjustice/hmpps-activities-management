@@ -11,7 +11,7 @@
             },
             classes: 'govuk-!-display-none-print'
         }
-    ] %}
+    ] if params.type == 'check' else [{}] %}
     {% for column in params.head %}
         {% set head = (head.push(column), head) %}
     {% endfor %}
@@ -27,6 +27,13 @@
                             <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
                                 <input type="checkbox" name="' + params.name + '" value="' + row.value + '" class="govuk-checkboxes__input" id="row-' + loop.index + '">
                                 <label class="govuk-label govuk-checkboxes__label" for="row-' + loop.index + '">
+                                    <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
+                                </label>
+                            </div>
+                        ' if params.type == 'check' else '
+                            <div class="govuk-radios__item govuk-radios--small moj-multi-select__radio">
+                                <input type="radio" name="' + params.name + '" value="' + row.value + '" class="govuk-radios__input" id="row-' + loop.index + '">
+                                <label class="govuk-label govuk-radios__label" for="row-' + loop.index + '">
                                     <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
                                 </label>
                             </div>
@@ -93,11 +100,13 @@
         </nav>
 
         <div class='multi-select-sticky' role='toolbar' aria-live='polite'
-             aria-label='Attendance actions' aria-disabled='false'
+             aria-label='actions' aria-disabled='false'
              {% if params.itemsDescription %}
-             data-description-singular='{{ params.itemsDescription.singular }}'
-             data-description-plural='{{ params.itemsDescription.plural }}'
+                 data-description-singular='{{ params.itemsDescription }}'
              {% endif %}
+            {% if params.itemsDescriptionPlural %}
+                data-description-plural='{{ params.itemsDescriptionPlural }}'
+            {% endif %}
         >
             <div class='govuk-width-container'>
                 <div class='multi-select-sticky__selected-summary'>

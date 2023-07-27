@@ -197,6 +197,7 @@
     <form method='POST'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         {{ multiSelect({
+            type: 'check',
             caption: "Currently allocated",
             captionClasses: "govuk-visually-hidden",
             name: 'selectedAllocations',
@@ -226,10 +227,8 @@
                     maxItems: 1
                 }
             ],
-            itemsDescription: {
-                singular: 'person',
-                plural: 'people'
-            }
+            itemsDescription: 'person',
+            itemsDescriptionPlural: 'people'
         }) }}
     </form>
 {% endset %}
@@ -409,6 +408,7 @@
     <form method='POST'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
         {{ multiSelect({
+            type: 'radio',
             caption: "Candidates",
             captionClasses: "govuk-visually-hidden",
             name: 'selectedAllocation',
@@ -427,14 +427,10 @@
             actions: [
                 {
                     text: 'Select candidate',
-                    formAction: schedule.id + '/allocate',
-                    maxItems: 1
+                    formAction: schedule.id + '/allocate'
                 }
             ],
-            itemsDescription: {
-                singular: 'person',
-                plural: 'people'
-            }
+            itemsDescription: 'person'
         }) }}
     </form>
 {% endset %}

@@ -68,6 +68,7 @@
                 {{ mojPagination(pagination) }}
 
                 {{ multiSelect({
+                    type: 'check',
                     id: "changeEvents",
                     caption: "Change events",
                     captionClasses: "govuk-visually-hidden",
@@ -93,10 +94,8 @@
                             formAction: 'view-changes'
                         }
                     ],
-                    itemsDescription: {
-                        singular: 'event',
-                        plural: 'events'
-                    }
+                    itemsDescription: 'event',
+                    itemsDescriptionPlural: 'events'
                 }) }}
 
                 {{ mojPagination(pagination) }}
