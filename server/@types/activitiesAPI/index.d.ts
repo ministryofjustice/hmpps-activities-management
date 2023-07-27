@@ -2096,6 +2096,12 @@ export interface components {
        * @example 10
        */
       capacity?: number
+      /**
+       * Format: int32
+       * @description The number of weeks in the schedule
+       * @example 1
+       */
+      scheduleWeeks: number
       /** @description The days and times an activity schedule can take place */
       slots: components['schemas']['Slot'][]
       /**
@@ -2171,6 +2177,12 @@ export interface components {
      *     e.g. 'AM, Monday, Wednesday and Friday' or 'PM Tuesday, Thursday, Sunday'
      */
     Slot: {
+      /**
+       * Format: int32
+       * @description The week of the schedule this slot relates to
+       * @example 1
+       */
+      weekNumber: number
       /**
        * @description The time slot of the activity schedule, morning afternoon or evening e.g. AM, PM or ED
        * @example AM
@@ -3188,8 +3200,20 @@ export interface components {
       minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
       /** @description The list of pay rates that can apply to this activity */
       pay?: components['schemas']['ActivityPayCreateRequest'][]
+      /**
+       * Format: int32
+       * @description The number of weeks in the schedule
+       * @example 1
+       */
+      scheduleWeeks?: number
       /** @description The days and times an activity schedule can take place */
       slots?: components['schemas']['Slot'][]
+      /**
+       * @description A flag to indicate that the end date is to be removed
+       * @default false
+       * @example true
+       */
+      removeEndDate: boolean
     }
     /**
      * @description

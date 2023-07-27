@@ -1,13 +1,14 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
+import createHttpError from 'http-errors'
+import { NextFunction } from 'express-serve-static-core'
 import { mapSlots } from '../../../../utils/utils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 
 export class DaysAndTimes {
   @Expose()
-  @IsNotEmpty({ message: 'Select at least one day' })
   days: string[]
 
   @Expose()
@@ -49,50 +50,111 @@ export class DaysAndTimes {
 export default class DaysAndTimesRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/activities/create-an-activity/days-and-times')
+  GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { scheduleWeeks } = req.session.createJourney
+    const { weekNumber } = req.params
+
+    if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
+
+    return res.render('pages/activities/create-an-activity/days-and-times')
   }
 
-  POST = async (req: Request, res: Response): Promise<void> => {
-    function sanitizeTimeSlots(timeSlots: string | string[]): string[] {
-      let result
-      if (typeof timeSlots === 'string') {
-        result = [timeSlots]
-      } else if (Array.isArray(timeSlots)) {
-        result = [...timeSlots]
-      }
-      return result
-    }
+  POST = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { scheduleWeeks } = req.session.createJourney
+    const { weekNumber } = req.params
+    const selectedDays = req.body.days
+    const { preserveHistory, fromScheduleFrequency, fromEditActivity } = req.query
 
-    if (typeof req.body.days === 'string') {
-      req.session.createJourney.days = [req.body.days]
-    } else if (Array.isArray(req.body.days)) {
-      req.session.createJourney.days = [...req.body.days]
+    if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
+
+    req.session.createJourney.slots ??= {}
+
+    const { slots } = req.session.createJourney
+    const weekNumberInt = +weekNumber
+
+    if (!selectedDays) {
+      req.session.createJourney.slots[weekNumberInt] = { days: [] }
+      const hasDaysSelected = Object.values(slots).find(slot => slot?.days?.length > 0)
+      if ((scheduleWeeks === weekNumberInt || preserveHistory) && !hasDaysSelected)
+        return res.validationFailed('days', 'You must select at least 1 slot across the schedule')
     } else {
-      req.session.createJourney.days = undefined
+      const weeklySlots = this.getSessionSlots(req, weekNumberInt)
+
+      if (typeof selectedDays === 'string') {
+        weeklySlots.days = [selectedDays]
+      } else if (Array.isArray(selectedDays)) {
+        weeklySlots.days = [...selectedDays]
+      }
+
+      const sanitizeTimeSlots = (timeSlots: string | string[]): string[] => {
+        if (typeof timeSlots === 'string') return [timeSlots]
+        if (Array.isArray(timeSlots)) return [...timeSlots]
+        return []
+      }
+
+      const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+      daysOfWeek.forEach(day => {
+        if (weeklySlots.days.find(selectedDay => selectedDay === day.toLowerCase())) {
+          weeklySlots[`timeSlots${day}`] = sanitizeTimeSlots(req.body[`timeSlots${day}`])
+        } else {
+          weeklySlots[`timeSlots${day}`] = []
+        }
+      })
     }
 
-    req.session.createJourney.timeSlotsMonday = sanitizeTimeSlots(req.body.timeSlotsMonday)
-    req.session.createJourney.timeSlotsTuesday = sanitizeTimeSlots(req.body.timeSlotsTuesday)
-    req.session.createJourney.timeSlotsWednesday = sanitizeTimeSlots(req.body.timeSlotsWednesday)
-    req.session.createJourney.timeSlotsThursday = sanitizeTimeSlots(req.body.timeSlotsThursday)
-    req.session.createJourney.timeSlotsFriday = sanitizeTimeSlots(req.body.timeSlotsFriday)
-    req.session.createJourney.timeSlotsSaturday = sanitizeTimeSlots(req.body.timeSlotsSaturday)
-    req.session.createJourney.timeSlotsSunday = sanitizeTimeSlots(req.body.timeSlotsSunday)
-    if (req.query && req.query.fromEditActivity) {
-      const { user } = res.locals
-      const { activityId } = req.session.createJourney
-      const prisonCode = user.activeCaseLoadId
-      const slots = mapSlots(req.session.createJourney)
-      const activity = {
-        slots,
-      } as ActivityUpdateRequest
-      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
-      const successMessage = `We've updated the daily schedule for ${req.session.createJourney.name}`
+    if (scheduleWeeks === weekNumberInt) {
+      // If create journey, redirect to next journey page
+      if (!preserveHistory) return res.redirect('../bank-holiday-option')
+      // If from edit page, edit slots
+      if (fromEditActivity) return this.editSlots(req, res)
+      return res.redirect('../check-answers')
+    }
+    if (preserveHistory && !fromScheduleFrequency) {
+      // If this is a week-specfic slot edit (not from schedule frequency page)
+      if (fromEditActivity) return this.editSlots(req, res)
+      return res.redirect('../check-answers')
+    }
 
-      const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
-      req.session.returnTo = returnTo
-      res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
-    } else res.redirectOrReturn('bank-holiday-option')
+    let redirectParams = ''
+    if (preserveHistory) {
+      redirectParams += `?preserveHistory=true`
+      redirectParams += fromScheduleFrequency ? `&fromScheduleFrequency=true` : ''
+      redirectParams += fromEditActivity ? `&fromEditActivity=true` : ''
+    }
+
+    return res.redirect(`${weekNumberInt + 1}${redirectParams}`)
+  }
+
+  private async editSlots(req: Request, res: Response) {
+    const { user } = res.locals
+    const { activityId, scheduleWeeks } = req.session.createJourney
+    const slots = mapSlots(req.session.createJourney)
+    const activity = {
+      slots,
+      scheduleWeeks,
+    } as ActivityUpdateRequest
+    await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
+    const successMessage = `We've updated the daily schedule for ${req.session.createJourney.name}`
+
+    const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
+    req.session.returnTo = returnTo
+    res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
+  }
+
+  private getSessionSlots = (req: Request, weekNumber: number) => {
+    req.session.createJourney.slots ??= {}
+    req.session.createJourney.slots[weekNumber] ??= {
+      days: [],
+    }
+    return req.session.createJourney.slots[weekNumber]
+  }
+
+  private validateWeekNumber = (weekNumber: string, scheduleWeeks: number) => {
+    // Week number should be a positive whole number, less or equal to the schedule weeks
+    const weekNumberInt = Math.floor(+weekNumber)
+    if (!+weekNumber || !scheduleWeeks) return false
+    if (weekNumberInt !== +weekNumber) return false
+    if (weekNumberInt <= 0 || weekNumberInt > scheduleWeeks) return false
+    return true
   }
 }
