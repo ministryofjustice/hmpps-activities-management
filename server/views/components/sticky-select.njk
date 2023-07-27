@@ -25,15 +25,15 @@
                 {
                     html: '
                             <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
-                                <input type="checkbox" name="' + params.name + '" value="' + row.value + '" class="govuk-checkboxes__input" id="row-' + loop.index + '">
-                                <label class="govuk-label govuk-checkboxes__label" for="row-' + loop.index + '">
+                                <input type="checkbox" name="' + params.name + '" value="' + row.value + '" class="govuk-checkboxes__input" id="' + (params.idPrefix or 'row') + '-' + loop.index + '">
+                                <label class="govuk-label govuk-checkboxes__label" for="' + (params.idPrefix or 'row') + '-' + loop.index + '">
                                     <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
                                 </label>
                             </div>
                         ' if params.type == 'check' else '
                             <div class="govuk-radios__item govuk-radios--small moj-multi-select__radio">
-                                <input type="radio" name="' + params.name + '" value="' + row.value + '" class="govuk-radios__input" id="row-' + loop.index + '">
-                                <label class="govuk-label govuk-radios__label" for="row-' + loop.index + '">
+                                <input type="radio" name="' + params.name + '" value="' + row.value + '" class="govuk-radios__input" id="' + (params.idPrefix or 'row') + '-' + loop.index + '">
+                                <label class="govuk-label govuk-radios__label" for="' + (params.idPrefix or 'row') + '-' + loop.index + '">
                                     <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
                                 </label>
                             </div>

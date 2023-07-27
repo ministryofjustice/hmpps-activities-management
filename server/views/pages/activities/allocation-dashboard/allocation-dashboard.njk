@@ -163,7 +163,7 @@
         {% endset %}
 
         {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + row.name,
+            visuallyHiddenText: 'Select ' + row.name | toTitleCase,
             value: row.prisonerNumber,
             selectable: true,
             items: [
@@ -197,6 +197,7 @@
     <form method='POST'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         {{ stickySelect({
+            idPrefix: 'allocated',
             type: 'check',
             caption: "Currently allocated",
             captionClasses: "govuk-visually-hidden",
@@ -377,7 +378,7 @@
             </ul>
         {% endset %}
         {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + row.name,
+            visuallyHiddenText: 'Select ' + row.name | toTitleCase,
             value: row.prisonerNumber,
             selectable: true,
             items: [
@@ -408,6 +409,7 @@
     <form method='POST'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
         {{ stickySelect({
+            idPrefix: 'candidate',
             type: 'radio',
             caption: "Candidates",
             captionClasses: "govuk-visually-hidden",
