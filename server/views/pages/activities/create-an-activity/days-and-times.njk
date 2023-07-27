@@ -3,82 +3,102 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% from "components/nestedTimeSlotCheckBoxes.njk" import nestedTimeSlotCheckBoxes %}
 
 {% set pageTitle = applicationName + " - Create a schedule - Days and times" %}
 {% set pageId = 'create-schedule-days-and-times-page' %}
-{% set backLinkHref = "end-date-option" %}
+{% if session.req.params.weekNumber > 1 %}
+    {% set backLinkHref = session.req.params.weekNumber - 1 %}
+{% else %}
+    {% set backLinkHref = "../schedule-frequency" %}
+{% endif %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-l">Enter the days and times when this activity runs</h1>
+            {% if session.createJourney.scheduleWeeks > 1 %}
+                {% if session.req.query.fromEditActivity %}
+                    <h1 class="govuk-heading-l">Edit week {{ session.req.params.weekNumber }} of {{ session.createJourney.scheduleWeeks }}</h1>
+                {% else %}
+                    <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }}: enter the days and times when this activity runs</h1>
+                {% endif %}
+            {% else %}
+                <h1 class="govuk-heading-l">Enter the days and times when this activity runs</h1>
+            {% endif %}
+
+            {% if session.req.query.fromEditActivity %}
+                <p class="govuk-hint">Any changes you make will take effect tomorrow</p>
+                <p class="govuk-hint">You should update any unlock lists that have been printed</p>
+            {% elseif session.createJourney.scheduleWeeks > 1 and session.req.params.weekNumber == 1 %}
+                <p class="govuk-hint">Your chosen start date will fall in week 1 of your schedule, even if there are no sessions planned for the rest of the week</p>
+            {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% if session.req.query.fromEditActivity %}
+                {% if currentWeek and session.createJourney.scheduleWeeks > 1 %}
                     {{ govukInsetText({
-                        text: "Any changes to the schedule will take effect from tomorrow."
+                        text: "The current week is: Week " + currentWeek
                     }) }}
                 {% endif %}
+
+                {% set selectedTimeSlots = session.createJourney.slots[session.req.params.weekNumber] %}
+                {% set selectedDays = selectedTimeSlots.days %}
                 {{ govukCheckboxes({
                     name: "days",
-                    hint: {
-                        text: "Select each day that the activity will run, then select the times the activity will run on that day."
-                    },
                     errorMessage: validationErrors | findError('days'),
-                    values: formResponses.days or session.createJourney.days,
+                    values: formResponses.days or selectedDays,
                     items: [
                         {
                             value: "monday",
-                            text: "Monday",
+                            html: "Monday" + startDayTag('monday', session),
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Monday", validationErrors, formResponses, session.createJourney)
+                                html: nestedTimeSlotCheckBoxes("Monday", validationErrors, formResponses, selectedTimeSlots)
                             }
                         },
                         {
                             value: "tuesday",
-                            text: "Tuesday",
+                            html: "Tuesday" + startDayTag('tuesday', session),
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Tuesday", validationErrors, formResponses, session.createJourney)
+                                html: nestedTimeSlotCheckBoxes("Tuesday", validationErrors, formResponses, selectedTimeSlots)
                             }
                         },
                         {
                             value: "wednesday",
-                            text: "Wednesday",
+                            html: "Wednesday" + startDayTag('wednesday', session),
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Wednesday", validationErrors, formResponses, session.createJourney)
+                                html: nestedTimeSlotCheckBoxes("Wednesday", validationErrors, formResponses, selectedTimeSlots)
                             }
                         },
                         {
                             value: "thursday",
-                            text: "Thursday",
+                            html: "Thursday" + startDayTag('thursday', session),
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Thursday", validationErrors, formResponses, session.createJourney)
+                                html: nestedTimeSlotCheckBoxes("Thursday", validationErrors, formResponses, selectedTimeSlots)
                             }
                         },
                         {
                             value: "friday",
-                            text: "Friday",
+                            html: "Friday" + startDayTag('friday', session),
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Friday", validationErrors, formResponses, session.createJourney)
+                                html: nestedTimeSlotCheckBoxes("Friday", validationErrors, formResponses, selectedTimeSlots)
                             }
                         },
                         {
                             value: "saturday",
-                            text: "Saturday",
+                            html: "Saturday" + startDayTag('saturday', session),
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Saturday", validationErrors, formResponses, session.createJourney)
+                                html: nestedTimeSlotCheckBoxes("Saturday", validationErrors, formResponses, selectedTimeSlots)
                             }
                         },
                         {
                             value: "sunday",
-                            text: "Sunday",
+                            html: "Sunday" + startDayTag('sunday', session),
                             conditional: {
-                                html: nestedTimeSlotCheckBoxes("Sunday", validationErrors, formResponses, session.createJourney)
+                                html: nestedTimeSlotCheckBoxes("Sunday", validationErrors, formResponses, selectedTimeSlots)
                             }
                         }
                     ]
@@ -91,6 +111,10 @@
                         <a class="govuk-link js-backlink" href="/">Cancel</a>
                     </div>
                 {% else %}
+                    {{ govukInsetText({
+                        text: 'The start date of activity is ' + session.createJourney.startDate | toDateFromSimpleDate | formatDate("EEEE d MMMM yyyy", false)
+                    }) }}
+
                     {{ govukButton({
                         text: "Continue"
                     }) }}
@@ -99,10 +123,10 @@
         </div>
     </div>
 {% endblock %}
-{% macro insetChangesText() %}
-   {% if session.req.query.fromEditActivity %}
-        {{ govukInsetText({
-          text: "Any changes to the schedule will take effect from tomorrow."
-        }) }}
-   {% endif %}
+
+{% macro startDayTag(slotDay, session) %}
+    {% set startDay = session.createJourney.startDate | toDateFromSimpleDate | formatDate("EEEE", false) | lower %}
+    {% if not session.req.query.fromEditActivity and slotDay == startDay and session.req.params.weekNumber == 1 %}
+        {{ govukTag({ text: 'Start day', classes: "govuk-tag--grey" }) }}
+    {% endif %}
 {% endmacro %}

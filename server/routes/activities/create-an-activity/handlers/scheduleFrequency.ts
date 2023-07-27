@@ -4,7 +4,7 @@ import { ScheduleFrequency } from '../journey'
 
 export class ScheduleFrequencyForm {
   @IsEnum(ScheduleFrequency, { message: 'Select the frequency of the schedule for this activity' })
-  scheduleFrequency: ScheduleFrequency
+  scheduleFrequency: string
 }
 
 export default class ScheduleRoutes {
@@ -13,14 +13,23 @@ export default class ScheduleRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const {
-      scheduleFrequency,
-    }: {
-      scheduleFrequency: ScheduleFrequency
-    } = req.body
+    const { preserveHistory, fromEditActivity } = req.query
+    const scheduleFrequency = req.body.scheduleFrequency as string
 
-    req.session.createJourney.scheduleFrequency = scheduleFrequency
+    req.session.createJourney.scheduleWeeks = ScheduleFrequency[scheduleFrequency]
 
-    res.redirect('days-and-times')
+    // Remove invalid slots
+    if (req.session.createJourney.slots) {
+      Object.keys(req.session.createJourney.slots).forEach(weekNumber => {
+        if (+weekNumber > req.session.createJourney.scheduleWeeks) {
+          delete req.session.createJourney.slots[weekNumber]
+        }
+      })
+    }
+
+    let redirect = 'days-and-times/1'
+    redirect += preserveHistory ? '?preserveHistory=true&fromScheduleFrequency=true' : ''
+    redirect += fromEditActivity ? '&fromEditActivity=true' : ''
+    res.redirect(redirect)
   }
 }
