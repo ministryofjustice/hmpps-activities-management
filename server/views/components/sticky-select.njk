@@ -1,7 +1,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% macro multiSelect(params) %}
+{% macro stickySelect(params) %}
     {% set selectAllId = params.selectAllId or 'select-all' %}
 
     {% set head = [
@@ -60,7 +60,7 @@
         {% set rows = unselectableRows %}
     {% endif %}
 
-    <div class='multi-select' {% if selectable %} data-module='activities-multi-select' {% endif %} {% if params.id %} id={{params.id}} {% endif %}>
+    <div class='sticky-select' {% if selectable %} data-module='activities-sticky-select' {% endif %} {% if params.id %} id={{params.id}} {% endif %}>
         {{ govukTable({
             attributes: {
                 'data-module': 'moj-multi-select',
@@ -99,7 +99,7 @@
             {% endif %}
         </nav>
 
-        <div class='multi-select-sticky' role='toolbar' aria-live='polite'
+        <div class='sticky-select-action-bar' role='toolbar' aria-live='polite'
              aria-label='actions' aria-disabled='false'
              {% if params.itemsDescription %}
                  data-description-singular='{{ params.itemsDescription }}'
@@ -109,9 +109,9 @@
             {% endif %}
         >
             <div class='govuk-width-container'>
-                <div class='multi-select-sticky__selected-summary'>
-                    <span class='multi-select-sticky__count'></span>
-                    <a class='multi-select-sticky__clear-link'>Clear</a>
+                <div class='sticky-select-action-bar__selected-summary'>
+                    <span class='sticky-select-action-bar__count'></span>
+                    <a class='sticky-select-action-bar__clear-link'>Clear</a>
                 </div>
                 <div class='govuk-button-group'>
                     {% for action in params.actions %}

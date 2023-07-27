@@ -1,4 +1,4 @@
-.multi-select {
+.sticky-select {
   .govuk-table__head {
     @media print {
       position: revert;
@@ -31,7 +31,7 @@
     }
   }
 
-  .multi-select-sticky {
+  .sticky-select-action-bar {
     position: sticky;
     z-index: 1000;
     bottom: -1px;
@@ -84,7 +84,7 @@
   }
 }
 
-.js-enabled .multi-select-sticky {
+.js-enabled .sticky-select-action-bar {
   display: none;
 
   &__selected-summary {
