@@ -2,7 +2,7 @@
 
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "components/multi-select.njk" import multiSelect %}
+{% from "components/sticky-select.njk" import stickySelect %}
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
@@ -163,7 +163,7 @@
         {% endset %}
 
         {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + row.name,
+            visuallyHiddenText: 'Select ' + row.name | toTitleCase,
             value: row.prisonerNumber,
             selectable: true,
             items: [
@@ -196,7 +196,9 @@
 
     <form method='POST'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-        {{ multiSelect({
+        {{ stickySelect({
+            idPrefix: 'allocated',
+            type: 'check',
             caption: "Currently allocated",
             captionClasses: "govuk-visually-hidden",
             name: 'selectedAllocations',
@@ -226,10 +228,8 @@
                     maxItems: 1
                 }
             ],
-            itemsDescription: {
-                singular: 'person',
-                plural: 'people'
-            }
+            itemsDescription: 'person',
+            itemsDescriptionPlural: 'people'
         }) }}
     </form>
 {% endset %}
@@ -377,40 +377,43 @@
                 {% endfor %}
             </ul>
         {% endset %}
-        {% set id = 'selectedAllocation' + (('-' + loop.index0) if loop.index0 else '') %}
-        {% set rows = (rows.push([
-            {
-                html: '
-                    <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            <input class="govuk-radios__input govuk-!-padding-top-3" id="' + id + '" name="selectedAllocation" type="radio" value="' + row.prisonerNumber + '">
-                            <label class="govuk-label govuk-radios__label" for="' + id + '">
-                                <h2 class="govuk-heading-s govuk-!-margin-bottom-1">
-                                    <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
-                                       class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase + '
-                                    </a>
-                                </h2>
-                                <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
-                                <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
-                            </label>
-                        </div>
-                    </div>
-                '
-            },
-            {
-                html: currentAllocationsHtml
-            },
-            {
-                text: row.releaseDate | formatDate('d MMMM yyyy') if row.releaseDate else 'TBC'
-            }
-        ]), rows) %}
+        {% set rows = (rows.push({
+            visuallyHiddenText: 'Select ' + row.name | toTitleCase,
+            value: row.prisonerNumber,
+            selectable: true,
+            items: [
+                {
+                    html: '
+                        <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                            <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
+                               class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase + '
+                            </a>
+                        </h2>
+                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
+                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
+                    ',
+                    attributes: {
+                        "data-sort-value": row.name
+                    }
+                },
+                {
+                    html: currentAllocationsHtml
+                },
+                {
+                    text: row.releaseDate | formatDate('d MMMM yyyy') if row.releaseDate else 'TBC'
+                }
+            ]
+        }), rows) %}
     {% endfor %}
 
-    <form method='POST' action='{{ schedule.id }}/allocate'>
+    <form method='POST'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-        {{ govukTable({
+        {{ stickySelect({
+            idPrefix: 'candidate',
+            type: 'radio',
             caption: "Candidates",
             captionClasses: "govuk-visually-hidden",
+            name: 'selectedAllocation',
             head: [
                 {
                     text: "Candidate details"
@@ -422,47 +425,27 @@
                     text: "Earliest release date"
                 }
             ],
-            rows: rows
-        }) }}
-
-        {% if pagedCandidates.totalPages > 1 %}
-            {{ govukPagination({
+            rows: rows,
+            actions: [
+                {
+                    text: 'Select candidate',
+                    formAction: schedule.id + '/allocate'
+                }
+            ],
+            itemsDescription: 'person',
+            pagination: {
                 previous: {
-                    href: "/page/" + (pagedCandidates.number - 1) + '?id=candidates-tab'
+                    title: 'Previous page',
+                    label: pagedCandidates.number + ' of ' + pagedCandidates.totalPages,
+                    href: '/page/' + (pagedCandidates.number - 1) + '?id=candidates-tab'
                 } if not pagedCandidates.first,
                 next: {
-                    href: "/page/" + (pagedCandidates.number + 1) + '?id=candidates-tab'
-                } if not pagedCandidates.last,
-                items: [
-                    {
-                        number: 1,
-                        href: "/page/0" + "?id=candidates-tab",
-                        current: pagedCandidates.number == 0
-                    },
-                    {
-                        ellipsis: true
-                    },
-                    {
-                        number: pagedCandidates.number + 1,
-                        current: true
-                    } if pagedCandidates.number != (pagedCandidates.totalPages - 1) and pagedCandidates.number != 0,
-                    {
-                        ellipsis: true
-                    } if pagedCandidates.number != (pagedCandidates.totalPages - 1) and pagedCandidates.number != 0,
-                    {
-                        number: pagedCandidates.totalPages,
-                        href: "/page/" + (pagedCandidates.totalPages - 1) + '?id=candidates-tab',
-                        current: pagedCandidates.number == pagedCandidates.totalPages - 1
-                    }
-                ]
-            }) }}
-        {% endif %}
-
-        {% if rows.length > 0 %}
-            {{ govukButton({
-                text: "Select candidate"
-            }) }}
-        {% endif %}
+                    title: 'Next page',
+                    label: (pagedCandidates.number + 2) + ' of ' + pagedCandidates.totalPages,
+                    href: '/page/' + (pagedCandidates.number + 1) + '?id=candidates-tab'
+                } if not pagedCandidates.last
+            }
+        }) }}
     </form>
 {% endset %}
 

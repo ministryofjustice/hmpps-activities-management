@@ -1,7 +1,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% macro multiSelect(params) %}
+{% macro stickySelect(params) %}
     {% set selectAllId = params.selectAllId or 'select-all' %}
 
     {% set head = [
@@ -11,7 +11,7 @@
             },
             classes: 'govuk-!-display-none-print'
         }
-    ] %}
+    ] if params.type == 'check' else [{}] %}
     {% for column in params.head %}
         {% set head = (head.push(column), head) %}
     {% endfor %}
@@ -25,8 +25,15 @@
                 {
                     html: '
                             <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
-                                <input type="checkbox" name="' + params.name + '" value="' + row.value + '" class="govuk-checkboxes__input" id="row-' + loop.index + '">
-                                <label class="govuk-label govuk-checkboxes__label" for="row-' + loop.index + '">
+                                <input type="checkbox" name="' + params.name + '" value="' + row.value + '" class="govuk-checkboxes__input" id="' + (params.idPrefix or 'row') + '-' + loop.index + '">
+                                <label class="govuk-label govuk-checkboxes__label" for="' + (params.idPrefix or 'row') + '-' + loop.index + '">
+                                    <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
+                                </label>
+                            </div>
+                        ' if params.type == 'check' else '
+                            <div class="govuk-radios__item govuk-radios--small moj-multi-select__radio">
+                                <input type="radio" name="' + params.name + '" value="' + row.value + '" class="govuk-radios__input" id="' + (params.idPrefix or 'row') + '-' + loop.index + '">
+                                <label class="govuk-label govuk-radios__label" for="' + (params.idPrefix or 'row') + '-' + loop.index + '">
                                     <span class="govuk-visually-hidden">' + row.visuallyHiddenText + '</span>
                                 </label>
                             </div>
@@ -53,7 +60,7 @@
         {% set rows = unselectableRows %}
     {% endif %}
 
-    <div class='multi-select' {% if selectable %} data-module='activities-multi-select' {% endif %} {% if params.id %} id={{params.id}} {% endif %}>
+    <div class='sticky-select' {% if selectable %} data-module='activities-sticky-select' {% endif %} {% if params.id %} id={{params.id}} {% endif %}>
         {{ govukTable({
             attributes: {
                 'data-module': 'moj-multi-select',
@@ -92,17 +99,19 @@
             {% endif %}
         </nav>
 
-        <div class='multi-select-sticky' role='toolbar' aria-live='polite'
-             aria-label='Attendance actions' aria-disabled='false'
+        <div class='sticky-select-action-bar' role='toolbar' aria-live='polite'
+             aria-label='actions' aria-disabled='false'
              {% if params.itemsDescription %}
-             data-description-singular='{{ params.itemsDescription.singular }}'
-             data-description-plural='{{ params.itemsDescription.plural }}'
+                 data-description-singular='{{ params.itemsDescription }}'
              {% endif %}
+            {% if params.itemsDescriptionPlural %}
+                data-description-plural='{{ params.itemsDescriptionPlural }}'
+            {% endif %}
         >
             <div class='govuk-width-container'>
-                <div class='multi-select-sticky__selected-summary'>
-                    <span class='multi-select-sticky__count'></span>
-                    <a class='multi-select-sticky__clear-link'>Clear</a>
+                <div class='sticky-select-action-bar__selected-summary'>
+                    <span class='sticky-select-action-bar__count'></span>
+                    <a class='sticky-select-action-bar__clear-link'>Clear</a>
                 </div>
                 <div class='govuk-button-group'>
                     {% for action in params.actions %}
