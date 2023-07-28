@@ -73,7 +73,7 @@
             {% set cancelledSessionsRows = (cancelledSessionsRows.push([
                 {
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": cancelledSession.summary },
-                    html: '<a href=/activities/attendance/activities/' + cancelledSession.id + '/attendance-list class="govuk-link govuk-link--no-visited-state" target="_blank">' + cancelledSession.summary + '</a>',
+                    html: '<a href=/activities/attendance/activities/' + cancelledSession.id + '/attendance-list class="govuk-link govuk-link--no-visited-state" target="_blank">' + (cancelledSession.summary | escape) + '</a>',
                     classes: 'govuk-table_cell'
                 },
                 {
@@ -162,7 +162,7 @@
 
         ],
         rows: cancelledSessionsRows if cancelledSessionsRows | length > 0 else [[{
-            html: "No cancelled sessions",
+            text: "No cancelled sessions",
             attributes: { "colspan": "6" },
             classes: 'govuk-table_cell govuk-!-text-align-centre'
         }]]

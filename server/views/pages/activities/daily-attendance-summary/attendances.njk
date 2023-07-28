@@ -166,7 +166,7 @@
                 },
                 {
                     attributes: { id: 'activity-' + loop.index },
-                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + attendee.attendance.activitySummary + '</a>',
+                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>',
                     classes: 'govuk-table__cell'
                 },
                 {
