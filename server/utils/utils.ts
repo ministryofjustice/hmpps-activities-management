@@ -58,6 +58,7 @@ export const initialiseName = (fullName?: string): string | null => {
  */
 export const fullName = (user?: { firstName: string; lastName: string; middleNames?: string }): string | null => {
   if (!user) return null
+  if (user.lastName == "UNKNOWN") return "UNKNOWN"
   return [user.firstName, user.middleNames, user.lastName]
     .filter(part => part)
     .reduce((parts, part) => `${parts} ${part}`, '')
