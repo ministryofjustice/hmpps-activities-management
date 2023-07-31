@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import { differenceInDays, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
@@ -8,6 +7,7 @@ import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityT
 import { getTimeSlotFromTime } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
+import calcCurrentWeek from '../../../../utils/helpers/activityCalcCurrentWeek'
 
 export default class ActivityRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -110,25 +110,13 @@ export default class ActivityRoutes {
     res.render('pages/activities/manage-schedules/view-activity', {
       activity,
       schedule,
-      dailySlots: activitySessionToDailyTimeSlots(req.session.createJourney),
+      dailySlots: activitySessionToDailyTimeSlots(
+        req.session.createJourney.scheduleWeeks,
+        req.session.createJourney.slots,
+      ),
       incentiveLevelPays,
       attendanceCount,
-      currentWeek: this.calcCurrentWeek(richStartDate, req.session.createJourney.scheduleWeeks),
+      currentWeek: calcCurrentWeek(richStartDate, req.session.createJourney.scheduleWeeks),
     })
-  }
-
-  private calcCurrentWeek(startDate: Date, scheduleWeeks: number) {
-    // Current week only applies if the activity has started
-    if (startDate > new Date()) return null
-
-    const daysInWeek = 7
-    const dayOfWeek = (sundayIndexedDay => {
-      if (sundayIndexedDay - 1 < 0) return 6
-      return sundayIndexedDay - 1
-    })(startDate.getDay())
-    const scheduleFirstMonday = subDays(startDate, dayOfWeek)
-    const daysIntoSchedule = differenceInDays(new Date(), scheduleFirstMonday)
-    const daysIntoThisSchedulePeriod = daysIntoSchedule % (daysInWeek * scheduleWeeks)
-    return Math.floor(daysIntoThisSchedulePeriod / daysInWeek) + 1
   }
 }

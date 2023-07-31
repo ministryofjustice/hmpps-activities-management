@@ -3,20 +3,25 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { addDays } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashboard'
 import atLeast from '../../../../../jest.setup'
 import { Activity, Allocation, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
+import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+
+const today = new Date()
+const nextWeek = addDays(today, 7)
 
 describe('Route Handlers - Allocation dashboard', () => {
   const handler = new AllocationDashboardRoutes(prisonService, activitiesService)
@@ -29,6 +34,32 @@ describe('Route Handlers - Allocation dashboard', () => {
       caseLoadId: 'MDI',
     },
   }
+
+  const mockActivity = {
+    attendanceRequired: false,
+    category: { code: 'EDUCATION', id: 1, name: 'Education' },
+    createdBy: '',
+    createdTime: '',
+    description: '',
+    eligibilityRules: [],
+    endDate: toDateString(nextWeek),
+    inCell: false,
+    minimumIncentiveNomisCode: 'BAS',
+    minimumIncentiveLevel: 'Basic',
+    outsideWork: false,
+    pay: [],
+    payPerSession: 'H',
+    pieceWork: false,
+    prisonCode: '',
+    riskLevel: '',
+    schedules: [activitySchedule],
+    startDate: toDateString(today),
+    summary: 'Maths Level 1',
+    tier: { code: '', description: '', id: 0 },
+    waitingList: [],
+    id: 1,
+    minimumEducationLevel: [],
+  } as unknown as Activity
 
   beforeEach(() => {
     res = {
@@ -56,7 +87,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         .calledWith(atLeast(1))
         .mockResolvedValue({
           pay: [{ incentiveNomisCode: 'BAS' }, { incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
-          schedules: [{ scheduleId: 1 }],
+          schedules: [activitySchedule],
         } as unknown as Activity)
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
@@ -139,7 +170,41 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/allocation-dashboard', {
-        schedule: { scheduleId: 1 },
+        schedule: activitySchedule,
+        dailySlots: {
+          '1': [
+            {
+              day: 'Monday',
+              slots: ['am'],
+            },
+            {
+              day: 'Tuesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Wednesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Thursday',
+              slots: ['am'],
+            },
+            {
+              day: 'Friday',
+              slots: ['am'],
+            },
+            {
+              day: 'Saturday',
+              slots: ['am'],
+            },
+            {
+              day: 'Sunday',
+              slots: ['am'],
+            },
+          ],
+        },
+        currentWeek: 1,
+        scheduleWeeks: 1,
         currentlyAllocated: [
           {
             allocationId: 1,
@@ -203,7 +268,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         .calledWith(atLeast(1))
         .mockResolvedValue({
           pay: [{ incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
-          schedules: [],
+          schedules: [activitySchedule],
         } as unknown as Activity)
 
       await handler.GET(req, res)
@@ -233,7 +298,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ pay: [], riskLevel: 'low', schedules: [] } as unknown as Activity)
+        .mockResolvedValue({ pay: [], riskLevel: 'low', schedules: [activitySchedule] } as unknown as Activity)
 
       await handler.GET(req, res)
 
@@ -250,7 +315,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ pay: [], riskLevel: 'medium', schedules: [] } as unknown as Activity)
+        .mockResolvedValue({ pay: [], riskLevel: 'medium', schedules: [activitySchedule] } as unknown as Activity)
 
       await handler.GET(req, res)
 
@@ -263,11 +328,15 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should calculate suitable workplace risk assessment correctly - HIGH', async () => {
+      const tomorrow = addDays(today, 1)
       req.params = { activityId: '1' }
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ pay: [], riskLevel: 'high', schedules: [] } as unknown as Activity)
+        .mockResolvedValueOnce({
+          ...mockActivity,
+          startDate: toDateString(tomorrow),
+        })
 
       await handler.GET(req, res)
 
@@ -280,8 +349,17 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with risk level filter set to any', async () => {
+      const tomorrow = addDays(today, 1)
+
       req.params = { activityId: '1' }
       req.query.riskLevelFilter = 'Any Workplace Risk Assessment'
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce({
+          ...mockActivity,
+          startDate: toDateString(tomorrow),
+        })
 
       await handler.GET(req, res)
 
@@ -305,8 +383,17 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with risk level filter set to none', async () => {
+      const tomorrow = addDays(today, 1)
+
       req.params = { activityId: '1' }
       req.query.riskLevelFilter = 'No Workplace Risk Assessment'
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce({
+          ...mockActivity,
+          startDate: toDateString(tomorrow),
+        })
 
       await handler.GET(req, res)
 
@@ -330,8 +417,17 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with employment filter set to In work', async () => {
+      const tomorrow = addDays(today, 1)
+
       req.params = { activityId: '1' }
       req.query.employmentFilter = 'In work'
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce({
+          ...mockActivity,
+          startDate: toDateString(tomorrow),
+        })
 
       await handler.GET(req, res)
 
@@ -355,8 +451,17 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with employment filter set to Everyone', async () => {
+      const tomorrow = addDays(today, 1)
+
       req.params = { activityId: '1' }
       req.query.employmentFilter = 'Everyone'
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce({
+          ...mockActivity,
+          startDate: toDateString(tomorrow),
+        })
 
       await handler.GET(req, res)
 
@@ -380,8 +485,17 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with employment filter set to Not in work', async () => {
+      const tomorrow = addDays(today, 1)
+
       req.params = { activityId: '1' }
       req.query.employmentFilter = 'Not in work'
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce({
+          ...mockActivity,
+          startDate: toDateString(tomorrow),
+        })
 
       await handler.GET(req, res)
 
@@ -405,8 +519,18 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with search string given', async () => {
+      const tomorrow = addDays(today, 1)
+
       req.params = { activityId: '1' }
+
       req.query.candidateQuery = 'joe'
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce({
+          ...mockActivity,
+          startDate: toDateString(tomorrow),
+        })
 
       await handler.GET(req, res)
 

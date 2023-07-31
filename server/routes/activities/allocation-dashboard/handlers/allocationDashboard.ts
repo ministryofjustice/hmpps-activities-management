@@ -1,14 +1,18 @@
 import { Request, Response } from 'express'
-import { Expose, Transform } from 'class-transformer'
+import { Expose, plainToInstance, Transform } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivityService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { Activity, ActivityPay, Allocation, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
-import { convertToTitleCase, parseDate } from '../../../../utils/utils'
+import { convertToTitleCase, getTimeSlotFromTime, parseDate } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
+import { Slots } from '../../create-an-activity/journey'
+import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
+import SimpleDate from '../../../../commonValidationTypes/simpleDate'
+import calcCurrentWeek from '../../../../utils/helpers/activityCalcCurrentWeek'
 
 type Filters = {
   candidateQuery: string
@@ -59,6 +63,32 @@ export default class AllocationDashboardRoutes {
       this.getCandidates(+activityId, filters, +req.query.page, user),
     ])
 
+    const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    const slots: { [weekNumber: string]: Slots } = {}
+    activity.schedules[0].slots.forEach(slot => {
+      daysOfWeek.forEach(day => {
+        const dayLowerCase = day.toLowerCase()
+        slots[slot.weekNumber] ??= {
+          days: [],
+        }
+        slots[slot.weekNumber][`timeSlots${day}`] ??= []
+
+        if (slot[`${dayLowerCase}Flag`]) {
+          slots[slot.weekNumber].days.push(dayLowerCase)
+          slots[slot.weekNumber][`timeSlots${day}`].push(getTimeSlotFromTime(slot.startTime).toUpperCase())
+        }
+      })
+    })
+
+    const startDate = {
+      day: Number(activity.schedules[0].startDate.substring(8, 10)),
+      month: Number(activity.schedules[0].startDate.substring(5, 7)),
+      year: Number(activity.schedules[0].startDate.substring(0, 4)),
+    } as unknown as SimpleDate
+
+    const richStartDate = plainToInstance(SimpleDate, startDate).toRichDate()
+
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       schedule: activity.schedules[0],
       currentlyAllocated,
@@ -67,6 +97,9 @@ export default class AllocationDashboardRoutes {
       filters,
       suitableForIep,
       suitableForWra,
+      dailySlots: activitySessionToDailyTimeSlots(activity.schedules[0].scheduleWeeks, slots),
+      currentWeek: calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks),
+      scheduleWeeks: activity.schedules[0].scheduleWeeks,
     })
   }
 

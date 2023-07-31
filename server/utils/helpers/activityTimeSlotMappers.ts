@@ -1,5 +1,5 @@
 import TimeSlot from '../../enum/timeSlot'
-import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
+import { Slots } from '../../routes/activities/create-an-activity/journey'
 
 interface DailyTimeSlots {
   [weekNumber: string]: {
@@ -18,10 +18,13 @@ const timeSlotOrder = {
 
 const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot]
 
-export default function activitySessionToDailyTimeSlots(createJourney: CreateAnActivityJourney) {
+export default function activitySessionToDailyTimeSlots(
+  scheduleWeeks: number,
+  schedluledSlots: { [weekNumber: string]: Slots },
+) {
   const weekilySlots: DailyTimeSlots = {}
-  for (let weekNumber = 1; weekNumber <= createJourney.scheduleWeeks; weekNumber += 1) {
-    const slots = createJourney.slots[weekNumber] ?? {}
+  for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
+    const slots = schedluledSlots[weekNumber] ?? {}
 
     weekilySlots[weekNumber] = daysOfWeek.map(day => ({
       day,
