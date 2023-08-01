@@ -31,6 +31,7 @@
             <p class='govuk-body'>You can either:</p>
             <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-3">
                 <li><a href="/activities/waitlist/{{ waitListApplicationJourney.prisoner.prisonerNumber }}/apply" class="govuk-link--no-visited-state">log another activity application for {{ waitListApplicationJourney.prisoner.name }}</a></li>
+                <li><a href="{{ dpsUrl }}/prisoner-search" class="govuk-link--no-visited-state">log an activity application for someone else</a></li>
                 <li><a href="/activities/allocation-dashboard/{{ waitListApplicationJourney.activity.activityId }}" class="govuk-link--no-visited-state">allocate someone to {{ waitListApplicationJourney.activity.activityName }}</a></li>
             </ul>
             <p class='govuk-body'>
