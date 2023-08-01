@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsIn } from 'class-validator'
+import { IsIn, Length, ValidateIf } from 'class-validator'
 import { isBlank } from '../../../../utils/utils'
 
 enum StatusEnum {
@@ -15,7 +15,9 @@ export class Status {
   status: StatusEnum
 
   @Expose()
-  @Transform(({ value }) => (isBlank(value) ? undefined : value))
+  @Transform(({ value }) => (isBlank(value) ? undefined : value.trim()))
+  @ValidateIf(o => o.comment?.length > 0)
+  @Length(0, 500, { message: 'Comment must be 500 characters or less' })
   comment: string
 }
 

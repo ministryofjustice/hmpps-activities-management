@@ -74,6 +74,19 @@ describe('Route Handlers - Waitlist application - Status', () => {
       expect(errors).toEqual([{ property: 'status', error: 'Select a status for the application' }])
     })
 
+    it('validation fails if a long comment is entered', async () => {
+      const body = {
+        status: 'PENDING',
+        comment:
+          'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus',
+      }
+
+      const requestObject = plainToInstance(Status, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'comment', error: 'Comment must be 500 characters or less' }])
+    })
+
     it('validation passes', async () => {
       const body = {
         status: 'PENDING',
