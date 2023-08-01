@@ -2,7 +2,7 @@
 
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "components/alertsList.njk" import alertsList %}
-{% from "components/multi-select.njk" import multiSelect %}
+{% from "components/sticky-select.njk" import stickySelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -144,7 +144,7 @@
                 },
                 {
                     classes: 'print-only',
-                    html: ''
+                    text: ''
                 },
                 {
                     html: renderViewLink(attendee.attendance),
@@ -156,7 +156,8 @@
 
     <form method='POST'>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-        {{ multiSelect({
+        {{ stickySelect({
+            type: 'check',
             id: "attendanceList",
             caption: "Attendance list",
             captionClasses: "govuk-visually-hidden",
@@ -199,10 +200,8 @@
                     formAction: 'not-attended'
                 }
             ],
-            itemsDescription: {
-                singular: 'person',
-                plural: 'people'
-            },
+            itemsDescription: 'person',
+            itemsDescriptionPlural: 'people',
             pagination: {
                 previous: {
                     title: 'Previous session',

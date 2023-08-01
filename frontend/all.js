@@ -2,7 +2,7 @@ import { nodeListForEach } from './utils'
 import BackLink from './components/back-link/back-link'
 import PrintButton from './components/print-button/print-button'
 import Card from './components/card/card'
-import MultiSelect from './components/multi-select/multi-select'
+import StickySelect from './components/sticky-select/sticky-select'
 import AutoComplete from './components/autocomplete/autocomplete'
 import Calendar from './spikes/calendar'
 import ListFilter from './components/list-filter/list-filter'
@@ -25,9 +25,9 @@ function initAll() {
     new Card($card)
   })
 
-  var $multiSelects = document.querySelectorAll('[data-module="activities-multi-select"]')
+  var $multiSelects = document.querySelectorAll('[data-module="activities-sticky-select"]')
   nodeListForEach($multiSelects, function ($multiSelect) {
-    new MultiSelect($multiSelect)
+    new StickySelect($multiSelect)
   })
 
   var $autoCompleteElements = document.getElementsByName('autocompleteElements')
@@ -61,7 +61,7 @@ export {
   BackLink,
   PrintButton,
   Card,
-  MultiSelect,
+  StickySelect,
   AutoComplete,
   Calendar,
   ListFilter,

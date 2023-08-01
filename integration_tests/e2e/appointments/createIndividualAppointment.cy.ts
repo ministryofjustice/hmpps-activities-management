@@ -55,10 +55,7 @@ context('Create individual appointment', () => {
     indexPage.appointmentsManagementCard().should('contain.text', 'Schedule and edit appointments')
     indexPage
       .appointmentsManagementCard()
-      .should(
-        'contain.text',
-        'Create one-to-one and group appointments. Edit existing appointments and print movement slips.',
-      )
+      .should('contain.text', 'Create and manage appointments. Print movement slips.')
     indexPage.appointmentsManagementCard().click()
 
     Page.verifyOnPage(AppointmentsManagementPage)

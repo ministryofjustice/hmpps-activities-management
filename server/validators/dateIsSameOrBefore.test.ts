@@ -11,9 +11,9 @@ describe('dateIsSameOrBefore', () => {
     date: SimpleDate
   }
 
-  class DummyFormWithNullDate {
+  class DummyFormWithObject {
     @Expose()
-    @DateIsSameOrBefore(() => null, { message: "Enter date on or before today's date" })
+    @DateIsSameOrBefore(o => o.date, { message: "Enter date on or before today's date" })
     date: SimpleDate
   }
 
@@ -62,7 +62,7 @@ describe('dateIsSameOrBefore', () => {
     expect(errors).toHaveLength(0)
   })
 
-  it('should pass validation for a null date', async () => {
+  it('should pass validation for null date', async () => {
     const body = {
       date: plainToInstance(SimpleDate, {
         day: 21,
@@ -71,7 +71,22 @@ describe('dateIsSameOrBefore', () => {
       }),
     }
 
-    const requestObject = plainToInstance(DummyFormWithNullDate, body)
+    const requestObject = plainToInstance(DummyFormWithObject, { ...body, dateToCompare: null })
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    expect(errors).toHaveLength(0)
+  })
+
+  it('should pass validation for undefined date', async () => {
+    const body = {
+      date: plainToInstance(SimpleDate, {
+        day: 21,
+        month: 12,
+        year: 2022,
+      }),
+    }
+
+    const requestObject = plainToInstance(DummyFormWithObject, { ...body, dateToCompare: undefined })
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
     expect(errors).toHaveLength(0)

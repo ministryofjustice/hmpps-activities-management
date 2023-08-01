@@ -157,6 +157,11 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
       const body = {
         startDate,
+        allocateJourney: {
+          activity: {
+            startDate: yesterday,
+          },
+        },
       }
 
       const requestObject = plainToInstance(StartDate, body)
@@ -171,16 +176,44 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
       const body = {
         startDate,
-        endDate: formatDate(subDays(today, 1), 'yyyy-MM-dd'),
+        endDate: formatDate(addDays(today, 1), 'yyyy-MM-dd'),
         allocationId: 1,
         scheduleId: 1,
         prisonerNumber: 'ABC123',
       }
 
-      const requestObject = plainToInstance(StartDate, body)
+      const requestObject = plainToInstance(StartDate, {
+        ...body,
+        allocateJourney: {
+          activity: {
+            startDate: addDays(today, 1),
+          },
+        },
+      })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date before the end date' }])
+      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date on or after the activity start date' }])
+    })
+
+    it('validation fails if start date is after activity end date', async () => {
+      const tomorrow = addDays(new Date(), 1)
+
+      const body = {
+        startDate: simpleDateFromDate(addDays(tomorrow, 1)),
+      }
+
+      const requestObject = plainToInstance(StartDate, {
+        ...body,
+        allocateJourney: {
+          activity: {
+            startDate: new Date('2022-04-04'),
+            endDate: new Date('2022-04-04'),
+          },
+        },
+      })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date on or before the activity end date' }])
     })
   })
 })
