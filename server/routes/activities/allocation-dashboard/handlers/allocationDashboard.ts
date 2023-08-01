@@ -88,7 +88,6 @@ export default class AllocationDashboardRoutes {
     } as unknown as SimpleDate
 
     const richStartDate = plainToInstance(SimpleDate, startDate).toRichDate()
-
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       schedule: activity.schedules[0],
       currentlyAllocated,
