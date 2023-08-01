@@ -19,7 +19,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
         },
       },
       render: jest.fn(),
-      redirect: jest.fn(),
+      redirectOrReturn: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -51,7 +51,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
         month: '1',
         year: '2023',
       })
-      expect(res.redirect).toHaveBeenCalledWith(`activity`)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith(`activity`)
     })
   })
 

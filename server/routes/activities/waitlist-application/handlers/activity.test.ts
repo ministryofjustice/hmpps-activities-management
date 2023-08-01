@@ -111,7 +111,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
       await handler.POST(req, res)
 
       expect(res.validationFailed).toHaveBeenCalledWith(
-        'activity',
+        'activityId',
         'Alan Key is already allocated or on the waitlist for test activity',
       )
     })

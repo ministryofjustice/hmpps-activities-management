@@ -38,7 +38,7 @@ export default class ActivityRoutes {
 
     if (alreadyAllocated) {
       return res.validationFailed(
-        'activity',
+        'activityId',
         `${prisoner.name} is already allocated or on the waitlist for ${activity.description}`,
       )
     }

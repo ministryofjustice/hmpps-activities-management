@@ -17,7 +17,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
         },
       },
       render: jest.fn(),
-      redirect: jest.fn(),
+      redirectOrReturn: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -52,7 +52,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
       await handler.POST(req, res)
 
       expect(req.session.waitListApplicationJourney.requester).toEqual('Alan Key')
-      expect(res.redirect).toHaveBeenCalledWith(`status`)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
 
     it('should set the requester in session if GUIDANCE_STAFF is selected', async () => {
@@ -65,7 +65,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
       expect(req.session.waitListApplicationJourney.requester).toEqual(
         'IAG or CXK careers information, advice and guidance staff',
       )
-      expect(res.redirect).toHaveBeenCalledWith(`status`)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
 
     it('should set the requester in session if OTHER is selected', async () => {
@@ -77,7 +77,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
       await handler.POST(req, res)
 
       expect(req.session.waitListApplicationJourney.requester).toEqual('Activity leader')
-      expect(res.redirect).toHaveBeenCalledWith(`status`)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
   })
 
