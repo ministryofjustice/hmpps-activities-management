@@ -49,6 +49,15 @@
         {% endfor %}
 
         {% set rows = (rows.push(r), rows) %}
+    {% else %}
+        {% set rows = (rows.push([
+            {},
+            {
+                text: 'No ' + params.itemsDescriptionPlural + ' to display',
+                attributes: { "colspan": (params.head | length) + 1 },
+                classes: 'govuk-table_cell govuk-!-text-align-centre'
+            }
+        ]), rows) %}
     {% endfor %}
 
     {% if not selectable %}

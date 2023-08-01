@@ -64,6 +64,14 @@
                             {
                                 text: schedule.activity.capacity
                             }
+                        ],
+                        [
+                            {
+                                text: "On waitlist:"
+                            },
+                            {
+                                text: 0
+                            }
                         ]
                     ]
                 }) }}
@@ -132,7 +140,14 @@
                 }
             },
             {
-                label: "Candidates",
+                label: "Waitlist",
+                id: "waitlist-tab",
+                panel: {
+                    html: waitlistHtml
+                }
+            },
+            {
+                label: "Other people",
                 id: "candidates-tab",
                 panel: {
                     html: candidatesHtml
@@ -234,12 +249,236 @@
     </form>
 {% endset %}
 
+{% set waitlistHtml %}
+    <div class='filter'>
+        <form method='GET'>
+            <div class="filter__items filter__items--quarters">
+                {% set employmentOptions = [
+                    {
+                        value: 'Not in work',
+                        text: 'Not in work',
+                        selected: filters.employmentFilter == 'Not in work'
+                    },
+                    {
+                        value: 'In work',
+                        text: 'In work',
+                        selected: filters.employmentFilter == 'In work'
+                    },
+                    {
+                        value: 'Everyone',
+                        text: 'Everyone',
+                        selected: filters.employmentFilter == 'Everyone'
+                    }
+                ] %}
+                {{ govukSelect({
+                    id: "employmentFilter",
+                    name: "employmentFilter",
+                    classes: "govuk-!-width-full",
+                    label: {
+                        text: "Showing people who are:"
+                    },
+                    items: employmentOptions
+                }) }}
+
+                {% set riskLevelOptions = [
+                    {
+                        value: 'Any Workplace Risk Assessment',
+                        text: 'Any Workplace Risk Assessment',
+                        selected: filters.riskLevelFilter == 'Any Workplace Risk Assessment'
+                    },
+                    {
+                        value: 'Low',
+                        text: 'Low',
+                        selected: filters.riskLevelFilter == 'Low'
+                    },
+                    {
+                        value: 'Low or Medium',
+                        text: 'Low or Medium',
+                        selected: filters.riskLevelFilter == 'Low or Medium'
+                    },
+                    {
+                        value: 'Low or Medium or High',
+                        text: 'Low or Medium or High',
+                        selected: filters.riskLevelFilter == 'Low or Medium or High'
+                    },
+                    {
+                        value: 'No Workplace Risk Assessment',
+                        text: 'No Workplace Risk Assessment',
+                        selected: filters.riskLevelFilter == 'No Workplace Risk Assessment'
+                    }
+                ] %}
+                {{ govukSelect({
+                    id: "riskLevelFilter",
+                    name: "riskLevelFilter",
+                    classes: "govuk-!-width-full",
+                    label: {
+                        text: "Showing people whose workplace risk assessment is:"
+                    },
+                    items: riskLevelOptions
+                }) }}
+
+                {% set incentiveLevelOptions = [
+                    {
+                        value: suitableForIep,
+                        text: 'Suitable incentive levels: ' + suitableForIep,
+                        selected: filters.incentiveLevelFilter == suitableForIep
+                    }
+                ] %}
+                {% for incentiveLevel in incentiveLevels %}
+                    {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                        {
+                            value: incentiveLevel.levelName,
+                            text: incentiveLevel.levelName,
+                            selected: filters.incentiveLevelFilter == incentiveLevel.levelName and incentiveLevel.levelName != suitableForIep
+                        }
+                    ), incentiveLevelOptions) %}
+                {% endfor %}
+                {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                    {
+                        value: 'All Incentive Levels',
+                        text: 'All Incentive Levels',
+                        selected: filters.incentiveLevelFilter == 'All Incentive Levels'
+                    }
+                ), incentiveLevelOptions) %}
+                {{ govukSelect({
+                    id: "incentiveLevelFilter",
+                    name: "incentiveLevelFilter",
+                    classes: "govuk-!-width-full",
+                    label: {
+                        text: "Showing people who have the following incentive level:"
+                    },
+                    items: incentiveLevelOptions
+                }) }}
+
+                {% set waitlistStatusOptions = [
+                    {
+                        value: 'Any',
+                        text: 'Any',
+                        selected: filters.waitlistStatusFilter == 'Any'
+                    },
+                    {
+                        value: 'Approved',
+                        text: 'Approved',
+                        selected: filters.waitlistStatusFilter == 'Approved'
+                    },
+                    {
+                        value: 'Rejected',
+                        text: 'Rejected',
+                        selected: filters.waitlistStatusFilter == 'Rejected'
+                    },
+                    {
+                        value: 'Pending',
+                        text: 'Pending',
+                        selected: filters.waitlistStatusFilter == 'Pending'
+                    }
+                ] %}
+                {{ govukSelect({
+                    id: "waitlistStatusFilter",
+                    name: "waitlistStatusFilter",
+                    classes: "govuk-!-width-full",
+                    label: {
+                        text: "Showing people whose application is:"
+                    },
+                    items: waitlistStatusOptions
+                }) }}
+            </div>
+
+            {{ govukButton({
+                text: "Apply filters"
+            }) }}
+        </form>
+    </div>
+
+    {% set rows = [] %}
+    {% for row in waitlistedPrisoners %}
+        {% set currentAllocationsHtml %}
+            <ul class='govuk-list'>
+                {% for allocation in row.otherAllocations %}
+                    <li><a href='/activities/allocation-dashboard/{{ allocation.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
+                {% else %}
+                    <li>None</li>
+                {% endfor %}
+            </ul>
+        {% endset %}
+        {% set rows = (rows.push({
+            visuallyHiddenText: 'Select ' + row.name | toTitleCase,
+            value: row.prisonerNumber,
+            selectable: true,
+            items: [
+                {
+                    html: '
+                        <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                            <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
+                               class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase + '
+                            </a>
+                        </h2>
+                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
+                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
+                    ',
+                    attributes: {
+                        "data-sort-value": row.name
+                    }
+                },
+                {
+                    text: row.requestDate | formatDate('d MMMM yyyy')
+                },
+                {
+                    text: row.requester
+                },
+                {
+                    html: currentAllocationsHtml
+                },
+                {
+                    text: 'STATUS HERE'
+                }
+            ]
+        }), rows) %}
+    {% endfor %}
+
+    <form method='POST'>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{ stickySelect({
+            idPrefix: 'waitlist',
+            type: 'radio',
+            caption: "Waitlist applications",
+            captionClasses: "govuk-visually-hidden",
+            name: 'selectedApplication',
+            head: [
+                {
+                    text: "Name"
+                },
+                {
+                    text: "Request date"
+                },
+                {
+                    text: "Requester"
+                },
+                {
+                    text: "Current allocations"
+                },
+                {
+                    text: "Status"
+                }
+            ],
+            rows: rows,
+            actions: [
+                {
+                    text: 'Select application',
+                    formAction: schedule.id + '/allocate'
+                }
+            ],
+            itemsDescription: 'application',
+            itemsDescriptionPlural: 'applications'
+        }) }}
+    </form>
+{% endset %}
+
 {% set candidatesHtml %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds-from-desktop govuk-grid-column-one-half">
             <p>
-                Your candidate list has been filtered to show people who match all the requirements for this activity.
-                Use the filters to expand or reduce the list. You can also search for someone you want to allocate.
+                Select the person you want to allocate. The list shows people who are not currently allocated or on the waitlist. People who have had an application declined are shown.
+                Use the filters to identify candidates, or search for someone.
             </p>
         </div>
         <div class="govuk-grid-column-one-third-from-desktop govuk-grid-column-one-half">
@@ -433,6 +672,7 @@
                 }
             ],
             itemsDescription: 'person',
+            itemsDescriptionPlural: 'people',
             pagination: {
                 previous: {
                     title: 'Previous page',
