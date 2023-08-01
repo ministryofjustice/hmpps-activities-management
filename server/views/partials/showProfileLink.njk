@@ -1,11 +1,7 @@
 {% macro showProfileLink(options = {}) %}
     <div {{ "class=" + options.classes if options.classes }} data-qa="prisoner-summary">
       <div data-qa="prisoner-name">
-        {% if options.name != "UNKNOWN" %}
-          {% set name = options.name | toTitleCase | prisonerName(options.link) %}
-        {% else %}
-          {% set name = 'No matching name' %}
-        {% endif %}
+        {% set name = options.name | toTitleCase | prisonerName(options.link) or 'No matching name' %}
         {% if options.link %}
           <a href="{{ dpsUrl }}/prisoner/{{ options.prisonerNumber }}"
             target="_blank"
@@ -20,7 +16,7 @@
         <div class="govuk-body-s govuk-!-margin-0" data-qa="prisoner-number">{{ options.prisonerNumber }}</div>
       {% endif %}
       {% if options.cellLocation %}
-        {% set cellLocation = options.cellLocation if options.cellLocation != "UNKNOWN" else "No matching cell location" %}
+        {% set cellLocation = "No matching cell location" if options.cellLocation == "UNKNOWN" else options.cellLocation %}
         <div class="govuk-body-s govuk-!-margin-0" data-qa="prisoner-cell-location">{{ cellLocation }}</div>
       {% endif %}
     </div>

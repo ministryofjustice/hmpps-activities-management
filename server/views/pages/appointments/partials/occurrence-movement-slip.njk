@@ -6,16 +6,28 @@
         </div>
     {% endmacro %}
 
+    {% macro appointmentTime(appointmentOccurrence) -%}
+        {{ appointmentOccurrence.startTime }}{% if appointmentOccurrence.endTime %} to {{ appointmentOccurrence.endTime }}{% endif %}
+    {%- endmacro %}
+
     {% for prisoner in appointmentOccurrence.prisoners %}
         <div class="movement-slip">
             <div class="govuk-heading-m movement-slip-header">{{ caseLoadDescription }} <span class="govuk-!-font-weight-regular">Movement authorisation slip</span></div>
-            <h2 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa="prisoner-name-and-number">{{ prisoner | fullName | toTitleCase }}, {{ prisoner.prisonerNumber }}</h2>
-            <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="cell-location">{{ prisoner.prisonCode + '-' + prisoner.cellLocation }}</span>
+            <h2 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa="prisoner-name-and-number">
+                {% if prisoner | fullName %}{{ prisoner | fullName | toTitleCase }}, {% endif %}{{ prisoner.prisonerNumber }}
+            </h2>
+            <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="cell-location">
+                {% if prisoner.cellLocation == "UNKNOWN"%}
+                    No matching cell location
+                {% else %}
+                    {{ prisoner.prisonCode + '-' + prisoner.cellLocation }}
+                {% endif %}
+            </span>
 
             <dl class='movement-slip__summary'>
                 {{ labelAndValue('Appointment', appointmentOccurrence.appointmentName | escape) }}
                 {{ labelAndValue('Time', '<ul class="govuk-list">' +
-                    '<li>' + appointmentOccurrence.startTime + ' to ' + appointmentOccurrence.endTime + '</li>' +
+                    '<li>' + appointmentTime(appointmentOccurrence) + '</li>' +
                     '<li>' + (appointmentOccurrence.startDate | toDate | formatDate('EEEE, d MMMM yyyy')) + '</li>' +
                 '</ul>') }}
                 {{ labelAndValue('Location', appointmentOccurrence.internalLocation.description) }}
