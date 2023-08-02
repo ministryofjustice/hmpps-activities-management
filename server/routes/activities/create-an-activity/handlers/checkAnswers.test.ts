@@ -7,7 +7,7 @@ import activity from '../../../../services/fixtures/activity_1.json'
 import atLeast from '../../../../../jest.setup'
 import PrisonService from '../../../../services/prisonService'
 import { Activity } from '../../../../@types/activitiesAPI/types'
-import { activitySessionToDailyTimeSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
+import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -67,9 +67,14 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             month: 1,
             year: 2023,
           },
-          days: ['tuesday', 'friday'],
-          timeSlotsTuesday: ['AM'],
-          timeSlotsFriday: ['PM', 'ED'],
+          scheduleWeeks: 1,
+          slots: {
+            '1': {
+              days: ['tuesday', 'friday'],
+              timeSlotsTuesday: ['AM'],
+              timeSlotsFriday: ['PM', 'ED'],
+            },
+          },
           location: {
             id: 26149,
             name: 'Gym',
@@ -116,10 +121,11 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         endDate: '2023-01-18',
         locationId: 26149,
         capacity: 12,
+        scheduleWeeks: 1,
         slots: [
-          { timeSlot: 'AM', tuesday: true },
-          { timeSlot: 'PM', friday: true },
-          { timeSlot: 'ED', friday: true },
+          { weekNumber: 1, timeSlot: 'AM', tuesday: true },
+          { weekNumber: 1, timeSlot: 'PM', friday: true },
+          { weekNumber: 1, timeSlot: 'ED', friday: true },
         ],
       }
 
@@ -145,10 +151,11 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         endDate: '2023-01-18',
         locationId: 26149,
         capacity: 12,
+        scheduleWeeks: 1,
         slots: [
-          { timeSlot: 'AM', tuesday: true },
-          { timeSlot: 'PM', friday: true },
-          { timeSlot: 'ED', friday: true },
+          { weekNumber: 1, timeSlot: 'AM', tuesday: true },
+          { weekNumber: 1, timeSlot: 'PM', friday: true },
+          { weekNumber: 1, timeSlot: 'ED', friday: true },
         ],
       }
 
@@ -156,7 +163,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
 
       when(activitiesService.createActivity)
         .calledWith(atLeast(expectedActivity))
-        .mockResolvedValueOnce(activity as unknown as Activity)
+        .mockResolvedValue(activity as unknown as Activity)
 
       await handler.POST(req, res)
 

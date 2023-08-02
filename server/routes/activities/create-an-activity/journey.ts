@@ -1,6 +1,22 @@
 // eslint-disable-next-line import/no-cycle
 import SimpleDate from '../../../commonValidationTypes/simpleDate'
 
+export enum ScheduleFrequency {
+  WEEKLY = 1,
+  BI_WEEKLY = 2,
+}
+
+export type Slots = {
+  days?: string[]
+  timeSlotsMonday?: string[]
+  timeSlotsTuesday?: string[]
+  timeSlotsWednesday?: string[]
+  timeSlotsThursday?: string[]
+  timeSlotsFriday?: string[]
+  timeSlotsSaturday?: string[]
+  timeSlotsSunday?: string[]
+}
+
 export type CreateAnActivityJourney = {
   activityId?: number
   category?: {
@@ -38,14 +54,8 @@ export type CreateAnActivityJourney = {
   startDate?: SimpleDate
   endDateOption?: string
   endDate?: SimpleDate
-  days?: string[]
-  timeSlotsMonday?: string[]
-  timeSlotsTuesday?: string[]
-  timeSlotsWednesday?: string[]
-  timeSlotsThursday?: string[]
-  timeSlotsFriday?: string[]
-  timeSlotsSaturday?: string[]
-  timeSlotsSunday?: string[]
+  scheduleWeeks?: number
+  slots?: { [weekNumber: string]: Slots }
   inCell?: boolean
   onWing?: boolean
   location?: {

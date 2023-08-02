@@ -7,7 +7,7 @@
 
 {% set pageTitle = applicationName + " - Create a schedule - Bank Holiday option" %}
 {% set pageId = 'create-schedule-bank-holiday-option-page' %}
-{% set backLinkHref = "days-and-times" %}
+{% set backLinkHref = "days-and-times/" + session.createJourney.scheduleWeeks %}
 
 {% block content %}
     <div class="govuk-grid-row">
