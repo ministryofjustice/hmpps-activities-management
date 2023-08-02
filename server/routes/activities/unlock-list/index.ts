@@ -7,11 +7,13 @@ import validationMiddleware from '../../../middleware/validationMiddleware'
 import HomeRoutes from './handlers/home'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 import ApplyFiltersRoutes, { Filters } from './handlers/applyFilters'
+import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 
 export default function Index({ unlockListService, activitiesService }: Services): Router {
   const router = Router()
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
+    router.get(path, emptyJourneyHandler('unlockListJourney', stepRequiresSession), asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
@@ -25,7 +27,7 @@ export default function Index({ unlockListService, activitiesService }: Services
   router.use(insertJourneyIdentifier())
   get('/:journeyId/select-date-and-location', dateAndLocationHandler.GET)
   post('/:journeyId/select-date-and-location', dateAndLocationHandler.POST, DateAndLocation)
-  get('/:journeyId/planned-events', plannedEventsHandler.GET)
+  get('/:journeyId/planned-events', plannedEventsHandler.GET, true)
   post('/:journeyId/update-filters', applyFiltersHandler.APPLY, Filters)
 
   return router

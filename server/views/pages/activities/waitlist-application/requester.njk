@@ -1,0 +1,131 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Waitlist - Who made the request?" %}
+{% set pageId = 'requester-page' %}
+{% set backLinkHref = '#' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-xl">Log an activity application</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    name: "requester",
+                    fieldset: {
+                        legend: {
+                            text: "Who made the application?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--xl"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('requester'),
+                    items: [
+                        {
+                            value: RequesterEnum.PRISONER,
+                            text:  prisonerName,
+                            checked: session.waitListApplicationJourney.requester == prisonerName
+                        },
+                        {
+                            value: RequesterEnum.GUIDANCE_STAFF,
+                            text: 'IAG or CXK careers information, advice and guidance staff',
+                            checked: session.waitListApplicationJourney.requester == 'IAG or CXK careers information, advice and guidance staff'
+                        },
+                        {
+                            value: RequesterEnum.OTHER,
+                            text: 'Someone else, for example a member of staff, an activity leader or an orderly',
+                            checked: formResponses.requester == RequesterEnum.OTHER or
+                                     (session.waitListApplicationJourney.requester and
+                                     session.waitListApplicationJourney.requester != prisonerName and
+                                     session.waitListApplicationJourney.requester != 'IAG or CXK careers information, advice and guidance staff'),
+                            conditional: {
+                                html: govukSelect({
+                                    id: "otherRequester",
+                                    name: "otherRequester",
+                                    errorMessage: validationErrors | findError('otherRequester'),
+                                    label: {
+                                        text: "Other requester",
+                                        classes: 'govuk-visually-hidden'
+                                    },
+                                    items: [
+                                        {
+                                            value: "",
+                                            text: "Select an option",
+                                            disabled: true,
+                                            selected: true
+                                        },
+                                        {
+                                            value: "Education staff",
+                                            text: "Education staff",
+                                            selected: session.waitListApplicationJourney.requester == "Education staff"
+                                        },
+                                        {
+                                            value: "Workshop staff",
+                                            text: "Workshop staff",
+                                            selected: session.waitListApplicationJourney.requester == "Workshop staff"
+                                        },
+                                        {
+                                            value: "Activity leader",
+                                            text: "Activity leader",
+                                            selected: session.waitListApplicationJourney.requester == "Activity leader"
+                                        },
+                                        {
+                                            value: "Mental health staff",
+                                            text: "Mental health staff",
+                                            selected: session.waitListApplicationJourney.requester == "Mental health staff"
+                                        },
+                                        {
+                                            value: "Offender Management Unit",
+                                            text: "Offender Management Unit",
+                                            selected: session.waitListApplicationJourney.requester == "Offender Management Unit"
+                                        },
+                                        {
+                                            value: "Wing staff",
+                                            text: "Wing staff",
+                                            selected: session.waitListApplicationJourney.requester == "Wing staff"
+                                        },
+                                        {
+                                            value: "Keyworker or POM",
+                                            text: "Keyworker or POM",
+                                            selected: session.waitListApplicationJourney.requester == "Keyworker or POM"
+                                        },
+                                        {
+                                            value: "Reception staff",
+                                            text: "Reception staff",
+                                            selected: session.waitListApplicationJourney.requester == "Reception staff"
+                                        },
+                                        {
+                                            value: "Orderly or Red Band",
+                                            text: "Orderly or Red Band",
+                                            selected: session.waitListApplicationJourney.requester == "Orderly or Red Band"
+                                        },
+                                        {
+                                            value: "Other",
+                                            text: "Other",
+                                            selected: session.waitListApplicationJourney.requester == "Other"
+                                        }
+                                    ]
+                                })
+                            }
+                        }
+                    ]
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

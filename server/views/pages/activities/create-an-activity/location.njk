@@ -47,9 +47,6 @@
                                     label: {
                                         text: "Start typing a location and select from the list of options."
                                     },
-                                    formGroup: {
-                                        classes: "location-autocomplete-formgroup"
-                                    },
                                     errorMessage: validationErrors | findError('location'),
                                     value: formResponses.location or session.createJourney.location.id,
                                     items: options
