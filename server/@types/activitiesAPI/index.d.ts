@@ -5107,6 +5107,9 @@ export interface operations {
    */
   cancelAppointmentOccurrence: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         appointmentOccurrenceId: number
       }
@@ -5152,6 +5155,9 @@ export interface operations {
       query?: {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
+      }
+      header: {
+        'Caseload-Id'?: string
       }
       path: {
         scheduleId: number
@@ -5539,6 +5545,11 @@ export interface operations {
    *     Does not require any specific roles
    */
   bulkCreateAppointment: {
+    parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
+    }
     requestBody: {
       content: {
         'application/json': components['schemas']['BulkAppointmentsRequest']
@@ -5610,6 +5621,11 @@ export interface operations {
    *     Does not require any specific roles
    */
   createAppointment: {
+    parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
+    }
     requestBody: {
       content: {
         'application/json': components['schemas']['AppointmentCreateRequest']
@@ -5644,6 +5660,9 @@ export interface operations {
    */
   searchAppointmentOccurrences: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         prisonCode: string
       }
@@ -5679,6 +5698,11 @@ export interface operations {
    * @description Create an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
    */
   create: {
+    parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
+    }
     requestBody: {
       content: {
         'application/json': components['schemas']['ActivityCreateRequest']
@@ -5719,6 +5743,9 @@ export interface operations {
    */
   updateAppointmentOccurrence: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         appointmentOccurrenceId: number
       }
@@ -5810,6 +5837,9 @@ export interface operations {
    */
   update_1: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         prisonCode: string
         activityId: number
@@ -5903,6 +5933,9 @@ export interface operations {
    */
   getScheduleId: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         scheduleId: number
       }
@@ -5999,6 +6032,9 @@ export interface operations {
         /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
         sort?: string[]
       }
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         scheduleId: number
       }
@@ -6042,6 +6078,9 @@ export interface operations {
    */
   getScheduledInstanceById: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         instanceId: number
       }
@@ -6590,6 +6629,9 @@ export interface operations {
    */
   getBulkAppointmentDetailsById: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         bulkAppointmentId: number
       }
@@ -6745,6 +6787,9 @@ export interface operations {
    */
   getAppointmentById: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         appointmentId: number
       }
@@ -6776,6 +6821,9 @@ export interface operations {
    */
   getAppointmentOccurrenceDetailsById: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         appointmentOccurrenceId: number
       }
@@ -6829,6 +6877,9 @@ export interface operations {
    */
   getAppointmentInstanceById: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         appointmentInstanceId: number
       }
@@ -6860,6 +6911,9 @@ export interface operations {
    */
   getAppointmentDetailsById: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         appointmentId: number
       }
@@ -6908,6 +6962,9 @@ export interface operations {
    */
   getAllocationById: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         allocationId: number
       }
@@ -6991,6 +7048,9 @@ export interface operations {
    */
   getActivityById: {
     parameters: {
+      header: {
+        'Caseload-Id'?: string
+      }
       path: {
         activityId: number
       }

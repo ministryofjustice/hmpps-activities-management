@@ -3,9 +3,10 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
 import createHttpError from 'http-errors'
 import { NextFunction } from 'express-serve-static-core'
-import { mapSlots } from '../../../../utils/utils'
+import { convertToArray, mapSlots } from '../../../../utils/utils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
+import { simpleDateFromPlain } from '../../../../commonValidationTypes/simpleDate'
 
 export class DaysAndTimes {
   @Expose()
@@ -51,12 +52,17 @@ export default class DaysAndTimesRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { scheduleWeeks } = req.session.createJourney
+    const { scheduleWeeks, startDate } = req.session.createJourney
     const { weekNumber } = req.params
 
     if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
 
-    return res.render('pages/activities/create-an-activity/days-and-times')
+    const currentWeek = this.activitiesService.calcCurrentWeek(
+      simpleDateFromPlain(startDate).toRichDate(),
+      scheduleWeeks,
+    )
+
+    return res.render('pages/activities/create-an-activity/days-and-times', { currentWeek })
   }
 
   POST = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -73,18 +79,18 @@ export default class DaysAndTimesRoutes {
     const weekNumberInt = +weekNumber
 
     if (!selectedDays) {
-      req.session.createJourney.slots[weekNumberInt] = { days: [] }
-      const hasDaysSelected = Object.values(slots).find(slot => slot?.days?.length > 0)
-      if ((scheduleWeeks === weekNumberInt || preserveHistory) && !hasDaysSelected)
+      const updatedSlots = { ...slots }
+      updatedSlots[weekNumberInt] = { days: [] }
+
+      const hasDaysSelected = Object.values(updatedSlots).find(slot => slot?.days?.length > 0)
+      if ((scheduleWeeks === weekNumberInt || preserveHistory) && !hasDaysSelected) {
         return res.validationFailed('days', 'You must select at least 1 slot across the schedule')
+      }
+      req.session.createJourney.slots = updatedSlots
     } else {
       const weeklySlots = this.getSessionSlots(req, weekNumberInt)
 
-      if (typeof selectedDays === 'string') {
-        weeklySlots.days = [selectedDays]
-      } else if (Array.isArray(selectedDays)) {
-        weeklySlots.days = [...selectedDays]
-      }
+      weeklySlots.days = convertToArray(selectedDays)
 
       const sanitizeTimeSlots = (timeSlots: string | string[]): string[] => {
         if (typeof timeSlots === 'string') return [timeSlots]

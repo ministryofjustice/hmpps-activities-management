@@ -51,14 +51,16 @@ export default class EndDateRoutes {
       res.redirectOrReturn('reason')
     } else {
       const { allocationId } = req.params
-      const { endDate } = req.body
       req.session.allocateJourney.endDate = req.body.endDate
       const { prisonerNumber } = req.session.allocateJourney.inmate
       const { scheduleId } = req.session.allocateJourney.activity
       const { user } = res.locals
       const prisonCode = user.activeCaseLoadId
       const allocation = {
-        endDate: formatDate(plainToInstance(SimpleDate, endDate).toRichDate(), 'yyyy-MM-dd'),
+        endDate: formatDate(
+          plainToInstance(SimpleDate, req.session.allocateJourney.endDate).toRichDate(),
+          'yyyy-MM-dd',
+        ),
       } as AllocationUpdateRequest
       await this.activitiesService.updateAllocation(prisonCode, +allocationId, allocation)
       const successMessage = `We've updated the end date for this allocation`

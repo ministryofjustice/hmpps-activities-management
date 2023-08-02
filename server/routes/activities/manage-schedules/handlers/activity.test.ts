@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 
-import { addDays, subDays } from 'date-fns'
+import { addDays } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import ActivityRoutes from './activity'
 import PrisonService from '../../../../services/prisonService'
@@ -52,6 +52,9 @@ describe('Route Handlers - View Activity', () => {
   } as unknown as Activity
 
   when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValueOnce(mockActivity)
+  when(activitiesService.calcCurrentWeek)
+    .calledWith(atLeast(expect.any(Date)))
+    .defaultReturnValue(1)
 
   when(activitiesService.getDefaultScheduleOfActivity).mockResolvedValue(
     activitySchedule as unknown as ActivityScheduleLite,
@@ -147,56 +150,5 @@ describe('Route Handlers - View Activity', () => {
         attendanceCount: 0,
       })
     })
-
-    it("shouldn't calculate a current week for activities in the future", async () => {
-      const tomorrow = addDays(today, 1)
-
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValueOnce({
-          ...mockActivity,
-          startDate: toDateString(tomorrow),
-        })
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({
-          currentWeek: null,
-        }),
-      )
-    })
-
-    it.each([
-      [toDateString(today), 1],
-      [toDateString(subDays(today, 7)), 2],
-      [toDateString(subDays(today, 14)), 1],
-    ])(
-      `should calculate current week correctly for multi-week schedule (start date: %s)`,
-      async (startDate, expectedCurrentWeek) => {
-        when(activitiesService.getActivity)
-          .calledWith(atLeast(1))
-          .mockResolvedValueOnce({
-            ...mockActivity,
-            startDate,
-            schedules: [
-              {
-                ...activitySchedule,
-                scheduleWeeks: 2,
-              },
-            ],
-          } as unknown as Activity)
-
-        await handler.GET(req, res)
-
-        expect(res.render).toHaveBeenCalledWith(
-          expect.anything(),
-          expect.objectContaining({
-            currentWeek: expectedCurrentWeek,
-          }),
-        )
-      },
-    )
   })
 })

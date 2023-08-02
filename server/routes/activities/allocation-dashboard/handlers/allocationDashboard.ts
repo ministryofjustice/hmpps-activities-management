@@ -12,7 +12,6 @@ import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import calcCurrentWeek from '../../../../utils/helpers/activityCalcCurrentWeek'
 
 type Filters = {
   candidateQuery: string
@@ -97,7 +96,7 @@ export default class AllocationDashboardRoutes {
       suitableForIep,
       suitableForWra,
       dailySlots: activitySessionToDailyTimeSlots(activity.schedules[0].scheduleWeeks, slots),
-      currentWeek: calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks),
+      currentWeek: this.activitiesService.calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks),
       scheduleWeeks: activity.schedules[0].scheduleWeeks,
     })
   }

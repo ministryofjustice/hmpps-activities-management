@@ -203,7 +203,6 @@ describe('Route Handlers - Allocation dashboard', () => {
             },
           ],
         },
-        currentWeek: 1,
         scheduleWeeks: 1,
         currentlyAllocated: [
           {

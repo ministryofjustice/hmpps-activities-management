@@ -9,6 +9,7 @@ import attendanceRoutes from './record-attendance'
 import attendanceSummaryRoutes from './daily-attendance-summary'
 import unlockListRoutes from './unlock-list'
 import changeOfCircumstanceRoutes from './change-of-circumstances'
+import waitlistApplicationRoutes from './waitlist-application'
 import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
@@ -32,6 +33,7 @@ export default function Index(services: Services): Router {
   router.use('/attendance-summary', attendanceSummaryRoutes(services))
   router.use('/unlock-list', unlockListRoutes(services))
   router.use('/change-of-circumstances', changeOfCircumstanceRoutes(services))
+  router.use('/waitlist', waitlistApplicationRoutes(services))
 
   return router
 }

@@ -1,11 +1,15 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { addDays } from 'date-fns'
+import { when } from 'jest-when'
 import { NextFunction } from 'express-serve-static-core'
 import createHttpError from 'http-errors'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import DaysAndTimesRoutes, { DaysAndTimes } from './daysAndTimes'
 import ActivitiesService from '../../../../services/activitiesService'
+import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import atLeast from '../../../../../jest.setup'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -33,7 +37,9 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
     req = {
       session: {
-        createJourney: {},
+        createJourney: {
+          startDate: simpleDateFromDate(addDays(new Date(), 1)),
+        },
       },
       body: {},
       params: {},
@@ -48,8 +54,27 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       req.session.createJourney.scheduleWeeks = 1
       req.params.weekNumber = '1'
 
+      when(activitiesService.calcCurrentWeek)
+        .calledWith(atLeast(expect.any(Date)))
+        .defaultReturnValue(null)
+
       await handler.GET(req, res, next)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/days-and-times')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/days-and-times', {
+        currentWeek: null,
+      })
+    })
+
+    it.each([
+      ['greater than schedule weeks', '3'],
+      ['less than 1', '0'],
+      ['a decimal', '1.1'],
+      ['not a valid number', 'invalid'],
+    ])('should render 404 error if week number is %s', async (desc: string, weekNumber: string) => {
+      req.session.createJourney.scheduleWeeks = 2
+      req.params.weekNumber = weekNumber
+
+      await handler.GET(req, res, next)
+      expect(next).toHaveBeenCalledWith(createHttpError.NotFound())
     })
 
     it.each([

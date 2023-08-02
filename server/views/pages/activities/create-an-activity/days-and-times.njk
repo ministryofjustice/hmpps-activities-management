@@ -39,9 +39,9 @@
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% if session.req.query.fromEditActivity and session.createJourney.scheduleWeeks > 1 %}
+                {% if currentWeek and session.createJourney.scheduleWeeks > 1 %}
                     {{ govukInsetText({
-                        text: "The current week is: Week " + session.req.params.weekNumber
+                        text: "The current week is: Week " + currentWeek
                     }) }}
                 {% endif %}
 
