@@ -1,4 +1,4 @@
-import { formatDate, toDate } from '../utils/utils'
+import { when } from 'jest-when'
 import PrisonApiClient from '../data/prisonApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
@@ -6,7 +6,7 @@ import { ServiceUser } from '../@types/express'
 import UnlockListService from './unlockListService'
 import { PagePrisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { PrisonerScheduledEvents } from '../@types/activitiesAPI/types'
-import { FilterItem, UnlockFilters } from '../@types/activities'
+import atLeast from '../../jest.setup'
 
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/activitiesApiClient')
@@ -182,47 +182,24 @@ const scheduledEvents = {
   ],
 } as PrisonerScheduledEvents
 
-const defaultLocationFilters = [
-  { value: 'A-Wing', text: 'A-Wing', checked: true },
-  { value: 'B-Wing', text: 'B-Wing', checked: true },
-  { value: 'C-Wing', text: 'C-Wing', checked: true },
-] as FilterItem[]
-
-const defaultActivityFilters = [
-  { value: 'Both', text: 'Both', checked: true },
-  { value: 'With', text: 'With', checked: false },
-  { value: 'Without', text: 'Without', checked: false },
-] as FilterItem[]
-
-const defaultStayingOrLeavingFilters = [
-  { value: 'Both', text: 'Both', checked: true },
-  { value: 'Staying', text: 'Staying', checked: false },
-  { value: 'Leaving', text: 'Leaving', checked: false },
-] as FilterItem[]
-
-const testUnlockFilters = (
-  locationFilters: FilterItem[],
-  activityFilters: FilterItem[],
-  stayingOrLeavingFilters: FilterItem[],
-): UnlockFilters => ({
-  location: 'HB1',
-  cellPrefix: 'MDI-1-.+',
-  unlockDate: toDate('2022-01-01'),
-  timeSlot: 'am',
-  subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
-  locationFilters,
-  activityFilters,
-  stayingOrLeavingFilters,
-})
-
 const unlockListService = new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient)
 
 describe('Unlock list service', () => {
   beforeEach(() => {
-    // Mocked the cell location pattern matchers for A-Wing, B-Wing and C-Wing
-    activitiesApiClient.getPrisonLocationPrefixByGroup
+    when(activitiesApiClient.getPrisonLocationPrefixByGroup)
+      .calledWith(atLeast('MDI', 'HB1'))
+      .mockResolvedValueOnce({ locationPrefix: 'MDI-1-' })
+
+    when(activitiesApiClient.getPrisonLocationPrefixByGroup)
+      .calledWith(atLeast('MDI', 'HB1_A-Wing'))
       .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
+
+    when(activitiesApiClient.getPrisonLocationPrefixByGroup)
+      .calledWith(atLeast('MDI', 'HB1_B-Wing'))
       .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
+
+    when(activitiesApiClient.getPrisonLocationPrefixByGroup)
+      .calledWith(atLeast('MDI', 'HB1_C-Wing'))
       .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
   })
 
@@ -232,22 +209,22 @@ describe('Unlock list service', () => {
 
   describe('getUnlockListForLocationGroups', () => {
     it('should get the unlock list items for three sub-locations', async () => {
-      const prisonerNumbers = ['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA']
-      const unlockFilters = testUnlockFilters(
-        defaultLocationFilters,
-        defaultActivityFilters,
-        defaultStayingOrLeavingFilters,
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(emptyScheduledEvents)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'Both',
+        'Both',
+        user,
       )
-
-      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
-
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(emptyScheduledEvents)
-
-      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
 
       expect(unlockListItems.length).toBe(4)
 
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(3)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(4)
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_A-Wing', user)
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_B-Wing', user)
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_C-Wing', user)
@@ -264,77 +241,73 @@ describe('Unlock list service', () => {
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledTimes(1)
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledWith(
         user.activeCaseLoadId,
-        formatDate(unlockFilters.unlockDate, 'yyyy-MM-dd'),
-        prisonerNumbers,
+        '2022-01-01',
+        ['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'],
         user,
-        unlockFilters.timeSlot,
+        'am',
       )
     })
 
     it('should return an empty list when no prisoners are in the sub-locations', async () => {
-      const prisonerNumbers: string[] = []
-      const locationFilters = [
-        { value: 'A-Wing', text: 'A-Wing', checked: false },
-        { value: 'B-Wing', text: 'B-Wing', checked: false },
-        { value: 'C-Wing', text: 'C-Wing', checked: true },
-      ] as FilterItem[]
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(emptyScheduledEvents)
 
-      const unlockFilters = testUnlockFilters(locationFilters, defaultActivityFilters, defaultStayingOrLeavingFilters)
-
-      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
-
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(emptyScheduledEvents)
-
-      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['C-Wing'],
+        'Both',
+        'Both',
+        user,
+      )
 
       expect(unlockListItems.length).toBe(0)
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(3)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(2)
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledTimes(1)
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledTimes(1)
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledWith(
         user.activeCaseLoadId,
-        formatDate(unlockFilters.unlockDate, 'yyyy-MM-dd'),
-        prisonerNumbers,
+        '2022-01-01',
+        [],
         user,
-        unlockFilters.timeSlot,
+        'am',
       )
     })
   })
 
   describe('unlock list filters', () => {
     it('filter by activities', async () => {
-      const activityFilters = [
-        { value: 'Both', text: 'Both', checked: false },
-        { value: 'With', text: 'With', checked: true },
-        { value: 'Without', text: 'Without', checked: false },
-      ] as FilterItem[]
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
 
-      const unlockFilters = testUnlockFilters(defaultLocationFilters, activityFilters, defaultStayingOrLeavingFilters)
-
-      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
-
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
-
-      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'With',
+        'Both',
+        user,
+      )
 
       expect(unlockListItems).toHaveLength(4)
       expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'])
     })
 
     it('filter by both leaving and staying', async () => {
-      const stayingOrLeavingFilters = [
-        { value: 'Both', text: 'Both', checked: true },
-        { value: 'Staying', text: 'Staying', checked: false },
-        { value: 'Leaving', text: 'Leaving', checked: false },
-      ] as FilterItem[]
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
 
-      const unlockFilters = testUnlockFilters(defaultLocationFilters, defaultActivityFilters, stayingOrLeavingFilters)
-
-      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
-
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
-
-      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'Both',
+        'Both',
+        user,
+      )
 
       expect(unlockListItems).toHaveLength(4)
       expect(unlockListItems.filter(i => i.isLeavingWing).length).toBe(2)
@@ -342,76 +315,75 @@ describe('Unlock list service', () => {
     })
 
     it('filter by leaving', async () => {
-      const stayingOrLeavingFilters = [
-        { value: 'Both', text: 'Both', checked: false },
-        { value: 'Staying', text: 'Staying', checked: false },
-        { value: 'Leaving', text: 'Leaving', checked: true },
-      ] as FilterItem[]
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
 
-      const unlockFilters = testUnlockFilters(defaultLocationFilters, defaultActivityFilters, stayingOrLeavingFilters)
-
-      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
-
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
-
-      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'Both',
+        'Leaving',
+        user,
+      )
 
       expect(unlockListItems).toHaveLength(2)
       expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A4444AA'])
     })
 
     it('filter by staying', async () => {
-      const stayingOrLeavingFilters = [
-        { value: 'Both', text: 'Both', checked: false },
-        { value: 'Staying', text: 'Staying', checked: true },
-        { value: 'Leaving', text: 'Leaving', checked: false },
-      ] as FilterItem[]
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
 
-      const unlockFilters = testUnlockFilters(defaultLocationFilters, defaultActivityFilters, stayingOrLeavingFilters)
-
-      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
-
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
-
-      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'Both',
+        'Staying',
+        user,
+      )
 
       expect(unlockListItems).toHaveLength(2)
       expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A2222AA', 'A3333AA'])
     })
 
     it('filter by sub-location', async () => {
-      const locationFilters = [
-        { value: 'A-Wing', text: 'A-Wing', checked: true },
-        { value: 'B-Wing', text: 'B-Wing', checked: false },
-        { value: 'C-Wing', text: 'C-Wing', checked: false },
-      ] as FilterItem[]
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
 
-      const unlockFilters = testUnlockFilters(locationFilters, defaultActivityFilters, defaultStayingOrLeavingFilters)
-
-      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
-
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
-
-      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['A-Wing'],
+        'Both',
+        'Leaving',
+        user,
+      )
 
       expect(unlockListItems).toHaveLength(2)
       expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A4444AA'])
     })
 
     it('filter by sub-location - no-sublocations exist', async () => {
-      const locationFilters = [] as FilterItem[]
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
 
-      const unlockFilters = testUnlockFilters(locationFilters, defaultActivityFilters, defaultStayingOrLeavingFilters)
-      unlockFilters.subLocations = []
-
-      prisonerSearchApiClient.searchPrisonersByLocationPrefix.mockResolvedValue(prisoners)
-
-      activitiesApiClient.getScheduledEventsByPrisonerNumbers.mockResolvedValue(scheduledEvents)
-
-      const unlockListItems = await unlockListService.getFilteredUnlockList(unlockFilters, user)
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        [],
+        'Both',
+        'Both',
+        user,
+      )
 
       expect(unlockListItems).toHaveLength(4)
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).not.toHaveBeenCalled()
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(1)
     })
   })
 })

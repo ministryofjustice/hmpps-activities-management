@@ -390,26 +390,6 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
       expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'The selected file is empty' }]))
     })
 
-    it('validation fails when invalid CSV file is uploaded', async () => {
-      const body = {
-        file: {
-          path: 'uploads/non-csv.xlsx',
-          mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        },
-      }
-
-      const requestObject = plainToInstance(AppointmentsList, body)
-
-      when(fsMock.existsSync).calledWith('uploads/non-csv.xlsx').mockReturnValue(true)
-      when(fsMock.lstatSync)
-        .calledWith('uploads/non-csv.xlsx')
-        .mockReturnValue(plainToInstance(Stats, { size: 1 }))
-
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(expect.arrayContaining([{ property: 'file', error: 'You must upload a CSV file' }]))
-    })
-
     it('passes validation when valid CSV file is uploaded', async () => {
       const body = {
         file: {

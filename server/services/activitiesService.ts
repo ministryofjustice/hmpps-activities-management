@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { differenceInDays, format, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
@@ -20,7 +20,6 @@ import {
   PrisonerScheduledEvents,
   Appointment,
   AppointmentCategorySummary,
-  LocationPrefix,
   AppointmentCreateRequest,
   AttendanceReason,
   AppointmentDetails,
@@ -220,11 +219,6 @@ export default class ActivitiesService {
     return this.activitiesApiClient.updateAttendances(attendanceUpdates, user)
   }
 
-  async getLocationPrefix(loc: string, user: ServiceUser): Promise<LocationPrefix> {
-    const { activeCaseLoadId } = user
-    return this.activitiesApiClient.getPrisonLocationPrefixByGroup(activeCaseLoadId, loc, user)
-  }
-
   async getLocationGroups(user: ServiceUser): Promise<LocationGroup[]> {
     const { activeCaseLoadId } = user
     return this.activitiesApiClient.getPrisonLocationGroups(activeCaseLoadId, user)
@@ -387,5 +381,23 @@ export default class ActivitiesService {
 
   async allocationSuitability(scheduleId: number, prisonerNumber: string, user: ServiceUser) {
     return this.activitiesApiClient.allocationSuitability(scheduleId, prisonerNumber, user)
+  }
+
+  calcCurrentWeek(startDate: Date, scheduleWeeks: number) {
+    // Current week only applies if the activity has started
+    if (startDate > new Date()) return null
+
+    /* The schedule starts on the Monday on or before the activity start date,
+     * so find this date and calculate the number of days from then to resolve
+     * which week number a particular date falls into */
+    const daysInWeek = 7
+    const dayOfWeek = (sundayIndexedDay => {
+      if (sundayIndexedDay - 1 < 0) return 6
+      return sundayIndexedDay - 1
+    })(startDate.getDay())
+    const scheduleFirstMonday = subDays(startDate, dayOfWeek)
+    const daysIntoSchedule = differenceInDays(new Date(), scheduleFirstMonday)
+    const daysIntoThisSchedulePeriod = daysIntoSchedule % (daysInWeek * scheduleWeeks)
+    return Math.floor(daysIntoThisSchedulePeriod / daysInWeek) + 1
   }
 }

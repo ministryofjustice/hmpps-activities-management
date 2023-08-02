@@ -6,7 +6,8 @@
 
 {% set pageTitle = applicationName + " - Create an activity - Check pay" %}
 {% set pageId = 'check-pay-page' %}
-{% set backLinkHref = "pay" %}
+
+{% set backLinkHref = "/activities/create/pay-rate-type" %}
 
 {% block content %}
     {% if session.req.query.fromEditActivity %}
@@ -17,7 +18,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-l">Review pay rates for {{ session.createJourney.name }}</h1>
+            <h1 class="govuk-heading-l">Review pay rates for {{ session.createJourney.payRateTypeOption }} </h1>
+            {{ session.createJourney.payRateTypeOption }}
 
             {% for incentiveLevelPay in incentiveLevelPays %}
                 <h2 class="govuk-heading-m">Pay rates for {{ incentiveLevelPay.incentiveLevel }} incentive level</h2>

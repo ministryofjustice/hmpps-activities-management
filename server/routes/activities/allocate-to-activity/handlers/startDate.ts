@@ -3,12 +3,20 @@ import { Expose, Type } from 'class-transformer'
 import { ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
+import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import DateIsAfter from '../../../../validators/dateIsAfter'
+import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
 
 export class StartDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
+  @DateIsSameOrAfter(o => o.allocateJourney.activity.startDate, {
+    message: 'Enter a date on or after the activity start date',
+  })
+  @DateIsSameOrBefore(o => o.allocateJourney.activity.endDate, {
+    message: 'Enter a date on or before the activity end date',
+  })
   @DateIsAfter(new Date(), { message: "Enter a date after today's date" })
   @IsValidDate({ message: 'Enter a valid start date' })
   startDate: SimpleDate

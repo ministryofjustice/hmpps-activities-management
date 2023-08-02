@@ -211,9 +211,11 @@
     }
   },
   "startDate": "2022-08-01",
+  "scheduleWeeks": 1,
   "slots": [
     {
       "id": 1,
+      "weekNumber": 1,
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Mon"],
@@ -221,6 +223,7 @@
     },
     {
       "id": 1,
+      "weekNumber": 1,
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Tue"],
@@ -228,6 +231,7 @@
     },
     {
       "id": 1,
+      "weekNumber": 1,
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Wed"],
@@ -235,6 +239,7 @@
     },
     {
       "id": 1,
+      "weekNumber": 1,
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Thu"],
@@ -242,6 +247,7 @@
     },
     {
       "id": 1,
+      "weekNumber": 1,
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Fri"],
@@ -249,6 +255,7 @@
     },
     {
       "id": 1,
+      "weekNumber": 1,
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Sat"],
@@ -256,6 +263,7 @@
     },
     {
       "id": 1,
+      "weekNumber": 1,
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Sun"],

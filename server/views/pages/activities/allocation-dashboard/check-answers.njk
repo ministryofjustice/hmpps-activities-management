@@ -66,6 +66,22 @@
                             {% endif %}
                         </dd>
                     </div>
+                    {% if allocation.endDate %}
+                      <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Reason for allocation ending
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                          {{ allocation.plannedDeallocation.plannedReason.description }}
+                                    </dd>
+                                    <dd class="govuk-summary-list__actions">
+                                            <a href="/activities/allocation-dashboard/{{ allocation.id }}/reason"
+                                               class="govuk-link govuk-link--no-visited-state">
+                                                Change
+                                            </a>
+                                    </dd>
+                       </div>
+                    {% endif %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Pay rate

@@ -50,6 +50,7 @@ import {
   getConfirmAppointmentEditCta,
 } from '../utils/editAppointmentUtils'
 import ServiceName from '../enum/serviceName'
+import SimpleDate, { simpleDateFromPlain } from '../commonValidationTypes/simpleDate'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -133,6 +134,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
   njkEnv.addFilter('toDate', toDate)
+  njkEnv.addFilter('toDateFromSimpleDate', (simpleDate: SimpleDate) => simpleDateFromPlain(simpleDate).toRichDate())
   njkEnv.addFilter('parseDate', parseDate)
   njkEnv.addFilter('parseISODate', parseISODate)
   njkEnv.addFilter('toDateString', toDateString)

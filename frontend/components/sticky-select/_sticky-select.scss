@@ -1,4 +1,4 @@
-.multi-select {
+.sticky-select {
   .govuk-table__head {
     @media print {
       position: revert;
@@ -14,8 +14,13 @@
     border-bottom: 2px govuk-colour("mid-grey") solid;
   }
 
-  .govuk-checkboxes__item {
+  .govuk-checkboxes__item, .govuk-radios__item {
     margin-left: 10px;
+  }
+
+  .moj-multi-select__radio {
+    display: inline-block;
+    padding-left: 0;
   }
 
   .govuk-table__row {
@@ -26,7 +31,7 @@
     }
   }
 
-  .multi-select-sticky {
+  .sticky-select-action-bar {
     position: sticky;
     z-index: 1000;
     bottom: -1px;
@@ -79,7 +84,7 @@
   }
 }
 
-.js-enabled .multi-select-sticky {
+.js-enabled .sticky-select-action-bar {
   display: none;
 
   &__selected-summary {

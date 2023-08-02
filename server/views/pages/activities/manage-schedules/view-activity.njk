@@ -3,6 +3,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "../../../partials/activities/days-and-times.njk" import daysAndTimes %}
 
@@ -12,33 +13,12 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l">View or change details for {{ activity.summary }}</h1>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds-from-desktop">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">Edit activity details</h1>
+            <h2 class="govuk-heading-m">Activity details</h2>
+
             {{ govukSummaryList({
                   rows: [
-                    {
-                        key: {
-                            text: "Name"
-                        },
-                        value: {
-                            text: activity.summary
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "/activities/create/name?fromEditActivity=true&preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change activity name",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
-                    }
-                    ,
                     {
                         key: {
                             text: "Activity category"
@@ -52,6 +32,24 @@
                                     href: "/activities/create/category?fromEditActivity=true&preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change category",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                    },
+                    {
+                        key: {
+                            text: "Activity Name"
+                        },
+                        value: {
+                            text: activity.summary
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/create/name?fromEditActivity=true&preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change activity name",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
@@ -101,10 +99,10 @@
                 rows: [
                     {
                         key: {
-                            text: "Risk assessment level"
+                            text: "Suitable for workplace risk assessment level"
                         },
                         value: {
-                            text: activity.riskLevel | capitalize
+                            text: riskLevel(activity)
                         },
                         actions: {
                             items: [
@@ -161,7 +159,11 @@
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Dates and schedule</h2>
+            <h2 class="govuk-heading-m">Schedule and dates</h2>
+            {{ govukInsetText({ 
+                text: 'The current week is: Week ' + currentWeek,
+                classes: 'govuk-!-margin-top-0 govuk-!-margin-bottom-0'
+            }) if session.createJourney.scheduleWeeks > 1 and currentWeek }}
             {% set dateAndScheduleRows = [{
                 key: {
                     text: "Start date"
@@ -203,25 +205,37 @@
                 } if (not schedule.endDate) or (schedule.endDate >= now | toDateString)
             }), dateAndScheduleRows) %}
 
-            {% set dateAndScheduleRows = (dateAndScheduleRows.push(
-                {
-                    key: {
-                        text: "Schedule"
-                    },
-                    value: {
-                        html: daysAndTimes(schedule.dailySlots)
-                    },
-                    actions: {
-                        items: [
-                            {
-                                href: "/activities/create/days-and-times?fromEditActivity=true&preserveHistory=true",
-                                text: "Change",
-                                visuallyHiddenText: "change days and times",
-                                classes: "govuk-link--no-visited-state"
-                            }
-                        ]
-                    } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+            {% set dateAndScheduleRows = (dateAndScheduleRows.push({
+                key: {
+                    text: "Repeats"
                 },
+                value: {
+                    text: session.createJourney.scheduleWeeks + ' weekly' if session.createJourney.scheduleWeeks > 1 else 'Weekly'
+                }
+            }), dateAndScheduleRows) %}
+
+            {% for week, slots in dailySlots %}
+                {% set dateAndScheduleRows = (dateAndScheduleRows.push(
+                    {
+                        key: {
+                            text: "Week " + week
+                        },
+                        value: { html: daysAndTimes(slots) },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/create/days-and-times/" + week + "?fromEditActivity=true&preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change days and times",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                    }
+                ), dateAndScheduleRows) %}
+            {% endfor %}
+
+            {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                 {
                     key: {
                         text: "Runs on bank holidays"
@@ -300,5 +314,15 @@
         text: "Change",
         visuallyHiddenText: "change activity name",
         classes: "govuk-link--no-visited-state"
+    {% endif %}
+{% endmacro %}
+
+{% macro riskLevel(activity) %}
+    {% if activity.riskLevel == 'low' %}
+        Low
+    {% elseif activity.riskLevel == 'medium' %}
+        Low and Medium
+    {% elseif activity.riskLevel == 'high' %}
+        Low, Medium and High
     {% endif %}
 {% endmacro %}

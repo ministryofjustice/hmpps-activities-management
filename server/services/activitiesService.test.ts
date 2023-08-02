@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import { addDays, subDays } from 'date-fns'
 import atLeast from '../../jest.setup'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
@@ -12,7 +13,6 @@ import {
   ActivityLite,
   ActivityScheduleLite,
   LocationGroup,
-  LocationPrefix,
   ScheduledActivity,
   PrisonPayBand,
   PrisonerScheduledEvents,
@@ -59,8 +59,6 @@ describe('Activities Service', () => {
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
 
   const mockedLocationGroups = [{ name: 'Houseblock 1', key: 'Houseblock 1', children: [] }] as LocationGroup[]
-
-  const mockedLocationPrefix = { locationPrefix: 'MDI-1-2' } as LocationPrefix
 
   describe('getActivity', () => {
     it('should get the activity from activities API', async () => {
@@ -249,17 +247,6 @@ describe('Activities Service', () => {
       const result = await activitiesService.getActivitySchedule(1, user)
       expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(1, user)
       expect(result).toEqual(activitySchedule1)
-    })
-  })
-
-  describe('getLocationPrefix', () => {
-    it('should fetch the location cell prefix for a group', async () => {
-      when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-        .calledWith(atLeast(user))
-        .mockResolvedValueOnce(mockedLocationPrefix)
-      const results = await activitiesService.getLocationPrefix('Houseblock 1', user)
-      expect(results).toEqual(mockedLocationPrefix)
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'Houseblock 1', user)
     })
   })
 
@@ -561,7 +548,6 @@ describe('Activities Service', () => {
 
   describe('acknowledgeChangeEvents', () => {
     it('should acknowledge a list of change event IDS', async () => {
-      when(activitiesApiClient.acknowledgeChangeEvents).mockResolvedValue()
       const eventReviewIds = [1, 2, 3]
       const request = { eventReviewIds } as EventAcknowledgeRequest
 
@@ -663,5 +649,41 @@ describe('Activities Service', () => {
       expect(activitiesApiClient.allocationSuitability).toHaveBeenCalledWith(2, 'A1234BC', user)
       expect(result).toEqual(expectedResult)
     })
+  })
+
+  describe('calcCurrentWeek', () => {
+    const today = new Date()
+    const tomorrow = addDays(today, 1)
+
+    it("shouldn't calculate a current week for activities in the future", async () => {
+      const currentWeek = activitiesService.calcCurrentWeek(tomorrow, 2)
+      expect(currentWeek).toBeNull()
+    })
+
+    it.each([
+      [today, 1],
+      [subDays(today, 7), 2],
+      [subDays(today, 14), 1],
+      [subDays(today, 21), 2],
+    ])(
+      `should calculate current week correctly for multi-week schedule (start date: %s)`,
+      async (startDate, expectedCurrentWeek) => {
+        const currentWeeks = activitiesService.calcCurrentWeek(startDate, 2)
+        expect(currentWeeks).toEqual(expectedCurrentWeek)
+      },
+    )
+
+    it.each([
+      [today, 1],
+      [subDays(today, 7), 1],
+      [subDays(today, 14), 1],
+      [subDays(today, 21), 1],
+    ])(
+      `should always calculate current week as 1 for single-week schedule (start date: %s)`,
+      async (startDate, expectedCurrentWeek) => {
+        const currentWeeks = activitiesService.calcCurrentWeek(startDate, 1)
+        expect(currentWeeks).toEqual(expectedCurrentWeek)
+      },
+    )
   })
 })

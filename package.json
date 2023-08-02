@@ -161,7 +161,7 @@
     "better-npm-audit": "^3.7.3",
     "cheerio": "^1.0.0-rc.12",
     "concurrently": "^8.2.0",
-    "cypress": "^12.17.1",
+    "cypress": "^12.17.2",
     "cypress-axe": "^1.4.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-multi-reporters": "^1.6.3",

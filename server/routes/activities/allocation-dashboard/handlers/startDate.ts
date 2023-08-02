@@ -9,12 +9,19 @@ import { convertToTitleCase, formatDate } from '../../../../utils/utils'
 import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
+import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
 
 export class StartDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @DateIsSameOrAfter(new Date(), { message: "Enter a date on or after today's date" })
+  @DateIsSameOrAfter(o => o.allocateJourney.activity.startDate, {
+    message: 'Enter a date on or after the activity start date',
+  })
+  @DateIsSameOrBefore(o => o.allocateJourney.activity.endDate, {
+    message: 'Enter a date on or before the activity end date',
+  })
+  @DateIsSameOrAfter(() => new Date(), { message: "Enter a date on or after today's date" })
   @DateIsBeforeOtherProperty('endDate', { message: 'Enter a date before the end date' })
   @IsNotEmpty({ message: 'Enter a valid start date' })
   @IsValidDate({ message: 'Enter a valid start date' })
