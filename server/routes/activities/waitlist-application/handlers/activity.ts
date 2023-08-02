@@ -36,6 +36,8 @@ export default class ActivityRoutes {
       .then(alloc => alloc.filter(all => all.allocations.find(a => a.scheduleId === activity.id)))
       .then(alloc => alloc.length > 0)
 
+    // TODO: Also check that the applicant isnt already waitlisted
+
     if (alreadyAllocated) {
       return res.validationFailed(
         'activityId',
