@@ -1,0 +1,50 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% set pageId = 'create-schedule-schedule-frequency-page' %}
+{% set pageTitle = applicationName + " - Create an activity - Schedule Frequency" %}
+{% set backLinkHref = "end-date" if session.createJourney.endDate else "end-date-option" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ activityJourneyCaption(session.createJourney) }}
+                <h1 class="govuk-heading-l">How often do you want the schedule to repeat?</h1>
+
+                {{ govukRadios({
+                    id: "scheduleFrequency",
+                    name: "scheduleFrequency",
+                    classes: "govuk-radios--inline",
+                    items: [
+                        {
+                            value: "WEEKLY",
+                            text: "Weekly",
+                            hint: {
+                                text: "The schedule is the same every week."
+                            },
+                            checked: session.createJourney.scheduleWeeks == "1"
+                        },
+                        {
+                            value: "BI_WEEKLY",
+                            text: "2 Weekly",
+                            hint: {
+                                text: "The schedule has 2 alternating weeks."
+                            },
+                            checked: session.createJourney.scheduleWeeks == "2"
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('scheduleFrequency')
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

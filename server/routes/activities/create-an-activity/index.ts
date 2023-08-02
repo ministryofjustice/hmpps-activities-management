@@ -25,6 +25,7 @@ import CapacityRoutes, { Capacity } from './handlers/capacity'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import PayRateTypeRoutes, { PayRateType } from './handlers/payRateType'
+import ScheduleFrequencyRoutes, { ScheduleFrequencyForm } from './handlers/scheduleFrequency'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -49,6 +50,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const startDateHandler = new StartDateRoutes(activitiesService)
   const endDateOptionHandler = new EndDateOptionRoutes()
   const endDateHandler = new EndDateRoutes(activitiesService)
+  const scheduleFrequencyHandler = new ScheduleFrequencyRoutes()
   const daysAndTimesHandler = new DaysAndTimesRoutes(activitiesService)
   const bankHolidayHandler = new BankHolidayOptionRoutes(activitiesService)
   const locationHandler = new LocationRoutes(activitiesService, prisonService)
@@ -86,8 +88,10 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/end-date-option', endDateOptionHandler.POST, EndDateOption)
   get('/end-date', endDateHandler.GET, true)
   post('/end-date', endDateHandler.POST, EndDate)
-  get('/days-and-times', daysAndTimesHandler.GET, true)
-  post('/days-and-times', daysAndTimesHandler.POST, DaysAndTimes)
+  get('/schedule-frequency', scheduleFrequencyHandler.GET, true)
+  post('/schedule-frequency', scheduleFrequencyHandler.POST, ScheduleFrequencyForm)
+  get('/days-and-times/:weekNumber(\\d+)', daysAndTimesHandler.GET, true)
+  post('/days-and-times/:weekNumber(\\d+)', daysAndTimesHandler.POST, DaysAndTimes)
   get('/bank-holiday-option', bankHolidayHandler.GET, true)
   post('/bank-holiday-option', bankHolidayHandler.POST, BankHolidayOption)
   get('/location', locationHandler.GET, true)

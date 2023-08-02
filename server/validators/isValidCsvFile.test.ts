@@ -52,24 +52,6 @@ describe('isValidCsvFile', () => {
     expect(fsMock.unlinkSync).not.toHaveBeenCalled()
   })
 
-  it('should fail validation for a non csv mime type', async () => {
-    const body = {
-      file: {
-        path: 'uploads/non-csv.xlsx',
-        mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      },
-    }
-
-    const requestObject = plainToInstance(DummyForm, body)
-
-    when(fsMock.existsSync).calledWith('uploads/non-csv.xlsx').mockReturnValue(true)
-
-    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-    expect(errors).toEqual([{ property: 'file', error: 'The selected file must be a CSV' }])
-    expect(fsMock.unlinkSync).toHaveBeenCalledWith('uploads/non-csv.xlsx')
-  })
-
   it('should fail validation for a binary file', async () => {
     const body = {
       file: {

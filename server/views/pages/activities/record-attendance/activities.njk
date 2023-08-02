@@ -165,7 +165,7 @@
                     },
                     html: '
                             <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                                <a href="activities/' + activity.id + '/attendance-list" class="govuk-link govuk-link--no-visited-state">' + activity.name + '</a>
+                                <a href="activities/' + activity.id + '/attendance-list" class="govuk-link govuk-link--no-visited-state">' + (activity.name | escape) + '</a>
                             </h2>
                             <div>' + activityCancelledTag(activity.cancelled) + '</div>'
                 },

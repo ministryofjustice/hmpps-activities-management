@@ -155,7 +155,7 @@
         {% set otherAllocationsHtml %}
             <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <li><a href='/activities/allocation-dashboard/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName }}</a></li>
+                    <li><a href='/activities/allocation-dashboard/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName | escape }}</a></li>
                 {% else %}
                     <li>None</li>
                 {% endfor %}
