@@ -1,0 +1,56 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Waitlist - Activity" %}
+{% set pageId = 'activity-page' %}
+{% set backLinkHref = '#' %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="activityId"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-xl">Log an activity application</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% set activityOptions = [{ value: '', text: '' }] %}
+                {% for activity in activities %}
+                    {% set activityOptions = (activityOptions.push({ value: activity.id, text: activity.name }), activityOptions) %}
+                {% endfor %}
+
+                {{ govukSelect({
+                    id: "activityId",
+                    name: "activityId",
+                    formGroup: {
+                        classes: "govuk-!-width-full"
+                    },
+                    label: {
+                        text: "Search for the activity",
+                        classes: "govuk-label--xl",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: 'Start typing the activity name and select it from the list.'
+                    },
+                    errorMessage: validationErrors | findError('activityId'),
+                    value: formResponses.activityId or session.waitListApplicationJourney.activity.activityId,
+                    items: activityOptions
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
