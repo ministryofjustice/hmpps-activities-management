@@ -2,6 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 {% from "partials/activities/days-and-times.njk" import daysAndTimes %}
 
@@ -114,68 +115,95 @@
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Dates and schedule</h2>
-            {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Start date"
-                        },
-                        value: {
-                            text: startDate
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "start-date?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change start date"
-                                }
-                            ]
-                        }
+            <h2 class="govuk-heading-m">Schedule and dates</h2>
+            {% set scheduleRows = [
+                {
+                    key: {
+                        text: "Start date"
                     },
-                    {
-                        key: {
-                            text: "End date"
-                        },
-                        value: {
-                            text: endDate
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "end-date?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change end date"
-                                }
-                            ]
-                        }
+                    value: {
+                        text: startDate
                     },
+                    actions: {
+                        items: [
+                            {
+                                href: "start-date?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change start date"
+                            }
+                        ]
+                    }
+                },
+                {
+                    key: {
+                        text: "End date"
+                    },
+                    value: {
+                        text: endDate
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "end-date?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change end date"
+                            }
+                        ]
+                    }
+                },
+                {
+                    key: {
+                        text: "Repeats"
+                    },
+                    value: {
+                        text: session.createJourney.scheduleWeeks + ' weekly' if session.createJourney.scheduleWeeks > 1 else 'Weekly'
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "schedule-frequency?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "change schedule frequency"
+                            }
+                        ]
+                    }
+                }
+            ] %}
+
+            {% for week, slots in dailySlots %}
+                {% set scheduleRows = (scheduleRows.push(
                     {
                         key: {
-                            text: "Days and times"
+                            text: 'Week ' + week
                         },
-                        value: { html: daysAndTimes(dailySlots) },
+                        value: { html: daysAndTimes(slots) },
                         actions: {
                             items: [{
-                                href: "days-and-times?preserveHistory=true",
+                                href: "days-and-times/" + week + "?preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "Change schedule"
                             }]
                         }
-                    },
-                    {
-                        key: { text: "Runs on bank holidays" },
-                        value: { text: "Yes" if session.createJourney.runsOnBankHoliday else "No"},
-                        actions: {
-                            items: [{
-                                href: "bank-holiday-option?preserveHistory=true",
-                                text: "Change",
-                                visuallyHiddenText: "Change bank holiday option"
-                            }]
-                        }
                     }
-                ]
+                ), scheduleRows) %}
+            {% endfor %}
+
+            {% set scheduleRows = (scheduleRows.push(
+                {
+                    key: { text: "Runs on bank holidays" },
+                    value: { text: "Yes" if session.createJourney.runsOnBankHoliday else "No"},
+                    actions: {
+                        items: [{
+                            href: "bank-holiday-option?preserveHistory=true",
+                            text: "Change",
+                            visuallyHiddenText: "Change bank holiday option"
+                        }]
+                    }
+                }
+            ), scheduleRows) %}
+
+            {{ govukSummaryList({
+                rows: scheduleRows
             }) }}
 
             <h2 class="govuk-heading-m">Location and capacity</h2>

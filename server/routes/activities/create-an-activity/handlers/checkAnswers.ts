@@ -6,7 +6,7 @@ import PrisonService from '../../../../services/prisonService'
 import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { formatDate, mapSlots } from '../../../../utils/utils'
-import { activitySessionToDailyTimeSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
+import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 
 export default class CheckAnswersRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -62,6 +62,7 @@ export default class CheckAnswersRoutes {
       onWing: createJourney.onWing,
       locationId: createJourney.location?.id,
       capacity: createJourney.capacity,
+      scheduleWeeks: createJourney.scheduleWeeks,
       slots,
       runsOnBankHoliday: createJourney.runsOnBankHoliday,
     } as ActivityCreateRequest

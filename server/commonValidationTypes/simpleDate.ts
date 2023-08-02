@@ -50,3 +50,5 @@ export const simpleDateFromDate = (date: Date) => {
 
   return null
 }
+
+export const simpleDateFromPlain = (date: SimpleDate) => plainToInstance(SimpleDate, date)

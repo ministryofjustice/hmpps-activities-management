@@ -22,6 +22,7 @@ import getPayProfile from '../fixtures/prisonApi/getPayProfile.json'
 import StartDatePage from '../pages/createSchedule/startDate'
 import EndDateOptionPage from '../pages/createSchedule/endDateOption'
 import EndDatePage from '../pages/createSchedule/endDate'
+import ScheduleFrequencyPage from '../pages/createSchedule/scheduleFrequency'
 import DaysAndTimesPage from '../pages/createSchedule/daysAndTimes'
 import BankHolidayPage from '../pages/createSchedule/bankHoliday'
 import LocationPage from '../pages/createSchedule/location'
@@ -125,6 +126,10 @@ context('Create activity', () => {
     const endDate = addMonths(new Date(), 8)
     endDatePicker.enterDate(endDate)
     endDatePage.continue()
+
+    const scheduleFrequencyPage = Page.verifyOnPage(ScheduleFrequencyPage)
+    scheduleFrequencyPage.selectScheduleFrequency('Weekly')
+    scheduleFrequencyPage.continue()
 
     const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
     daysAndTimesPage.selectDayTimeCheckboxes([

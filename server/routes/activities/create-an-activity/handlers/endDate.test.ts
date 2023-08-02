@@ -60,7 +60,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.endDate).toEqual(endDate)
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('days-and-times')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule-frequency')
     })
 
     it('should save entered end date in database', async () => {
