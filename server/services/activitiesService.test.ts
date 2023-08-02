@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import { addDays, subDays } from 'date-fns'
 import atLeast from '../../jest.setup'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
@@ -648,5 +649,41 @@ describe('Activities Service', () => {
       expect(activitiesApiClient.allocationSuitability).toHaveBeenCalledWith(2, 'A1234BC', user)
       expect(result).toEqual(expectedResult)
     })
+  })
+
+  describe('calcCurrentWeek', () => {
+    const today = new Date()
+    const tomorrow = addDays(today, 1)
+
+    it("shouldn't calculate a current week for activities in the future", async () => {
+      const currentWeek = activitiesService.calcCurrentWeek(tomorrow, 2)
+      expect(currentWeek).toBeNull()
+    })
+
+    it.each([
+      [today, 1],
+      [subDays(today, 7), 2],
+      [subDays(today, 14), 1],
+      [subDays(today, 21), 2],
+    ])(
+      `should calculate current week correctly for multi-week schedule (start date: %s)`,
+      async (startDate, expectedCurrentWeek) => {
+        const currentWeeks = activitiesService.calcCurrentWeek(startDate, 2)
+        expect(currentWeeks).toEqual(expectedCurrentWeek)
+      },
+    )
+
+    it.each([
+      [today, 1],
+      [subDays(today, 7), 1],
+      [subDays(today, 14), 1],
+      [subDays(today, 21), 1],
+    ])(
+      `should always calculate current week as 1 for single-week schedule (start date: %s)`,
+      async (startDate, expectedCurrentWeek) => {
+        const currentWeeks = activitiesService.calcCurrentWeek(startDate, 1)
+        expect(currentWeeks).toEqual(expectedCurrentWeek)
+      },
+    )
   })
 })

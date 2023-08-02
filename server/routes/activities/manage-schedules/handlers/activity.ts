@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
+import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 import PrisonService from '../../../../services/prisonService'
-import { scheduleSlotsToDailyTimeSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
+import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import { getTimeSlotFromTime } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
@@ -18,6 +19,8 @@ export default class ActivityRoutes {
     const { user } = res.locals
     const activityId = +req.params.activityId
     const activity = await this.activitiesService.getActivity(activityId, user)
+
+    const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
     let attendanceCount = 0
     let allocationCount = 0
@@ -53,56 +56,36 @@ export default class ActivityRoutes {
       } as unknown as SimpleDate
     }
     req.session.createJourney.minimumIncentiveLevel = activity.minimumIncentiveLevel
-    req.session.createJourney.days = []
-    req.session.createJourney.timeSlotsMonday = []
-    req.session.createJourney.timeSlotsTuesday = []
-    req.session.createJourney.timeSlotsWednesday = []
-    req.session.createJourney.timeSlotsThursday = []
-    req.session.createJourney.timeSlotsFriday = []
-    req.session.createJourney.timeSlotsSaturday = []
-    req.session.createJourney.timeSlotsSunday = []
-    activity.schedules.forEach(schedule =>
-      schedule.slots.forEach(slot => {
-        if (slot.mondayFlag) {
-          req.session.createJourney.days.push('monday')
-          req.session.createJourney.timeSlotsMonday.push(getTimeSlotFromTime(slot.startTime).toUpperCase())
+    const activitySchedule = activity.schedules[0]
+
+    req.session.createJourney.scheduleWeeks = activitySchedule.scheduleWeeks
+    req.session.createJourney.slots ??= {}
+    activitySchedule.slots.forEach(slot => {
+      daysOfWeek.forEach(day => {
+        const dayLowerCase = day.toLowerCase()
+        req.session.createJourney.slots[slot.weekNumber] ??= {
+          days: [],
         }
-        if (slot.tuesdayFlag) {
-          req.session.createJourney.days.push('tuesday')
-          req.session.createJourney.timeSlotsTuesday.push(getTimeSlotFromTime(slot.startTime).toUpperCase())
+        req.session.createJourney.slots[slot.weekNumber][`timeSlots${day}`] ??= []
+
+        if (slot[`${dayLowerCase}Flag`]) {
+          req.session.createJourney.slots[slot.weekNumber].days.push(dayLowerCase)
+          req.session.createJourney.slots[slot.weekNumber][`timeSlots${day}`].push(
+            getTimeSlotFromTime(slot.startTime).toUpperCase(),
+          )
         }
-        if (slot.wednesdayFlag) {
-          req.session.createJourney.days.push('wednesday')
-          req.session.createJourney.timeSlotsWednesday.push(getTimeSlotFromTime(slot.startTime).toUpperCase())
-        }
-        if (slot.thursdayFlag) {
-          req.session.createJourney.days.push('thursday')
-          req.session.createJourney.timeSlotsThursday.push(getTimeSlotFromTime(slot.startTime).toUpperCase())
-        }
-        if (slot.fridayFlag) {
-          req.session.createJourney.days.push('friday')
-          req.session.createJourney.timeSlotsFriday.push(getTimeSlotFromTime(slot.startTime).toUpperCase())
-        }
-        if (slot.saturdayFlag) {
-          req.session.createJourney.days.push('saturday')
-          req.session.createJourney.timeSlotsSaturday.push(getTimeSlotFromTime(slot.startTime).toUpperCase())
-        }
-        if (slot.sundayFlag) {
-          req.session.createJourney.days.push('sunday')
-          req.session.createJourney.timeSlotsSunday.push(getTimeSlotFromTime(slot.startTime).toUpperCase())
-        }
-        req.session.createJourney.runsOnBankHoliday = schedule.runsOnBankHoliday
-        if (schedule.internalLocation) {
-          req.session.createJourney.location = {
-            id: schedule.internalLocation.id,
-            name: schedule.internalLocation.description,
-          }
-        }
-        req.session.createJourney.currentCapacity = schedule.capacity
-        req.session.createJourney.capacity = schedule.capacity
-        req.session.createJourney.allocationCount = allocationCount
-      }),
-    )
+      })
+    })
+    req.session.createJourney.runsOnBankHoliday = activitySchedule.runsOnBankHoliday
+    if (activitySchedule.internalLocation) {
+      req.session.createJourney.location = {
+        id: activitySchedule.internalLocation.id,
+        name: activitySchedule.internalLocation.description,
+      }
+    }
+    req.session.createJourney.currentCapacity = activitySchedule.capacity
+    req.session.createJourney.capacity = activitySchedule.capacity
+    req.session.createJourney.allocationCount = allocationCount
     req.session.createJourney.pay = []
     activity.pay.forEach(pay => {
       req.session.createJourney.pay.push({
@@ -118,17 +101,19 @@ export default class ActivityRoutes {
 
     const [incentiveLevelPays, schedule] = await Promise.all([
       this.helper.getPayGroupedByIncentiveLevel(req.session.createJourney.pay, user, activity),
-      this.activitiesService.getDefaultScheduleOfActivity(activity, user).then(s => ({
-        ...s,
-        dailySlots: scheduleSlotsToDailyTimeSlots(s.slots),
-      })),
+      this.activitiesService.getDefaultScheduleOfActivity(activity, user),
     ])
+
+    const richStartDate = plainToInstance(SimpleDate, req.session.createJourney.startDate).toRichDate()
+    const currentWeek = this.activitiesService.calcCurrentWeek(richStartDate, req.session.createJourney.scheduleWeeks)
 
     res.render('pages/activities/manage-schedules/view-activity', {
       activity,
       schedule,
+      dailySlots: activitySessionToDailyTimeSlots(req.session.createJourney),
       incentiveLevelPays,
       attendanceCount,
+      currentWeek,
     })
   }
 }
