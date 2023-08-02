@@ -38,12 +38,24 @@ export default class RepeatPeriodAndCountRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const maxOccurrenceAllocations = 20000
+
     const { repeatPeriod, repeatCount } = req.body
+    const prisonersCount = req.session.appointmentJourney.prisoners.length
+
+    if (prisonersCount * repeatCount > maxOccurrenceAllocations) {
+      return res.validationFailed(
+        'repeatCount',
+        `You cannot schedule more than ${Math.floor(
+          maxOccurrenceAllocations / prisonersCount,
+        )} appointments for this number of attendees.`,
+      )
+    }
 
     req.session.appointmentJourney.repeat = YesNo.YES
     req.session.appointmentJourney.repeatPeriod = repeatPeriod
     req.session.appointmentJourney.repeatCount = repeatCount
 
-    res.redirectOrReturn(`schedule`)
+    return res.redirectOrReturn(`schedule`)
   }
 }
