@@ -44,6 +44,7 @@ import {
   PrisonerDeallocationRequest,
   EventAcknowledgeRequest,
   AllocationSuitability,
+  WaitingListApplicationRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -556,6 +557,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       query: { prisonerNumber },
+    })
+  }
+
+  async postWaitlistApplication(
+    waitlistApplicationRequest: WaitingListApplicationRequest,
+    user: ServiceUser,
+  ): Promise<void> {
+    return this.post({
+      path: `/allocations/${user.activeCaseLoadId}/waiting-list-application`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: waitlistApplicationRequest,
     })
   }
 }

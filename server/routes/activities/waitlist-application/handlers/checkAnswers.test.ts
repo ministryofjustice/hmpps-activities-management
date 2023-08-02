@@ -1,9 +1,14 @@
 import { Request, Response } from 'express'
 import { parse } from 'date-fns'
 import CheckAnswersRoutes from './checkAnswers'
+import ActivitiesService from '../../../../services/activitiesService'
+
+jest.mock('../../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null, null)
 
 describe('Route Handlers - Waitlist application - Check answers', () => {
-  const handler = new CheckAnswersRoutes()
+  const handler = new CheckAnswersRoutes(activitiesService)
   let req: Request
   let res: Response
 
