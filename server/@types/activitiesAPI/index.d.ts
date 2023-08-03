@@ -1200,6 +1200,7 @@ export interface components {
        * @enum {string}
        */
       status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
+      plannedDeallocation?: components['schemas']['PlannedDeallocation']
     }
     /** @description The code and descriptive reason why this prisoner was deallocated from the activity */
     DeallocationReason: {
