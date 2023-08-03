@@ -31,6 +31,7 @@
                     formResponses: formResponses.endDate or session.createJourney.endDate
                 }) }}
                 <input type="hidden" id="startDate" name="startDate" value="{{ startDate }}">
+                <input type="hidden" id="latestAllocationStartDate" name="latestAllocationStartDate" value="{{ latestAllocationStartDate }}">
                 {% if session.req.query.fromEditActivity %}
                     {{ govukInsetText({
                           text: "Anyone allocated to the activity who was due to be taken off after this date will now finish on this date."

@@ -159,7 +159,24 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       const requestObject = plainToInstance(EndDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date on or after the start date' }])
+      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date on or after the activity start date' }])
+    })
+
+    it('validation fails if end date is before latest allocation start date', async () => {
+      const today = new Date()
+      const endDate = simpleDateFromDate(addDays(today, 1))
+
+      const body = {
+        endDate,
+        latestAllocationStartDate: formatDate(addDays(today, 2), 'yyyy-MM-dd'),
+      }
+
+      const requestObject = plainToInstance(EndDate, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        { property: 'endDate', error: 'Enter a date on or after the latest allocation start date' },
+      ])
     })
 
     it('validation passes if end date is after start date', async () => {

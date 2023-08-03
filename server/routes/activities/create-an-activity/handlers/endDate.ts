@@ -4,7 +4,7 @@ import { ValidateIf, ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import { formatDate } from '../../../../utils/utils'
-import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { ActivityUpdateRequest, Allocation } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import DateIsSameOrAfterOtherProperty from '../../../../validators/dateIsSameOrAfterOtherProperty'
 
@@ -13,12 +13,17 @@ export class EndDate {
   @Type(() => SimpleDate)
   @ValidateIf(o => !o.endDate.isEmpty())
   @ValidateNested()
-  @DateIsSameOrAfterOtherProperty('startDate', { message: 'Enter a date on or after the start date' })
+  @DateIsSameOrAfterOtherProperty('startDate', { message: 'Enter a date on or after the activity start date' })
+  @DateIsSameOrAfterOtherProperty('latestAllocationStartDate', {
+    message: 'Enter a date on or after the latest allocation start date',
+  })
   @IsValidDate({ message: 'Enter a valid end date' })
   endDate: SimpleDate
 
   @Expose()
   startDate: string
+
+  latestAllocationStartDate: string
 }
 
 export default class EndDateRoutes {
@@ -26,10 +31,22 @@ export default class EndDateRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { session } = req
+    const { user } = res.locals
+    let allocations: Allocation[]
+    let latestAllocationStartDate: string
+    if (req.query && req.query.fromEditActivity) {
+      const { activityId } = req.session.createJourney
+      const schedule = await this.activitiesService.getActivitySchedule(activityId, user)
+      if (schedule.allocations.length > 0) {
+        allocations = schedule.allocations.sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
+        latestAllocationStartDate = allocations[allocations.length - 1].startDate
+      }
+    }
     res.render('pages/activities/create-an-activity/end-date', {
       startDate: session.createJourney.startDate
         ? formatDate(plainToInstance(SimpleDate, session.createJourney.startDate).toRichDate(), 'yyyy-MM-dd')
         : undefined,
+      latestAllocationStartDate: latestAllocationStartDate || undefined,
     })
   }
 
