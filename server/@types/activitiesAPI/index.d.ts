@@ -165,6 +165,13 @@ export interface paths {
      */
     post: operations['searchAppointmentOccurrences']
   }
+  '/allocations/{prisonCode}/waiting-list-application': {
+    /**
+     * Add a prisoner to an activity schedule waiting list
+     * @description Adds the supplied waiting list creation request to the activity schedule. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     */
+    post: operations['addToWaitingList']
+  }
   '/activities': {
     /**
      * Create an activity
@@ -338,13 +345,6 @@ export interface paths {
      * @description Returns an attendance.
      */
     get: operations['getAttendanceById']
-  }
-  '/attendances/summary/{prisonCode}/{sessionDate}': {
-    /**
-     * Get a daily summary of attendances
-     * @description Returns an attendance summary.
-     */
-    get: operations['getAttendanceSummaryByDate']
   }
   '/attendance-reasons': {
     /** Get the list of attendance reasons */
@@ -1202,7 +1202,10 @@ export interface components {
       status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
       plannedDeallocation?: components['schemas']['PlannedDeallocation']
     }
-    /** @description The code and descriptive reason why this prisoner was deallocated from the activity */
+    /**
+     * @description The code and descriptive reason why this prisoner was deallocated from the activity
+     * @example PLANNED
+     */
     DeallocationReason: {
       /**
        * @description The code for the deallocation reason
@@ -1214,6 +1217,32 @@ export interface components {
        * @example Released from prison
        */
       description: string
+    }
+    /** @description Describes one instance of a planned deallocation */
+    PlannedDeallocation: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this planned de-allocation
+       * @example 24
+       */
+      id: number
+      /**
+       * Format: date
+       * @description The planned de-allocation date
+       * @example 2023-07-31
+       */
+      plannedDate: string
+      /**
+       * @description The person who planned the de-allocation
+       * @example ADMIN
+       */
+      plannedBy: string
+      plannedReason: components['schemas']['DeallocationReason']
+      /**
+       * Format: date-time
+       * @description The system time when the de-allocation plan was made
+       */
+      plannedAt: string
     }
     /** @description Describes one instance of a prison pay band */
     PrisonPayBand: {
@@ -1985,6 +2014,42 @@ export interface components {
        * @example false
        */
       isExpired: boolean
+    }
+    /** @description The request with the prisoner waiting list details */
+    WaitingListApplicationRequest: {
+      /**
+       * @description The prisoner number (Nomis ID)
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity schedule (assumes 1-2-1 with activity)
+       * @example 7654321
+       */
+      activityScheduleId: number
+      /**
+       * Format: date
+       * @description The past or present date on which the waitlist application was requested
+       * @example 2023-06-23
+       */
+      applicationDate: string
+      /**
+       * @description The person who made the request
+       * @example Fred Bloggs
+       */
+      requestedBy: string
+      /**
+       * @description Any particular comments related to the waiting list request
+       * @example The prisoner has specifically requested to attend this activity
+       */
+      comments?: string
+      /**
+       * @description The status of the application
+       * @example PENDING
+       * @enum {string}
+       */
+      status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
     }
     /** @description The create request with the new activity details */
     ActivityCreateRequest: {
@@ -3715,17 +3780,17 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
+      paged?: boolean
+      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -4453,63 +4518,6 @@ export interface components {
     }
     /**
      * @description
-     *   Represents the key data required to report on daily attendance activity
-     */
-    AllAttendanceSummary: {
-      /**
-       * Format: int64
-       * @description The attendance summary primary key
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * Format: int64
-       * @description The internally-generated ID for the activity
-       * @example 123456
-       */
-      activityId: number
-      /**
-       * @description The name of the activity category
-       * @example Leisure and social
-       */
-      categoryName: string
-      /**
-       * Format: date
-       * @description The date of the session for which attendance may have been marked or a planned absence recorded
-       * @example 2023-03-30
-       */
-      sessionDate: string
-      /**
-       * @description AM, PM, ED.
-       * @example AM
-       */
-      timeSlot: string
-      /**
-       * @description WAITING, COMPLETED.
-       * @example WAITING
-       */
-      status: string
-      /** @description The reason for attending or not */
-      attendanceReasonCode?: string
-      /**
-       * @description Should payment be issued for SICK, REST or OTHER
-       * @example true
-       */
-      issuePayment?: boolean
-      /**
-       * Format: int32
-       * @description The number of attendance records
-       * @example 123456
-       */
-      attendanceCount: number
-    }
-    /**
-     * @description
      *   Represents an appointment instance for a specific prisoner to attend at the specified location, date and time.
      *   The fully denormalised representation of the appointment occurrences and allocations.
      */
@@ -5108,7 +5116,7 @@ export interface operations {
    */
   cancelAppointmentOccurrence: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -5157,7 +5165,7 @@ export interface operations {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
       }
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -5547,7 +5555,7 @@ export interface operations {
    */
   bulkCreateAppointment: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -5623,7 +5631,7 @@ export interface operations {
    */
   createAppointment: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -5661,7 +5669,7 @@ export interface operations {
    */
   searchAppointmentOccurrences: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -5695,12 +5703,63 @@ export interface operations {
     }
   }
   /**
+   * Add a prisoner to an activity schedule waiting list
+   * @description Adds the supplied waiting list creation request to the activity schedule. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   */
+  addToWaitingList: {
+    parameters: {
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaitingListApplicationRequest']
+      }
+    }
+    responses: {
+      /** @description The waiting list entry was created and added to the schedule. */
+      204: {
+        content: {
+          'application/json': Record<string, never>
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The activity schedule in the request for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Create an activity
    * @description Create an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
    */
   create: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -5744,7 +5803,7 @@ export interface operations {
    */
   updateAppointmentOccurrence: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -5838,7 +5897,7 @@ export interface operations {
    */
   update_1: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -5934,7 +5993,7 @@ export interface operations {
    */
   getScheduleId: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6033,7 +6092,7 @@ export interface operations {
         /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
         sort?: string[]
       }
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6079,7 +6138,7 @@ export interface operations {
    */
   getScheduledInstanceById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6630,7 +6689,7 @@ export interface operations {
    */
   getBulkAppointmentDetailsById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6727,38 +6786,6 @@ export interface operations {
       }
     }
   }
-  /**
-   * Get a daily summary of attendances
-   * @description Returns an attendance summary.
-   */
-  getAttendanceSummaryByDate: {
-    parameters: {
-      path: {
-        prisonCode: string
-        sessionDate: string
-      }
-    }
-    responses: {
-      /** @description Attendance Summary found */
-      200: {
-        content: {
-          'application/json': components['schemas']['AllAttendanceSummary'][]
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   /** Get the list of attendance reasons */
   getAttendanceReasons: {
     responses: {
@@ -6788,7 +6815,7 @@ export interface operations {
    */
   getAppointmentById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6822,7 +6849,7 @@ export interface operations {
    */
   getAppointmentOccurrenceDetailsById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6878,7 +6905,7 @@ export interface operations {
    */
   getAppointmentInstanceById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6912,7 +6939,7 @@ export interface operations {
    */
   getAppointmentDetailsById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6963,7 +6990,7 @@ export interface operations {
    */
   getAllocationById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7049,7 +7076,7 @@ export interface operations {
    */
   getActivityById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {

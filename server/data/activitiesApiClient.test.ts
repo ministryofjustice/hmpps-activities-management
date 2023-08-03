@@ -25,6 +25,7 @@ import {
   BulkAppointmentsRequest,
   IndividualAppointment,
   BulkAppointmentDetails,
+  WaitingListApplicationRequest,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -871,6 +872,19 @@ describe('activitiesApiClient', () => {
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200)
       await activitiesApiClient.allocationSuitability(1, 'AA1234BC', user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('postWaitlistApplication', () => {
+    it('should call endpoint to post the waitlist application', async () => {
+      const request = { status: 'PENDING' } as WaitingListApplicationRequest
+      fakeActivitiesApi
+        .post('/allocations/MDI/waiting-list-application')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.postWaitlistApplication(request, user)
       expect(nock.isDone()).toBe(true)
     })
   })
