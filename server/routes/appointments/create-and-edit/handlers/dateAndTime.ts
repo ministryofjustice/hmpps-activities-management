@@ -9,7 +9,6 @@ import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import { AppointmentJourneyMode } from '../appointmentJourney'
-import EditAppointmentService from '../../../../services/editAppointmentService'
 import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class DateAndTime {
@@ -39,8 +38,6 @@ export class DateAndTime {
 }
 
 export default class DateAndTimeRoutes {
-  constructor(private readonly editAppointmentService: EditAppointmentService) {}
-
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/date-and-time', {
       backLinkHref: getAppointmentBackLinkHref(req, 'location'),
@@ -63,7 +60,7 @@ export default class DateAndTimeRoutes {
   EDIT = async (req: Request, res: Response): Promise<void> => {
     this.setTimeAndDate(req, 'editAppointmentJourney')
 
-    await this.editAppointmentService.redirectOrEdit(req, res, 'date-and-time')
+    res.redirect('schedule')
   }
 
   private setTimeAndDate(req: Request, journeyName: string) {

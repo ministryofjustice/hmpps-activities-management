@@ -44,7 +44,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const nameHandler = new NameRoutes(activitiesService)
   const locationHandler = new LocationRoutes(activitiesService, editAppointmentService)
-  const dateAndTimeHandler = new DateAndTimeRoutes(editAppointmentService)
+  const dateAndTimeHandler = new DateAndTimeRoutes()
   const repeatHandler = new RepeatRoutes()
   const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
   const commentHandler = new CommentRoutes(editAppointmentService)
@@ -57,7 +57,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const uploadBulkAppointment = new UploadBulkAppointment(new PrisonerListCsvParser(), prisonService)
   const bulkAppointmentDate = new BulkAppointmentDateRoutes()
   const reviewBulkAppointment = new ReviewBulkAppointment()
-  const scheduleRoutes = new ScheduleRoutes(activitiesService)
+  const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService)
 
   get('/start-individual', startHandler.INDIVIDUAL)
   get('/start-group', startHandler.GROUP)

@@ -37,7 +37,7 @@
                     },
                     renderedErrorMessage: validationErrors | findError('startDate'),
                     validationErrors: validationErrors,
-                    formResponses: formResponses.startDate or session.appointmentJourney.startDate
+                    formResponses: formResponses.startDate or session.editAppointmentJourney.startDate or session.appointmentJourney.startDate
                 }) }}
                 {{ timePicker({
                     id: 'startTime',
@@ -48,7 +48,7 @@
                     },
                     renderedErrorMessage: validationErrors | findError('startTime'),
                     validationErrors: validationErrors,
-                    formResponses: formResponses.startTime or session.appointmentJourney.startTime
+                    formResponses: formResponses.startTime or session.editAppointmentJourney.startTime or session.appointmentJourney.startTime
                 }) }}
                 {{ timePicker({
                     id: 'endTime',
@@ -59,7 +59,7 @@
                     },
                     renderedErrorMessage: validationErrors | findError('endTime'),
                     validationErrors: validationErrors,
-                    formResponses: formResponses.endTime or session.appointmentJourney.endTime
+                    formResponses: formResponses.endTime or session.editAppointmentJourney.endTime or session.appointmentJourney.endTime
                 }) }}
                 {{ govukButton({
                     text: "Update appointment" if isCtaAcceptAndSave else "Continue"

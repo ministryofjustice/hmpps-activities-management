@@ -2,56 +2,79 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import { AppointmentType } from '../appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 
 export default class ScheduleRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly editAppointmentService: EditAppointmentService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { appointmentJourney, bulkAppointmentJourney } = req.session
+    const { occurrenceId } = req.params
+    const { appointmentJourney, bulkAppointmentJourney, editAppointmentJourney } = req.session
     const { preserveHistory } = req.query
 
     let backLinkHref: string
-    if (req.session.appointmentJourney.type === AppointmentType.BULK) {
+    if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
+      backLinkHref = 'date-and-time'
+      if (editAppointmentJourney?.addPrisoners) {
+        backLinkHref = 'prisoners/add/review-prisoners'
+      }
+    } else if (req.session.appointmentJourney.type === AppointmentType.BULK) {
       backLinkHref = 'review-bulk-appointment'
     } else {
       backLinkHref = req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
     }
 
-    const prisonNumbers =
-      appointmentJourney.type === AppointmentType.BULK
-        ? bulkAppointmentJourney.appointments.map(a => a.prisoner.number)
-        : appointmentJourney.prisoners.map(p => p.number)
+    let prisonNumbers
+    if (appointmentJourney.type === AppointmentType.BULK) {
+      prisonNumbers = bulkAppointmentJourney.appointments.map(a => a.prisoner.number)
+    } else if (editAppointmentJourney?.addPrisoners) {
+      prisonNumbers = editAppointmentJourney.addPrisoners.map(p => p.number)
+    } else {
+      prisonNumbers = appointmentJourney.prisoners.map(p => p.number)
+    }
+
+    const appointmentStartDate = editAppointmentJourney?.startDate ?? appointmentJourney.startDate
 
     const scheduledEvents = await this.activitiesService
       .getScheduledEventsForPrisoners(
-        plainToInstance(SimpleDate, appointmentJourney.startDate).toRichDate(),
+        plainToInstance(SimpleDate, appointmentStartDate).toRichDate(),
         prisonNumbers,
         user,
       )
       .then(response => [
         ...response.activities,
-        ...response.appointments,
+        ...response.appointments.filter(e => e.appointmentOccurrenceId !== +occurrenceId),
         ...response.courtHearings,
         ...response.visits,
         ...response.externalTransfers,
         ...response.adjudications,
       ])
 
-    const prisonerSchedules =
-      appointmentJourney.type === AppointmentType.BULK
-        ? bulkAppointmentJourney.appointments.map(appointment => ({
-            prisoner: appointment.prisoner,
-            startTime: appointment.startTime,
-            endTime: appointment.endTime,
-            scheduledEvents: scheduledEvents.filter(event => event.prisonerNumber === appointment.prisoner.number),
-          }))
-        : appointmentJourney.prisoners.map(prisoner => ({
-            prisoner,
-            scheduledEvents: scheduledEvents.filter(event => event.prisonerNumber === prisoner.number),
-          }))
+    let prisonerSchedules
+    if (appointmentJourney.type === AppointmentType.BULK) {
+      prisonerSchedules = bulkAppointmentJourney.appointments.map(appointment => ({
+        prisoner: appointment.prisoner,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        scheduledEvents: scheduledEvents.filter(event => event.prisonerNumber === appointment.prisoner.number),
+      }))
+    } else if (editAppointmentJourney?.addPrisoners) {
+      prisonerSchedules = editAppointmentJourney?.addPrisoners.map(p => ({
+        prisoner: p,
+        scheduledEvents: scheduledEvents.filter(event => event.prisonerNumber === p.number),
+      }))
+    } else {
+      prisonerSchedules = appointmentJourney.prisoners.map(prisoner => ({
+        prisoner,
+        scheduledEvents: scheduledEvents.filter(event => event.prisonerNumber === prisoner.number),
+      }))
+    }
 
     res.render('pages/appointments/create-and-edit/schedule', {
       backLinkHref,
@@ -66,12 +89,28 @@ export default class ScheduleRoutes {
     )
   }
 
+  EDIT = async (req: Request, res: Response): Promise<void> => {
+    let property = 'date-and-time'
+    if (req.session.editAppointmentJourney.addPrisoners) {
+      property = 'prisoners/add'
+    }
+
+    await this.editAppointmentService.redirectOrEdit(req, res, property)
+  }
+
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
 
     if (req.session.appointmentJourney.type === AppointmentType.BULK) {
       req.session.bulkAppointmentJourney.appointments = req.session.bulkAppointmentJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
+      )
+    } else if (
+      req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+      req.session.editAppointmentJourney?.addPrisoners
+    ) {
+      req.session.editAppointmentJourney.addPrisoners = req.session.editAppointmentJourney.addPrisoners.filter(
+        p => p.number !== prisonNumber,
       )
     } else {
       req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.filter(

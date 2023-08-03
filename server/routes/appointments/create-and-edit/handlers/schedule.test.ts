@@ -4,16 +4,19 @@ import { addDays } from 'date-fns'
 import ScheduleRoutes from './schedule'
 import { YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 import { PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import { AppointmentType } from '../appointmentJourney'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/editAppointmentService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const editAppointmentService = new EditAppointmentService(null) as jest.Mocked<EditAppointmentService>
 
 describe('Route Handlers - Create Appointment - Schedule', () => {
-  const handler = new ScheduleRoutes(activitiesService)
+  const handler = new ScheduleRoutes(activitiesService, editAppointmentService)
   let req: Request
   let res: Response
 
@@ -45,6 +48,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         },
       },
       query: {},
+      params: {},
       flash: jest.fn(),
     } as unknown as Request
 
@@ -82,6 +86,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
   describe('GET', () => {
     it('should render the schedule view with back to repeat page', async () => {
+      req.params.occurrenceId = '1'
       req.session.appointmentJourney.repeat = YesNo.NO
 
       await handler.GET(req, res)
