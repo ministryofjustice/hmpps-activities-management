@@ -2049,7 +2049,7 @@ export interface components {
        * @example PENDING
        * @enum {string}
        */
-      status: 'APPROVED' | 'DECLINED' | 'PENDING'
+      status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
     }
     /** @description The create request with the new activity details */
     ActivityCreateRequest: {
@@ -3771,9 +3771,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     PageableObject: {
@@ -3789,8 +3789,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
