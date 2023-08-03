@@ -15,11 +15,20 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
     res = {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
       session: {
-        appointmentJourney: {},
+        appointmentJourney: {
+          prisoners: [
+            {
+              number: 'A1234BC',
+              name: 'Test Prisoner',
+              cellLocation: '1-1-1',
+            },
+          ],
+        },
       },
     } as unknown as Request
   })
@@ -47,6 +56,27 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
       expect(req.session.appointmentJourney.repeatPeriod).toEqual(AppointmentRepeatPeriod.WEEKLY)
       expect(req.session.appointmentJourney.repeatCount).toEqual(6)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule')
+    })
+
+    it('should throw validation error if appointment occurrence allocations exceed 20,000', async () => {
+      req.body = {
+        repeatPeriod: AppointmentRepeatPeriod.DAILY,
+        repeatCount: 350,
+      }
+
+      req.session.appointmentJourney.prisoners = Array(60).map((_, i) => ({
+        number: `A12${i}BC`,
+        name: 'Test Prisoner',
+        cellLocation: '1-1-1',
+      }))
+
+      await handler.POST(req, res)
+
+      expect(res.validationFailed).toBeCalledWith(
+        'repeatCount',
+        'You cannot schedule more than 333 appointments for this number of attendees.',
+      )
+      expect(res.redirectOrReturn).toBeCalledTimes(0)
     })
   })
 
