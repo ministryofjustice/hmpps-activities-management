@@ -20,18 +20,18 @@ const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot]
 
 export default function activitySessionToDailyTimeSlots(
   scheduleWeeks: number,
-  schedluledSlots: { [weekNumber: string]: Slots },
+  scheduleSlots: { [weekNumber: string]: Slots },
 ) {
-  const weekilySlots: DailyTimeSlots = {}
+  const weeklySlots: DailyTimeSlots = {}
   for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
-    const slots = schedluledSlots[weekNumber] ?? {}
+    const slots = scheduleSlots[weekNumber] ?? {}
 
-    weekilySlots[weekNumber] = daysOfWeek.map(day => ({
+    weeklySlots[weekNumber] = daysOfWeek.map(day => ({
       day,
       slots: (slots[`timeSlots${day}`] as string[])
         ?.map(timeslot => toTimeSlot(timeslot))
         ?.sort((a, b) => timeSlotOrder[a] - timeSlotOrder[b]),
     }))
   }
-  return weekilySlots
+  return weeklySlots
 }
