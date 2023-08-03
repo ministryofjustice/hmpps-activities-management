@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { parse } from 'date-fns'
 import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../services/activitiesService'
+import { formatDate } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -36,6 +37,7 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
             year: 2023,
           },
           activity: {
+            activityId: 1,
             activityName: 'Test activity',
           },
           requester: 'Alan Key',
@@ -66,6 +68,17 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
   describe('POST', () => {
     it('should set the activity in session and redirect to the requester route', async () => {
       await handler.POST(req, res)
+      expect(activitiesService.logWaitlistApplication).toHaveBeenCalledWith(
+        {
+          prisonerNumber: 'ABC123',
+          activityScheduleId: 1,
+          applicationDate: formatDate('2023-07-31', 'yyyy-MM-dd'),
+          requestedBy: 'Alan Key',
+          comments: 'test comment',
+          status: 'PENDING',
+        },
+        { username: 'joebloggs' },
+      )
       expect(res.redirect).toHaveBeenCalledWith(`confirmation`)
     })
   })
