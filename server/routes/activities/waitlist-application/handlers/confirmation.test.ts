@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 import ConfirmationRoutes from './confirmation'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import { Activity, WaitingListApplication } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -49,6 +49,14 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
           ],
         } as Activity)
 
+      when(activitiesService.fetchActivityWaitlist)
+        .calledWith(atLeast(1))
+        .mockResolvedValue([
+          { status: 'ALLOCATED' },
+          { status: 'PENDING' },
+          { status: 'APPROVED' },
+        ] as WaitingListApplication[])
+
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/waitlist-application/confirmation', {
         waitListApplicationJourney: {
@@ -57,7 +65,7 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
             activityId: 1,
           },
         },
-        waitlistSize: 1,
+        waitlistSize: 2,
         vacancies: 2,
         currentlyAllocated: 3,
         capacity: 5,
