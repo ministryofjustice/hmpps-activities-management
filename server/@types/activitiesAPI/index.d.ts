@@ -216,6 +216,13 @@ export interface paths {
      */
     get: operations['getScheduleId']
   }
+  '/schedules/{scheduleId}/waiting-list-applications': {
+    /**
+     * Get a schedules waiting list applications
+     * @description Returns zero or more activity schedule waiting list applications.
+     */
+    get: operations['getWaitingListApplicationsBy']
+  }
   '/schedules/{scheduleId}/suitability': {
     /**
      * Gets the suitability details of a candidate for an activity
@@ -2018,7 +2025,7 @@ export interface components {
     /** @description The request with the prisoner waiting list details */
     WaitingListApplicationRequest: {
       /**
-       * @description The prisoner number (Nomis ID)
+       * @description The prisoner number (NOMIS ID)
        * @example A1234AA
        */
       prisonerNumber: string
@@ -2030,7 +2037,7 @@ export interface components {
       activityScheduleId: number
       /**
        * Format: date
-       * @description The past or present date on which the waitlist application was requested
+       * @description The past or present date on which the waiting list application was requested
        * @example 2023-06-23
        */
       applicationDate: string
@@ -3363,6 +3370,90 @@ export interface components {
        */
       issuePayment?: boolean
     }
+    /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
+    WaitingListApplication: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this waiting list
+       * @example 111111
+       */
+      id: number
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the associated activity schedule
+       * @example 222222
+       */
+      scheduleId: number
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the associated allocation
+       * @example 333333
+       */
+      allocationId?: number
+      /**
+       * @description The prison code for this waiting list
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description The prisoner number (NOMIS ID) for this waiting list
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The prisoner booking id (NOMIS ID) for this waiting list
+       * @example 10001
+       */
+      bookingId: number
+      /**
+       * @description The status of this waiting list
+       * @example PENDING
+       * @enum {string}
+       */
+      status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
+      /**
+       * Format: date
+       * @description The past or present date on which the waiting list was requested
+       * @example 2023-06-23
+       */
+      requestedDate: string
+      /**
+       * @description The person who made the request for this waiting list
+       * @example Fred Bloggs
+       */
+      requestedBy: string
+      /**
+       * @description Any particular comments related to this waiting list
+       * @example The prisoner has specifically requested to attend this activity
+       */
+      comments?: string
+      /**
+       * @description The reason for the waiting list request to be declined (null if status is not declined)
+       * @example The prisoner has specifically requested to attend this activity
+       */
+      declinedReason?: string
+      /**
+       * Format: date-time
+       * @description The date and time the waiting list was first created
+       */
+      creationTime: string
+      /**
+       * @description The person who created the waiting list i.e the user at the time
+       * @example Jon Doe
+       */
+      createdBy: string
+      /**
+       * Format: date-time
+       * @description The date and time the waiting list was last updated
+       */
+      updatedTime?: string
+      /**
+       * @description The person who last made changes to the waiting list
+       * @example Jane Doe
+       */
+      updatedBy?: string
+    }
     /** @description Describes a pay rate applied to an activity */
     ActivityPayLite: {
       /**
@@ -3763,34 +3854,34 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
-      first?: boolean
-      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
+      first?: boolean
       /** Format: int32 */
       numberOfElements?: number
+      last?: boolean
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     PageableObject: {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      paged?: boolean
-      unpaged?: boolean
-      /** Format: int32 */
-      pageNumber?: number
       /** Format: int32 */
       pageSize?: number
+      /** Format: int32 */
+      pageNumber?: number
+      paged?: boolean
+      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -6020,6 +6111,46 @@ export interface operations {
         }
       }
       /** @description The activity for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Get a schedules waiting list applications
+   * @description Returns zero or more activity schedule waiting list applications.
+   */
+  getWaitingListApplicationsBy: {
+    parameters: {
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        scheduleId: number
+      }
+    }
+    responses: {
+      /** @description The waiting list applications for an activity schedule */
+      200: {
+        content: {
+          'application/json': components['schemas']['WaitingListApplication'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Schedule ID not found */
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
