@@ -5,6 +5,7 @@
 
 {% set pageTitle = "Activities Management - Record Attendance" %}
 {% set pageId = 'edit-attendance-page' %}
+{% set backLinkHref = '../' + attendance.id %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -42,7 +43,6 @@
                 {{ govukButton({
                     text: "Continue"
                 }) }}
-
             </form>
         </div>
     </div>
