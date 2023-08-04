@@ -388,6 +388,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.postWaitlistApplication(waitlistApplicationRequest, user)
   }
 
+  async fetchActivityWaitlist(activityId: number, user: ServiceUser) {
+    return this.activitiesApiClient.fetchActivityWaitlist(activityId, user)
+  }
+
   calcCurrentWeek(startDate: Date, scheduleWeeks: number) {
     // Current week only applies if the activity has started
     if (startDate > new Date()) return null
