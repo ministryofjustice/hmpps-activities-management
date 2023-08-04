@@ -13,7 +13,7 @@
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
-{% set backLinkHref = "/activities/attendance/select-period" %}
+{% set backLinkHref = "/activities/attendance/activities?date=" + instance.date | toDate | formatDate('yyyy-MM-dd') %}
 {% set backLinkText = "Back to all activities on " + instance.date | toDate | formatDate('dd MMMM yyyy') %}
 
 {% block content %}
