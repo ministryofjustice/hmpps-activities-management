@@ -101,7 +101,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
       const requestObject = plainToInstance(RequestDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'requestDate', error: 'Enter a date which is not in the future' }])
+      expect(errors).toEqual([{ property: 'requestDate', error: 'The date cannot be in the future' }])
     })
   })
 })

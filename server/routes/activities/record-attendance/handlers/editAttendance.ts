@@ -86,7 +86,7 @@ export default class EditAttendanceRoutes {
           otherEvents: attendee.otherEvents,
         },
       ]
-      return res.redirect(`/activities/attendance/activities/${id}/not-attended-reason`)
+      return res.redirect(`/activities/attendance/activities/${id}/not-attended-reason?preserveHistory=true`)
     }
 
     // If not "yes" or "no", assume "reset"

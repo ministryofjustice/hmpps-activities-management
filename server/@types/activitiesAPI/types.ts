@@ -55,3 +55,4 @@ export type DeallocationReasonCode = components['schemas']['PrisonerDeallocation
 export type AllocationSuitability = components['schemas']['AllocationSuitability']
 export type ActivityPay = components['schemas']['ActivityPay']
 export type WaitingListApplicationRequest = components['schemas']['WaitingListApplicationRequest']
+export type WaitingListApplication = components['schemas']['WaitingListApplication']
