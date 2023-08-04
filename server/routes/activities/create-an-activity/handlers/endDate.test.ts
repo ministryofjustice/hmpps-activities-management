@@ -34,7 +34,10 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
     req = {
       session: {
-        createJourney: {},
+        createJourney: {
+          latestAllocationStartDate: formatDate(new Date(), 'yyyy-MM-dd'),
+          startDate: simpleDateFromDate(new Date()),
+        },
       },
     } as unknown as Request
   })
@@ -44,6 +47,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/end-date', {
         endDate: undefined,
+        startDate: formatDate(new Date(), 'yyyy-MM-dd'),
       })
     })
   })
@@ -109,7 +113,14 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         endDate,
       }
 
-      const requestObject = plainToInstance(EndDate, body)
+      const requestObject = plainToInstance(EndDate, {
+        ...body,
+        createJourney: {
+          activity: {
+            latestAllocationStartDate: new Date('2022-04-04'),
+          },
+        },
+      })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
@@ -126,7 +137,14 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         endDate,
       }
 
-      const requestObject = plainToInstance(EndDate, body)
+      const requestObject = plainToInstance(EndDate, {
+        ...body,
+        createJourney: {
+          activity: {
+            latestAllocationStartDate: new Date('2022-04-04'),
+          },
+        },
+      })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
@@ -141,7 +159,12 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         startDate: formatDate(today, 'yyyy-MM-dd'),
       }
 
-      const requestObject = plainToInstance(EndDate, body)
+      const requestObject = plainToInstance(EndDate, {
+        ...body,
+        createJourney: {
+          latestAllocationStartDate: simpleDateFromDate(today),
+        },
+      })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
@@ -156,10 +179,21 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         startDate: formatDate(today, 'yyyy-MM-dd'),
       }
 
-      const requestObject = plainToInstance(EndDate, body)
+      const requestObject = plainToInstance(EndDate, {
+        ...body,
+        createJourney: {
+          latestAllocationStartDate: simpleDateFromDate(addDays(today, -1)),
+        },
+      })
+
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date on or after the activity start date' }])
+      expect(errors).toEqual([
+        {
+          property: 'endDate',
+          error: 'Enter a date on or after the activity start date and latest allocation start date',
+        },
+      ])
     })
 
     it('validation fails if end date is before latest allocation start date', async () => {
@@ -171,11 +205,19 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         latestAllocationStartDate: formatDate(addDays(today, 2), 'yyyy-MM-dd'),
       }
 
-      const requestObject = plainToInstance(EndDate, body)
+      const requestObject = plainToInstance(EndDate, {
+        ...body,
+        createJourney: {
+          latestAllocationStartDate: simpleDateFromDate(addDays(today, 2)),
+        },
+      })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'endDate', error: 'Enter a date on or after the latest allocation start date' },
+        {
+          property: 'endDate',
+          error: 'Enter a date on or after the activity start date and latest allocation start date',
+        },
       ])
     })
 
@@ -188,7 +230,12 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         startDate: formatDate(today, 'yyyy-MM-dd'),
       }
 
-      const requestObject = plainToInstance(EndDate, body)
+      const requestObject = plainToInstance(EndDate, {
+        ...body,
+        createJourney: {
+          latestAllocationStartDate: new Date('2022-04-04'),
+        },
+      })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
