@@ -888,4 +888,16 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('fetchActivityWaitlist', () => {
+    it('should call endpoint to fetch the waitlist applications for an activity', async () => {
+      fakeActivitiesApi
+        .get('/schedules/1/waiting-list-applications')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.fetchActivityWaitlist(1, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

@@ -9,7 +9,7 @@ export class RequestDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @DateIsSameOrBefore(() => new Date(), { message: 'Enter a date which is not in the future' })
+  @DateIsSameOrBefore(() => new Date(), { message: 'The date cannot be in the future' })
   @IsValidDate({ message: 'Enter a valid request date' })
   requestDate: SimpleDate
 }
