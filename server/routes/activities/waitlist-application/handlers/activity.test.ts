@@ -122,31 +122,34 @@ describe('Route Handlers - Waitlist application - Request date', () => {
       )
     })
 
-    it('should throw validation error if prisoner already on a waitlist', async () => {
-      req.body = {
-        activityId: 1,
-      }
+    it.each([['PENDING'], ['APPROVED']])(
+      'should throw validation error if prisoner already on a waitlist',
+      async status => {
+        req.body = {
+          activityId: 1,
+        }
 
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValue({
-          id: 1,
-          description: 'test activity',
-        } as unknown as Activity)
-      when(activitiesService.getActivePrisonPrisonerAllocations)
-        .calledWith(atLeast(['ABC123']))
-        .mockResolvedValue([])
-      when(activitiesService.fetchActivityWaitlist)
-        .calledWith(atLeast(1))
-        .mockResolvedValue([{ prisonerNumber: 'ABC123', status: 'PENDING' }] as WaitingListApplication[])
+        when(activitiesService.getActivity)
+          .calledWith(atLeast(1))
+          .mockResolvedValue({
+            id: 1,
+            description: 'test activity',
+          } as unknown as Activity)
+        when(activitiesService.getActivePrisonPrisonerAllocations)
+          .calledWith(atLeast(['ABC123']))
+          .mockResolvedValue([])
+        when(activitiesService.fetchActivityWaitlist)
+          .calledWith(atLeast(1))
+          .mockResolvedValue([{ prisonerNumber: 'ABC123', status }] as WaitingListApplication[])
 
-      await handler.POST(req, res)
+        await handler.POST(req, res)
 
-      expect(res.validationFailed).toHaveBeenCalledWith(
-        'activityId',
-        'Alan Key is already allocated or on the waitlist for test activity',
-      )
-    })
+        expect(res.validationFailed).toHaveBeenCalledWith(
+          'activityId',
+          'Alan Key is already allocated or on the waitlist for test activity',
+        )
+      },
+    )
   })
 
   describe('type validation', () => {
@@ -156,7 +159,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
       const requestObject = plainToInstance(Body, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'activityId', error: 'Select an activity' }])
+      expect(errors).toEqual([{ property: 'activityId', error: 'Search for an activity and select it from the list' }])
     })
 
     it('validation fails if a bad value is entered', async () => {
@@ -167,7 +170,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
       const requestObject = plainToInstance(Body, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'activityId', error: 'Select an activity' }])
+      expect(errors).toEqual([{ property: 'activityId', error: 'Search for an activity and select it from the list' }])
     })
 
     it('validation passes', async () => {
