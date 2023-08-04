@@ -6,7 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 export class Activity {
   @Expose()
   @Type(() => Number)
-  @Min(1, { message: 'Select an activity' })
+  @Min(1, { message: 'Search for an activity and select it from the list' })
   activityId: number
 }
 
