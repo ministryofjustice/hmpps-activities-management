@@ -24,7 +24,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
   const activityHandler = new ActivityRoutes(activitiesService)
   const requesterHandler = new RequesterRoutes()
   const statusHandler = new StatusRoutes()
-  const checkAnswersHandler = new CheckAnswersRoutes()
+  const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes(activitiesService)
 
   router.use(insertJourneyIdentifier())

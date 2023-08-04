@@ -42,6 +42,7 @@ import {
   PrisonerDeallocationRequest,
   DeallocationReasonCode,
   EventAcknowledgeRequest,
+  WaitingListApplicationRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
@@ -381,6 +382,10 @@ export default class ActivitiesService {
 
   async allocationSuitability(scheduleId: number, prisonerNumber: string, user: ServiceUser) {
     return this.activitiesApiClient.allocationSuitability(scheduleId, prisonerNumber, user)
+  }
+
+  async logWaitlistApplication(waitlistApplicationRequest: WaitingListApplicationRequest, user: ServiceUser) {
+    return this.activitiesApiClient.postWaitlistApplication(waitlistApplicationRequest, user)
   }
 
   calcCurrentWeek(startDate: Date, scheduleWeeks: number) {

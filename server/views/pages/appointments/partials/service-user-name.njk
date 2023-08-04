@@ -1,0 +1,7 @@
+{% macro serviceUserName(user) %}
+  {% if user.username == 'DPS client account' %}
+    DPS user
+  {% else %}
+    {{ user | fullName | toTitleCase | initialiseName or "Unknown user" }}
+  {% endif %}
+{% endmacro %}
