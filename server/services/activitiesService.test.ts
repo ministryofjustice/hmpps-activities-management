@@ -34,6 +34,7 @@ import {
   IndividualAppointment,
   BulkAppointmentsRequest,
   BulkAppointmentDetails,
+  WaitingListApplicationRequest,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -648,6 +649,13 @@ describe('Activities Service', () => {
       const result = await activitiesService.allocationSuitability(2, 'A1234BC', user)
       expect(activitiesApiClient.allocationSuitability).toHaveBeenCalledWith(2, 'A1234BC', user)
       expect(result).toEqual(expectedResult)
+    })
+  })
+
+  describe('logWaitlistApplication', () => {
+    it('should call the api client to post the waitlist application', async () => {
+      await activitiesService.logWaitlistApplication({ status: 'PENDING' } as WaitingListApplicationRequest, user)
+      expect(activitiesApiClient.postWaitlistApplication).toHaveBeenCalledWith({ status: 'PENDING' }, user)
     })
   })
 
