@@ -31,12 +31,16 @@ export default class ActivityRoutes {
 
     const activity = await this.activitiesService.getActivity(activityId, user)
 
-    const alreadyAllocated = await this.activitiesService
-      .getActivePrisonPrisonerAllocations([prisoner.prisonerNumber], user)
-      .then(alloc => alloc.filter(all => all.allocations.find(a => a.scheduleId === activity.id)))
-      .then(alloc => alloc.length > 0)
-
-    // TODO: Also check that the applicant isnt already waitlisted
+    const alreadyAllocated =
+      (await this.activitiesService
+        .getActivePrisonPrisonerAllocations([prisoner.prisonerNumber], user)
+        .then(alloc => alloc.filter(all => all.allocations.find(a => a.scheduleId === activity.id)))
+        .then(alloc => alloc.length > 0)) ||
+      (await this.activitiesService
+        .fetchActivityWaitlist(activityId, user)
+        .then(waitlist => waitlist.filter(w => w.prisonerNumber === prisoner.prisonerNumber))
+        .then(waitlist => waitlist.filter(w => w.status === 'PENDING' || w.status === 'APPROVED'))
+        .then(alloc => alloc.length > 0))
 
     if (alreadyAllocated) {
       return res.validationFailed(
