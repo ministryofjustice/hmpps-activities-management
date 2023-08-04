@@ -5,6 +5,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
+{% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% set pageTitle = "Set of back-to-backs overview" %}
@@ -68,7 +69,7 @@
                             text: "Created by"
                         },
                         value: {
-                            text: bulkAppointment.createdBy | fullName | toTitleCase | initialiseName
+                            text: serviceUserName(bulkAppointment.createdBy)
                         }
                     }, {
                         key: {

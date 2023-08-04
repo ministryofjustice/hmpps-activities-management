@@ -7,6 +7,7 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
+{% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
 
 {% set pageTitle = occurrence.appointmentName + (' single' if occurrence.repeat) + ' appointment details' %}
 {% set pageId = 'appointment-occurrence-view-details-page' %}
@@ -207,7 +208,7 @@
                         text: "Created by"
                     },
                         value: {
-                            text: occurrence.createdBy | fullName | toTitleCase | initialiseName
+                            text: serviceUserName(occurrence.createdBy)
                         }
                     }, {
                         key: {
@@ -221,7 +222,7 @@
                             text: "Last edited by"
                         },
                         value: {
-                            text: occurrence.updatedBy | fullName | toTitleCase | initialiseName
+                            text: serviceUserName(occurrence.updatedBy)
                         }
                     } if occurrence.updatedBy, {
                         key: {
