@@ -15,7 +15,7 @@ export class Status {
   status: StatusEnum
 
   @Expose()
-  @Transform(({ value }) => (isBlank(value) ? undefined : value.trim()))
+  @Transform(({ value }) => (isBlank(value) ? undefined : value.trim().replaceAll('\r', '')))
   @ValidateIf(o => o.comment?.length > 0)
   @Length(0, 500, { message: 'Comment must be 500 characters or less' })
   comment: string
