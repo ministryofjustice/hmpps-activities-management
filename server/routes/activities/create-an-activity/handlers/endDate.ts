@@ -39,15 +39,13 @@ export default class EndDateRoutes {
       const schedule = await this.activitiesService.getActivitySchedule(activityId, user)
       if (schedule.allocations.length > 0) {
         allocations = schedule.allocations.sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
-        req.session.createJourney.latestAllocationStartDate =
-          ({
-            day: Number(allocations[allocations.length - 1].startDate.substring(8, 10)),
-            month: Number(allocations[allocations.length - 1].startDate.substring(5, 7)),
-            year: Number(allocations[allocations.length - 1].startDate.substring(0, 4)),
-          } as unknown as SimpleDate) || undefined
+        req.session.createJourney.latestAllocationStartDate = new Date(allocations[allocations.length - 1].startDate)
       }
     } else {
-      req.session.createJourney.latestAllocationStartDate = session.createJourney.startDate
+      req.session.createJourney.latestAllocationStartDate = plainToInstance(
+        SimpleDate,
+        req.session.createJourney.startDate,
+      ).toRichDate()
     }
     res.render('pages/activities/create-an-activity/end-date', {
       startDate: session.createJourney.startDate
