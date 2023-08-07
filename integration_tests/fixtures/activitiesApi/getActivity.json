@@ -186,7 +186,6 @@
           "weekNumber": 1,
           "startTime": "10:00",
           "endTime": "11:00",
-          "daysOfWeek": ["Tue"],
           "mondayFlag": false,
           "tuesdayFlag": true,
           "wednesdayFlag": false,
