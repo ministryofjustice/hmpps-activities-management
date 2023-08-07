@@ -23,7 +23,7 @@ export default class SearchRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { startDate, timeSlot, categoryCode, locationId, prisonerNumber, createdBy } = req.query
+    const { startDate, timeSlot, appointmentName, locationId, prisonerNumber, createdBy } = req.query
 
     const simpleStartDate = simpleDateFromDate(toDate(startDate as string))
 
@@ -34,17 +34,25 @@ export default class SearchRoutes {
     const request = {
       startDate: simpleStartDate.toIsoString(),
       timeSlot: timeSlot || null,
-      categoryCode: categoryCode || null,
       internalLocationId: locationId ? +locationId : null,
       prisonerNumbers: prisonerNumber ? [prisonerNumber] : null,
       createdBy: createdBy && createdBy !== 'all' ? createdBy : null,
     } as AppointmentOccurrenceSearchRequest
 
-    const [categories, locations, results] = await Promise.all([
+    const [categories, locations, appointments] = await Promise.all([
       this.activitiesService.getAppointmentCategories(user),
       this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user),
       this.activitiesService.searchAppointmentOccurrences(user.activeCaseLoadId, request, user),
     ])
+
+    const appointmentNameFilters = [
+      ...categories.map(c => c.description),
+      ...appointments.filter(a => a.appointmentDescription).map(a => a.appointmentName),
+    ]
+
+    const results = appointmentName
+      ? appointments.filter(a => a.appointmentName === appointmentName || a.category.description === appointmentName)
+      : appointments
 
     // Get prisoner details for appointments with a single allocation
     const prisonerNumbers = results.flatMap(r => (r.allocations.length === 1 ? r.allocations[0].prisonerNumber : []))
@@ -62,8 +70,8 @@ export default class SearchRoutes {
     return res.render('pages/appointments/search/results', {
       startDate: simpleStartDate,
       timeSlot: timeSlot ?? '',
-      categories,
-      categoryCode: categoryCode ?? '',
+      appointmentNameFilters,
+      appointmentName: appointmentName ?? '',
       locations,
       locationId: locationId ?? '',
       prisonerNumber: prisonerNumber ?? '',
@@ -74,12 +82,12 @@ export default class SearchRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { startDate, timeSlot, categoryCode, locationId, prisonerNumber, createdBy } = req.body
+    const { startDate, timeSlot, appointmentName, locationId, prisonerNumber, createdBy } = req.body
 
     return res.redirect(
-      `?startDate=${startDate.toIsoString()}&timeSlot=${timeSlot ?? ''}&categoryCode=${categoryCode ?? ''}&locationId=${
-        locationId ?? ''
-      }&prisonerNumber=${prisonerNumber ?? ''}&createdBy=${createdBy ?? ''}`,
+      `?startDate=${startDate.toIsoString()}&timeSlot=${timeSlot ?? ''}&appointmentName=${
+        appointmentName ?? ''
+      }&locationId=${locationId ?? ''}&prisonerNumber=${prisonerNumber ?? ''}&createdBy=${createdBy ?? ''}`,
     )
   }
 }
