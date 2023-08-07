@@ -8,6 +8,7 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "components/searchBar.njk" import searchBar %}
+{% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
 
 {% set pageTitle = applicationName + " - Allocate" %}
 {% set pageId = 'allocation-dashboard-page' %}
@@ -70,7 +71,7 @@
                                 text: "On waitlist:"
                             },
                             {
-                                text: 0
+                                text: waitlistedPrisoners | length
                             }
                         ]
                     ]
@@ -404,6 +405,7 @@
             visuallyHiddenText: 'Select ' + row.name | toTitleCase,
             value: row.prisonerNumber,
             selectable: true,
+            forbiddenActionId: 'waitlist-action-0' if row.status != 'APPROVED',
             items: [
                 {
                     html: '
@@ -423,13 +425,13 @@
                     text: row.requestDate | formatDate('d MMMM yyyy')
                 },
                 {
-                    text: row.requester
+                    text: row.requestedBy
                 },
                 {
                     html: currentAllocationsHtml
                 },
                 {
-                    text: 'STATUS HERE'
+                    text: waitlistStatusBadge(row.status)
                 }
             ]
         }), rows) %}
@@ -442,7 +444,7 @@
             type: 'radio',
             caption: "Waitlist applications",
             captionClasses: "govuk-visually-hidden",
-            name: 'selectedApplication',
+            name: 'selectedAllocation',
             head: [
                 {
                     text: "Name"
@@ -463,7 +465,7 @@
             rows: rows,
             actions: [
                 {
-                    text: 'Select application',
+                    text: 'Allocate',
                     formAction: schedule.id + '/allocate'
                 }
             ],

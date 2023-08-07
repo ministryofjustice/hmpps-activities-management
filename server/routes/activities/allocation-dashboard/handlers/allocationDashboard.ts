@@ -54,14 +54,16 @@ export default class AllocationDashboardRoutes {
       filters.employmentFilter = 'Not in work'
     }
 
-    const [currentlyAllocated, pagedCandidates] = await Promise.all([
+    const [currentlyAllocated, waitlistedPrisoners, pagedCandidates] = await Promise.all([
       this.getCurrentlyAllocated(+activityId, user),
+      this.getWaitlistedPrisoners(+activityId, user),
       this.getCandidates(+activityId, filters, +req.query.page, user),
     ])
 
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       schedule: activity.schedules[0],
       currentlyAllocated,
+      waitlistedPrisoners,
       pagedCandidates,
       incentiveLevels,
       filters,
@@ -167,6 +169,41 @@ export default class AllocationDashboardRoutes {
           scheduleName: a.scheduleDescription,
         })),
       }
+    })
+  }
+
+  private getWaitlistedPrisoners = async (scheduleId: number, user: ServiceUser) => {
+    const waitlist = await this.activitiesService
+      .fetchActivityWaitlist(scheduleId, user)
+      .then(a => a.filter(w => w.status === 'PENDING' || w.status === 'APPROVED' || w.status === 'DECLINED'))
+
+    const prisonerNumbers = waitlist.map(application => application.prisonerNumber)
+    const [inmateDetails, prisonerAllocations]: [Prisoner[], PrisonerAllocations[]] = await Promise.all([
+      this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
+      this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
+    ])
+
+    return inmateDetails.flatMap(inmate => {
+      const thisWaitlist = waitlist.filter(a => a.prisonerNumber === inmate.prisonerNumber)
+      let otherAllocations: Allocation[] = []
+      if (prisonerAllocations.length > 0) {
+        otherAllocations = prisonerAllocations
+          .find(a => a.prisonerNumber === inmate.prisonerNumber)
+          ?.allocations.filter(a => a.scheduleId !== scheduleId)
+      }
+      return thisWaitlist.map(w => ({
+        waitlistApplicationId: w.id,
+        name: `${inmate.firstName} ${inmate.lastName}`,
+        prisonerNumber: inmate.prisonerNumber,
+        cellLocation: inmate.cellLocation,
+        requestDate: parseDate(w.requestedDate),
+        requestedBy: w.requestedBy,
+        status: w.status,
+        otherAllocations: otherAllocations?.map(a => ({
+          id: a.scheduleId,
+          scheduleName: a.scheduleDescription,
+        })),
+      }))
     })
   }
 
