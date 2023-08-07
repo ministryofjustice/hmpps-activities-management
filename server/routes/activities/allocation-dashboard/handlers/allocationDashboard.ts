@@ -176,6 +176,7 @@ export default class AllocationDashboardRoutes {
     const waitlist = await this.activitiesService
       .fetchActivityWaitlist(scheduleId, user)
       .then(a => a.filter(w => w.status === 'PENDING' || w.status === 'APPROVED' || w.status === 'DECLINED'))
+      .then(a => a.filter(w => !w.allocationId))
 
     const prisonerNumbers = waitlist.map(application => application.prisonerNumber)
     const [inmateDetails, prisonerAllocations]: [Prisoner[], PrisonerAllocations[]] = await Promise.all([
