@@ -42,6 +42,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       description: 'Gym - Weights',
     },
   ] as AppointmentCategorySummary[]
+  const appointmentNameFilters = ['Chaplaincy', 'Medical - Doctor', 'Gym - Weights']
   const locations = [
     {
       id: 26152,
@@ -56,60 +57,86 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       description: 'Library',
     },
   ] as AppointmentLocationSummary[]
-  const results = [
-    {
-      appointmentId: 1,
-      appointmentOccurrenceId: 2,
-      appointmentType: 'INDIVIDUAL',
-      allocations: [
-        {
-          prisonerNumber: 'A1111AA',
-        },
-      ],
-      category: {
-        code: 'TEST1',
-        description: 'Test Category 1',
+  const appointment1 = {
+    appointmentId: 1,
+    appointmentOccurrenceId: 2,
+    appointmentType: 'INDIVIDUAL',
+    allocations: [
+      {
+        prisonerNumber: 'A1111AA',
       },
-      internalLocation: {
-        description: 'Test Location 1',
-      },
-      startDate: '2023-05-26',
-      startTime: '09:30',
-      endTime: '11:00',
-      isRepeat: false,
-      sequenceNumber: 1,
-      maxSequenceNumber: 1,
+    ],
+    appointmentName: 'Chaplaincy',
+    category: {
+      code: 'CHAP',
+      description: 'Chaplaincy',
     },
-    {
-      appointmentId: 2,
-      appointmentOccurrenceId: 3,
-      appointmentType: 'GROUP',
-      allocations: [
-        {
-          prisonerNumber: 'A1111AA',
-        },
-        {
-          prisonerNumber: 'B2222BB',
-        },
-        {
-          prisonerNumber: 'C3333CC',
-        },
-      ],
-      category: {
-        code: 'TEST2',
-        description: 'Test Category 2',
-      },
-      internalLocation: {
-        description: 'Test Location 2',
-      },
-      startDate: '2022-12-01',
-      startTime: '13:00',
-      endTime: '14:30',
-      isRepeat: true,
-      sequenceNumber: 2,
-      maxSequenceNumber: 6,
+    internalLocation: {
+      description: 'Test Location 1',
     },
-  ] as AppointmentOccurrenceSearchResult[]
+    startDate: '2023-05-26',
+    startTime: '09:30',
+    endTime: '11:00',
+    isRepeat: false,
+    sequenceNumber: 1,
+    maxSequenceNumber: 1,
+  }
+  const appointment2 = {
+    appointmentId: 2,
+    appointmentOccurrenceId: 3,
+    appointmentType: 'GROUP',
+    allocations: [
+      {
+        prisonerNumber: 'A1111AA',
+      },
+      {
+        prisonerNumber: 'B2222BB',
+      },
+      {
+        prisonerNumber: 'C3333CC',
+      },
+    ],
+    appointmentName: 'Medical - Doctor',
+    category: {
+      code: 'MEDO',
+      description: 'Medical - Doctor',
+    },
+    internalLocation: {
+      description: 'Test Location 2',
+    },
+    startDate: '2022-12-01',
+    startTime: '13:00',
+    endTime: '14:30',
+    isRepeat: true,
+    sequenceNumber: 2,
+    maxSequenceNumber: 6,
+  }
+  const appointment3 = {
+    appointmentId: 3,
+    appointmentOccurrenceId: 4,
+    appointmentType: 'INDIVIDUAL',
+    allocations: [
+      {
+        prisonerNumber: 'A1111AA',
+      },
+    ],
+    appointmentName: 'Doctors appointment (Medical - Doctor)',
+    category: {
+      code: 'MEDO',
+      description: 'Medical - Doctor',
+    },
+    internalLocation: {
+      description: 'Test Location 2',
+    },
+    startDate: '2022-12-01',
+    startTime: '13:00',
+    endTime: '14:30',
+    isRepeat: true,
+    sequenceNumber: 2,
+    maxSequenceNumber: 6,
+  }
+
+  const results = [appointment1, appointment2, appointment3] as AppointmentOccurrenceSearchResult[]
 
   beforeEach(() => {
     req = {} as unknown as Request
@@ -126,6 +153,21 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
   })
 
   describe('GET', () => {
+    beforeEach(() => {
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+      when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1111AA'], user)
+        .mockResolvedValue([
+          {
+            firstName: 'Lee',
+            lastName: 'Jacobson',
+            prisonerNumber: 'A1111AA',
+            cellLocation: '1-1-1',
+          } as Prisoner,
+        ])
+    })
+
     it('should populate start date and redirect if start date is not supplied', async () => {
       req.query = {}
 
@@ -155,15 +197,12 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         startDate: toDateString(today),
       }
 
-      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
-      when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
       when(activitiesService.searchAppointmentOccurrences)
         .calledWith(
           'MDI',
           {
             startDate: toDateString(today),
             timeSlot: null,
-            categoryCode: null,
             internalLocationId: null,
             prisonerNumbers: null,
             createdBy: null,
@@ -171,24 +210,14 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           user,
         )
         .mockResolvedValue(results)
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['A1111AA'], user)
-        .mockResolvedValue([
-          {
-            firstName: 'Lee',
-            lastName: 'Jacobson',
-            prisonerNumber: 'A1111AA',
-            cellLocation: '1-1-1',
-          } as Prisoner,
-        ])
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/search/results', {
         startDate: expect.any(SimpleDate),
         timeSlot: '',
-        categories,
-        categoryCode: '',
+        appointmentNameFilters,
+        appointmentName: '',
         locations,
         locationId: '',
         prisonerNumber: '',
@@ -209,21 +238,18 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       req.query = {
         startDate: toDateString(today),
         timeSlot: TimeSlot.PM,
-        categoryCode: 'MEDO',
+        appointmentName: 'Medical - Doctor',
         locationId: '26151',
         prisonerNumber: 'A1234BC',
         createdBy: user.username,
       }
 
-      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
-      when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
       when(activitiesService.searchAppointmentOccurrences)
         .calledWith(
           'MDI',
           {
             startDate: toDateString(today),
             timeSlot: TimeSlot.PM as unknown as 'AM' | 'PM' | 'ED',
-            categoryCode: 'MEDO',
             internalLocationId: 26151,
             prisonerNumbers: ['A1234BC'],
             createdBy: user.username,
@@ -231,29 +257,19 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           user,
         )
         .mockResolvedValue(results)
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['A1111AA'], user)
-        .mockResolvedValue([
-          {
-            firstName: 'Lee',
-            lastName: 'Jacobson',
-            prisonerNumber: 'A1111AA',
-            cellLocation: '1-1-1',
-          } as Prisoner,
-        ])
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/search/results', {
         startDate: expect.any(SimpleDate),
         timeSlot: TimeSlot.PM,
-        categories,
-        categoryCode: 'MEDO',
+        appointmentNameFilters,
+        appointmentName: 'Medical - Doctor',
         locations,
         locationId: '26151',
         prisonerNumber: 'A1234BC',
         createdBy: user.username,
-        results,
+        results: [appointment2, appointment3],
         prisonersDetails: {
           A1111AA: {
             firstName: 'Lee',
@@ -263,6 +279,36 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           },
         },
       })
+    })
+
+    it('should filter results by matching appointment name', async () => {
+      req.query = {
+        startDate: toDateString(today),
+        appointmentName: 'Doctors appointment (Medical - Doctor)',
+      }
+
+      when(activitiesService.searchAppointmentOccurrences)
+        .calledWith(
+          'MDI',
+          {
+            startDate: toDateString(today),
+            timeSlot: null,
+            internalLocationId: null,
+            prisonerNumbers: null,
+            createdBy: null,
+          },
+          user,
+        )
+        .mockResolvedValue(results)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/search/results',
+        expect.objectContaining({
+          results: [appointment3],
+        }),
+      )
     })
   })
 
@@ -275,7 +321,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `?startDate=${toDateString(new Date())}&timeSlot=&categoryCode=&locationId=&prisonerNumber=&createdBy=`,
+        `?startDate=${toDateString(new Date())}&timeSlot=&appointmentName=&locationId=&prisonerNumber=&createdBy=`,
       )
     })
 
@@ -283,7 +329,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       req.body = {
         startDate: simpleDateFromDate(today),
         timeSlot: TimeSlot.PM,
-        categoryCode: 'MEDO',
+        appointmentName: 'Medical - Doctor',
         locationId: '26151',
         prisonerNumber: 'A1234BC',
         createdBy: user.username,
@@ -294,7 +340,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       expect(res.redirect).toHaveBeenCalledWith(
         `?startDate=${toDateString(new Date())}&timeSlot=${
           TimeSlot.PM
-        }&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=${user.username}`,
+        }&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=${user.username}`,
       )
     })
   })
