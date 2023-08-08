@@ -1,0 +1,36 @@
+[
+  {
+    "id": 2,
+    "scheduleId": 6,
+    "allocationId": null,
+    "prisonCode": "MDI",
+    "prisonerNumber": "G5688UP",
+    "bookingId": 1185631,
+    "status": "PENDING",
+    "requestedDate": "2023-08-03",
+    "requestedBy": "Education staff",
+    "comments": "test comment",
+    "declinedReason": null,
+    "creationTime": "2023-08-03T17:23:40",
+    "createdBy": "SCH_ACTIVITY",
+    "updatedTime": null,
+    "updatedBy": null
+  },
+  {
+    "id": 4,
+    "scheduleId": 6,
+    "allocationId": null,
+    "prisonCode": "MDI",
+    "prisonerNumber": "G0682VU",
+    "bookingId": 1096407,
+    "status": "PENDING",
+    "requestedDate": "2023-08-03",
+    "requestedBy": "Activity leader",
+    "comments": null,
+    "declinedReason": null,
+    "creationTime": "2023-08-04T10:25:19",
+    "createdBy": "SCH_ACTIVITY",
+    "updatedTime": null,
+    "updatedBy": null
+  }
+]

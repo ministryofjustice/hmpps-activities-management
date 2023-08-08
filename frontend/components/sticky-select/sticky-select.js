@@ -102,11 +102,16 @@ StickySelect.prototype.handleToggleAllButtonChanged = function () {
   )
 }
 
-StickySelect.prototype.handleDisabledButtons = function (checkCount) {
+StickySelect.prototype.handleDisabledButtons = function(checkCount) {
+  const forbiddenActionIds = [...this.radios, ...this.checkboxes]
+    .filter($el => $el.checked)
+    .flatMap($el => $el.getAttribute('data-forbidden-action')?.split(' '))
+    .filter($el => Boolean($el))
+
   nodeListForEach(
     this.actionButtons,
     function ($el) {
-      if (parseInt($el.dataset.maxItems) < checkCount) {
+      if (parseInt($el.dataset.maxItems) < checkCount || forbiddenActionIds.includes($el.id)) {
         $el.setAttribute('disabled', 'disabled')
       } else {
         $el.removeAttribute('disabled')
@@ -140,7 +145,7 @@ StickySelect.prototype.clearAll = function () {
     }.bind(this)
   )
 
-  if (this.toggleAllButton.checked) {
+  if (this.toggleAllButton?.checked) {
     this.toggleAllButton.checked = false
     var event = document.createEvent('HTMLEvents')
     event.initEvent('click', false, true)

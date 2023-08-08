@@ -17,8 +17,8 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     },
     startDate: simpleDateFromDate(new Date()),
     timeSlot: TimeSlot.AM,
-    categories: [{}],
-    categoryCode: '',
+    appointmentNameFilters: [{}],
+    appointmentName: '',
     locations: [{}],
     locationId: 1,
     prisonerNumber: '',
@@ -37,21 +37,8 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
       },
       startDate: simpleDateFromDate(new Date()),
       timeSlot: TimeSlot.AM,
-      categories: [
-        {
-          code: 'CHAP',
-          description: 'Chaplaincy',
-        },
-        {
-          code: 'MEDO',
-          description: 'Medical - Doctor',
-        },
-        {
-          code: 'GYMW',
-          description: 'Gym - Weights',
-        },
-      ],
-      categoryCode: 'MEDO',
+      appointmentNameFilters: ['Chaplaincy', 'Medical - Doctor', 'Gym - Weights'],
+      appointmentName: 'Medical - Doctor',
       locations: [
         {
           id: 26152,
@@ -259,7 +246,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
+      )}&timeSlot=&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
     )
 
     const checked = $("[name='timeSlot']:checked")
@@ -281,11 +268,11 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=am&categoryCode=&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
+      )}&timeSlot=am&appointmentName=&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
     )
 
-    const selected = $("[name='categoryCode'] > option:selected")
-    expect(selected.val()).toEqual('MEDO')
+    const selected = $("[name='appointmentName'] > option:selected")
+    expect(selected.val()).toEqual('Medical - Doctor')
     expect(selected.text().trim()).toEqual('Medical - Doctor')
   })
 
@@ -298,7 +285,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=am&categoryCode=MEDO&locationId=&prisonerNumber=A1234BC&createdBy=all`,
+      )}&timeSlot=am&appointmentName=Medical - Doctor&locationId=&prisonerNumber=A1234BC&createdBy=all`,
     )
 
     const selected = $("[name='locationId'] > option:selected")
@@ -315,7 +302,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=am&categoryCode=MEDO&locationId=26151&prisonerNumber=&createdBy=all`,
+      )}&timeSlot=am&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=&createdBy=all`,
     )
 
     expect($("[name='prisonerNumber']").val()).toEqual('A1234BC')
@@ -335,7 +322,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${toDateString(
         new Date(),
-      )}&timeSlot=am&categoryCode=MEDO&locationId=26151&prisonerNumber=A1234BC&createdBy=`,
+      )}&timeSlot=am&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=`,
     )
 
     const checked = $("[name='createdBy']:checked")
