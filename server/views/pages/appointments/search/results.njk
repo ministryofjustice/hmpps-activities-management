@@ -89,7 +89,7 @@
     {% set selectedDateAndTime = [] %}
     {% if (timeSlot) %}
         {% set selectedDateAndTime = (selectedDateAndTime.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+            href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
             text: ("Morning (AM)" if timeSlot == TimeSlot.AM) +
                   ("Afternoon (PM)" if timeSlot == TimeSlot.PM) +
                   ("Evening (ED)" if timeSlot == TimeSlot.ED)
@@ -105,17 +105,20 @@
         }), selectedFilterCategories) %}
     {% endif %}
 
-    {% set categoryOptions = [{ value: "", text: "" }] %}
-    {% for category in categories %}
-        {% set categoryOptions = (categoryOptions.push( { value: category.code, text: category.description } ), categoryOptions) %}
-        {% if (category.code == categoryCode) %}
+    {% set appointmentNameOptions = [{ value: "", text: "" }] %}
+    {% for appointmentNameFilter in appointmentNameFilters %}
+        {% set appointmentNameOptions = (appointmentNameOptions.push({
+            text: appointmentNameFilter,
+            value: appointmentNameFilter
+        }), appointmentNameOptions) %}
+        {% if (appointmentNameFilter == appointmentName) %}
             {% set selectedFilterCategories = (selectedFilterCategories.push({
                 heading: {
                     text: 'Appointment name'
                 },
                 items: [{
-                    href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
-                    text: category.description
+                    href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&appointmentName=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+                    text: appointmentNameFilter
                 }]
             }), selectedFilterCategories) %}
         {% endif %}
@@ -130,7 +133,7 @@
                     text: 'Location'
                 },
                 items: [{
-                    href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+                    href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
                     text: location.description
                 }]
             }), selectedFilterCategories) %}
@@ -143,7 +146,7 @@
                 text: 'Prison number'
             },
             items: [{
-                href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy,
+                href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy,
                 text: prisonerNumber
             }]
         }), selectedFilterCategories) %}
@@ -155,7 +158,7 @@
                 text: 'Created by'
             },
             items: [{
-                href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&categoryCode=' + categoryCode + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=',
+                href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=',
                 text: ("Myself" if createdBy == user.username) +
                 ("All appointment creators" if createdBy == "all")
             }]
@@ -218,15 +221,15 @@
         }) }}
 
         {{ govukSelect({
-            id: "categoryCode",
-            name: "categoryCode",
+            id: "appointmentName",
+            name: "appointmentName",
             label: {
                 text: "Appointment name",
                 classes: "govuk-label--s"
             },
-            errorMessage: validationErrors | findError('categoryCode'),
-            items: categoryOptions,
-            value: formResponses.categoryCode or categoryCode
+            errorMessage: validationErrors | findError('appointmentName'),
+            items: appointmentNameOptions,
+            value: formResponses.appointmentName or appointmentName
         }) }}
 
         {{ govukSelect({
@@ -339,5 +342,5 @@
 {% endblock %}
 
 {% block meta %}
-    <meta name="autocompleteElements" content="categoryCode,locationId"/>
+    <meta name="autocompleteElements" content="appointmentName,locationId"/>
 {% endblock %}

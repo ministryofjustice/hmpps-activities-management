@@ -34,5 +34,5 @@ export default class AllocationDashboard extends Page {
 
   selectRiskLevelOption = (option: string) => cy.get('#riskLevelFilter').select(option)
 
-  applyFilters = () => cy.get('button').contains('Apply filters').click()
+  applyFilters = () => cy.get('#apply-filters').click()
 }
