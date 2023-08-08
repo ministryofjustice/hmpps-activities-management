@@ -10,13 +10,18 @@
 
     .govuk-form-group {
       flex: 0 0 calc(33.3% - 20px);
-      flex-grow: 1;
       padding: 0 10px;
 
       .govuk-label {
         @include govuk-media-query($from: tablet) {
           min-height: 75px;
         }
+      }
+    }
+
+    &--quarters {
+      .govuk-form-group {
+        flex: 0 0 calc(25% - 20px);
       }
     }
   }

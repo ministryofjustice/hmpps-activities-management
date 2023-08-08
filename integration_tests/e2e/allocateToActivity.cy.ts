@@ -11,6 +11,7 @@ import getPrisonerIepSummary from '../fixtures/incentivesApi/getPrisonerIepSumma
 import getActivity from '../fixtures/activitiesApi/getActivity.json'
 import getMdiPrisonPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import getCandidates from '../fixtures/activitiesApi/getCandidates.json'
+import getWaitlist from '../fixtures/activitiesApi/getWaitlist.json'
 import getCandidateSuitability from '../fixtures/activitiesApi/getCandidateSuitability.json'
 
 import IndexPage from '../pages/index'
@@ -41,6 +42,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
+    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', getWaitlist)
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('GET', '/api/offenders/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/iep/reviews/prisoner/A5015DY', getPrisonerIepSummary)
@@ -72,7 +74,7 @@ context('Allocate to activity', () => {
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
     allocatePage.activeTimeSlots().should('have.length', 1)
 
-    allocatePage.tabWithTitle('Candidates').click()
+    allocatePage.tabWithTitle('Other people').click()
     allocatePage.selectRiskLevelOption('Any Workplace Risk Assessment')
     allocatePage.applyFilters()
     allocatePage.candidateRows().should('have.length', 10)

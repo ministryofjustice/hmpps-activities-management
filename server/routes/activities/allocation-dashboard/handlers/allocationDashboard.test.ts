@@ -7,7 +7,12 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashboard'
 import atLeast from '../../../../../jest.setup'
-import { Activity, Allocation, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
+import {
+  Activity,
+  Allocation,
+  PrisonerAllocations,
+  WaitingListApplication,
+} from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
@@ -99,6 +104,16 @@ describe('Route Handlers - Allocation dashboard', () => {
             releaseDate: '2023-12-26',
           },
         ] as Prisoner[])
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(atLeast(['A0013DZ']))
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'A0013DZ',
+            firstName: 'RODNEY',
+            lastName: 'REINDEER',
+            cellLocation: 'MDI-4-2-009',
+          },
+        ] as Prisoner[])
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith(atLeast(['ABC123', '321CBA']))
         .mockResolvedValue([
@@ -111,6 +126,17 @@ describe('Route Handlers - Allocation dashboard', () => {
           },
           {
             prisonerNumber: '321CBA',
+            allocations: [
+              { scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+              { scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
+            ],
+          },
+        ] as PrisonerAllocations[])
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith(atLeast(['A0013DZ']))
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'A0013DZ',
             allocations: [
               { scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
               { scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
@@ -130,6 +156,18 @@ describe('Route Handlers - Allocation dashboard', () => {
             },
           ],
         })
+      when(activitiesService.fetchActivityWaitlist)
+        .calledWith(atLeast(1))
+        .mockResolvedValue([
+          {
+            id: 1,
+            scheduleId: 1,
+            prisonerNumber: 'A0013DZ',
+            status: 'PENDING',
+            requestedDate: '2023-08-07',
+            requestedBy: 'Activities Management',
+          },
+        ] as WaitingListApplication[])
     })
 
     it('should render the correct view', async () => {
@@ -170,6 +208,23 @@ describe('Route Handlers - Allocation dashboard', () => {
             ],
             prisonerNumber: '321CBA',
             releaseDate: new Date(2023, 11, 26),
+          },
+        ],
+        waitlistedPrisoners: [
+          {
+            cellLocation: 'MDI-4-2-009',
+            name: 'RODNEY REINDEER',
+            otherAllocations: [
+              {
+                id: 2,
+                scheduleName: 'other schedule',
+              },
+            ],
+            prisonerNumber: 'A0013DZ',
+            requestDate: new Date(2023, 7, 7),
+            requestedBy: 'Activities Management',
+            status: 'PENDING',
+            waitlistApplicationId: 1,
           },
         ],
         pagedCandidates: {
