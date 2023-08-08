@@ -272,7 +272,6 @@
                     }
                 ] %}
                 {{ govukSelect({
-                    id: "employmentFilter",
                     name: "employmentFilter",
                     classes: "govuk-!-width-full",
                     label: {
@@ -309,7 +308,6 @@
                     }
                 ] %}
                 {{ govukSelect({
-                    id: "riskLevelFilter",
                     name: "riskLevelFilter",
                     classes: "govuk-!-width-full",
                     label: {
@@ -342,7 +340,6 @@
                     }
                 ), incentiveLevelOptions) %}
                 {{ govukSelect({
-                    name: "incentiveLevelFilter",
                     classes: "govuk-!-width-full",
                     label: {
                         text: "Showing people who have the following incentive level:"
@@ -373,7 +370,6 @@
                     }
                 ] %}
                 {{ govukSelect({
-                    id: "waitlistStatusFilter",
                     name: "waitlistStatusFilter",
                     classes: "govuk-!-width-full",
                     label: {
@@ -601,6 +597,7 @@
             </div>
 
             {{ govukButton({
+                id: 'apply-filters',
                 text: "Apply filters"
             }) }}
         </form>
