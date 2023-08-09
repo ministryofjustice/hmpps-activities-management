@@ -55,6 +55,7 @@ export default class DailyAttendanceRoutes {
         prisonerNumber: a.prisonerNumber,
         location: a.inmate.cellLocation,
         attendance: a.attendance,
+        status: a.inmate.status,
       }))
       .filter(
         a =>
