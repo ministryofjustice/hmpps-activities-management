@@ -174,14 +174,14 @@
                     html: showProfileLink({
                         name: attendee.name,
                         prisonerNumber: attendee.prisonerNumber,
-                        link: true,
+                        link: false if attendee.status == 'INACTIVE OUT' else true,
                         classes: 'hmpps-inline-block'
                     }),
                     classes: 'govuk-table_cell'
                 },
                 {
                     attributes: { id: 'cell-location-' + loop.index, "data-sort-value": attendee.location },
-                    text: attendee.location,
+                    html: renderLocation(attendee.location, attendee.status),
                     classes: 'govuk-table_cell'
                 },
                 {
@@ -268,3 +268,11 @@
         }) }}
     {% endif %}
 {% endmacro %}
+
+  {% macro renderLocation(location, status) %}
+     {% if (location == 'CSWAP' and status == 'ACTIVE OUT') or status == 'INACTIVE OUT' %}
+          --
+     {% else %}
+         {{ location }}
+     {% endif %}
+  {% endmacro %}

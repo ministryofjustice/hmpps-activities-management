@@ -117,7 +117,7 @@
                     }
                 },
                 {
-                    text: attendee.location,
+                    html: locationHtml(attendee.location, attendee.status),
                     attributes: {
                         "data-qa": "location"
                     }
@@ -247,3 +247,11 @@
         <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">{{ "View or edit" if attendance.editable else "View" }}</a>
     {% endif %}
 {% endmacro %}
+
+  {% macro locationHtml(location, status) %}
+             {% if location == 'CSWAP' and status == 'ACTIVE OUT'%}
+                  --
+             {% else %}
+                 {{ location }}
+             {% endif %}
+  {% endmacro %}
