@@ -2,12 +2,14 @@ import { addDays } from 'date-fns'
 import getRepeatGroupAppointmentDetails from '../../fixtures/activitiesApi/getRepeatGroupAppointmentDetails.json'
 import getRepeatGroupOccurrence2Details from '../../fixtures/activitiesApi/getRepeatGroupOccurrence2Details.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
+import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import Page from '../../pages/page'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
 import { formatDate } from '../../../server/utils/utils'
 import LocationPage from '../../pages/appointments/create-and-edit/locationPage'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
+import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
 const tomorrow = addDays(new Date(), 1)
 const nextWeek = addDays(new Date(), 7)
@@ -23,6 +25,16 @@ context('Edit appointment', () => {
     cy.stubEndpoint('GET', '/appointment-details/10', getRepeatGroupAppointmentDetails)
     cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getRepeatGroupOccurrence2Details)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI\\?date=${formatDate(tomorrow, 'yyyy-MM-dd')}`,
+      getScheduledEvents,
+    )
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI\\?date=${formatDate(nextWeek, 'yyyy-MM-dd')}`,
+      getScheduledEvents,
+    )
     cy.stubEndpoint('PATCH', '/appointment-occurrences/12')
 
     cy.visit('/appointments/10/occurrence/12')
@@ -63,6 +75,9 @@ context('Edit appointment', () => {
         dateAndTimePage.enterStartDate(tomorrow)
         dateAndTimePage.getButton('Update appointment').click()
 
+        const schedulePage = Page.verifyOnPage(SchedulePage)
+        schedulePage.continue()
+
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the date for this appointment")
       })
@@ -79,6 +94,9 @@ context('Edit appointment', () => {
         dateAndTimePage.selectStartTime(14, 30)
         dateAndTimePage.getButton('Update appointment').click()
 
+        const schedulePage = Page.verifyOnPage(SchedulePage)
+        schedulePage.continue()
+
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
       })
@@ -93,6 +111,9 @@ context('Edit appointment', () => {
         dateAndTimePage.assertEndTime(15, 30)
         dateAndTimePage.selectEndTime(17, 30)
         dateAndTimePage.getButton('Update appointment').click()
+
+        const schedulePage = Page.verifyOnPage(SchedulePage)
+        schedulePage.continue()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
@@ -109,6 +130,9 @@ context('Edit appointment', () => {
         dateAndTimePage.selectStartTime(16, 0)
         dateAndTimePage.selectEndTime(17, 30)
         dateAndTimePage.getButton('Update appointment').click()
+
+        const schedulePage = Page.verifyOnPage(SchedulePage)
+        schedulePage.continue()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the date and time for this appointment")

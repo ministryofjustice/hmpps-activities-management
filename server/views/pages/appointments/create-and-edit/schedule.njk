@@ -107,7 +107,7 @@
                         ), appointmentSummary) %}
                     {% endif %}
 
-                    {% if session.editAppointmentJourney.addPrisoners %}
+                    {% if session.editAppointmentJourney.addPrisoners | length %}
                         {% set appointmentSummary = (appointmentSummary.push({
                             key: {
                                 text: "Attendees you are adding"
@@ -129,13 +129,12 @@
                         }), appointmentSummary) %}
                     {% endif %}
 
-                    {% set showTime = (session.editAppointmentJourney.startTime and session.editAppointmentJourney.endTime) or
-                        (session.appointmentJourney.startTime and session.appointmentJourney.endTime) %}
+                    {% set showTime = (session.appointmentJourney.startTime and session.appointmentJourney.endTime) or
+                        (session.editAppointmentJourney.startTime and session.editAppointmentJourney.endTime) %}
 
                     {% set isDateTimeEditable = session.appointmentJourney.mode != AppointmentJourneyMode.EDIT or
                         session.editAppointmentJourney.startDate or
-                        session.editAppointmentJourney.startTime or
-                        session.editAppointmentJourney.endTime %}
+                        (session.editAppointmentJourney.startTime and session.editAppointmentJourney.endTime) %}
                     {% set appointmentSummary = (appointmentSummary.push(
                         {
                             key: {
