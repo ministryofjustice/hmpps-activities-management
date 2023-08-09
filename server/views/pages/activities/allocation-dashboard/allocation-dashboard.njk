@@ -361,6 +361,7 @@
                     }
                 ), incentiveLevelOptions) %}
                 {{ govukSelect({
+                    name: "incentiveLevelFilter",
                     classes: "govuk-!-width-full",
                     label: {
                         text: "Showing people who have the following incentive level:"
@@ -375,19 +376,19 @@
                         selected: filters.waitlistStatusFilter == 'Any'
                     },
                     {
-                        value: 'Approved',
+                        value: 'APPROVED',
                         text: 'Approved',
-                        selected: filters.waitlistStatusFilter == 'Approved'
+                        selected: filters.waitlistStatusFilter == 'APPROVED'
                     },
                     {
-                        value: 'Rejected',
-                        text: 'Rejected',
-                        selected: filters.waitlistStatusFilter == 'Rejected'
+                        value: 'DECLINED',
+                        text: 'Declined',
+                        selected: filters.waitlistStatusFilter == 'DECLINED'
                     },
                     {
-                        value: 'Pending',
+                        value: 'PENDING',
                         text: 'Pending',
-                        selected: filters.waitlistStatusFilter == 'Pending'
+                        selected: filters.waitlistStatusFilter == 'PENDING'
                     }
                 ] %}
                 {{ govukSelect({
@@ -411,7 +412,7 @@
         {% set currentAllocationsHtml %}
             <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <li><a href='/activities/allocation-dashboard/{{ allocation.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
+                    <li><a href='/activities/allocation-dashboard/{{ allocation.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName | escape }}</a></li>
                 {% else %}
                     <li>None</li>
                 {% endfor %}

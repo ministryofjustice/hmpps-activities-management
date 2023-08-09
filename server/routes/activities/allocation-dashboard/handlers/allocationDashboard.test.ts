@@ -112,6 +112,17 @@ describe('Route Handlers - Allocation dashboard', () => {
             firstName: 'RODNEY',
             lastName: 'REINDEER',
             cellLocation: 'MDI-4-2-009',
+            alerts: [
+              {
+                alertType: 'R',
+                alertCode: 'RME',
+              },
+            ],
+            currentIncentive: {
+              level: {
+                description: 'Standard',
+              },
+            },
           },
         ] as Prisoner[])
       when(activitiesService.getActivePrisonPrisonerAllocations)
@@ -225,6 +236,13 @@ describe('Route Handlers - Allocation dashboard', () => {
             requestedBy: 'Activities Management',
             status: 'PENDING',
             waitlistApplicationId: 1,
+            currentIncentive: 'Standard',
+            alerts: [
+              {
+                alertCode: 'RME',
+                alertType: 'R',
+              },
+            ],
           },
         ],
         pagedCandidates: {
