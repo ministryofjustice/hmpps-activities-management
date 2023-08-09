@@ -1,12 +1,11 @@
 import { Request, Response } from 'express'
-import { Expose, plainToInstance, Type } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 import { ValidateNested } from 'class-validator'
 import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
-import { convertToTitleCase, formatDate } from '../../../../utils/utils'
+import { convertToTitleCase } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import DateIsSameOrAfterOtherProperty from '../../../../validators/dateIsSameOrAfterOtherProperty'
 
 export class EndDate {
@@ -46,29 +45,7 @@ export default class EndDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    if (!req.session.allocateJourney.endDate) {
-      req.session.allocateJourney.endDate = req.body.endDate
-      res.redirectOrReturn('reason')
-    } else {
-      const { allocationId } = req.params
-      req.session.allocateJourney.endDate = req.body.endDate
-      const { prisonerNumber } = req.session.allocateJourney.inmate
-      const { scheduleId } = req.session.allocateJourney.activity
-      const { user } = res.locals
-      const prisonCode = user.activeCaseLoadId
-      const allocation = {
-        endDate: formatDate(
-          plainToInstance(SimpleDate, req.session.allocateJourney.endDate).toRichDate(),
-          'yyyy-MM-dd',
-        ),
-      } as AllocationUpdateRequest
-      await this.activitiesService.updateAllocation(prisonCode, +allocationId, allocation)
-      const successMessage = `We've updated the end date for this allocation`
-      res.redirectOrReturnWithSuccess(
-        `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
-        'Allocation updated',
-        successMessage,
-      )
-    }
+    req.session.allocateJourney.endDate = req.body.endDate
+    res.redirectOrReturn('reason')
   }
 }
