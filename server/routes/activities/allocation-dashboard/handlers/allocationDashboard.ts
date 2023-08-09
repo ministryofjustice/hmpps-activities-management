@@ -55,7 +55,7 @@ export default class AllocationDashboardRoutes {
       filters.employmentFilter = 'Not in work'
     }
 
-    const [currentlyAllocated, waitlistedPrisoners, pagedCandidates] = await Promise.all([
+    const [currentlyAllocated, { waitlistedPrisoners, waitlistSize }, pagedCandidates] = await Promise.all([
       this.getCurrentlyAllocated(+activityId, user),
       this.getWaitlistedPrisoners(+activityId, filters, user),
       this.getCandidates(+activityId, filters, +req.query.page, user),
@@ -65,6 +65,7 @@ export default class AllocationDashboardRoutes {
       schedule: activity.schedules[0],
       currentlyAllocated,
       waitlistedPrisoners,
+      waitlistSize,
       pagedCandidates,
       incentiveLevels,
       filters,
@@ -185,7 +186,7 @@ export default class AllocationDashboardRoutes {
       this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
     ])
 
-    return inmateDetails
+    const filteredWaitlist = inmateDetails
       .flatMap(inmate => {
         const thisWaitlist = waitlist.filter(a => a.prisonerNumber === inmate.prisonerNumber)
         const otherAllocations =
@@ -206,7 +207,7 @@ export default class AllocationDashboardRoutes {
             scheduleName: a.scheduleDescription,
           })),
           alerts: inmate.alerts.filter(a => a.alertType === 'R' && ['RLO', 'RME', 'RHI'].includes(a.alertCode)),
-          currentIncentive: inmate.currentIncentive.level.description,
+          currentIncentive: inmate.currentIncentive?.level?.description,
         }))
       })
       .filter(
@@ -235,6 +236,8 @@ export default class AllocationDashboardRoutes {
           filters.incentiveLevelFilter === 'All Incentive Levels' ||
           filters.incentiveLevelFilter === inmate.currentIncentive,
       )
+
+    return { waitlistedPrisoners: filteredWaitlist, waitlistSize: waitlist.length }
   }
 
   private getCandidates = async (scheduleId: number, filters: Filters, pageNumber: number, user: ServiceUser) => {

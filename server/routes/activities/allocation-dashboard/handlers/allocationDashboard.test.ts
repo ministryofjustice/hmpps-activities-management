@@ -221,6 +221,7 @@ describe('Route Handlers - Allocation dashboard', () => {
             releaseDate: new Date(2023, 11, 26),
           },
         ],
+        waitlistSize: 1,
         waitlistedPrisoners: [
           {
             cellLocation: 'MDI-4-2-009',
