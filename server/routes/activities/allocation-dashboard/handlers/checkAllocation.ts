@@ -42,6 +42,7 @@ export default class CheckAllocationRoutes {
       },
       startDate: simpleDateFromDate(new Date(allocation.startDate)),
       endDate: allocation.endDate ? simpleDateFromDate(new Date(allocation.endDate)) : undefined,
+      deallocationReason: allocation.plannedDeallocation?.plannedReason.code || undefined,
     }
 
     res.render('pages/activities/allocation-dashboard/check-answers', {
