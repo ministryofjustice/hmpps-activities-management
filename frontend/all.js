@@ -8,6 +8,7 @@ import Calendar from './spikes/calendar'
 import ListFilter from './components/list-filter/list-filter'
 import AppointmentEndDate from './components/appointment-end-date/end-date'
 import SelectAllLink from './components/select-all-link/select-all-link'
+import FormSpinner from './components/form-spinner/form-spinner'
 
 function initAll() {
   var $backLinks = document.querySelectorAll('[class*=js-backlink]')
@@ -54,6 +55,11 @@ function initAll() {
   nodeListForEach($selectAllLinks, function ($selectAllLink) {
     new SelectAllLink($selectAllLink)
   })
+
+  var $spinnerForms = document.querySelectorAll('[data-module="form-spinner"]')
+  nodeListForEach($spinnerForms, function ($spinnerForm) {
+    new FormSpinner($spinnerForm)
+  })
 }
 
 export {
@@ -67,4 +73,5 @@ export {
   ListFilter,
   AppointmentEndDate,
   SelectAllLink,
+  FormSpinner,
 }
