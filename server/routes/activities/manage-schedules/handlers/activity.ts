@@ -4,6 +4,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 import PrisonService from '../../../../services/prisonService'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
+import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { getTimeSlotFromTime } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
@@ -105,7 +106,7 @@ export default class ActivityRoutes {
     ])
 
     const richStartDate = plainToInstance(SimpleDate, req.session.createJourney.startDate).toRichDate()
-    const currentWeek = this.activitiesService.calcCurrentWeek(richStartDate, req.session.createJourney.scheduleWeeks)
+    const currentWeek = calcCurrentWeek(richStartDate, req.session.createJourney.scheduleWeeks)
 
     res.render('pages/activities/manage-schedules/view-activity', {
       activity,

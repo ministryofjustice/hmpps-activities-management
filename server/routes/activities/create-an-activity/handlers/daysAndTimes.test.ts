@@ -2,14 +2,12 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays } from 'date-fns'
-import { when } from 'jest-when'
 import { NextFunction } from 'express-serve-static-core'
 import createHttpError from 'http-errors'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import DaysAndTimesRoutes, { DaysAndTimes } from './daysAndTimes'
 import ActivitiesService from '../../../../services/activitiesService'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
-import atLeast from '../../../../../jest.setup'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -53,10 +51,6 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
     it('should render the expected view if week number is valid', async () => {
       req.session.createJourney.scheduleWeeks = 1
       req.params.weekNumber = '1'
-
-      when(activitiesService.calcCurrentWeek)
-        .calledWith(atLeast(expect.any(Date)))
-        .defaultReturnValue(null)
 
       await handler.GET(req, res, next)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/days-and-times', {

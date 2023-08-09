@@ -66,6 +66,8 @@ describe('Route Handlers - Allocation dashboard', () => {
     minimumEducationLevel: [],
   } as unknown as Activity
 
+  const tomorrow = addDays(today, 1)
+
   beforeEach(() => {
     res = {
       locals: {
@@ -81,6 +83,13 @@ describe('Route Handlers - Allocation dashboard', () => {
         page: 0,
       },
     } as unknown as Request
+
+    when(activitiesService.getActivity)
+      .calledWith(atLeast(1))
+      .mockResolvedValueOnce({
+        ...mockActivity,
+        startDate: toDateString(tomorrow),
+      })
   })
 
   afterEach(() => jest.resetAllMocks())
@@ -242,6 +251,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           ],
         },
         scheduleWeeks: 1,
+        currentWeek: 1,
         currentlyAllocated: [
           {
             allocationId: 1,
@@ -382,15 +392,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should calculate suitable workplace risk assessment correctly - HIGH', async () => {
-      const tomorrow = addDays(today, 1)
       req.params = { activityId: '1' }
-      activitiesService.getActivity = jest.fn()
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValueOnce({
-          ...mockActivity,
-          startDate: toDateString(tomorrow),
-        })
 
       await handler.GET(req, res)
 
@@ -403,17 +405,8 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with risk level filter set to any', async () => {
-      const tomorrow = addDays(today, 1)
-
       req.params = { activityId: '1' }
       req.query.riskLevelFilter = 'Any Workplace Risk Assessment'
-
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValueOnce({
-          ...mockActivity,
-          startDate: toDateString(tomorrow),
-        })
 
       await handler.GET(req, res)
 
@@ -437,17 +430,8 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with risk level filter set to none', async () => {
-      const tomorrow = addDays(today, 1)
-
       req.params = { activityId: '1' }
       req.query.riskLevelFilter = 'No Workplace Risk Assessment'
-
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValueOnce({
-          ...mockActivity,
-          startDate: toDateString(tomorrow),
-        })
 
       await handler.GET(req, res)
 
@@ -471,17 +455,8 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with employment filter set to In work', async () => {
-      const tomorrow = addDays(today, 1)
-
       req.params = { activityId: '1' }
       req.query.employmentFilter = 'In work'
-
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValueOnce({
-          ...mockActivity,
-          startDate: toDateString(tomorrow),
-        })
 
       await handler.GET(req, res)
 
@@ -505,17 +480,8 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with employment filter set to Everyone', async () => {
-      const tomorrow = addDays(today, 1)
-
       req.params = { activityId: '1' }
       req.query.employmentFilter = 'Everyone'
-
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValueOnce({
-          ...mockActivity,
-          startDate: toDateString(tomorrow),
-        })
 
       await handler.GET(req, res)
 
@@ -539,17 +505,8 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with employment filter set to Not in work', async () => {
-      const tomorrow = addDays(today, 1)
-
       req.params = { activityId: '1' }
       req.query.employmentFilter = 'Not in work'
-
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValueOnce({
-          ...mockActivity,
-          startDate: toDateString(tomorrow),
-        })
 
       await handler.GET(req, res)
 
@@ -573,18 +530,8 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should return correct candidates with search string given', async () => {
-      const tomorrow = addDays(today, 1)
-
       req.params = { activityId: '1' }
-
       req.query.candidateQuery = 'joe'
-
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValueOnce({
-          ...mockActivity,
-          startDate: toDateString(tomorrow),
-        })
 
       await handler.GET(req, res)
 

@@ -11,6 +11,7 @@ import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/typ
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
+import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 
 type Filters = {
@@ -98,7 +99,7 @@ export default class AllocationDashboardRoutes {
       suitableForIep,
       suitableForWra,
       dailySlots: activitySessionToDailyTimeSlots(activity.schedules[0].scheduleWeeks, slots),
-      currentWeek: this.activitiesService.calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks),
+      currentWeek: calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks),
       scheduleWeeks: activity.schedules[0].scheduleWeeks,
     })
   }
