@@ -162,6 +162,7 @@ export default class AllocationDashboardRoutes {
         releaseDate: parseDate(inmate.releaseDate),
         startDate: parseDate(thisAllocation.startDate),
         endDate: parseDate(thisAllocation.endDate),
+        status: thisAllocation.status,
         otherAllocations: otherAllocations?.map(a => ({
           id: a.scheduleId,
           scheduleName: a.scheduleDescription,

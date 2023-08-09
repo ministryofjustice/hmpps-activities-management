@@ -162,27 +162,48 @@
             </ul>
         {% endset %}
 
+        {% set currentlyAllocatedHtml %}
+            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                <a href= '{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
+                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer"> {{ row.name | toTitleCase }}
+                </a>
+            </h2>
+                <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.prisonerNumber }} </div>
+            {% if row.cellLocation == 'CSWAP' %}
+                <div class="govuk-hint govuk-!-margin-bottom-1"> -- </div>
+            {% else %}
+                <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.cellLocation }}</div>
+            {% endif %}
+        {% endset%}
+
+        {% set suspendedTagHtml %}
+
+            {% if row.status == 'SUSPENDED'%}
+                {{ govukTag({
+                    text: "Suspended",
+                    classes: "govuk-tag--red"
+                }) }}
+            {% endif %}
+         <div>
+                {{ row.startDate | formatDate('d MMMM yyyy') + (' to ' + row.endDate | formatDate('d MMMM yyyy') if row.endDate) }}
+         </div>
+        {% endset %}
+
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + row.name | toTitleCase,
             value: row.prisonerNumber,
             selectable: true,
             items: [
                 {
-                    html: '
-                        <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                            <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
-                               class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase + '
-                            </a>
-                        </h2>
-                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
-                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
-                    ',
+                    html: currentlyAllocatedHtml,
                     attributes: {
                         "data-sort-value": row.name
                     }
                 },
                 {
-                    text: row.startDate | formatDate('d MMMM yyyy') + (' to ' + row.endDate | formatDate('d MMMM yyyy') if row.endDate)
+
+                    html: suspendedTagHtml
+
                 },
                 {
                     html: otherAllocationsHtml
@@ -377,21 +398,26 @@
                 {% endfor %}
             </ul>
         {% endset %}
+        {% set candidatesHtml %}
+               <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                   <a href='{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
+                      class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer"> {{ row.name | toTitleCase }}
+                   </a>
+               </h2>
+                   <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.prisonerNumber }}</div>
+                   {% if row.cellLocation == 'CSWAP' %}
+                        <div class="govuk-hint govuk-!-margin-bottom-1"> --- </div>
+                   {% else %}
+                        <div class="govuk-hint govuk-!-margin-bottom-1">{{ row.cellLocation }}</div>
+                   {% endif %}
+        {% endset %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + row.name | toTitleCase,
             value: row.prisonerNumber,
             selectable: true,
             items: [
                 {
-                    html: '
-                        <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                            <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
-                               class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase + '
-                            </a>
-                        </h2>
-                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
-                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
-                    ',
+                    html: candidatesHtml,
                     attributes: {
                         "data-sort-value": row.name
                     }
