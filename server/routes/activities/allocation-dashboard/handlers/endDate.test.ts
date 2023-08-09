@@ -106,7 +106,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
   })
 
   describe('POST', () => {
-    it('should save entered end date in session and redirect to the allocation dashboard page', async () => {
+    it('should save entered end date in session and redirect to the reason page', async () => {
       const today = new Date()
       const endDate = simpleDateFromDate(today)
 
@@ -120,11 +120,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/activities/allocation-dashboard/1/check-allocation/ABC123',
-        'Allocation updated',
-        "We've updated the end date for this allocation",
-      )
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
     })
   })
 
