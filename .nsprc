@@ -1,12 +1,2 @@
 {
-  "1092778": {
-    "active": true,
-    "notes": "Awaiting fix in latest @cypress/request version",
-    "expiry": 1693518240000
-  },
-  "1092470": {
-    "active": true,
-    "notes": "Awaiting fix in latest @cypress/request version",
-    "expiry": 1693518240000
-  }
 }
