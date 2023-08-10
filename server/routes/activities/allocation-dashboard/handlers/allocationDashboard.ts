@@ -19,6 +19,7 @@ type Filters = {
   incentiveLevelFilter: string
   riskLevelFilter: string
   employmentFilter: string
+  waitlistStatusFilter: string
 }
 
 export class SelectedAllocation {
@@ -58,9 +59,9 @@ export default class AllocationDashboardRoutes {
       filters.employmentFilter = 'Not in work'
     }
 
-    const [currentlyAllocated, waitlistedPrisoners, pagedCandidates] = await Promise.all([
+    const [currentlyAllocated, { waitlistedPrisoners, waitlistSize }, pagedCandidates] = await Promise.all([
       this.getCurrentlyAllocated(+activityId, user),
-      this.getWaitlistedPrisoners(+activityId, user),
+      this.getWaitlistedPrisoners(+activityId, filters, user),
       this.getCandidates(+activityId, filters, +req.query.page, user),
     ])
 
@@ -93,6 +94,7 @@ export default class AllocationDashboardRoutes {
       schedule: activity.schedules[0],
       currentlyAllocated,
       waitlistedPrisoners,
+      waitlistSize,
       pagedCandidates,
       incentiveLevels,
       filters,
@@ -205,11 +207,10 @@ export default class AllocationDashboardRoutes {
     })
   }
 
-  private getWaitlistedPrisoners = async (scheduleId: number, user: ServiceUser) => {
+  private getWaitlistedPrisoners = async (scheduleId: number, filters: Filters, user: ServiceUser) => {
     const waitlist = await this.activitiesService
       .fetchActivityWaitlist(scheduleId, user)
       .then(a => a.filter(w => w.status === 'PENDING' || w.status === 'APPROVED' || w.status === 'DECLINED'))
-      .then(a => a.filter(w => !w.allocationId))
 
     const prisonerNumbers = waitlist.map(application => application.prisonerNumber)
     const [inmateDetails, prisonerAllocations]: [Prisoner[], PrisonerAllocations[]] = await Promise.all([
@@ -217,28 +218,58 @@ export default class AllocationDashboardRoutes {
       this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
     ])
 
-    return inmateDetails.flatMap(inmate => {
-      const thisWaitlist = waitlist.filter(a => a.prisonerNumber === inmate.prisonerNumber)
-      let otherAllocations: Allocation[] = []
-      if (prisonerAllocations.length > 0) {
-        otherAllocations = prisonerAllocations
-          .find(a => a.prisonerNumber === inmate.prisonerNumber)
-          ?.allocations.filter(a => a.scheduleId !== scheduleId)
-      }
-      return thisWaitlist.map(w => ({
-        waitlistApplicationId: w.id,
-        name: `${inmate.firstName} ${inmate.lastName}`,
-        prisonerNumber: inmate.prisonerNumber,
-        cellLocation: inmate.cellLocation,
-        requestDate: parseDate(w.requestedDate),
-        requestedBy: w.requestedBy,
-        status: w.status,
-        otherAllocations: otherAllocations?.map(a => ({
-          id: a.scheduleId,
-          scheduleName: a.scheduleDescription,
-        })),
-      }))
-    })
+    const filteredWaitlist = inmateDetails
+      .flatMap(inmate => {
+        const thisWaitlist = waitlist.filter(a => a.prisonerNumber === inmate.prisonerNumber)
+        const otherAllocations =
+          prisonerAllocations
+            .find(a => a.prisonerNumber === inmate.prisonerNumber)
+            ?.allocations.filter(a => a.scheduleId !== scheduleId) || []
+
+        return thisWaitlist.map(w => ({
+          waitlistApplicationId: w.id,
+          name: `${inmate.firstName} ${inmate.lastName}`,
+          prisonerNumber: inmate.prisonerNumber,
+          cellLocation: inmate.cellLocation,
+          requestDate: parseDate(w.requestedDate),
+          requestedBy: w.requestedBy,
+          status: w.status,
+          otherAllocations: otherAllocations?.map(a => ({
+            id: a.scheduleId,
+            scheduleName: a.scheduleDescription,
+          })),
+          alerts: inmate.alerts.filter(a => a.alertType === 'R' && ['RLO', 'RME', 'RHI'].includes(a.alertCode)),
+          currentIncentive: inmate.currentIncentive?.level?.description,
+        }))
+      })
+      .filter(
+        inmate =>
+          !filters.waitlistStatusFilter ||
+          filters.waitlistStatusFilter === 'Any' ||
+          inmate.status === filters.waitlistStatusFilter,
+      )
+      .filter(
+        inmate =>
+          !filters.employmentFilter ||
+          filters.employmentFilter === 'Everyone' ||
+          (inmate.otherAllocations.length > 0 && filters.employmentFilter === 'In work') ||
+          (inmate.otherAllocations.length === 0 && filters.employmentFilter === 'Not in work'),
+      )
+      .filter(
+        inmate =>
+          !filters.riskLevelFilter ||
+          filters.riskLevelFilter === 'Any Workplace Risk Assessment' ||
+          (filters.riskLevelFilter === 'No Workplace Risk Assessment' && inmate.alerts.length === 0) ||
+          this.getSuitableRiskLevelCodes(filters).includes(inmate.alerts.map(a => a.alertCode)[0]),
+      )
+      .filter(
+        inmate =>
+          !filters.incentiveLevelFilter ||
+          filters.incentiveLevelFilter === 'All Incentive Levels' ||
+          filters.incentiveLevelFilter === inmate.currentIncentive,
+      )
+
+    return { waitlistedPrisoners: filteredWaitlist, waitlistSize: waitlist.length }
   }
 
   private getCandidates = async (scheduleId: number, filters: Filters, pageNumber: number, user: ServiceUser) => {
