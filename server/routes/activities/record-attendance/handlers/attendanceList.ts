@@ -57,6 +57,7 @@ export default class AttendanceListRoutes {
               category: i.category,
               otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
               attendance: instance.attendances.find(a => a.prisonerNumber === i.prisonerNumber),
+              status: i.status,
             })),
           )
         : []
