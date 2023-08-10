@@ -249,7 +249,7 @@
             <h1 class="govuk-heading-l">Check and confirm the appointment details</h1>
             <h2 class="govuk-heading-m">Appointment details</h2>
 
-            <form method="POST">
+            <form method="POST" data-module="form-spinner">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ govukSummaryList({
