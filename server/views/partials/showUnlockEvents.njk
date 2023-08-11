@@ -45,10 +45,10 @@
 
 {% macro locationText(e) %}
     {% if e.inCell %}
-        In cell 
+        In cell
     {% elseif e.onWing %}
         On wing
     {% else %}
-        {{ e.internalLocationDescription | trim | title }}
+        {{ e.internalLocationDescription | trim }}
     {% endif %}
 {% endmacro %}

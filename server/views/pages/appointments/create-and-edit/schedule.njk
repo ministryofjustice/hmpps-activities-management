@@ -316,7 +316,7 @@
         {% elseif scheduledEvent.onWing %}
             On wing
         {% elseif scheduledEvent.internalLocationDescription %}
-            {{ scheduledEvent.internalLocationDescription | trim | title }}
+            {{ scheduledEvent.internalLocationDescription | trim }}
         {% endif %}
     {% endif %}
 {% endmacro %}
