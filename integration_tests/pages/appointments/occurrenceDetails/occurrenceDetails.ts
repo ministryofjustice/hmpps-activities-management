@@ -1,5 +1,5 @@
+import { format } from 'date-fns'
 import Page from '../../page'
-import { formatDate } from '../../../../server/utils/utils'
 
 export default class OccurrenceDetailsPage extends Page {
   constructor() {
@@ -29,8 +29,7 @@ export default class OccurrenceDetailsPage extends Page {
 
   assertLocation = (location: string) => this.assertAppointmentDetail('Location', location)
 
-  assertStartDate = (startDate: Date) =>
-    this.assertAppointmentDetail('Date', formatDate(startDate, 'EEEE, d MMMM yyyy'))
+  assertStartDate = (startDate: Date) => this.assertAppointmentDetail('Date', format(startDate, 'EEEE, d MMMM yyyy'))
 
   assertStartTime = (hour: number, minute: number) =>
     this.assertAppointmentDetail('Start time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)

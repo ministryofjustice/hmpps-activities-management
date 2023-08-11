@@ -36,7 +36,7 @@ export default class DeallocationReasonRoutes {
       reasonCode: deallocationReason,
     } as AllocationUpdateRequest
     await this.activitiesService.updateAllocation(prisonCode, +allocationId, allocation)
-    const successMessage = `We've updated the end date for this allocation`
+    const successMessage = `We've updated the reason for ending this allocation`
 
     res.redirectOrReturnWithSuccess(
       `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,

@@ -26,7 +26,7 @@ export default class CheckAnswersRoutes {
     const flatPay = req.session.createJourney.flat
     res.render(`pages/activities/create-an-activity/check-answers`, {
       incentiveLevelPays,
-      dailySlots: activitySessionToDailyTimeSlots(createJourney),
+      dailySlots: activitySessionToDailyTimeSlots(createJourney.scheduleWeeks, createJourney.slots),
       startDate,
       endDate,
       flatPay,
