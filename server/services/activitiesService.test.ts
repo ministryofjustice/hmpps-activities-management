@@ -49,6 +49,7 @@ import { AppointmentType } from '../routes/appointments/create-and-edit/appointm
 import { AppointmentApplyTo } from '../@types/appointments'
 import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
 import SimpleDate from '../commonValidationTypes/simpleDate'
+import calcCurrentWeek from '../utils/helpers/currentWeekCalculator'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -677,7 +678,7 @@ describe('Activities Service', () => {
     const tomorrow = addDays(today, 1)
 
     it("shouldn't calculate a current week for activities in the future", async () => {
-      const currentWeek = activitiesService.calcCurrentWeek(tomorrow, 2)
+      const currentWeek = calcCurrentWeek(tomorrow, 2)
       expect(currentWeek).toBeNull()
     })
 
@@ -689,7 +690,7 @@ describe('Activities Service', () => {
     ])(
       `should calculate current week correctly for multi-week schedule (start date: %s)`,
       async (startDate, expectedCurrentWeek) => {
-        const currentWeeks = activitiesService.calcCurrentWeek(startDate, 2)
+        const currentWeeks = calcCurrentWeek(startDate, 2)
         expect(currentWeeks).toEqual(expectedCurrentWeek)
       },
     )
@@ -702,7 +703,7 @@ describe('Activities Service', () => {
     ])(
       `should always calculate current week as 1 for single-week schedule (start date: %s)`,
       async (startDate, expectedCurrentWeek) => {
-        const currentWeeks = activitiesService.calcCurrentWeek(startDate, 1)
+        const currentWeeks = calcCurrentWeek(startDate, 1)
         expect(currentWeeks).toEqual(expectedCurrentWeek)
       },
     )

@@ -101,7 +101,10 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         ],
         endDate: '18th January 2023',
         startDate: '17th January 2023',
-        dailySlots: activitySessionToDailyTimeSlots(req.session.createJourney),
+        dailySlots: activitySessionToDailyTimeSlots(
+          req.session.createJourney.scheduleWeeks,
+          req.session.createJourney.slots,
+        ),
       })
     })
   })

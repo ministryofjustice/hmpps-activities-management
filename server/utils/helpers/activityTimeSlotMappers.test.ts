@@ -18,7 +18,7 @@ describe('Activity session slots to daily time slots mapper', () => {
       },
     }
 
-    const scheduleTimes = activitySessionToDailyTimeSlots(createJourney)
+    const scheduleTimes = activitySessionToDailyTimeSlots(createJourney.scheduleWeeks, createJourney.slots)
 
     expect(scheduleTimes).toEqual({
       '1': [

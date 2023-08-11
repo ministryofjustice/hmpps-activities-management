@@ -52,9 +52,6 @@ describe('Route Handlers - View Activity', () => {
   } as unknown as Activity
 
   when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValueOnce(mockActivity)
-  when(activitiesService.calcCurrentWeek)
-    .calledWith(atLeast(expect.any(Date)))
-    .defaultReturnValue(1)
 
   when(activitiesService.getDefaultScheduleOfActivity).mockResolvedValue(
     activitySchedule as unknown as ActivityScheduleLite,

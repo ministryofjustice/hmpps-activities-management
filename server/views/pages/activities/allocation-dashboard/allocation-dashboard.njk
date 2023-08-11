@@ -715,44 +715,44 @@
 {% endset %}
 
 {% set scheduleHtml %}
-    {% set rows = [] %}
-
-    {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
-        {% set columns = [
-            {
-                text: day
-            }
-        ] %}
-
-        {% for timeSlot in ['am', 'pm', 'ed'] %}
-            {% set slotMatches = false %}
-            {% for slot in schedule.slots %}
-                {% set dayMatchesSlot = day | startsWithAny(slot.daysOfWeek) %}
-                {% set slotMatches = dayMatchesSlot and (slotMatches or slot.startTime | getTimeSlotFromTime == timeSlot) %}
-            {% endfor %}
-
-            {% set columns = (columns.push(
+  <p>This schedule {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
+    {% for week, slots in dailySlots %}
+        {% set rows = [] %}
+         <h2 class="govuk-heading-m">Week {{week}}</h2>
+         {{ govukTag({
+           text: "Current week", classes: 'govuk-tag--small govuk-tag--green'
+         }) if scheduleWeeks > 1 and currentWeek == week }}
+        {% for day in slots %}
+            {% set columns = [
                 {
-                    html: govukTag({
-                        text: "Yes" if slotMatches else "No",
-                        classes: "govuk-tag--grey" if not slotMatches
-                    })
+                    text: day.day,
+                    classes: 'govuk-!-width-one-quarter'
                 }
-            ), columns) %}
+            ] %}
+            {% for timeSlot in ['am', 'pm', 'ed'] %}
+                {% set slotMatches = false %}
+
+                {% for slot in day.slots %}
+                    {% set slotMatches = (slot == timeSlot) %}
+                {% endfor %}
+
+                {% set columns = (columns.push(
+                    {
+                        html: govukTag({
+                            text: "Yes" if slotMatches else "No",
+                            classes: "govuk-tag--grey" if not slotMatches
+                        })
+                    }
+                ), columns) %}
+            {% endfor %}
+            {% set rows = (rows.push(columns), rows) %}
         {% endfor %}
-
-        {% set rows = (rows.push(columns), rows) %}
+        {{ govukTable({
+            caption: "Schedule",
+            captionClasses: "govuk-visually-hidden",
+            head: [ { text: "Days" }, { text: "AM" }, { text: "PM" }, { text: "ED" } ],
+            rows: rows,
+            classes: "govuk-!-margin-bottom-6"
+        }) }}
     {% endfor %}
-
-    <p>Check the activity schedule is compatible with any current allocations. 
-    You can check individual schedules using the <a href="{{ dpsUrl }}/prisoner-search?keywords=&location={{ user.activeCaseLoad.caseLoadId }}") }}
-                                                    target='_blank' class='govuk-link--no-visited-state'>prisoner profile</a></p>
-    <p>This schedule {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
-
-    {{ govukTable({
-        caption: "Schedule",
-        captionClasses: "govuk-visually-hidden",
-        head: [ { text: "Days" }, { text: "AM" }, { text: "PM" }, { text: "ED" } ],
-        rows: rows
-    }) }}
 {% endset %}
