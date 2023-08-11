@@ -30,7 +30,7 @@ describe('Route Handlers - applyFilters', () => {
       req.body = {
         categoryFilters: ['Prison Jobs'],
         activityFilters: ['Activity One'],
-        searchTerm: 'search',
+        searchTerm: ['search'],
       }
       await handler.APPLY(req, res)
 
@@ -45,7 +45,7 @@ describe('Route Handlers - applyFilters', () => {
       req.body = {
         categoryFilters: [],
         activityFilters: [],
-        searchTerm: '',
+        searchTerm: [''],
       }
       await handler.APPLY(req, res)
 
@@ -63,7 +63,7 @@ describe('Route Handlers - applyFilters', () => {
       expect(req.session.attendanceSummaryJourney).toStrictEqual({
         categoryFilters: ['Original category'],
         activityFilters: ['Original Activity'],
-        searchTerm: 'Original search',
+        searchTerm: '',
       })
     })
   })

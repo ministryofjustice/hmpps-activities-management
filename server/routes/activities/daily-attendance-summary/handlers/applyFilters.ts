@@ -9,14 +9,20 @@ export class Filters {
   @Expose()
   @Transform(({ value }) => (value ? [value].flat() : undefined)) // Transform to an array if only one value is provided
   activityFilters?: string[]
-
-  @Expose()
-  searchTerm?: string
 }
 
 export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
-    const { categoryFilters, activityFilters, searchTerm } = req.body
+    const { categoryFilters, activityFilters } = req.body
+    const searchTermArray = req.body.searchTerm
+    let nonEmptySearchTerm = ``
+    if (searchTermArray) {
+      searchTermArray.forEach((search: string) => {
+        if (search.trim() !== '') {
+          nonEmptySearchTerm = search
+        }
+      })
+    }
 
     if (categoryFilters) {
       req.session.attendanceSummaryJourney.categoryFilters = categoryFilters
@@ -26,8 +32,8 @@ export default class ApplyFiltersRoutes {
       req.session.attendanceSummaryJourney.activityFilters = activityFilters
     }
 
-    if (searchTerm || searchTerm === '') {
-      req.session.attendanceSummaryJourney.searchTerm = searchTerm
+    if (nonEmptySearchTerm || nonEmptySearchTerm === '') {
+      req.session.attendanceSummaryJourney.searchTerm = nonEmptySearchTerm
     }
 
     res.redirect('back')
