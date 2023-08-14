@@ -17,10 +17,11 @@ export default class DeallocationReasonRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { allocationId } = req.params
 
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
 
-    res.render('pages/activities/allocation-dashboard/deallocation-reason', { deallocationReasons })
+    res.render('pages/activities/allocation-dashboard/deallocation-reason', { deallocationReasons, allocationId })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

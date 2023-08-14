@@ -50,6 +50,7 @@ describe('Route Handlers - Deallocation reason', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/deallocation-reason', {
         deallocationReasons: [{ code: 'OTHER', description: 'OTHER' }],
+        allocationId: 1,
       })
     })
   })
