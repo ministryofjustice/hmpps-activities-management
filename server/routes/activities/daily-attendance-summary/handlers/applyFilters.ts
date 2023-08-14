@@ -9,13 +9,16 @@ export class Filters {
   @Expose()
   @Transform(({ value }) => (value ? [value].flat() : undefined)) // Transform to an array if only one value is provided
   activityFilters?: string[]
+
+  @Expose()
+  searchTerm?: string[]
 }
 
 export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
     const { categoryFilters, activityFilters } = req.body
     const searchTermArray = req.body.searchTerm
-    let nonEmptySearchTerm = ``
+    let nonEmptySearchTerm = ''
     if (searchTermArray) {
       searchTermArray.forEach((search: string) => {
         if (search.trim() !== '') {

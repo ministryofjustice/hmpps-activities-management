@@ -75,5 +75,5 @@ export default class DailyAttendanceRoutes {
   }
 
   private includesSearchTerm = (propertyValue: string, searchTerm: string) =>
-    !searchTerm || searchTerm === undefined || propertyValue.toLowerCase().includes(searchTerm.toLowerCase())
+    !searchTerm || propertyValue.toLowerCase().includes(searchTerm.toLowerCase())
 }
