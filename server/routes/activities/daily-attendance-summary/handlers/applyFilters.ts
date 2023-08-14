@@ -11,7 +11,8 @@ export class Filters {
   activityFilters?: string[]
 
   @Expose()
-  searchTerm?: string[]
+  @Transform(({ value }) => (value ? [value].flat().map(v => v.trim()).find(v !== '') : undefined)) 
+  searchTerm?: string
 }
 
 export default class ApplyFiltersRoutes {
