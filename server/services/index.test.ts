@@ -4,6 +4,7 @@ import PrisonService from './prisonService'
 import BankHolidayService from './bankHolidayService'
 import ActivitiesService from './activitiesService'
 import UnlockListService from './unlockListService'
+import AppInsightsService from './AppInsightsService'
 
 describe('Services', () => {
   test('The correct services are instantiated', () => {
@@ -15,5 +16,6 @@ describe('Services', () => {
     expect(servicesList.ukBankHolidayService).toBeInstanceOf(BankHolidayService)
     expect(servicesList.activitiesService).toBeInstanceOf(ActivitiesService)
     expect(servicesList.unlockListService).toBeInstanceOf(UnlockListService)
+    expect(servicesList.appInsightsClient).toBeInstanceOf(AppInsightsService)
   })
 })
