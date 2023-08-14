@@ -11,13 +11,20 @@ export class Filters {
   activityFilters?: string[]
 
   @Expose()
-  @Transform(({ value }) => (value ? [value].flat().map(v => v.trim()).find(v !== '') : undefined)) 
+  @Transform(({ value }) =>
+    value
+      ? [value]
+          .flat()
+          .map(v => v.trim())
+          .find(v => v !== '')
+      : undefined,
+  )
   searchTerm?: string
 }
 
 export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
-    const { categoryFilters, activityFilters } = req.body
+    const { categoryFilters, activityFilters, searchTerm } = req.body
 
     if (categoryFilters) {
       req.session.attendanceSummaryJourney.categoryFilters = categoryFilters
@@ -27,8 +34,8 @@ export default class ApplyFiltersRoutes {
       req.session.attendanceSummaryJourney.activityFilters = activityFilters
     }
 
-    if (nonEmptySearchTerm || nonEmptySearchTerm === '') {
-      req.session.attendanceSummaryJourney.searchTerm = nonEmptySearchTerm
+    if (searchTerm || searchTerm === '') {
+      req.session.attendanceSummaryJourney.searchTerm = searchTerm
     }
 
     res.redirect('back')
