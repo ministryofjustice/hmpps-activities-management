@@ -35,8 +35,7 @@ export default class DailyAttendanceRoutes {
     req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
     req.session.attendanceSummaryJourney.activityFilters ??= uniqueActivities
 
-    const { categoryFilters, activityFilters } = req.session.attendanceSummaryJourney
-    const { searchTerm } = req.session.attendanceSummaryJourney
+    const { categoryFilters, activityFilters, searchTerm } = req.session.attendanceSummaryJourney
 
     const attendancesMatchingFilter = attendancesForStatus.filter(
       a => categoryFilters.includes(a.categoryName) && activityFilters.includes(a.activitySummary),
