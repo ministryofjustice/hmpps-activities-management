@@ -9,7 +9,7 @@ describe('Services', () => {
   test('The correct services are instantiated', () => {
     const servicesList = services()
 
-    expect(Object.values(servicesList).length).toBe(5)
+    expect(Object.values(servicesList).length).toBe(6)
     expect(servicesList.userService).toBeInstanceOf(UserService)
     expect(servicesList.prisonService).toBeInstanceOf(PrisonService)
     expect(servicesList.ukBankHolidayService).toBeInstanceOf(BankHolidayService)
