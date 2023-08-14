@@ -57,19 +57,27 @@
                     },
                     {
                         attributes: {
-                            id: 'percentage-allocated-total',
-                            "data-sort-fixed": "bottom"
-                        },
-                        classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
-                        text: total.percentageAllocated + '%'
-                    },
-                    {
-                        attributes: {
                             id: 'vacancies-total',
                             "data-sort-fixed": "bottom"
                         },
                         classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
                         text: total.vacancies
+                    },
+                    {
+                        attributes: {
+                            id: 'waitlist-total',
+                            "data-sort-fixed": "bottom"
+                        },
+                        classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
+                        text: total.waitlisted
+                    },
+                    {
+                        attributes: {
+                            id: 'percentage-allocated-total',
+                            "data-sort-fixed": "bottom"
+                        },
+                        classes: 'govuk-table__cell--numeric govuk-!-font-weight-bold',
+                        text: total.percentageAllocated + '%'
                     }
                 ]
             ] %}
@@ -112,14 +120,6 @@
                     },
                     {
                         attributes: {
-                            id: 'percentage-allocated-' + loop.index,
-                            "data-sort-value": activity.allocationSummary.percentageAllocated
-                        },
-                        classes: 'govuk-table__cell--numeric',
-                        text: activity.allocationSummary.percentageAllocated + '%'
-                    },
-                    {
-                        attributes: {
                             id: 'vacancies-' + loop.index,
                             "data-sort-value": activity.allocationSummary.vacancies
                         },
@@ -127,6 +127,22 @@
                         html: '
                                 <span class="govuk-tag govuk-tag--' + ('green' if activity.allocationSummary.vacancies <= 0 else 'red') + '">' + activity.allocationSummary.vacancies + '</span>
                               '
+                    },
+                    {
+                        attributes: {
+                            id: 'waitlist-' + loop.index,
+                            "data-sort-value": activity.allocationSummary.waitlisted
+                        },
+                        classes: 'govuk-table__cell--numeric',
+                        text: activity.allocationSummary.waitlisted
+                    },
+                    {
+                        attributes: {
+                            id: 'percentage-allocated-' + loop.index,
+                            "data-sort-value": activity.allocationSummary.percentageAllocated
+                        },
+                        classes: 'govuk-table__cell--numeric',
+                        text: activity.allocationSummary.percentageAllocated + '%'
                     }
                 ]), rows) %}
             {% endfor %}
@@ -140,7 +156,7 @@
                 captionClasses: "govuk-visually-hidden",
                 head: [
                     {
-                        text: "Activity name",
+                        text: "Activity",
                         attributes: {
                             "aria-sort": "ascending"
                         }
@@ -166,14 +182,21 @@
                         classes: 'govuk-table__header--numeric'
                     },
                     {
-                        text: "Percentage allocated",
+                        text: "Vacancies",
                         attributes: {
                             "aria-sort": "none"
                         },
                         classes: 'govuk-table__header--numeric'
                     },
                     {
-                        text: "Vacancies",
+                        text: "Waitlist",
+                        attributes: {
+                            "aria-sort": "none"
+                        },
+                        classes: 'govuk-table__header--numeric'
+                    },
+                    {
+                        text: "Percentage allocated",
                         attributes: {
                             "aria-sort": "none"
                         },
