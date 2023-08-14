@@ -2,14 +2,19 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
 import { toDate } from '../../../../utils/utils'
+import AppInsightsService from '../../../../services/AppInsightsService'
 
 export default class PlannedEventsRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly unlockListService: UnlockListService,
+
+    private readonly appInsightsClient: AppInsightsService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
+    this.trackEvent('saaUnlockList', res)
+
     const { user } = res.locals
     const { date } = req.query
     const { location, timeSlot } = req.session.unlockListJourney
@@ -51,5 +56,10 @@ export default class PlannedEventsRoutes {
       unlockListItems,
       movementCounts,
     })
+  }
+
+  private trackEvent(eventName: string, res: Response): void {
+    const properties = { user: res.locals.user.username, prisonCode: res.locals.user.prisonCode }
+    this.appInsightsClient.trackEvent(eventName, properties)
   }
 }

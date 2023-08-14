@@ -9,7 +9,7 @@ import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier
 import ApplyFiltersRoutes, { Filters } from './handlers/applyFilters'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 
-export default function Index({ unlockListService, activitiesService }: Services): Router {
+export default function Index({ unlockListService, activitiesService, appInsightsClient }: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
@@ -19,7 +19,7 @@ export default function Index({ unlockListService, activitiesService }: Services
 
   const homeHandler = new HomeRoutes()
   const dateAndLocationHandler = new SelectDateAndLocationRoutes(activitiesService)
-  const plannedEventsHandler = new PlannedEventsRoutes(activitiesService, unlockListService)
+  const plannedEventsHandler = new PlannedEventsRoutes(activitiesService, unlockListService, appInsightsClient)
   const applyFiltersHandler = new ApplyFiltersRoutes()
 
   get('/', homeHandler.GET)
