@@ -18,15 +18,6 @@ export class Filters {
 export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
     const { categoryFilters, activityFilters } = req.body
-    const searchTermArray = req.body.searchTerm
-    let nonEmptySearchTerm = ''
-    if (searchTermArray) {
-      searchTermArray.forEach((search: string) => {
-        if (search.trim() !== '') {
-          nonEmptySearchTerm = search
-        }
-      })
-    }
 
     if (categoryFilters) {
       req.session.attendanceSummaryJourney.categoryFilters = categoryFilters
