@@ -11,6 +11,14 @@ export class Filters {
   activityFilters?: string[]
 
   @Expose()
+  @Transform(({ value }) =>
+    value
+      ? [value]
+          .flat()
+          .map(v => v.trim())
+          .find(v => v !== '')
+      : undefined,
+  )
   searchTerm?: string
 }
 
