@@ -11,7 +11,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <span class="govuk-caption-xl">Log an activity application</span>
+            <span class="govuk-caption-xl">{{ session.waitListApplicationJourney.activity.activityName }}</span>
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -23,7 +23,7 @@
                     name: "requester",
                     fieldset: {
                         legend: {
-                            text: "Who made the application?",
+                            text: "Change the requester for " + session.waitListApplicationJourney.prisoner.name + "'s application",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--xl"
                         }
@@ -122,7 +122,7 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Continue"
+                        text: "Update requester details"
                     }) }}
                 </div>
             </form>

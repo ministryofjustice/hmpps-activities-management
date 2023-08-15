@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import RequesterRoutes, { Requester } from './requester'
 
 describe('Route Handlers - Waitlist application - Requester', () => {

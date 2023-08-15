@@ -3,8 +3,8 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays } from 'date-fns'
 import RequestDateRoutes, { RequestDate } from './requestDate'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import { associateErrorsWithProperty } from '../../../../../utils/utils'
+import { simpleDateFromDate } from '../../../../../commonValidationTypes/simpleDate'
 
 describe('Route Handlers - Waitlist application - Request date', () => {
   const handler = new RequestDateRoutes()

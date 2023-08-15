@@ -1,0 +1,137 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Waitlist - View application" %}
+{% set pageId = 'view-application-page' %}
+
+{% block content %}
+    {% if not isNotAlreadyAllocated %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                {{ govukNotificationBanner({
+                    html: '
+                        <p class="govuk-notification-banner__heading">
+                            You cannot edit this application because the prisoner has already been allocated to the activity
+                        </p>
+                      '
+                }) }}
+            </div>
+        </div>
+    {% elseif not isMostRecent %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                {{ govukNotificationBanner({
+                    html: '
+                        <p class="govuk-notification-banner__heading">
+                            You cannot edit this application because there is a more recent application for this prisoner
+                        </p>
+                      '
+                }) }}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-xl">{{ session.waitListApplicationJourney.activity.activityName }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class='govuk-heading-xl'>Request for {{ prisoner.name }}, {{ prisoner.prisonerNumber }}</h1>
+
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Status"
+                        },
+                        value: {
+                            html:   waitlistStatusBadge(status) +
+                                    '<div class="govuk-!-font-size-16 govuk-hint govuk-!-margin-top-2">Last changed ' + lastUpdated | parseISODate | formatDate('do MMMM yyyy HH:mm:ss') + '</div>'
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "status?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "status"
+                                }
+                            ]
+                        } if isMostRecent and isNotAlreadyAllocated
+                    },
+                    {
+                        key: {
+                            text: "Activity requested"
+                        },
+                        value: {
+                            text: activityName
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Requester"
+                        },
+                        value: {
+                            text: requester
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "requester?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "requester"
+                                }
+                            ]
+                        } if isMostRecent and isNotAlreadyAllocated
+                    },
+                    {
+                        key: {
+                            text: "Date of request"
+                        },
+                        value: {
+                            text: requestDate | formatDate('do MMMM yyyy')
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "request-date?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "request date"
+                                }
+                            ]
+                        } if isMostRecent and isNotAlreadyAllocated
+                    },
+                    {
+                        key: {
+                            text: "Comments"
+                        },
+                        value: {
+                            text: comment or "None"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "comment?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "comment"
+                                }
+                            ]
+                        } if isMostRecent and isNotAlreadyAllocated
+                    }
+                ]
+            }) }}
+
+            {{ govukButton({
+                text: "Return to waitlist",
+                href: '/activities/allocation-dashboard/' + activityId + '#waitlist-tab',
+                classes: "govuk-button--secondary"
+            }) }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import { Expose, plainToInstance, Transform } from 'class-transformer'
-import { IsNotEmpty } from 'class-validator'
+import { Expose, plainToInstance, Transform, Type } from 'class-transformer'
+import { IsNotEmpty, ValidateIf } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivityService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
@@ -24,8 +24,15 @@ type Filters = {
 
 export class SelectedAllocation {
   @Expose()
+  @ValidateIf(o => !o.selectedWaitlistApplication)
   @IsNotEmpty({ message: 'Select a candidate to allocate them' })
   selectedAllocation: string
+
+  @Expose()
+  @ValidateIf(o => !o.selectedAllocation)
+  @Type(() => Number)
+  @IsNotEmpty({ message: 'Select a waitlist application to allocate the candidate' })
+  selectedWaitlistApplication: number
 }
 
 export class SelectedAllocations {
@@ -107,18 +114,25 @@ export default class AllocationDashboardRoutes {
   }
 
   ALLOCATE = async (req: Request, res: Response): Promise<void> => {
-    const { selectedAllocation } = req.body
+    const { selectedAllocation, selectedWaitlistApplication } = req.body
     const { user } = res.locals
 
+    let application
+    if (selectedWaitlistApplication) {
+      application = await this.activitiesService.fetchWaitlistApplication(selectedWaitlistApplication, user)
+    }
+
+    const prisonerNumber = selectedAllocation ?? application.prisonerNumber
+
     const [iepSummary, activity]: [IepSummary, Activity] = await Promise.all([
-      this.prisonService.getPrisonerIepSummary(selectedAllocation, user),
+      this.prisonService.getPrisonerIepSummary(prisonerNumber, user),
       this.activitiesService.getActivity(+req.params.activityId, user),
     ])
 
     if (!activity.pay.map(p => p.incentiveLevel).includes(iepSummary.iepLevel)) {
       return res.validationFailed('selectedAllocation', 'No suitable pay rate exists for this candidate')
     }
-    return res.redirect(`/activities/allocate/prisoner/${selectedAllocation}?scheduleId=${req.params.activityId}`)
+    return res.redirect(`/activities/allocate/prisoner/${prisonerNumber}?scheduleId=${req.params.activityId}`)
   }
 
   DEALLOCATE = async (req: Request, res: Response): Promise<void> => {
@@ -149,6 +163,15 @@ export default class AllocationDashboardRoutes {
       )
 
     res.redirect(`/activities/deallocate/date`)
+  }
+
+  VIEW_APPLICATION = async (req: Request, res: Response): Promise<void> => {
+    const { selectedWaitlistApplication } = req.body
+    const { user } = res.locals
+
+    const application = await this.activitiesService.fetchWaitlistApplication(selectedWaitlistApplication, user)
+
+    return res.redirect(`/activities/waitlist/view-and-edit/${application.id}/view`)
   }
 
   UPDATE = async (req: Request, res: Response): Promise<void> => {

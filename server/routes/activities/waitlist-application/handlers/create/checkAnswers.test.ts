@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import { parse } from 'date-fns'
 import CheckAnswersRoutes from './checkAnswers'
-import ActivitiesService from '../../../../services/activitiesService'
-import { formatDate } from '../../../../utils/utils'
+import ActivitiesService from '../../../../../services/activitiesService'
+import { formatDate } from '../../../../../utils/utils'
 
-jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null, null)
 
