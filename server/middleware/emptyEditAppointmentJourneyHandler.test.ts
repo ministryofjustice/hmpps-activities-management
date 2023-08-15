@@ -51,6 +51,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
       req.session.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.INDIVIDUAL,
+        journeyComplete: false,
         appointmentName: 'appointment name',
       }
       req.session.editAppointmentJourney = null
@@ -63,6 +64,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
       req.session.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.INDIVIDUAL,
+        journeyComplete: false,
         appointmentName: 'appointment name',
       }
       req.session.editAppointmentJourney = {

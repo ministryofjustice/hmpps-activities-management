@@ -33,6 +33,7 @@ describe('Views - Appointments Management - Comment', () => {
         appointmentJourney: {
           mode: AppointmentJourneyMode.CREATE,
           type: AppointmentType.GROUP,
+          journeyComplete: false,
           startDate: {
             day: weekTomorrow.getDate(),
             month: weekTomorrow.getMonth() + 1,

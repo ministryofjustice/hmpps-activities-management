@@ -11,6 +11,7 @@ export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
+    req.session.appointmentJourney.journeyComplete = true
     res.render('pages/appointments/create-and-edit/check-answers')
   }
 
