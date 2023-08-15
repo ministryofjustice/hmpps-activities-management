@@ -8,9 +8,7 @@ import IsValidTime from '../../../../validators/isValidTime'
 import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
-import { AppointmentJourneyMode } from '../appointmentJourney'
-import EditAppointmentService from '../../../../services/editAppointmentService'
-import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import { getAppointmentBackLinkHref, hasAnyAppointmentPropertyChanged } from '../../../../utils/editAppointmentUtils'
 
 export class DateAndTime {
   @Expose()
@@ -39,14 +37,9 @@ export class DateAndTime {
 }
 
 export default class DateAndTimeRoutes {
-  constructor(private readonly editAppointmentService: EditAppointmentService) {}
-
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/date-and-time', {
       backLinkHref: getAppointmentBackLinkHref(req, 'location'),
-      isCtaAcceptAndSave:
-        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
     })
   }
 
@@ -61,9 +54,18 @@ export default class DateAndTimeRoutes {
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentId, occurrenceId } = req.params
+
     this.setTimeAndDate(req, 'editAppointmentJourney')
 
-    await this.editAppointmentService.redirectOrEdit(req, res, 'date-and-time')
+    if (hasAnyAppointmentPropertyChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)) {
+      return res.redirect('schedule')
+    }
+
+    req.session.appointmentJourney = null
+    req.session.editAppointmentJourney = null
+
+    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
   }
 
   private setTimeAndDate(req: Request, journeyName: string) {

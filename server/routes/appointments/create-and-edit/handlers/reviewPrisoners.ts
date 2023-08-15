@@ -1,7 +1,5 @@
 import { Request, Response } from 'express'
-import { AppointmentApplyTo } from '../../../../@types/appointments'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
-import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 import config from '../../../../config'
 
 export default class ReviewPrisonerRoutes {
@@ -43,13 +41,7 @@ export default class ReviewPrisonerRoutes {
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
-      return res.redirect('apply-to')
-    }
-
-    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_OCCURRENCE
-
-    return res.redirect('confirm')
+    return res.redirect('../../schedule')
   }
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {

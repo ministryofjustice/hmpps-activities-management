@@ -169,6 +169,13 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
   })
 
+  describe('EDIT', () => {
+    it('should redirect to the schedule page', async () => {
+      await handler.EDIT(req, res)
+      expect(res.redirect).toBeCalledWith('../../schedule')
+    })
+  })
+
   describe('REMOVE', () => {
     it('should remove prisoner and redirect back to GET', async () => {
       req.session.appointmentJourney.prisoners = [
