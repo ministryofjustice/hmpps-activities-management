@@ -73,10 +73,10 @@ context('Edit appointment', () => {
         const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
         dateAndTimePage.assertStartDate(nextWeek)
         dateAndTimePage.enterStartDate(tomorrow)
-        dateAndTimePage.getButton('Update appointment').click()
+        dateAndTimePage.continue()
 
         const schedulePage = Page.verifyOnPage(SchedulePage)
-        schedulePage.continue()
+        schedulePage.getButton('Update date').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the date for this appointment")
@@ -92,10 +92,10 @@ context('Edit appointment', () => {
         const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
         dateAndTimePage.assertStartTime(14, 0)
         dateAndTimePage.selectStartTime(14, 30)
-        dateAndTimePage.getButton('Update appointment').click()
+        dateAndTimePage.continue()
 
         const schedulePage = Page.verifyOnPage(SchedulePage)
-        schedulePage.continue()
+        schedulePage.getButton('Update time').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
@@ -110,10 +110,10 @@ context('Edit appointment', () => {
         const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
         dateAndTimePage.assertEndTime(15, 30)
         dateAndTimePage.selectEndTime(17, 30)
-        dateAndTimePage.getButton('Update appointment').click()
+        dateAndTimePage.continue()
 
         const schedulePage = Page.verifyOnPage(SchedulePage)
-        schedulePage.continue()
+        schedulePage.getButton('Update time').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the time for this appointment")
@@ -129,10 +129,10 @@ context('Edit appointment', () => {
         dateAndTimePage.enterStartDate(tomorrow)
         dateAndTimePage.selectStartTime(16, 0)
         dateAndTimePage.selectEndTime(17, 30)
-        dateAndTimePage.getButton('Update appointment').click()
+        dateAndTimePage.continue()
 
         const schedulePage = Page.verifyOnPage(SchedulePage)
-        schedulePage.continue()
+        schedulePage.getButton('Update date and time').click()
 
         occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
         occurrenceDetailsPage.assertNotificationContents("You've changed the date and time for this appointment")

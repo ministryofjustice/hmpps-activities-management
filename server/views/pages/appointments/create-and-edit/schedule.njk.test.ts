@@ -18,6 +18,7 @@ let $: CheerioAPI
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/schedule.njk')
 
 const tomorrow = addDays(new Date(), 1)
+const nextWeek = addDays(new Date(), 7)
 
 const getAppointmentDetailsValueElement = (heading: string) =>
   $('[data-qa=appointment-details] > .govuk-summary-list__row > .govuk-summary-list__key')
@@ -133,6 +134,7 @@ describe('Views - Create Appointment - Schedule', () => {
       }[]
     }[],
     formResponses: {},
+    isCtaAcceptAndSave: false,
   }
 
   const njkEnv = registerNunjucks()
@@ -154,6 +156,7 @@ describe('Views - Create Appointment - Schedule', () => {
       },
       prisonerSchedules: [],
       formResponses: {},
+      isCtaAcceptAndSave: false,
     }
   })
 
@@ -211,6 +214,10 @@ describe('Views - Create Appointment - Schedule', () => {
 
     it('should not display top call to action', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
+    })
+
+    it('should display continue CTA during create journey', () => {
+      expect($('[data-qa=bottom-cta]').text().trim()).toEqual('Continue')
     })
 
     it('should display events for attendee heading', () => {
@@ -395,7 +402,7 @@ describe('Views - Create Appointment - Schedule', () => {
       expect($('[data-qa=change-time]').attr('href')).toEqual('date-and-time?preserveHistory=true')
     })
 
-    it('should display top call to action for eleven attendees', () => {
+    it('should display "Continue" top call to action for eleven attendees', () => {
       viewContext.session.appointmentJourney.prisoners.push({
         number: 'K2345LM',
         name: 'TEST11 PRISONER11',
@@ -413,6 +420,10 @@ describe('Views - Create Appointment - Schedule', () => {
 
     it('should not display top call to action for fewer than eleven attendees', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
+    })
+
+    it('should display "Continue" bottom CTA during create journey', () => {
+      expect($('[data-qa=bottom-cta]').text().trim()).toEqual('Continue')
     })
 
     it('should not display events for attendee heading', () => {
@@ -672,7 +683,7 @@ describe('Views - Create Appointment - Schedule', () => {
       expect(getAppointmentDetailsValueElement('Time').length).toEqual(0)
     })
 
-    it('should display top call to action for eleven appointments', () => {
+    it('should display "Continue" top call to action for eleven appointments', () => {
       viewContext.session.bulkAppointmentJourney.appointments.push({
         startTime: { hour: 11, minute: 30 },
         endTime: { hour: 11, minute: 45 },
@@ -694,6 +705,10 @@ describe('Views - Create Appointment - Schedule', () => {
 
     it('should not display top call to action for fewer than eleven appointments', () => {
       expect($('[data-qa=top-cta]').length).toBe(0)
+    })
+
+    it('should display "Continue" bottom CTA during create journey', () => {
+      expect($('[data-qa=bottom-cta]').text().trim()).toEqual('Continue')
     })
 
     it('should not display events for attendee heading', () => {
@@ -923,6 +938,7 @@ describe('Views - Create Appointment - Schedule', () => {
 
     describe('Add prisoners', () => {
       beforeEach(() => {
+        viewContext.isCtaAcceptAndSave = true
         viewContext.session.editAppointmentJourney.addPrisoners = [
           {
             number: 'A1234BC',
@@ -957,12 +973,39 @@ describe('Views - Create Appointment - Schedule', () => {
         expect(getAppointmentDetailsValueElement('Time').text().trim()).toEqual('14:30 to 16:00')
         expect($('[data-qa=change-time]').length).toEqual(0)
       })
+
+      it('should display remove attendee links', () => {
+        viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+          const link = $(`[data-qa=remove-prison-number-${prisonerSchedule.prisoner.number}]`)
+          expect(link.text()).toContain('Remove attendee')
+          expect(link.attr('href')).toEqual(`schedule/${prisonerSchedule.prisoner.number}/remove`)
+        })
+      })
+
+      it('should display "Confirm" top call to action when adding eleven attendees', () => {
+        viewContext.session.editAppointmentJourney.addPrisoners = Array(11).map((v, i) => ({
+          number: `A1234BC${i}`,
+          name: `TEST PRISONER${i}`,
+          cellLocation: '1-1-1',
+        }))
+        viewContext.prisonerSchedules = viewContext.session.editAppointmentJourney.addPrisoners.map(v => ({
+          prisoner: v,
+          scheduledEvents: getScheduledEventsForPrisoner(v),
+        }))
+
+        $ = cheerio.load(compiledTemplate.render(viewContext))
+
+        expect($('[data-qa=top-cta]').text().trim()).toBe('Confirm')
+      })
+
+      it('should display confirm CTA when adding prisoners to appointment', () => {
+        expect($('button').text().trim()).toEqual('Confirm')
+      })
     })
 
     describe('Edit date', () => {
-      const nextWeek = addDays(new Date(), 7)
-
       beforeEach(() => {
+        viewContext.isCtaAcceptAndSave = true
         viewContext.session.editAppointmentJourney = {
           startDate: {
             day: nextWeek.getDate(),
@@ -971,6 +1014,15 @@ describe('Views - Create Appointment - Schedule', () => {
             date: formatDate(nextWeek, 'yyyy-MM-dd'),
           },
         } as unknown as EditAppointmentJourney
+        viewContext.session.appointmentJourney.prisoners.push({
+          number: 'K2345LM',
+          name: 'TEST11 PRISONER11',
+          cellLocation: '1-1-11',
+        })
+        viewContext.prisonerSchedules.push({
+          prisoner: viewContext.session.appointmentJourney.prisoners[10],
+          scheduledEvents: getScheduledEventsForPrisoner(viewContext.session.appointmentJourney.prisoners[10]),
+        })
         $ = cheerio.load(compiledTemplate.render(viewContext))
       })
 
@@ -993,10 +1045,23 @@ describe('Views - Create Appointment - Schedule', () => {
         expect(getAppointmentDetailsValueElement('Time').text().trim()).toEqual('14:30 to 16:00')
         expect($('[data-qa=change-time]').attr('href')).toEqual('date-and-time?preserveHistory=true')
       })
+
+      it('should not display remove attendee links', () => {
+        viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+          const link = $(`[data-qa=remove-prison-number-${prisonerSchedule.prisoner.number}]`)
+          expect(link.length).toEqual(0)
+        })
+      })
+
+      it('should display "Update date" call to action buttons', () => {
+        expect($('[data-qa=top-cta]').text().trim()).toEqual('Update date')
+        expect($('[data-qa=bottom-cta]').text().trim()).toEqual('Update date')
+      })
     })
 
     describe('Edit time', () => {
       beforeEach(() => {
+        viewContext.isCtaAcceptAndSave = true
         viewContext.session.editAppointmentJourney = {
           startTime: {
             hour: 12,
@@ -1009,6 +1074,15 @@ describe('Views - Create Appointment - Schedule', () => {
             date: formatDate(tomorrow.setHours(16, 0), "yyyy-MM-dd'T'HH:mm:ss") as unknown as Date,
           },
         } as unknown as EditAppointmentJourney
+        viewContext.session.appointmentJourney.prisoners.push({
+          number: 'K2345LM',
+          name: 'TEST11 PRISONER11',
+          cellLocation: '1-1-11',
+        })
+        viewContext.prisonerSchedules.push({
+          prisoner: viewContext.session.appointmentJourney.prisoners[10],
+          scheduledEvents: getScheduledEventsForPrisoner(viewContext.session.appointmentJourney.prisoners[10]),
+        })
         $ = cheerio.load(compiledTemplate.render(viewContext))
       })
 
@@ -1030,6 +1104,57 @@ describe('Views - Create Appointment - Schedule', () => {
       it('should display "Time" with new value and change link', () => {
         expect(getAppointmentDetailsValueElement('Time').text().trim()).toEqual('12:30 to 16:00')
         expect($('[data-qa=change-time]').attr('href')).toEqual('date-and-time?preserveHistory=true')
+      })
+
+      it('should not display remove attendee links', () => {
+        viewContext.prisonerSchedules.forEach(prisonerSchedule => {
+          const link = $(`[data-qa=remove-prison-number-${prisonerSchedule.prisoner.number}]`)
+          expect(link.length).toEqual(0)
+        })
+      })
+
+      it('should display "Update time" call to action buttons', () => {
+        expect($('[data-qa=top-cta]').text().trim()).toEqual('Update time')
+        expect($('[data-qa=bottom-cta]').text().trim()).toEqual('Update time')
+      })
+    })
+
+    describe('Edit date and time', () => {
+      beforeEach(() => {
+        viewContext.isCtaAcceptAndSave = true
+        viewContext.session.editAppointmentJourney = {
+          startDate: {
+            day: nextWeek.getDate(),
+            month: nextWeek.getMonth() + 1,
+            year: nextWeek.getFullYear(),
+            date: formatDate(nextWeek, 'yyyy-MM-dd'),
+          },
+          startTime: {
+            hour: 12,
+            minute: 30,
+            date: formatDate(tomorrow.setHours(12, 30), "yyyy-MM-dd'T'HH:mm:ss") as unknown as Date,
+          },
+          endTime: {
+            hour: 16,
+            minute: 0,
+            date: formatDate(tomorrow.setHours(16, 0), "yyyy-MM-dd'T'HH:mm:ss") as unknown as Date,
+          },
+        } as unknown as EditAppointmentJourney
+        viewContext.session.appointmentJourney.prisoners.push({
+          number: 'K2345LM',
+          name: 'TEST11 PRISONER11',
+          cellLocation: '1-1-11',
+        })
+        viewContext.prisonerSchedules.push({
+          prisoner: viewContext.session.appointmentJourney.prisoners[10],
+          scheduledEvents: getScheduledEventsForPrisoner(viewContext.session.appointmentJourney.prisoners[10]),
+        })
+        $ = cheerio.load(compiledTemplate.render(viewContext))
+      })
+
+      it('should display "Update date and time" call to action buttons', () => {
+        expect($('[data-qa=top-cta]').text().trim()).toEqual('Update date and time')
+        expect($('[data-qa=bottom-cta]').text().trim()).toEqual('Update date and time')
       })
     })
   })

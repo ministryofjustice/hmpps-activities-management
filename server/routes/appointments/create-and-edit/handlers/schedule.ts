@@ -5,6 +5,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
+import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export default class ScheduleRoutes {
   constructor(
@@ -80,6 +81,9 @@ export default class ScheduleRoutes {
       backLinkHref,
       preserveHistory,
       prisonerSchedules,
+      isCtaAcceptAndSave:
+        req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
+        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
     })
   }
 

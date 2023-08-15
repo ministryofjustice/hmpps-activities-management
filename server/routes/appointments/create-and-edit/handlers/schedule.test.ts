@@ -94,6 +94,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         backLinkHref: 'repeat',
+        isCtaAcceptAndSave: false,
         prisonerSchedules: [],
       })
     })
@@ -105,6 +106,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         backLinkHref: 'repeat-period-and-count',
+        isCtaAcceptAndSave: false,
         prisonerSchedules: [],
       })
     })
@@ -116,6 +118,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         backLinkHref: 'review-bulk-appointment',
+        isCtaAcceptAndSave: false,
         prisonerSchedules: [],
       })
     })
@@ -129,6 +132,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         backLinkHref: 'date-and-time',
         prisonerSchedules: [],
+        isCtaAcceptAndSave: true,
       })
     })
 
@@ -147,6 +151,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         backLinkHref: 'prisoners/add/review-prisoners',
+        isCtaAcceptAndSave: true,
         prisonerSchedules: [
           {
             prisoner: {
@@ -204,6 +209,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
             ],
           },
         ],
+        isCtaAcceptAndSave: false,
       })
     })
 
@@ -244,6 +250,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
             ],
           },
         ],
+        isCtaAcceptAndSave: false,
       })
     })
 
@@ -302,6 +309,85 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
             ],
           },
         ],
+        isCtaAcceptAndSave: false,
+      })
+    })
+
+    it('should not display current appointment occurrence as a clash', async () => {
+      req.params.occurrenceId = '1'
+      req.session.appointmentJourney.type = AppointmentType.GROUP
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+
+      const prisoner = {
+        number: 'A1234BC',
+        name: 'TEST01 PRISONER01',
+        cellLocation: '1-1-1',
+      }
+      req.session.appointmentJourney.prisoners = [prisoner]
+
+      const appointmentEvent1 = { appointmentOccurrenceId: 1, prisonerNumber: prisoner.number }
+      const appointmentEvent2 = { appointmentOccurrenceId: 2, prisonerNumber: prisoner.number }
+      const appointmentEvents = {
+        activities: [],
+        appointments: [appointmentEvent1, appointmentEvent2],
+        courtHearings: [],
+        visits: [],
+        externalTransfers: [],
+        adjudications: [],
+      } as PrisonerScheduledEvents
+
+      when(activitiesService.getScheduledEventsForPrisoners).mockResolvedValue(appointmentEvents)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/create-and-edit/schedule',
+        expect.objectContaining({
+          prisonerSchedules: [
+            {
+              prisoner,
+              scheduledEvents: [appointmentEvent2],
+            },
+          ],
+        }),
+      )
+    })
+
+    it('should render the schedule view with accept and save button', async () => {
+      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.session.appointmentJourney.prisoners = [
+        {
+          number: 'A1234BC',
+          name: 'TEST01 PRISONER01',
+          cellLocation: '1-1-1',
+        },
+      ]
+
+      when(activitiesService.getScheduledEventsForPrisoners).mockResolvedValue({
+        activities: [],
+        appointments: [],
+        courtHearings: [],
+        visits: [],
+        externalTransfers: [],
+        adjudications: [],
+      })
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
+        backLinkHref: 'date-and-time',
+        prisonerSchedules: [
+          {
+            prisoner: {
+              number: 'A1234BC',
+              name: 'TEST01 PRISONER01',
+              cellLocation: '1-1-1',
+            },
+            scheduledEvents: [],
+          },
+        ],
+        isCtaAcceptAndSave: true,
       })
     })
   })

@@ -100,12 +100,20 @@ describe('Views - Appointments Management - Apply to', () => {
     expect($('a.govuk-back-link').attr('href')).toEqual('../location')
   })
 
-  it('back link href does not contain edit property when redirected from cancel, add or remove prisoner', () => {
-    viewContext.property = null
+  it('back link href redirects back to schedule when editing date or time', () => {
+    viewContext.property = 'date-and-time'
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('a.govuk-back-link').attr('href')).toEqual('/appointments/1/occurrence/2')
+    expect($('a.govuk-back-link').attr('href')).toEqual('../schedule')
+  })
+
+  it('back link href redirects back to schedule when adding prisoners', () => {
+    viewContext.property = 'prisoners/add'
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('a.govuk-back-link').attr('href')).toEqual('../../schedule')
   })
 
   it('prisoner list is not shown when adding one prisoner', () => {

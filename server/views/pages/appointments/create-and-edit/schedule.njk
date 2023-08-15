@@ -180,7 +180,7 @@
                     }) }}
 
                     {{ govukButton({
-                        text: "Continue",
+                        text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney) if isCtaAcceptAndSave else "Continue",
                         attributes: { 'data-qa': 'top-cta' }
                     }) if prisonerSchedules.length > 10 }}
 
@@ -233,7 +233,8 @@
                     {% endfor %}
 
                     {{ govukButton({
-                        text: "Continue"
+                        attributes: { 'data-qa': 'bottom-cta' },
+                        text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney) if isCtaAcceptAndSave else "Continue"
                     }) }}
                 </form>
             {% endif %}

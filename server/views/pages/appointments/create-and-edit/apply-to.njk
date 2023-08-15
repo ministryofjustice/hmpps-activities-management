@@ -11,6 +11,8 @@
 {% set pageId = 'appointments-manage-apply-to-page' %}
 {% if property == 'date-and-time' %}
     {% set backLinkHref = '../schedule'  %}
+{% elseif property ==  'prisoners/add' %}
+    {% set backLinkHref = '../../schedule' %}
 {% else %}
     {% set backLinkHref = ('../' + property if property else "/appointments/" + appointmentId + "/occurrence/" + occurrenceId) %}
 {% endif %}

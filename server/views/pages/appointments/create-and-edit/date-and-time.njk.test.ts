@@ -93,20 +93,4 @@ describe('Views - Appointments Management - Date and Time', () => {
 
     expect($('h1').text().trim()).toEqual('Enter the new date and time')
   })
-
-  it('call to action is continue when creating', () => {
-    viewContext.isCtaAcceptAndSave = false
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('button').text().trim()).toEqual('Continue')
-  })
-
-  it('call to action is confirm and save when editing', () => {
-    viewContext.isCtaAcceptAndSave = true
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('button').text().trim()).toEqual('Update appointment')
-  })
 })
