@@ -15,7 +15,7 @@ export enum AppointmentJourneyMode {
 export type AppointmentJourney = {
   mode: AppointmentJourneyMode
   type: AppointmentType
-  journeyComplete: boolean
+  createJourneyComplete?: boolean
   appointmentName?: string
   prisoners?: {
     number: string

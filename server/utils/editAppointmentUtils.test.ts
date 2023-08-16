@@ -767,7 +767,6 @@ describe('Edit Appointment Utils', () => {
         req.session.appointmentJourney = {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
-          journeyComplete: true,
           repeatPeriod,
         }
 

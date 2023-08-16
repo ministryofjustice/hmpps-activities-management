@@ -56,7 +56,6 @@ describe('Views - Appointments Management - Apply to', () => {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
-          journeyComplete: true,
           location: {
             id: 123,
             description: 'Original location',

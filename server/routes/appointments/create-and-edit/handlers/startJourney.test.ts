@@ -94,7 +94,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.INDIVIDUAL,
-        journeyComplete: false,
+        createJourneyComplete: false,
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
@@ -109,7 +109,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
-        journeyComplete: false,
+        createJourneyComplete: false,
         prisoners: [],
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
@@ -125,7 +125,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.BULK,
-        journeyComplete: false,
+        createJourneyComplete: false,
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toEqual({
@@ -147,8 +147,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
+        createJourneyComplete: false,
         prisoners: [],
-        journeyComplete: false,
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
@@ -171,7 +171,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
-        journeyComplete: false,
+        createJourneyComplete: false,
         prisoners: [
           {
             cellLocation: '1-1-1',
@@ -219,7 +219,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
       const appointmentJourneySession = {
         mode: AppointmentJourneyMode.EDIT,
         type: AppointmentType.GROUP,
-        journeyComplete: true,
         appointmentName: 'Appointment name (Chaplaincy)',
         prisoners: [
           {

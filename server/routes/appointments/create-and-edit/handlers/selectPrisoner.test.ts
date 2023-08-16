@@ -136,7 +136,6 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       req.session.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.INDIVIDUAL,
-        journeyComplete: false,
         prisoners: [
           {
             number: 'X9876YZ',
@@ -177,7 +176,6 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       req.session.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.INDIVIDUAL,
-        journeyComplete: false,
         prisoners: [
           {
             number: 'X9876YZ',
@@ -210,7 +208,6 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       req.session.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
-        journeyComplete: false,
         prisoners: [
           {
             number: 'X9876YZ',
@@ -256,7 +253,6 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       req.session.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
-        journeyComplete: false,
         prisoners: [
           {
             number: 'X9876YZ',
@@ -289,7 +285,6 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       req.session.appointmentJourney = {
         mode: AppointmentJourneyMode.EDIT,
         type: AppointmentType.GROUP,
-        journeyComplete: true,
       }
       req.session.editAppointmentJourney = {
         addPrisoners: [

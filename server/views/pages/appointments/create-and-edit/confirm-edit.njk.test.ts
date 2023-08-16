@@ -36,7 +36,6 @@ describe('Views - Appointments Management - Confirm Edit', () => {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
-          journeyComplete: true,
           startDate: {
             day: weekTomorrow.getDate(),
             month: weekTomorrow.getMonth() + 1,

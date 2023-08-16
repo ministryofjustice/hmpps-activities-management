@@ -14,7 +14,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.INDIVIDUAL,
-      journeyComplete: false,
+      createJourneyComplete: false,
     }
     return res.redirect(`select-prisoner`)
   }
@@ -23,7 +23,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.GROUP,
-      journeyComplete: false,
+      createJourneyComplete: false,
       prisoners: [],
     }
     res.redirect('how-to-add-prisoners')
@@ -33,7 +33,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.BULK,
-      journeyComplete: false,
+      createJourneyComplete: false,
     }
     req.session.bulkAppointmentJourney = {
       appointments: [],
@@ -48,7 +48,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.GROUP,
-      journeyComplete: false,
+      createJourneyComplete: false,
       prisoners: [],
     }
 
@@ -127,7 +127,6 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.EDIT,
       type: AppointmentType[appointmentOccurrence.appointmentType],
-      journeyComplete: true,
       appointmentName: appointment.appointmentName,
       prisoners: appointmentOccurrence.prisoners.map(p => ({
         number: p.prisonerNumber,
