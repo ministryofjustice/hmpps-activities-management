@@ -12,7 +12,7 @@ export class EditRequestDate {
   @Type(() => SimpleDate)
   @ValidateNested()
   @DateIsSameOrBefore(o => o.waitListApplicationJourney.createdTime, {
-    message: 'The date cannot be before the date that the application was originally recorded',
+    message: 'The date cannot be after the date that the application was originally recorded',
   })
   @IsValidDate({ message: 'Enter a valid request date' })
   requestDate: SimpleDate

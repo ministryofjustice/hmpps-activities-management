@@ -127,7 +127,7 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
       expect(errors).toEqual([
         {
           property: 'requestDate',
-          error: 'The date cannot be before the date that the application was originally recorded',
+          error: 'The date cannot be after the date that the application was originally recorded',
         },
       ])
     })
