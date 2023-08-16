@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import ActivitiesService from '../../../../services/activitiesService'
+import ActivitiesService from '../../../../../services/activitiesService'
 
 export default class ConfirmationRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}

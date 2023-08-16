@@ -36,6 +36,7 @@ import {
   BulkAppointmentDetails,
   WaitingListApplicationRequest,
   WaitingListApplication,
+  WaitingListApplicationUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
 import activitySchedules from './fixtures/activity_schedules_1.json'
@@ -668,6 +669,29 @@ describe('Activities Service', () => {
       when(activitiesApiClient.fetchActivityWaitlist).calledWith(1, user).mockResolvedValue(response)
 
       const actualResult = await activitiesService.fetchActivityWaitlist(1, user)
+
+      expect(actualResult).toEqual(response)
+    })
+  })
+
+  describe('patchWaitlistApplication', () => {
+    it('should call the api client to patch the waitlist application', async () => {
+      await activitiesService.patchWaitlistApplication(
+        1,
+        { status: 'PENDING' } as WaitingListApplicationUpdateRequest,
+        user,
+      )
+      expect(activitiesApiClient.patchWaitlistApplication).toHaveBeenCalledWith(1, { status: 'PENDING' }, user)
+    })
+  })
+
+  describe('fetchWaitlistApplication', () => {
+    it('should call the api client to fetch a waitlist application by id', async () => {
+      const response = { id: 12345 } as WaitingListApplication
+
+      when(activitiesApiClient.fetchWaitlistApplication).calledWith(1, user).mockResolvedValue(response)
+
+      const actualResult = await activitiesService.fetchWaitlistApplication(1, user)
 
       expect(actualResult).toEqual(response)
     })

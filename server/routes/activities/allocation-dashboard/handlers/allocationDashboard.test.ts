@@ -586,6 +586,30 @@ describe('Route Handlers - Allocation dashboard', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/activities/allocate/prisoner/ABC123?scheduleId=1`)
     })
 
+    it('should redirect to allocate when a waitlist application is selected', async () => {
+      activitiesService.fetchWaitlistApplication = jest.fn()
+      when(activitiesService.fetchWaitlistApplication)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ prisonerNumber: 'ABC123' } as WaitingListApplication)
+
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
+
+      prisonService.getPrisonerIepSummary = jest.fn()
+      when(prisonService.getPrisonerIepSummary)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue({ iepLevel: 'ENH' } as IepSummary)
+
+      req.body = { selectedWaitlistApplication: 1 }
+      req.params = { activityId: '1' }
+
+      await handler.ALLOCATE(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocate/prisoner/ABC123?scheduleId=1`)
+    })
+
     it('should throw validation error if a pay rate doesnt exist to match the inmates iep level', async () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
@@ -609,25 +633,18 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
   })
 
-  describe('type validation', () => {
-    it('validation fails if a value is not entered', async () => {
-      const body = {}
+  describe('VIEW_APPLICATION', () => {
+    it('should redirect to view a waitlist application for the selected id', async () => {
+      activitiesService.fetchWaitlistApplication = jest.fn()
+      when(activitiesService.fetchWaitlistApplication)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ id: 1 } as WaitingListApplication)
 
-      const requestObject = plainToInstance(SelectedAllocation, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      req.body = { selectedWaitlistApplication: 1 }
 
-      expect(errors).toEqual([{ property: 'selectedAllocation', error: 'Select a candidate to allocate them' }])
-    })
+      await handler.VIEW_APPLICATION(req, res)
 
-    it('passes validation', async () => {
-      const body = {
-        selectedAllocation: 'MDI',
-      }
-
-      const requestObject = plainToInstance(SelectedAllocation, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toHaveLength(0)
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/waitlist/view-and-edit/1/view`)
     })
   })
 
@@ -650,6 +667,42 @@ describe('Route Handlers - Allocation dashboard', () => {
         'selectedAllocations',
         'You can only select one allocation to edit',
       )
+    })
+  })
+
+  describe('type validation', () => {
+    it('validation fails if a value is not entered', async () => {
+      const body = {}
+
+      const requestObject = plainToInstance(SelectedAllocation, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        { error: 'Select a candidate to allocate them', property: 'selectedAllocation' },
+        { error: 'Select a waitlist application to allocate the candidate', property: 'selectedWaitlistApplication' },
+      ])
+    })
+
+    it('passes validation when allocation is selected', async () => {
+      const body = {
+        selectedAllocation: 'ABC123',
+      }
+
+      const requestObject = plainToInstance(SelectedAllocation, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
+
+    it('passes validation when waitlist application is selected', async () => {
+      const body = {
+        selectedWaitlistApplication: '1',
+      }
+
+      const requestObject = plainToInstance(SelectedAllocation, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
     })
   })
 })

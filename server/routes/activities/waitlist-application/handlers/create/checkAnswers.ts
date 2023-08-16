@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import ActivitiesService from '../../../../services/activitiesService'
-import { WaitingListApplicationRequest } from '../../../../@types/activitiesAPI/types'
-import { formatDate } from '../../../../utils/utils'
+import SimpleDate from '../../../../../commonValidationTypes/simpleDate'
+import ActivitiesService from '../../../../../services/activitiesService'
+import { WaitingListApplicationRequest } from '../../../../../@types/activitiesAPI/types'
+import { formatDate } from '../../../../../utils/utils'
 
 export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}

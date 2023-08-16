@@ -39,6 +39,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/:allocationId/end-date-option', endDateOptionHandler.POST, EndDateOption)
   get('/:activityId', allocationDashboardHandler.GET)
   post('/:activityId/allocate', allocationDashboardHandler.ALLOCATE, SelectedAllocation)
+  post('/:activityId/view-waitlist-application', allocationDashboardHandler.VIEW_APPLICATION, SelectedAllocation)
   post('/:activityId/deallocate', allocationDashboardHandler.DEALLOCATE, SelectedAllocations)
   get('/:activityId/check-allocation/:prisonerNumber', checkAllocationHandler.GET)
   post('/:activityId/check-allocation/:prisonerNumber', checkAllocationHandler.POST)

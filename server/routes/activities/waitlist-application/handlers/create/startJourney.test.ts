@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 import { when } from 'jest-when'
-import atLeast from '../../../../../jest.setup'
+import atLeast from '../../../../../../jest.setup'
 import StartJourneyRoutes from './startJourney'
-import PrisonService from '../../../../services/prisonService'
-import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import PrisonService from '../../../../../services/prisonService'
+import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 
-jest.mock('../../../../services/prisonService')
+jest.mock('../../../../../services/prisonService')
 
 const prisonService = new PrisonService(null, null, null)
 

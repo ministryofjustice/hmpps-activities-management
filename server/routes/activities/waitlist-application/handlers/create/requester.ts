@@ -35,7 +35,7 @@ export default class RequesterRoutes {
     } else {
       req.session.waitListApplicationJourney.requester =
         requester === RequesterEnum.PRISONER
-          ? req.session.waitListApplicationJourney.prisoner.name
+          ? 'Self-requested'
           : 'IAG or CXK careers information, advice and guidance staff'
     }
 

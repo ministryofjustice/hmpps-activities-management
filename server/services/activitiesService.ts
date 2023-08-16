@@ -43,6 +43,7 @@ import {
   DeallocationReasonCode,
   EventAcknowledgeRequest,
   WaitingListApplicationRequest,
+  WaitingListApplicationUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
@@ -390,5 +391,17 @@ export default class ActivitiesService {
 
   async fetchActivityWaitlist(activityId: number, user: ServiceUser) {
     return this.activitiesApiClient.fetchActivityWaitlist(activityId, user)
+  }
+
+  async fetchWaitlistApplication(applicationId: number, user: ServiceUser) {
+    return this.activitiesApiClient.fetchWaitlistApplication(applicationId, user)
+  }
+
+  async patchWaitlistApplication(
+    applicationId: number,
+    updateWaitlistRequest: WaitingListApplicationUpdateRequest,
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.patchWaitlistApplication(applicationId, updateWaitlistRequest, user)
   }
 }

@@ -2,18 +2,18 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
-import ActivitiesService from '../../../../services/activitiesService'
+import { associateErrorsWithProperty } from '../../../../../utils/utils'
+import ActivitiesService from '../../../../../services/activitiesService'
 import ActivityRoutes, { Activity as Body } from './activity'
-import atLeast from '../../../../../jest.setup'
+import atLeast from '../../../../../../jest.setup'
 import {
   Activity,
   ActivityLite,
   PrisonerAllocations,
   WaitingListApplication,
-} from '../../../../@types/activitiesAPI/types'
+} from '../../../../../@types/activitiesAPI/types'
 
-jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null, null)
 
