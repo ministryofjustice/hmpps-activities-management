@@ -740,7 +740,7 @@
                 {% set slotMatches = false %}
 
                 {% for slot in day.slots %}
-                    {% set slotMatches = (slot == timeSlot) %}
+                    {% set slotMatches = (slot == timeSlot) or slotMatches %}
                 {% endfor %}
 
                 {% set columns = (columns.push(
