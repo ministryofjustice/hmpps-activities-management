@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
-import { IsNotEmpty } from 'class-validator'
+import { IsIn } from 'class-validator'
+
 enum Options {
-    CHANGE = 'change'
-    REMOVE = 'remove'
+  CHANGE = 'change',
+  REMOVE = 'remove',
 }
 
 export class RemoveDateOption {
