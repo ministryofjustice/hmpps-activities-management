@@ -26,6 +26,7 @@ import {
   IndividualAppointment,
   BulkAppointmentDetails,
   WaitingListApplicationRequest,
+  WaitingListApplicationUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -897,6 +898,31 @@ describe('activitiesApiClient', () => {
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200)
       await activitiesApiClient.fetchActivityWaitlist(1, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('fetchWaitlistApplication', () => {
+    it('should call endpoint to fetch a waitlist application by id', async () => {
+      fakeActivitiesApi
+        .get('/waiting-list-applications/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.fetchWaitlistApplication(1, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('patchWaitlistApplication', () => {
+    it('should call endpoint to patch the waitlist application', async () => {
+      const request = { status: 'PENDING' } as WaitingListApplicationUpdateRequest
+      fakeActivitiesApi
+        .patch('/waiting-list-applications/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.patchWaitlistApplication(1, request, user)
       expect(nock.isDone()).toBe(true)
     })
   })

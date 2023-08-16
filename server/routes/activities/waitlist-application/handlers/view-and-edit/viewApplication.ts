@@ -4,8 +4,8 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import { simpleDateFromDate } from '../../../../../commonValidationTypes/simpleDate'
 import PrisonService from '../../../../../services/prisonService'
 import { convertToTitleCase, parseDate } from '../../../../../utils/utils'
-import { Prisoner } from '../../../../../@types/activities'
 import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
+import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 
 export default class ViewApplicationRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}

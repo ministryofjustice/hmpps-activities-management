@@ -49,7 +49,7 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
   })
 
   describe('GET', () => {
-    it('should render the activity template', async () => {
+    it('should render the check answers template', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/check-answers`, {
         prisoner: {

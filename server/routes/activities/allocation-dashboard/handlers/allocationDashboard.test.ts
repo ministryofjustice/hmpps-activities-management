@@ -586,6 +586,30 @@ describe('Route Handlers - Allocation dashboard', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/activities/allocate/prisoner/ABC123?scheduleId=1`)
     })
 
+    it('should redirect to allocate when a waitlist application is selected', async () => {
+      activitiesService.fetchWaitlistApplication = jest.fn()
+      when(activitiesService.fetchWaitlistApplication)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ prisonerNumber: 'ABC123' } as WaitingListApplication)
+
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
+
+      prisonService.getPrisonerIepSummary = jest.fn()
+      when(prisonService.getPrisonerIepSummary)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue({ iepLevel: 'ENH' } as IepSummary)
+
+      req.body = { selectedWaitlistApplication: 1 }
+      req.params = { activityId: '1' }
+
+      await handler.ALLOCATE(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocate/prisoner/ABC123?scheduleId=1`)
+    })
+
     it('should throw validation error if a pay rate doesnt exist to match the inmates iep level', async () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
@@ -605,6 +629,43 @@ describe('Route Handlers - Allocation dashboard', () => {
       expect(res.validationFailed).toHaveBeenCalledWith(
         'selectedAllocation',
         'No suitable pay rate exists for this candidate',
+      )
+    })
+  })
+
+  describe('VIEW_APPLICATION', () => {
+    it('should redirect to view a waitlist application for the selected id', async () => {
+      activitiesService.fetchWaitlistApplication = jest.fn()
+      when(activitiesService.fetchWaitlistApplication)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ id: 1 } as WaitingListApplication)
+
+      req.body = { selectedWaitlistApplication: 1 }
+
+      await handler.VIEW_APPLICATION(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/waitlist/view-and-edit/1/view`)
+    })
+  })
+
+  describe('UPDATE', () => {
+    it('should redirect to update the selected allocation', async () => {
+      req.body = { selectedAllocations: ['ABC123'] }
+      req.params = { activityId: '1' }
+
+      await handler.UPDATE(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocation-dashboard/1/check-allocation/ABC123`)
+    })
+
+    it('validation fails if multiple allocations are selected', async () => {
+      req.body = { selectedAllocations: ['ABC123', 'ABC124'] }
+
+      await handler.UPDATE(req, res)
+
+      expect(res.validationFailed).toHaveBeenCalledWith(
+        'selectedAllocations',
+        'You can only select one allocation to edit',
       )
     })
   })
@@ -642,28 +703,6 @@ describe('Route Handlers - Allocation dashboard', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
-    })
-  })
-
-  describe('UPDATE', () => {
-    it('should redirect to update the selected allocation', async () => {
-      req.body = { selectedAllocations: ['ABC123'] }
-      req.params = { activityId: '1' }
-
-      await handler.UPDATE(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocation-dashboard/1/check-allocation/ABC123`)
-    })
-
-    it('validation fails if multiple allocations are selected', async () => {
-      req.body = { selectedAllocations: ['ABC123', 'ABC124'] }
-
-      await handler.UPDATE(req, res)
-
-      expect(res.validationFailed).toHaveBeenCalledWith(
-        'selectedAllocations',
-        'You can only select one allocation to edit',
-      )
     })
   })
 })
