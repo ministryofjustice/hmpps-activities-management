@@ -12,6 +12,7 @@ import CancelRoutes, { ConfirmCancelOptions } from './handlers/cancel'
 import StartDateRoutes, { StartDate } from './handlers/startDate'
 import EndDateOptionRoutes, { EndDateOption } from './handlers/endDateOption'
 import EndDateRoutes, { EndDate } from './handlers/endDate'
+import RemoveDateOptionRoutes, { RemoveDateOption } from './handlers/removeDateOption'
 import AllocateHomeRoutes from './handlers/home'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
@@ -31,6 +32,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const startDateHandler = new StartDateRoutes()
   const endDateOptionHandler = new EndDateOptionRoutes()
   const endDateHandler = new EndDateRoutes()
+  const removeDateOptionHandler = new RemoveDateOptionRoutes()
 
   get('/', allocateHomeHandler.GET)
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
@@ -49,6 +51,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/cancel', cancelHandler.GET, true)
   post('/cancel', cancelHandler.POST, ConfirmCancelOptions)
   get('/confirmation', confirmationHandler.GET, true)
+  get('/remove-date-option', removeDateOptionHandler.GET, true)
+  post('/remove-date-option', removeDateOptionHandler.POST, RemoveDateOption)
 
   return router
 }
