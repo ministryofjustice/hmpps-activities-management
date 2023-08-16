@@ -1,10 +1,14 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
+enum Options {
+    CHANGE = 'change'
+    REMOVE = 'remove'
+}
 
 export class RemoveDateOption {
   @Expose()
-  @IsNotEmpty({ message: 'Choose whether you want to change or remove the end date.' })
+  @IsIn(Object.values(Options), { message: 'Choose whether you want to change or remove the end date.' })
   endDateOption: string
 }
 
@@ -18,7 +22,7 @@ export default class RemoveDateOptionRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    if (req.body.endDateOption === 'change') {
+    if (req.body.endDateOption === Options.CHANGE) {
       return res.redirect(`end-date?preserveHistory=true`)
     }
     req.session.allocateJourney.endDate = null
