@@ -77,7 +77,7 @@ export default class AllocationDashboardRoutes {
         slots[slot.weekNumber][`timeSlots${day}`] ??= []
 
         if (slot[`${dayLowerCase}Flag`]) {
-          slots[slot.weekNumber].days.push(dayLowerCase)
+          if (!slots[slot.weekNumber].days.includes(dayLowerCase)) slots[slot.weekNumber].days.push(dayLowerCase)
           slots[slot.weekNumber][`timeSlots${day}`].push(getTimeSlotFromTime(slot.startTime).toUpperCase())
         }
       })
