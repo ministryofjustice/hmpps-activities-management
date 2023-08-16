@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
-import PrisonService from '../../../../services/prisonService'
-import { convertToTitleCase } from '../../../../utils/utils'
+import PrisonService from '../../../../../services/prisonService'
+import { convertToTitleCase } from '../../../../../utils/utils'
 
 export default class StartJourneyRoutes {
   constructor(private readonly prisonService: PrisonService) {}

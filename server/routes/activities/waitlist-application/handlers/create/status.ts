@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsIn, Length, ValidateIf } from 'class-validator'
-import { isBlank } from '../../../../utils/utils'
+import { isBlank } from '../../../../../utils/utils'
 
 enum StatusEnum {
   APPROVED = 'APPROVED',

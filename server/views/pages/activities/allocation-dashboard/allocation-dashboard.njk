@@ -180,29 +180,29 @@
 
         {% set currentlyAllocatedHtml %}
             <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                <a href= '{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
+                <a href='{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
                    class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer"> {{ row.name | toTitleCase }}
                 </a>
             </h2>
-                <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.prisonerNumber }} </div>
+            <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.prisonerNumber }} </div>
             {% if row.cellLocation == 'CSWAP' %}
-                <div class="govuk-hint govuk-!-margin-bottom-1"> -- </div>
+                <div class="govuk-hint govuk-!-margin-bottom-1"> --</div>
             {% else %}
                 <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.cellLocation }}</div>
             {% endif %}
-        {% endset%}
+        {% endset %}
 
         {% set suspendedTagHtml %}
 
-            {% if row.status == 'SUSPENDED'%}
+            {% if row.status == 'SUSPENDED' %}
                 {{ govukTag({
                     text: "Suspended",
                     classes: "govuk-tag--red"
                 }) }}
             {% endif %}
-         <div>
+            <div>
                 {{ row.startDate | formatDate('d MMMM yyyy') + (' to ' + row.endDate | formatDate('d MMMM yyyy') if row.endDate) }}
-         </div>
+            </div>
         {% endset %}
 
         {% set rows = (rows.push({
@@ -420,9 +420,9 @@
         {% endset %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + row.name | toTitleCase,
-            value: row.prisonerNumber,
+            value: row.waitlistApplicationId,
             selectable: true,
-            forbiddenActionId: 'waitlist-action-0' if row.status != 'APPROVED',
+            forbiddenActionId: 'waitlist-action-1' if row.status != 'APPROVED',
             items: [
                 {
                     html: '
@@ -461,7 +461,7 @@
             type: 'radio',
             caption: "Waitlist applications",
             captionClasses: "govuk-visually-hidden",
-            name: 'selectedAllocation',
+            name: 'selectedWaitlistApplication',
             head: [
                 {
                     text: "Name"
@@ -476,11 +476,16 @@
                     text: "Current allocations"
                 },
                 {
-                    text: "Status"
+                    text: "Status",
+                    classes: 'min-width--110'
                 }
             ],
             rows: rows,
             actions: [
+                {
+                    text: 'View or edit application',
+                    formAction: schedule.id + '/view-waitlist-application'
+                },
                 {
                     text: 'Allocate',
                     formAction: schedule.id + '/allocate'
@@ -637,17 +642,17 @@
             </ul>
         {% endset %}
         {% set candidatesHtml %}
-               <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                   <a href='{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
-                      class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer"> {{ row.name | toTitleCase }}
-                   </a>
-               </h2>
-                   <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.prisonerNumber }}</div>
-                   {% if row.cellLocation == 'CSWAP' %}
-                        <div class="govuk-hint govuk-!-margin-bottom-1"> --- </div>
-                   {% else %}
-                        <div class="govuk-hint govuk-!-margin-bottom-1">{{ row.cellLocation }}</div>
-                   {% endif %}
+            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                <a href='{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
+                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer"> {{ row.name | toTitleCase }}
+                </a>
+            </h2>
+            <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.prisonerNumber }}</div>
+            {% if row.cellLocation == 'CSWAP' %}
+                <div class="govuk-hint govuk-!-margin-bottom-1"> ---</div>
+            {% else %}
+                <div class="govuk-hint govuk-!-margin-bottom-1">{{ row.cellLocation }}</div>
+            {% endif %}
         {% endset %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + row.name | toTitleCase,
@@ -692,7 +697,7 @@
             rows: rows,
             actions: [
                 {
-                    text: 'Select candidate',
+                    text: 'Allocate',
                     formAction: schedule.id + '/allocate'
                 }
             ],
@@ -715,15 +720,15 @@
 {% endset %}
 
 {% set scheduleHtml %}
-  <p>This schedule {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
+    <p>This schedule {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
     {% for week, slots in dailySlots %}
         {% set rows = [] %}
         {% if scheduleWeeks > 1 %}
-            <h2 class="govuk-heading-m">Week {{week}}</h2>
+            <h2 class="govuk-heading-m">Week {{ week }}</h2>
         {% endif %}
-         {{ govukTag({
-           text: "Current week", classes: 'govuk-tag--small govuk-tag--green'
-         }) if scheduleWeeks > 1 and currentWeek == week }}
+        {{ govukTag({
+            text: "Current week", classes: 'govuk-tag--small govuk-tag--green'
+        }) if scheduleWeeks > 1 and currentWeek == week }}
         {% for day in slots %}
             {% set columns = [
                 {
@@ -735,7 +740,7 @@
                 {% set slotMatches = false %}
 
                 {% for slot in day.slots %}
-                    {% set slotMatches = (slot == timeSlot) %}
+                    {% set slotMatches = (slot == timeSlot) or slotMatches %}
                 {% endfor %}
 
                 {% set columns = (columns.push(

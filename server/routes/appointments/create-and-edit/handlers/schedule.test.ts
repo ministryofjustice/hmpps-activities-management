@@ -412,22 +412,36 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
   })
 
   describe('POST', () => {
-    it('should redirect to comment page for type = INDIVIDUAL', async () => {
-      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
-      await handler.POST(req, res)
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('comment')
-    })
+    describe.each([
+      {
+        createJourneyComplete: true,
+        redirectMethod: 'redirectOrReturn',
+        description: 'When create journey is complete',
+      },
+      { createJourneyComplete: false, redirectMethod: 'redirect', description: "When create journey isn't complete" },
+      { createJourneyComplete: undefined, redirectMethod: 'redirect', description: 'When not a create journey' },
+    ])('$description', ({ createJourneyComplete, redirectMethod }) => {
+      beforeEach(() => {
+        req.session.appointmentJourney.createJourneyComplete = createJourneyComplete
+      })
 
-    it('should redirect to comment page for type = GROUP', async () => {
-      req.session.appointmentJourney.type = AppointmentType.GROUP
-      await handler.POST(req, res)
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('comment')
-    })
+      it('should redirect to comment page for type = INDIVIDUAL', async () => {
+        req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
+        await handler.POST(req, res)
+        expect(res[redirectMethod]).toHaveBeenCalledWith('comment')
+      })
 
-    it('should redirect to comment page for type = BULK', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
-      await handler.POST(req, res)
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('bulk-appointment-comments')
+      it('should redirect to comment page for type = GROUP', async () => {
+        req.session.appointmentJourney.type = AppointmentType.GROUP
+        await handler.POST(req, res)
+        expect(res[redirectMethod]).toHaveBeenCalledWith('comment')
+      })
+
+      it('should redirect to bulk appointment comments page for type = BULK', async () => {
+        req.session.appointmentJourney.type = AppointmentType.BULK
+        await handler.POST(req, res)
+        expect(res[redirectMethod]).toHaveBeenCalledWith('bulk-appointment-comments')
+      })
     })
   })
 

@@ -27,7 +27,7 @@ export default class AllocationDashboard extends Page {
 
   selectCandidateWithName = (name: string): void => {
     this.getInputByLabel(name).click()
-    cy.get('button').contains('Select candidate').click()
+    cy.get('#candidates-tab').find('button').contains('Allocate').click()
   }
 
   activeTimeSlots = () => cy.get('.govuk-table__cell > .govuk-tag').contains('Yes')

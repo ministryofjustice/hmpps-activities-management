@@ -1,0 +1,47 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "components/datePicker.njk" import datePicker %}
+
+{% set pageTitle = applicationName + " - Waitlist - Request date" %}
+{% set pageId = 'request-date-page' %}
+{% set backLinkHref = '#' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-xl">{{ session.waitListApplicationJourney.activity.activityName }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ datePicker({
+                    id: 'requestDate',
+                    label: {
+                        text: "Change the date of " + session.waitListApplicationJourney.prisoner.name + "'s application",
+                        classes: "govuk-fieldset__legend--xl",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        html: '
+                            <div>If the application has not been dated, use today\'s date.</div>
+                            <div>For example, 28 7 2023</div>
+                        '
+                    },
+                    renderedErrorMessage: validationErrors | findError('requestDate'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.requestDate or session.waitListApplicationJourney.requestDate
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Update date of request"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

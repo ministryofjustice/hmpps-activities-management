@@ -22,3 +22,9 @@ $hmpps-widths: (
         max-width: map-get($hmpps-widths, $width);
     }
 }
+
+.min-width {
+    &--110 {
+        min-width: 110px;
+    }
+}

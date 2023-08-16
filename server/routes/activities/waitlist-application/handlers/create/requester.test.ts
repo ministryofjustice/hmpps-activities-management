@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import RequesterRoutes, { Requester } from './requester'
 
 describe('Route Handlers - Waitlist application - Requester', () => {
@@ -51,7 +51,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.requester).toEqual('Alan Key')
+      expect(req.session.waitListApplicationJourney.requester).toEqual('Self-requested')
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
 

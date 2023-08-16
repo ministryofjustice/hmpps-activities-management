@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { ValidateNested } from 'class-validator'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import IsValidDate from '../../../../validators/isValidDate'
-import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
+import SimpleDate from '../../../../../commonValidationTypes/simpleDate'
+import IsValidDate from '../../../../../validators/isValidDate'
+import DateIsSameOrBefore from '../../../../../validators/dateIsSameOrBefore'
 
 export class RequestDate {
   @Expose()
