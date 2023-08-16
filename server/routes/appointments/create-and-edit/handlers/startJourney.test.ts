@@ -94,6 +94,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.INDIVIDUAL,
+        createJourneyComplete: false,
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toBeUndefined()
@@ -108,6 +109,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
+        createJourneyComplete: false,
         prisoners: [],
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
@@ -123,6 +125,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.BULK,
+        createJourneyComplete: false,
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.bulkAppointmentJourney).toEqual({
@@ -144,6 +147,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
+        createJourneyComplete: false,
         prisoners: [],
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
@@ -167,6 +171,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.GROUP,
+        createJourneyComplete: false,
         prisoners: [
           {
             cellLocation: '1-1-1',
