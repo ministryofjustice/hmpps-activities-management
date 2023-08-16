@@ -6,20 +6,17 @@ import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime, { simpleTimeFromDate } from '../../../../commonValidationTypes/simpleTime'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { AppointmentJourney, AppointmentJourneyMode } from '../appointmentJourney'
+import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { ServiceUser } from '../../../../@types/express'
-import EditAppointmentService from '../../../../services/editAppointmentService'
 
 jest.mock('../../../../services/editAppointmentService')
-
-const editAppointmentService = new EditAppointmentService(null) as jest.Mocked<EditAppointmentService>
 
 const tomorrow = addDays(new Date(), 1)
 const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
 
 describe('Route Handlers - Appointment Journey - Date and Time', () => {
-  const handler = new DateAndTimeRoutes(editAppointmentService)
+  const handler = new DateAndTimeRoutes()
   let req: Request
   let res: Response
   const appointmentId = '1'
@@ -28,6 +25,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   beforeEach(() => {
     res = {
       render: jest.fn(),
+      redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectWithSuccess: jest.fn(),
       validationFailed: jest.fn(),
@@ -53,11 +51,10 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/date-and-time', {
         backLinkHref: 'location',
-        isCtaAcceptAndSave: false,
       })
     })
 
-    it('should render the date and time view with back to occurrence details and accept and save', async () => {
+    it('should render the date and time view with back to occurrence details', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.params = {
         appointmentId,
@@ -68,7 +65,6 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/date-and-time', {
         backLinkHref: `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
-        isCtaAcceptAndSave: true,
       })
     })
   })
@@ -163,7 +159,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       } as unknown as AppointmentJourney
     })
 
-    it('should update the occurrence date and call redirect or edit', async () => {
+    it('should update the occurrence date and redirect to schedule', async () => {
       const nextWeek = simpleDateFromDate(addDays(new Date(), 7))
       req.body.startDate = nextWeek
 
@@ -175,10 +171,10 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         year: nextWeek.year,
         date: nextWeek.toRichDate(),
       })
-      expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'date-and-time')
+      expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
 
-    it('should update the occurrence start time and end time and call redirect or edit', async () => {
+    it('should update the occurrence start time and end time and redirect to schedule', async () => {
       const startTime = plainToInstance(SimpleTime, {
         hour: 10,
         minute: 30,
@@ -203,10 +199,10 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         minute: endTime.minute,
         date: endTime.toDate(tomorrow),
       })
-      expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'date-and-time')
+      expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
 
-    it('should update the occurrence date, start time and end time and call redirect or edit', async () => {
+    it('should update the occurrence date, start time and end time and redirect to schedule', async () => {
       const nextWeek = simpleDateFromDate(addDays(new Date(), 7))
       const startTime = plainToInstance(SimpleTime, {
         hour: 10,
@@ -239,7 +235,46 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         minute: endTime.minute,
         date: endTime.toDate(nextWeek.toRichDate()),
       })
-      expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'date-and-time')
+      expect(res.redirect).toHaveBeenCalledWith('schedule')
+    })
+
+    it('should clear the journey and redirect back to occurrence page if no changes are made', async () => {
+      const nextWeek = simpleDateFromDate(addDays(new Date(), 7))
+      const startTime = plainToInstance(SimpleTime, {
+        hour: 10,
+        minute: 30,
+      })
+      const endTime = plainToInstance(SimpleTime, {
+        hour: 14,
+        minute: 0,
+      })
+
+      req.body.startDate = nextWeek
+      req.body.startTime = startTime
+      req.body.endTime = endTime
+
+      req.session.appointmentJourney = {
+        type: AppointmentType.GROUP,
+        mode: AppointmentJourneyMode.EDIT,
+        startDate: {
+          ...nextWeek,
+          date: nextWeek.toRichDate(),
+        },
+        startTime: {
+          ...startTime,
+          date: nextWeek.toRichDate(),
+        },
+        endTime: {
+          ...endTime,
+          date: nextWeek.toRichDate(),
+        },
+      }
+
+      await handler.EDIT(req, res)
+
+      expect(req.session.editAppointmentJourney).toBeNull()
+      expect(req.session.appointmentJourney).toBeNull()
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12`)
     })
   })
 

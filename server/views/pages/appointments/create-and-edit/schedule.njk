@@ -31,9 +31,13 @@
                     <p class="govuk-body">You need to add someone to continue scheduling it.</p>
                 {% endif %}
 
+                {% set addPrisonersHref = ('prisoners/add/how-to-add-prisoners?preserveHistory=true' if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT) or
+                    ("upload-bulk-appointment?preserveHistory=true" if session.appointmentJourney.type == AppointmentType.BULK) or
+                    "how-to-add-prisoners?preserveHistory=true" %}
+
                 {{ govukButton({
                     text: ("Add a new list" if session.appointmentJourney.type == AppointmentType.BULK else "Add someone to the list"),
-                    href: ("upload-bulk-appointment?preserveHistory=true" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners?preserveHistory=true")
+                    href: addPrisonersHref
                 }) }}
             {% else %}
                 <h1 class="govuk-heading-l">Review scheduled events to avoid clashes</h1>
@@ -41,8 +45,9 @@
                 <form method="POST">
                     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                    {{ govukSummaryList({
-                        rows: [
+                    {% set appointmentSummary = [] %}
+                    {% if session.appointmentJourney.mode != AppointmentJourneyMode.EDIT %}
+                        {% set appointmentSummary = (appointmentSummary.push(
                             {
                                 key: {
                                     text: "Appointment name"
@@ -98,49 +103,84 @@
                                 value: {
                                     text: session.bulkAppointmentJourney.appointments | length
                                 }
-                            } if session.appointmentJourney.type == AppointmentType.BULK, {
-                                key: {
-                                    text: "Date"
-                                },
-                                value: {
-                                    text: session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy')
-                                },
-                                actions: {
-                                    items: [
-                                        {
-                                            href: 'bulk-appointment-date?preserveHistory=true' if session.appointmentJourney.type == AppointmentType.BULK else 'date-and-time?preserveHistory=true',
-                                            text: "Change",
-                                            visuallyHiddenText: "change date",
-                                            classes: "govuk-link--no-visited-state",
-                                            attributes: { 'data-qa': 'change-start-date' }
-                                        }
-                                    ]
-                                }
-                            }, {
-                                key: {
-                                    text: "Time"
-                                },
-                                value: {
-                                    text: (session.appointmentJourney.startTime.date | parseISODate | formatDate('HH:mm') + ' to ' + session.appointmentJourney.endTime.date | parseISODate | formatDate('HH:mm'))
-                                },
-                                actions: {
-                                    items: [
-                                        {
-                                            href: "date-and-time?preserveHistory=true",
-                                            text: "Change",
-                                            visuallyHiddenText: "change time",
-                                            classes: "govuk-link--no-visited-state",
-                                            attributes: { 'data-qa': 'change-time' }
-                                        }
-                                    ]
-                                }
-                            } if session.appointmentJourney.startTime and session.appointmentJourney.endTime
-                        ],
+                            } if session.appointmentJourney.type == AppointmentType.BULK
+                        ), appointmentSummary) %}
+                    {% endif %}
+
+                    {% if session.editAppointmentJourney.addPrisoners | length %}
+                        {% set appointmentSummary = (appointmentSummary.push({
+                            key: {
+                                text: "Attendees you are adding"
+                            },
+                            value: {
+                                text: session.editAppointmentJourney.addPrisoners | length
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: 'prisoners/add/review-prisoners',
+                                        text: "Change",
+                                        visuallyHiddenText: "change attendees",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-attendees' }
+                                    }
+                                ]
+                            }
+                        }), appointmentSummary) %}
+                    {% endif %}
+
+                    {% set showTime = (session.appointmentJourney.startTime and session.appointmentJourney.endTime) or
+                        (session.editAppointmentJourney.startTime and session.editAppointmentJourney.endTime) %}
+
+                    {% set isDateTimeEditable = session.appointmentJourney.mode != AppointmentJourneyMode.EDIT or
+                        session.editAppointmentJourney.startDate or
+                        (session.editAppointmentJourney.startTime and session.editAppointmentJourney.endTime) %}
+                    {% set appointmentSummary = (appointmentSummary.push(
+                        {
+                            key: {
+                                text: "Date"
+                            },
+                            value: {
+                                text: appointmentDate()
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: 'bulk-appointment-date?preserveHistory=true' if session.appointmentJourney.type == AppointmentType.BULK else 'date-and-time?preserveHistory=true',
+                                        text: "Change",
+                                        visuallyHiddenText: "change date",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-start-date' }
+                                    }
+                                ]
+                            } if isDateTimeEditable
+                        }, {
+                            key: {
+                                text: "Time"
+                            },
+                            value: {
+                                text: appointmentTime()
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "date-and-time?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change time",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-time' }
+                                    }
+                                ]
+                            } if isDateTimeEditable
+                        } if showTime
+                    ), appointmentSummary) %}
+                    {{ govukSummaryList({
+                        rows: appointmentSummary,
                         attributes: { 'data-qa': 'appointment-details' }
                     }) }}
 
                     {{ govukButton({
-                        text: "Continue",
+                        text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney) if isCtaAcceptAndSave else "Continue",
                         attributes: { 'data-qa': 'top-cta' }
                     }) if prisonerSchedules.length > 10 }}
 
@@ -176,7 +216,7 @@
                                                     Remove appointment<span class="govuk-visually-hidden"> for prison number {{ prisoner.number }}</span>
                                                 </a>
                                             </li>
-                                        {% else %}
+                                        {% elseif session.appointmentJourney.mode != AppointmentJourneyMode.EDIT or session.editAppointmentJourney.addPrisoners %}
                                             <li class="govuk-summary-card__action">
                                                 <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" + ("?preserveHistory=true" if preserveHistory else "") }}" data-qa="remove-prison-number-{{ prisoner.number }}">
                                                     Remove attendee<span class="govuk-visually-hidden"> with prison number {{ prisoner.number }}</span>
@@ -193,7 +233,8 @@
                     {% endfor %}
 
                     {{ govukButton({
-                        text: "Continue"
+                        attributes: { 'data-qa': 'bottom-cta' },
+                        text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney) if isCtaAcceptAndSave else "Continue"
                     }) }}
                 </form>
             {% endif %}
@@ -278,4 +319,15 @@
             {{ scheduledEvent.internalLocationDescription | trim | title }}
         {% endif %}
     {% endif %}
+{% endmacro %}
+
+{% macro appointmentDate() %}
+    {% set startDate = session.editAppointmentJourney.startDate.date or session.appointmentJourney.startDate.date %}
+    {{ startDate | parseISODate | formatDate('EEEE, d MMMM yyyy') }}
+{% endmacro %}
+
+{% macro appointmentTime() %}
+    {% set startTime = session.editAppointmentJourney.startTime.date or session.appointmentJourney.startTime.date %}
+    {% set endTime = session.editAppointmentJourney.endTime.date or session.appointmentJourney.endTime.date %}
+    {{ (startTime | parseISODate | formatDate('HH:mm') + ' to ' + endTime | parseISODate | formatDate('HH:mm')) }}
 {% endmacro %}

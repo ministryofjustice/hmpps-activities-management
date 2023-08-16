@@ -3,6 +3,7 @@ import { Services } from '../../../services'
 import StartJourneyRoutes from './handlers/startJourney'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
+import ScheduleRoutes from './handlers/schedule'
 import CommentRoutes, { Comment } from './handlers/comment'
 import ApplyToRoutes, { ApplyTo } from './handlers/applyTo'
 import ConfirmEditRoutes, { ConfirmEdit } from './handlers/confirmEdit'
@@ -31,7 +32,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   const editAppointmentService = new EditAppointmentService(activitiesService)
   const startHandler = new StartJourneyRoutes(prisonService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
-  const dateAndTimeRoutes = new DateAndTimeRoutes(editAppointmentService)
+  const dateAndTimeRoutes = new DateAndTimeRoutes()
+  const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService)
   const commentHandler = new CommentRoutes(editAppointmentService)
   const confirmEditRoutes = new ConfirmEditRoutes(editAppointmentService)
   const applyToRoutes = new ApplyToRoutes(editAppointmentService)
@@ -63,6 +65,9 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   post('/location', locationRoutes.EDIT, Location)
   get('/date-and-time', dateAndTimeRoutes.GET, true)
   post('/date-and-time', dateAndTimeRoutes.EDIT, DateAndTime)
+  get('/schedule', scheduleRoutes.GET, true)
+  post('/schedule', scheduleRoutes.EDIT)
+  get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
   get('/comment', commentHandler.GET, true)
   post('/comment', commentHandler.EDIT, Comment)
   get('/:property/apply-to', applyToRoutes.GET, true)
