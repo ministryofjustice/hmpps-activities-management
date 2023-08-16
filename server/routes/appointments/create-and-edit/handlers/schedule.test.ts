@@ -4,16 +4,19 @@ import { addDays } from 'date-fns'
 import ScheduleRoutes from './schedule'
 import { YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
+import EditAppointmentService from '../../../../services/editAppointmentService'
 import { PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
-import { AppointmentType } from '../appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/editAppointmentService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const editAppointmentService = new EditAppointmentService(null) as jest.Mocked<EditAppointmentService>
 
 describe('Route Handlers - Create Appointment - Schedule', () => {
-  const handler = new ScheduleRoutes(activitiesService)
+  const handler = new ScheduleRoutes(activitiesService, editAppointmentService)
   let req: Request
   let res: Response
 
@@ -43,8 +46,10 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         bulkAppointmentJourney: {
           appointments: [],
         },
+        editAppointmentJourney: {},
       },
       query: {},
+      params: {},
       flash: jest.fn(),
     } as unknown as Request
 
@@ -82,12 +87,14 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
   describe('GET', () => {
     it('should render the schedule view with back to repeat page', async () => {
+      req.params.occurrenceId = '1'
       req.session.appointmentJourney.repeat = YesNo.NO
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         backLinkHref: 'repeat',
+        isCtaAcceptAndSave: false,
         prisonerSchedules: [],
       })
     })
@@ -99,6 +106,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         backLinkHref: 'repeat-period-and-count',
+        isCtaAcceptAndSave: false,
         prisonerSchedules: [],
       })
     })
@@ -110,7 +118,57 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         backLinkHref: 'review-bulk-appointment',
+        isCtaAcceptAndSave: false,
         prisonerSchedules: [],
+      })
+    })
+
+    it('should render the schedule view with back to date and time page', async () => {
+      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
+        backLinkHref: 'date-and-time',
+        prisonerSchedules: [],
+        isCtaAcceptAndSave: true,
+      })
+    })
+
+    it('should render the schedule view with back to date and time page', async () => {
+      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.session.editAppointmentJourney.addPrisoners = [
+        {
+          number: 'A1234BC',
+          name: 'TEST01 PRISONER01',
+          cellLocation: '1-1-1',
+        },
+      ]
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
+        backLinkHref: 'prisoners/add/review-prisoners',
+        isCtaAcceptAndSave: true,
+        prisonerSchedules: [
+          {
+            prisoner: {
+              number: 'A1234BC',
+              name: 'TEST01 PRISONER01',
+              cellLocation: '1-1-1',
+            },
+            scheduledEvents: [
+              { prisonerNumber: 'A1234BC', summary: 'Activity for A1234BC' },
+              { prisonerNumber: 'A1234BC', summary: 'Appointments for A1234BC' },
+              { prisonerNumber: 'A1234BC', summary: 'Court hearing for A1234BC' },
+              { prisonerNumber: 'A1234BC', summary: 'Visit for A1234BC' },
+              { prisonerNumber: 'A1234BC', summary: 'External transfer for A1234BC' },
+              { prisonerNumber: 'A1234BC', summary: 'Adjudication for A1234BC' },
+            ],
+          },
+        ],
       })
     })
 
@@ -151,6 +209,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
             ],
           },
         ],
+        isCtaAcceptAndSave: false,
       })
     })
 
@@ -191,6 +250,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
             ],
           },
         ],
+        isCtaAcceptAndSave: false,
       })
     })
 
@@ -249,7 +309,105 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
             ],
           },
         ],
+        isCtaAcceptAndSave: false,
       })
+    })
+
+    it('should not display current appointment occurrence as a clash', async () => {
+      req.params.occurrenceId = '1'
+      req.session.appointmentJourney.type = AppointmentType.GROUP
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+
+      const prisoner = {
+        number: 'A1234BC',
+        name: 'TEST01 PRISONER01',
+        cellLocation: '1-1-1',
+      }
+      req.session.appointmentJourney.prisoners = [prisoner]
+
+      const appointmentEvent1 = { appointmentOccurrenceId: 1, prisonerNumber: prisoner.number }
+      const appointmentEvent2 = { appointmentOccurrenceId: 2, prisonerNumber: prisoner.number }
+      const appointmentEvents = {
+        activities: [],
+        appointments: [appointmentEvent1, appointmentEvent2],
+        courtHearings: [],
+        visits: [],
+        externalTransfers: [],
+        adjudications: [],
+      } as PrisonerScheduledEvents
+
+      when(activitiesService.getScheduledEventsForPrisoners).mockResolvedValue(appointmentEvents)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/create-and-edit/schedule',
+        expect.objectContaining({
+          prisonerSchedules: [
+            {
+              prisoner,
+              scheduledEvents: [appointmentEvent2],
+            },
+          ],
+        }),
+      )
+    })
+
+    it('should render the schedule view with accept and save button', async () => {
+      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.session.appointmentJourney.prisoners = [
+        {
+          number: 'A1234BC',
+          name: 'TEST01 PRISONER01',
+          cellLocation: '1-1-1',
+        },
+      ]
+
+      when(activitiesService.getScheduledEventsForPrisoners).mockResolvedValue({
+        activities: [],
+        appointments: [],
+        courtHearings: [],
+        visits: [],
+        externalTransfers: [],
+        adjudications: [],
+      })
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
+        backLinkHref: 'date-and-time',
+        prisonerSchedules: [
+          {
+            prisoner: {
+              number: 'A1234BC',
+              name: 'TEST01 PRISONER01',
+              cellLocation: '1-1-1',
+            },
+            scheduledEvents: [],
+          },
+        ],
+        isCtaAcceptAndSave: true,
+      })
+    })
+  })
+
+  describe('EDIT', () => {
+    it('should call redirect and edit with date-and-time property', async () => {
+      await handler.EDIT(req, res)
+      expect(editAppointmentService.redirectOrEdit(req, res, 'date-and-time'))
+    })
+
+    it('should call redirect and edit with prisoners/add property', async () => {
+      req.session.editAppointmentJourney.addPrisoners = [
+        {
+          number: 'A1234BC',
+          name: 'TEST01 PRISONER01',
+          cellLocation: '1-1-1',
+        },
+      ]
+      await handler.EDIT(req, res)
+      expect(editAppointmentService.redirectOrEdit(req, res, 'prisoners/add'))
     })
   })
 
@@ -304,7 +462,36 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       expect(res.redirect).toBeCalledWith('../../schedule')
     })
 
-    it('should remove appointment and redirect back to GET', async () => {
+    it('should remove prisoners when editing appointment and redirect back to GET', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.session.editAppointmentJourney.addPrisoners = [
+        {
+          number: 'A1234BC',
+          name: 'TEST01 PRISONER01',
+          cellLocation: '1-1-1',
+        },
+        {
+          number: 'B2345CD',
+          name: 'TEST02 PRISONER02',
+          cellLocation: '2-2-2',
+        },
+      ]
+      req.params.prisonNumber = 'B2345CD'
+
+      await handler.REMOVE(req, res)
+
+      expect(req.session.editAppointmentJourney.addPrisoners.length).toEqual(1)
+      expect(req.session.editAppointmentJourney.addPrisoners).toEqual([
+        {
+          number: 'A1234BC',
+          name: 'TEST01 PRISONER01',
+          cellLocation: '1-1-1',
+        },
+      ])
+      expect(res.redirect).toBeCalledWith('../../schedule')
+    })
+
+    it('should remove prisoner appointment from bulk appointment and redirect back to GET', async () => {
       req.session.appointmentJourney.type = AppointmentType.BULK
       req.session.bulkAppointmentJourney.appointments = [
         {

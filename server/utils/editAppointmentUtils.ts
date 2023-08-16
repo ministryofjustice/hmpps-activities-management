@@ -314,7 +314,8 @@ export const hasAnyAppointmentPropertyChanged = (
   hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney) ||
   hasAppointmentStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
   hasAppointmentEndTimeChanged(appointmentJourney, editAppointmentJourney) ||
-  hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)
+  hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney) ||
+  hasAppointmentAttendeesChanged(editAppointmentJourney)
 
 export const hasAppointmentLocationChanged = (
   appointmentJourney: AppointmentJourney,
@@ -357,3 +358,6 @@ export const hasAppointmentCommentChanged = (
   appointmentJourney: AppointmentJourney,
   editAppointmentJourney: EditAppointmentJourney,
 ) => editAppointmentJourney.comment !== undefined && appointmentJourney.comment !== editAppointmentJourney.comment
+
+export const hasAppointmentAttendeesChanged = (editAppointmentJourney: EditAppointmentJourney) =>
+  editAppointmentJourney.addPrisoners || editAppointmentJourney.removePrisoner
