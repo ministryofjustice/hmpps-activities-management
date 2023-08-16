@@ -616,12 +616,26 @@ describe('Route Handlers - Allocation dashboard', () => {
       const requestObject = plainToInstance(SelectedAllocation, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'selectedAllocation', error: 'Select a candidate to allocate them' }])
+      expect(errors).toEqual([
+        { error: 'Select a candidate to allocate them', property: 'selectedAllocation' },
+        { error: 'Select a waitlist application to allocate the candidate', property: 'selectedWaitlistApplication' },
+      ])
     })
 
-    it('passes validation', async () => {
+    it('passes validation when allocation is selected', async () => {
       const body = {
-        selectedAllocation: 'MDI',
+        selectedAllocation: 'ABC123',
+      }
+
+      const requestObject = plainToInstance(SelectedAllocation, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
+
+    it('passes validation when waitlist application is selected', async () => {
+      const body = {
+        selectedWaitlistApplication: '1',
       }
 
       const requestObject = plainToInstance(SelectedAllocation, body)

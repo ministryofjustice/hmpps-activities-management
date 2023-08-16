@@ -51,7 +51,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.requester).toEqual('Alan Key')
+      expect(req.session.waitListApplicationJourney.requester).toEqual('Self-requested')
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
 
