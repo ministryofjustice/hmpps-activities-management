@@ -1,0 +1,51 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Waitlist - Comment" %}
+{% set pageId = 'comment-page' %}
+{% set backLinkHref = '#' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-xl">{{ session.waitListApplicationJourney.activity.activityName }}</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class='govuk-heading-xl'>Add or edit comment</h1>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukCharacterCount({
+                    name: "comment",
+                    id: "comment",
+                    maxlength: 500,
+                    label: {
+                        text: "Add or edit comment",
+                        classes: "govuk-visually-hidden"
+                    },
+                    hint: {
+                        text: "If you add a comment, you may want to include your name and date."
+                    },
+                    value: formResponses.comment or session.waitListApplicationJourney.comment
+                }) }}
+
+                {{ govukWarningText({
+                    text: "Any existing comments will be overwritten with this new comment.",
+                    iconFallbackText: "Warning"
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Update application comment"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

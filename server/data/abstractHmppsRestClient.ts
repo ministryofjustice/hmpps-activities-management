@@ -94,7 +94,7 @@ export default abstract class AbstractHmppsRestClient {
           `Error calling ${this.name}, path: '${path}', verb: '${request.method}'`,
         )
         throw sanitisedError
-      })
+      }) as T
   }
 
   protected async get<T>(request: Request, user?: ServiceUser): Promise<T> {

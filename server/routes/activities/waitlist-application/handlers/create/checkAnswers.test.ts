@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import { parse } from 'date-fns'
 import CheckAnswersRoutes from './checkAnswers'
-import ActivitiesService from '../../../../services/activitiesService'
-import { formatDate } from '../../../../utils/utils'
+import ActivitiesService from '../../../../../services/activitiesService'
+import { formatDate } from '../../../../../utils/utils'
 
-jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null, null)
 
@@ -49,7 +49,7 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
   })
 
   describe('GET', () => {
-    it('should render the activity template', async () => {
+    it('should render the check answers template', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/check-answers`, {
         prisoner: {

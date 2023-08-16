@@ -46,6 +46,7 @@ import {
   AllocationSuitability,
   WaitingListApplicationRequest,
   WaitingListApplication,
+  WaitingListApplicationUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -578,6 +579,27 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/schedules/${activityId}/waiting-list-applications`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async fetchWaitlistApplication(applicationId: number, user: ServiceUser): Promise<WaitingListApplication> {
+    return this.get({
+      path: `/waiting-list-applications/${applicationId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async patchWaitlistApplication(
+    applicationId: number,
+    updateWaitlistRequest: WaitingListApplicationUpdateRequest,
+    user: ServiceUser,
+  ): Promise<WaitingListApplication> {
+    return this.patch({
+      path: `/waiting-list-applications/${applicationId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: updateWaitlistRequest,
     })
   }
 }
