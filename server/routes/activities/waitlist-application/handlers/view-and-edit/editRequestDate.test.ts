@@ -48,7 +48,7 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
 
       expect(activitiesService.patchWaitlistApplication).toHaveBeenCalledWith(
         1,
-        { applicationDate: '2022-12-1' },
+        { applicationDate: '2022-12-01' },
         { username: 'joebloggs' },
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(

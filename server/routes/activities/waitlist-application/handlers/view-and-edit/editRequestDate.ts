@@ -4,6 +4,7 @@ import { ValidateNested } from 'class-validator'
 import IsValidDate from '../../../../../validators/isValidDate'
 import DateIsSameOrBefore from '../../../../../validators/dateIsSameOrBefore'
 import ActivitiesService from '../../../../../services/activitiesService'
+import { formatDate } from '../../../../../utils/utils'
 import SimpleDate from '../../../../../commonValidationTypes/simpleDate'
 
 export class EditRequestDate {
@@ -32,7 +33,7 @@ export default class EditRequestDateRoutes {
     await this.activitiesService.patchWaitlistApplication(
       +applicationId,
       {
-        applicationDate: plainToInstance(SimpleDate, requestDate as SimpleDate).toString(),
+        applicationDate: formatDate(plainToInstance(SimpleDate, requestDate as SimpleDate).toString(), 'yyyy-MM-dd'),
       },
       user,
     )
