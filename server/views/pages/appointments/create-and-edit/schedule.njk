@@ -191,14 +191,14 @@
                     {% for prisonerSchedule in prisonerSchedules %}
                         {% set prisoner = prisonerSchedule.prisoner %}
                         {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-                            <h2 class="govuk-heading-m" data-qa="schedule-heading">Events for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
+                            <h2 class="govuk-heading-m" data-qa="schedule-heading">Events for {{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
                             {{ prisonerScheduledEvents(prisoner, prisonerSchedule.scheduledEvents) }}
                         {% else %}
                             <div class="govuk-summary-card appointment-schedule">
                                 <div class="govuk-summary-card__title-wrapper">
                                     <h2 class="govuk-summary-card__title" data-qa="schedule-card-title-prison-number-{{ prisoner.number }}">
                                         <ul class='govuk-list'>
-                                            <li><strong>{{ prisoner.name | toTitleCase }}, {{ prisoner.number }}</strong></li>
+                                            <li><strong>{{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }}</strong></li>
                                             {% if session.appointmentJourney.type == AppointmentType.BULK %}
                                                 <li>{{ prisonerSchedule.startTime.hour | padNumber + ":" + prisonerSchedule.startTime.minute | padNumber }} to {{ prisonerSchedule.endTime.hour | padNumber + ":" + prisonerSchedule.endTime.minute | padNumber }}</li>
                                             {% endif %}

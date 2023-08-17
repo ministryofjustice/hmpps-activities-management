@@ -1,5 +1,5 @@
 {% macro serviceUserName(user) %}
-  {% if user.username == 'DPS client account' %}
+  {% if user.username == 'PRISONER_MANAGER_API' %}
     DPS user
   {% else %}
     {{ user | fullName | toTitleCase | initialiseName or "Unknown user" }}
