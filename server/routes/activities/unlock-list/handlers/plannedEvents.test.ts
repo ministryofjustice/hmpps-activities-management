@@ -5,16 +5,15 @@ import PlannedEventRoutes from './plannedEvents'
 import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
 import { LocationGroup } from '../../../../@types/activitiesAPI/types'
-import AppInsightsService from '../../../../services/AppInsightsService'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/unlockListService')
 
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
 const unlockListService = new UnlockListService(null, null, null) as jest.Mocked<UnlockListService>
-const appInsightsClient = new AppInsightsService() as jest.Mocked<AppInsightsService>
+
 describe('Unlock list routes - planned events', () => {
-  const handler = new PlannedEventRoutes(activitiesService, unlockListService, appInsightsClient)
+  const handler = new PlannedEventRoutes(activitiesService, unlockListService)
 
   const locationsAtPrison = [
     {

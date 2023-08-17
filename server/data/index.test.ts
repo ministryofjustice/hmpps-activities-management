@@ -5,8 +5,6 @@ import PrisonerSearchApiClient from './prisonerSearchApiClient'
 import ActivitiesApiClient from './activitiesApiClient'
 import IncentivesApiClient from './incentivesApiClient'
 
-jest.mock('../utils/azureAppInsights')
-
 describe('DataAccess', () => {
   test('The correct rest clients are instantiated', () => {
     const clients = dataAccess()

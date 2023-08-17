@@ -1,15 +1,13 @@
 import { Request, Response } from 'express'
+import appInsights from 'applicationinsights'
 import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
 import { toDate } from '../../../../utils/utils'
-import AppInsightsService from '../../../../services/AppInsightsService'
 
 export default class PlannedEventsRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly unlockListService: UnlockListService,
-
-    private readonly appInsightsClient: AppInsightsService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -59,7 +57,10 @@ export default class PlannedEventsRoutes {
   }
 
   private trackEvent(eventName: string, res: Response): void {
-    const properties = { user: res.locals.user.username, prisonCode: res.locals.user.prisonCode }
-    this.appInsightsClient.trackEvent(eventName, properties)
+    if (appInsights) {
+      const client = appInsights.defaultClient
+      const properties = { user: res.locals.user.username, prisonCode: res.locals.user.prisonCode }
+      client.trackEvent({ name: eventName, properties: { ...properties } })
+    }
   }
 }

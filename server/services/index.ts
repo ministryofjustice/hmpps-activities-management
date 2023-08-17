@@ -4,7 +4,6 @@ import PrisonService from './prisonService'
 import ActivitiesService from './activitiesService'
 import BankHolidayService from './bankHolidayService'
 import UnlockListService from './unlockListService'
-import AppInsightsService from './AppInsightsService'
 
 export default function services() {
   const { hmppsAuthClient, prisonApiClient, prisonerSearchApiClient, incentivesApiClient, activitiesApiClient } =
@@ -16,7 +15,6 @@ export default function services() {
     activitiesService: new ActivitiesService(activitiesApiClient, prisonerSearchApiClient),
     ukBankHolidayService: new BankHolidayService(),
     unlockListService: new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient),
-    appInsightsClient: new AppInsightsService(),
   }
 }
 
