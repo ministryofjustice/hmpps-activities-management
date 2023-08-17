@@ -130,7 +130,7 @@ export default class StartJourneyRoutes {
       appointmentName: appointment.appointmentName,
       prisoners: appointmentOccurrence.prisoners.map(p => ({
         number: p.prisonerNumber,
-        name: `${p.firstName} ${p.lastName}`,
+        name: p.lastName !== 'UNKNOWN' ? `${p.firstName} ${p.lastName}` : null,
         cellLocation: p.cellLocation,
       })),
       category: appointmentOccurrence.category,
