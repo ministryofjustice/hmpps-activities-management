@@ -11,7 +11,7 @@ export default class PlannedEventsRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    this.trackEvent('saaUnlockList', res)
+    this.trackEvent('SAA-UnlockList', res)
 
     const { user } = res.locals
     const { date } = req.query
@@ -58,6 +58,7 @@ export default class PlannedEventsRoutes {
 
   private trackEvent(eventName: string, res: Response): void {
     if (appInsights) {
+      appInsights.setup(process.env.APPINSIGHTS_INSTRUMENTATIONKEY).start()
       const client = appInsights.defaultClient
       const properties = { user: res.locals.user.username, prisonCode: res.locals.user.prisonCode }
       client.trackEvent({ name: eventName, properties: { ...properties } })
