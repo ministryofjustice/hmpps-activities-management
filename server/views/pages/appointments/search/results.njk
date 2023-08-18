@@ -19,7 +19,7 @@
     {% if allocations | length == 1 %}
         {% set prisonerDetails = prisonersDetails[allocations[0].prisonerNumber] %}
         {{ showProfileLink({
-            name: (prisonerDetails.firstName or "Unknown") + " " + (prisonerDetails.lastName or "Unknown"),
+            name: prisonerDetails | firstNameLastName,
             prisonerNumber: prisonerDetails.prisonerNumber or allocations[0].prisonerNumber,
             cellLocation: prisonerDetails.cellLocation or "UNKNOWN",
             link: true,

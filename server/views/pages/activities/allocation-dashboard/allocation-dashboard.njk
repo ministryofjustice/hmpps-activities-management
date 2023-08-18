@@ -194,7 +194,7 @@
 
         {% set suspendedTagHtml %}
 
-            {% if row.status == 'SUSPENDED' %}
+            {% if row.status == 'AUTO_SUSPENDED' or  row.status == 'SUSPENDED' %}
                 {{ govukTag({
                     text: "Suspended",
                     classes: "govuk-tag--red"

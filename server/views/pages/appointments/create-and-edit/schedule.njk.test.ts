@@ -252,13 +252,13 @@ describe('Views - Create Appointment - Schedule', () => {
           time: '09:00 to 12:00',
           eventName: 'Activity for A1234BC',
           type: 'Activity',
-          location: 'Activity Location',
+          location: 'Activity location',
         },
         {
           time: '13:00 to 14:30',
           eventName: 'Appointment for A1234BC',
           type: 'Appointment',
-          location: 'Appointment Location',
+          location: 'Appointment location',
         },
         {
           time: '',
@@ -270,7 +270,7 @@ describe('Views - Create Appointment - Schedule', () => {
           time: '15:00 to 15:30',
           eventName: 'Visit for A1234BC',
           type: 'Visit',
-          location: 'Visit Location',
+          location: 'Visit location',
         },
         {
           time: '',
@@ -282,7 +282,7 @@ describe('Views - Create Appointment - Schedule', () => {
           time: '10:00 to 11:00',
           eventName: 'Adjudication for A1234BC',
           type: 'Adjudication hearing',
-          location: 'Adjudication Location',
+          location: 'Adjudication location',
         },
       ])
     })
@@ -502,13 +502,13 @@ describe('Views - Create Appointment - Schedule', () => {
           time: '09:00 to 12:00',
           eventName: 'Activity for A1234BC',
           type: 'Activity',
-          location: 'Activity Location',
+          location: 'Activity location',
         },
         {
           time: '13:00 to 14:30',
           eventName: 'Appointment for A1234BC',
           type: 'Appointment',
-          location: 'Appointment Location',
+          location: 'Appointment location',
         },
         {
           time: '',
@@ -520,7 +520,7 @@ describe('Views - Create Appointment - Schedule', () => {
           time: '15:00 to 15:30',
           eventName: 'Visit for A1234BC',
           type: 'Visit',
-          location: 'Visit Location',
+          location: 'Visit location',
         },
         {
           time: '',
@@ -532,7 +532,7 @@ describe('Views - Create Appointment - Schedule', () => {
           time: '10:00 to 11:00',
           eventName: 'Adjudication for A1234BC',
           type: 'Adjudication hearing',
-          location: 'Adjudication Location',
+          location: 'Adjudication location',
         },
       ])
     })
@@ -802,13 +802,13 @@ describe('Views - Create Appointment - Schedule', () => {
           time: '09:00 to 12:00',
           eventName: 'Activity for A1234BC',
           type: 'Activity',
-          location: 'Activity Location',
+          location: 'Activity location',
         },
         {
           time: '13:00 to 14:30',
           eventName: 'Appointment for A1234BC',
           type: 'Appointment',
-          location: 'Appointment Location',
+          location: 'Appointment location',
         },
         {
           time: '',
@@ -820,7 +820,7 @@ describe('Views - Create Appointment - Schedule', () => {
           time: '15:00 to 15:30',
           eventName: 'Visit for A1234BC',
           type: 'Visit',
-          location: 'Visit Location',
+          location: 'Visit location',
         },
         {
           time: '',
@@ -832,7 +832,7 @@ describe('Views - Create Appointment - Schedule', () => {
           time: '10:00 to 11:00',
           eventName: 'Adjudication for A1234BC',
           type: 'Adjudication hearing',
-          location: 'Adjudication Location',
+          location: 'Adjudication location',
         },
       ])
     })
