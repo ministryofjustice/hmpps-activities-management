@@ -50,6 +50,7 @@ describe('Route Handlers - Deallocation reason', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/deallocation-reason', {
         deallocationReasons: [{ code: 'OTHER', description: 'OTHER' }],
+        allocationId: 1,
       })
     })
   })
@@ -64,7 +65,7 @@ describe('Route Handlers - Deallocation reason', () => {
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         `/activities/allocation-dashboard/1/check-allocation/ABC123`,
         'Allocation updated',
-        "We've updated the end date for this allocation",
+        "We've updated the reason for ending this allocation",
       )
     })
   })

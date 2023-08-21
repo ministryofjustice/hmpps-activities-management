@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { Min } from 'class-validator'
-import ActivitiesService from '../../../../services/activitiesService'
+import ActivitiesService from '../../../../../services/activitiesService'
 
 export class Activity {
   @Expose()

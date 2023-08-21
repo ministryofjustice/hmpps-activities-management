@@ -19,7 +19,7 @@ function FormSpinner(container) {
       </div>
     `.trim()
 
-    document.querySelector('body').appendChild(formSpinnerTemplate.content.firstChild)
+    setTimeout(() => document.querySelector('body').appendChild(formSpinnerTemplate.content.firstChild), 1000)
 
     const buttons = this.container.querySelectorAll('[data-module="govuk-button"]')
     nodeListForEach(buttons, function (button) {

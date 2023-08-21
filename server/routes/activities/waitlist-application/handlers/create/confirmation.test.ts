@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ConfirmationRoutes from './confirmation'
-import ActivitiesService from '../../../../services/activitiesService'
-import atLeast from '../../../../../jest.setup'
-import { Activity, WaitingListApplication } from '../../../../@types/activitiesAPI/types'
+import ActivitiesService from '../../../../../services/activitiesService'
+import atLeast from '../../../../../../jest.setup'
+import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
 
-jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null, null)
 

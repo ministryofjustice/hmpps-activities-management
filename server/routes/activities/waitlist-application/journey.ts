@@ -13,4 +13,5 @@ export type WaitListApplicationJourney = {
   requester?: string
   status?: string
   comment?: string
+  createdTime?: string
 }

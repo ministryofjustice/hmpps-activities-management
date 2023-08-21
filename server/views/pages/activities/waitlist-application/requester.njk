@@ -6,7 +6,7 @@
 
 {% set pageTitle = applicationName + " - Waitlist - Who made the request?" %}
 {% set pageId = 'requester-page' %}
-{% set backLinkHref = '#' %}
+{% set backLinkHref = "activity" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -33,7 +33,7 @@
                         {
                             value: RequesterEnum.PRISONER,
                             text:  prisonerName,
-                            checked: session.waitListApplicationJourney.requester == prisonerName
+                            checked: session.waitListApplicationJourney.requester == 'Self-requested'
                         },
                         {
                             value: RequesterEnum.GUIDANCE_STAFF,
@@ -45,7 +45,7 @@
                             text: 'Someone else, for example a member of staff, an activity leader or an orderly',
                             checked: formResponses.requester == RequesterEnum.OTHER or
                                      (session.waitListApplicationJourney.requester and
-                                     session.waitListApplicationJourney.requester != prisonerName and
+                                     session.waitListApplicationJourney.requester != 'Self-requested' and
                                      session.waitListApplicationJourney.requester != 'IAG or CXK careers information, advice and guidance staff'),
                             conditional: {
                                 html: govukSelect({

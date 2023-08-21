@@ -57,3 +57,4 @@ export type AllocationSuitability = components['schemas']['AllocationSuitability
 export type ActivityPay = components['schemas']['ActivityPay']
 export type WaitingListApplicationRequest = components['schemas']['WaitingListApplicationRequest']
 export type WaitingListApplication = components['schemas']['WaitingListApplication']
+export type WaitingListApplicationUpdateRequest = components['schemas']['WaitingListApplicationUpdateRequest']

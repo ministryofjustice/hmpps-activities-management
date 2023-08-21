@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { addDays } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashboard'
@@ -14,14 +15,18 @@ import {
   WaitingListApplication,
 } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
+import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+
+const today = new Date()
+const nextWeek = addDays(today, 7)
 
 describe('Route Handlers - Allocation dashboard', () => {
   const handler = new AllocationDashboardRoutes(prisonService, activitiesService)
@@ -34,6 +39,34 @@ describe('Route Handlers - Allocation dashboard', () => {
       caseLoadId: 'MDI',
     },
   }
+
+  const mockActivity = {
+    attendanceRequired: false,
+    category: { code: 'EDUCATION', id: 1, name: 'Education' },
+    createdBy: '',
+    createdTime: '',
+    description: '',
+    eligibilityRules: [],
+    endDate: toDateString(nextWeek),
+    inCell: false,
+    minimumIncentiveNomisCode: 'BAS',
+    minimumIncentiveLevel: 'Basic',
+    outsideWork: false,
+    pay: [],
+    payPerSession: 'H',
+    pieceWork: false,
+    prisonCode: '',
+    riskLevel: '',
+    schedules: [activitySchedule],
+    startDate: toDateString(today),
+    summary: 'Maths Level 1',
+    tier: { code: '', description: '', id: 0 },
+    waitingList: [],
+    id: 1,
+    minimumEducationLevel: [],
+  } as unknown as Activity
+
+  const tomorrow = addDays(today, 1)
 
   beforeEach(() => {
     res = {
@@ -50,6 +83,13 @@ describe('Route Handlers - Allocation dashboard', () => {
         page: 0,
       },
     } as unknown as Request
+
+    when(activitiesService.getActivity)
+      .calledWith(atLeast(1))
+      .mockResolvedValueOnce({
+        ...mockActivity,
+        startDate: toDateString(tomorrow),
+      })
   })
 
   afterEach(() => jest.resetAllMocks())
@@ -61,7 +101,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         .calledWith(atLeast(1))
         .mockResolvedValue({
           pay: [{ incentiveNomisCode: 'BAS' }, { incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
-          schedules: [{ scheduleId: 1 }],
+          schedules: [activitySchedule],
         } as unknown as Activity)
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
@@ -188,7 +228,41 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/allocation-dashboard', {
-        schedule: { scheduleId: 1 },
+        schedule: activitySchedule,
+        dailySlots: {
+          '1': [
+            {
+              day: 'Monday',
+              slots: ['am'],
+            },
+            {
+              day: 'Tuesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Wednesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Thursday',
+              slots: ['am'],
+            },
+            {
+              day: 'Friday',
+              slots: ['am'],
+            },
+            {
+              day: 'Saturday',
+              slots: ['am'],
+            },
+            {
+              day: 'Sunday',
+              slots: ['am'],
+            },
+          ],
+        },
+        scheduleWeeks: 1,
+        currentWeek: 1,
         currentlyAllocated: [
           {
             allocationId: 1,
@@ -277,7 +351,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         .calledWith(atLeast(1))
         .mockResolvedValue({
           pay: [{ incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
-          schedules: [],
+          schedules: [activitySchedule],
         } as unknown as Activity)
 
       await handler.GET(req, res)
@@ -307,7 +381,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ pay: [], riskLevel: 'low', schedules: [] } as unknown as Activity)
+        .mockResolvedValue({ pay: [], riskLevel: 'low', schedules: [activitySchedule] } as unknown as Activity)
 
       await handler.GET(req, res)
 
@@ -324,7 +398,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ pay: [], riskLevel: 'medium', schedules: [] } as unknown as Activity)
+        .mockResolvedValue({ pay: [], riskLevel: 'medium', schedules: [activitySchedule] } as unknown as Activity)
 
       await handler.GET(req, res)
 
@@ -338,10 +412,6 @@ describe('Route Handlers - Allocation dashboard', () => {
 
     it('should calculate suitable workplace risk assessment correctly - HIGH', async () => {
       req.params = { activityId: '1' }
-      activitiesService.getActivity = jest.fn()
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValue({ pay: [], riskLevel: 'high', schedules: [] } as unknown as Activity)
 
       await handler.GET(req, res)
 
@@ -516,6 +586,30 @@ describe('Route Handlers - Allocation dashboard', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/activities/allocate/prisoner/ABC123?scheduleId=1`)
     })
 
+    it('should redirect to allocate when a waitlist application is selected', async () => {
+      activitiesService.fetchWaitlistApplication = jest.fn()
+      when(activitiesService.fetchWaitlistApplication)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ prisonerNumber: 'ABC123' } as WaitingListApplication)
+
+      activitiesService.getActivity = jest.fn()
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
+
+      prisonService.getPrisonerIepSummary = jest.fn()
+      when(prisonService.getPrisonerIepSummary)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue({ iepLevel: 'ENH' } as IepSummary)
+
+      req.body = { selectedWaitlistApplication: 1 }
+      req.params = { activityId: '1' }
+
+      await handler.ALLOCATE(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocate/prisoner/ABC123?scheduleId=1`)
+    })
+
     it('should throw validation error if a pay rate doesnt exist to match the inmates iep level', async () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
@@ -539,25 +633,18 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
   })
 
-  describe('type validation', () => {
-    it('validation fails if a value is not entered', async () => {
-      const body = {}
+  describe('VIEW_APPLICATION', () => {
+    it('should redirect to view a waitlist application for the selected id', async () => {
+      activitiesService.fetchWaitlistApplication = jest.fn()
+      when(activitiesService.fetchWaitlistApplication)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ id: 1 } as WaitingListApplication)
 
-      const requestObject = plainToInstance(SelectedAllocation, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      req.body = { selectedWaitlistApplication: 1 }
 
-      expect(errors).toEqual([{ property: 'selectedAllocation', error: 'Select a candidate to allocate them' }])
-    })
+      await handler.VIEW_APPLICATION(req, res)
 
-    it('passes validation', async () => {
-      const body = {
-        selectedAllocation: 'MDI',
-      }
-
-      const requestObject = plainToInstance(SelectedAllocation, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toHaveLength(0)
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/waitlist/view-and-edit/1/view`)
     })
   })
 
@@ -580,6 +667,42 @@ describe('Route Handlers - Allocation dashboard', () => {
         'selectedAllocations',
         'You can only select one allocation to edit',
       )
+    })
+  })
+
+  describe('type validation', () => {
+    it('validation fails if a value is not entered', async () => {
+      const body = {}
+
+      const requestObject = plainToInstance(SelectedAllocation, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        { error: 'Select a candidate to allocate them', property: 'selectedAllocation' },
+        { error: 'Select a waitlist application to allocate the candidate', property: 'selectedWaitlistApplication' },
+      ])
+    })
+
+    it('passes validation when allocation is selected', async () => {
+      const body = {
+        selectedAllocation: 'ABC123',
+      }
+
+      const requestObject = plainToInstance(SelectedAllocation, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
+
+    it('passes validation when waitlist application is selected', async () => {
+      const body = {
+        selectedWaitlistApplication: '1',
+      }
+
+      const requestObject = plainToInstance(SelectedAllocation, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
     })
   })
 })

@@ -11,8 +11,8 @@ function AutoComplete(meta) {
       showAllValues: true,
       preserveNullOptions: true,
       templates: {
-        suggestion: (option) => _.escape(option), // escape html which may have been injected to the component
-      }
+        suggestion: option => _.escape(option), // escape html which may have been injected to the component
+      },
     })
 
     // By default accessible-autocomplete creates an input element with type="text".

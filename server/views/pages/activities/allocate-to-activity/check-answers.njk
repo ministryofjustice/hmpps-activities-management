@@ -21,6 +21,13 @@
                     <li>{{ cellLocation }}</li>
                 </ul>
             {% endset %}
+            {% set endDateOption %}
+                {% if endDate == "Not set" %}
+                    end-date?preserveHistory=true
+                {% else %}
+                    remove-date-option?preserveHistory=true
+                {% endif %}
+            {% endset %}
 
             {{ govukSummaryList({
                 rows: [
@@ -76,7 +83,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "end-date?preserveHistory=true",
+                                    href: endDateOption,
                                     classes: 'govuk-link--no-visited-state',
                                     text: "Change",
                                     visuallyHiddenText: "change end date"
@@ -118,3 +125,5 @@
         </div>
     </div>
 {% endblock %}
+
+

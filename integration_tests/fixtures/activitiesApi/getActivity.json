@@ -179,12 +179,21 @@
         "riskLevel": null,
         "minimumIncentiveLevel": null
       },
+      "scheduleWeeks": 1,
       "slots": [
         {
           "id": 5,
+          "weekNumber": 1,
           "startTime": "10:00",
           "endTime": "11:00",
-          "daysOfWeek": ["Tue"]
+          "daysOfWeek": ["Tue"],
+          "mondayFlag": false,
+          "tuesdayFlag": true,
+          "wednesdayFlag": false,
+          "thursdayFlag": false,
+          "fridayFlag": false,
+          "saturdayFlag": false,
+          "sundayFlag": false
         }
       ],
       "startDate": "2022-10-10",

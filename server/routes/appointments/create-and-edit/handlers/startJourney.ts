@@ -14,6 +14,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.INDIVIDUAL,
+      createJourneyComplete: false,
     }
     return res.redirect(`select-prisoner`)
   }
@@ -22,6 +23,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.GROUP,
+      createJourneyComplete: false,
       prisoners: [],
     }
     res.redirect('how-to-add-prisoners')
@@ -31,6 +33,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.BULK,
+      createJourneyComplete: false,
     }
     req.session.bulkAppointmentJourney = {
       appointments: [],
@@ -45,6 +48,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.GROUP,
+      createJourneyComplete: false,
       prisoners: [],
     }
 
@@ -126,7 +130,7 @@ export default class StartJourneyRoutes {
       appointmentName: appointment.appointmentName,
       prisoners: appointmentOccurrence.prisoners.map(p => ({
         number: p.prisonerNumber,
-        name: `${p.firstName} ${p.lastName}`,
+        name: p.lastName !== 'UNKNOWN' ? `${p.firstName} ${p.lastName}` : null,
         cellLocation: p.cellLocation,
       })),
       category: appointmentOccurrence.category,
