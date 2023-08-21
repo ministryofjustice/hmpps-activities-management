@@ -9,6 +9,7 @@ import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import { getAppointmentBackLinkHref, hasAnyAppointmentPropertyChanged } from '../../../../utils/editAppointmentUtils'
+import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
 
 export class DateAndTime {
   @Expose()
@@ -41,6 +42,12 @@ export default class DateAndTimeRoutes {
     res.render('pages/appointments/create-and-edit/date-and-time', {
       backLinkHref: getAppointmentBackLinkHref(req, 'location'),
     })
+    const properties = {
+      username: res.locals.user.username,
+      prisonCode: res.locals.user.activeCaseLoadId,
+      property: 'Date and Time',
+    }
+    trackEvent('SAA-Appointments-Appointment-Change-From-Schedule', properties, null)
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {

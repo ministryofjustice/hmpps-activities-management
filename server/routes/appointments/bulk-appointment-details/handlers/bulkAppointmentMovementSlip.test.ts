@@ -26,6 +26,7 @@ describe('Route Handlers - Movement Slip', () => {
         id: '10',
       },
       bulkAppointment: {
+        id: '12',
         occurrences: [],
       } as unknown as BulkAppointmentDetails,
     } as unknown as Request
@@ -64,6 +65,7 @@ describe('Route Handlers - Movement Slip', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/bulk-appointment', {
         bulkAppointment: {
+          id: '12',
           occurrences: [
             {
               isCancelled: false,

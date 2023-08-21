@@ -54,6 +54,6 @@ export default class PlannedEventsRoutes {
     })
 
     const properties = { user: res.locals.user.username, prisonCode: res.locals.user.activeCaseLoadId }
-    trackEvent('SAA-Unlock List', properties)
+    trackEvent('SAA-Unlock List', properties, null)
   }
 }

@@ -37,7 +37,7 @@ export default class ReviewPrisonerRoutes {
       prisonCode: res.locals.user.activeCaseLoadId,
       property: 'Attendees',
     }
-    trackEvent('SAA-Appointments-Appointment-Change-From-Schedule', properties)
+    trackEvent('SAA-Appointments-Appointment-Change-From-Schedule', properties, null)
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
