@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import config from '../../../../config'
+import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
 
 export default class ReviewPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -30,6 +31,13 @@ export default class ReviewPrisonerRoutes {
       preserveHistory,
       prisoners,
     })
+
+    const properties = {
+      username: res.locals.user.username,
+      prisonCode: res.locals.user.activeCaseLoadId,
+      property: 'Attendees',
+    }
+    trackEvent('SAA-Appointments-Appointment-Change-From-Schedule', properties)
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

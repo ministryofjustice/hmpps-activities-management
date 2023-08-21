@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import appInsights from 'applicationinsights'
 import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
 import { toDate } from '../../../../utils/utils'
+import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
 
 export default class PlannedEventsRoutes {
   constructor(
@@ -11,8 +11,6 @@ export default class PlannedEventsRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    this.trackEvent('saaUnlockList', res)
-
     const { user } = res.locals
     const { date } = req.query
     const { location, timeSlot } = req.session.unlockListJourney
@@ -54,13 +52,8 @@ export default class PlannedEventsRoutes {
       unlockListItems,
       movementCounts,
     })
-  }
 
-  private trackEvent(eventName: string, res: Response): void {
-    if (appInsights) {
-      const client = appInsights.defaultClient
-      const properties = { user: res.locals.user.username, prisonCode: res.locals.user.prisonCode }
-      client.trackEvent({ name: eventName, properties: { ...properties } })
-    }
+    const properties = { user: res.locals.user.username, prisonCode: res.locals.user.activeCaseLoadId }
+    trackEvent('SAA-Unlock List', properties)
   }
 }
