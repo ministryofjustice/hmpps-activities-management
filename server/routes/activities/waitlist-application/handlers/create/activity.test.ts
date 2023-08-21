@@ -8,7 +8,7 @@ import ActivityRoutes, { Activity as Body } from './activity'
 import atLeast from '../../../../../../jest.setup'
 import {
   Activity,
-  ActivityLite,
+  ActivitySummary,
   PrisonerAllocations,
   WaitingListApplication,
 } from '../../../../../@types/activitiesAPI/types'
@@ -53,15 +53,15 @@ describe('Route Handlers - Waitlist application - Request date', () => {
         .mockResolvedValue([
           {
             id: 1,
-            description: 'test activity',
+            activityName: 'test activity',
             category: { code: 'EDU' },
           },
           {
             id: 2,
-            description: 'filtered activity',
+            activityName: 'filtered activity',
             category: { code: 'SAA_NOT_IN_WORK' },
           },
-        ] as ActivityLite[])
+        ] as ActivitySummary[])
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/activity`, {

@@ -1,26 +1,30 @@
 [
   {
     "id": 1,
-    "prisonCode": "MDI",
-    "attendanceRequired": true,
-    "summary": "Maths level 1",
-    "description": "A basic maths course suitable for introduction to the subject",
+    "activityName": "Maths level 1",
     "category": {
       "id": 1,
       "code": "EDU",
       "description": "Education"
-    }
+    },
+    "capacity": 15,
+    "allocated": 8,
+    "waitlisted": 2,
+    "createdTime": "2023-07-20T16:05:16",
+    "activityState": "LIVE"
   },
   {
     "id": 2,
-    "prisonCode": "MDI",
-    "attendanceRequired": true,
-    "summary": "English level 1",
-    "description": "A basic english course suitable for introduction to the subject",
+    "activityName": "English level 1",
     "category": {
       "id": 1,
       "code": "EDU",
       "description": "Education"
-    }
+    },
+    "capacity": 15,
+    "allocated": 8,
+    "waitlisted": 2,
+    "createdTime": "2023-07-20T16:05:16",
+    "activityState": "LIVE"
   }
 ]

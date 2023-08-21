@@ -19,7 +19,7 @@ export default class ActivityRoutes {
     const activities = await this.activitiesService
       .getActivities(true, user)
       .then(act => act.filter(a => a.category.code !== 'SAA_NOT_IN_WORK'))
-      .then(act => act.map(a => ({ id: a.id, name: a.description })))
+      .then(act => act.map(a => ({ id: a.id, name: a.activityName })))
 
     return res.render(`pages/activities/waitlist-application/activity`, { activities })
   }

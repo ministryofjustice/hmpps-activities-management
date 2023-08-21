@@ -1823,7 +1823,7 @@ export interface components {
         | 'PRISONER_ADDED_TO_WAITING_LIST'
         | 'PRISONER_ALLOCATED'
         | 'PRISONER_DEALLOCATED'
-        | 'PRISONER_REJECTED_FROM_WAITING_LIST'
+        | 'PRISONER_DECLINED_FROM_WAITING_LIST'
         | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
       /**
@@ -1882,7 +1882,7 @@ export interface components {
         | 'PRISONER_ADDED_TO_WAITING_LIST'
         | 'PRISONER_ALLOCATED'
         | 'PRISONER_DEALLOCATED'
-        | 'PRISONER_REJECTED_FROM_WAITING_LIST'
+        | 'PRISONER_DECLINED_FROM_WAITING_LIST'
         | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
       /**
@@ -4293,6 +4293,47 @@ export interface components {
       /** Format: int32 */
       messagesReturnedCount: number
       messages: components['schemas']['DlqMessage'][]
+    }
+    /** @description Summarises an activity */
+    ActivitySummary: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The name of the activity
+       * @example Maths level 1
+       */
+      activityName?: string
+      category: components['schemas']['ActivityCategory']
+      /**
+       * Format: int32
+       * @description The capacity of the activity
+       */
+      capacity: number
+      /**
+       * Format: int32
+       * @description The number of prisoners currently allocated to the activity
+       */
+      allocated: number
+      /**
+       * Format: int32
+       * @description The number of prisoners currently currently on the waitlist for the activity
+       */
+      waitlisted: number
+      /**
+       * Format: date-time
+       * @description The date and time when this activity was created
+       */
+      createdTime: string
+      /**
+       * @description Whether the activity is live or archived
+       * @example LIVE
+       * @enum {string}
+       */
+      activityState: 'ARCHIVED' | 'LIVE'
     }
     /** @description Describes a top-level activity */
     PrisonRegime: {
@@ -6996,7 +7037,7 @@ export interface operations {
       /** @description Activities */
       200: {
         content: {
-          'application/json': components['schemas']['ActivityLite'][]
+          'application/json': components['schemas']['ActivitySummary'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
