@@ -43,6 +43,7 @@ import {
   DeallocationReasonCode,
   EventAcknowledgeRequest,
   WaitingListApplicationRequest,
+  ActivitySummary,
 } from '../@types/activitiesAPI/types'
 import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
@@ -68,7 +69,7 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAttendanceReasons(user)
   }
 
-  async getActivities(excludeArchived: boolean, user: ServiceUser): Promise<ActivityLite[]> {
+  async getActivities(excludeArchived: boolean, user: ServiceUser): Promise<ActivitySummary[]> {
     return this.activitiesApiClient.getActivities(user.activeCaseLoadId, excludeArchived, user)
   }
 

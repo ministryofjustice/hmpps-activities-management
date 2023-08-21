@@ -237,7 +237,10 @@ export default class AllocationDashboardRoutes {
           filters.incentiveLevelFilter === inmate.currentIncentive,
       )
 
-    return { waitlistedPrisoners: filteredWaitlist, waitlistSize: waitlist.length }
+    return {
+      waitlistedPrisoners: filteredWaitlist,
+      waitlistSize: waitlist.filter(w => w.status === 'PENDING' || w.status === 'APPROVED').length,
+    }
   }
 
   private getCandidates = async (scheduleId: number, filters: Filters, pageNumber: number, user: ServiceUser) => {

@@ -91,6 +91,20 @@ export interface paths {
      */
     post: operations['prisonerAllocations']
   }
+  '/migrate/allocation': {
+    /**
+     * Migrate an allocation
+     * @description Migrate an allocation from NOMIS. Requires the role 'ROLE_NOMIS_ACTIVITIES'
+     */
+    post: operations['migrateAllocation']
+  }
+  '/migrate/activity': {
+    /**
+     * Migrate an activity
+     * @description Migrate an activity. Requires the role 'ROLE_NOMIS_ACTIVITIES'
+     */
+    post: operations['migrateActivity']
+  }
   '/migrate-appointment': {
     /**
      * Create an appointment or series of appointment occurrences
@@ -178,6 +192,15 @@ export interface paths {
      * @description Create an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
      */
     post: operations['create']
+  }
+  '/waiting-list-applications/{waitingListId}': {
+    /**
+     * Get a waiting list application by its id
+     * @description Returns a single waiting list application by its unique identifier.
+     */
+    get: operations['getWaitingListById']
+    /** @description Update a waiting list application. */
+    patch: operations['updateWaitingList']
   }
   '/appointment-occurrences/{appointmentOccurrenceId}': {
     /**
@@ -428,8 +451,8 @@ export interface paths {
   }
   '/activities/{activityId}/basic': {
     /**
-     * DO NOT USE:  Get an activity key ids - testing only
-     * @description DO NOT USEL: Returns keys ids - testing only
+     * Returns the basic activity ids and descriptions without its child collections
+     * @description Returns basic activity IDs and attributes without its child collections.
      */
     get: operations['getActivityKeyIds']
   }
@@ -1297,6 +1320,232 @@ export interface components {
       /** @description The list of allocations for the prisoner */
       allocations: components['schemas']['Allocation'][]
     }
+    /** @description Allocation migration request */
+    AllocationMigrateRequest: {
+      /**
+       * @description The prison code where this allocation is to be made
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: int64
+       * @description The activity ID to which this allocation should be made
+       * @example 12332
+       */
+      activityId: number
+      /**
+       * Format: int64
+       * @description The alternative activity ID in a split regime
+       * @example 1322
+       */
+      splitRegimeActivityId?: number
+      /**
+       * @description The prisoner display number from NOMIS
+       * @example A3334AB
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The prisoner booking id from NOMIS
+       * @example 99098484
+       */
+      bookingId: number
+      /**
+       * @description The prisoner cell location
+       * @example RSI-A-1-2-001
+       */
+      cellLocation?: string
+      /**
+       * @description The pay band code from NOMIS
+       * @example 2
+       */
+      nomisPayBand?: string
+      /**
+       * Format: date
+       * @description Date on which this allocation starts or started. Not nullable.
+       * @example 2022-12-23
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description Date on which this allocation ended or will end. Nullable.
+       * @example 2022-12-23
+       */
+      endDate?: string
+      /**
+       * @description If an end date is set there may be a comment. Nullable.
+       * @example Due to end in January.
+       */
+      endComment?: string
+      /**
+       * @description True if this prisoner allocation is suspended.
+       * @example true
+       */
+      suspendedFlag: boolean
+    }
+    /** @description Response for a successful migration of one allocation to an activity */
+    AllocationMigrateResponse: {
+      /**
+       * Format: int64
+       * @description The actual activity ID to which the allocation was made
+       * @example 123232
+       */
+      activityId: number
+      /**
+       * Format: int64
+       * @description The allocation ID created in the activities service
+       * @example 32323
+       */
+      allocationId: number
+    }
+    /** @description Activity migration request */
+    ActivityMigrateRequest: {
+      /**
+       * @description A nomis program service code (activity category)
+       * @example PRISON JOBS
+       */
+      programServiceCode: string
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * Format: date
+       * @description Date on which this activity starts or started. Can not be null.
+       * @example 2022-12-23
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description Date when this activity ends. Can be null.
+       * @example 2022-12-23
+       */
+      endDate?: string
+      /**
+       * Format: int64
+       * @description Optional NOMIS internal location id
+       * @example 98877667
+       */
+      internalLocationId?: number
+      /**
+       * @description Optional NOMIS internal location code
+       * @example A011
+       */
+      internalLocationCode?: string
+      /**
+       * @description Optional NOMIS internal location description
+       * @example PVI-1-2-A011
+       */
+      internalLocationDescription?: string
+      /**
+       * Format: int32
+       * @description The maximum number of prisoners who can attend. Not null.
+       * @example 10
+       */
+      capacity: number
+      /**
+       * @description A summary description for the activity.
+       * @example Maths level 1
+       */
+      description: string
+      /**
+       * @description Indicates (F)ull or (H)alf day (for payment purposes). Not nullable.
+       * @example H
+       * @enum {string}
+       */
+      payPerSession: 'H' | 'F'
+      /**
+       * @description The NOMIS code for the minimum incentive level for this activity
+       * @example BAS
+       */
+      minimumIncentiveLevel: string
+      /**
+       * @description Whether the schedule runs on bank holidays
+       * @example true
+       */
+      runsOnBankHoliday: boolean
+      /** @description Details of when this activity runs during the week */
+      scheduleRules: components['schemas']['NomisScheduleRule'][]
+      /** @description The pay rates which apply to this activity */
+      payRates: components['schemas']['NomisPayRate'][]
+    }
+    /** @description Describes a pay rate for an activity. At least one pay rate must be specified. */
+    NomisPayRate: {
+      /**
+       * @description The incentive level code from NOMIS
+       * @example BAS
+       */
+      incentiveLevel: string
+      /**
+       * @description The pay band code from NOMIS. If null, will be defaulted to 1
+       * @example 2
+       */
+      nomisPayBand?: string
+      /**
+       * Format: int32
+       * @description The pay rate for one half day session in pence
+       * @example 120
+       */
+      rate: number
+    }
+    /** @description The scheduling rules in Nomis. At least one day and time must be specified. */
+    NomisScheduleRule: {
+      /**
+       * Format: partial-time
+       * @description Start time on the day
+       * @example 10:45
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description End time on the day
+       * @example 11:45
+       */
+      endTime: string
+      /**
+       * @description Runs on a Monday
+       * @example true
+       */
+      monday: boolean
+      /**
+       * @description Runs on a Tuesday
+       * @example true
+       */
+      tuesday: boolean
+      /**
+       * @description Runs on a Wednesday
+       * @example true
+       */
+      wednesday: boolean
+      /**
+       * @description Runs on a Thursday
+       * @example true
+       */
+      thursday: boolean
+      /**
+       * @description Runs on a Friday
+       * @example true
+       */
+      friday: boolean
+      /**
+       * @description Runs on a Saturday
+       * @example true
+       */
+      saturday: boolean
+      /**
+       * @description Runs on a Sunday
+       * @example true
+       */
+      sunday: boolean
+    }
+    ActivityMigrateResponse: {
+      prisonCode: string
+      /** Format: int64 */
+      activityId: number
+      /** Format: int64 */
+      splitRegimeActivityId?: number
+    }
     /** @description The migration request with the appointment details */
     AppointmentMigrateRequest: {
       /**
@@ -1574,7 +1823,7 @@ export interface components {
         | 'PRISONER_ADDED_TO_WAITING_LIST'
         | 'PRISONER_ALLOCATED'
         | 'PRISONER_DEALLOCATED'
-        | 'PRISONER_REJECTED_FROM_WAITING_LIST'
+        | 'PRISONER_DECLINED_FROM_WAITING_LIST'
         | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
       /**
@@ -1633,7 +1882,7 @@ export interface components {
         | 'PRISONER_ADDED_TO_WAITING_LIST'
         | 'PRISONER_ALLOCATED'
         | 'PRISONER_DEALLOCATED'
-        | 'PRISONER_REJECTED_FROM_WAITING_LIST'
+        | 'PRISONER_DECLINED_FROM_WAITING_LIST'
         | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
       /**
@@ -2052,7 +2301,7 @@ export interface components {
        */
       comments?: string
       /**
-       * @description The status of the application
+       * @description The status of the application. Only PENDING, APPROVED or DECLINED are allowed when creating.
        * @example PENDING
        * @enum {string}
        */
@@ -2333,8 +2582,6 @@ export interface components {
       eligibilityRules: components['schemas']['ActivityEligibility'][]
       /** @description A list of schedules for this activity. These contain the time slots / recurrence settings for instances of this activity. */
       schedules: components['schemas']['ActivitySchedule'][]
-      /** @description A list of prisoners who are waiting for allocation to this activity. This list is held against the activity, though allocation is against particular schedules of the activity */
-      waitingList: components['schemas']['PrisonerWaiting'][]
       /** @description The list of pay rates by incentive level and pay band that can apply to this activity */
       pay: components['schemas']['ActivityPay'][]
       /**
@@ -2986,36 +3233,6 @@ export interface components {
        */
       description: string
     }
-    /** @description Describes a person who is on a waiting list for an activity */
-    PrisonerWaiting: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this prisoner waiting
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The prisoner number (NomisId) of the person on the waiting list
-       * @example A1234AA
-       */
-      prisonerNumber: string
-      /**
-       * Format: int32
-       * @description The priority of this person in the waiting list. The lower the number, the higher the priority
-       * @example 1
-       */
-      priority: number
-      /**
-       * Format: date-time
-       * @description The date and time when this person was added to the waiting list
-       */
-      createdTime: string
-      /**
-       * @description The staff members name who added this person to the waiting list
-       * @example Adam Smith
-       */
-      createdBy: string
-    }
     /** @description Describes one instance of an activity schedule */
     ScheduledInstance: {
       /**
@@ -3074,6 +3291,119 @@ export interface components {
        * @example 2022-09-02
        */
       suspendedUntil?: string
+    }
+    /** @description The update request with the waiting list changes */
+    WaitingListApplicationUpdateRequest: {
+      /**
+       * Format: date
+       * @description
+       *       The updated past or present date on which the waiting list application was requested.
+       *
+       *       Note this cannot be after the date the waiting list application was first made.
+       *
+       * @example 2023-06-23
+       */
+      applicationDate?: string
+      /**
+       * @description The updated person who made the request
+       * @example Fred Bloggs
+       */
+      requestedBy?: string
+      /**
+       * @description The updated comments related to the waiting list request
+       * @example The prisoner has specifically requested to attend this activity
+       */
+      comments?: string
+      /**
+       * @description The updated status of the application. Only PENDING, APPROVED or DECLINED are allowed when updating.
+       * @example PENDING
+       * @enum {string}
+       */
+      status?: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
+    }
+    /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
+    WaitingListApplication: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this waiting list
+       * @example 111111
+       */
+      id: number
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the associated activity schedule
+       * @example 222222
+       */
+      scheduleId: number
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the associated allocation
+       * @example 333333
+       */
+      allocationId?: number
+      /**
+       * @description The prison code for this waiting list
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description The prisoner number (NOMIS ID) for this waiting list
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The prisoner booking id (NOMIS ID) for this waiting list
+       * @example 10001
+       */
+      bookingId: number
+      /**
+       * @description The status of this waiting list
+       * @example PENDING
+       * @enum {string}
+       */
+      status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
+      /**
+       * Format: date
+       * @description The past or present date on which the waiting list was requested
+       * @example 2023-06-23
+       */
+      requestedDate: string
+      /**
+       * @description The person who made the request for this waiting list
+       * @example Fred Bloggs
+       */
+      requestedBy: string
+      /**
+       * @description Any particular comments related to this waiting list
+       * @example The prisoner has specifically requested to attend this activity
+       */
+      comments?: string
+      /**
+       * @description The reason for the waiting list request to be declined (null if status is not declined)
+       * @example The prisoner has specifically requested to attend this activity
+       */
+      declinedReason?: string
+      /**
+       * Format: date-time
+       * @description The date and time the waiting list was first created
+       */
+      creationTime: string
+      /**
+       * @description The person who created the waiting list i.e the user at the time
+       * @example Jon Doe
+       */
+      createdBy: string
+      /**
+       * Format: date-time
+       * @description The date and time the waiting list was last updated
+       */
+      updatedTime?: string
+      /**
+       * @description The person who last made changes to the waiting list
+       * @example Jane Doe
+       */
+      updatedBy?: string
     }
     /** @description The update request with the new appointment occurrence details and how to apply the update */
     AppointmentOccurrenceUpdateRequest: {
@@ -3369,90 +3699,6 @@ export interface components {
        * @example true
        */
       issuePayment?: boolean
-    }
-    /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
-    WaitingListApplication: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this waiting list
-       * @example 111111
-       */
-      id: number
-      /**
-       * Format: int64
-       * @description The internally-generated ID for the associated activity schedule
-       * @example 222222
-       */
-      scheduleId: number
-      /**
-       * Format: int64
-       * @description The internally-generated ID for the associated allocation
-       * @example 333333
-       */
-      allocationId?: number
-      /**
-       * @description The prison code for this waiting list
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * @description The prisoner number (NOMIS ID) for this waiting list
-       * @example A1234AA
-       */
-      prisonerNumber: string
-      /**
-       * Format: int64
-       * @description The prisoner booking id (NOMIS ID) for this waiting list
-       * @example 10001
-       */
-      bookingId: number
-      /**
-       * @description The status of this waiting list
-       * @example PENDING
-       * @enum {string}
-       */
-      status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
-      /**
-       * Format: date
-       * @description The past or present date on which the waiting list was requested
-       * @example 2023-06-23
-       */
-      requestedDate: string
-      /**
-       * @description The person who made the request for this waiting list
-       * @example Fred Bloggs
-       */
-      requestedBy: string
-      /**
-       * @description Any particular comments related to this waiting list
-       * @example The prisoner has specifically requested to attend this activity
-       */
-      comments?: string
-      /**
-       * @description The reason for the waiting list request to be declined (null if status is not declined)
-       * @example The prisoner has specifically requested to attend this activity
-       */
-      declinedReason?: string
-      /**
-       * Format: date-time
-       * @description The date and time the waiting list was first created
-       */
-      creationTime: string
-      /**
-       * @description The person who created the waiting list i.e the user at the time
-       * @example Jon Doe
-       */
-      createdBy: string
-      /**
-       * Format: date-time
-       * @description The date and time the waiting list was last updated
-       */
-      updatedTime?: string
-      /**
-       * @description The person who last made changes to the waiting list
-       * @example Jane Doe
-       */
-      updatedBy?: string
     }
     /** @description Describes a pay rate applied to an activity */
     ActivityPayLite: {
@@ -3854,16 +4100,16 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      first?: boolean
       /** Format: int32 */
       numberOfElements?: number
-      last?: boolean
       pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
@@ -3872,9 +4118,9 @@ export interface components {
       offset?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
-      pageSize?: number
-      /** Format: int32 */
       pageNumber?: number
+      /** Format: int32 */
+      pageSize?: number
       paged?: boolean
       unpaged?: boolean
     }
@@ -4047,6 +4293,47 @@ export interface components {
       /** Format: int32 */
       messagesReturnedCount: number
       messages: components['schemas']['DlqMessage'][]
+    }
+    /** @description Summarises an activity */
+    ActivitySummary: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The name of the activity
+       * @example Maths level 1
+       */
+      activityName?: string
+      category: components['schemas']['ActivityCategory']
+      /**
+       * Format: int32
+       * @description The capacity of the activity
+       */
+      capacity: number
+      /**
+       * Format: int32
+       * @description The number of prisoners currently allocated to the activity
+       */
+      allocated: number
+      /**
+       * Format: int32
+       * @description The number of prisoners currently currently on the waitlist for the activity
+       */
+      waitlisted: number
+      /**
+       * Format: date-time
+       * @description The date and time when this activity was created
+       */
+      createdTime: string
+      /**
+       * @description Whether the activity is live or archived
+       * @example LIVE
+       * @enum {string}
+       */
+      activityState: 'ARCHIVED' | 'LIVE'
     }
     /** @description Describes a top-level activity */
     PrisonRegime: {
@@ -4998,6 +5285,9 @@ export interface operations {
    */
   deallocate: {
     parameters: {
+      header?: {
+        'Caseload-Id'?: string
+      }
       path: {
         scheduleId: number
       }
@@ -5498,6 +5788,80 @@ export interface operations {
     }
   }
   /**
+   * Migrate an allocation
+   * @description Migrate an allocation from NOMIS. Requires the role 'ROLE_NOMIS_ACTIVITIES'
+   */
+  migrateAllocation: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AllocationMigrateRequest']
+      }
+    }
+    responses: {
+      /** @description The allocation was migrated. */
+      200: {
+        content: {
+          'application/json': components['schemas']['AllocationMigrateResponse']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Migrate an activity
+   * @description Migrate an activity. Requires the role 'ROLE_NOMIS_ACTIVITIES'
+   */
+  migrateActivity: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ActivityMigrateRequest']
+      }
+    }
+    responses: {
+      /** @description The activity was migrated. */
+      200: {
+        content: {
+          'application/json': components['schemas']['ActivityMigrateResponse']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Create an appointment or series of appointment occurrences
    * @description
    *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
@@ -5880,6 +6244,94 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Get a waiting list application by its id
+   * @description Returns a single waiting list application by its unique identifier.
+   */
+  getWaitingListById: {
+    parameters: {
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        waitingListId: number
+      }
+    }
+    responses: {
+      /** @description Waiting list application found */
+      200: {
+        content: {
+          'application/json': components['schemas']['WaitingListApplication']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The waiting list application for this ID was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /** @description Update a waiting list application. */
+  updateWaitingList: {
+    parameters: {
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        waitingListId: number
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaitingListApplicationUpdateRequest']
+      }
+    }
+    responses: {
+      /** @description The updated waiting list application. */
+      202: {
+        content: {
+          'application/json': components['schemas']['WaitingListApplication']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Waiting list application not found */
+      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
@@ -6585,7 +7037,7 @@ export interface operations {
       /** @description Activities */
       200: {
         content: {
-          'application/json': components['schemas']['ActivityLite'][]
+          'application/json': components['schemas']['ActivitySummary'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
@@ -7317,8 +7769,8 @@ export interface operations {
     }
   }
   /**
-   * DO NOT USE:  Get an activity key ids - testing only
-   * @description DO NOT USEL: Returns keys ids - testing only
+   * Returns the basic activity ids and descriptions without its child collections
+   * @description Returns basic activity IDs and attributes without its child collections.
    */
   getActivityKeyIds: {
     parameters: {
