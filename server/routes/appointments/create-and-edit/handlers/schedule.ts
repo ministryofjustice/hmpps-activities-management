@@ -6,6 +6,7 @@ import EditAppointmentService from '../../../../services/editAppointmentService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
 
 export default class ScheduleRoutes {
   constructor(
@@ -85,6 +86,7 @@ export default class ScheduleRoutes {
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.session.editAppointmentJourney),
     })
+    this.trackAppointmentJourneyMode(res, req)
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -124,5 +126,37 @@ export default class ScheduleRoutes {
     }
 
     res.redirect(`../../schedule${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
+
+    this.trackAppointmentJourneyMode(res, req)
+  }
+
+  CHANGE = async (req: Request, res: Response): Promise<void> => {
+    const { property, preserveHistory } = req.query
+    const propertyAsString: string = property as string
+    const properties = {
+      username: res.locals.user.username,
+      prisonCode: res.locals.user.activeCaseLoadId,
+      propertyName: propertyAsString,
+    }
+    trackEvent({
+      eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
+      properties,
+      metrics: null,
+    })
+
+    res.redirect(`${property}${preserveHistory ? '?preserveHistory=true' : ''}`)
+  }
+
+  private trackAppointmentJourneyMode(res: Response, req: Request) {
+    const properties = {
+      username: res.locals.user.username,
+      prisonCode: res.locals.user.activeCaseLoadId,
+      appointmentJourneyMode: req.session.appointmentJourney.mode,
+    }
+    trackEvent({
+      eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
+      properties,
+      metrics: null,
+    })
   }
 }

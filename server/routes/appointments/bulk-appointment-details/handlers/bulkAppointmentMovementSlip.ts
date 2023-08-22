@@ -18,6 +18,6 @@ export default class BulkAppointmentMovementSlipRoutes {
     const metrics = {
       appointmentCount: 1.0,
     }
-    trackEvent('SAA-Appointments-Movement-Slips-Printed', properties, metrics)
+    trackEvent({ eventName: 'SAA-Appointments-Movement-Slips-Printed', properties, metrics })
   }
 }
