@@ -154,7 +154,7 @@ export default class ScheduleRoutes {
       appointmentJourneyMode: req.session.appointmentJourney.mode,
     }
     trackEvent({
-      eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
+      eventName: 'SAA-Appointments-Appointment-Journey-Mode',
       properties,
       metrics: null,
     })
