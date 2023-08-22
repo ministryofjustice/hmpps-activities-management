@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import ActivitiesRoutes from './activitiesDashboard'
-import { ActivityLite } from '../../../../@types/activitiesAPI/types'
+import { ActivitySummary } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -17,16 +17,18 @@ describe('Route Handlers - Activities dashboard', () => {
   const mockActivitiesData = () => {
     const maths = {
       id: 1,
-      summary: 'Maths level 1',
+      activityName: 'Maths level 1',
       capacity: 150,
       allocated: 75,
-    } as ActivityLite
+      waitlisted: 5,
+    } as ActivitySummary
     const english = {
       id: 2,
-      summary: 'English level 1',
+      activityName: 'English level 1',
       capacity: 200,
       allocated: 100,
-    } as ActivityLite
+      waitlisted: 2,
+    } as ActivitySummary
 
     when(activitiesService.getActivities).mockResolvedValue([maths, english])
   }
@@ -57,31 +59,25 @@ describe('Route Handlers - Activities dashboard', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/activities', {
         activities: expect.arrayContaining([
           {
-            summary: 'English level 1',
+            activityName: 'English level 1',
             id: 2,
             capacity: 200,
             allocated: 100,
-            allocationSummary: {
-              allocated: 100,
-              capacity: 200,
-              percentageAllocated: 50,
-              vacancies: 100,
-            },
+            percentageAllocated: 50,
+            vacancies: 100,
+            waitlisted: 2,
           },
           {
-            summary: 'Maths level 1',
+            activityName: 'Maths level 1',
             id: 1,
             capacity: 150,
             allocated: 75,
-            allocationSummary: {
-              allocated: 75,
-              capacity: 150,
-              percentageAllocated: 50,
-              vacancies: 75,
-            },
+            percentageAllocated: 50,
+            vacancies: 75,
+            waitlisted: 5,
           },
         ]),
-        total: { allocated: 175, capacity: 350, percentageAllocated: 50, vacancies: 175 },
+        total: { allocated: 175, capacity: 350, percentageAllocated: 50, vacancies: 175, waitlisted: 7 },
       })
     })
   })

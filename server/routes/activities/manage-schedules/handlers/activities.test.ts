@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import ActivitiesRoutes from './activities'
-import { ActivityCategory, ActivityLite } from '../../../../@types/activitiesAPI/types'
+import { ActivityCategory, ActivityLite, ActivitySummary } from '../../../../@types/activitiesAPI/types'
 import atLeast from '../../../../../jest.setup'
 
 jest.mock('../../../../services/activitiesService')
@@ -28,24 +28,24 @@ describe('Route Handlers - Activities dashboard', () => {
 
     const maths = {
       id: 1,
-      summary: 'Maths level 1',
+      activityName: 'Maths level 1',
       category: educationCategory,
-    } as ActivityLite
+    } as ActivitySummary
 
     const english = {
       id: 2,
-      summary: 'English level 1',
+      activityName: 'English level 1',
       category: educationCategory,
-    } as ActivityLite
+    } as ActivitySummary
 
     const gym = {
       id: 3,
-      summary: 'Gym',
+      activityName: 'Gym',
       category: gymCategory,
-    } as ActivityLite
+    } as ActivitySummary
 
-    activitiesService.getActivities.mockResolvedValue([maths, english, gym])
-    activitiesService.getActivityCategories.mockResolvedValue([educationCategory, gymCategory])
+    when(activitiesService.getActivities).mockResolvedValue([maths, english, gym])
+    when(activitiesService.getActivityCategories).mockResolvedValue([educationCategory, gymCategory])
   }
 
   beforeEach(() => {
@@ -79,7 +79,7 @@ describe('Route Handlers - Activities dashboard', () => {
               id: 1,
               name: 'Education',
             },
-            summary: 'Maths level 1',
+            activityName: 'Maths level 1',
             id: 1,
           },
           {
@@ -87,7 +87,7 @@ describe('Route Handlers - Activities dashboard', () => {
               id: 1,
               name: 'Education',
             },
-            summary: 'English level 1',
+            activityName: 'English level 1',
             id: 2,
           },
           {
@@ -95,7 +95,7 @@ describe('Route Handlers - Activities dashboard', () => {
               id: 2,
               name: 'Gym, sport, fitness',
             },
-            summary: 'Gym',
+            activityName: 'Gym',
             id: 3,
           },
         ],

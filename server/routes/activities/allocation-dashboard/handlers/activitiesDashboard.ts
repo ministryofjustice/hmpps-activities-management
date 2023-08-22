@@ -1,11 +1,6 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
-import { ActivityLite } from '../../../../@types/activitiesAPI/types'
-
-type CapacityAndAllocated = {
-  capacity: number
-  allocated: number
-}
+import { ActivitySummary } from '../../../../@types/activitiesAPI/types'
 
 export default class ActivitiesRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -16,40 +11,37 @@ export default class ActivitiesRoutes {
     const activities = await this.activitiesService.getActivities(true, user).then(act =>
       act.map(a => ({
         ...a,
-        allocationSummary: this.addCalculatedFields(this.getCapacityAndAllocated(a)),
+        ...this.getCalculatedFields(a),
       })),
     )
 
     res.render('pages/activities/allocation-dashboard/activities', {
-      total: this.addCalculatedFields(this.calculateTotals(activities)),
+      total: this.getCalculatedFields(this.calculateTotals(activities) as ActivitySummary),
       activities,
     })
   }
 
-  private getCapacityAndAllocated = (activity: ActivityLite): CapacityAndAllocated => ({
-    capacity: activity.capacity,
-    allocated: activity.allocated,
-  })
-
-  private addCalculatedFields = (capacityAndAllocated: CapacityAndAllocated) => {
-    const percentageAllocated = Math.floor((capacityAndAllocated.allocated / capacityAndAllocated.capacity) * 100)
+  private getCalculatedFields = (activity: ActivitySummary) => {
+    const percentageAllocated = Math.floor((activity.allocated / activity.capacity) * 100)
 
     return {
-      ...capacityAndAllocated,
+      ...activity,
       percentageAllocated: Number.isNaN(percentageAllocated) ? 100 : percentageAllocated,
-      vacancies: capacityAndAllocated.capacity - capacityAndAllocated.allocated,
+      vacancies: activity.capacity - activity.allocated,
     }
   }
 
-  private calculateTotals = (activities: ActivityLite[]): CapacityAndAllocated => {
+  private calculateTotals = (activities: ActivitySummary[]) => {
     return activities.reduce(
       (totals, a) => ({
         capacity: totals.capacity + a.capacity,
         allocated: totals.allocated + a.allocated,
+        waitlisted: totals.waitlisted + a.waitlisted,
       }),
       {
         capacity: 0,
         allocated: 0,
+        waitlisted: 0,
       },
     )
   }

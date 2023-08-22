@@ -36,6 +36,7 @@ import {
   BulkAppointmentDetails,
   WaitingListApplicationRequest,
   WaitingListApplication,
+  ActivitySummary,
   WaitingListApplicationUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import activityLocations from './fixtures/activity_locations_am_1.json'
@@ -105,7 +106,7 @@ describe('Activities Service', () => {
 
   describe('getActivities', () => {
     it('should get the list of activities from activities API', async () => {
-      const expectedResult = [{ id: 1, summary: 'Maths level 1' }] as ActivityLite[]
+      const expectedResult = [{ id: 1, activityName: 'Maths level 1' }] as ActivitySummary[]
 
       when(activitiesApiClient.getActivities).mockResolvedValue(expectedResult)
 
