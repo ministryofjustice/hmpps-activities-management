@@ -4,13 +4,16 @@ import { IsInt, IsNumber, Max, Min } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
+const MIN_MAX_CAPACITY_ERROR_MSG =
+  'Enter the number of people who can be allocated to this activity. This must be a number between 1 and 999'
+
 export class Capacity {
   @Expose()
   @Type(() => Number)
-  @IsNumber({}, { message: 'Enter a capacity for the activity' })
-  @IsInt({ message: 'Enter a whole number for the capacity' })
-  @Min(1, { message: 'Enter a capacity for the activity more than 0' })
-  @Max(999, { message: 'Enter a capacity for the activity less than 1000' })
+  @IsNumber({}, { message: MIN_MAX_CAPACITY_ERROR_MSG })
+  @IsInt({ message: MIN_MAX_CAPACITY_ERROR_MSG })
+  @Min(1, { message: MIN_MAX_CAPACITY_ERROR_MSG })
+  @Max(999, { message: MIN_MAX_CAPACITY_ERROR_MSG })
   capacity: number
 }
 

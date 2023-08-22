@@ -96,7 +96,13 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       const requestObject = plainToInstance(Capacity, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'capacity', error: 'Enter a capacity for the activity more than 0' }])
+      expect(errors).toEqual([
+        {
+          property: 'capacity',
+          error:
+            'Enter the number of people who can be allocated to this activity. This must be a number between 1 and 999',
+        },
+      ])
     })
 
     it('validation fails if a bad value is entered', async () => {
@@ -108,7 +114,13 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'capacity', error: 'Enter a capacity for the activity' }]),
+        expect.arrayContaining([
+          {
+            property: 'capacity',
+            error:
+              'Enter the number of people who can be allocated to this activity. This must be a number between 1 and 999',
+          },
+        ]),
       )
     })
 
@@ -120,7 +132,13 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       const requestObject = plainToInstance(Capacity, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'capacity', error: 'Enter a capacity for the activity more than 0' }])
+      expect(errors).toEqual([
+        {
+          property: 'capacity',
+          error:
+            'Enter the number of people who can be allocated to this activity. This must be a number between 1 and 999',
+        },
+      ])
     })
 
     it('validation fails if a value too large is entered', async () => {
@@ -131,7 +149,13 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       const requestObject = plainToInstance(Capacity, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'capacity', error: 'Enter a capacity for the activity less than 1000' }])
+      expect(errors).toEqual([
+        {
+          property: 'capacity',
+          error:
+            'Enter the number of people who can be allocated to this activity. This must be a number between 1 and 999',
+        },
+      ])
     })
 
     it('validation fails if a decimal number is entered', async () => {
@@ -142,7 +166,13 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       const requestObject = plainToInstance(Capacity, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'capacity', error: 'Enter a whole number for the capacity' }])
+      expect(errors).toEqual([
+        {
+          property: 'capacity',
+          error:
+            'Enter the number of people who can be allocated to this activity. This must be a number between 1 and 999',
+        },
+      ])
     })
   })
 })
