@@ -12,7 +12,7 @@ enum RiskLevelOptions {
 
 export class RiskLevel {
   @Expose()
-  @IsIn(Object.values(RiskLevelOptions), { message: 'Select a risk level for the activity' })
+  @IsIn(Object.values(RiskLevelOptions), { message: 'Select which workplace risk assessment levels are suitable' })
   riskLevel: RiskLevelOptions
 }
 

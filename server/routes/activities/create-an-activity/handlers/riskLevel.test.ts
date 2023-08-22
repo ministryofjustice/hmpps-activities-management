@@ -93,7 +93,9 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       const requestObject = plainToInstance(RiskLevel, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'riskLevel', error: 'Select a risk level for the activity' }])
+      expect(errors).toEqual([
+        { property: 'riskLevel', error: 'Select which workplace risk assessment levels are suitable' },
+      ])
     })
 
     it('validation fails if a bad value is entered', async () => {
@@ -104,7 +106,9 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       const requestObject = plainToInstance(RiskLevel, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'riskLevel', error: 'Select a risk level for the activity' }])
+      expect(errors).toEqual([
+        { property: 'riskLevel', error: 'Select which workplace risk assessment levels are suitable' },
+      ])
     })
 
     it('passes validation', async () => {
