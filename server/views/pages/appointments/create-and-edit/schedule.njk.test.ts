@@ -430,7 +430,7 @@ describe('Views - Create Appointment - Schedule', () => {
       expect($('[data-qa=schedule-heading]').length).toEqual(0)
     })
 
-    it('should not display attendee events heading', () => {
+    it('should display attendee events heading', () => {
       expect($('[data-qa=schedules-heading]').text().trim()).toEqual(
         `Attendee events on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`,
       )
@@ -715,7 +715,7 @@ describe('Views - Create Appointment - Schedule', () => {
       expect($('[data-qa=schedule-heading]').length).toEqual(0)
     })
 
-    it('should not display attendee events heading', () => {
+    it('should display attendee events heading', () => {
       expect($('[data-qa=schedules-heading]').text().trim()).toEqual(
         `Attendee events on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`,
       )
@@ -1039,6 +1039,9 @@ describe('Views - Create Appointment - Schedule', () => {
           formatDate(nextWeek, 'EEEE, d MMMM yyyy'),
         )
         expect($('[data-qa=change-start-date]').attr('href')).toEqual('date-and-time?preserveHistory=true')
+        expect($('[data-qa=schedules-heading]').text().trim()).toEqual(
+          `Attendee events on ${formatDate(nextWeek, 'EEEE, d MMMM yyyy')}`,
+        )
       })
 
       it('should display "Time" with change link', () => {
