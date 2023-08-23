@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import config from '../../../../config'
+import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
 
 export default class ReviewPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -17,6 +18,17 @@ export default class ReviewPrisonerRoutes {
     let prisoners
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
       prisoners = req.session.editAppointmentJourney.addPrisoners
+      const properties = {
+        username: res.locals.user.username,
+        prisonCode: res.locals.user.activeCaseLoadId,
+        appointmentJourneyMode: req.session.appointmentJourney.mode,
+      }
+      trackEvent({
+        eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
+        properties,
+        metricName: null,
+        metricValue: null,
+      })
     } else if (req.session.appointmentJourney.type === AppointmentType.BULK) {
       prisoners = req.session.bulkAppointmentJourney.appointments.map(appointment => appointment.prisoner)
     } else {

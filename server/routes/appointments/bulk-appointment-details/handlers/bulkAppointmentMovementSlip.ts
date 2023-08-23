@@ -15,9 +15,12 @@ export default class BulkAppointmentMovementSlipRoutes {
       prisonCode: bulkAppointment.prisonCode,
       bulkAppointmentId: bulkAppointment.id.toString(),
     }
-    const metrics = {
-      appointmentCount: 1.0,
-    }
-    trackEvent({ eventName: 'SAA-Appointments-Movement-Slips-Printed', properties, metrics })
+
+    trackEvent({
+      eventName: 'SAA-Appointments-Movement-Slips-Printed',
+      properties,
+      metricName: 'movementSlipCount',
+      metricValue: bulkAppointment.occurrences.length,
+    })
   }
 }
