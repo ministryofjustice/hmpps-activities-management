@@ -185,7 +185,7 @@
                     }) if prisonerSchedules.length > 10 }}
 
                     {% if session.appointmentJourney.type != AppointmentType.INDIVIDUAL %}
-                        <h2 class="govuk-heading-m" data-qa="schedules-heading">Attendee events on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
+                        <h2 class="govuk-heading-m" data-qa="schedules-heading">Attendee events on {{ appointmentDate() }}</h2>
                     {% endif %}
 
                     {% for prisonerSchedule in prisonerSchedules %}
@@ -322,7 +322,7 @@
 {% endmacro %}
 
 {% macro appointmentDate() %}
-    {% set startDate = session.editAppointmentJourney.startDate.date or session.appointmentJourney.startDate.date %}
+    {%- set startDate = session.editAppointmentJourney.startDate.date or session.appointmentJourney.startDate.date -%}
     {{ startDate | parseISODate | formatDate('EEEE, d MMMM yyyy') }}
 {% endmacro %}
 

@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 
 type Filters = {
-  categoryFilter: string
   stateFilter: string
 }
 
@@ -12,36 +11,16 @@ export default class ActivitiesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const filters = req.query as Filters
+    filters.stateFilter ??= 'live'
 
-    const [activities, categories] = await Promise.all([
-      !filters.categoryFilter || filters.categoryFilter === 'all'
-        ? this.activitiesService
-            .getActivities(false, user)
-            .then(act =>
-              act.filter(
-                a =>
-                  !filters.stateFilter ||
-                  filters.stateFilter === 'all' ||
-                  a.activityState.toLowerCase() === filters.stateFilter,
-              ),
-            )
-        : this.activitiesService
-            .getActivitiesInCategory(+filters.categoryFilter, user)
-            .then(act =>
-              act.filter(
-                a =>
-                  !filters.stateFilter ||
-                  filters.stateFilter === 'all' ||
-                  a.activityState.toLowerCase() === filters.stateFilter,
-              ),
-            ),
-
-      this.activitiesService.getActivityCategories(user),
-    ])
+    const activities = await this.activitiesService
+      .getActivities(false, user)
+      .then(act =>
+        act.filter(a => filters.stateFilter === 'all' || a.activityState.toLowerCase() === filters.stateFilter),
+      )
 
     res.render('pages/activities/manage-schedules/activities-dashboard', {
       activities,
-      categories,
       filters,
     })
   }
