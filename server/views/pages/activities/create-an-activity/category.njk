@@ -31,7 +31,7 @@
                 {{ govukRadios({
                     fieldset: {
                         legend: {
-                            text: "Select a category for the new activity",
+                            text: "Change the activity category" if session.req.query.fromEditActivity else "Select a category for the new activity",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
@@ -43,9 +43,9 @@
 
                 {% if session.req.query.fromEditActivity %}
                     <div class="govuk-button-group">
-                      {{ govukButton({
-                        text: "Update category"
-                      }) }}
+                        {{ govukButton({
+                            text: "Update activity category"
+                        }) }}
                         <a class="govuk-link js-backlink" href="/">Cancel</a>
                     </div>
                 {% else %}
