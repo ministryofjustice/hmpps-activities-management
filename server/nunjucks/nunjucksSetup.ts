@@ -2,7 +2,7 @@
 import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
-import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks } from 'date-fns'
+import { addDays, addMonths, addWeeks, addYears, subDays, subMonths, subWeeks } from 'date-fns'
 import {
   addDefaultSelectedValue,
   buildErrorSummaryList,
@@ -145,6 +145,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('sliceArray', sliceArray)
   njkEnv.addFilter('addDays', addDays)
   njkEnv.addFilter('addWeeks', addWeeks)
+  njkEnv.addFilter('addYears', addYears)
   njkEnv.addFilter('firstNameLastName', firstNameLastName)
   njkEnv.addFilter('setAttribute', setAttribute)
   njkEnv.addFilter('removeUndefined', removeUndefined)
@@ -166,6 +167,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)
+  njkEnv.addGlobal('exampleDate', `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
 
   return njkEnv
 }
