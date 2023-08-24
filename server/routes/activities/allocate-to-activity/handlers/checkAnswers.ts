@@ -19,13 +19,15 @@ export default class CheckAnswersRoutes {
     )
     const endDate = req.session.allocateJourney.endDate
       ? formatDate(plainToInstance(SimpleDate, req.session.allocateJourney.endDate).toRichDate(), 'do MMMM yyyy')
-      : 'Not set'
+      : null
 
     res.render('pages/activities/allocate-to-activity/check-answers', {
       prisonerName: inmate.prisonerName,
       prisonerNumber: inmate.prisonerNumber,
       cellLocation: inmate.cellLocation,
       payBand: inmate.payBand.alias,
+      payRate: inmate.payBand.rate,
+      incentiveLevel: inmate.incentiveLevel,
       activityName: activity.name,
       inCell: activityEntity.inCell,
       onWing: activityEntity.onWing,

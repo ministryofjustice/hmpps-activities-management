@@ -31,10 +31,7 @@
                 </ul>
             {% endif %}
 
-            {{ govukButton({
-                text: "Finish and return to " + deallocateJourney.activityName,
-                href: '/activities/allocation-dashboard/' + deallocateJourney.scheduleId
-            }) }}
+            <a href="/activities/allocation-dashboard/{{ deallocateJourney.scheduleId }}" class="govuk-link govuk-link--no-visited-state">Finish and return to {{ deallocateJourney.activityName }}</a>
         </div>
     </div>
 {% endblock %}

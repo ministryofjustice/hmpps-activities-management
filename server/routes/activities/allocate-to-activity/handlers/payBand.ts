@@ -15,10 +15,36 @@ export default class PayBandRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
+    const { inmate } = req.session.allocateJourney
+
+    const payBands = await this.getActivityPayBands(req, res)
+
+    res.render('pages/activities/allocate-to-activity/pay-band', {
+      prisonerName: inmate.prisonerName,
+      prisonerNumber: inmate.prisonerNumber,
+      incentiveLevel: inmate.incentiveLevel,
+      payBands,
+    })
+  }
+
+  POST = async (req: Request, res: Response): Promise<void> => {
+    const { payBand } = req.body
+
+    const payBandDetails = (await this.getActivityPayBands(req, res)).find(b => b.bandId === payBand)
+
+    req.session.allocateJourney.inmate.payBand = {
+      id: payBandDetails.bandId,
+      alias: payBandDetails.bandAlias,
+      rate: payBandDetails.rate,
+    }
+    return res.redirectOrReturn('check-answers')
+  }
+
+  async getActivityPayBands(req: Request, res: Response) {
     const { inmate, activity } = req.session.allocateJourney
     const { user } = res.locals
 
-    const payBands = await this.activitiesService
+    return this.activitiesService
       .getActivity(activity.activityId, user)
       .then(response => response.pay)
       .then(bands => bands.filter(band => !band.incentiveLevel || band.incentiveLevel === inmate.incentiveLevel))
@@ -30,27 +56,5 @@ export default class PayBandRoutes {
           rate: band.rate,
         })),
       )
-
-    res.render('pages/activities/allocate-to-activity/pay-band', {
-      prisonerName: inmate.prisonerName,
-      prisonerNumber: inmate.prisonerNumber,
-      incentiveLevel: inmate.incentiveLevel,
-      payBands,
-    })
-  }
-
-  POST = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const { payBand } = req.body
-
-    const band = await this.activitiesService
-      .getPayBandsForPrison(user)
-      .then(bands => bands.find(b => b.id === payBand))
-
-    req.session.allocateJourney.inmate.payBand = {
-      id: band.id,
-      alias: band.alias,
-    }
-    return res.redirectOrReturn('check-answers')
   }
 }
