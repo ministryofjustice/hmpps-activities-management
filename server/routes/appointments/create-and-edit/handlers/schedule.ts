@@ -136,11 +136,10 @@ export default class ScheduleRoutes {
       propertyName: propertyAsString,
       appointmentJourneyMode: req.session.appointmentJourney.mode,
     }
+
     trackEvent({
       eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
       properties,
-      metricName: null,
-      metricValue: null,
     })
 
     res.redirect(`${property}${preserveHistory ? '?preserveHistory=true' : ''}`)

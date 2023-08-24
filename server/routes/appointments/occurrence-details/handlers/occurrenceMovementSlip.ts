@@ -12,12 +12,14 @@ export default class OccurrenceMovementSlipRoutes {
       prisonCode: res.locals.user.activeCaseLoadId,
       appointmentId: appointmentOccurrence.appointmentId.toString(),
     }
+    const eventMetrics = {
+      movementSlipCount: appointmentOccurrence.prisoners.length,
+    }
 
     trackEvent({
       eventName: 'SAA-Appointments-Movement-Slips-Printed',
       properties,
-      metricName: 'movementSlipCount',
-      metricValue: appointmentOccurrence.prisoners.length,
+      eventMetrics,
     })
   }
 }

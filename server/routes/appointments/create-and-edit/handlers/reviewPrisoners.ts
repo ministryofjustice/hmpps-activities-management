@@ -23,11 +23,10 @@ export default class ReviewPrisonerRoutes {
         prisonCode: res.locals.user.activeCaseLoadId,
         appointmentJourneyMode: req.session.appointmentJourney.mode,
       }
+
       trackEvent({
         eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
         properties,
-        metricName: null,
-        metricValue: null,
       })
     } else if (req.session.appointmentJourney.type === AppointmentType.BULK) {
       prisoners = req.session.bulkAppointmentJourney.appointments.map(appointment => appointment.prisoner)

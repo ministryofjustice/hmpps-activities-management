@@ -16,11 +16,14 @@ export default class BulkAppointmentMovementSlipRoutes {
       bulkAppointmentId: bulkAppointment.id.toString(),
     }
 
+    const eventMetrics = {
+      movementSlipCount: bulkAppointment.occurrences.length,
+    }
+
     trackEvent({
       eventName: 'SAA-Appointments-Movement-Slips-Printed',
       properties,
-      metricName: 'movementSlipCount',
-      metricValue: bulkAppointment.occurrences.length,
+      eventMetrics,
     })
   }
 }
