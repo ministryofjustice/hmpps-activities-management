@@ -1,28 +1,45 @@
 import { Request, Response } from 'express'
 import { Expose, plainToInstance, Type } from 'class-transformer'
-import { IsNotEmpty, ValidateNested } from 'class-validator'
+import { IsNotEmpty, ValidateNested, ValidationArguments } from 'class-validator'
 import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
-import DateIsBeforeOtherProperty from '../../../../validators/dateIsBeforeOtherProperty'
 import { convertToTitleCase, formatDate } from '../../../../utils/utils'
 import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
+import { AllocateToActivityJourney } from '../../allocate-to-activity/journey'
 
 export class StartDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
   @DateIsSameOrAfter(o => o.allocateJourney.activity.startDate, {
-    message: 'Enter a date on or after the activity start date',
-  })
-  @DateIsSameOrBefore(o => o.allocateJourney.activity.endDate, {
-    message: 'Enter a date on or before the activity end date',
+    message: (args: ValidationArguments) => {
+      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
+      const activityStartDate = formatDate(new Date(allocateJourney.activity.startDate), 'dd-MM-yyyy')
+      return `Enter a date on or after the activity's scheduled start date , ${activityStartDate}`
+    },
   })
   @DateIsSameOrAfter(() => new Date(), { message: "Enter a date on or after today's date" })
-  @DateIsBeforeOtherProperty('endDate', { message: 'Enter a date before the end date' })
+  @DateIsSameOrBefore(o => o.allocateJourney.activity.endDate, {
+    message: (args: ValidationArguments) => {
+      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
+      const activityEndDate = formatDate(new Date(allocateJourney.activity.endDate), 'dd-MM-yyyy')
+      return `Enter a date on or before the activity's scheduled end date, ${activityEndDate}`
+    },
+  })
+  @DateIsSameOrBefore(o => plainToInstance(SimpleDate, o.allocateJourney.endDate)?.toRichDate(), {
+    message: (args: ValidationArguments) => {
+      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
+      const allocationEndDate = formatDate(
+        plainToInstance(SimpleDate, allocateJourney.endDate).toRichDate(),
+        'dd-MM-yyyy',
+      )
+      return `Enter a date on or before the allocation end date, ${allocationEndDate}`
+    },
+  })
   @IsNotEmpty({ message: 'Enter a valid start date' })
   @IsValidDate({ message: 'Enter a valid start date' })
   startDate: SimpleDate
