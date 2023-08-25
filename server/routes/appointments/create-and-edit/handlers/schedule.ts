@@ -6,6 +6,7 @@ import EditAppointmentService from '../../../../services/editAppointmentService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
 
 export default class ScheduleRoutes {
   constructor(
@@ -124,5 +125,23 @@ export default class ScheduleRoutes {
     }
 
     res.redirect(`../../schedule${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
+  }
+
+  CHANGE = async (req: Request, res: Response): Promise<void> => {
+    const { property, preserveHistory } = req.query
+    const propertyAsString: string = property as string
+    const properties = {
+      username: res.locals.user.username,
+      prisonCode: res.locals.user.activeCaseLoadId,
+      propertyName: propertyAsString,
+      appointmentJourneyMode: req.session.appointmentJourney.mode,
+    }
+
+    trackEvent({
+      eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
+      properties,
+    })
+
+    res.redirect(`${property}${preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 }
