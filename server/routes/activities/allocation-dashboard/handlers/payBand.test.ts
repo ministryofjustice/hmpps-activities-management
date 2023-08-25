@@ -5,7 +5,7 @@ import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import PayBandRoutes, { PayBand } from './payBand'
 import atLeast from '../../../../../jest.setup'
-import { Activity, ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivitySchedule, Allocation } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -63,29 +63,29 @@ describe('Route Handlers - Edit Allocation - Pay band', () => {
   })
 
   describe('GET', () => {
+    const allocation = {
+      id: 1,
+      prisonerNumber: 'ABC123',
+      bookingId: 1,
+      activitySummary: 'Maths Level 1',
+      scheduleId: 1,
+      scheduleDescription: '',
+      isUnemployment: false,
+      startDate: '2023-01-01',
+      endDate: '2023-01-31',
+      prisonPayBand: {
+        id: 1,
+        displaySequence: 1,
+        alias: 'Low',
+        description: 'Low',
+        nomisPayBand: 1,
+        prisonCode: 'MDI',
+      },
+      status: 'ACTIVE',
+    } as Allocation
+
     it('should render the expected view with pay bands sorted', async () => {
-      when(activitiesService.getAllocation)
-        .calledWith(atLeast(1))
-        .mockResolvedValue({
-          id: 1,
-          prisonerNumber: 'ABC123',
-          bookingId: 1,
-          activitySummary: 'Maths Level 1',
-          scheduleId: 1,
-          scheduleDescription: '',
-          isUnemployment: false,
-          startDate: '2023-01-01',
-          endDate: '2023-01-31',
-          prisonPayBand: {
-            id: 1,
-            displaySequence: 1,
-            alias: 'Low',
-            description: 'Low',
-            nomisPayBand: 1,
-            prisonCode: 'MDI',
-          },
-          status: 'ACTIVE',
-        })
+      when(activitiesService.getAllocation).calledWith(atLeast(1)).mockResolvedValue(allocation)
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
         .mockResolvedValue({
@@ -138,6 +138,7 @@ describe('Route Handlers - Edit Allocation - Pay band', () => {
             rate: 125,
           },
         ],
+        allocation,
       })
     })
   })
@@ -156,7 +157,7 @@ describe('Route Handlers - Edit Allocation - Pay band', () => {
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         '/activities/allocation-dashboard/1/check-allocation/ABC123',
         'Allocation updated',
-        "We've updated the pay band for this allocation",
+        "We've updated the pay rate for this allocation",
       )
     })
   })

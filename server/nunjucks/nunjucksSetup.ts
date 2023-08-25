@@ -18,7 +18,6 @@ import {
   toFixed,
   toMoney,
   toTimeItems,
-  exampleDateOneWeekAhead,
   fullName,
   prisonerName,
   toDate,
@@ -135,7 +134,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('padNumber', padNumber)
   njkEnv.addFilter('toMoney', toMoney)
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
-  njkEnv.addFilter('exampleDateOneWeekAhead', exampleDateOneWeekAhead)
   njkEnv.addFilter('toDate', toDate)
   njkEnv.addFilter('toDateFromSimpleDate', (simpleDate: SimpleDate) => simpleDateFromPlain(simpleDate).toRichDate())
   njkEnv.addFilter('parseDate', parseDate)
@@ -167,7 +165,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)
-  njkEnv.addGlobal('exampleDate', `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
+  njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
 
   return njkEnv
 }
