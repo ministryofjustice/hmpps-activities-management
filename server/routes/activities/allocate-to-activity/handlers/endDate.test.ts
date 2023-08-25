@@ -26,6 +26,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
     req = {
       session: {
         allocateJourney: {
+          startDate: simpleDateFromDate(new Date()),
           activity: {
             name: 'Maths Level 1',
           },
@@ -43,6 +44,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/end-date', {
         activityName: 'Maths Level 1',
         prisonerName: 'John Smith',
+        startDate: formatDate(new Date(), 'yyyy-MM-dd'),
       })
     })
   })
@@ -103,7 +105,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
       const body = {
         endDate,
-        startDate: formatDate(addDays(today, 1), 'yyyy-MM-dd'),
+        startDate: formatDate(addDays(today, -1), 'yyyy-MM-dd'),
         allocationId: 1,
         scheduleId: 1,
         prisonerNumber: 'ABC123',
@@ -112,7 +114,9 @@ describe('Route Handlers - Edit allocation - End date', () => {
       const requestObject = plainToInstance(EndDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a date on or after the start date' }])
+      expect(errors).toEqual([
+        { property: 'endDate', error: `Enter a date on or after the allocation start date, null` },
+      ])
     })
   })
 })
