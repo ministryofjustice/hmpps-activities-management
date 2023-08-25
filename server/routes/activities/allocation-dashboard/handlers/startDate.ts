@@ -67,6 +67,7 @@ export default class StartDateRoutes {
       allocationId,
       prisonerNumber,
       prisonerName,
+      allocation,
     })
   }
 

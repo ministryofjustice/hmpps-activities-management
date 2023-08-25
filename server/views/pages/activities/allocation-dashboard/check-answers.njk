@@ -46,11 +46,7 @@
                             End of allocation
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if allocation.endDate %}
-                                {{ allocation.endDate | formatDate('EEEE, dd MMMM yyyy') }}
-                            {% else %}
-                                None set
-                            {% endif %}
+                            {{ allocation.endDate | formatDate('EEEE, dd MMMM yyyy') if allocation.endDate else "No date set " }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             {% if allocation.endDate %}
@@ -87,11 +83,12 @@
                             Pay rate
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {{ (pay.prisonPayBand.alias + ' - ' + pay.rate | toMoney) if pay else '£0' }}
+                            <div>{{ pay.incentiveLevel }} incentive level:</div>
+                            <div>{{ (pay.prisonPayBand.alias + ' - ' + pay.rate | toMoney) if pay else '£0' }}</div>
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             {% if isOnlyPay %}
-                                No alternative pay rates
+                                <div>No alternative</div><div>pay rates</div>
                             {% else %}
                                 <a href="/activities/allocation-dashboard/{{ allocation.id }}/pay-band"
                                    class="govuk-link govuk-link--no-visited-state">

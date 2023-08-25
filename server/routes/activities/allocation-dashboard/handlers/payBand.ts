@@ -52,6 +52,7 @@ export default class PayBandRoutes {
       scheduleId,
       allocationId,
       payBandId: allocation.prisonPayBand.id,
+      allocation,
     })
   }
 
@@ -64,7 +65,7 @@ export default class PayBandRoutes {
       payBandId: +payBand,
     } as AllocationUpdateRequest
     await this.activitiesService.updateAllocation(prisonCode, allocationId, allocation)
-    const successMessage = `We've updated the pay band for this allocation`
+    const successMessage = `We've updated the pay rate for this allocation`
 
     res.redirectOrReturnWithSuccess(
       `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
