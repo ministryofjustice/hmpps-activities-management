@@ -3,7 +3,6 @@ import { Expose, plainToInstance, Type } from 'class-transformer'
 import { ValidateNested, ValidationArguments } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
-import DateIsSameOrAfterOtherProperty from '../../../../validators/dateIsSameOrAfterOtherProperty'
 import { formatDate } from '../../../../utils/utils'
 import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
 import { AllocateToActivityJourney } from '../journey'
@@ -13,7 +12,6 @@ export class EndDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @DateIsSameOrAfterOtherProperty('startDate', { message: 'Enter a date on or after the activity start date' })
   @DateIsSameOrBefore(o => o.allocateJourney?.activity.endDate, {
     message: (args: ValidationArguments) => {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }

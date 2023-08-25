@@ -100,22 +100,33 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     it('validation fails if end date is not after or same as start date', async () => {
-      const today = new Date()
-      const endDate = simpleDateFromDate(today)
+      const endDate = simpleDateFromDate(new Date('2023-08-24'))
 
-      const body = {
+      const request = {
         endDate,
-        startDate: formatDate(addDays(today, -1), 'yyyy-MM-dd'),
+        startDate: formatDate(new Date('2023-08-25'), 'yyyy-MM-dd'),
         allocationId: 1,
         scheduleId: 1,
         prisonerNumber: 'ABC123',
+        allocateJourney: {
+          startDate: simpleDateFromDate(addDays(new Date('2023-08-26'), 1)),
+          inmate: {
+            prisonerNumber: 'ABC123',
+          },
+          activity: {
+            scheduleId: 1,
+          },
+        },
       }
 
-      const requestObject = plainToInstance(EndDate, body)
+      const requestObject = plainToInstance(EndDate, request)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'endDate', error: `Enter a date on or after the allocation start date, null` },
+        {
+          property: 'endDate',
+          error: `Enter a date on or after the allocation start date, 27-08-2023`,
+        },
       ])
     })
   })
