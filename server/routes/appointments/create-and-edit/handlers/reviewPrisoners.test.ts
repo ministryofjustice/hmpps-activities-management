@@ -14,7 +14,12 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       render: jest.fn(),
       redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
-      locals: {},
+      locals: {
+        user: {
+          username: 'user',
+          activeCaseLoadId: 'LEI',
+        },
+      },
     } as unknown as Response
 
     req = {

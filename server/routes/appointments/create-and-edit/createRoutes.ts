@@ -94,6 +94,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/schedule', scheduleRoutes.GET, true)
   post('/schedule', scheduleRoutes.POST)
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
+  get('/change', scheduleRoutes.CHANGE)
   get('/bulk-appointment-comments', bulkAppointmentCommentsHandler.GET, true)
   post('/bulk-appointment-comments', bulkAppointmentCommentsHandler.POST)
   get('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.GET, true)

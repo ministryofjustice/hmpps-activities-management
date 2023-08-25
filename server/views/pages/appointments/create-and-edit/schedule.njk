@@ -70,7 +70,7 @@
                                 actions: {
                                     items: [
                                         {
-                                            href: "select-prisoner?preserveHistory=true",
+                                            href: "change?property=select-prisoner&preserveHistory=true",
                                             text: "Change",
                                             visuallyHiddenText: "change attendee",
                                             classes: "govuk-link--no-visited-state",
@@ -88,7 +88,7 @@
                                 actions: {
                                     items: [
                                         {
-                                            href: "review-prisoners?preserveHistory=true",
+                                            href: "change?property=review-prisoners&preserveHistory=true",
                                             text: "Change",
                                             visuallyHiddenText: "change prisoners",
                                             classes: "govuk-link--no-visited-state",
@@ -146,7 +146,7 @@
                             actions: {
                                 items: [
                                     {
-                                        href: 'bulk-appointment-date?preserveHistory=true' if session.appointmentJourney.type == AppointmentType.BULK else 'date-and-time?preserveHistory=true',
+                                        href: 'change?property=bulk-appointment-date&preserveHistory=true' if session.appointmentJourney.type == AppointmentType.BULK else 'change?property=date-and-time&preserveHistory=true',
                                         text: "Change",
                                         visuallyHiddenText: "change date",
                                         classes: "govuk-link--no-visited-state",
@@ -164,7 +164,7 @@
                             actions: {
                                 items: [
                                     {
-                                        href: "date-and-time?preserveHistory=true",
+                                        href: "change?property=date-and-time&preserveHistory=true",
                                         text: "Change",
                                         visuallyHiddenText: "change time",
                                         classes: "govuk-link--no-visited-state",
