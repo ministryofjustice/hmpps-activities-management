@@ -5,7 +5,7 @@ export default class LocationPage extends Page {
     super('create-schedule-location-page')
   }
 
-  selectOutOfCell = () => this.getInputByLabel('Out of cell').click()
+  selectSearchForLocation = () => this.getInputByLabel('Search for a location').click()
 
   selectLocation = (location: string) => this.getInputById('location').clear().type(location)
 }

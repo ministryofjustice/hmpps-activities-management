@@ -289,6 +289,7 @@ export default class AllocationDashboardRoutes {
         inmate =>
           !filters.incentiveLevelFilter ||
           filters.incentiveLevelFilter === 'All Incentive Levels' ||
+          filters.incentiveLevelFilter.split(', ').includes(inmate.currentIncentive) ||
           filters.incentiveLevelFilter === inmate.currentIncentive,
       )
 
