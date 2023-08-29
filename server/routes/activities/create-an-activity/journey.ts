@@ -59,6 +59,7 @@ export type CreateAnActivityJourney = {
   slots?: { [weekNumber: string]: Slots }
   inCell?: boolean
   onWing?: boolean
+  offWing?: boolean
   location?: {
     id: number
     name: string

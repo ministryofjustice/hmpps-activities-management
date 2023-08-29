@@ -291,6 +291,8 @@
         {{ "In cell" }}
     {% elseif journey.onWing %}
         {{ "On wing" }}
+    {% elseif journey.offWing %}
+        {{ "Off wing" }}
     {% else %}
         {{ journey.location.name }}
     {% endif %}

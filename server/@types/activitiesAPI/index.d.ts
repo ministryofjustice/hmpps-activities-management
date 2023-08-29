@@ -7,7 +7,11 @@ export interface paths {
   '/schedules/{scheduleId}/deallocate': {
     /**
      * Deallocate offenders
-     * @description Deallocates offenders from an activity schedule on a future date. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     * @description Deallocates offenders from an activity schedule on a future date.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
      */
     put: operations['deallocate']
   }
@@ -15,6 +19,10 @@ export interface paths {
     /**
      * Un-cancels a scheduled instance.
      * @description Un-cancels a previously cancelled scheduled instance.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     put: operations['uncancelScheduledInstance']
   }
@@ -22,22 +30,42 @@ export interface paths {
     /**
      * Cancel a scheduled instance
      * @description Cancels scheduled instance and associated attendance records
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     put: operations['cancelScheduledInstance']
   }
   '/queue-admin/retry-dlq/{dlqName}': {
+    /**
+     * @description
+     *
+     * Requires one of the following roles:
+     * * ROLE_QUEUE_ADMIN
+     */
     put: operations['retryDlq']
   }
   '/queue-admin/retry-all-dlqs': {
     put: operations['retryAllDlqs']
   }
   '/queue-admin/purge-queue/{queueName}': {
+    /**
+     * @description
+     *
+     * Requires one of the following roles:
+     * * ROLE_QUEUE_ADMIN
+     */
     put: operations['purgeQueue']
   }
   '/attendances': {
     /**
      * Updates attendance records.
-     * @description Updates the given attendance records with the supplied update request details. Requires the 'ACTIVITY_ADMIN' role.
+     * @description Updates the given attendance records with the supplied update request details.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     put: operations['markAttendances']
   }
@@ -46,7 +74,11 @@ export interface paths {
      * Cancel an appointment occurrence or series of appointment occurrences
      * @description
      *     Cancel an appointment occurrence or series of appointment occurrences based on the applyTo property.
-     *     Does not require any specific roles
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     put: operations['cancelAppointmentOccurrence']
   }
@@ -54,11 +86,19 @@ export interface paths {
     /**
      * Get a list of activity schedule allocations
      * @description Returns zero or more activity schedule allocations.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getAllocationsBy']
     /**
      * Allocate offender to schedule
-     * @description Allocates the supplied offender allocation request to the activity schedule. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     * @description Allocates the supplied offender allocation request to the activity schedule.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
      */
     post: operations['allocate']
   }
@@ -71,6 +111,11 @@ export interface paths {
      *       Activities and appointments come from either NOMIS or the local database depending on whether the prison is
      *       marked as active for appointments and/or activities.
      *       (Intended usage: Prisoner calendar / schedule)
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getScheduledEventsForSinglePrisoner']
     /**
@@ -81,6 +126,11 @@ export interface paths {
      *       Activities and appointments come from either NOMIS or the local database depending on whether the prison is
      *       marked as rolled-out for activities and/or appointments.
      *       (Intended usage: Unlock list)
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     post: operations['getScheduledEventsForMultiplePrisoners']
   }
@@ -88,20 +138,30 @@ export interface paths {
     /**
      * Get all allocations for prisoners
      * @description Returns zero or more allocations for the supplied list of prisoners.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     post: operations['prisonerAllocations']
   }
   '/migrate/allocation': {
     /**
      * Migrate an allocation
-     * @description Migrate an allocation from NOMIS. Requires the role 'ROLE_NOMIS_ACTIVITIES'
+     * @description Migrate an allocation from NOMIS.
+     *
+     * Requires one of the following roles:
+     * * NOMIS_ACTIVITIES
      */
     post: operations['migrateAllocation']
   }
   '/migrate/activity': {
     /**
      * Migrate an activity
-     * @description Migrate an activity. Requires the role 'ROLE_NOMIS_ACTIVITIES'
+     * @description Migrate an activity.
+     *
+     * Requires one of the following roles:
+     * * NOMIS_ACTIVITIES
      */
     post: operations['migrateActivity']
   }
@@ -110,7 +170,10 @@ export interface paths {
      * Create an appointment or series of appointment occurrences
      * @description
      *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
-     *     Does not require any specific roles
+     *
+     *
+     * Requires one of the following roles:
+     * * NOMIS_APPOINTMENTS
      */
     post: operations['migrateAppointment']
   }
@@ -142,6 +205,10 @@ export interface paths {
     /**
      * Acknowledge a list of change of circumstance events in the prison.
      * @description Used to indicate that a subset of change events have been acknowledged.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
      */
     post: operations['acknowledgeEvents']
   }
@@ -150,7 +217,11 @@ export interface paths {
      * Bulk create a set of appointments
      * @description
      *     Create a list of appointments and allocate the supplied prisoner or prisoners to them.
-     *     Does not require any specific roles
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     post: operations['bulkCreateAppointment']
   }
@@ -158,6 +229,10 @@ export interface paths {
     /**
      * Search for audit records
      * @description Returns all records that match the search criteria.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     post: operations['getAuditRecords']
   }
@@ -166,7 +241,11 @@ export interface paths {
      * Create an appointment or series of appointment occurrences
      * @description
      *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
-     *     Does not require any specific roles
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     post: operations['createAppointment']
   }
@@ -175,21 +254,33 @@ export interface paths {
      * Search for appointment occurrences within the specified prison
      * @description
      *     Uses the supplied prison code and search parameters to filter and return appointment occurrence search results.
-     *     Does not require any specific roles
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     post: operations['searchAppointmentOccurrences']
   }
   '/allocations/{prisonCode}/waiting-list-application': {
     /**
      * Add a prisoner to an activity schedule waiting list
-     * @description Adds the supplied waiting list creation request to the activity schedule. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     * @description Adds the supplied waiting list creation request to the activity schedule.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
      */
     post: operations['addToWaitingList']
   }
   '/activities': {
     /**
      * Create an activity
-     * @description Create an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     * @description Create an activity
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
      */
     post: operations['create']
   }
@@ -197,9 +288,19 @@ export interface paths {
     /**
      * Get a waiting list application by its id
      * @description Returns a single waiting list application by its unique identifier.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getWaitingListById']
-    /** @description Update a waiting list application. */
+    /**
+     * @description Update a waiting list application.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
+     */
     patch: operations['updateWaitingList']
   }
   '/appointment-occurrences/{appointmentOccurrenceId}': {
@@ -207,28 +308,43 @@ export interface paths {
      * Update an appointment occurrence or series of appointment occurrences
      * @description
      *     Update an appointment occurrence or series of appointment occurrences based on the applyTo property.
-     *     Does not require any specific roles
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     patch: operations['updateAppointmentOccurrence']
   }
   '/allocations/{prisonCode}/allocationId/{allocationId}': {
     /**
      * Update an allocation
-     * @description Update an allocation. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     * @description Update an allocation
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
      */
     patch: operations['update']
   }
   '/activities/{prisonCode}/activityId/{activityId}': {
     /**
      * Update an activity
-     * @description Update an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     * @description Update an activity
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
      */
     patch: operations['update_1']
   }
   '/synchronisation/attendance/{attendanceId}': {
     /**
      * Retrieves Nomis synchronisation details
-     * @description Retrieves all details required in order to synchronise an attendance with the Nomis database. Requires role NOMIS_ACTIVITIES
+     * @description Retrieves all details required in order to synchronise an attendance with the Nomis database.
+     *
+     * Requires one of the following roles:
+     * * NOMIS_ACTIVITIES
      */
     get: operations['getAttendanceSync']
   }
@@ -236,6 +352,11 @@ export interface paths {
     /**
      * Get an activity schedule by its id
      * @description Returns a single activity schedule by its unique identifier.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     * * NOMIS_ACTIVITIES
      */
     get: operations['getScheduleId']
   }
@@ -243,20 +364,32 @@ export interface paths {
     /**
      * Get a schedules waiting list applications
      * @description Returns zero or more activity schedule waiting list applications.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getWaitingListApplicationsBy']
   }
   '/schedules/{scheduleId}/suitability': {
     /**
      * Gets the suitability details of a candidate for an activity
-     * @description Returns candidate suitability details considering factors such as, workplace risk assessment, incentive level, education levels, earliest release date and non-associations Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     * @description Returns candidate suitability details considering factors such as, workplace risk assessment, incentive level, education levels, earliest release date and non-associations
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
      */
     get: operations['allocationSuitability']
   }
   '/schedules/{scheduleId}/candidates': {
     /**
      * Get the suitable candidates for an activity
-     * @description Returns a paginated view of the list of candidates suitable for a given activity schedule. Filterable by employment status, workplace risk assessment, and incentive level. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+     * @description Returns a paginated view of the list of candidates suitable for a given activity schedule. Filterable by employment status, workplace risk assessment, and incentive level.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
      */
     get: operations['candidates']
   }
@@ -264,6 +397,11 @@ export interface paths {
     /**
      * Get a scheduled instance by ID
      * @description Returns a scheduled instance.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     * * NOMIS_ACTIVITIES
      */
     get: operations['getScheduledInstanceById']
   }
@@ -271,6 +409,10 @@ export interface paths {
     /**
      * Get a list of attendances for a scheduled instance
      * @description Returns one or more attendance records for a particular scheduled activity for a given scheduled instance.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getAttendancesByScheduledInstance']
   }
@@ -278,16 +420,29 @@ export interface paths {
     /**
      * Get a prison's rollout plan by prison code
      * @description Returns a single prison and its activities management service rollout plan by its unique code.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_ADMIN
      */
     get: operations['getPrisonByCode']
   }
   '/queue-admin/get-dlq-messages/{dlqName}': {
+    /**
+     * @description
+     *
+     * Requires one of the following roles:
+     * * ROLE_QUEUE_ADMIN
+     */
     get: operations['getDlqMessages']
   }
   '/prisons/{prisonCode}/scheduled-instances': {
     /**
      * Get a list of scheduled instances for a prison, date range (max 3 months) and time slot (AM, PM or ED - optional)
      * @description Returns zero or more scheduled instances for a prison and date range (max 3 months).
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getActivityScheduleInstancesByDateRange']
   }
@@ -295,6 +450,10 @@ export interface paths {
     /**
      * Get a list of activity schedules at a given prison
      * @description Returns zero or more activity schedules at a given prison.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getSchedulesByPrisonCode']
   }
@@ -302,6 +461,10 @@ export interface paths {
     /**
      * Get a list of pay bands at a given prison
      * @description Returns the pay bands at a given prison or a default list of values if none present.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getPrisonPayBands']
   }
@@ -309,21 +472,43 @@ export interface paths {
     /**
      * Get scheduled prison locations
      * @description Returns a list of zero or more scheduled prison locations for the supplied criteria.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getScheduledPrisonLocations']
   }
   '/prison/{prisonCode}/activity-categories/{categoryId}/activities': {
-    /** Get list of activities within a category at a specified prison */
+    /**
+     * Get list of activities within a category at a specified prison
+     * @description
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
     get: operations['getActivitiesInCategory']
   }
   '/prison/{prisonCode}/activities': {
-    /** Get list of activities running at a specified prison. Optionally and by default, only currently LIVE activities are returned */
+    /**
+     * Get list of activities running at a specified prison. Optionally and by default, only currently LIVE activities are returned
+     * @description
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
     get: operations['getActivities']
   }
   '/prison/prison-regime/{prisonCode}': {
     /**
      * Get a prison regime by its code
      * @description Returns a single prison regime and its details by its unique prison code.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getPrisonRegimeByPrisonCode']
   }
@@ -331,6 +516,10 @@ export interface paths {
     /**
      * List of cell locations for a prison group supplied as a query parameter
      * @description List of cell locations for a prison group supplied as a query parameter
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getCellLocationsForGroup']
   }
@@ -338,6 +527,10 @@ export interface paths {
     /**
      * Get the location prefix for a location group supplied as a query parameter
      * @description Get location prefix for a location group name supplied as a query parameter
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getLocationPrefixForGroup']
   }
@@ -345,6 +538,10 @@ export interface paths {
     /**
      * List of all available location groups defined at a prison
      * @description List of all available location groups defined at a prison
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getLocationGroups']
   }
@@ -352,6 +549,10 @@ export interface paths {
     /**
      * Get events for a prison which may indicate that a change of circumstances affecting allocations had occurred
      * @description Returns events in the prison which match the search criteria provided.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
      */
     get: operations['getEventsForReview']
   }
@@ -359,6 +560,10 @@ export interface paths {
     /**
      * Gets the details of a set of appointments created as part of a single bulk operation for display purposes
      * @description Returns the displayable details of a set of appointments created as part of a single bulk operation by its unique identifier.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getBulkAppointmentDetailsById']
   }
@@ -366,6 +571,10 @@ export interface paths {
     /**
      * Get a daily list of attendances
      * @description Returns an attendance list.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getAttendanceByDate']
   }
@@ -373,17 +582,32 @@ export interface paths {
     /**
      * Get an attendance by ID
      * @description Returns an attendance.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getAttendanceById']
   }
   '/attendance-reasons': {
-    /** Get the list of attendance reasons */
+    /**
+     * Get the list of attendance reasons
+     * @description
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
     get: operations['getAttendanceReasons']
   }
   '/appointments/{appointmentId}': {
     /**
      * Get an appointment by its id
      * @description Returns an appointment and its details by its unique identifier.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getAppointmentById']
   }
@@ -391,17 +615,32 @@ export interface paths {
     /**
      * Gets the appointment occurrence details for display purposes identified by the appointment occurrence's id
      * @description Returns the displayable details of an appointment occurrence by its unique identifier.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getAppointmentOccurrenceDetailsById']
   }
   '/appointment-locations/{prisonCode}': {
-    /** Get the list of appointment locations */
+    /**
+     * Get the list of appointment locations
+     * @description
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
     get: operations['getAppointmentLocations']
   }
   '/appointment-instances/{appointmentInstanceId}': {
     /**
      * Get an appointment instance by its id
      * @description Returns an appointment instance and its details by its unique identifier.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getAppointmentInstanceById']
   }
@@ -409,43 +648,90 @@ export interface paths {
     /**
      * Gets the top level appointment details for display purposes identified by the appointment's id
      * @description Returns the displayable details of an appointment by its unique identifier.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getAppointmentDetailsById']
   }
   '/appointment-categories': {
-    /** Get the list of appointment categories */
+    /**
+     * Get the list of appointment categories
+     * @description
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
     get: operations['getAppointmentCategories']
   }
   '/allocations/id/{allocationId}': {
     /**
      * Get an allocation by its id
      * @description Returns a single allocation and its details by its unique identifier.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     * * NOMIS_ACTIVITIES
      */
     get: operations['getAllocationById']
   }
   '/allocations/deallocation-reasons': {
-    /** Get the list of deallocation reasons */
+    /**
+     * Get the list of deallocation reasons
+     * @description
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
     get: operations['getDeallocationReasons']
   }
   '/activity-categories': {
-    /** Get the list of top-level activity categories */
+    /**
+     * Get the list of top-level activity categories
+     * @description
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     * * NOMIS_ACTIVITIES
+     */
     get: operations['getCategories']
   }
   '/activities/{activityId}': {
     /**
      * Get an activity by its id
      * @description Returns a single activity and its details by its unique identifier.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     * * NOMIS_ACTIVITIES
      */
     get: operations['getActivityById']
   }
   '/activities/{activityId}/schedules': {
-    /** Get the capacity and number of allocated slots in an activity */
+    /**
+     * Get the capacity and number of allocated slots in an activity
+     * @description
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
     get: operations['getActivitySchedules']
   }
   '/activities/{activityId}/filtered': {
     /**
      * Get an activity by its ID with limited instances (by date)
      * @description Returns a single activity by activity ID with limited instances.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getActivityByIdWithFilters']
   }
@@ -453,8 +739,25 @@ export interface paths {
     /**
      * Returns the basic activity ids and descriptions without its child collections
      * @description Returns basic activity IDs and attributes without its child collections.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
      */
     get: operations['getActivityKeyIds']
+  }
+  '/migrate/delete-activity/prison/{prisonCode}/id/{activityId}': {
+    /**
+     * Delete an activity with cascade.
+     * @description
+     *       Deletes an activity and all its child entities including schedule, slots, pay, instances, attendances and allocations.
+     *       Only for use via by migration services to undo a failed migration.
+     *
+     *
+     * Requires one of the following roles:
+     * * NOMIS_ACTIVITIES
+     */
+    delete: operations['deleteActivity']
   }
 }
 
@@ -488,12 +791,32 @@ export interface components {
       endDate: string
     }
     ErrorResponse: {
-      /** Format: int32 */
+      /**
+       * Format: int32
+       * @description Response status code (will typically mirror HTTP status code).
+       * @example 404
+       */
       status: number
-      /** Format: int32 */
+      /**
+       * @description Concise error reason for end-user consumption.
+       * @example Entity Not Found
+       */
+      userMessage: string
+      /**
+       * Format: int32
+       * @description An (optional) application-specific error code.
+       * @example 20002
+       */
       errorCode?: number
-      userMessage?: string
+      /**
+       * @description Detailed description of problem with remediation hints aimed at application developer.
+       * @example Serious error in the system
+       */
       developerMessage?: string
+      /**
+       * @description Provision for further information about the problem (e.g. a link to a FAQ or knowledge base article).
+       * @example Check out this FAQ for more information
+       */
       moreInfo?: string
     }
     /** @description The uncancel request with the user details */
@@ -1465,12 +1788,17 @@ export interface components {
        * @example true
        */
       runsOnBankHoliday: boolean
+      /**
+       * @description Whether the activity takes place outside of the prison
+       * @example true
+       */
+      outsideWork: boolean
       /** @description Details of when this activity runs during the week */
       scheduleRules: components['schemas']['NomisScheduleRule'][]
-      /** @description The pay rates which apply to this activity */
+      /** @description The pay rates which apply to this activity. Where none are specified we will assume an unpaid activity. */
       payRates: components['schemas']['NomisPayRate'][]
     }
-    /** @description Describes a pay rate for an activity. At least one pay rate must be specified. */
+    /** @description Describes a pay rate for an activity. */
     NomisPayRate: {
       /**
        * @description The incentive level code from NOMIS
@@ -2330,6 +2658,11 @@ export interface components {
        */
       onWing: boolean
       /**
+       * @description Flag to indicate if the location of the activity is off wing and not in a listed location
+       * @example false
+       */
+      offWing: boolean
+      /**
        * @description Flag to indicate if the activity is piece work
        * @example false
        */
@@ -2548,6 +2881,11 @@ export interface components {
        */
       onWing: boolean
       /**
+       * @description Flag to indicate if the location of the activity is off wing and not in a listed location
+       * @example false
+       */
+      offWing: boolean
+      /**
        * @description Flag to indicate if the activity is piece work
        * @example false
        */
@@ -2699,6 +3037,11 @@ export interface components {
        * @example false
        */
       onWing: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is off wing and not in a listed location
+       * @example false
+       */
+      offWing: boolean
       /**
        * @description Flag to indicate if the activity is piece work
        * @example false
@@ -3595,6 +3938,11 @@ export interface components {
        */
       onWing?: boolean
       /**
+       * @description Flag to indicate if the location of the activity is off wing and not in a listed location
+       * @example false
+       */
+      offWing?: boolean
+      /**
        * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
        * @example false
        */
@@ -4108,9 +4456,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     PageableObject: {
@@ -5281,7 +5629,11 @@ export type external = Record<string, never>
 export interface operations {
   /**
    * Deallocate offenders
-   * @description Deallocates offenders from an activity schedule on a future date. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   * @description Deallocates offenders from an activity schedule on a future date.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
    */
   deallocate: {
     parameters: {
@@ -5329,6 +5681,10 @@ export interface operations {
   /**
    * Un-cancels a scheduled instance.
    * @description Un-cancels a previously cancelled scheduled instance.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   uncancelScheduledInstance: {
     parameters: {
@@ -5373,6 +5729,10 @@ export interface operations {
   /**
    * Cancel a scheduled instance
    * @description Cancels scheduled instance and associated attendance records
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   cancelScheduledInstance: {
     parameters: {
@@ -5418,6 +5778,12 @@ export interface operations {
       }
     }
   }
+  /**
+   * @description
+   *
+   * Requires one of the following roles:
+   * * ROLE_QUEUE_ADMIN
+   */
   retryDlq: {
     parameters: {
       path: {
@@ -5443,6 +5809,12 @@ export interface operations {
       }
     }
   }
+  /**
+   * @description
+   *
+   * Requires one of the following roles:
+   * * ROLE_QUEUE_ADMIN
+   */
   purgeQueue: {
     parameters: {
       path: {
@@ -5460,7 +5832,11 @@ export interface operations {
   }
   /**
    * Updates attendance records.
-   * @description Updates the given attendance records with the supplied update request details. Requires the 'ACTIVITY_ADMIN' role.
+   * @description Updates the given attendance records with the supplied update request details.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   markAttendances: {
     requestBody: {
@@ -5493,7 +5869,11 @@ export interface operations {
    * Cancel an appointment occurrence or series of appointment occurrences
    * @description
    *     Cancel an appointment occurrence or series of appointment occurrences based on the applyTo property.
-   *     Does not require any specific roles
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   cancelAppointmentOccurrence: {
     parameters: {
@@ -5539,6 +5919,10 @@ export interface operations {
   /**
    * Get a list of activity schedule allocations
    * @description Returns zero or more activity schedule allocations.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getAllocationsBy: {
     parameters: {
@@ -5582,7 +5966,11 @@ export interface operations {
   }
   /**
    * Allocate offender to schedule
-   * @description Allocates the supplied offender allocation request to the activity schedule. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   * @description Allocates the supplied offender allocation request to the activity schedule.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
    */
   allocate: {
     parameters: {
@@ -5636,6 +6024,11 @@ export interface operations {
    *       Activities and appointments come from either NOMIS or the local database depending on whether the prison is
    *       marked as active for appointments and/or activities.
    *       (Intended usage: Prisoner calendar / schedule)
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getScheduledEventsForSinglePrisoner: {
     parameters: {
@@ -5695,6 +6088,11 @@ export interface operations {
    *       Activities and appointments come from either NOMIS or the local database depending on whether the prison is
    *       marked as rolled-out for activities and/or appointments.
    *       (Intended usage: Unlock list)
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getScheduledEventsForMultiplePrisoners: {
     parameters: {
@@ -5750,6 +6148,10 @@ export interface operations {
   /**
    * Get all allocations for prisoners
    * @description Returns zero or more allocations for the supplied list of prisoners.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   prisonerAllocations: {
     parameters: {
@@ -5789,7 +6191,10 @@ export interface operations {
   }
   /**
    * Migrate an allocation
-   * @description Migrate an allocation from NOMIS. Requires the role 'ROLE_NOMIS_ACTIVITIES'
+   * @description Migrate an allocation from NOMIS.
+   *
+   * Requires one of the following roles:
+   * * NOMIS_ACTIVITIES
    */
   migrateAllocation: {
     requestBody: {
@@ -5826,7 +6231,10 @@ export interface operations {
   }
   /**
    * Migrate an activity
-   * @description Migrate an activity. Requires the role 'ROLE_NOMIS_ACTIVITIES'
+   * @description Migrate an activity.
+   *
+   * Requires one of the following roles:
+   * * NOMIS_ACTIVITIES
    */
   migrateActivity: {
     requestBody: {
@@ -5865,7 +6273,10 @@ export interface operations {
    * Create an appointment or series of appointment occurrences
    * @description
    *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
-   *     Does not require any specific roles
+   *
+   *
+   * Requires one of the following roles:
+   * * NOMIS_APPOINTMENTS
    */
   migrateAppointment: {
     requestBody: {
@@ -5956,6 +6367,10 @@ export interface operations {
   /**
    * Acknowledge a list of change of circumstance events in the prison.
    * @description Used to indicate that a subset of change events have been acknowledged.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
    */
   acknowledgeEvents: {
     parameters: {
@@ -6006,7 +6421,11 @@ export interface operations {
    * Bulk create a set of appointments
    * @description
    *     Create a list of appointments and allocate the supplied prisoner or prisoners to them.
-   *     Does not require any specific roles
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   bulkCreateAppointment: {
     parameters: {
@@ -6043,6 +6462,10 @@ export interface operations {
   /**
    * Search for audit records
    * @description Returns all records that match the search criteria.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getAuditRecords: {
     parameters: {
@@ -6082,7 +6505,11 @@ export interface operations {
    * Create an appointment or series of appointment occurrences
    * @description
    *     Create an appointment or series of appointment occurrences and allocate the supplied prisoner or prisoners to them.
-   *     Does not require any specific roles
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   createAppointment: {
     parameters: {
@@ -6120,7 +6547,11 @@ export interface operations {
    * Search for appointment occurrences within the specified prison
    * @description
    *     Uses the supplied prison code and search parameters to filter and return appointment occurrence search results.
-   *     Does not require any specific roles
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   searchAppointmentOccurrences: {
     parameters: {
@@ -6159,7 +6590,11 @@ export interface operations {
   }
   /**
    * Add a prisoner to an activity schedule waiting list
-   * @description Adds the supplied waiting list creation request to the activity schedule. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   * @description Adds the supplied waiting list creation request to the activity schedule.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
    */
   addToWaitingList: {
     parameters: {
@@ -6210,7 +6645,11 @@ export interface operations {
   }
   /**
    * Create an activity
-   * @description Create an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   * @description Create an activity
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
    */
   create: {
     parameters: {
@@ -6253,6 +6692,10 @@ export interface operations {
   /**
    * Get a waiting list application by its id
    * @description Returns a single waiting list application by its unique identifier.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getWaitingListById: {
     parameters: {
@@ -6290,7 +6733,13 @@ export interface operations {
       }
     }
   }
-  /** @description Update a waiting list application. */
+  /**
+   * @description Update a waiting list application.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
+   */
   updateWaitingList: {
     parameters: {
       header?: {
@@ -6342,7 +6791,11 @@ export interface operations {
    * Update an appointment occurrence or series of appointment occurrences
    * @description
    *     Update an appointment occurrence or series of appointment occurrences based on the applyTo property.
-   *     Does not require any specific roles
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   updateAppointmentOccurrence: {
     parameters: {
@@ -6387,7 +6840,11 @@ export interface operations {
   }
   /**
    * Update an allocation
-   * @description Update an allocation. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   * @description Update an allocation
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
    */
   update: {
     parameters: {
@@ -6436,7 +6893,11 @@ export interface operations {
   }
   /**
    * Update an activity
-   * @description Update an activity. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   * @description Update an activity
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
    */
   update_1: {
     parameters: {
@@ -6488,7 +6949,10 @@ export interface operations {
   }
   /**
    * Retrieves Nomis synchronisation details
-   * @description Retrieves all details required in order to synchronise an attendance with the Nomis database. Requires role NOMIS_ACTIVITIES
+   * @description Retrieves all details required in order to synchronise an attendance with the Nomis database.
+   *
+   * Requires one of the following roles:
+   * * NOMIS_ACTIVITIES
    */
   getAttendanceSync: {
     parameters: {
@@ -6516,7 +6980,7 @@ export interface operations {
           'application/json': components['schemas']['ErrorResponse']
         }
       }
-      /** @description Forbidden, requires role NOMIS_ACTIVITIES */
+      /** @description Forbidden */
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
@@ -6533,6 +6997,11 @@ export interface operations {
   /**
    * Get an activity schedule by its id
    * @description Returns a single activity schedule by its unique identifier.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   * * NOMIS_ACTIVITIES
    */
   getScheduleId: {
     parameters: {
@@ -6573,6 +7042,10 @@ export interface operations {
   /**
    * Get a schedules waiting list applications
    * @description Returns zero or more activity schedule waiting list applications.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getWaitingListApplicationsBy: {
     parameters: {
@@ -6612,7 +7085,11 @@ export interface operations {
   }
   /**
    * Gets the suitability details of a candidate for an activity
-   * @description Returns candidate suitability details considering factors such as, workplace risk assessment, incentive level, education levels, earliest release date and non-associations Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   * @description Returns candidate suitability details considering factors such as, workplace risk assessment, incentive level, education levels, earliest release date and non-associations
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
    */
   allocationSuitability: {
     parameters: {
@@ -6659,7 +7136,11 @@ export interface operations {
   }
   /**
    * Get the suitable candidates for an activity
-   * @description Returns a paginated view of the list of candidates suitable for a given activity schedule. Filterable by employment status, workplace risk assessment, and incentive level. Requires any one of the following roles ['ACTIVITY_HUB', 'ACTIVITY_HUB_LEAD', 'ACTIVITY_ADMIN'].
+   * @description Returns a paginated view of the list of candidates suitable for a given activity schedule. Filterable by employment status, workplace risk assessment, and incentive level.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
    */
   candidates: {
     parameters: {
@@ -6718,6 +7199,11 @@ export interface operations {
   /**
    * Get a scheduled instance by ID
    * @description Returns a scheduled instance.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   * * NOMIS_ACTIVITIES
    */
   getScheduledInstanceById: {
     parameters: {
@@ -6758,6 +7244,10 @@ export interface operations {
   /**
    * Get a list of attendances for a scheduled instance
    * @description Returns one or more attendance records for a particular scheduled activity for a given scheduled instance.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getAttendancesByScheduledInstance: {
     parameters: {
@@ -6795,6 +7285,9 @@ export interface operations {
   /**
    * Get a prison's rollout plan by prison code
    * @description Returns a single prison and its activities management service rollout plan by its unique code.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_ADMIN
    */
   getPrisonByCode: {
     parameters: {
@@ -6823,6 +7316,12 @@ export interface operations {
       }
     }
   }
+  /**
+   * @description
+   *
+   * Requires one of the following roles:
+   * * ROLE_QUEUE_ADMIN
+   */
   getDlqMessages: {
     parameters: {
       query?: {
@@ -6844,6 +7343,10 @@ export interface operations {
   /**
    * Get a list of scheduled instances for a prison, date range (max 3 months) and time slot (AM, PM or ED - optional)
    * @description Returns zero or more scheduled instances for a prison and date range (max 3 months).
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getActivityScheduleInstancesByDateRange: {
     parameters: {
@@ -6884,6 +7387,10 @@ export interface operations {
   /**
    * Get a list of activity schedules at a given prison
    * @description Returns zero or more activity schedules at a given prison.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getSchedulesByPrisonCode: {
     parameters: {
@@ -6923,6 +7430,10 @@ export interface operations {
   /**
    * Get a list of pay bands at a given prison
    * @description Returns the pay bands at a given prison or a default list of values if none present.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getPrisonPayBands: {
     parameters: {
@@ -6954,6 +7465,10 @@ export interface operations {
   /**
    * Get scheduled prison locations
    * @description Returns a list of zero or more scheduled prison locations for the supplied criteria.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getScheduledPrisonLocations: {
     parameters: {
@@ -6988,7 +7503,14 @@ export interface operations {
       }
     }
   }
-  /** Get list of activities within a category at a specified prison */
+  /**
+   * Get list of activities within a category at a specified prison
+   * @description
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
   getActivitiesInCategory: {
     parameters: {
       path: {
@@ -7023,7 +7545,14 @@ export interface operations {
       }
     }
   }
-  /** Get list of activities running at a specified prison. Optionally and by default, only currently LIVE activities are returned */
+  /**
+   * Get list of activities running at a specified prison. Optionally and by default, only currently LIVE activities are returned
+   * @description
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
   getActivities: {
     parameters: {
       query?: {
@@ -7057,6 +7586,10 @@ export interface operations {
   /**
    * Get a prison regime by its code
    * @description Returns a single prison regime and its details by its unique prison code.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getPrisonRegimeByPrisonCode: {
     parameters: {
@@ -7094,6 +7627,10 @@ export interface operations {
   /**
    * List of cell locations for a prison group supplied as a query parameter
    * @description List of cell locations for a prison group supplied as a query parameter
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getCellLocationsForGroup: {
     parameters: {
@@ -7140,6 +7677,10 @@ export interface operations {
   /**
    * Get the location prefix for a location group supplied as a query parameter
    * @description Get location prefix for a location group name supplied as a query parameter
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getLocationPrefixForGroup: {
     parameters: {
@@ -7180,6 +7721,10 @@ export interface operations {
   /**
    * List of all available location groups defined at a prison
    * @description List of all available location groups defined at a prison
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getLocationGroups: {
     parameters: {
@@ -7223,6 +7768,10 @@ export interface operations {
   /**
    * Get events for a prison which may indicate that a change of circumstances affecting allocations had occurred
    * @description Returns events in the prison which match the search criteria provided.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
    */
   getEventsForReview: {
     parameters: {
@@ -7269,6 +7818,10 @@ export interface operations {
   /**
    * Gets the details of a set of appointments created as part of a single bulk operation for display purposes
    * @description Returns the displayable details of a set of appointments created as part of a single bulk operation by its unique identifier.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getBulkAppointmentDetailsById: {
     parameters: {
@@ -7303,6 +7856,10 @@ export interface operations {
   /**
    * Get a daily list of attendances
    * @description Returns an attendance list.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getAttendanceByDate: {
     parameters: {
@@ -7335,6 +7892,10 @@ export interface operations {
   /**
    * Get an attendance by ID
    * @description Returns an attendance.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getAttendanceById: {
     parameters: {
@@ -7369,7 +7930,14 @@ export interface operations {
       }
     }
   }
-  /** Get the list of attendance reasons */
+  /**
+   * Get the list of attendance reasons
+   * @description
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
   getAttendanceReasons: {
     responses: {
       /** @description Attendance reasons found */
@@ -7395,6 +7963,10 @@ export interface operations {
   /**
    * Get an appointment by its id
    * @description Returns an appointment and its details by its unique identifier.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getAppointmentById: {
     parameters: {
@@ -7429,6 +8001,10 @@ export interface operations {
   /**
    * Gets the appointment occurrence details for display purposes identified by the appointment occurrence's id
    * @description Returns the displayable details of an appointment occurrence by its unique identifier.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getAppointmentOccurrenceDetailsById: {
     parameters: {
@@ -7460,7 +8036,14 @@ export interface operations {
       }
     }
   }
-  /** Get the list of appointment locations */
+  /**
+   * Get the list of appointment locations
+   * @description
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
   getAppointmentLocations: {
     parameters: {
       path: {
@@ -7485,6 +8068,10 @@ export interface operations {
   /**
    * Get an appointment instance by its id
    * @description Returns an appointment instance and its details by its unique identifier.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getAppointmentInstanceById: {
     parameters: {
@@ -7519,6 +8106,10 @@ export interface operations {
   /**
    * Gets the top level appointment details for display purposes identified by the appointment's id
    * @description Returns the displayable details of an appointment by its unique identifier.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getAppointmentDetailsById: {
     parameters: {
@@ -7550,7 +8141,14 @@ export interface operations {
       }
     }
   }
-  /** Get the list of appointment categories */
+  /**
+   * Get the list of appointment categories
+   * @description
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
   getAppointmentCategories: {
     responses: {
       /** @description Appointment categories found */
@@ -7570,6 +8168,11 @@ export interface operations {
   /**
    * Get an allocation by its id
    * @description Returns a single allocation and its details by its unique identifier.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   * * NOMIS_ACTIVITIES
    */
   getAllocationById: {
     parameters: {
@@ -7607,7 +8210,14 @@ export interface operations {
       }
     }
   }
-  /** Get the list of deallocation reasons */
+  /**
+   * Get the list of deallocation reasons
+   * @description
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
   getDeallocationReasons: {
     responses: {
       /** @description Deallocation reasons found */
@@ -7630,7 +8240,15 @@ export interface operations {
       }
     }
   }
-  /** Get the list of top-level activity categories */
+  /**
+   * Get the list of top-level activity categories
+   * @description
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   * * NOMIS_ACTIVITIES
+   */
   getCategories: {
     responses: {
       /** @description Activity categories found */
@@ -7656,6 +8274,11 @@ export interface operations {
   /**
    * Get an activity by its id
    * @description Returns a single activity and its details by its unique identifier.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   * * NOMIS_ACTIVITIES
    */
   getActivityById: {
     parameters: {
@@ -7693,7 +8316,14 @@ export interface operations {
       }
     }
   }
-  /** Get the capacity and number of allocated slots in an activity */
+  /**
+   * Get the capacity and number of allocated slots in an activity
+   * @description
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
   getActivitySchedules: {
     parameters: {
       path: {
@@ -7730,6 +8360,10 @@ export interface operations {
   /**
    * Get an activity by its ID with limited instances (by date)
    * @description Returns a single activity by activity ID with limited instances.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getActivityByIdWithFilters: {
     parameters: {
@@ -7771,6 +8405,10 @@ export interface operations {
   /**
    * Returns the basic activity ids and descriptions without its child collections
    * @description Returns basic activity IDs and attributes without its child collections.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
    */
   getActivityKeyIds: {
     parameters: {
@@ -7799,6 +8437,48 @@ export interface operations {
       }
       /** @description The activity for this ID was not found. */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Delete an activity with cascade.
+   * @description
+   *       Deletes an activity and all its child entities including schedule, slots, pay, instances, attendances and allocations.
+   *       Only for use via by migration services to undo a failed migration.
+   *
+   *
+   * Requires one of the following roles:
+   * * NOMIS_ACTIVITIES
+   */
+  deleteActivity: {
+    parameters: {
+      path: {
+        /** @description The prison code where this activity exists */
+        prisonCode: string
+        /** @description The activity ID to remove */
+        activityId: number
+      }
+    }
+    responses: {
+      /** @description The activity was deleted. */
+      200: never
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
