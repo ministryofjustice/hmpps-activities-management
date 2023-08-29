@@ -22,24 +22,23 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
+            <h1 class="govuk-heading-xl">{{ 'Enter the new activity location' if session.req.query.fromEditActivity else 'Where does this activity take place?' }}</h1>
+
+            <p class='govuk-body'>
+                If the location is not listed choose the relevant option so unlock lists can be filtered to show who is staying on the wing or leaving.
+            </p>
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ activityJourneyCaption(session.createJourney) }}
                 {{ govukRadios({
                     id: "location-type",
                     name: "locationType",
-                    fieldset: {
-                        legend: {
-                            text: 'Enter the new activity location' if session.req.query.fromEditActivity else 'Where does this activity take place?',
-                            classes: "govuk-label--l",
-                            isPageHeading: true
-                        }
-                    },
                     items: [
                         {
                             value: "OUT_OF_CELL",
-                            text: "Out of cell",
-                            checked: formResponses.location or session.createJourney.location,
+                            text: "Search for a location",
+                            checked: formResponses.locationType == 'OFF_WING' or session.createJourney.location.id,
                             conditional: {
                                 html: govukSelect({
                                     id: "location",
@@ -54,14 +53,19 @@
                             }
                         },
                         {
-                            value: "ON_WING",
-                            text: "On wing",
-                            checked: formResponses.onWing == true or session.createJourney.onWing == true
-                        },
-                        {
                             value: "IN_CELL",
                             text: "In cell",
-                            checked: formResponses.inCell == true or session.createJourney.inCell == true
+                            checked: session.createJourney.inCell == true
+                        },
+                        {
+                            value: "OFF_WING",
+                            text: "Off wing - not listed",
+                            checked: session.createJourney.offWing == true
+                        },
+                        {
+                            value: "ON_WING",
+                            text: "On wing - not listed",
+                            checked: session.createJourney.onWing == true
                         }
                     ]
                 }) }}

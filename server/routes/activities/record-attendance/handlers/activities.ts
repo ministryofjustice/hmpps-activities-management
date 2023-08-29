@@ -46,6 +46,7 @@ export default class ActivitiesRoutes {
           location: activity.activitySchedule.internalLocation?.description,
           inCell: activity.activitySchedule.activity.inCell,
           onWing: activity.activitySchedule.activity.onWing,
+          offWing: activity.activitySchedule.activity.offWing,
           timeSlot: getTimeSlotFromTime(activity.startTime),
           time: `${activity.startTime} - ${activity.endTime}`,
           cancelled: activity.cancelled,

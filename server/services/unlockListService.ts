@@ -133,7 +133,7 @@ export default class UnlockListService {
     }
 
     // If it's not an off-wing event, check if the event location is off-wing
-    const offWingLocations = events.filter(e => !e.inCell && !e.onWing && !e.internalLocationCode.includes('WOW'))
+    const offWingLocations = events.filter(e => !e.inCell && !e.onWing && !e.internalLocationCode?.includes('WOW'))
     return offWingLocations.length > 0
   }
 

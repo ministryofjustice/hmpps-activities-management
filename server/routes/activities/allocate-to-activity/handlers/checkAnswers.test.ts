@@ -57,7 +57,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
     it('should render page with data from session', async () => {
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ inCell: false, onWing: false } as Activity)
+        .mockResolvedValue({ inCell: false, onWing: false, offWing: false } as Activity)
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/check-answers', {
@@ -71,6 +71,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
         endDate: 'Not set',
         inCell: false,
         onWing: false,
+        offWing: false,
       })
     })
   })
