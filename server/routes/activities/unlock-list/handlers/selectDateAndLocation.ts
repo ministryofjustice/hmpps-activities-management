@@ -21,7 +21,7 @@ enum ActivitySlotOptions {
 
 export class DateAndLocation {
   @Expose()
-  @IsIn(Object.values(PresetDateOptions), { message: 'Select a date for the unlock list' })
+  @IsIn(Object.values(PresetDateOptions), { message: 'Select a date' })
   datePresetOption: string
 
   @Expose()
@@ -33,7 +33,7 @@ export class DateAndLocation {
   date: SimpleDate
 
   @Expose()
-  @IsIn(Object.values(ActivitySlotOptions), { message: 'Select a time slot' })
+  @IsIn(Object.values(ActivitySlotOptions), { message: 'Select a time' })
   activitySlot: string
 
   @Expose()
