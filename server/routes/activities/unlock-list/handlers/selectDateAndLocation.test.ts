@@ -124,8 +124,8 @@ describe('Unlock list routes - select date and location', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'datePresetOption', error: 'Select a date for the unlock list' },
-        { property: 'activitySlot', error: 'Select a time slot' },
+        { property: 'datePresetOption', error: 'Select a date' },
+        { property: 'activitySlot', error: 'Select a time' },
         { property: 'location', error: 'Select a location' },
       ])
     })
@@ -140,8 +140,8 @@ describe('Unlock list routes - select date and location', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'datePresetOption', error: 'Select a date for the unlock list' },
-        { property: 'activitySlot', error: 'Select a time slot' },
+        { property: 'datePresetOption', error: 'Select a date' },
+        { property: 'activitySlot', error: 'Select a time' },
         { property: 'location', error: 'Select a location' },
       ])
     })
