@@ -86,6 +86,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
       expect(req.session.createJourney.location).toEqual(null)
       expect(req.session.createJourney.inCell).toEqual(true)
       expect(req.session.createJourney.onWing).toEqual(false)
+      expect(req.session.createJourney.offWing).toEqual(false)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('capacity')
     })
@@ -102,6 +103,24 @@ describe('Route Handlers - Create an activity schedule - location', () => {
       expect(req.session.createJourney.location).toEqual(null)
       expect(req.session.createJourney.inCell).toEqual(false)
       expect(req.session.createJourney.onWing).toEqual(true)
+      expect(req.session.createJourney.offWing).toEqual(false)
+
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('capacity')
+    })
+
+    it('should save off wing to session and redirect to capacity page', async () => {
+      req.body = {
+        locationType: LocationType.OFF_WING,
+      }
+
+      when(prisonService.getEventLocations).mockResolvedValue(eventLocations)
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.location).toEqual(null)
+      expect(req.session.createJourney.inCell).toEqual(false)
+      expect(req.session.createJourney.onWing).toEqual(false)
+      expect(req.session.createJourney.offWing).toEqual(true)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('capacity')
     })

@@ -25,6 +25,7 @@ export default class CancelledSessionsRoutes {
         summary: session.activitySchedule.activity.summary,
         inCell: session.activitySchedule.activity.inCell,
         onWing: session.activitySchedule.activity.onWing,
+        offWing: session.activitySchedule.activity.offWing,
         location: session.activitySchedule.internalLocation?.description,
         timeSlot: getTimeSlotFromTime(session.startTime).toUpperCase(),
         reason: session.cancelledReason,
