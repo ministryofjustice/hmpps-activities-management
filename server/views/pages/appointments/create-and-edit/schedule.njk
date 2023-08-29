@@ -315,6 +315,8 @@
             In cell
         {% elseif scheduledEvent.onWing %}
             On wing
+        {% elseif scheduledEvent.offWing %}
+            Off wing
         {% elseif scheduledEvent.internalLocationDescription %}
             {{ scheduledEvent.internalLocationDescription | trim }}
         {% endif %}

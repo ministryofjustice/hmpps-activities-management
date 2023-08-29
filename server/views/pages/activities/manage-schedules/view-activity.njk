@@ -296,6 +296,8 @@
         {{ "In cell" }}
     {% elseif schedule.activity.onWing %}
         {{ "On wing" }}
+    {% elseif schedule.activity.offWing %}
+        {{ "Off wing" }}
     {% else %}
         {{ schedule.internalLocation.description | trim | title }}
     {% endif %}

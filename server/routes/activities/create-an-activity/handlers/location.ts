@@ -10,6 +10,7 @@ export enum LocationType {
   IN_CELL = 'IN_CELL',
   OUT_OF_CELL = 'OUT_OF_CELL',
   ON_WING = 'ON_WING',
+  OFF_WING = 'OFF_WING',
 }
 
 export class Location {
@@ -57,6 +58,7 @@ export default class LocationRoutes {
     }
     req.session.createJourney.inCell = locationType === LocationType.IN_CELL
     req.session.createJourney.onWing = locationType === LocationType.ON_WING
+    req.session.createJourney.offWing = locationType === LocationType.OFF_WING
 
     if (req.query && req.query.fromEditActivity) {
       const { activityId } = req.session.createJourney
@@ -64,6 +66,7 @@ export default class LocationRoutes {
       const activity = {
         inCell: req.session.createJourney.inCell,
         onWing: req.session.createJourney.onWing,
+        offWing: req.session.createJourney.offWing,
         locationId: req.session.createJourney.location?.id,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
