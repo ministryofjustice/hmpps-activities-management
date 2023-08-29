@@ -172,7 +172,7 @@
                 {
                     attributes: {
                         id: 'location-' + tableNumber + '-' + loop.index,
-                        "data-sort-value": activity.location
+                        "data-sort-value": ("In cell" if activity.inCell) or ("On wing" if activity.onWing) or ("Off wing" if activity.offWing) or activity.location
                     },
                     text: ("In cell" if activity.inCell) or ("On wing" if activity.onWing) or ("Off wing" if activity.offWing) or activity.location
                 },
