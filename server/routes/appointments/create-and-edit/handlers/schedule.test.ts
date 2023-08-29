@@ -552,4 +552,16 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       expect(res.redirect).toBeCalledWith('../../schedule?preserveHistory=true')
     })
   })
+  describe('CHANGE', () => {
+    it('should redirect to the correct url', async () => {
+      req.query = {
+        property: 'date-and-time',
+        preserveHistory: 'true',
+      }
+
+      await handler.CHANGE(req, res)
+
+      expect(res.redirect).toBeCalledWith('date-and-time?preserveHistory=true')
+    })
+  })
 })
