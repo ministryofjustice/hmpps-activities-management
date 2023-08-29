@@ -29,6 +29,7 @@ export default class CheckAnswersRoutes {
       activityName: activity.name,
       inCell: activityEntity.inCell,
       onWing: activityEntity.onWing,
+      offWing: activityEntity.offWing,
       activityLocation: activity.location,
       startDate,
       endDate,
