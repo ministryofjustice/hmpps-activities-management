@@ -258,7 +258,7 @@ export const buildErrorSummaryList = (array: FieldValidationError[]) => {
   }))
 }
 
-export const formatDate = (date: unknown, fmt: string, inContextName?: boolean) => {
+export const formatDate = (date: unknown, fmt = 'EEEE, d MMMM yyyy', inContextName = false) => {
   if (!date) return null
 
   let richDate = date as Date

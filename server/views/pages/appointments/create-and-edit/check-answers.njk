@@ -90,7 +90,7 @@
             text: "Date"
         },
         value: {
-            text: session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy')
+            text: session.appointmentJourney.startDate.date | parseISODate | formatDate
         },
         actions: {
             items: [
@@ -249,7 +249,7 @@
             <h1 class="govuk-heading-l">Check and confirm the appointment details</h1>
             <h2 class="govuk-heading-m">Appointment details</h2>
 
-            <form method="POST" data-module="form-spinner">
+            <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ govukSummaryList({

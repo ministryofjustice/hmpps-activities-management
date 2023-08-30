@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
 
 {% set backLinkHref = "attendance-list" %}
 {% set pageTitle = applicationName + " - Cancel session - Reason" %}
@@ -32,15 +32,16 @@
           errorMessage: validationErrors | findError('reason')
         }) }}
 
-        {{ govukTextarea({
-          id: "comment",
-          name: "comment",
-          label: {
-            text: "More details (optional)"
-          },
-          rows: "3",
-          value: formResponses.comment,
-          errorMessage: validationErrors | findError('comment')
+        {{ govukCharacterCount({
+            label: {
+              text: "More details (optional)"
+            },
+            name: "comment",
+            id: "comment",
+            rows: "3",
+            maxlength: "100",
+            value: formResponses.comment,
+            errorMessage: validationErrors | findError('comment')
         }) }}
 
         {{ govukButton({

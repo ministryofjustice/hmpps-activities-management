@@ -23,18 +23,18 @@
                         }
                     },
                     hint: {
-                        text: "You can view the summary for any of the last 15 days"
+                        text: "You can view the summary for any of the last 15 days."
                     },
                     errorMessage: validationErrors | findError('datePresetOption'),
                     items: [
                         {
                             value: "today",
-                            text: "Today - " + now | formatDate('dd MMM yyyy'),
+                            text: "Today - " + now | formatDate('dd MMMM yyyy'),
                             checked: formResponses.datePresetOption == 'today'
                         },
                         {
                             value: "yesterday",
-                            text: "Yesterday - " + (now - 86400000) | formatDate('dd MMM yyyy'),
+                            text: "Yesterday - " + (now - 86400000) | formatDate('dd MMMM yyyy'),
                             checked: formResponses.datePresetOption == 'yesterday'
                         },
                         {

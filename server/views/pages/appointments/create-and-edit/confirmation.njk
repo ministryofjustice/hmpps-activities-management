@@ -23,9 +23,9 @@
                 {% endif %}
 
                 {% if not appointment.repeat %}
-                    on {{ (appointment.startDate or bulkAppointment.startDate) | toDate | formatDate('EEEE, d MMMM yyyy') }}.
+                    on {{ (appointment.startDate or bulkAppointment.startDate) | toDate | formatDate }}.
                 {% else %}
-                    starting on {{ appointment.startDate | toDate | formatDate('EEEE, d MMMM yyyy') }}.
+                    starting on {{ appointment.startDate | toDate | formatDate }}.
                     It will repeat {{ ("every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
                                     ("daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
                                     ("weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +

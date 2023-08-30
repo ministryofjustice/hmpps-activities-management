@@ -10,7 +10,7 @@ export class CancelReasonForm {
   reason: string
 
   @Expose()
-  @MaxLength(250, { message: 'Details must be 250 characters or less' })
+  @MaxLength(100, { message: 'Details must be 100 characters or less' })
   comment: string
 }
 
