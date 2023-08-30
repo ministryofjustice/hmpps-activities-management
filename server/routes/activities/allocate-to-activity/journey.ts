@@ -22,6 +22,5 @@ export type AllocateToActivityJourney = {
   }
   startDate?: SimpleDate
   endDate?: SimpleDate
-
   deallocationReason?: string
 }

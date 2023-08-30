@@ -14,7 +14,7 @@ import { toDateString } from '../../../../utils/utils'
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 const today = new Date()

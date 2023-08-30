@@ -12,7 +12,7 @@ let res: Response
 
 const next = jest.fn()
 
-const activitiesServiceMock = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesServiceMock = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 const middleware = fetchAppointment(activitiesServiceMock)
 

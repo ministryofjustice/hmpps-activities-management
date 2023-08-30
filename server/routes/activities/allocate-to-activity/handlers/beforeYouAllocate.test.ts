@@ -11,7 +11,7 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Allocate - Before you allocate', () => {
   const handler = new BeforeYouAllocate(activitiesService)

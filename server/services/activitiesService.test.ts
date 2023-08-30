@@ -2,16 +2,12 @@ import { when } from 'jest-when'
 import { addDays, subDays } from 'date-fns'
 import atLeast from '../../jest.setup'
 import ActivitiesApiClient from '../data/activitiesApiClient'
-import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesService from './activitiesService'
 import { ServiceUser } from '../@types/express'
-import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import {
   Activity,
   ActivityCategory,
   ActivityCreateRequest,
-  ActivityLite,
-  ActivityScheduleLite,
   LocationGroup,
   ScheduledActivity,
   PrisonPayBand,
@@ -39,14 +35,9 @@ import {
   ActivitySummary,
   WaitingListApplicationUpdateRequest,
 } from '../@types/activitiesAPI/types'
-import activityLocations from './fixtures/activity_locations_am_1.json'
-import activitySchedules from './fixtures/activity_schedules_1.json'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
-import appointment from './fixtures/appointment_1.json'
 import appointmentDetails from './fixtures/appointment_details_1.json'
 import appointmentOccurrenceDetails from './fixtures/appointment_occurrence_details_1.json'
-import prisoners from './fixtures/prisoners_1.json'
-import activityScheduleAllocation from './fixtures/activity_schedule_allocation_1.json'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
 import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
@@ -58,8 +49,7 @@ jest.mock('../data/prisonerSearchApiClient')
 
 describe('Activities Service', () => {
   const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
-  const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
-  const activitiesService = new ActivitiesService(activitiesApiClient, prisonerSearchApiClient)
+  const activitiesService = new ActivitiesService(activitiesApiClient)
 
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
 
@@ -91,19 +81,6 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('getActivitiesInCategory', () => {
-    it('should get the list of activities from activities API', async () => {
-      const expectedResult = [{ id: 1, summary: 'Maths level 1' }] as ActivityLite[]
-
-      when(activitiesApiClient.getActivitiesInCategory).mockResolvedValue(expectedResult)
-
-      const actualResult = await activitiesService.getActivitiesInCategory(1, user)
-
-      expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getActivitiesInCategory).toHaveBeenCalledWith('MDI', 1, user)
-    })
-  })
-
   describe('getActivities', () => {
     it('should get the list of activities from activities API', async () => {
       const expectedResult = [{ id: 1, activityName: 'Maths level 1' }] as ActivitySummary[]
@@ -114,19 +91,6 @@ describe('Activities Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(activitiesApiClient.getActivities).toHaveBeenCalledWith('MDI', true, user)
-    })
-  })
-
-  describe('getSchedulesOfActivity', () => {
-    it('should get the list of schedules from activities API', async () => {
-      const expectedResult = [{ id: 1, description: 'Houseblock 1 AM' }] as ActivityScheduleLite[]
-
-      when(activitiesApiClient.getSchedulesOfActivity).mockResolvedValue(expectedResult)
-
-      const actualResult = await activitiesService.getSchedulesOfActivity(1, user)
-
-      expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getSchedulesOfActivity).toHaveBeenCalledWith(1, user)
     })
   })
 
@@ -185,17 +149,6 @@ describe('Activities Service', () => {
   })
 
   describe('getScheduledEventsForPrisoners', () => {
-    it('should fetch internal prison locations that have activities scheduled using the activities API', async () => {
-      when(activitiesApiClient.getScheduledPrisonLocations)
-        .calledWith(atLeast('10001'))
-        .mockResolvedValue(activityLocations)
-      const locations = await activitiesService.getScheduledPrisonLocations('EDI', '10001', '2022-08-01', user)
-      expect(locations.length).toEqual(41)
-      expect(activitiesApiClient.getScheduledPrisonLocations).toHaveBeenCalledWith('EDI', '10001', '2022-08-01', user)
-    })
-  })
-
-  describe('getScheduledEventsForPrisoners', () => {
     it('should fetch scheduled activities for a list of prisoners using the activities API', async () => {
       const expectedResult = { activities: [{ id: 1 }] } as unknown as PrisonerScheduledEvents
 
@@ -224,26 +177,6 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('getActivitySchedules', () => {
-    it('should fetch activity schedules using the activities API', async () => {
-      const criteria = { prisonerNumbers: ['G4793VF'] }
-      when(prisonerSearchApiClient.searchByPrisonerNumbers)
-        .calledWith(criteria, user)
-        .mockResolvedValue(prisoners as Prisoner[])
-      when(activitiesApiClient.getActivitySchedules)
-        .calledWith(atLeast('10001'))
-        .mockResolvedValueOnce(activitySchedules as unknown as ActivitySchedule[])
-
-      when(activitiesApiClient.getActivitySchedules).calledWith(atLeast('10001')).mockResolvedValueOnce([])
-
-      const results = await activitiesService.getActivitySchedules('MDI', '10001', '2022-08-01', 'AM', user)
-
-      expect(results.length).toEqual(1)
-      expect(activitiesApiClient.getActivitySchedules).toHaveBeenCalledWith('MDI', '10001', '2022-08-01', 'AM', user)
-      expect(results[0]).toEqual(activityScheduleAllocation[1])
-    })
-  })
-
   describe('getActivitySchedule', () => {
     it('should fetch activity schedule by id using the activities API', async () => {
       when(activitiesApiClient.getActivitySchedule)
@@ -266,18 +199,6 @@ describe('Activities Service', () => {
       expect(results.length).toEqual(1)
       expect(results[0]).toEqual(mockedLocationGroups[0])
       expect(activitiesApiClient.getPrisonLocationGroups).toHaveBeenCalledWith('MDI', user)
-    })
-  })
-
-  describe('getAppointment', () => {
-    it('should return appointment from api when valid appointment id is used', async () => {
-      when(activitiesApiClient.getAppointment)
-        .calledWith(12345, user)
-        .mockResolvedValue(appointment as Appointment)
-
-      const actualResult = await activitiesService.getAppointment(12345, user)
-
-      expect(actualResult).toEqual(appointment)
     })
   })
 

@@ -19,7 +19,7 @@ import { YesNo } from '../@types/activities'
 
 jest.mock('./activitiesService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Edit Appointment Service', () => {
   const service = new EditAppointmentService(activitiesService)

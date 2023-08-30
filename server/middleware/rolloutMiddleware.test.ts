@@ -12,7 +12,7 @@ const res = { locals: { user: { activeCaseLoadId: 'MDI' } }, render: jest.fn() }
 const req = {} as Request
 const next = jest.fn()
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 beforeEach(() => {
   jest.resetAllMocks()
