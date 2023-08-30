@@ -7,7 +7,7 @@ import { Activity, WaitingListApplication } from '../../../../../@types/activiti
 
 jest.mock('../../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Waitlist - Confirmation', () => {
   const handler = new ConfirmationRoutes(activitiesService)

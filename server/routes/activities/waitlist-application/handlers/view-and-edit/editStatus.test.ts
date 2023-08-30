@@ -7,7 +7,7 @@ import EditStatusRoutes, { EditStatus } from './editStatus'
 
 jest.mock('../../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Waitlist application - Edit Status', () => {
   const handler = new EditStatusRoutes(activitiesService)

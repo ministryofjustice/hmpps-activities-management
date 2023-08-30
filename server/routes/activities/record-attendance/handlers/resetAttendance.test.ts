@@ -14,7 +14,7 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
 
 describe('Route Handlers - Reset Attendance', () => {

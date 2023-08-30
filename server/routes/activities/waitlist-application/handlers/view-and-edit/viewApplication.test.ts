@@ -12,7 +12,7 @@ import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/typ
 jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/prisonService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
 
 describe('Route Handlers - Waitlist application - View application', () => {

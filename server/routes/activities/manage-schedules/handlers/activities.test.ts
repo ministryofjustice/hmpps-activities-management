@@ -7,7 +7,7 @@ import { ActivityCategory, ActivitySummary } from '../../../../@types/activities
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Activities dashboard', () => {
   const handler = new ActivitiesRoutes(activitiesService)

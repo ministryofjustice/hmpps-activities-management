@@ -7,7 +7,7 @@ import { AllAttendance, ScheduledActivity } from '../../../../@types/activitiesA
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Daily Attendance Summary', () => {
   const handler = new DailySummaryRoutes(activitiesService)

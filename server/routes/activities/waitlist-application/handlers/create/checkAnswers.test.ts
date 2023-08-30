@@ -6,7 +6,7 @@ import { formatDate } from '../../../../../utils/utils'
 
 jest.mock('../../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Waitlist application - Check answers', () => {
   const handler = new CheckAnswersRoutes(activitiesService)

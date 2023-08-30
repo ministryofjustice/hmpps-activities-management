@@ -80,20 +80,6 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('getActivitiesInCategory', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-      fakeActivitiesApi
-        .get('/prison/MDI/activity-categories/1/activities')
-        .matchHeader('authorization', `Bearer token`)
-        .matchHeader('Caseload-Id', 'MDI')
-        .reply(200, response)
-      const output = await activitiesApiClient.getActivitiesInCategory('MDI', 1, user)
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
   describe('getActivities', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
@@ -103,20 +89,6 @@ describe('activitiesApiClient', () => {
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
       const output = await activitiesApiClient.getActivities('MDI', true, user)
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
-  describe('getSchedulesOfActivity', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-      fakeActivitiesApi
-        .get('/activities/1/schedules')
-        .matchHeader('authorization', `Bearer token`)
-        .matchHeader('Caseload-Id', 'MDI')
-        .reply(200, response)
-      const output = await activitiesApiClient.getSchedulesOfActivity(1, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
@@ -224,40 +196,6 @@ describe('activitiesApiClient', () => {
 
       await activitiesApiClient.getPayBandsForPrison('MDI', user)
 
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
-  describe('searchActivityLocations', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-
-      fakeActivitiesApi
-        .get('/prison/MDI/locations')
-        .query({ date: '2022-08-01', timeSlot: 'AM' })
-        .matchHeader('authorization', `Bearer token`)
-        .matchHeader('Caseload-Id', 'MDI')
-        .reply(200, response)
-
-      const output = await activitiesApiClient.getScheduledPrisonLocations('MDI', '2022-08-01', 'AM', user)
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
-  describe('getActivitiesAtLocation', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-
-      fakeActivitiesApi
-        .get('/prison/MDI/schedules')
-        .query({ locationId: 'LOC', date: '2022-08-01', timeSlot: 'AM' })
-        .matchHeader('authorization', `Bearer token`)
-        .matchHeader('Caseload-Id', 'MDI')
-        .reply(200, response)
-
-      const output = await activitiesApiClient.getActivitySchedules('MDI', 'LOC', '2022-08-01', 'AM', user)
-      expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
   })
@@ -444,54 +382,6 @@ describe('activitiesApiClient', () => {
       )
 
       expect(result).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
-  describe('getAppointment', () => {
-    it('should return appointment from api when valid appointment id is used', async () => {
-      const response = {
-        id: 12345,
-        appointmentType: 'INDIVIDUAL',
-        prisonCode: 'SKI',
-        categoryCode: 'CHAP',
-        internalLocationId: 123,
-        startDate: '2023-02-07',
-        startTime: '09:00',
-        endTime: '10:30',
-        comment: 'This appointment will help adjusting to life outside of prison',
-        created: '2023-02-07T15:37:59.266Z',
-        createdBy: 'AAA01U',
-        occurrences: [
-          {
-            id: 123456,
-            sequenceNumber: 1,
-            internalLocationId: 123,
-            startDate: '2023-02-07',
-            startTime: '13:00',
-            endTime: '13:30',
-            comment: 'This appointment occurrence has been rescheduled due to staff availability',
-            updated: '2023-02-07T15:37:59.266Z',
-            updatedBy: 'AAA01U',
-            allocations: [
-              {
-                id: 123456,
-                prisonerNumber: 'A1234BC',
-                bookingId: 456,
-              },
-            ],
-          },
-        ],
-      } as Appointment
-
-      fakeActivitiesApi
-        .get('/appointments/12345')
-        .matchHeader('authorization', `Bearer token`)
-        .matchHeader('Caseload-Id', 'MDI')
-        .reply(200, response)
-
-      const output = await activitiesApiClient.getAppointment(12345, user)
-      expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
   })
