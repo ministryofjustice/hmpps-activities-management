@@ -99,7 +99,7 @@
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-l">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</span>
+            <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
             <h1 class="govuk-heading-xl">{{ timeSlotDescription }} attendance summary</h1>
         </div>
         <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
@@ -160,7 +160,7 @@
             <h2 class="govuk-heading-l">Absences</h2>
         </div>
         <div class="govuk-grid-column-full">
-            <h2 class="govuk-heading-m">{{ totalPaidAbsences[timeSlot] }} Paid absences</h2>
+            <h2 class="govuk-heading-m">{{ totalPaidAbsences[timeSlot] }} paid {{ "absence" if totalPaidAbsences[timeSlot] == 1 else "absences" }}</h2>
         </div>
 
         {{ stat({
@@ -200,7 +200,7 @@
         }) }}
 
         <div class="govuk-grid-column-full govuk-!-margin-top-3">
-            <h4 class="govuk-heading-m">{{ totalUnPaidAbsences[timeSlot] }} Unpaid absences</h4>
+            <h4 class="govuk-heading-m">{{ totalUnPaidAbsences[timeSlot] }} unpaid {{ "absence" if totalUnPaidAbsences[timeSlot] == 1 else "absences" }}</h4>
         </div>
 
         {{ stat({

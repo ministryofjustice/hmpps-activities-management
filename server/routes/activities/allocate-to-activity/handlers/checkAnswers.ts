@@ -15,10 +15,10 @@ export default class CheckAnswersRoutes {
 
     const startDate = formatDate(
       plainToInstance(SimpleDate, req.session.allocateJourney.startDate).toRichDate(),
-      'do MMMM yyyy',
+      'EEEE, d MMMM yyyy',
     )
     const endDate = req.session.allocateJourney.endDate
-      ? formatDate(plainToInstance(SimpleDate, req.session.allocateJourney.endDate).toRichDate(), 'do MMMM yyyy')
+      ? formatDate(plainToInstance(SimpleDate, req.session.allocateJourney.endDate).toRichDate(), 'EEEE, d MMMM yyyy')
       : null
 
     res.render('pages/activities/allocate-to-activity/check-answers', {

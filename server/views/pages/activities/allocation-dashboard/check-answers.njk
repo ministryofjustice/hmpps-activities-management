@@ -25,7 +25,7 @@
                             Start of allocation
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {{ allocation.startDate | formatDate('EEEE, dd MMMM yyyy') }}
+                            {{ allocation.startDate | formatDate }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             {% if isStarted %}
@@ -46,7 +46,7 @@
                             End of allocation
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {{ allocation.endDate | formatDate('EEEE, dd MMMM yyyy') if allocation.endDate else "No date set " }}
+                            {{ allocation.endDate | formatDate if allocation.endDate else "No date set " }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             {% if allocation.endDate %}

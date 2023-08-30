@@ -28,7 +28,7 @@
                 {{ labelAndValue('Appointment', appointmentOccurrence.appointmentName | escape) }}
                 {{ labelAndValue('Time', '<ul class="govuk-list">' +
                     '<li>' + appointmentTime(appointmentOccurrence) + '</li>' +
-                    '<li>' + (appointmentOccurrence.startDate | toDate | formatDate('EEEE, d MMMM yyyy')) + '</li>' +
+                    '<li>' + (appointmentOccurrence.startDate | toDate | formatDate) + '</li>' +
                 '</ul>') }}
                 {{ labelAndValue('Location', appointmentOccurrence.internalLocation.description) }}
                 {{ labelAndValue('Extra information', appointmentOccurrence.comment | escape, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointmentOccurrence.comment }}

@@ -70,7 +70,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
         incentiveLevel: 'standard',
         activityName: 'Maths',
         activityLocation: 'Education room 1',
-        startDate: '1st January 2023',
+        startDate: 'Sunday, 1 January 2023',
         endDate: null,
         inCell: false,
         onWing: false,

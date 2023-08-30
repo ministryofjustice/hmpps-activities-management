@@ -145,12 +145,14 @@
                         rows: currentAllocations
                     }) }}
 
-                    <a href="{{ dpsUrl }}/prisoner/{{ session.allocateJourney.inmate.prisonerNumber }}/work-and-skills" class="govuk-link" target="_blank">View allocations form the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+                    <span class="govuk-body"><a href="{{ dpsUrl }}/prisoner/{{ session.allocateJourney.inmate.prisonerNumber }}/work-activities" class="govuk-link" target="_blank">View allocations for the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a></span>
                 </div>
             {% else %}
                 {{ govukInsetText({
                     text: session.allocateJourney.inmate.prisonerName + " is not currently allocated to any activities."
                 }) }}
+
+                <span class="govuk-body"><a href="{{ dpsUrl }}/prisoner/{{ session.allocateJourney.inmate.prisonerNumber }}/work-activities" class="govuk-link" target="_blank">View allocations for the last 12 months<span class="govuk-visually-hidden"> (opens in new tab)</span></a></span>
             {% endif %}
 
             <div class="govuk-!-margin-top-8">

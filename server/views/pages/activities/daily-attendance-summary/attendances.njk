@@ -78,6 +78,51 @@
         </button>
     {% endset %}
     <div class="moj-filter-layout" data-module="activities-list-filter">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">{{
+                    ("All not attended yet" if status == 'NotAttended') +
+                    ("All absences" if status == 'Absences') +
+                    ("All attended" if status == 'Attended')
+                }}
+                <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
+                </h1>
+
+                {{ searchInput({
+                    classes: "search-input--inline-search",
+                    input: {
+                        id: 'searchTerm',
+                        name: 'searchTerm',
+                        type: "search",
+                        label: {
+                            text: 'Search by name or prison number',
+                            classes: 'govuk-label--s'
+                        },
+                        value: session.attendanceSummaryJourney.searchTerm,
+                        attributes: {
+                            form: 'filter-form'
+                        }
+                    },
+                    button: {
+                        text: "Search",
+                        attributes: {
+                            form: 'filter-form'
+                        }
+                    }
+                }) }}
+            </div>
+            <div class="govuk-grid-column-one-third govuk-!-text-align-right">
+                <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
+                {{ govukButton({
+                    text: "Refresh",
+                    classes: "govuk-button--secondary",
+                    attributes: {
+                        form: 'filter-form'
+                    }
+                }) }}
+            </div>
+        </div>
+
         <form id="filter-form" method="POST" action="update-filters" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
             <div class="moj-filter-layout__filter">
@@ -132,39 +177,6 @@
 {% endblock %}
 
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
-        <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-three-quarters">
-                     <span class="govuk-caption-l">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</span>
-                        {% if status == 'NotAttended' %}
-                            <h1 class="govuk-heading-xl">All not attended yet</h1>
-                        {% elseif status == 'Absences' %}
-                            <h1 class="govuk-heading-xl">All absences</h1>
-                        {% endif %}
-                </div>
-            <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
-                <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('dd MMMM yyyy') }}</div>
-                {{ govukButton({
-                    text: "Refresh",
-                    classes: "govuk-button--secondary"
-                }) }}
-            </div>
-        </div>
-               {{ searchInput({
-                        classes: "search-input--inline-search",
-                        input: {
-                            id: 'searchTerm',
-                            name: 'searchTerm',
-                            type: "search",
-                            label: {
-                                text: 'Search by name or prison number',
-                                classes: 'govuk-label--s'
-                            },
-                            value: session.attendanceSummaryJourney.searchTerm
-                        },
-                        button: {
-                            text: "Search"
-                        }
-                    }) }}
     {% set attendanceRows = [] %}
     {% for attendee in attendees %}
         {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
@@ -210,11 +222,11 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
             {% if status == 'Attended' %}
-                <h1 class="govuk-heading-m">{{ attendanceRows | length }} attended</h1>
+                <h2 class="govuk-heading-m">{{ attendanceRows | length }} attended</h2>
             {% elseif status == 'NotAttended' %}
-                <h1 class="govuk-heading-m">{{ attendanceRows | length }} not attended yet</h1>
+                <h2 class="govuk-heading-m">{{ attendanceRows | length }} not attended yet</h2>
             {% elseif status == 'Absences' %}
-                <h1 class="govuk-heading-m">{{ attendanceRows | length }} absence{% if attendanceRows | length != 1 %}s{% endif %}</h1>
+                <h2 class="govuk-heading-m">{{ attendanceRows | length }} absence{% if attendanceRows | length != 1 %}s{% endif %}</h2>
             {% endif %}
         </div>
     </div>

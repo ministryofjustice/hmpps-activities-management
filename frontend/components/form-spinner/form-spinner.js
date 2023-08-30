@@ -11,7 +11,7 @@ function FormSpinner(container) {
     formSpinnerTemplate.innerHTML = `
       <div class="form-spinner">
         <div class="form-spinner__notification-box" role="alert">
-          Loading
+          ${this.container.dataset.loadingText ?? 'Loading'}
           <div class="form-spinner__spinner">
             ${this.spinnerSvg}
           </div>
