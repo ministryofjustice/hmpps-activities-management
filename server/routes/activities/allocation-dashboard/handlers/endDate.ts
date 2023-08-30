@@ -1,18 +1,36 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import { ValidateNested } from 'class-validator'
+import { Expose, plainToInstance, Type } from 'class-transformer'
+import { ValidateNested, ValidationArguments } from 'class-validator'
 import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
-import { convertToTitleCase } from '../../../../utils/utils'
+import { convertToTitleCase, formatDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import DateIsSameOrAfterOtherProperty from '../../../../validators/dateIsSameOrAfterOtherProperty'
+import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
+import { AllocateToActivityJourney } from '../../allocate-to-activity/journey'
+import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
 
 export class EndDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @DateIsSameOrAfterOtherProperty('startDate', { message: 'Enter a date on or after the start date' })
+  @DateIsSameOrAfter(o => plainToInstance(SimpleDate, o.allocateJourney?.startDate)?.toRichDate(), {
+    message: (args: ValidationArguments) => {
+      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
+      const allocationStartDate = formatDate(
+        plainToInstance(SimpleDate, allocateJourney?.startDate)?.toRichDate(),
+        'dd-MM-yyyy',
+      )
+      return `Enter a date on or after the allocation start date, ${allocationStartDate}`
+    },
+  })
+  @DateIsSameOrBefore(o => o.allocateJourney?.activity.endDate, {
+    message: (args: ValidationArguments) => {
+      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
+      const endDate = formatDate(new Date(allocateJourney?.activity.endDate), 'dd-MM-yyyy')
+      return `Enter a date on or before the activity's scheduled end date, ${endDate}`
+    },
+  })
   @IsValidDate({ message: 'Enter a valid end date' })
   endDate: SimpleDate
 
