@@ -89,16 +89,16 @@ describe('Route Handlers - Cancel Session Reason', () => {
       expect(errors).toEqual(expect.arrayContaining([{ property: 'reason', error: 'Invalid cancellation reason' }]))
     })
 
-    it("comment shouldn't exceed 250 characters", async () => {
+    it("comment shouldn't exceed 100 characters", async () => {
       const body = {
-        comment: new Array(100).fill('test comment. ').reduce((acc, part) => acc + part, ''),
+        comment: 'a'.repeat(101),
       }
 
       const requestObject = plainToInstance(CancelReasonForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'comment', error: 'Details must be 250 characters or less' }]),
+        expect.arrayContaining([{ property: 'comment', error: 'Details must be 100 characters or less' }]),
       )
     })
   })

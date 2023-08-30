@@ -308,7 +308,7 @@ describe('Route Handlers - Attendance List', () => {
       expect(res.redirectWithSuccess).toBeCalledWith(
         'attendance-list',
         'Attendance recorded',
-        "We've saved attendance details for 2 prisoners",
+        "We've saved attendance details for 2 people",
       )
     })
 

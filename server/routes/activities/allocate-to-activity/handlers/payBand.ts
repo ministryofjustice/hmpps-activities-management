@@ -15,21 +15,9 @@ export default class PayBandRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { inmate, activity } = req.session.allocateJourney
-    const { user } = res.locals
+    const { inmate } = req.session.allocateJourney
 
-    const payBands = await this.activitiesService
-      .getActivity(activity.activityId, user)
-      .then(response => response.pay)
-      .then(bands => bands.filter(band => !band.incentiveLevel || band.incentiveLevel === inmate.incentiveLevel))
-      .then(bands => _.sortBy(bands, 'prisonPayBand.displaySequence'))
-      .then(bands =>
-        bands.map(band => ({
-          bandId: band.prisonPayBand.id,
-          bandAlias: band.prisonPayBand.alias,
-          rate: band.rate,
-        })),
-      )
+    const payBands = await this.getActivityPayRates(req, res)
 
     res.render('pages/activities/allocate-to-activity/pay-band', {
       prisonerName: inmate.prisonerName,
@@ -40,17 +28,28 @@ export default class PayBandRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
     const { payBand } = req.body
 
-    const band = await this.activitiesService
-      .getPayBandsForPrison(user)
-      .then(bands => bands.find(b => b.id === payBand))
+    const payBandDetails = (await this.getActivityPayRates(req, res)).find(b => b.bandId === payBand)
 
     req.session.allocateJourney.inmate.payBand = {
-      id: band.id,
-      alias: band.alias,
+      id: payBandDetails.bandId,
+      alias: payBandDetails.bandAlias,
+      rate: payBandDetails.rate,
     }
     return res.redirectOrReturn('check-answers')
+  }
+
+  async getActivityPayRates(req: Request, res: Response) {
+    const { inmate, activity } = req.session.allocateJourney
+
+    const payRates = (await this.activitiesService.getActivity(activity.activityId, res.locals.user)).pay
+    return _.sortBy(payRates, 'prisonPayBand.displaySequence')
+      .filter(pay => !pay.incentiveLevel || pay.incentiveLevel === inmate.incentiveLevel)
+      .map(pay => ({
+        bandId: pay.prisonPayBand.id,
+        bandAlias: pay.prisonPayBand.alias,
+        rate: pay.rate,
+      }))
   }
 }

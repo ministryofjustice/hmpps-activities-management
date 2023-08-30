@@ -258,7 +258,7 @@ export const buildErrorSummaryList = (array: FieldValidationError[]) => {
   }))
 }
 
-export const formatDate = (date: unknown, fmt: string, inContextName?: boolean) => {
+export const formatDate = (date: unknown, fmt = 'EEEE, d MMMM yyyy', inContextName = false) => {
   if (!date) return null
 
   let richDate = date as Date
@@ -341,12 +341,6 @@ export const convertToNumberArray = (maybeArray: string | string[]): number[] =>
   return convertToArray(maybeArray)
     .map(item => (Number.isNaN(+item) ? null : +item))
     .filter(item => item)
-}
-
-export const exampleDateOneWeekAhead = (message: string) => {
-  const nextWeek = new Date()
-  nextWeek.setDate(nextWeek.getDate() + 7)
-  return message + formatDate(nextWeek, 'dd MM yyyy')
 }
 
 export const eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity) => {

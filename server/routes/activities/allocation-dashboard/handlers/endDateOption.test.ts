@@ -41,33 +41,15 @@ describe('Route Handlers - Edit allocation - End Date option', () => {
     beforeEach(() => {
       when(activitiesService.getAllocation)
         .calledWith(atLeast(1))
-        .mockResolvedValue({
-          id: 1,
-          prisonerNumber: 'ABC123',
-          bookingId: 1,
-          activitySummary: 'Maths Level 1',
-          scheduleId: 1,
-          scheduleDescription: '',
-          isUnemployment: false,
-          startDate: '2023-01-01',
-          endDate: '2023-01-31',
-          prisonPayBand: {
-            id: 1,
-            displaySequence: 1,
-            alias: 'Low',
-            description: 'Low',
-            nomisPayBand: 1,
-            prisonCode: 'MDI',
-          },
-          status: 'ACTIVE',
-        })
+        .mockResolvedValue(allocation as Allocation)
     })
     it('should render the expected view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/end-date-option', {
+        allocation,
         allocationId: 1,
         prisonerNumber: 'ABC123',
-        scheduleId: 1,
+        scheduleId: 2,
       })
     })
   })

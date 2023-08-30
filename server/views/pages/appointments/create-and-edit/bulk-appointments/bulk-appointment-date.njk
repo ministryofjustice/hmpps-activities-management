@@ -26,7 +26,7 @@
                         isPageHeading: true
                     },
                     hint: {
-                        text: "For example, " | exampleDateOneWeekAhead
+                        text: "For example, " + exampleDate()
                     },
                     renderedErrorMessage: validationErrors | findError('startDate'),
                     validationErrors: validationErrors,

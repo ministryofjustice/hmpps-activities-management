@@ -67,7 +67,7 @@ context('Create activity', () => {
     activityNamePage.continue()
 
     const riskLevelPage = Page.verifyOnPage(RiskLevelPage)
-    riskLevelPage.selectRiskLevel('Only low workplace risk assessment is suitable')
+    riskLevelPage.selectRiskLevel('Only people with a low workplace risk assessment are suitable')
     riskLevelPage.continue()
 
     const payRateTypePage = Page.verifyOnPage(PayRateTypePage)
@@ -109,7 +109,7 @@ context('Create activity', () => {
 
     const checkEducationLevelPage = Page.verifyOnPage(CheckEducationLevelsPage)
     checkEducationLevelPage.educationLevelRows().should('have.length', 1)
-    checkEducationLevelPage.continue()
+    checkEducationLevelPage.getButton('Confirm').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
     const startDatePicker = startDatePage.getDatePicker()

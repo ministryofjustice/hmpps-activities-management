@@ -18,12 +18,12 @@
                 {{ datePicker({
                     id: 'startDate',
                     label: {
-                        text: "Enter the start date for this activity",
+                        text: "Change the start date for this activity" if session.req.query.fromEditActivity else "Enter the start date for this activity",
                         classes: "govuk-fieldset__legend--l",
                         isPageHeading: true
                     },
                     hint: {
-                        text: "For example, 29 12 2022"
+                        text: "For example, " + exampleDate()
                     },
                     renderedErrorMessage: validationErrors | findError('startDate'),
                     validationErrors: validationErrors,

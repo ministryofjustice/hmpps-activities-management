@@ -9,6 +9,7 @@ export type AllocateToActivityJourney = {
     payBand?: {
       id: number
       alias: string
+      rate: number
     }
   }
   activity: {

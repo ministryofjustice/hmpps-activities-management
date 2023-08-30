@@ -93,10 +93,9 @@ export default class AttendanceListRoutes {
 
     await this.activitiesService.updateAttendances(attendances, user)
 
-    const successMessage =
-      selectedAttendances.length > 1
-        ? `We've saved attendance details for ${selectedAttendances.length} prisoners`
-        : `We've saved attendance details for ${selectedAttendances.length} prisoner`
+    const successMessage = `We've saved attendance details for ${selectedAttendances.length} ${
+      selectedAttendances.length === 1 ? 'person' : 'people'
+    }`
 
     return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
   }

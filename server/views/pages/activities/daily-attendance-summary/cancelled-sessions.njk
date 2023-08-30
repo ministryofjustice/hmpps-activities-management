@@ -15,22 +15,39 @@
 {% block content %}
     <form id="filter-form" method="POST" action="update-filters" novalidate>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-        {{ searchInput({
-            classes: "search-input--inline-search",
-            input: {
-                id: 'searchTerm',
-                name: 'searchTerm',
-                type: "search",
-                label: {
-                    text: 'Search by session name',
-                    classes: 'govuk-label--s'
-                },
-                value: session.attendanceSummaryJourney.searchTerm
-            },
-            button: {
-                text: "Search"
-            }
-        }) }}
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
+                    Cancelled sessions
+                    <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
+                </h1>
+
+                {{ searchInput({
+                    classes: "search-input--inline-search",
+                    input: {
+                        id: 'searchTerm',
+                        name: 'searchTerm',
+                        type: "search",
+                        label: {
+                            text: 'Search by activty',
+                            classes: 'govuk-label--s'
+                        },
+                        value: session.attendanceSummaryJourney.searchTerm
+                    },
+                    button: {
+                        text: "Search"
+                    }
+                }) }}
+            </div>
+            <div class="govuk-grid-column-one-third govuk-!-text-align-right">
+                <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('dd MMMM yyyy') }}</div>
+                {{ govukButton({
+                    text: "Refresh",
+                    classes: "govuk-button--secondary"
+                }) }}
+            </div>
+        </div>
 
         <div>
             {{ govukTabs({
@@ -108,21 +125,9 @@
         {% endif %}
     {% endfor %}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-l">{{ activityDate | formatDate('EEEE, dd MMMM yyyy') }}</span>
-            <h1 class="govuk-heading-xl">{{ cancelledSessionsRows | length }} {{ timeSlotDescription }}
-                session{% if cancelledSessionsRows | length != 1 %}s{% endif %} cancelled</h1>
-        </div>
-        <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
-            <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }}
-                on {{ now | formatDate('dd MMMM yyyy') }}</div>
-            {{ govukButton({
-                text: "Refresh",
-                classes: "govuk-button--secondary"
-            }) }}
-        </div>
-    </div>
+    <h2 class="govuk-heading-m">
+        {{ cancelledSessionsRows | length }} {{ timeSlotDescription if timeSlotDescription != "daily" }} session{% if cancelledSessionsRows | length != 1 %}s{% endif %} cancelled
+    </h2>
 
     {{ govukTable({
         attributes: {
