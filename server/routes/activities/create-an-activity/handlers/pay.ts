@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
-import { IsNotEmpty, IsNumber, Min, ValidateIf } from 'class-validator'
+import { IsNotEmpty, IsNumber, Min, ValidateIf, ValidationArguments } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import IsNotDuplicatedForIep from '../../../../validators/bandNotDuplicatedForIep'
 import PayRateBetweenMinAndMax from '../../../../validators/payRateBetweenMinAndMax'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { CreateAnActivityJourney } from '../journey'
 
 export class Pay {
   @Expose()
@@ -14,14 +15,23 @@ export class Pay {
   @IsNumber({ allowNaN: false }, { message: 'Pay rate must be a number' })
   @Min(1, { message: 'Enter a pay rate' })
   @PayRateBetweenMinAndMax({
-    message: `Enter a pay amount that is at least the minimum pay and no more than maximum pay`,
+    message: (args: ValidationArguments) => {
+      const { createJourney } = args.object as { createJourney: CreateAnActivityJourney }
+      const { minimumPayRate, maximumPayRate } = createJourney
+      return `Enter a pay amount that is at least £${minimumPayRate / 100} (minimum pay) and no more than £${
+        maximumPayRate / 100
+      } (maximum pay)`
+    },
   })
   rate: number
 
   @Expose()
   @Type(() => Number)
   @Min(1, { message: 'Select a pay band' })
-  @IsNotDuplicatedForIep({ message: 'A rate for the selected band and incentive level combination already exists' })
+  @IsNotDuplicatedForIep({
+    message:
+      'You can only use each pay band once for an incentive level. Select a pay band which has not already been used',
+  })
   bandId: number
 
   @Expose()

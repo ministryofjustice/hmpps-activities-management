@@ -55,6 +55,7 @@ export type CreateAnActivityJourney = {
   endDateOption?: string
   endDate?: SimpleDate
   latestAllocationStartDate?: Date
+  earliestAllocationStartDate?: Date
   scheduleWeeks?: number
   slots?: { [weekNumber: string]: Slots }
   inCell?: boolean
