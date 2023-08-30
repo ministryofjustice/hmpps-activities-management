@@ -14,7 +14,7 @@ enum PresetDateOptions {
 
 export class TimePeriod {
   @Expose()
-  @IsIn(Object.values(PresetDateOptions), { message: 'Select an activity or appointment date' })
+  @IsIn(Object.values(PresetDateOptions), { message: 'Select a date' })
   datePresetOption: string
 
   @Expose()

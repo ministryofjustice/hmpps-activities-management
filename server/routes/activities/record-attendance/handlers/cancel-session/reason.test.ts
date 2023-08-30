@@ -74,7 +74,7 @@ describe('Route Handlers - Cancel Session Reason', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
-        expect.arrayContaining([{ property: 'reason', error: 'Enter a reason for cancelling the session' }]),
+        expect.arrayContaining([{ property: 'reason', error: "Select why you're cancelling the session" }]),
       )
     })
 

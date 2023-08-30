@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import _ from 'lodash'
+import { ValidationArguments } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AttendanceUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import NotAttendedData, {
@@ -13,16 +14,54 @@ import NotAttendedData, {
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import { convertToTitleCase } from '../../../../utils/utils'
+import { NotAttendedJourney } from '../journey'
 
 export class NotAttendedReason {
   @Expose()
   @Type(() => NotAttendedData)
-  @ReasonEnteredForAllPrisoners({ message: 'Enter an absence reason for all prisoners' })
-  @AbsenceReasonRequired({ message: 'Please enter a reason for the absence' })
-  @PayRequired({ message: 'Please specify whether the prisoner should be paid' })
-  @CaseNoteRequired({ message: 'Please enter a case note' })
+  @ReasonEnteredForAllPrisoners({
+    message: (args: ValidationArguments) => {
+      const { notAttendedJourney } = args.object as { notAttendedJourney: NotAttendedJourney }
+      const { selectedPrisoners } = notAttendedJourney
+      const numberOfPrisoners = selectedPrisoners.length
+      return numberOfPrisoners === 1
+        ? 'Select why they did not attend'
+        : `Select an absence reason for ${numberOfPrisoners} people`
+    },
+  })
+  @AbsenceReasonRequired({
+    message: (args: ValidationArguments) => {
+      const { notAttendedJourney } = args.object as { notAttendedJourney: NotAttendedJourney }
+      const { selectedPrisoners } = notAttendedJourney
+      const numberOfPrisoners = selectedPrisoners.length
+      return numberOfPrisoners === 1 ? 'Enter an absence reason' : 'Enter an absence reason for the people'
+    },
+  })
+  @PayRequired({
+    message: (args: ValidationArguments) => {
+      const { notAttendedJourney } = args.object as { notAttendedJourney: NotAttendedJourney }
+      const { selectedPrisoners } = notAttendedJourney
+      const numberOfPrisoners = selectedPrisoners.length
+      return numberOfPrisoners === 1 ? 'Select if the person should be paid' : 'Select if the people should be paid'
+    },
+  })
+  @CaseNoteRequired({
+    message: (args: ValidationArguments) => {
+      const { notAttendedJourney } = args.object as { notAttendedJourney: NotAttendedJourney }
+      const { selectedPrisoners } = notAttendedJourney
+      const numberOfPrisoners = selectedPrisoners.length
+      return numberOfPrisoners === 1 ? 'Enter a case note' : 'Enter a case note for the people'
+    },
+  })
   @IncentiveLevelWarningRequired({
-    message: 'Please specify whether this should be recorded as an incentive level warning',
+    message: (args: ValidationArguments) => {
+      const { notAttendedJourney } = args.object as { notAttendedJourney: NotAttendedJourney }
+      const { selectedPrisoners } = notAttendedJourney
+      const numberOfPrisoners = selectedPrisoners.length
+      return numberOfPrisoners === 1
+        ? 'Select if there should be an incentive level warning'
+        : 'Select if there should be an incentive level warning for the people'
+    },
   })
   notAttendedData: NotAttendedData
 }

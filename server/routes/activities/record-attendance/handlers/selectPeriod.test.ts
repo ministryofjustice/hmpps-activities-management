@@ -75,7 +75,7 @@ describe('Route Handlers - Select period', () => {
       const requestObject = plainToInstance(TimePeriod, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select an activity or appointment date' }])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date' }])
     })
 
     it('validation fails if invalid values are entered', async () => {
@@ -86,7 +86,7 @@ describe('Route Handlers - Select period', () => {
       const requestObject = plainToInstance(TimePeriod, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select an activity or appointment date' }])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date' }])
     })
 
     it('validation fails if preset option is other and a date is not provided', async () => {
