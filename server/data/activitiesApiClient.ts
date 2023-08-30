@@ -3,12 +3,9 @@ import config, { ApiConfig } from '../config'
 import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
-  ActivityLite,
   ActivitySchedule,
-  ActivityScheduleLite,
   Attendance,
   AttendanceUpdateRequest,
-  InternalLocation,
   PrisonerScheduledEvents,
   ScheduledActivity,
   LocationGroup,
@@ -83,26 +80,10 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getActivitiesInCategory(prisonCode: string, categoryId: number, user: ServiceUser): Promise<ActivityLite[]> {
-    return this.get({
-      path: `/prison/${prisonCode}/activity-categories/${categoryId}/activities`,
-      authToken: user.token,
-      headers: CASELOAD_HEADER(user.activeCaseLoadId),
-    })
-  }
-
   async getActivities(prisonCode: string, excludeArchived: boolean, user: ServiceUser): Promise<ActivitySummary[]> {
     return this.get({
       path: `/prison/${prisonCode}/activities`,
       query: { excludeArchived },
-      authToken: user.token,
-      headers: CASELOAD_HEADER(user.activeCaseLoadId),
-    })
-  }
-
-  async getSchedulesOfActivity(activityId: number, user: ServiceUser): Promise<ActivityScheduleLite[]> {
-    return this.get({
-      path: `/activities/${activityId}/schedules`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
@@ -223,35 +204,6 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     }).then(res => res as RolloutPrisonPlan)
   }
 
-  getScheduledPrisonLocations(
-    prisonCode: string,
-    date: string,
-    period: string,
-    user: ServiceUser,
-  ): Promise<InternalLocation[]> {
-    return this.get({
-      path: `/prison/${prisonCode}/locations`,
-      query: { date, timeSlot: period },
-      authToken: user.token,
-      headers: CASELOAD_HEADER(user.activeCaseLoadId),
-    })
-  }
-
-  async getActivitySchedules(
-    prisonCode: string,
-    locationId: string,
-    date: string,
-    period: string,
-    user: ServiceUser,
-  ): Promise<ActivitySchedule[]> {
-    return this.get({
-      path: `/prison/${prisonCode}/schedules`,
-      query: { locationId, date, timeSlot: period },
-      authToken: user.token,
-      headers: CASELOAD_HEADER(user.activeCaseLoadId),
-    })
-  }
-
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
     return this.get({
       path: `/schedules/${id}`,
@@ -325,14 +277,6 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.post({
       path: `/prisons/${prisonCode}/prisoner-allocations`,
       data: prisonerNumbers,
-      authToken: user.token,
-      headers: CASELOAD_HEADER(user.activeCaseLoadId),
-    })
-  }
-
-  async getAppointment(appointmentId: number, user: ServiceUser): Promise<Appointment> {
-    return this.get({
-      path: `/appointments/${appointmentId}`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })

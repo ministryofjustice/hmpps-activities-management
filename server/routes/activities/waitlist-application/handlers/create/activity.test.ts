@@ -15,7 +15,7 @@ import {
 
 jest.mock('../../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Waitlist application - Request date', () => {
   const handler = new ActivityRoutes(activitiesService)

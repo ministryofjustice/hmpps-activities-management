@@ -4,7 +4,7 @@ import EditRequesterRoutes from './editRequester'
 
 jest.mock('../../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Waitlist application - Edit Requester', () => {
   const handler = new EditRequesterRoutes(activitiesService)

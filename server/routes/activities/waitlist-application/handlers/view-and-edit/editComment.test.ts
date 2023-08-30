@@ -7,7 +7,7 @@ import ActivitiesService from '../../../../../services/activitiesService'
 
 jest.mock('../../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Waitlist application - Edit Comment', () => {
   const handler = new EditCommentRoutes(activitiesService)

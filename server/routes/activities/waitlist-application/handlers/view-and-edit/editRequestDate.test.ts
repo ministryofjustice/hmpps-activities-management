@@ -7,7 +7,7 @@ import EditRequestDateRoutes, { EditRequestDate } from './editRequestDate'
 
 jest.mock('../../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Waitlist application - Edit Request date', () => {
   const handler = new EditRequestDateRoutes(activitiesService)
