@@ -22,10 +22,10 @@
                 </ul>
             {% endset %}
             {% set endDateOption %}
-                {% if endDate == "Not set" %}
-                    end-date?preserveHistory=true
-                {% else %}
+                {% if endDate %}
                     remove-date-option?preserveHistory=true
+                {% else %}
+                    end-date?preserveHistory=true
                 {% endif %}
             {% endset %}
 
@@ -78,7 +78,7 @@
                             text: "End of allocation"
                         },
                         value: {
-                            text: endDate
+                            text: endDate if endDate else "No date set"
                         },
                         actions: {
                             items: [
@@ -96,7 +96,7 @@
                             text: "Pay rate"
                         },
                         value: {
-                            text: payBand
+                            html: '<div>' + incentiveLevel + ' incentive level:</div><div>' + payBand + ' - ' + payRate | toMoney + '</div>'
                         },
                         actions: {
                             items: [
@@ -111,13 +111,12 @@
                     }
                 ]
             }) }}
-            <span class="govuk-heading-m">Confirm that you want to allocate {{ prisonerName }} to {{activityName}}</span>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Confirm and allocate"
+                        text: "Confirm this allocation"
                     }) }}
                     <a href="/activities/allocate/cancel" class="govuk-link govuk-link--no-visited-state">Cancel and return to the list of candidates</a>
                 </div>

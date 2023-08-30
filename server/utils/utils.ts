@@ -343,12 +343,6 @@ export const convertToNumberArray = (maybeArray: string | string[]): number[] =>
     .filter(item => item)
 }
 
-export const exampleDateOneWeekAhead = (message: string) => {
-  const nextWeek = new Date()
-  nextWeek.setDate(nextWeek.getDate() + 7)
-  return message + formatDate(nextWeek, 'dd MM yyyy')
-}
-
 export const eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity) => {
   const timeToDate = (time: string) => parse(time, 'HH:mm', new Date())
   const toInterval = (start: Date, end: Date) => ({ start, end })

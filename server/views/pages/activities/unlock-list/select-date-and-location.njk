@@ -16,7 +16,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
                 {% set otherDateHintHtml %}
-                  <div>For example, {{ now | formatDate('dd MM yyyy') }}</div>
+                  <div>For example, {{ exampleDate() }}</div>
                   <div>You can get unlock lists for up to 60 days from today.</div>
                 {% endset %}
 

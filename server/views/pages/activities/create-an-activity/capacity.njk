@@ -17,7 +17,7 @@
                 {{ activityJourneyCaption(session.createJourney) }}
                 {{ govukInput({
                     label: {
-                        text: "How many people can be allocated to this activity?",
+                        text: "Change the capacity" if session.req.query.fromEditActivity else "How many people can be allocated to this activity?",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },

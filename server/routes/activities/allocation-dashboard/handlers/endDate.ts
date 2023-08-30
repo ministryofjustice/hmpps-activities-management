@@ -53,12 +53,11 @@ export default class EndDateRoutes {
 
     res.render(`pages/activities/allocation-dashboard/end-date`, {
       endDate,
-      startDate: allocation.startDate,
       scheduleId,
       allocationId,
       prisonerNumber,
       prisonerName,
-      activitySummary: allocation.activitySummary,
+      allocation,
     })
   }
 

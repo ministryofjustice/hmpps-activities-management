@@ -23,6 +23,7 @@ export default class EndDateOptionRoutes {
       scheduleId,
       allocationId,
       prisonerNumber,
+      allocation,
     })
   }
 

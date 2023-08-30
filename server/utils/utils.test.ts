@@ -19,7 +19,6 @@ import {
   convertToArray,
   convertToNumberArray,
   toTimeItems,
-  exampleDateOneWeekAhead,
   parseDate,
   toFixed,
 } from './utils'
@@ -364,14 +363,6 @@ describe('utils', () => {
           selected: false,
         },
       ])
-    })
-  })
-
-  describe('exampleDateOneWeekAhead', () => {
-    it('should return the date one week from now in dd MM yyyy format', () => {
-      const nextWeek = new Date()
-      nextWeek.setDate(nextWeek.getDate() + 7)
-      expect(exampleDateOneWeekAhead('Example, ')).toEqual(`Example, ${formatDate(nextWeek, 'dd MM yyyy')}`)
     })
   })
 

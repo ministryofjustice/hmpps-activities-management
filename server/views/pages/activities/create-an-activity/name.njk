@@ -18,7 +18,7 @@
                 {{ activityJourneyCaption(session.createJourney) }}
                 {{ characterCountInput({
                     label: {
-                        text: "What's the new activity called?",
+                        text: "Enter the new name of the activity" if session.req.query.fromEditActivity else "What's the new activity called?",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },

@@ -10,12 +10,9 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <span class="govuk-caption-m">Allocate to {{ session.allocateJourney.activity.name }}</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
@@ -23,11 +20,11 @@
                     id: 'startDate',
                     label: {
                         text: "When do you want " + prisonerName + " to start attending this activity?",
-                        classes: "govuk-fieldset__legend--l",
+                        classes: "govuk-fieldset__legend--xl",
                         isPageHeading: true
                     },
                     hint: {
-                        text: "For example, 29 12 2022"
+                        text: "For example, " + exampleDate()
                     },
                     renderedErrorMessage: validationErrors | findError('startDate'),
                     validationErrors: validationErrors,

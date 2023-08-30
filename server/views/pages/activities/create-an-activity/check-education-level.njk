@@ -55,13 +55,13 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div>
                     {{ govukButton({
-                        text: "Add a qualification",
+                        text: "Add another qualification",
                         href: 'education-level' + ('?fromEditActivity=true' if session.req.query.fromEditActivity),
                         classes: "govuk-button--secondary govuk-!-margin-bottom-8"
                     }) }}
                 </div>
                 {{ govukButton({
-                    text: "Continue"
+                    text: "Update education levels" if session.req.query.fromEditActivity else "Confirm" 
                 }) }}
             </form>
         </div>
