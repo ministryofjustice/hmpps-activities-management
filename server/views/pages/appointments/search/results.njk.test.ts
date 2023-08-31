@@ -228,7 +228,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($("[name='startDate[month]']").val()).toEqual(`${tomorrow.getMonth() + 1}`)
     expect($("[name='startDate[year]']").val()).toEqual(`${tomorrow.getFullYear()}`)
 
-    expect($("[data-qa='start-date-caption']").text()).toEqual(formatDate(tomorrow, 'EEEE, dd MMMM yyyy'))
+    expect($("[data-qa='start-date-caption']").text()).toEqual(formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
   })
 
   it.each([
