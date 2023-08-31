@@ -1,9 +1,20 @@
 import { Request, Response } from 'express'
-
+import { when } from 'jest-when'
 import RemovePayRoutes from './removePay'
+import ActivitiesService from '../../../../services/activitiesService'
+import PrisonService from '../../../../services/prisonService'
+import { CreateAnActivityJourney } from '../journey'
+import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
+import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+
+jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/prisonService')
+
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create an activity - Remove pay', () => {
-  const handler = new RemovePayRoutes()
+  const handler = new RemovePayRoutes(activitiesService, prisonService)
   let req: Request
   let res: Response
 
@@ -24,6 +35,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       query: {},
       session: {
         createJourney: {
+          activityId: 1,
           name: 'Maths level 1',
           category: {
             id: 1,
@@ -99,6 +111,38 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
         { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
         { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
       ])
+    })
+
+    it('should update activity pay rates if its an edit journey', async () => {
+      const payRates = [
+        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 150 },
+        { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
+      ] as CreateAnActivityJourney['pay']
+
+      req.session.createJourney.pay = payRates
+
+      req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
+      req.query = { fromEditActivity: 'true' }
+
+      when(prisonService.getIncentiveLevels).mockResolvedValue([
+        { levelCode: 'BAS', levelName: 'Basic' },
+        { levelCode: 'STD', levelName: 'Standard' },
+      ] as IncentiveLevel[])
+
+      await handler.POST(req, res)
+
+      const updatedActivity = {
+        pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 150 }],
+        minimumIncentiveNomisCode: 'STD',
+        minimumIncentiveLevel: 'Standard',
+      } as ActivityUpdateRequest
+
+      expect(activitiesService.updateActivity).toBeCalledWith('MDI', 1, updatedActivity)
+      expect(res.redirectWithSuccess).toBeCalledWith(
+        '/activities/schedule/check-pay?preserveHistory=true',
+        'Activity updated',
+        `We've updated the pay for ${req.session.createJourney.name}`,
+      )
     })
   })
 })

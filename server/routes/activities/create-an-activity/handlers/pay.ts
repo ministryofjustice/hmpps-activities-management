@@ -5,6 +5,7 @@ import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import IsNotDuplicatedForIep from '../../../../validators/bandNotDuplicatedForIep'
 import PayRateBetweenMinAndMax from '../../../../validators/payRateBetweenMinAndMax'
+import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 export class Pay {
   @Expose()
@@ -73,6 +74,7 @@ export default class PayRoutes {
     const { payRateType } = req.params
     const originalBandId = req.query.bandId
     const originalIncentiveLevel = req.query.iep
+    const { preserveHistory } = req.query
     const { rate, incentiveLevel, bandId } = req.body
 
     // Remove any existing pay rates with the same iep and band to avoid duplication
@@ -83,31 +85,84 @@ export default class PayRoutes {
     if (singlePayIndex >= 0) req.session.createJourney.pay.splice(singlePayIndex, 1)
     if (flatPayIndex >= 0) req.session.createJourney.flat.splice(flatPayIndex, 1)
 
-    const [bandAlias, displaySequence] = await this.activitiesService
-      .getPayBandsForPrison(user)
-      .then(bands => bands.find(band => band.id === bandId))
-      .then(band => [band.alias, band.displaySequence])
+    const [band, allIncentiveLevels] = await Promise.all([
+      this.activitiesService
+        .getPayBandsForPrison(user)
+        .then(bands => bands.find(b => b.id === bandId))
+        .then(b => [b.alias, b.displaySequence]),
+      this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user),
+    ])
 
-    const allIncentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
+    const [bandAlias, displaySequence] = band
+
+    const newRate = {
+      rate: +rate,
+      bandId,
+      bandAlias: String(bandAlias),
+      displaySequence: +displaySequence,
+    }
 
     if (payRateType === 'single') {
       req.session.createJourney.pay.push({
+        ...newRate,
         incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel).levelCode,
         incentiveLevel,
-        rate: +rate,
-        bandId,
-        bandAlias: String(bandAlias),
-        displaySequence: +displaySequence,
       })
     } else {
-      req.session.createJourney.flat.push({
-        rate: +rate,
-        bandId,
-        bandAlias: String(bandAlias),
-        displaySequence: +displaySequence,
-      })
+      req.session.createJourney.flat.push({ ...newRate })
     }
-    if (req.query.fromEditActivity) res.redirect('/activities/schedule/check-pay?preserveHistory=true')
-    else res.redirect('../check-pay')
+
+    if (req.query.fromEditActivity) await this.updatePay(req, res)
+    else res.redirect(`../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
+  }
+
+  updatePay = async (req: Request, res: Response) => {
+    const { user } = res.locals
+    const { activityId } = req.session.createJourney
+
+    const activityPay = req.session.createJourney.pay ?? []
+    const activityFlatPay = req.session.createJourney.flat ?? []
+
+    const incentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
+
+    if (activityFlatPay && activityFlatPay.length > 0) {
+      const flatPayRates = activityFlatPay.flatMap(flatRate =>
+        incentiveLevels.flatMap(iep => ({
+          ...flatRate,
+          incentiveNomisCode: iep.levelCode,
+          incentiveLevel: iep.levelName,
+        })),
+      )
+
+      activityPay.push(...flatPayRates)
+      req.session.createJourney.flat = []
+    }
+
+    const updatedPayRates = activityPay.map(p => ({
+      incentiveNomisCode: p.incentiveNomisCode,
+      incentiveLevel: p.incentiveLevel,
+      payBandId: p.bandId,
+      rate: p.rate,
+    }))
+
+    const minimumIncentiveLevel =
+      incentiveLevels.find(l => updatedPayRates.find(p => p.incentiveLevel === l.levelName)) ?? incentiveLevels[0]
+
+    req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.levelCode
+    req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.levelName
+
+    const updatedActivity = {
+      pay: updatedPayRates,
+      minimumIncentiveNomisCode: req.session.createJourney.minimumIncentiveNomisCode,
+      minimumIncentiveLevel: req.session.createJourney.minimumIncentiveLevel,
+    } as ActivityUpdateRequest
+    await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, updatedActivity)
+    const successMessage = `We've updated the pay for ${req.session.createJourney.name}`
+
+    return res.redirectWithSuccess(
+      '/activities/schedule/check-pay?preserveHistory=true',
+      'Activity updated',
+      successMessage,
+    )
   }
 }

@@ -2,19 +2,30 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "components/card.njk" import card %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Edit activity - Check pay" %}
 {% set pageId = 'check-pay-page' %}
+{% set backLinkText = 'Back to edit activity details' %}
 {% set backLinkHref = "activities/" + session.createJourney.activityId %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-l">Review pay rates for {{ session.createJourney.name }}</h1>
-            <p class="govuk-body">You can add new pay rates. You can only edit or delete pay rates if no one is allocated to them.</p>
+            <h1 class="govuk-heading-l">Edit pay rates for {{ session.createJourney.name }}</h1>
+
+            {{ govukButton({
+                text: "Add new pay rate",
+                href: '/activities/create/pay-rate-type?fromEditActivity=true&preserveHistory=true',
+                classes: 'govuk-!-margin-0'
+            }) }}
+
+            {{ govukInsetText({
+                text: 'You can add new pay rates. You can only edit or delete pay rates if no one is allocated to them.'
+            }) }}
 
             {% for incentiveLevelPay in incentiveLevelPays %}
                 <h2 class="govuk-heading-m">{{ incentiveLevelPay.incentiveLevel }} incentive level pay rates</h2>
@@ -106,21 +117,11 @@
             {% endfor %}
             {{ govukSummaryList({
                 rows: rows
-            }) }}
+            }) if rows | length }}
 
-            <form method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Confirm"
-                    }) }}
-                    {{ govukButton({
-                        text: "Add another pay rate",
-                        href: '/activities/create/pay-rate-type?fromEditActivity=true&preserveHistory=true',
-                        classes: "govuk-button--secondary"
-                    }) }}
-                </div>
-            </form>
+            <div class="govuk-!-margin-bottom-6 govuk-body">
+                <a href="activities/{{ session.createJourney.activityId }}" class="govuk-link govuk-link--no-visited-state gov-!-margin-bottom-6">Return to edit activity page</a>
+            </div>
         </div>
     </div>
 {% endblock %}
