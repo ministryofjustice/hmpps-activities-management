@@ -6,23 +6,19 @@ export default class ConfirmCapacityRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/activities/manage-schedules/confirm-capacity')
+    res.render('pages/activities/create-an-activity/confirm-capacity')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activityId } = req.session.createJourney
-    const prisonCode = user.activeCaseLoadId
-    const activity = {
-      capacity: req.session.createJourney.capacity,
-    } as ActivityUpdateRequest
-    await this.activitiesService.updateActivity(prisonCode, activityId, activity)
-    const successMessage = `We've updated the capacity for ${req.session.createJourney.name}`
+    const { activityId, capacity } = req.session.createJourney
+    const activity = { capacity } as ActivityUpdateRequest
+    await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
 
-    res.redirectOrReturnWithSuccess(
+    res.redirectWithSuccess(
       `/activities/schedule/activities/${req.session.createJourney.activityId}`,
       'Activity updated',
-      successMessage,
+      `We've updated the capacity for ${req.session.createJourney.name}`,
     )
   }
 }

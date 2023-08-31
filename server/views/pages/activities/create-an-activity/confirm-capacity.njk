@@ -2,20 +2,20 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Edit an Activity - Confirm Capacity" %}
 {% set pageId = 'edit-activity-confirm-capacity-page' %}
-{% set backLinkHref = "activities" %}
+{% set backLinkHref = "capacity" %}
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }} | Minimum incentive: {{ session.createJourney.minimumIncentiveLevel }}</span>
-            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
+            <h1 class="govuk-heading-l">This activity will be overallocated</h1>
+
+            <p class="govuk-body">You can reduce the number of people currently allocated to this activity before you change the capacity.</p>
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
@@ -62,7 +62,7 @@
                   {{ govukButton({
                     text: "Confirm capacity change"
                   }) }}
-                    <a class="govuk-link js-backlink" href="/">Cancel</a>
+                    <a class="govuk-link js-backlink" href="/activities/create/capacity?fromEditActivity=true">Cancel</a>
                 </div>
             </form>
         </div>
@@ -70,8 +70,9 @@
 {% endblock %}
 
 {% macro currentlyAllocated() %}
+    {% set overallocatedCount = session.createJourney.allocationCount - session.createJourney.capacity %}
     <div class="govuk-!-margin-bottom-0">
         <div>{{ session.createJourney.allocationCount }}</div>
-        <div>There will be {{ session.createJourney.allocationCount - session.createJourney.capacity }} people more than the capacity of this activity.</div>
+        <div>There will be {{ overallocatedCount }} {{ "person" if overallocatedCount == 1 else "people" }} more than the capacity of this activity.</div>
     </div>
 {% endmacro %}
