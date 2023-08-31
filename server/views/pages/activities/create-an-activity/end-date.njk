@@ -19,12 +19,12 @@
                 {{ datePicker({
                     id: 'endDate',
                     label: {
-                        text: "Enter the end date for this activity",
+                        text: "Change the end date for this activity" if session.req.query.fromEditActivity else "Enter the end date for this activity",
                         classes: "govuk-fieldset__legend--l",
                         isPageHeading: true
                     },
                     hint: {
-                        text: "For example, 31 01 2023"
+                        text: "For example, " + exampleDate()
                     },
                     renderedErrorMessage: validationErrors | findError('endDate'),
                     validationErrors: validationErrors,

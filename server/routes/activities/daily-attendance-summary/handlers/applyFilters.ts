@@ -34,9 +34,7 @@ export default class ApplyFiltersRoutes {
       req.session.attendanceSummaryJourney.activityFilters = activityFilters
     }
 
-    if (searchTerm || searchTerm === '') {
-      req.session.attendanceSummaryJourney.searchTerm = searchTerm
-    }
+    req.session.attendanceSummaryJourney.searchTerm = searchTerm ?? null
 
     res.redirect('back')
   }

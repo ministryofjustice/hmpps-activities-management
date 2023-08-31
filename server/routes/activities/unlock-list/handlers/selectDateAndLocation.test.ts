@@ -11,7 +11,7 @@ import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import atLeast from '../../../../../jest.setup'
 
 jest.mock('../../../../services/activitiesService')
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Unlock list routes - select date and location', () => {
   const handler = new SelectDateAndLocationRoutes(activitiesService)

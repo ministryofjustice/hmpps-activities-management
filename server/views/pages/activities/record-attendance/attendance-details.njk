@@ -109,7 +109,7 @@
          text: "Date and time"
         },
         value: {
-         text: attendance.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm:ss')
+         text: attendance.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
         }
     }
 ), summaryListRows) %}
@@ -235,7 +235,7 @@
                                     text: "Date and time"
                                 },
                                 value: {
-                                    text: attendanceHistory.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm:ss')
+                                    text: attendanceHistory.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
                                 }
                             }
                         ), historyListRows) %}

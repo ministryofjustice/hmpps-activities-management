@@ -6,7 +6,7 @@ import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Deallocation reason', () => {
   const handler = new DeallocationReasonRoutes(activitiesService)

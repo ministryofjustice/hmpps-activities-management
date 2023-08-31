@@ -6,7 +6,7 @@ import { AttendanceReason } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Non Attendance', () => {
   const handler = new NotAttendedReasonRoutes(activitiesService)

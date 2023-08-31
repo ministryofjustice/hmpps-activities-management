@@ -67,7 +67,7 @@
                             text: "End of allocation"
                         },
                         value: {
-                            text: deallocationDate | formatDate('EEEE, dd MMMM yyyy')
+                            text: deallocationDate | formatDate
                         },
                         actions: {
                             items: [
@@ -84,7 +84,7 @@
                 {% set rows = (rows.push(
                     {
                         key: {
-                            text: "Reason"
+                            text: "Reason for allocation ending"
                         },
                         value: {
                             text: deallocationReason

@@ -63,7 +63,7 @@ describe('Route Handlers - applyFilters', () => {
       expect(req.session.attendanceSummaryJourney).toStrictEqual({
         categoryFilters: ['Original category'],
         activityFilters: ['Original Activity'],
-        searchTerm: 'Original search',
+        searchTerm: null,
       })
     })
   })

@@ -33,7 +33,7 @@
                         classes: "govuk-fieldset__legend--m"
                     },
                     hint: {
-                        text: "For example, " | exampleDateOneWeekAhead
+                        text: "For example, " + exampleDate()
                     },
                     renderedErrorMessage: validationErrors | findError('startDate'),
                     validationErrors: validationErrors,

@@ -82,24 +82,24 @@
             classes: "govuk-radios--small",
             fieldset: {
                 legend: {
-                    text: 'Activity',
+                    text: 'Show people who have:',
                     classes: 'govuk-fieldset__legend--m'
                 }
             },
             items:[
                 {
                     value: 'With',
-                    text: 'With',
+                    text: 'Scheduled events',
                     checked: 'With' == session.unlockListJourney.activityFilter
                 },
                 {
                     value: 'Without',
-                    text: 'Without',
+                    text: 'No events',
                     checked: 'Without' == session.unlockListJourney.activityFilter
                 },
                 {
                     value: 'Both',
-                    text: 'Both',
+                    text: 'Either',
                     checked: 'Both' == session.unlockListJourney.activityFilter
                 }
             ]
@@ -267,7 +267,7 @@
                     <tfoot class="print-only">
                     <tr>
                         <td class="govuk-!-padding-top-4 govuk-!-padding-bottom-2 govuk-body">
-                            Printed at {{ now | formatDate('h:mmbbb \'on\' EEEE, dd MMMM yyyy') }}
+                            Printed at {{ now | formatDate('h:mmbbb \'on\' EEEE, d MMMM yyyy') }}
                         </td>
                     </tr>
                     </tfoot>

@@ -18,7 +18,7 @@
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
-                text: "Should the prisoner be paid?"
+                text: "Should they be paid?"
             },
             name: "notAttendedData["  + prisoner.prisonerNumber + "][sickPay]",
             errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][sickPay]"),
@@ -94,7 +94,7 @@
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
-                text: "Should the prisoner be paid?"
+                text: "Should they be paid?"
             },
             name: "notAttendedData["  + prisoner.prisonerNumber + "][restPay]",
             errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][restPay]"),
@@ -131,7 +131,7 @@
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
-                text: "Was this an acceptable absence and should the prisoner be paid?"
+                text: "Was the absence acceptable? If it was, they will be paid."
             },
             name: "notAttendedData["  + prisoner.prisonerNumber + "][absencePay]",
             errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][absencePay]"),
@@ -156,7 +156,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             {% if selectedPrisoners | length > 1 %}
-                <h1 class="govuk-heading-l">Select a reason why {{ selectedPrisoners | length }} prisoners did not attend</h1>
+                <h1 class="govuk-heading-l">Select a reason why {{ selectedPrisoners | length }} people did not attend</h1>
             {% endif %}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -193,7 +193,7 @@
                     {{ govukRadios({
                         fieldset: {
                             legend: {
-                                text: "Why did " + prisoner.prisonerName | toTitleCase + " not attend?",
+                                text: "Why did " + prisoner.prisonerName | toTitleCase + " not attend?" if selectedPrisoners | length > 1,
                                 classes: "govuk-label"
                             }
                         },

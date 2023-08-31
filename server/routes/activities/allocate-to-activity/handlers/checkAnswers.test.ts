@@ -9,7 +9,7 @@ import { Activity } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Allocate - Check answers', () => {
   const handler = new CheckAnswersRoutes(activitiesService)
@@ -34,7 +34,8 @@ describe('Route Handlers - Allocate - Check answers', () => {
             prisonerName: 'Joe Bloggs',
             prisonerNumber: 'ABC123',
             cellLocation: '1-2-001',
-            payBand: { id: 1, alias: 'A' },
+            incentiveLevel: 'standard',
+            payBand: { id: 1, alias: 'A', rate: 150 },
           },
           activity: {
             activityId: 1,
@@ -65,10 +66,12 @@ describe('Route Handlers - Allocate - Check answers', () => {
         prisonerNumber: 'ABC123',
         cellLocation: '1-2-001',
         payBand: 'A',
+        payRate: 150,
+        incentiveLevel: 'standard',
         activityName: 'Maths',
         activityLocation: 'Education room 1',
-        startDate: '1st January 2023',
-        endDate: 'Not set',
+        startDate: 'Sunday, 1 January 2023',
+        endDate: null,
         inCell: false,
         onWing: false,
         offWing: false,

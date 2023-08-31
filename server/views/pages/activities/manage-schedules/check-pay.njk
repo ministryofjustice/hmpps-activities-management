@@ -3,6 +3,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "components/card.njk" import card %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Edit activity - Check pay" %}
 {% set pageId = 'check-pay-page' %}
@@ -10,18 +11,11 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half">
-            <span class="govuk-caption-m">{{ session.createJourney.category.name }} | Risk level: {{ session.createJourney.riskLevel | toTitleCase }}</span>
-            <span class="govuk-heading-m">{{ session.createJourney.name }}</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l">View or change details for {{ session.createJourney.name }}</h1>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds-from-desktop">
+        <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
+            <h1 class="govuk-heading-l">Review pay rates for {{ session.createJourney.name }}</h1>
+            <p class="govuk-body">You can add new pay rates. You can only edit or delete pay rates if no one is allocated to them.</p>
+
             {% for incentiveLevelPay in incentiveLevelPays %}
                 <h2 class="govuk-heading-m">{{ incentiveLevelPay.incentiveLevel }} incentive level pay rates</h2>
                 {% for pay in incentiveLevelPay.pays %}

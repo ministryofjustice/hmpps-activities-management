@@ -10,7 +10,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Select period for changes', () => {

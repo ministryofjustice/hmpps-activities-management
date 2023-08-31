@@ -5,12 +5,12 @@ import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import PayBandRoutes, { PayBand } from './payBand'
 import atLeast from '../../../../../jest.setup'
-import { Activity, PrisonPayBand } from '../../../../@types/activitiesAPI/types'
+import { Activity } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Allocate - Pay band', () => {
   const handler = new PayBandRoutes(activitiesService)
@@ -46,37 +46,37 @@ describe('Route Handlers - Allocate - Pay band', () => {
         },
       },
     } as unknown as Request
+
+    when(activitiesService.getActivity)
+      .calledWith(atLeast(1))
+      .mockResolvedValue({
+        pay: [
+          {
+            incentiveLevel: 'Standard',
+            prisonPayBand: { id: 1, alias: 'Standard rate' },
+            rate: 125,
+          },
+          {
+            incentiveLevel: 'Enhanced',
+            prisonPayBand: { id: 2, alias: 'Enhanced rate 2', displaySequence: 2 },
+            rate: 150,
+          },
+          {
+            incentiveLevel: 'Enhanced',
+            prisonPayBand: { id: 3, alias: 'Enhanced rate 3', displaySequence: 3 },
+            rate: 200,
+          },
+          {
+            incentiveLevel: 'Enhanced',
+            prisonPayBand: { id: 1, alias: 'Enhanced rate 1', displaySequence: 1 },
+            rate: 100,
+          },
+        ],
+      } as Activity)
   })
 
   describe('GET', () => {
     it('should render the expected view with pay bands sorted', async () => {
-      when(activitiesService.getActivity)
-        .calledWith(atLeast(1))
-        .mockResolvedValue({
-          pay: [
-            {
-              incentiveLevel: 'Standard',
-              prisonPayBand: { id: 1, alias: 'Standard rate' },
-              rate: 125,
-            },
-            {
-              incentiveLevel: 'Enhanced',
-              prisonPayBand: { id: 2, alias: 'Enhanced rate 2', displaySequence: 2 },
-              rate: 150,
-            },
-            {
-              incentiveLevel: 'Enhanced',
-              prisonPayBand: { id: 3, alias: 'Enhanced rate 3', displaySequence: 3 },
-              rate: 200,
-            },
-            {
-              incentiveLevel: 'Enhanced',
-              prisonPayBand: { id: 1, alias: 'Enhanced rate 1', displaySequence: 1 },
-              rate: 100,
-            },
-          ],
-        } as Activity)
-
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/pay-band', {
         prisonerName: 'Joe Bloggs',
@@ -109,17 +109,12 @@ describe('Route Handlers - Allocate - Pay band', () => {
         payBand: 2,
       }
 
-      when(activitiesService.getPayBandsForPrison).mockResolvedValue([
-        { id: 1, alias: 'Low' },
-        { id: 2, alias: 'Medium' },
-        { id: 3, alias: 'High' },
-      ] as PrisonPayBand[])
-
       await handler.POST(req, res)
 
       expect(req.session.allocateJourney.inmate.payBand).toEqual({
         id: 2,
-        alias: 'Medium',
+        alias: 'Enhanced rate 2',
+        rate: 150,
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })

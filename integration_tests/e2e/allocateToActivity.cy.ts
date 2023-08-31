@@ -101,7 +101,7 @@ context('Allocate to activity', () => {
     endDatePage.continue()
 
     const payBandPage = Page.verifyOnPage(PayBandPage)
-    payBandPage.selectPayBand('Medium (£1.75)')
+    payBandPage.selectPayBand('Medium - £1.75')
     payBandPage.confirmPay()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)

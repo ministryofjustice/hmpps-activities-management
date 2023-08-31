@@ -11,7 +11,7 @@ import activity from '../../../../services/fixtures/activity_1.json'
 
 jest.mock('../../../../services/activitiesService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 
 describe('Route Handlers - Create an activity - Category', () => {
   const handler = new CategoryRoutes(activitiesService)

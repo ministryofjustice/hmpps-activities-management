@@ -1,16 +1,13 @@
 import { format } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import ActivitiesApiClient from '../data/activitiesApiClient'
-import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
-  ActivityLite,
   ActivitySchedule,
   ActivityScheduleLite,
   Allocation,
   AttendanceUpdateRequest,
-  InternalLocation,
   LocationGroup,
   ScheduledActivity,
   ScheduledEvent,
@@ -46,17 +43,13 @@ import {
   WaitingListApplicationUpdateRequest,
   ActivitySummary,
 } from '../@types/activitiesAPI/types'
-import { ActivityScheduleAllocation } from '../@types/activities'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
 import { formatDate } from '../utils/utils'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 
 export default class ActivitiesService {
-  constructor(
-    private readonly activitiesApiClient: ActivitiesApiClient,
-    private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
-  ) {}
+  constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
 
   getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
     return this.activitiesApiClient.getActivity(activityId, user)
@@ -72,14 +65,6 @@ export default class ActivitiesService {
 
   async getActivities(excludeArchived: boolean, user: ServiceUser): Promise<ActivitySummary[]> {
     return this.activitiesApiClient.getActivities(user.activeCaseLoadId, excludeArchived, user)
-  }
-
-  async getActivitiesInCategory(categoryId: number, user: ServiceUser): Promise<ActivityLite[]> {
-    return this.activitiesApiClient.getActivitiesInCategory(user.activeCaseLoadId, categoryId, user)
-  }
-
-  async getSchedulesOfActivity(activityId: number, user: ServiceUser): Promise<ActivityScheduleLite[]> {
-    return this.activitiesApiClient.getSchedulesOfActivity(activityId, user)
   }
 
   getScheduledActivitiesAtPrison(date: Date, user: ServiceUser): Promise<ScheduledActivity[]> {
@@ -154,68 +139,12 @@ export default class ActivitiesService {
     )
   }
 
-  async getScheduledPrisonLocations(
-    prisonCode: string,
-    date: string,
-    period: string,
-    user: ServiceUser,
-  ): Promise<InternalLocation[]> {
-    return this.activitiesApiClient.getScheduledPrisonLocations(prisonCode, date, period, user)
-  }
-
   async getDefaultScheduleOfActivity(activity: Activity, user: ServiceUser): Promise<ActivityScheduleLite> {
     return this.getActivitySchedule(activity.schedules[0].id, user)
   }
 
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
     return this.activitiesApiClient.getActivitySchedule(id, user)
-  }
-
-  async getActivitySchedules(
-    prisonCode: string,
-    locationId: string,
-    date: string,
-    period: string,
-    user: ServiceUser,
-  ): Promise<ActivityScheduleAllocation[]> {
-    const activitySchedules = await this.activitiesApiClient.getActivitySchedules(
-      prisonCode,
-      locationId,
-      date,
-      period,
-      user,
-    )
-
-    // We'd like to assume there would be only one activity schedule returned - but we cant at this stage
-    const prisonerNumbers: string[] = activitySchedules
-      .map(as => {
-        if (as.instances.length === 1) {
-          // We wouldn't be able to cope with multiple instances
-          return as.allocations.map(alloc => alloc.prisonerNumber)
-        }
-        return []
-      })
-      .flat()
-
-    const prisoners = await this.prisonerSearchApiClient.searchByPrisonerNumbers({ prisonerNumbers }, user)
-
-    return activitySchedules
-      .map(as => {
-        if (as.instances.length === 1) {
-          // We wouldn't be able to cope with multiple instances
-          return as.allocations.map(alloc => {
-            return {
-              activityScheduleId: as.id,
-              description: as.description,
-              internalLocation: as.internalLocation,
-              prisoner: prisoners.find(p => p.prisonerNumber === alloc.prisonerNumber),
-              attendance: as.instances[0].attendances.find(a => a.prisonerNumber === alloc.prisonerNumber),
-            }
-          })
-        }
-        return []
-      })
-      .flat()
   }
 
   async updateAttendances(attendanceUpdates: AttendanceUpdateRequest[], user: ServiceUser): Promise<void> {
@@ -237,10 +166,6 @@ export default class ActivitiesService {
 
   async getActivePrisonPrisonerAllocations(prisonerNumbers: string[], user: ServiceUser) {
     return this.activitiesApiClient.getPrisonerAllocations(user.activeCaseLoadId, prisonerNumbers, user)
-  }
-
-  async getAppointment(appointmentId: number, user: ServiceUser): Promise<Appointment> {
-    return this.activitiesApiClient.getAppointment(appointmentId, user)
   }
 
   async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {

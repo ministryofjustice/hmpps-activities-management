@@ -8,7 +8,7 @@ import CancelledSessionsRoutes from './cancelledSessions'
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 
-const activitiesService = new ActivitiesService(null, null) as jest.Mocked<ActivitiesService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Cancelled Sessions List', () => {
   const handler = new CancelledSessionsRoutes(activitiesService)

@@ -17,30 +17,27 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <span class="govuk-caption-m">Edit allocation for {{ prisonerName }}</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l">{{ allocation.activitySummary }}</span>
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ datePicker({
                     id: 'endDate',
                     label: {
-                        text: "When do you want " + prisonerName + " to stop attending " + activitySummary + "?",
-                        classes: "govuk-fieldset__legend--l",
+                        text: "When is " + prisonerName + " last day on this activity?",
+                        classes: "govuk-fieldset__legend--xl",
                         isPageHeading: true
                     },
                     hint: {
-                        text: "For example, 29 12 2022"
+                        text: "For example, " + exampleDate()
                     },
                     renderedErrorMessage: validationErrors | findError('endDate'),
                     validationErrors: validationErrors,
                     formResponses: formResponses.endDate or endDate
                 }) }}
-                <input type="hidden" id="startDate" name="startDate" value="{{ startDate }}">
+                <input type="hidden" id="startDate" name="startDate" value="{{ allocation.startDate }}">
                 <input type="hidden" id="allocationId" name="allocationId" value="{{ allocationId }}">
                 <input type="hidden" id="scheduleId" name="scheduleId" value="{{ scheduleId }}">
                 <input type="hidden" id="prisonerNumber" name="prisonerNumber" value="{{ prisonerNumber }}">
@@ -51,7 +48,7 @@
 
                 <div class="govuk-button-group">
                   {{ govukButton({
-                    text: "Update end date"
+                    text: "Continue"
                   }) }}
                 </div>
             </form>

@@ -10,7 +10,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 
-const activitiesService = new ActivitiesService(null, null)
+const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
 
 describe('Route Handlers - Attendance List', () => {
@@ -308,7 +308,7 @@ describe('Route Handlers - Attendance List', () => {
       expect(res.redirectWithSuccess).toBeCalledWith(
         'attendance-list',
         'Attendance recorded',
-        "We've saved attendance details for 2 prisoners",
+        "We've saved attendance details for 2 people",
       )
     })
 

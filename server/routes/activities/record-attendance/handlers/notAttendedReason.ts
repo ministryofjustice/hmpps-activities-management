@@ -84,7 +84,7 @@ export default class NotAttendedReasonRoutes {
     const successMessage =
       selectedPrisoners.length === 1
         ? `We've saved attendance details for ${convertToTitleCase(selectedPrisoners[0].prisonerName)}`
-        : `We've saved attendance details for ${selectedPrisoners.length} prisoners`
+        : `We've saved attendance details for ${selectedPrisoners.length} people`
 
     return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
   }

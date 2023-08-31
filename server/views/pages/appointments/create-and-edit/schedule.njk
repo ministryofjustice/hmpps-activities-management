@@ -191,7 +191,7 @@
                     {% for prisonerSchedule in prisonerSchedules %}
                         {% set prisoner = prisonerSchedule.prisoner %}
                         {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-                            <h2 class="govuk-heading-m" data-qa="schedule-heading">Events for {{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate('EEEE, d MMMM yyyy') }}</h2>
+                            <h2 class="govuk-heading-m" data-qa="schedule-heading">Events for {{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate.date | parseISODate | formatDate }}</h2>
                             {{ prisonerScheduledEvents(prisoner, prisonerSchedule.scheduledEvents) }}
                         {% else %}
                             <div class="govuk-summary-card appointment-schedule">
@@ -325,7 +325,7 @@
 
 {% macro appointmentDate() %}
     {%- set startDate = session.editAppointmentJourney.startDate.date or session.appointmentJourney.startDate.date -%}
-    {{ startDate | parseISODate | formatDate('EEEE, d MMMM yyyy') }}
+    {{ startDate | parseISODate | formatDate }}
 {% endmacro %}
 
 {% macro appointmentTime() %}

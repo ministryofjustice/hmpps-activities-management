@@ -40,7 +40,7 @@
                         classes: "govuk-label--m"
                     },
                     hint: {
-                        text: "Choose the area of study for the education level or qualification that participants need to be eligible for this activity."
+                        text: "Choose the subject or skill from the list, for example 'Maths' or 'Construction'."
                     },
                     errorMessage: validationErrors | findError('studyAreaCode'),
                     value: formResponses.studyAreaCode or session.createActivityJourney.educationLevels.educationLevelCode,
@@ -51,7 +51,7 @@
                     id: "eduLevelCode",
                     name: "eduLevelCode",
                     label: {
-                        text: "Education Level or other qualification",
+                        text: "Education level or other qualification",
                         classes: "govuk-label--m"
                     },
                     hint: {

@@ -38,10 +38,10 @@
                     {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.startTime | getTimeSlotFromTime | upper }})
                 </span>
                 <span class="govuk-caption-l">
-                    {{ instance.date | toDate | formatDate('EEEE, dd MMMM yyyy') }}
+                    {{ instance.date | toDate | formatDate }}
                 </span>
                 <span class="govuk-caption-l">
-                    {{ ("In cell" if activity.inCell) or ("On wing" if activity.onWing) or ("Off wing" if activity.offWing) or activity.location }}
+                    {{ ("In cell" if activity.inCell) or ("On wing" if activity.onWing) or ("Off wing" if activity.offWing) or activity.location | capitalize }}
                 </span>
             </h1>
 
@@ -217,7 +217,7 @@
         }) }}
     </form>
 
-    <div class="print-only govuk-body-s govuk-!-margin-top-6">Printed at {{ now | formatDate('h:mmbbb \'on\' EEEE, dd MMMM yyyy') }}</div>
+    <div class="print-only govuk-body-s govuk-!-margin-top-6">Printed at {{ now | formatDate('h:mmbbb \'on\' EEEE, d MMMM yyyy') }}</div>
 {% endblock %}
 
 {% macro renderOtherEvents(otherEvents) %}
