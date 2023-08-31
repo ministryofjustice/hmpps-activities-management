@@ -23,13 +23,17 @@ describe('Route Handlers - Edit an activity - Confirm capacity', () => {
         },
       },
       render: jest.fn(),
-      redirectOrReturn: jest.fn(),
-      redirectOrReturnWithSuccess: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
+      query: {},
+      body: {},
       session: {
-        createJourney: {},
+        createJourney: {
+          activityId: 1,
+          name: 'Test activity',
+        },
       },
     } as unknown as Request
   })
@@ -37,7 +41,7 @@ describe('Route Handlers - Edit an activity - Confirm capacity', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/confirm-capacity')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/confirm-capacity')
     })
   })
 
@@ -51,24 +55,14 @@ describe('Route Handlers - Edit an activity - Confirm capacity', () => {
         .calledWith(atLeast(updatedActivity))
         .mockResolvedValueOnce(activity as unknown as Activity)
 
-      req = {
-        session: {
-          createJourney: {},
-        },
-        query: {
-          fromEditActivity: true,
-        },
-        body: {
-          capacity: 10,
-        },
-      } as unknown as Request
-
+      req.query.fromEditActivity = 'true'
+      req.body.capacity = 10
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/activities/schedule/activities/undefined',
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '/activities/schedule/activities/1',
         'Activity updated',
-        "We've updated the capacity for undefined",
+        "We've updated the capacity for Test activity",
       )
     })
   })

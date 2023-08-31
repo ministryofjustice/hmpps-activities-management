@@ -26,6 +26,7 @@ import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import PayRateTypeRoutes, { PayRateType } from './handlers/payRateType'
 import ScheduleFrequencyRoutes, { ScheduleFrequencyForm } from './handlers/scheduleFrequency'
+import ConfirmCapacityRoutes from './handlers/confirmCapacity'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -55,6 +56,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const bankHolidayHandler = new BankHolidayOptionRoutes(activitiesService)
   const locationHandler = new LocationRoutes(activitiesService, prisonService)
   const capacityHandler = new CapacityRoutes(activitiesService)
+  const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(activitiesService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, prisonService)
   const confirmationHandler = new ConfirmationRoutes()
 
@@ -98,6 +100,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/location', locationHandler.POST, Location)
   get('/capacity', capacityHandler.GET, true)
   post('/capacity', capacityHandler.POST, Capacity)
+  get('/confirm-capacity', confirmCapacityRouteHandler.GET)
+  post('/confirm-capacity', confirmCapacityRouteHandler.POST)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
   get('/confirmation/:id', confirmationHandler.GET, true)
