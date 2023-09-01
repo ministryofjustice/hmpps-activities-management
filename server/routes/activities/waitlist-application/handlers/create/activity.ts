@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { Min } from 'class-validator'
 import ActivitiesService from '../../../../../services/activitiesService'
+import { getScheduleIdFromActivity } from '../../../../../utils/utils'
 
 export class Activity {
   @Expose()
@@ -34,10 +35,12 @@ export default class ActivityRoutes {
     const alreadyAllocated =
       (await this.activitiesService
         .getActivePrisonPrisonerAllocations([prisoner.prisonerNumber], user)
-        .then(alloc => alloc.filter(all => all.allocations.find(a => a.scheduleId === activity.id)))
+        .then(alloc =>
+          alloc.filter(all => all.allocations.find(a => a.scheduleId === getScheduleIdFromActivity(activity))),
+        )
         .then(alloc => alloc.length > 0)) ||
       (await this.activitiesService
-        .fetchActivityWaitlist(activityId, user)
+        .fetchActivityWaitlist(getScheduleIdFromActivity(activity), user)
         .then(waitlist => waitlist.filter(w => w.prisonerNumber === prisoner.prisonerNumber))
         .then(waitlist => waitlist.filter(w => w.status === 'PENDING' || w.status === 'APPROVED'))
         .then(alloc => alloc.length > 0))
@@ -51,6 +54,7 @@ export default class ActivityRoutes {
 
     req.session.waitListApplicationJourney.activity = {
       activityId: activity.id,
+      scheduleId: getScheduleIdFromActivity(activity),
       activityName: activity.description,
     }
     return res.redirectOrReturn(`requester`)

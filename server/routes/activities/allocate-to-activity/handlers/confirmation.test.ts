@@ -46,7 +46,6 @@ describe('Route Handlers - Allocate - Confirmation', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/confirmation', {
         activityId: 1,
-        scheduleId: 1,
         prisonerName: 'Joe Bloggs',
         prisonerNumber: 'ABC123',
         activityName: 'Maths',

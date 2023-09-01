@@ -27,6 +27,7 @@ import {
   BulkAppointmentDetails,
   WaitingListApplicationRequest,
   WaitingListApplicationUpdateRequest,
+  AppointmentOccurrenceUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -594,7 +595,7 @@ describe('activitiesApiClient', () => {
         startTime: '13:00',
         endTime: '13:30',
         applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
-      }
+      } as AppointmentOccurrenceUpdateRequest
 
       await activitiesApiClient.editAppointmentOccurrence(1, body, user)
       expect(nock.isDone()).toBe(true)

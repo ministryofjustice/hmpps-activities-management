@@ -88,7 +88,7 @@
 
                 {% set suitableForIepHtml %}
                     <p>{{ suitableForIep }}</p>
-                    <p class='govuk-hint'>You can control which incentive levels are suitable by <a class='govuk-link govuk-link--no-visited-state' href='/activities/schedule/activities/{{ schedule.id }}' target='_blank'>adding or removing corresponding pay rates.</a></p>
+                    <p class='govuk-hint'>You can control which incentive levels are suitable by <a class='govuk-link govuk-link--no-visited-state' href='/activities/schedule/activities/{{ activity.id }}' target='_blank'>adding or removing corresponding pay rates.</a></p>
                 {% endset %}
 
                 {{ govukTable({
@@ -167,7 +167,7 @@
         {% set otherAllocationsHtml %}
             <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <li><a href='/activities/allocation-dashboard/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName | escape }}</a></li>
+                    <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName | escape }}</a></li>
                 {% else %}
                     <li>None</li>
                 {% endfor %}
@@ -253,11 +253,11 @@
             actions: [
                 {
                     text: 'Remove from activity',
-                    formAction: schedule.id + '/deallocate'
+                    formAction: activity.id + '/deallocate'
                 },
                 {
                     text: 'Edit allocation',
-                    formAction: schedule.id + '/check-allocation',
+                    formAction: activity.id + '/check-allocation',
                     maxItems: 1
                 }
             ],
@@ -408,7 +408,7 @@
         {% set currentAllocationsHtml %}
             <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <li><a href='/activities/allocation-dashboard/{{ allocation.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName | escape }}</a></li>
+                    <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName | escape }}</a></li>
                 {% else %}
                     <li>None</li>
                 {% endfor %}
@@ -480,11 +480,11 @@
             actions: [
                 {
                     text: 'View or edit application',
-                    formAction: schedule.id + '/view-waitlist-application'
+                    formAction: activity.id + '/view-waitlist-application'
                 },
                 {
                     text: 'Allocate',
-                    formAction: schedule.id + '/allocate'
+                    formAction: activity.id + '/allocate'
                 }
             ],
             itemsDescription: 'person',
@@ -631,7 +631,7 @@
         {% set currentAllocationsHtml %}
             <ul class='govuk-list'>
                 {% for allocation in row.otherAllocations %}
-                    <li><a href='/activities/allocation-dashboard/{{ allocation.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
+                    <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
                 {% else %}
                     <li>None</li>
                 {% endfor %}
@@ -694,7 +694,7 @@
             actions: [
                 {
                     text: 'Allocate',
-                    formAction: schedule.id + '/allocate'
+                    formAction: activity.id + '/allocate'
                 }
             ],
             itemsDescription: 'person',

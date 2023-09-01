@@ -50,6 +50,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
         .calledWith(atLeast(1))
         .mockResolvedValue({
           status: 'PENDING',
+          activityId: 1,
           scheduleId: 1,
           prisonerNumber: 'ABC123',
           creationTime: '2023-08-16',
@@ -138,6 +139,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
         .calledWith(atLeast(1))
         .mockResolvedValue({
           status: 'DECLINED',
+          activityId: 1,
           scheduleId: 1,
           prisonerNumber: 'ABC123',
           creationTime: '2023-08-16',

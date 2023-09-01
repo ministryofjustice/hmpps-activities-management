@@ -3,7 +3,7 @@ import createHttpError from 'http-errors'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { simpleDateFromDate } from '../../../../../commonValidationTypes/simpleDate'
 import PrisonService from '../../../../../services/prisonService'
-import { convertToTitleCase, parseDate } from '../../../../../utils/utils'
+import { convertToTitleCase, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
 import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 
@@ -22,7 +22,7 @@ export default class ViewApplicationRoutes {
 
     const [prisoner, activity, allApplications]: [Prisoner, Activity, WaitingListApplication[]] = await Promise.all([
       this.prisonService.getInmateByPrisonerNumber(application.prisonerNumber, user),
-      this.activitiesService.getActivity(application.scheduleId, user),
+      this.activitiesService.getActivity(application.activityId, user),
       this.activitiesService.fetchActivityWaitlist(application.scheduleId, user),
     ])
 
@@ -46,6 +46,7 @@ export default class ViewApplicationRoutes {
       requestDate: simpleDateFromDate(parseDate(application.requestedDate)),
       activity: {
         activityId: activity.id,
+        scheduleId: getScheduleIdFromActivity(activity),
         activityName: activity.description,
       },
       requester: application.requestedBy,
@@ -62,7 +63,7 @@ export default class ViewApplicationRoutes {
       comment: application.comments,
       status: application.status,
       lastUpdated: application.updatedTime || application.creationTime,
-      activityId: application.scheduleId,
+      activityId: application.activityId,
       isMostRecent,
       isNotAlreadyAllocated,
     })

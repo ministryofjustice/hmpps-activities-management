@@ -38,6 +38,7 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
           },
           activity: {
             activityId: 1,
+            scheduleId: 1,
             activityName: 'Test activity',
           },
           requester: 'Alan Key',
