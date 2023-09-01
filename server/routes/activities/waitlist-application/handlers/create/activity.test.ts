@@ -86,6 +86,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
         .mockResolvedValue({
           id: 1,
           description: 'test activity',
+          schedules: [{ id: 1 }],
         } as unknown as Activity)
       when(activitiesService.getActivePrisonPrisonerAllocations).mockResolvedValue([])
       when(activitiesService.fetchActivityWaitlist).mockResolvedValue([])
@@ -94,6 +95,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
 
       expect(req.session.waitListApplicationJourney.activity).toEqual({
         activityId: 1,
+        scheduleId: 1,
         activityName: 'test activity',
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`requester`)

@@ -1430,6 +1430,11 @@ export interface components {
        */
       onWing: boolean
       /**
+       * @description Flag to indicate if the location of the activity is off wing and not in a listed location
+       * @example false
+       */
+      offWing: boolean
+      /**
        * @description Set to true if this event takes place outside the prison
        * @example false
        */
@@ -1493,6 +1498,8 @@ export interface components {
        */
       bookingId: number
       activitySummary: string
+      /** Format: int64 */
+      activityId: number
       /** Format: int64 */
       scheduleId: number
       scheduleDescription: string
@@ -3674,6 +3681,12 @@ export interface components {
       id: number
       /**
        * Format: int64
+       * @description The internally-generated ID for the associated activity
+       * @example 1000
+       */
+      activityId: number
+      /**
+       * Format: int64
        * @description The internally-generated ID for the associated activity schedule
        * @example 222222
        */
@@ -3825,6 +3838,7 @@ export interface components {
        * @enum {string}
        */
       applyTo: 'THIS_OCCURRENCE' | 'THIS_AND_ALL_FUTURE_OCCURRENCES' | 'ALL_FUTURE_OCCURRENCES'
+      isPropertyUpdate: boolean
     }
     /** @description The update request with the new allocation details */
     AllocationUpdateRequest: {
@@ -4465,17 +4479,17 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
+      paged?: boolean
+      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {

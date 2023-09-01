@@ -27,7 +27,7 @@ export default class CheckAnswersRoutes {
 
     const waitlistApplication = {
       prisonerNumber: waitListApplicationJourney.prisoner.prisonerNumber,
-      activityScheduleId: waitListApplicationJourney.activity.activityId,
+      activityScheduleId: waitListApplicationJourney.activity.scheduleId,
       applicationDate: formatDate(
         plainToInstance(SimpleDate, waitListApplicationJourney.requestDate).toRichDate(),
         'yyyy-MM-dd',

@@ -171,15 +171,15 @@ describe('Route Handlers - Allocation dashboard', () => {
           {
             prisonerNumber: 'ABC123',
             allocations: [
-              { scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
-              { scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
+              { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+              { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
             ],
           },
           {
             prisonerNumber: '321CBA',
             allocations: [
-              { scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
-              { scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
+              { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+              { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
             ],
           },
         ] as PrisonerAllocations[])
@@ -189,8 +189,8 @@ describe('Route Handlers - Allocation dashboard', () => {
           {
             prisonerNumber: 'A0013DZ',
             allocations: [
-              { scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
-              { scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
+              { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+              { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
             ],
           },
         ] as PrisonerAllocations[])
@@ -227,121 +227,124 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/allocation-dashboard', {
-        schedule: activitySchedule,
-        dailySlots: {
-          '1': [
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/allocation-dashboard/allocation-dashboard',
+        expect.objectContaining({
+          schedule: activitySchedule,
+          dailySlots: {
+            '1': [
+              {
+                day: 'Monday',
+                slots: ['am'],
+              },
+              {
+                day: 'Tuesday',
+                slots: ['am'],
+              },
+              {
+                day: 'Wednesday',
+                slots: ['am'],
+              },
+              {
+                day: 'Thursday',
+                slots: ['am'],
+              },
+              {
+                day: 'Friday',
+                slots: ['am'],
+              },
+              {
+                day: 'Saturday',
+                slots: ['am'],
+              },
+              {
+                day: 'Sunday',
+                slots: ['am'],
+              },
+            ],
+          },
+          scheduleWeeks: 1,
+          currentWeek: 1,
+          currentlyAllocated: [
             {
-              day: 'Monday',
-              slots: ['am'],
+              allocationId: 1,
+              cellLocation: 'MDI-1-1-101',
+              startDate: new Date(2023, 1, 17),
+              endDate: null,
+              name: 'Joe Bloggs',
+              otherAllocations: [
+                {
+                  activityId: 2,
+                  scheduleName: 'other schedule',
+                },
+              ],
+              prisonerNumber: 'ABC123',
+              releaseDate: new Date(2023, 11, 25),
             },
             {
-              day: 'Tuesday',
-              slots: ['am'],
-            },
-            {
-              day: 'Wednesday',
-              slots: ['am'],
-            },
-            {
-              day: 'Thursday',
-              slots: ['am'],
-            },
-            {
-              day: 'Friday',
-              slots: ['am'],
-            },
-            {
-              day: 'Saturday',
-              slots: ['am'],
-            },
-            {
-              day: 'Sunday',
-              slots: ['am'],
+              allocationId: 2,
+              cellLocation: 'MDI-1-1-103',
+              startDate: new Date(2023, 1, 16),
+              endDate: null,
+              name: 'John Smith',
+              otherAllocations: [
+                {
+                  activityId: 2,
+                  scheduleName: 'other schedule',
+                },
+              ],
+              prisonerNumber: '321CBA',
+              releaseDate: new Date(2023, 11, 26),
             },
           ],
-        },
-        scheduleWeeks: 1,
-        currentWeek: 1,
-        currentlyAllocated: [
-          {
-            allocationId: 1,
-            cellLocation: 'MDI-1-1-101',
-            startDate: new Date(2023, 1, 17),
-            endDate: null,
-            name: 'Joe Bloggs',
-            otherAllocations: [
-              {
-                id: 2,
-                scheduleName: 'other schedule',
-              },
-            ],
-            prisonerNumber: 'ABC123',
-            releaseDate: new Date(2023, 11, 25),
-          },
-          {
-            allocationId: 2,
-            cellLocation: 'MDI-1-1-103',
-            startDate: new Date(2023, 1, 16),
-            endDate: null,
-            name: 'John Smith',
-            otherAllocations: [
-              {
-                id: 2,
-                scheduleName: 'other schedule',
-              },
-            ],
-            prisonerNumber: '321CBA',
-            releaseDate: new Date(2023, 11, 26),
-          },
-        ],
-        waitlistSize: 1,
-        waitlistedPrisoners: [
-          {
-            cellLocation: 'MDI-4-2-009',
-            name: 'RODNEY REINDEER',
-            otherAllocations: [
-              {
-                id: 2,
-                scheduleName: 'other schedule',
-              },
-            ],
-            prisonerNumber: 'A0013DZ',
-            requestDate: new Date(2023, 7, 7),
-            requestedBy: 'Activities Management',
-            status: 'PENDING',
-            waitlistApplicationId: 1,
-            currentIncentive: 'Standard',
-            alerts: [
-              {
-                alertCode: 'RME',
-                alertType: 'R',
-              },
-            ],
-          },
-        ],
-        pagedCandidates: {
-          content: [
+          waitlistSize: 1,
+          waitlistedPrisoners: [
             {
-              cellLocation: '4-2-009',
+              cellLocation: 'MDI-4-2-009',
               name: 'RODNEY REINDEER',
-              otherAllocations: [],
+              otherAllocations: [
+                {
+                  activityId: 2,
+                  scheduleName: 'other schedule',
+                },
+              ],
               prisonerNumber: 'A0013DZ',
-              releaseDate: null,
+              requestDate: new Date(2023, 7, 7),
+              requestedBy: 'Activities Management',
+              status: 'PENDING',
+              waitlistApplicationId: 1,
+              currentIncentive: 'Standard',
+              alerts: [
+                {
+                  alertCode: 'RME',
+                  alertType: 'R',
+                },
+              ],
             },
           ],
-        },
-        incentiveLevels: [
-          { levelCode: 'BAS', levelName: 'Basic' },
-          { levelCode: 'STD', levelName: 'Standard' },
-          { levelCode: 'ENH', levelName: 'Enhanced' },
-        ],
-        filters: {
-          candidateQuery: 'jack',
-        },
-        suitableForIep: 'All Incentive Levels',
-        suitableForWra: 'Low or Medium or High',
-      })
+          pagedCandidates: {
+            content: [
+              {
+                cellLocation: '4-2-009',
+                name: 'RODNEY REINDEER',
+                otherAllocations: [],
+                prisonerNumber: 'A0013DZ',
+                releaseDate: null,
+              },
+            ],
+          },
+          incentiveLevels: [
+            { levelCode: 'BAS', levelName: 'Basic' },
+            { levelCode: 'STD', levelName: 'Standard' },
+            { levelCode: 'ENH', levelName: 'Enhanced' },
+          ],
+          filters: {
+            candidateQuery: 'jack',
+          },
+          suitableForIep: 'All Incentive Levels',
+          suitableForWra: 'Low or Medium or High',
+        }),
+      )
     })
 
     it('should calculate suitable iep correctly', async () => {
@@ -571,7 +574,10 @@ describe('Route Handlers - Allocation dashboard', () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
+        .mockResolvedValue({
+          pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }],
+          schedules: [{ id: 1 }],
+        } as Activity)
 
       prisonService.getPrisonerIepSummary = jest.fn()
       when(prisonService.getPrisonerIepSummary)
@@ -595,7 +601,10 @@ describe('Route Handlers - Allocation dashboard', () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
+        .mockResolvedValue({
+          pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }],
+          schedules: [{ id: 1 }],
+        } as Activity)
 
       prisonService.getPrisonerIepSummary = jest.fn()
       when(prisonService.getPrisonerIepSummary)

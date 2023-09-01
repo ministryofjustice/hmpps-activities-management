@@ -34,6 +34,7 @@ import {
   WaitingListApplication,
   ActivitySummary,
   WaitingListApplicationUpdateRequest,
+  AppointmentOccurrenceUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import appointmentDetails from './fixtures/appointment_details_1.json'
@@ -367,7 +368,7 @@ describe('Activities Service', () => {
       const apiRequest = {
         internalLocationId: 123,
         applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
-      }
+      } as AppointmentOccurrenceUpdateRequest
 
       await activitiesService.editAppointmentOccurrence(1, apiRequest, user)
 

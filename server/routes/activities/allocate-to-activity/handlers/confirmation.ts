@@ -6,7 +6,6 @@ export default class ConfirmationRoutes {
 
     res.render('pages/activities/allocate-to-activity/confirmation', {
       activityId: activity.activityId,
-      scheduleId: activity.scheduleId,
       prisonerName: inmate.prisonerName,
       prisonerNumber: inmate.prisonerNumber,
       activityName: activity.name,

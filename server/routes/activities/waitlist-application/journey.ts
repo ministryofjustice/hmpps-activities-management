@@ -8,6 +8,7 @@ export type WaitListApplicationJourney = {
   requestDate?: SimpleDate
   activity?: {
     activityId: number
+    scheduleId: number
     activityName: string
   }
   requester?: string

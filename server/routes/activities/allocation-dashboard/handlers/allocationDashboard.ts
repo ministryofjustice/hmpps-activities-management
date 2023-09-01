@@ -6,7 +6,7 @@ import ActivityService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { Activity, ActivityPay, Allocation, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
-import { convertToTitleCase, getTimeSlotFromTime, parseDate } from '../../../../utils/utils'
+import { convertToTitleCase, getScheduleIdFromActivity, getTimeSlotFromTime, parseDate } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
@@ -67,9 +67,9 @@ export default class AllocationDashboardRoutes {
     }
 
     const [currentlyAllocated, { waitlistedPrisoners, waitlistSize }, pagedCandidates] = await Promise.all([
-      this.getCurrentlyAllocated(+activityId, user),
-      this.getWaitlistedPrisoners(+activityId, filters, user),
-      this.getCandidates(+activityId, filters, +req.query.page, user),
+      this.getCurrentlyAllocated(getScheduleIdFromActivity(activity), user),
+      this.getWaitlistedPrisoners(getScheduleIdFromActivity(activity), filters, user),
+      this.getCandidates(getScheduleIdFromActivity(activity), filters, +req.query.page, user),
     ])
 
     const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -98,6 +98,7 @@ export default class AllocationDashboardRoutes {
 
     const richStartDate = plainToInstance(SimpleDate, startDate).toRichDate()
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
+      activity,
       schedule: activity.schedules[0],
       currentlyAllocated,
       waitlistedPrisoners,
@@ -132,7 +133,9 @@ export default class AllocationDashboardRoutes {
     if (!activity.pay.map(p => p.incentiveLevel).includes(iepSummary.iepLevel)) {
       return res.validationFailed('selectedAllocation', 'No suitable pay rate exists for this candidate')
     }
-    return res.redirect(`/activities/allocate/prisoner/${prisonerNumber}?scheduleId=${req.params.activityId}`)
+    return res.redirect(
+      `/activities/allocate/prisoner/${prisonerNumber}?scheduleId=${getScheduleIdFromActivity(activity)}`,
+    )
   }
 
   DEALLOCATE = async (req: Request, res: Response): Promise<void> => {
@@ -223,7 +226,7 @@ export default class AllocationDashboardRoutes {
         endDate: parseDate(thisAllocation.endDate),
         status: thisAllocation.status,
         otherAllocations: otherAllocations?.map(a => ({
-          id: a.scheduleId,
+          activityId: a.activityId,
           scheduleName: a.scheduleDescription,
         })),
       }
@@ -258,7 +261,7 @@ export default class AllocationDashboardRoutes {
           requestedBy: w.requestedBy,
           status: w.status,
           otherAllocations: otherAllocations?.map(a => ({
-            id: a.scheduleId,
+            activityId: a.activityId,
             scheduleName: a.scheduleDescription,
           })),
           alerts: inmate.alerts.filter(a => a.alertType === 'R' && ['RLO', 'RME', 'RHI'].includes(a.alertCode)),

@@ -28,7 +28,7 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
       session: {
         waitListApplicationJourney: {
           prisoner: { name: 'Alan Key' },
-          activity: { activityId: 1 },
+          activity: { activityId: 1, scheduleId: 1 },
         },
       },
     } as unknown as Request
@@ -63,6 +63,7 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
           prisoner: { name: 'Alan Key' },
           activity: {
             activityId: 1,
+            scheduleId: 1,
           },
         },
         waitlistSize: 2,
