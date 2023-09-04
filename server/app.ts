@@ -18,6 +18,7 @@ import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 
 import routes from './routes'
+import { DataAccess } from './data'
 import type { Services } from './services'
 import setUpSuccessMessages from './middleware/setUpSuccessMessages'
 import setUpChangeLinks from './middleware/setUpChangeLinks'
@@ -25,8 +26,9 @@ import trimRequestBody from './middleware/trimBodyMiddleware'
 import setUpValidationExtensions from './middleware/setUpValidationExtensions'
 import formValidationErrorHandler from './middleware/formValidationErrorHandler'
 import populateJourney from './middleware/populateJourney'
+import setUpFrontendComponents from './middleware/fetchFrontendComponentMiddleware'
 
-export default function createApp(services: Services): express.Application {
+export default function createApp(services: Services, dataAccess: DataAccess): express.Application {
   const app = express()
 
   app.set('json spaces', 2)
@@ -49,6 +51,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services))
   app.use(trimRequestBody())
   app.use(setUpValidationExtensions())
+  app.use(setUpFrontendComponents(dataAccess))
   app.use(populateJourney())
   app.use(routes(services))
   app.use(formValidationErrorHandler)

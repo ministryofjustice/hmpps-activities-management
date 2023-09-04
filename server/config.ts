@@ -77,6 +77,9 @@ export default {
       agent: new AgentConfig(Number(get('TOKEN_VERIFICATION_API_TIMEOUT_RESPONSE', 5000))),
       enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
     },
+    frontendComponents: {
+      url: get('FRONTEND_COMPONENT_API_URL', 'http://localhost:8082', requiredInProduction),
+    },
     activitiesApi: {
       url: get('ACTIVITIES_API_URL', 'http://localhost:8089', requiredInProduction),
       timeout: {
