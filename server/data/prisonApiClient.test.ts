@@ -77,22 +77,6 @@ describe('prisonApiClient', () => {
     })
   })
 
-  describe('setActiveCaseLoad', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-
-      fakePrisonApi
-        .put('/api/users/me/activeCaseLoad', { caseLoadId: 'MDI' })
-        .matchHeader('authorization', `Bearer token`)
-        .reply(200, response)
-
-      const output = await prisonApiClient.setActiveCaseLoad('MDI', user)
-
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
   describe('searchActivityLocations', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
