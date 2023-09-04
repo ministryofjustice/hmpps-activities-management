@@ -128,7 +128,7 @@
         "nomisPayBand": 1,
         "prisonCode": "PVI"
       },
-      "startDate": "10/10/2022",
+      "startDate": "2022-10-10",
       "endDate": null,
       "allocatedTime": "10/10/2022 09:30",
       "allocatedBy": "MR BLOGS",
@@ -151,7 +151,7 @@
         "nomisPayBand": 1,
         "prisonCode": "PVI"
       },
-      "startDate": "10/10/2022",
+      "startDate": "2022-10-10",
       "endDate": null,
       "allocatedTime": "10/10/2022 09:30",
       "allocatedBy": "MR BLOGS",
@@ -174,7 +174,7 @@
         "nomisPayBand": 1,
         "prisonCode": "PVI"
       },
-      "startDate": "10/10/2022",
+      "startDate": "2022-10-10",
       "endDate": null,
       "allocatedTime": "10/10/2022 09:30",
       "allocatedBy": "MR BLOGS",
@@ -211,6 +211,7 @@
     }
   },
   "startDate": "2022-08-01",
+  "endDate": "2024-08-01",
   "scheduleWeeks": 1,
   "slots": [
     {

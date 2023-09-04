@@ -10,12 +10,13 @@ import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashb
 import atLeast from '../../../../../jest.setup'
 import {
   Activity,
+  ActivitySchedule,
   Allocation,
   PrisonerAllocations,
   WaitingListApplication,
 } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
+import { associateErrorsWithProperty, convertToTitleCase, toDateString } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 
@@ -82,6 +83,9 @@ describe('Route Handlers - Allocation dashboard', () => {
       query: {
         page: 0,
       },
+      body: {},
+      params: {},
+      session: {},
     } as unknown as Request
 
     when(activitiesService.getActivity)
@@ -639,6 +643,59 @@ describe('Route Handlers - Allocation dashboard', () => {
         'selectedAllocation',
         'No suitable pay rate exists for this candidate',
       )
+    })
+  })
+
+  describe('DEALLOCATE', () => {
+    const prisoners = [
+      {
+        prisonerNumber: 'G4793VF',
+        firstName: 'Joe',
+        lastName: 'Bloggs',
+        cellLocation: 'MDI-1-1-101',
+        releaseDate: '2023-12-25',
+      },
+      {
+        prisonerNumber: 'A9477DY',
+        firstName: 'John',
+        lastName: 'Smith',
+        cellLocation: 'MDI-1-1-103',
+        releaseDate: '2023-12-26',
+      },
+    ] as Prisoner[]
+
+    beforeEach(() => {
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(1))
+        .mockResolvedValue(activitySchedule as unknown as ActivitySchedule)
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(atLeast(['G4793VF', 'A9477DY']))
+        .mockResolvedValue(prisoners)
+    })
+
+    it('should set session and redirect to deallocation date page', async () => {
+      req.body.selectedAllocations = ['G4793VF', 'A9477DY']
+      req.params.activityId = '1'
+
+      await handler.DEALLOCATE(req, res)
+
+      expect(req.session.deallocateJourney).toEqual({
+        allocationsToRemove: ['G4793VF', 'A9477DY'],
+        scheduleId: 1,
+        latestAllocationStartDate: '2022-10-10',
+        activity: {
+          activityName: 'A basic maths course suitable for introduction to the subject',
+          endDate: '2024-08-01',
+        },
+        prisoners: prisoners.map(i => ({
+          name: convertToTitleCase(`${i.firstName} ${i.lastName}`),
+          prisonerNumber: i.prisonerNumber,
+          cellLocation: i.cellLocation,
+        })),
+      })
+
+      expect(res.redirect).toBeCalledWith('/activities/deallocate/date')
     })
   })
 

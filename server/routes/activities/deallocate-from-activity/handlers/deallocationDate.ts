@@ -1,20 +1,34 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
-import { ValidateNested } from 'class-validator'
+import { ValidateNested, ValidationArguments } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
-import DateIsAfter from '../../../../validators/dateIsAfter'
-import DateIsSameOrAfterOtherProperty from '../../../../validators/dateIsSameOrAfterOtherProperty'
+import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
+import { formatDate } from '../../../../utils/utils'
+import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
+import { DeallocateFromActivityJourney } from '../journey'
 
 export class DeallocationDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @DateIsAfter(new Date(), { message: "Enter a date after today's date" })
-  @DateIsSameOrAfterOtherProperty('startDate', {
-    message: 'Enter a date on or after the latest allocation start date',
+  @DateIsSameOrAfter(o => new Date(o.deallocateJourney.latestAllocationStartDate), {
+    message: (args: ValidationArguments) => {
+      const { deallocateJourney } = args.object as { deallocateJourney: DeallocateFromActivityJourney }
+      const allocationStartDate = formatDate(new Date(deallocateJourney.latestAllocationStartDate), 'dd-MM-yyyy')
+      return `Enter a date on or after the allocation start date, ${allocationStartDate}`
+    },
   })
-  @IsValidDate({ message: 'Enter a valid date' })
+  @DateIsSameOrBefore(
+    o => (o.deallocateJourney.activity.endDate ? new Date(o.deallocateJourney.activity.endDate) : null),
+    {
+      message: (args: ValidationArguments) => {
+        const { deallocateJourney } = args.object as { deallocateJourney: DeallocateFromActivityJourney }
+        return `Enter a date on or before the activity's scheduled end date, ${deallocateJourney.activity.endDate}`
+      },
+    },
+  )
+  @IsValidDate({ message: 'Enter a valid end date' })
   deallocationDate: SimpleDate
 
   @Expose()
