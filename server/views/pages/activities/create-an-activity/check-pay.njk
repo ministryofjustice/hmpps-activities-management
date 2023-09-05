@@ -9,11 +9,8 @@
 {% set backLinkHref = "pay" %}
 
 {% block content %}
-    {% if session.req.query.fromEditActivity %}
-        {% set fromEditText = "&fromEditActivity=true" %}
-    {% else %}
-        {% set fromEditText = "" %}
-    {% endif %}
+    {% set preserveHistoryText = "?preserveHistory=true" if session.req.query.preserveHistory else "" %}
+    {% set fromEditText = "&fromEditActivity=true" if preserveHistoryText and session.req.query.fromEditActivity else "" %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
@@ -69,7 +66,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "pay/flat?bandId=" + flatRate.bandId,
+                                    href: "pay/flat?bandId=" + flatRate.bandId + "&preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change pay rate"
                                 },
@@ -95,7 +92,7 @@
                     }) }}
                     {{ govukButton({
                         text: "Add another pay rate",
-                        href: 'pay-rate-type?preserveHistory=true' + fromEditText,
+                        href: 'pay-rate-type' + preserveHistoryText + fromEditText,
                         classes: "govuk-button--secondary"
                     }) }}
                 </div>

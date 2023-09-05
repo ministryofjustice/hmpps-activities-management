@@ -13,6 +13,5 @@ export default function Index(services: Services): Router {
   router.get('/activities/:activityId', asyncMiddleware(activityRouteHandler.GET))
   const checkPayRouteHandler = new CheckPayRoutes(services.activitiesService, services.prisonService)
   router.get('/check-pay', asyncMiddleware(checkPayRouteHandler.GET))
-  router.post('/check-pay', asyncMiddleware(checkPayRouteHandler.POST))
   return router
 }

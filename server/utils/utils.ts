@@ -347,13 +347,13 @@ export const eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActiv
   const timeToDate = (time: string) => parse(time, 'HH:mm', new Date())
   const toInterval = (start: Date, end: Date) => ({ start, end })
 
-  const re = areIntervalsOverlapping(
-    // TODO: Events from prison API may not have an endtime, so default the endtime to equal the start time. May need to handle this better
-    toInterval(timeToDate(event.startTime), timeToDate(event.endTime || event.startTime)),
+  return areIntervalsOverlapping(
+    toInterval(
+      timeToDate(event.startTime),
+      event.endTime ? timeToDate(event.endTime) : endOfDay(timeToDate(event.startTime)),
+    ),
     toInterval(timeToDate(thisActivity.startTime), timeToDate(thisActivity.endTime)),
   )
-
-  return re
 }
 
 export const mapSlots = (createJourney: CreateAnActivityJourney) => {
