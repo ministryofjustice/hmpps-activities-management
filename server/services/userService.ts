@@ -33,6 +33,7 @@ export default class UserService {
       ...hmppsAuthUser,
       ...nomisUser,
       displayName: convertToTitleCase(hmppsAuthUser.name),
+      allCaseLoads: userCaseLoads,
       activeCaseLoad,
       roles,
       isActivitiesRolledOut: rolloutPlan?.activitiesRolledOut || false,

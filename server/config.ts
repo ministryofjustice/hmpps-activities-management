@@ -79,6 +79,11 @@ export default {
     },
     frontendComponents: {
       url: get('FRONTEND_COMPONENT_API_URL', 'http://localhost:8082', requiredInProduction),
+      timeout: {
+        response: Number(get('FRONTEND_COMPONENT_API_TIMEOUT_RESPONSE', 50000)),
+        deadline: Number(get('FRONTEND_COMPONENT_API_TIMEOUT_DEADLINE', 50000)),
+      },
+      agent: new AgentConfig(Number(get('FRONTEND_COMPONENT_API_TIMEOUT_RESPONSE', 5000))),
     },
     activitiesApi: {
       url: get('ACTIVITIES_API_URL', 'http://localhost:8089', requiredInProduction),
@@ -142,4 +147,7 @@ export default {
     },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: Boolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', false)),
+  frontendComponentsApiToggleEnabled: Boolean(
+    get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
+  ),
 }

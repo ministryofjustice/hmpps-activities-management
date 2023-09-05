@@ -18,7 +18,11 @@
 {% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
 
 {% block header %}
-  {{ feComponents.header | safe }}
+  {% if feComponents.header %}
+    {{ feComponents.header | safe }}
+  {% else %}
+    {% include "partials/header.njk" %}
+  {% endif %}
   {% block meta %}{% endblock %}
 {% endblock %}
 
@@ -27,7 +31,13 @@
 {% endblock %}
 
 {% block footer %}
-  {{ feComponents.footer | safe }}
+  {% if feComponents.footer %}
+    {{ feComponents.footer | safe }}
+  {% else %}
+    {{ govukFooter({
+      classes: 'govuk-!-display-none-print'
+    }) }}
+  {% endif %}
 {% endblock %}
 
 {% block bodyEnd %}
