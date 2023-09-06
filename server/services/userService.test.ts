@@ -1,3 +1,4 @@
+import { when } from 'jest-when'
 import UserService from './userService'
 import HmppsAuthClient from '../data/hmppsAuthClient'
 import { ServiceUser } from '../@types/express'
@@ -13,7 +14,7 @@ jest.mock('jwt-decode', () => () => ({
   authorities: ['ROLE_ACTIVITY_HUB'],
 }))
 
-let user = {} as ServiceUser
+const user = { authSource: 'nomis' } as ServiceUser
 
 describe('User service', () => {
   let hmppsAuthClient: jest.Mocked<HmppsAuthClient>
@@ -27,13 +28,13 @@ describe('User service', () => {
     activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
     userService = new UserService(hmppsAuthClient, prisonApiClient, activitiesApiClient)
 
-    hmppsAuthClient.getUser.mockResolvedValue({ name: 'john smith' } as HmppsAuthUser)
-    prisonApiClient.getUser.mockResolvedValue({ staffId: 1000 } as PrisonApiUserDetail)
-    prisonApiClient.getUserCaseLoads.mockResolvedValue([
+    when(hmppsAuthClient.getUser).mockResolvedValue({ name: 'john smith' } as HmppsAuthUser)
+    when(prisonApiClient.getUser).mockResolvedValue({ staffId: 1000 } as PrisonApiUserDetail)
+    when(prisonApiClient.getUserCaseLoads).mockResolvedValue([
       { caseLoadId: 'MDI', currentlyActive: true },
       { caseLoadId: 'LEI', currentlyActive: false },
     ] as CaseLoad[])
-    activitiesApiClient.getPrisonRolloutPlan.mockResolvedValue({
+    when(activitiesApiClient.getPrisonRolloutPlan).mockResolvedValue({
       prisonCode: 'MDI',
       activitiesRolledOut: true,
       appointmentsRolledOut: true,
@@ -45,35 +46,14 @@ describe('User service', () => {
   })
 
   describe('getUser', () => {
-    it('Retrieves user information from auth', async () => {
-      const result = await userService.getUser(user)
-
-      expect(hmppsAuthClient.getUser).toHaveBeenCalled()
-      expect(prisonApiClient.getUser).not.toHaveBeenCalled()
-      expect(prisonApiClient.getUserCaseLoads).not.toHaveBeenCalled()
-      expect(result.displayName).toEqual('John Smith')
-    })
-
-    it('Retrieves user information from nomis user api', async () => {
-      user = { ...user, authSource: 'nomis' }
-
+    it('Retrieves user information', async () => {
       const result = await userService.getUser(user)
 
       expect(hmppsAuthClient.getUser).toHaveBeenCalled()
       expect(prisonApiClient.getUser).toHaveBeenCalled()
       expect(prisonApiClient.getUserCaseLoads).toHaveBeenCalled()
+      expect(result.displayName).toEqual('John Smith')
       expect(result.roles).toEqual(['ROLE_ACTIVITY_HUB'])
-    })
-
-    it('Retrieves user information from prison api', async () => {
-      user = { ...user, authSource: 'nomis' }
-
-      const result = await userService.getUser(user)
-
-      expect(hmppsAuthClient.getUser).toHaveBeenCalled()
-      expect(prisonApiClient.getUser).toHaveBeenCalled()
-      expect(prisonApiClient.getUserCaseLoads).toHaveBeenCalled()
-      expect(result.displayName).toEqual('John Smith')
       expect(result.staffId).toEqual(1000)
       expect(result.allCaseLoads).toEqual([
         { caseLoadId: 'MDI', currentlyActive: true },

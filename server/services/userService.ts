@@ -3,7 +3,6 @@ import { convertToTitleCase } from '../utils/utils'
 import HmppsAuthClient from '../data/hmppsAuthClient'
 import { ServiceUser } from '../@types/express'
 import PrisonApiClient from '../data/prisonApiClient'
-import AuthSource from '../enum/authSource'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { HmppsAuthUser } from '../@types/hmppsAuth'
 import { CaseLoad, PrisonApiUserDetail } from '../@types/prisonApiImport/types'
@@ -19,8 +18,8 @@ export default class UserService {
     const [hmppsAuthUser, nomisUser, userCaseLoads]: [HmppsAuthUser, PrisonApiUserDetail, CaseLoad[]] =
       await Promise.all([
         this.hmppsAuthClient.getUser(user),
-        user.authSource === AuthSource.NOMIS ? this.prisonApiClient.getUser(user) : null,
-        user.authSource === AuthSource.NOMIS ? this.prisonApiClient.getUserCaseLoads(user) : null,
+        this.prisonApiClient.getUser(user),
+        this.prisonApiClient.getUserCaseLoads(user),
       ])
 
     const { authorities: roles = [] } = jwtDecode(user.token) as { authorities?: string[] }

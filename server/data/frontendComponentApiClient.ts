@@ -17,6 +17,7 @@ export default class FrontendComponentApiClient extends AbstractHmppsRestClient 
     return this.get({
       path: `/${component}`,
       headers: { 'x-user-token': user.token },
+      authToken: user.token,
     })
   }
 }
