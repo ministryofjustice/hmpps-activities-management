@@ -2,7 +2,6 @@ import { Router } from 'express'
 import type { Services } from '../services'
 import homeRoutes from './home'
 import activityRoutes from './activities'
-import changeLocationRoutes from './change-location'
 import spikeRoutes from './spikes'
 import errorMessageMiddleware from '../middleware/errorMessageMiddleware'
 import successMessageMiddleware from '../middleware/successMessageMiddleware'
@@ -20,7 +19,6 @@ export default function routes(services: Services): Router {
   router.use(timeNowMiddleware())
 
   router.use('/', homeRoutes())
-  router.use('/change-location', changeLocationRoutes(services))
   router.use('/activities', activityRoutes(services))
   router.use('/appointments', appointmentRoutes(services))
   // Add more beta build routes here

@@ -13,6 +13,7 @@ import PrisonApiClient from './prisonApiClient'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
 import ActivitiesApiClient from './activitiesApiClient'
 import IncentivesApiClient from './incentivesApiClient'
+import FrontendComponentApiClient from './frontendComponentApiClient'
 
 export default function dataAccess() {
   return {
@@ -21,5 +22,8 @@ export default function dataAccess() {
     prisonerSearchApiClient: new PrisonerSearchApiClient(),
     incentivesApiClient: new IncentivesApiClient(),
     activitiesApiClient: new ActivitiesApiClient(),
+    frontendComponentApiClient: new FrontendComponentApiClient(),
   }
 }
+
+export type DataAccess = ReturnType<typeof dataAccess>

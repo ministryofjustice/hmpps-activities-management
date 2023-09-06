@@ -33,14 +33,6 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     return this.get({ path: '/api/users/me/caseLoads', authToken: user.token })
   }
 
-  async setActiveCaseLoad(caseLoadId: string, user: ServiceUser): Promise<void> {
-    const data = {
-      caseLoadId,
-    }
-
-    return this.put({ path: '/api/users/me/activeCaseLoad', data, authToken: user.token })
-  }
-
   async getEventLocations(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
     return this.get({
       path: `/api/agencies/${prisonCode}/eventLocations`,

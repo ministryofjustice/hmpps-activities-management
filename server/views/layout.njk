@@ -9,12 +9,20 @@
   <script src="/assets/vendor/html5shiv-3.7.3.min.js"></script>
   <link href="/assets/stylesheets/application-ie8.css?{{ version }}" rel="stylesheet"/>
   <![endif]-->
+
+  {% for css in feComponents.cssIncludes %}
+    <link href="{{ css }}" nonce="{{ cspNonce }}" rel="stylesheet" />
+  {% endfor %}
 {% endblock %}
 
 {% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
 
 {% block header %}
-  {% include "partials/header.njk" %}
+  {% if feComponents.header %}
+    {{ feComponents.header | safe }}
+  {% else %}
+    {% include "partials/header.njk" %}
+  {% endif %}
   {% block meta %}{% endblock %}
 {% endblock %}
 
@@ -23,13 +31,20 @@
 {% endblock %}
 
 {% block footer %}
-  {{ govukFooter({
-    classes: 'govuk-!-display-none-print'
-  }) }}
+  {% if feComponents.footer %}
+    {{ feComponents.footer | safe }}
+  {% else %}
+    {{ govukFooter({
+      classes: 'govuk-!-display-none-print'
+    }) }}
+  {% endif %}
 {% endblock %}
 
 {% block bodyEnd %}
   {# Run JavaScript at end of the
   <body>, to avoid blocking the initial render. #}
   <script src="/assets/javascript/activities.min.js"></script>
+  {% for js in feComponents.jsIncludes %}
+    <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
+  {% endfor %}
 {% endblock %}
