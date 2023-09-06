@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
-import { Session } from 'express-session'
+import { when } from 'jest-when'
 import populateCurrentUser from './populateCurrentUser'
 import UserService from '../services/userService'
+import { ServiceUser } from '../@types/express'
 
 jest.mock('../services/userService')
 
@@ -28,12 +29,8 @@ afterEach(() => {
 })
 
 describe('populateCurrentUser', () => {
-  it('should add current user to res locals if it already exists in session', async () => {
-    req.session = {
-      user: {
-        displayName: 'Joe Bloggs',
-      },
-    } as unknown as Session
+  it('should add current user to res locals', async () => {
+    when(userServiceMock.getUser).mockResolvedValue({ displayName: 'Joe Bloggs' } as ServiceUser)
 
     await middleware(req, res, next)
 
@@ -44,7 +41,7 @@ describe('populateCurrentUser', () => {
   })
 
   it('should catch error from user service and persist it to next', async () => {
-    userServiceMock.getUser.mockRejectedValue(new Error('Some error'))
+    when(userServiceMock.getUser).mockRejectedValue(new Error('Some error'))
 
     await middleware(req, res, next)
 
