@@ -119,7 +119,7 @@
   "minimumEducationLevel": [{ "educationLevelCode": "1", "educationLevelDescription": "" }],
   "schedules": [
     {
-      "id": 1,
+      "id": 2,
       "instances": [],
       "allocations": [],
       "description": "Maths level 1",
