@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsIn, ValidateIf, ValidateNested } from 'class-validator'
-import { format, subDays } from 'date-fns'
+import { addDays, format, subDays } from 'date-fns'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
@@ -22,7 +22,7 @@ export class TimePeriod {
   @Type(() => SimpleDate)
   @ValidateNested()
   @IsValidDate({ message: 'Enter a valid date' })
-  @DateIsSameOrBefore(() => new Date(), { message: "Enter a date on or before today's date" })
+  @DateIsSameOrBefore(() => addDays(new Date(), 60), { message: 'Enter a date up to 60 days in the future.' })
   date: SimpleDate
 }
 
@@ -31,16 +31,15 @@ export default class SelectPeriodRoutes {
     res.render('pages/activities/record-attendance/select-period')
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    let selectedDate: Date
     if (req.body.datePresetOption === PresetDateOptions.TODAY) {
-      return res.redirect(`activities?date=${this.formatDate(new Date())}`)
+      selectedDate = new Date()
+    } else if (req.body.datePresetOption === PresetDateOptions.YESTERDAY) {
+      selectedDate = subDays(new Date(), 1)
+    } else {
+      selectedDate = req.body.date.toRichDate()
     }
 
-    if (req.body.datePresetOption === PresetDateOptions.YESTERDAY) {
-      return res.redirect(`activities?date=${this.formatDate(subDays(new Date(), 1))}`)
-    }
-
-    return res.redirect(`activities?date=${req.body.date.toString()}`)
+    res.redirect(`activities?date=${format(selectedDate, 'yyyy-MM-dd')}`)
   }
-
-  private formatDate = (date: Date) => format(date, 'yyyy-MM-dd')
 }

@@ -35,6 +35,7 @@ import {
   ActivitySummary,
   WaitingListApplicationUpdateRequest,
   AppointmentUpdateRequest,
+  Allocation,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import appointmentSeriesDetails from './fixtures/appointment_series_details_1.json'
@@ -673,5 +674,74 @@ describe('Activities Service', () => {
         expect(currentWeeks).toEqual(expectedCurrentWeek)
       },
     )
+  })
+
+  describe('getAllocations', () => {
+    it('should call the api client and fetch allocations', async () => {
+      const allocations = [
+        {
+          id: 9,
+          prisonerNumber: 'ABC123',
+        },
+        {
+          id: 10,
+          prisonerNumber: 'ABC321',
+        },
+        {
+          id: 11,
+          prisonerNumber: 'ZXY123',
+        },
+      ] as Allocation[]
+
+      when(activitiesApiClient.getAllocations)
+        .calledWith(1, user)
+        .mockResolvedValueOnce([
+          {
+            id: 9,
+            prisonerNumber: 'ABC123',
+          },
+          {
+            id: 10,
+            prisonerNumber: 'ABC321',
+          },
+          {
+            id: 11,
+            prisonerNumber: 'ZXY123',
+          },
+        ] as Allocation[])
+
+      const results = await activitiesService.getAllocations(1, user)
+
+      expect(activitiesApiClient.getAllocations).toHaveBeenCalledWith(1, user)
+      expect(results).toEqual(allocations)
+    })
+  })
+
+  describe('getAllocationsWithParams', () => {
+    it('should call the api client and fetch allocations', async () => {
+      const allocations = [
+        {
+          id: 9,
+          prisonerNumber: 'ABC123',
+        },
+        {
+          id: 10,
+          prisonerNumber: 'ABC321',
+        },
+        {
+          id: 11,
+          prisonerNumber: 'ZXY123',
+        },
+      ] as Allocation[]
+
+      when(activitiesApiClient.getAllocationsWithParams)
+        .calledWith(1, { date: '2023-01-01' }, user)
+        .mockResolvedValueOnce(allocations)
+
+      const results = await activitiesService.getAllocationsWithParams(1, { date: '2023-01-01' }, user)
+
+      expect(activitiesApiClient.getAllocationsWithParams).toHaveBeenCalledWith(1, { date: '2023-01-01' }, user)
+      expect(results).toEqual(allocations)
+    })
   })
 })

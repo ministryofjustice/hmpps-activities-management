@@ -7,7 +7,7 @@ import AttendanceListPage from '../pages/recordAttendance/attendanceList'
 import CancelSessionReason from '../pages/recordAttendance/cancelSessionReason'
 import CancelSessionConfirm from '../pages/recordAttendance/cancelSessionConfirm'
 import UncancelSessionConfirm from '../pages/recordAttendance/uncancelSessionConfirm'
-import getScheduledInstances from '../fixtures/activitiesApi/getScheduledInstancesMdi20230202.json'
+import getAttendanceSummary from '../fixtures/activitiesApi/getAttendanceSummary.json'
 import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance93.json'
 import getCancelledScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance-cancelled.json'
 import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
@@ -29,8 +29,8 @@ context('Record attendance', () => {
 
     cy.stubEndpoint(
       'GET',
-      `/prisons/MDI/scheduled-instances\\?startDate=${today}&endDate=${today}`,
-      getScheduledInstances,
+      `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,
+      getAttendanceSummary,
     )
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents)

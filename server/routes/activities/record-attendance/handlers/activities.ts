@@ -1,205 +1,87 @@
 import { Request, Response } from 'express'
-import _ from 'lodash'
+import { addDays, startOfDay } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
-import { convertToArray, formatDate, getAttendanceSummary, getTimeSlotFromTime, toDate } from '../../../../utils/utils'
-import { FilterItem, ActivitiesFilters } from '../../../../@types/activities'
+import { asString, convertToArray, formatDate, getTimeSlotFromTime, toDate } from '../../../../utils/utils'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
+import TimeSlot from '../../../../enum/timeSlot'
 
 export default class ActivitiesRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const activityDate = req.query.date ? toDate(req.query.date as string) : undefined
-    let { activitiesFilters } = req.session
+    const { date, searchTerm, sessionFilters, categoryFilters, locationFilters } = req.query
 
-    if (!activitiesFilters) {
-      const [categories] = await Promise.all([this.activitiesService.getActivityCategories(user)])
-      activitiesFilters = defaultFilters(activityDate, '', categories)
-      req.session.activitiesFilters = activitiesFilters
+    const activityDate = date ? toDate(asString(date)) : new Date()
+
+    if (startOfDay(activityDate) > startOfDay(addDays(new Date(), 60))) return res.redirect('select-period')
+
+    const [categories, activityAttendanceSummary] = await Promise.all([
+      this.activitiesService.getActivityCategories(user),
+      this.activitiesService.getScheduledInstanceAttendanceSummary(user.activeCaseLoadId, activityDate, user),
+    ])
+
+    const filterValues = {
+      sessionFilters: sessionFilters !== undefined ? asString(sessionFilters).split(',') : null,
+      categoryFilters: categoryFilters !== undefined ? asString(categoryFilters).split(',') : null,
+      locationFilters: locationFilters !== undefined ? asString(locationFilters).split(',') : null,
     }
 
-    if (activityDate === undefined) {
-      return res.redirect('select-period')
+    const selectedCategoryIds = categories
+      .filter(c => filterValues.categoryFilters?.includes(c.code) ?? true)
+      .map(c => c.id)
+
+    const filteredActivities = activityAttendanceSummary
+      .filter(a => (searchTerm ? a.summary.toLowerCase().includes(asString(searchTerm).toLowerCase()) : true))
+      .filter(a => filterValues.sessionFilters?.includes(getTimeSlotFromTime(a.startTime)) ?? true)
+      .filter(a => selectedCategoryIds?.includes(a.categoryId) ?? true)
+      .filter(a => filterValues.locationFilters?.includes(a.inCell ? 'IN_CELL' : 'OUT_OF_CELL') ?? true)
+
+    const activitiesBySession = {
+      am: filteredActivities.filter(a => getTimeSlotFromTime(a.startTime) === TimeSlot.AM),
+      pm: filteredActivities.filter(a => getTimeSlotFromTime(a.startTime) === TimeSlot.PM),
+      ed: filteredActivities.filter(a => getTimeSlotFromTime(a.startTime) === TimeSlot.ED),
     }
-
-    const sessionFilters = activitiesFilters.sessionFilters
-      .filter(session => session.checked)
-      .map(session => session.value)
-
-    const categoryFilters = activitiesFilters.categoryFilters
-      .filter(category => category.checked)
-      .map(category => category.value)
-
-    const locationFilters = activitiesFilters.locationFilters
-      .filter(location => location.checked)
-      .map(location => location.value)
-
-    const activitiesModel = await this.activitiesService
-      .getScheduledActivitiesAtPrison(activityDate, user)
-      .then(scheduledActivities =>
-        scheduledActivities.map(activity => ({
-          id: activity.id,
-          name: activity.activitySchedule.activity.summary,
-          scheduleName: activity.activitySchedule.description,
-          category: activity.activitySchedule.activity.category.code,
-          location: activity.activitySchedule.internalLocation?.description,
-          inCell: activity.activitySchedule.activity.inCell,
-          onWing: activity.activitySchedule.activity.onWing,
-          offWing: activity.activitySchedule.activity.offWing,
-          timeSlot: getTimeSlotFromTime(activity.startTime),
-          time: `${activity.startTime} - ${activity.endTime}`,
-          cancelled: activity.cancelled,
-          ...getAttendanceSummary(activity.attendances),
-        })),
-      )
-      .then(scheduledActivities =>
-        scheduledActivities.filter(a => this.nameIncludesSearchTerm(a.name, activitiesFilters.searchTerm)),
-      )
-      .then(scheduledActivities =>
-        scheduledActivities.filter(a => sessionFilters.includes(a.timeSlot.toUpperCase()) === true),
-      )
-      .then(scheduledActivities => scheduledActivities.filter(a => categoryFilters.includes(a.category)))
-      .then(scheduledActivities =>
-        scheduledActivities.filter(a => locationFilters.includes(a.inCell ? 'IN_CELL' : 'OUT_OF_CELL')),
-      )
-      .then(scheduledActivities => ({
-        ..._.groupBy(scheduledActivities, 'timeSlot'),
-        ...{ length: scheduledActivities.length },
-      }))
 
     return res.render('pages/activities/record-attendance/activities', {
-      activities: activitiesModel,
+      activitiesBySession,
       activityDate,
-      activitiesFilters,
+      filterItems: filterItems(categories, filterValues),
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { activitiesFilters } = req.session
-    const activityDate = req.query.date ? toDate(req.query.date as string) : undefined
-    activitiesFilters.searchTerm = req.body?.searchTerm ? (req.body?.searchTerm as string) : ''
-    const isoDateString = formatDate(new Date(activityDate), 'yyyy-MM-dd')
+    const { searchTerm, sessionFilters, categoryFilters, locationFilters } = req.body
 
-    req.session.activitiesFilters = parseFiltersFromPost(
-      activitiesFilters,
-      req.body?.sessionFilters,
-      req.body?.categoryFilters,
-      req.body?.locationFilters,
-    )
-    res.redirect(`activities?date=${isoDateString}`)
+    const activityDate = req.query.date ?? formatDate(new Date(), 'YYYY-MM-dd')
+    const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''
+    const categoryFiltersString = categoryFilters ? convertToArray(categoryFilters).join(',') : ''
+    const locationFiltersString = locationFilters ? convertToArray(locationFilters).join(',') : ''
+
+    const redirectUrl =
+      `activities?date=${activityDate}&searchTerm=${searchTerm ?? ''}` +
+      `&sessionFilters=${sessionFiltersString}` +
+      `&categoryFilters=${categoryFiltersString}` +
+      `&locationFilters=${locationFiltersString}`
+    res.redirect(redirectUrl)
   }
-
-  FILTERS = async (req: Request, res: Response): Promise<void> => {
-    const { clearFilters, clearSession, clearCategory } = req.query
-    let { activitiesFilters } = req.session
-
-    activitiesFilters = amendFilters(
-      activitiesFilters,
-      clearFilters as string,
-      clearSession as string,
-      clearCategory as string,
-    )
-    req.session.activitiesFilters = activitiesFilters
-
-    // Reconstruct the query parameters from the amended filters
-    const { activityDate } = activitiesFilters
-
-    // Important - during serialization to/from session storage the date object is altered to a string
-    const isoDateString = formatDate(new Date(activityDate), 'yyyy-MM-dd')
-
-    res.redirect(`activities?date=${isoDateString}`)
-  }
-
-  private nameIncludesSearchTerm = (name: string, searchTerm: string) =>
-    !searchTerm || name.toLowerCase().includes(searchTerm.toLowerCase())
 }
 
-const defaultFilters = (activityDate: Date, searchTerm: string, categories: ActivityCategory[]): ActivitiesFilters => {
-  const categoryFilters: FilterItem[] = categories.map(category => ({
+const filterItems = (categories: ActivityCategory[], filterValues: { [key: string]: string[] }) => {
+  const categoryFilters = categories.map(category => ({
     value: category.code,
     text: category.name,
-    checked: true,
+    checked: filterValues.categoryFilters?.includes(category.code) ?? true,
   }))
   const sessionFilters = [
-    { value: 'AM', text: 'Morning (AM)', checked: true },
-    { value: 'PM', text: 'Afternoon (PM)', checked: true },
-    { value: 'ED', text: 'Evening (ED)', checked: true },
-  ] as FilterItem[]
-  const locationFilters: FilterItem[] = [
-    { value: 'IN_CELL', text: 'In cell', checked: true },
-    { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
-  ]
-  return {
-    activityDate,
-    searchTerm,
-    sessionFilters,
-    categoryFilters,
-    locationFilters,
-  } as ActivitiesFilters
-}
+    { value: 'am', text: 'Morning (AM)' },
+    { value: 'pm', text: 'Afternoon (PM)' },
+    { value: 'ed', text: 'Evening (ED)' },
+  ].map(c => ({ ...c, checked: filterValues.sessionFilters?.includes(c.value) ?? true }))
+  const locationFilters = [
+    { value: 'IN_CELL', text: 'In cell' },
+    { value: 'OUT_OF_CELL', text: 'Out of cell' },
+  ].map(c => ({ ...c, checked: filterValues.locationFilters?.includes(c.value) ?? true }))
 
-const amendFilters = (
-  activitiesFilters: ActivitiesFilters,
-  clearFilters: string,
-  clearSession: string,
-  clearCategory: string,
-): ActivitiesFilters => {
-  let newFilters = activitiesFilters
-  if (clearFilters) {
-    newFilters = defaultFilters(
-      activitiesFilters.activityDate,
-      activitiesFilters.searchTerm,
-      activitiesFilters.categories,
-    )
-  } else if (clearSession) {
-    newFilters = clearSessionItem(activitiesFilters, clearSession)
-  } else if (clearCategory) {
-    newFilters = clearCategoryItem(activitiesFilters, clearCategory)
-  }
-  return newFilters
-}
-
-const clearSessionItem = (activitiesFilters: ActivitiesFilters, session: string): ActivitiesFilters => {
-  const newSessionFilters = activitiesFilters.sessionFilters.map(s => {
-    return { value: s.value, text: s.text, checked: s.value === session ? false : s.checked }
-  })
-  const newFilters = activitiesFilters
-  newFilters.sessionFilters = newSessionFilters
-  return newFilters
-}
-
-const clearCategoryItem = (activitiesFilters: ActivitiesFilters, category: string): ActivitiesFilters => {
-  const newCategoryFilters = activitiesFilters.categoryFilters.map(c => {
-    return { value: c.value, text: c.text, checked: c.value === category ? false : c.checked }
-  })
-  const newFilters = activitiesFilters
-  newFilters.categoryFilters = newCategoryFilters
-  return newFilters
-}
-
-const parseFiltersFromPost = (
-  oldFilters: ActivitiesFilters,
-  sessions: string | string[],
-  categories: string | string[],
-  locations: string | string[],
-): ActivitiesFilters => {
-  const newFilters = oldFilters
-
-  newFilters.sessionFilters = oldFilters.sessionFilters.map(session => {
-    const checked = convertToArray(sessions).includes(session.value)
-    return { value: session.value, text: session.text, checked } as FilterItem
-  })
-
-  newFilters.categoryFilters = oldFilters.categoryFilters.map(category => {
-    const checked = convertToArray(categories).includes(category.value)
-    return { value: category.value, text: category.text, checked } as FilterItem
-  })
-
-  newFilters.locationFilters = oldFilters.locationFilters.map(location => {
-    const checked = convertToArray(locations).includes(location.value)
-    return { value: location.value, text: location.text, checked } as FilterItem
-  })
-
-  return newFilters
+  return { sessionFilters, categoryFilters, locationFilters }
 }

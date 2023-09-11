@@ -42,6 +42,7 @@ import {
   WaitingListApplicationRequest,
   WaitingListApplicationUpdateRequest,
   ActivitySummary,
+  GetAllocationsParams,
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
@@ -160,6 +161,14 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAllocations(id, user)
   }
 
+  async getAllocationsWithParams(
+    scheduledInstanceId: number,
+    params: GetAllocationsParams,
+    user: ServiceUser,
+  ): Promise<Allocation[]> {
+    return this.activitiesApiClient.getAllocationsWithParams(scheduledInstanceId, params, user)
+  }
+
   async getAllocation(allocationId: number, user: ServiceUser): Promise<Allocation> {
     return this.activitiesApiClient.getAllocation(allocationId, user)
   }
@@ -250,6 +259,10 @@ export default class ActivitiesService {
 
   async searchAppointments(prisonCode: string, request: AppointmentSearchRequest, user: ServiceUser) {
     return this.activitiesApiClient.searchAppointments(prisonCode, request, user)
+  }
+
+  async getScheduledInstanceAttendanceSummary(prisonCode: string, sessionDate: Date, user: ServiceUser) {
+    return this.activitiesApiClient.getScheduledInstanceAttendanceSummary(prisonCode, sessionDate, user)
   }
 
   async cancelAppointment(appointmentId: number, request: AppointmentCancelRequest, user: ServiceUser) {
