@@ -12,7 +12,7 @@
                         {{ e.summary | trim }}
                     </a>
                 {% elseif e.eventType === 'APPOINTMENT' and e.eventSource === 'SAA'%}
-                    <a href="/appointments/{{ e.appointmentId }}/occurrence/{{ e.appointmentOccurrenceId }}?preserveHistory=true"
+                    <a href="/appointments/{{ e.appointmentSeriesId }}/occurrence/{{ e.appointmentId }}?preserveHistory=true"
                     class="govuk-link govuk-link--no-visited-state">
                         {{ e.summary | trim }}
                     </a>
