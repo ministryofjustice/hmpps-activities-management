@@ -10,7 +10,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import {
   AppointmentCategorySummary,
   AppointmentLocationSummary,
-  AppointmentOccurrenceSearchResult,
+  AppointmentSearchResult,
 } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import PrisonService from '../../../../services/prisonService'
@@ -136,7 +136,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
     maxSequenceNumber: 6,
   }
 
-  const results = [appointment1, appointment2, appointment3] as AppointmentOccurrenceSearchResult[]
+  const results = [appointment1, appointment2, appointment3] as AppointmentSearchResult[]
 
   beforeEach(() => {
     req = {} as unknown as Request
@@ -175,7 +175,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
 
       expect(activitiesService.getAppointmentCategories).not.toHaveBeenCalled()
       expect(activitiesService.getAppointmentLocations).not.toHaveBeenCalled()
-      expect(activitiesService.searchAppointmentOccurrences).not.toHaveBeenCalled()
+      expect(activitiesService.searchAppointments).not.toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith(`?startDate=${toDateString(new Date())}`)
     })
 
@@ -188,7 +188,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
 
       expect(activitiesService.getAppointmentCategories).not.toHaveBeenCalled()
       expect(activitiesService.getAppointmentLocations).not.toHaveBeenCalled()
-      expect(activitiesService.searchAppointmentOccurrences).not.toHaveBeenCalled()
+      expect(activitiesService.searchAppointments).not.toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith(`?startDate=${toDateString(new Date())}`)
     })
 
@@ -197,7 +197,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         startDate: toDateString(today),
       }
 
-      when(activitiesService.searchAppointmentOccurrences)
+      when(activitiesService.searchAppointments)
         .calledWith(
           'MDI',
           {
@@ -244,7 +244,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         createdBy: user.username,
       }
 
-      when(activitiesService.searchAppointmentOccurrences)
+      when(activitiesService.searchAppointments)
         .calledWith(
           'MDI',
           {
@@ -287,7 +287,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         appointmentName: 'Doctors appointment (Medical - Doctor)',
       }
 
-      when(activitiesService.searchAppointmentOccurrences)
+      when(activitiesService.searchAppointments)
         .calledWith(
           'MDI',
           {

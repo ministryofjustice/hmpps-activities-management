@@ -5,7 +5,7 @@ import { uniq } from 'lodash'
 import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AppointmentOccurrenceSearchRequest } from '../../../../@types/activitiesAPI/types'
+import { AppointmentSearchRequest } from '../../../../@types/activitiesAPI/types'
 import { toDate, toDateString } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 
@@ -37,12 +37,12 @@ export default class SearchRoutes {
       internalLocationId: locationId ? +locationId : null,
       prisonerNumbers: prisonerNumber ? [prisonerNumber] : null,
       createdBy: createdBy && createdBy !== 'all' ? createdBy : null,
-    } as AppointmentOccurrenceSearchRequest
+    } as AppointmentSearchRequest
 
     const [categories, locations, appointments] = await Promise.all([
       this.activitiesService.getAppointmentCategories(user),
       this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user),
-      this.activitiesService.searchAppointmentOccurrences(user.activeCaseLoadId, request, user),
+      this.activitiesService.searchAppointments(user.activeCaseLoadId, request, user),
     ])
 
     const appointmentNameFilters = [

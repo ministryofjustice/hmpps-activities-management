@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { addHours, subMinutes } from 'date-fns'
 import AppointmentDetailsRoutes from './appointmentDetails'
-import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentSeriesDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 
 describe('Route Handlers - Appointment Details', () => {
@@ -35,7 +35,7 @@ describe('Route Handlers - Appointment Details', () => {
             sequenceNumber: 2,
           },
         ],
-      } as unknown as AppointmentDetails,
+      } as unknown as AppointmentSeriesDetails,
     } as unknown as Request
   })
 
@@ -48,7 +48,7 @@ describe('Route Handlers - Appointment Details', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/details/appointment', {
-        appointment: req.appointment,
+        appointment: req.appointmentSeries,
       })
     })
 
@@ -57,15 +57,15 @@ describe('Route Handlers - Appointment Details', () => {
       const todayOneMinuteInThePast = subMinutes(now, 1)
       const todayOneHourInTheFuture = addHours(now, 1)
 
-      req.appointment.occurrences[0].startDate = formatDate(todayOneMinuteInThePast, 'yyyy-MM-dd')
-      req.appointment.occurrences[0].startTime = formatDate(todayOneMinuteInThePast, 'HH:mm')
-      req.appointment.occurrences[1].startDate = formatDate(todayOneHourInTheFuture, 'yyyy-MM-dd')
-      req.appointment.occurrences[1].startTime = formatDate(todayOneHourInTheFuture, 'HH:mm')
+      req.appointmentSeries.occurrences[0].startDate = formatDate(todayOneMinuteInThePast, 'yyyy-MM-dd')
+      req.appointmentSeries.occurrences[0].startTime = formatDate(todayOneMinuteInThePast, 'HH:mm')
+      req.appointmentSeries.occurrences[1].startDate = formatDate(todayOneHourInTheFuture, 'yyyy-MM-dd')
+      req.appointmentSeries.occurrences[1].startTime = formatDate(todayOneHourInTheFuture, 'HH:mm')
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/details/appointment', {
-        appointment: req.appointment,
+        appointment: req.appointmentSeries,
       })
     })
   })

@@ -29,7 +29,7 @@ export default class CancellationReasonRoutes {
       return res.redirect('apply-to')
     }
 
-    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_OCCURRENCE
+    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_APPOINTMENT
 
     return res.redirect('confirm')
   }

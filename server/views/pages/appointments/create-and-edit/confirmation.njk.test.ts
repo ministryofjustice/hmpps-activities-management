@@ -5,7 +5,7 @@ import { addDays, format } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
-import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentSeriesDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/confirmation.njk')
@@ -14,7 +14,7 @@ describe('Views - Create Appointment - Check Answers', () => {
   let compiledTemplate: Template
   const tomorrow = addDays(new Date(), 1)
   const viewContext = {
-    appointment: {} as AppointmentDetails,
+    appointment: {} as AppointmentSeriesDetails,
   }
 
   const njkEnv = registerNunjucks()
@@ -34,7 +34,7 @@ describe('Views - Create Appointment - Check Answers', () => {
         },
       ],
       repeat: null,
-    } as AppointmentDetails
+    } as AppointmentSeriesDetails
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -65,7 +65,7 @@ describe('Views - Create Appointment - Check Answers', () => {
           period: repeatPeriod,
           count: 6,
         },
-      } as AppointmentDetails
+      } as AppointmentSeriesDetails
 
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -98,7 +98,7 @@ describe('Views - Create Appointment - Check Answers', () => {
           },
         ],
         repeat: null,
-      } as AppointmentDetails
+      } as AppointmentSeriesDetails
 
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 

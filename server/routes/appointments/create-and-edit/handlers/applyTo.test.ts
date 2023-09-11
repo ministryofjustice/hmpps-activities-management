@@ -92,16 +92,16 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
   describe('POST', () => {
     it('should save apply to in session and edit', async () => {
       req.body = {
-        applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+        applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.editAppointmentJourney.applyTo).toEqual(AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES)
+      expect(req.session.editAppointmentJourney.applyTo).toEqual(AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
       expect(editAppointmentService.edit).toHaveBeenCalledWith(
         req,
         res,
-        AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+        AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
       )
     })
   })
@@ -143,7 +143,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
 
     it('passes validation when valid apply to value is selected', async () => {
       const body = {
-        applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+        applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
       }
 
       const requestObject = plainToInstance(ApplyTo, body)

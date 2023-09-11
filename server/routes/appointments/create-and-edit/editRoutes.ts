@@ -14,9 +14,9 @@ import ReviewPrisoners from './handlers/reviewPrisoners'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyEditAppointmentJourneyHandler from '../../../middleware/emptyEditAppointmentJourneyHandler'
-import fetchAppointmentOccurrence from '../../../middleware/appointments/fetchAppointmentOccurrence'
-import EditAppointmentService from '../../../services/editAppointmentService'
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
+import EditAppointmentService from '../../../services/editAppointmentService'
+import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import CancellationReasonRoutes, { CancellationReason } from './handlers/cancellationReason'
@@ -43,8 +43,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
 
   router.get(
     '/start/cancel',
+    fetchAppointmentSeries(activitiesService),
     fetchAppointment(activitiesService),
-    fetchAppointmentOccurrence(activitiesService),
     startHandler.CANCEL,
   )
   get('/cancel/reason', cancellationReasonRoutes.GET, true)
@@ -57,8 +57,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   // Edit property routes
   router.get(
     '/start/:property',
+    fetchAppointmentSeries(activitiesService),
     fetchAppointment(activitiesService),
-    fetchAppointmentOccurrence(activitiesService),
     startHandler.EDIT,
   )
   get('/location', locationRoutes.GET, true)
@@ -76,8 +76,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   // Remove prisoner routes
   router.get(
     '/start/:prisonNumber/remove',
+    fetchAppointmentSeries(activitiesService),
     fetchAppointment(activitiesService),
-    fetchAppointmentOccurrence(activitiesService),
     startHandler.REMOVE_PRISONER,
   )
   get('/:prisonNumber/remove/confirm', confirmEditRoutes.GET, true)
@@ -93,8 +93,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
 
   router.get(
     '/start/prisoners/add',
+    fetchAppointmentSeries(activitiesService),
     fetchAppointment(activitiesService),
-    fetchAppointmentOccurrence(activitiesService),
     startHandler.ADD_PRISONERS,
   )
   get('/prisoners/add/how-to-add-prisoners', howToAddPrisoners.GET, true)

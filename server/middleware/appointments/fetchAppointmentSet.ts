@@ -5,14 +5,14 @@ import ActivitiesService from '../../services/activitiesService'
 export default (activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
     const { user } = res.locals
-    const { bulkAppointment } = req
-    const bulkAppointmentId = +req.params.bulkAppointmentId
+    const { appointmentSet } = req
+    const appointmentSetId = +req.params.appointmentSetId
     try {
-      if (bulkAppointment?.id !== bulkAppointmentId) {
-        req.bulkAppointment = await activitiesService.getBulkAppointmentDetails(bulkAppointmentId, user)
+      if (appointmentSet?.id !== appointmentSetId) {
+        req.appointmentSet = await activitiesService.getAppointmentSetDetails(appointmentSetId, user)
       }
     } catch (error) {
-      logger.error(error, `Failed to fetch bulk appointment, id: ${bulkAppointmentId}`)
+      logger.error(error, `Failed to fetch bulk appointment, id: ${appointmentSetId}`)
       return next(error)
     }
     return next()

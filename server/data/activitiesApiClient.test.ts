@@ -12,22 +12,22 @@ import {
   LocationPrefix,
   PrisonerAllocations,
   PrisonerScheduledEvents,
-  Appointment,
+  AppointmentSeries,
+  AppointmentSeriesDetails,
   AppointmentDetails,
-  AppointmentOccurrenceDetails,
   AppointmentCategorySummary,
   AppointmentLocationSummary,
-  AppointmentCreateRequest,
+  AppointmentSeriesCreateRequest,
   PrisonerDeallocationRequest,
   EventAcknowledgeRequest,
   EventReview,
   EventReviewSearchResults,
-  BulkAppointmentsRequest,
-  IndividualAppointment,
-  BulkAppointmentDetails,
+  AppointmentSetCreateRequest,
+  AppointmentSetAppointment,
+  AppointmentSetDetails,
   WaitingListApplicationRequest,
   WaitingListApplicationUpdateRequest,
-  AppointmentOccurrenceUpdateRequest,
+  AppointmentUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -387,37 +387,37 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('getAppointmentDetails', () => {
-    it('should return appointment details from api when valid appointment id is used', async () => {
+  describe('getAppointmentSeriesDetails', () => {
+    it('should return appointment series details from api when valid appointment series id is used', async () => {
       const response = {
         id: 12345,
-      } as AppointmentDetails
+      } as AppointmentSeriesDetails
 
       fakeActivitiesApi
-        .get('/appointment-details/12345')
+        .get('/appointments/12345/details')
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
-      const output = await activitiesApiClient.getAppointmentDetails(12345, user)
+      const output = await activitiesApiClient.getAppointmentSeriesDetails(12345, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
   })
 
-  describe('getAppointmentOccurrenceDetails', () => {
-    it('should return appointment occurrence details from api when valid appointment occurrence id is used', async () => {
+  describe('getAppointmentDetails', () => {
+    it('should return appointment details from api when valid appointment id is used', async () => {
       const response = {
         id: 123456,
-      } as AppointmentOccurrenceDetails
+      } as AppointmentDetails
 
       fakeActivitiesApi
-        .get('/appointment-occurrence-details/123456')
+        .get('/appointments/123456/details')
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
-      const output = await activitiesApiClient.getAppointmentOccurrenceDetails(123456, user)
+      const output = await activitiesApiClient.getAppointmentDetails(123456, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
@@ -484,8 +484,8 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('postCreateAppointment', () => {
-    it('should return created appointment from api when valid request is sent', async () => {
+  describe('postCreateAppointmentSeries', () => {
+    it('should return created appointment series from api when valid request is sent', async () => {
       const request = {
         categoryCode: 'CHAP',
         prisonCode: 'SKI',
@@ -494,11 +494,11 @@ describe('activitiesApiClient', () => {
         startDate: '2023-02-07',
         startTime: '09:00',
         endTime: '10:30',
-        comment: 'This appointment will help adjusting to life outside of prison',
-        appointmentDescription: 'Appointment description',
+        extraInformation: 'This appointment will help adjusting to life outside of prison',
+        customName: 'Appointment description',
         prisonerNumbers: ['A1234BC'],
         appointmentType: AppointmentType.INDIVIDUAL,
-      } as AppointmentCreateRequest
+      } as AppointmentSeriesCreateRequest
 
       const response = {
         id: 12345,
@@ -509,21 +509,21 @@ describe('activitiesApiClient', () => {
         startDate: '2023-02-07',
         startTime: '09:00',
         endTime: '10:30',
-        comment: 'This appointment will help adjusting to life outside of prison',
-        appointmentDescription: 'Appointment description',
-        created: '2023-02-07T15:37:59.266Z',
+        extraInformation: 'This appointment will help adjusting to life outside of prison',
+        customName: 'Appointment description',
+        createdTime: '2023-02-07T15:37:59.266Z',
         createdBy: 'AAA01U',
-        occurrences: [
+        appointments: [
           {
             id: 123456,
             internalLocationId: 123,
             startDate: '2023-02-07',
             startTime: '13:00',
             endTime: '13:30',
-            comment: 'This appointment occurrence has been rescheduled due to staff availability',
-            updated: '2023-02-07T15:37:59.266Z',
-            updatedBy: 'AAA01U',
-            allocations: [
+            extraInformation: 'This appointment has been rescheduled due to staff availability',
+            createdTime: '2023-02-07T15:37:59.266Z',
+            createdBy: 'AAA01U',
+            attendees: [
               {
                 id: 123456,
                 prisonerNumber: 'A1234BC',
@@ -532,15 +532,15 @@ describe('activitiesApiClient', () => {
             ],
           },
         ],
-      } as Appointment
+      } as AppointmentSeries
 
       fakeActivitiesApi
-        .post('/appointments', request)
+        .post('/appointment-series', request)
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
-      const output = await activitiesApiClient.postCreateAppointment(request, user)
+      const output = await activitiesApiClient.postCreateAppointmentSeries(request, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
@@ -582,22 +582,22 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('patchAppointmentOccurrence', () => {
-    it('should update an appointment occurrence', async () => {
+  describe('patchUpdateAppointment', () => {
+    it('should update an appointment', async () => {
       fakeActivitiesApi
-        .patch('/appointment-occurrences/1')
+        .patch('/appointments/1')
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
-        .reply(200)
+        .reply(201)
 
       const body = {
         startDate: '2023-02-07',
         startTime: '13:00',
         endTime: '13:30',
-        applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
-      } as AppointmentOccurrenceUpdateRequest
+        applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+      } as AppointmentUpdateRequest
 
-      await activitiesApiClient.editAppointmentOccurrence(1, body, user)
+      await activitiesApiClient.patchUpdateAppointment(1, body, user)
       expect(nock.isDone()).toBe(true)
     })
   })
@@ -626,7 +626,7 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('postCreateBulkAppointment', () => {
+  describe('postCreateAppointmentSet', () => {
     it('should successfully post data to api', async () => {
       const request = {
         prisonCode: 'MDI',
@@ -635,10 +635,10 @@ describe('activitiesApiClient', () => {
         inCell: false,
         startDate: '2023-05-16',
         appointments: [
-          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30', comment: '' } as IndividualAppointment,
-          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00', comment: '' } as IndividualAppointment,
+          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30', comment: '' } as AppointmentSetAppointment,
+          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00', comment: '' } as AppointmentSetAppointment,
         ],
-      } as BulkAppointmentsRequest
+      } as AppointmentSetCreateRequest
 
       const response = {
         id: 10,
@@ -653,31 +653,31 @@ describe('activitiesApiClient', () => {
       }
 
       fakeActivitiesApi
-        .post('/bulk-appointments', request)
+        .post('/appointment-set', request)
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
-      const output = await activitiesApiClient.postCreateBulkAppointment(request, user)
+      const output = await activitiesApiClient.postCreateAppointmentSet(request, user)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
   })
 
-  describe('getBulkAppointmentDetails', () => {
-    it('should return bulk appointment details from api when valid bulk appointment id is used', async () => {
+  describe('getAppointmentSetDetails', () => {
+    it('should return appointment set details from api when valid appointment set id is used', async () => {
       const response = {
         id: 12345,
-      } as BulkAppointmentDetails
+      } as AppointmentSetDetails
 
       fakeActivitiesApi
-        .get('/bulk-appointment-details/12345')
+        .get('/appointment-set/12345/details')
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
-      const output = await activitiesApiClient.getBulkAppointmentDetails(12345, user)
+      const output = await activitiesApiClient.getAppointmentSetDetails(12345, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })

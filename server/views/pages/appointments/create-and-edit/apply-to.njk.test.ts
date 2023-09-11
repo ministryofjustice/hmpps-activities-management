@@ -20,16 +20,16 @@ describe('Views - Appointments Management - Apply to', () => {
   const weekTomorrow = addDays(new Date(), 8)
   const applyToOptions = [
     {
-      applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+      applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
       description: `Just this one - ${formatDate(weekTomorrow, 'EEEE, d MMMM yyyy')} (2 of 3)`,
     },
     {
-      applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+      applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
       description: 'This one and the appointment that comes after it in the series',
       additionalDescription: `You’re changing appointments 2 to 3`,
     },
     {
-      applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
+      applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
       description: 'This one and all the appointments in the series that haven’t happened yet',
       additionalDescription: `You’re changing appointments 1 to 2`,
     },

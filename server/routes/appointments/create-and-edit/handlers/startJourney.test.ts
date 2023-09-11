@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import StartJourneyRoutes from './startJourney'
-import { AppointmentDetails, AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentSeriesDetails, AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { parseDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { YesNo } from '../../../../@types/activities'
@@ -32,7 +32,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         startDate: '2023-04-27',
       },
     ],
-  } as unknown as AppointmentDetails
+  } as unknown as AppointmentSeriesDetails
   const appointmentOccurrence = {
     id: 12,
     appointmentId: 2,
@@ -68,7 +68,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         cellLocation: '2-2-2',
       },
     ],
-  } as AppointmentOccurrenceDetails
+  } as AppointmentDetails
 
   beforeEach(() => {
     res = {
@@ -286,7 +286,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
     })
 
     it('should accept an invalid end date value', async () => {
-      req.appointmentOccurrence.endTime = null
+      req.appointment.endTime = null
       req.params = {
         property: 'location',
       }
@@ -368,7 +368,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
     })
 
     it('should populate the session with prisoner details and redirect to confirm', async () => {
-      req.appointment = {
+      req.appointmentSeries = {
         ...appointment,
         occurrences: [
           {
@@ -377,7 +377,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
             startDate: '2023-04-20',
           },
         ],
-      } as unknown as AppointmentDetails
+      } as unknown as AppointmentSeriesDetails
       req.params = {
         prisonNumber: 'A1234BC',
       }
@@ -397,7 +397,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
           lastName: 'PRISONER01',
           cellLocation: '1-1-1',
         },
-        applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+        applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
       } as EditAppointmentJourney
 
       await handler.REMOVE_PRISONER(req, res)

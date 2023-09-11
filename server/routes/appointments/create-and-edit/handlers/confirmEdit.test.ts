@@ -56,7 +56,7 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
             },
           ],
           sequenceNumber: 2,
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
         } as EditAppointmentJourney,
       },
       params: {
@@ -101,7 +101,7 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
 
       await handler.POST(req, res)
 
-      expect(editAppointmentService.edit).toHaveBeenCalledWith(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
+      expect(editAppointmentService.edit).toHaveBeenCalledWith(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
     })
   })
 

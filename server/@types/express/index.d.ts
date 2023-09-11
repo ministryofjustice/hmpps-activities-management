@@ -10,7 +10,7 @@ import { RecordAttendanceRequests } from '../../routes/activities/record-attenda
 
 // eslint-disable-next-line import/no-cycle
 import { ActivitiesFilters } from '../activities'
-import { AppointmentDetails, AppointmentOccurrenceDetails, BulkAppointmentDetails } from '../activitiesAPI/types'
+import { AppointmentSeriesDetails, AppointmentDetails, AppointmentSetDetails } from '../activitiesAPI/types'
 import { BulkAppointmentJourney } from '../../routes/appointments/create-and-edit/bulkAppointmentJourney'
 import { DeallocateFromActivityJourney } from '../../routes/activities/deallocate-from-activity/journey'
 import { AttendanceSummaryJourney } from '../../routes/activities/daily-attendance-summary/journey'
@@ -81,9 +81,9 @@ export declare global {
       verified?: boolean
       id: string
       logout(done: (err: unknown) => void): void
+      appointmentSeries?: AppointmentSeriesDetails
       appointment?: AppointmentDetails
-      appointmentOccurrence?: AppointmentOccurrenceDetails
-      bulkAppointment?: BulkAppointmentDetails
+      appointmentSet?: AppointmentSetDetails
     }
   }
 }

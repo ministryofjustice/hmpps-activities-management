@@ -22,12 +22,12 @@ import ReviewPrisoners from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
-import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
+import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
 import EditAppointmentService from '../../../services/editAppointmentService'
 import UploadBulkAppointment, { AppointmentsList } from './handlers/bulk-appointments/uploadBulkAppointment'
 import BulkAppointmentDateRoutes, { BulkAppointmentDate } from './handlers/bulk-appointments/bulkAppointmentDate'
 import ReviewBulkAppointment, { AppointmentTimes } from './handlers/bulk-appointments/reviewBulkAppointment'
-import fetchBulkAppointment from '../../../middleware/appointments/fetchBulkAppointment'
+import fetchAppointmentSet from '../../../middleware/appointments/fetchAppointmentSet'
 import ScheduleRoutes from './handlers/schedule'
 
 export default function Create({ prisonService, activitiesService }: Services): Router {
@@ -104,7 +104,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   post('/check-answers', checkAnswersHandler.POST)
   router.get(
     '/confirmation/:appointmentId',
-    fetchAppointment(activitiesService),
+    fetchAppointmentSeries(activitiesService),
     emptyAppointmentJourneyHandler(true),
     asyncMiddleware(confirmationHandler.GET),
   )
@@ -119,7 +119,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   post('/review-bulk-appointment', reviewBulkAppointment.POST, AppointmentTimes)
   router.get(
     '/bulk-appointments-confirmation/:bulkAppointmentId',
-    fetchBulkAppointment(activitiesService),
+    fetchAppointmentSet(activitiesService),
     emptyAppointmentJourneyHandler(true),
     asyncMiddleware(confirmationHandler.GET_BULK),
   )

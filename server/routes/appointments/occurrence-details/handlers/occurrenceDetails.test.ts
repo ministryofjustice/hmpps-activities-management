@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { addDays } from 'date-fns'
 import OccurrenceDetailsRoutes from './occurrenceDetails'
-import { AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 
 describe('Route Handlers - Appointment Occurrence Details', () => {
@@ -34,7 +34,7 @@ describe('Route Handlers - Appointment Occurrence Details', () => {
         appointmentId: 9,
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
         startTime: '23:59',
-      } as AppointmentOccurrenceDetails
+      } as AppointmentDetails
 
       req = {
         params: {

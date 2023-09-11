@@ -4,13 +4,13 @@ import BulkAppointmentDetailsRoutes from './handlers/bulkAppointmentDetails'
 import BulkAppointmentMovementSlipRoutes from './handlers/bulkAppointmentMovementSlip'
 
 import { Services } from '../../../services'
-import fetchBulkAppointment from '../../../middleware/appointments/fetchBulkAppointment'
+import fetchAppointmentSet from '../../../middleware/appointments/fetchAppointmentSet'
 
 export default function Index({ activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) =>
-    router.get(path, fetchBulkAppointment(activitiesService), asyncMiddleware(handler))
+    router.get(path, fetchAppointmentSet(activitiesService), asyncMiddleware(handler))
 
   const bulkAppointmentDetailsHandler = new BulkAppointmentDetailsRoutes()
   const bulkAppointmentMovementSlipHandler = new BulkAppointmentMovementSlipRoutes()

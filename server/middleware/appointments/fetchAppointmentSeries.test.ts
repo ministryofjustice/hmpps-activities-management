@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { AppointmentOccurrenceDetails } from '../../@types/activitiesAPI/types'
+import fetchAppointmentSeries from './fetchAppointmentSeries'
+import { AppointmentSeriesDetails } from '../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../@types/express'
 import ActivitiesService from '../../services/activitiesService'
-import fetchAppointmentOccurrence from './fetchAppointmentOccurrence'
 
 jest.mock('../../services/activitiesService')
 
@@ -14,14 +14,13 @@ const next = jest.fn()
 
 const activitiesServiceMock = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
-const middleware = fetchAppointmentOccurrence(activitiesServiceMock)
+const middleware = fetchAppointmentSeries(activitiesServiceMock)
 
-describe('fetchAppointment', () => {
+describe('fetchAppointmentSeries', () => {
   beforeEach(() => {
     req = {
       params: {
-        appointmentId: 2,
-        occurrenceId: 123,
+        appointmentSeriesId: 123,
       },
     } as unknown as Request
     res = {
@@ -37,8 +36,8 @@ describe('fetchAppointment', () => {
     jest.resetAllMocks()
   })
 
-  it('should retrieve appointment occurrence from route param', async () => {
-    const occurrenceDetails = {
+  it('should retrieve appointment from route param', async () => {
+    const appointmentSeriesDetails = {
       id: 123,
       category: {
         code: 'CHAP',
@@ -48,20 +47,20 @@ describe('fetchAppointment', () => {
       startTime: '09:00',
       endTime: '10:30',
       appointmentType: 'INDIVIDUAL',
-    } as unknown as AppointmentOccurrenceDetails
+    } as unknown as AppointmentSeriesDetails
 
-    when(activitiesServiceMock.getAppointmentOccurrenceDetails)
+    when(activitiesServiceMock.getAppointmentSeriesDetails)
       .calledWith(123, res.locals.user)
-      .mockResolvedValue(occurrenceDetails)
+      .mockResolvedValue(appointmentSeriesDetails)
 
     await middleware(req, res, next)
 
-    expect(req.appointmentOccurrence).toEqual(occurrenceDetails)
+    expect(req.appointmentSeries).toEqual(appointmentSeriesDetails)
     expect(next).toBeCalledTimes(1)
   })
 
-  it('should catch errors while retrieving appointment occurrence and pass to next', async () => {
-    when(activitiesServiceMock.getAppointmentOccurrenceDetails)
+  it('should catch errors while retrieving appointment and pass to next', async () => {
+    when(activitiesServiceMock.getAppointmentSeriesDetails)
       .calledWith(123, res.locals.user)
       .mockRejectedValue(new Error('Some error'))
 

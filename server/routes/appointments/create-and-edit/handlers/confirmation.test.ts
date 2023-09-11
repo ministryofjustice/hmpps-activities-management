@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import ConfirmationRoutes from './confirmation'
-import { AppointmentDetails, BulkAppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentSeriesDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
 
 describe('Route Handlers - Create Appointment - Confirmation', () => {
   const handler = new ConfirmationRoutes()
@@ -48,8 +48,8 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
         },
         bulkAppointmentJourney: {},
       },
-      appointment: {} as AppointmentDetails,
-      bulkAppointment: {} as BulkAppointmentDetails,
+      appointment: {} as AppointmentSeriesDetails,
+      bulkAppointment: {} as AppointmentSetDetails,
       params: {
         id: '1',
       },
@@ -64,7 +64,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should render the confirmation page with appointment details', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
-        appointment: req.appointment,
+        appointment: req.appointmentSeries,
       })
     })
 
@@ -78,7 +78,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should render the confirmation page with bulk appointment details', async () => {
       await handler.GET_BULK(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
-        bulkAppointment: req.bulkAppointment,
+        bulkAppointment: req.appointmentSet,
       })
     })
 

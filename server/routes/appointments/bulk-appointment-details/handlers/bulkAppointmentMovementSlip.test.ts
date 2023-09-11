@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 
 import BulkAppointmentMovementSlipRoutes from './bulkAppointmentMovementSlip'
-import { AppointmentOccurrenceDetails, BulkAppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -28,7 +28,7 @@ describe('Route Handlers - Movement Slip', () => {
       bulkAppointment: {
         id: '12',
         occurrences: [],
-      } as unknown as BulkAppointmentDetails,
+      } as unknown as AppointmentSetDetails,
     } as unknown as Request
   })
 
@@ -41,24 +41,24 @@ describe('Route Handlers - Movement Slip', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/bulk-appointment', {
-        bulkAppointment: req.bulkAppointment,
+        bulkAppointment: req.appointmentSet,
       })
     })
 
     it('should only render movement slips for occurrences that are not cancelled and not expired', async () => {
-      req.bulkAppointment.occurrences = [
+      req.appointmentSet.occurrences = [
         {
           isCancelled: false,
           isExpired: true,
-        } as unknown as AppointmentOccurrenceDetails,
+        } as unknown as AppointmentDetails,
         {
           isCancelled: true,
           isExpired: false,
-        } as unknown as AppointmentOccurrenceDetails,
+        } as unknown as AppointmentDetails,
         {
           isCancelled: false,
           isExpired: false,
-        } as unknown as AppointmentOccurrenceDetails,
+        } as unknown as AppointmentDetails,
       ]
 
       await handler.GET(req, res)
@@ -70,9 +70,9 @@ describe('Route Handlers - Movement Slip', () => {
             {
               isCancelled: false,
               isExpired: false,
-            } as unknown as AppointmentOccurrenceDetails,
+            } as unknown as AppointmentDetails,
           ],
-        } as unknown as BulkAppointmentDetails,
+        } as unknown as AppointmentSetDetails,
       })
     })
   })

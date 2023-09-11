@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 
 import OccurrenceMovementSlipRoutes from './occurrenceMovementSlip'
-import { AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -39,7 +39,7 @@ describe('Route Handlers - Movement Slip', () => {
     updated: null,
     updatedBy: null,
     prisoners: [{ prisonerNumber: 'A1350DZ' }],
-  } as AppointmentOccurrenceDetails
+  } as AppointmentDetails
 
   beforeEach(() => {
     res = {

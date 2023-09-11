@@ -3,7 +3,7 @@ import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
-import { AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 
@@ -12,8 +12,8 @@ const view = fs.readFileSync('server/views/pages/appointments/occurrence-details
 describe('Views - Appointments Management - Appointment Occurrence Details', () => {
   let compiledTemplate: Template
   const tomorrow = addDays(new Date(), 1)
-  let viewContext: { occurrence: AppointmentOccurrenceDetails } = {
-    occurrence: {} as AppointmentOccurrenceDetails,
+  let viewContext: { occurrence: AppointmentDetails } = {
+    occurrence: {} as AppointmentDetails,
   }
 
   const njkEnv = registerNunjucks()
@@ -39,7 +39,7 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
         isCancelled: false,
         isExpired: false,
         created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
-      } as AppointmentOccurrenceDetails,
+      } as AppointmentDetails,
     }
   })
 
@@ -105,7 +105,7 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
         isCancelled: false,
         isExpired: false,
         created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
-      } as AppointmentOccurrenceDetails,
+      } as AppointmentDetails,
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))

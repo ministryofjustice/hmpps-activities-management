@@ -4,7 +4,7 @@ import ActivitiesService from './activitiesService'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { AppointmentCancellationReason, AppointmentApplyTo } from '../@types/appointments'
-import { AppointmentOccurrenceCancelRequest, AppointmentOccurrenceUpdateRequest } from '../@types/activitiesAPI/types'
+import { AppointmentCancelRequest, AppointmentUpdateRequest } from '../@types/activitiesAPI/types'
 import SimpleDate from '../commonValidationTypes/simpleDate'
 import SimpleTime from '../commonValidationTypes/simpleTime'
 import { formatDate } from '../utils/utils'
@@ -32,7 +32,7 @@ export default class EditAppointmentService {
         return res.redirect(`${property}/apply-to`)
       }
 
-      return this.edit(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
+      return this.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
     }
 
     this.clearSession(req)
@@ -49,12 +49,12 @@ export default class EditAppointmentService {
       const { repeat } = appointmentJourney
       const { cancellationReason, bulkAppointment } = editAppointmentJourney
 
-      const cancelRequest: AppointmentOccurrenceCancelRequest = {
+      const cancelRequest: AppointmentCancelRequest = {
         cancellationReasonId: +cancellationReason,
         applyTo,
       }
 
-      await this.activitiesService.cancelAppointmentOccurrence(+occurrenceId, cancelRequest, user)
+      await this.activitiesService.cancelAppointment(+occurrenceId, cancelRequest, user)
 
       // For delete requests we can't redirect back to the occurrence page. Instead we should provide a more specific
       // error message and redirect back to a relevent page
@@ -95,7 +95,7 @@ export default class EditAppointmentService {
       return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
     }
 
-    const occurrenceUpdates = { applyTo } as AppointmentOccurrenceUpdateRequest
+    const occurrenceUpdates = { applyTo } as AppointmentUpdateRequest
 
     if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
       occurrenceUpdates.internalLocationId = editAppointmentJourney.location.id
@@ -104,8 +104,8 @@ export default class EditAppointmentService {
     if (hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)) {
       occurrenceUpdates.startDate = plainToInstance(SimpleDate, editAppointmentJourney.startDate).toIsoString()
       // TODO: This is a hack as the API doesn't currently support apply to all future occurrences for date
-      if (applyTo === AppointmentApplyTo.ALL_FUTURE_OCCURRENCES) {
-        occurrenceUpdates.applyTo = AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES
+      if (applyTo === AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS) {
+        occurrenceUpdates.applyTo = AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS
       }
     }
 
@@ -129,7 +129,7 @@ export default class EditAppointmentService {
       occurrenceUpdates.removePrisonerNumbers = [editAppointmentJourney.removePrisoner.prisonerNumber]
     }
 
-    await this.activitiesService.editAppointmentOccurrence(+occurrenceId, occurrenceUpdates, user)
+    await this.activitiesService.editAppointment(+occurrenceId, occurrenceUpdates, user)
 
     const successHeading = `You've ${this.getEditedMessage(
       appointmentJourney,
@@ -158,11 +158,11 @@ export default class EditAppointmentService {
   ) {
     if (appointmentJourney.repeat === YesNo.YES) {
       switch (applyTo) {
-        case AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES:
+        case AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS:
           return `appointments ${editAppointmentJourney.sequenceNumber} to ${
             getLastOccurrence(editAppointmentJourney).sequenceNumber
           } in ${backToSeries ? 'this' : 'the'} series`
-        case AppointmentApplyTo.ALL_FUTURE_OCCURRENCES:
+        case AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS:
           return `appointments ${getFirstOccurrence(editAppointmentJourney).sequenceNumber} to ${
             getLastOccurrence(editAppointmentJourney).sequenceNumber
           } in ${backToSeries ? 'this' : 'the'} series`

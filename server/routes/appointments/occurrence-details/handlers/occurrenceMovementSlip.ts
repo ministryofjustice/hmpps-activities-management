@@ -3,17 +3,17 @@ import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
 
 export default class OccurrenceMovementSlipRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentOccurrence } = req
+    const { appointment } = req
 
-    res.render('pages/appointments/movement-slip/occurrence', { appointmentOccurrence })
+    res.render('pages/appointments/movement-slip/occurrence', { appointment: appointmentOccurrence })
 
     const properties = {
       username: res.locals.user.username,
       prisonCode: res.locals.user.activeCaseLoadId,
-      appointmentId: appointmentOccurrence.appointmentId.toString(),
+      appointmentId: appointment.appointmentId.toString(),
     }
     const eventMetrics = {
-      movementSlipCount: appointmentOccurrence.prisoners.length,
+      movementSlipCount: appointment.prisoners.length,
     }
 
     trackEvent({

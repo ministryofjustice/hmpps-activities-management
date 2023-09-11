@@ -78,10 +78,10 @@ export default class StartJourneyRoutes {
   }
 
   REMOVE_PRISONER = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentOccurrence } = req
+    const { appointment } = req
     const { prisonNumber } = req.params
 
-    const prisoner = appointmentOccurrence.prisoners.filter(_ => _.prisonerNumber === prisonNumber)[0]
+    const prisoner = appointment.prisoners.filter(_ => _.prisonerNumber === prisonNumber)[0]
 
     if (!prisoner) return res.redirect('back')
 
@@ -93,7 +93,7 @@ export default class StartJourneyRoutes {
       return res.redirect('../remove/apply-to')
     }
 
-    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_OCCURRENCE
+    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_APPOINTMENT
 
     return res.redirect('../remove/confirm')
   }
@@ -112,29 +112,23 @@ export default class StartJourneyRoutes {
   }
 
   private populateEditSession(req: Request) {
-    const { appointment, appointmentOccurrence } = req
+    const { appointmentSeries, appointment } = req
 
-    const startDate = parseDate(appointmentOccurrence.startDate)
-    const startTime = parseDate(
-      `${appointmentOccurrence.startDate}T${appointmentOccurrence.startTime}`,
-      "yyyy-MM-dd'T'HH:mm",
-    )
-    const endTime = parseDate(
-      `${appointmentOccurrence.startDate}T${appointmentOccurrence.endTime}`,
-      "yyyy-MM-dd'T'HH:mm",
-    )
+    const startDate = parseDate(appointment.startDate)
+    const startTime = parseDate(`${appointment.startDate}T${appointment.startTime}`, "yyyy-MM-dd'T'HH:mm")
+    const endTime = parseDate(`${appointment.startDate}T${appointment.endTime}`, "yyyy-MM-dd'T'HH:mm")
 
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.EDIT,
-      type: AppointmentType[appointmentOccurrence.appointmentType],
-      appointmentName: appointment.appointmentName,
-      prisoners: appointmentOccurrence.prisoners.map(p => ({
+      type: AppointmentType[appointment.appointmentType],
+      appointmentName: appointmentSeries.appointmentName,
+      prisoners: appointment.prisoners.map(p => ({
         number: p.prisonerNumber,
         name: p.lastName !== 'UNKNOWN' ? `${p.firstName} ${p.lastName}` : null,
         cellLocation: p.cellLocation,
       })),
-      category: appointmentOccurrence.category,
-      location: appointmentOccurrence.internalLocation,
+      category: appointment.category,
+      location: appointment.internalLocation,
       startDate: {
         date: startDate,
         day: +formatDate(startDate, 'dd'),
@@ -147,10 +141,10 @@ export default class StartJourneyRoutes {
         minute: +formatDate(startTime, 'mm'),
       },
       endTime: null,
-      repeat: appointmentOccurrence.repeat ? YesNo.YES : YesNo.NO,
-      repeatPeriod: appointmentOccurrence.repeat?.period as AppointmentRepeatPeriod,
-      repeatCount: appointmentOccurrence.repeat?.count,
-      comment: appointmentOccurrence.comment,
+      repeat: appointment.repeat ? YesNo.YES : YesNo.NO,
+      repeatPeriod: appointment.repeat?.period as AppointmentRepeatPeriod,
+      repeatCount: appointment.repeat?.count,
+      comment: appointment.comment,
     }
 
     if (isValid(endTime)) {
@@ -162,13 +156,13 @@ export default class StartJourneyRoutes {
     }
 
     req.session.editAppointmentJourney = {
-      repeatCount: appointmentOccurrence.repeat?.count ?? 1,
-      occurrences: appointment.occurrences.map(occurrence => ({
+      repeatCount: appointment.repeat?.count ?? 1,
+      occurrences: appointmentSeries.occurrences.map(occurrence => ({
         sequenceNumber: occurrence.sequenceNumber,
         startDate: occurrence.startDate,
       })),
-      sequenceNumber: appointmentOccurrence.sequenceNumber,
-      bulkAppointment: appointmentOccurrence.bulkAppointment,
+      sequenceNumber: appointment.sequenceNumber,
+      bulkAppointment: appointment.bulkAppointment,
     }
   }
 }

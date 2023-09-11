@@ -2,12 +2,12 @@ import { Request, Response } from 'express'
 
 export default class BulkAppointmentDetailsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { bulkAppointment } = req
+    const { appointmentSet } = req
 
     res.render('pages/appointments/bulk-appointment-details/bulk-appointment', {
-      bulkAppointment,
+      appointmentSet,
       showPrintMovementSlipsLink:
-        bulkAppointment.occurrences.filter(occurrence => !occurrence.isCancelled && !occurrence.isExpired).length > 0,
+        appointmentSet.occurrences.filter(occurrence => !occurrence.isCancelled && !occurrence.isExpired).length > 0,
     })
   }
 }

@@ -501,7 +501,7 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (1 of 1)`,
         },
       ] as AppointmentApplyToOption[])
@@ -518,7 +518,7 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (4 of 4)`,
         },
       ] as AppointmentApplyToOption[])
@@ -529,11 +529,11 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (1 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: 'This one and all the appointments that come after it in the series',
           additionalDescription:
             "You're changing the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
@@ -556,11 +556,11 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (3 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: 'This one and all the appointments that come after it in the series',
           additionalDescription:
             "You're changing the following 2 appointments:<br>3 January 2023 (3 of 4) to 4 January 2023 (4 of 4)",
@@ -587,11 +587,11 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (1 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: 'This one and all the appointments that come after it in the series',
           additionalDescription:
             "You're changing the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
@@ -604,17 +604,17 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (2 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: 'This one and all the appointments that come after it in the series',
           additionalDescription:
             "You're changing the following 3 appointments:<br>2 January 2023 (2 of 4) to 4 January 2023 (4 of 4)",
         },
         {
-          applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
           description: "This one and all the appointments in the series that haven't happened yet",
           additionalDescription:
             "You're changing the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
@@ -627,17 +627,17 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (3 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: 'This one and the appointment that comes after it in the series',
           additionalDescription:
             "You're changing the following 2 appointments:<br>3 January 2023 (3 of 4) to 4 January 2023 (4 of 4)",
         },
         {
-          applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
           description: "This one and all the appointments in the series that haven't happened yet",
           additionalDescription:
             "You're changing the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
@@ -650,11 +650,11 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (4 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
           description: "This one and all the appointments in the series that haven't happened yet",
           additionalDescription:
             "You're changing the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",

@@ -4,11 +4,11 @@ import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import {
-  Appointment,
-  AppointmentCreateRequest,
-  BulkAppointment,
-  BulkAppointmentsRequest,
-  IndividualAppointment,
+  AppointmentSeries,
+  AppointmentSeriesCreateRequest,
+  AppointmentSet,
+  AppointmentSetCreateRequest,
+  AppointmentSetAppointment,
 } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
@@ -90,8 +90,8 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
   })
 
   describe('POST', () => {
-    let expectedRequest: AppointmentCreateRequest
-    let expectedResponse: Appointment
+    let expectedRequest: AppointmentSeriesCreateRequest
+    let expectedResponse: AppointmentSeries
 
     beforeEach(() => {
       expectedRequest = {
@@ -104,7 +104,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         startTime: '09:30',
         endTime: '13:00',
         prisonerNumbers: ['A1234BC'],
-      } as AppointmentCreateRequest
+      } as AppointmentSeriesCreateRequest
 
       expectedResponse = {
         id: 15,
@@ -135,16 +135,16 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             ],
           },
         ],
-      } as Appointment
+      } as AppointmentSeries
     })
 
     it('should create the appointment and redirect to confirmation page', async () => {
-      when(activitiesService.createAppointment)
+      when(activitiesService.createAppointmentSeries)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
-      expect(activitiesService.createAppointment).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/15')
     })
 
@@ -158,18 +158,18 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         count: 6,
       }
 
-      when(activitiesService.createAppointment)
+      when(activitiesService.createAppointmentSeries)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
-      expect(activitiesService.createAppointment).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
     })
   })
 
   describe('POST bulk', () => {
-    let expectedRequest: BulkAppointmentsRequest
-    let expectedResponse: BulkAppointment
+    let expectedRequest: AppointmentSetCreateRequest
+    let expectedResponse: AppointmentSet
 
     beforeEach(() => {
       req.session.appointmentJourney.type = AppointmentType.BULK
@@ -217,15 +217,15 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         inCell: false,
         startDate: '2023-04-23',
         appointments: [
-          { prisonerNumber: 'A1234BC', startTime: '13:30', endTime: '14:00' } as IndividualAppointment,
+          { prisonerNumber: 'A1234BC', startTime: '13:30', endTime: '14:00' } as AppointmentSetAppointment,
           {
             prisonerNumber: 'B2345CD',
             startTime: '14:00',
             endTime: '14:30',
             comment: 'Extra information for B2345CD',
-          } as IndividualAppointment,
+          } as AppointmentSetAppointment,
         ],
-      } as BulkAppointmentsRequest
+      } as AppointmentSetCreateRequest
 
       expectedResponse = {
         id: 14,
@@ -265,7 +265,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
                 ],
               },
             ],
-          } as Appointment,
+          } as AppointmentSeries,
           {
             id: 16,
             appointmentType: 'INDIVIDUAL',
@@ -295,18 +295,18 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
                 ],
               },
             ],
-          } as Appointment,
+          } as AppointmentSeries,
         ],
-      } as BulkAppointment
+      } as AppointmentSet
     })
 
     it('should create the bulk appointment and redirect to confirmation page', async () => {
-      when(activitiesService.createBulkAppointment)
+      when(activitiesService.createAppointmentSet)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
-      expect(activitiesService.createBulkAppointment).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(activitiesService.createAppointmentSet).toHaveBeenCalledWith(expectedRequest, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('bulk-appointments-confirmation/14')
     })
   })

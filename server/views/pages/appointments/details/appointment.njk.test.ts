@@ -4,7 +4,7 @@ import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
-import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentSeriesDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
 
@@ -22,7 +22,7 @@ const getRepeatCountValueElement = ($: CheerioAPI) => getAppointmentDetailsValue
 describe('Views - Appointments Management - Appointment Details', () => {
   let compiledTemplate: Template
   let viewContext = {
-    appointment: {} as AppointmentDetails,
+    appointment: {} as AppointmentSeriesDetails,
   }
 
   const njkEnv = registerNunjucks()
@@ -34,7 +34,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
       appointment: {
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
         created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
-      } as AppointmentDetails,
+      } as AppointmentSeriesDetails,
     }
   })
 
@@ -116,7 +116,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
         },
         isEdited: true,
       },
-    ] as unknown as AppointmentDetails['occurrences']
+    ] as unknown as AppointmentSeriesDetails['occurrences']
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
     expect($('[data-qa=occurrence-status-1]').text()).not.toContain('Edited')

@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
-import { AppointmentCreateRequest, BulkAppointmentsRequest } from '../../../../@types/activitiesAPI/types'
+import { AppointmentSeriesCreateRequest, AppointmentSetCreateRequest } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentType } from '../appointmentJourney'
 
@@ -22,11 +22,11 @@ export default class CheckAnswersRoutes {
     let response
     if (appointmentJourney.type === AppointmentType.BULK) {
       const request = this.createBulkAppointmentRequest(req, res)
-      response = await this.activitiesService.createBulkAppointment(request, user)
+      response = await this.activitiesService.createAppointmentSet(request, user)
       res.redirect(`bulk-appointments-confirmation/${response.id}`)
     } else {
       const request = this.createAppointmentRequest(req, res)
-      response = await this.activitiesService.createAppointment(request, user)
+      response = await this.activitiesService.createAppointmentSeries(request, user)
       res.redirect(`confirmation/${response.id}`)
     }
   }
@@ -47,7 +47,7 @@ export default class CheckAnswersRoutes {
       startTime: plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString(),
       endTime: plainToInstance(SimpleTime, appointmentJourney.endTime).toIsoString(),
       comment: appointmentJourney.comment,
-    } as AppointmentCreateRequest
+    } as AppointmentSeriesCreateRequest
 
     if (appointmentJourney.repeat === YesNo.YES) {
       request.repeat = {
@@ -76,6 +76,6 @@ export default class CheckAnswersRoutes {
         endTime: plainToInstance(SimpleTime, appointment.endTime).toIsoString(),
         comment: appointment.comment,
       })),
-    } as BulkAppointmentsRequest
+    } as AppointmentSetCreateRequest
   }
 }

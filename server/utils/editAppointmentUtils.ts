@@ -182,7 +182,7 @@ export const getAppointmentApplyToOptions = (req: Request) => {
 
   const applyToOptions = [
     {
-      applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+      applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
       description: `Just this one - ${formatDate(new Date(appointmentJourney.startDate.date), 'EEEE, d MMMM yyyy')} (${
         getOccurrence(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.sequenceNumber
       } of ${getLastOccurrence(editAppointmentJourney)?.sequenceNumber})`,
@@ -192,7 +192,7 @@ export const getAppointmentApplyToOptions = (req: Request) => {
   if (isApplyToQuestionRequired(editAppointmentJourney)) {
     if (isFirstRemainingOccurrence(editAppointmentJourney) || !isLastRemainingOccurrence(editAppointmentJourney)) {
       applyToOptions.push({
-        applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+        applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
         description: isSecondLastRemainingOccurrence(editAppointmentJourney)
           ? 'This one and the appointment that comes after it in the series'
           : 'This one and all the appointments that come after it in the series',
@@ -214,7 +214,7 @@ export const getAppointmentApplyToOptions = (req: Request) => {
       !hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)
     ) {
       applyToOptions.push({
-        applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
+        applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
         description: "This one and all the appointments in the series that haven't happened yet",
         additionalDescription: `You're ${getEditHintAction(appointmentJourney, editAppointmentJourney)} the following ${
           getLastOccurrence(editAppointmentJourney).sequenceNumber -

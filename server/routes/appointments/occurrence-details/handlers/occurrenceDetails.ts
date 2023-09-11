@@ -2,10 +2,10 @@ import { Request, Response } from 'express'
 
 export default class OccurrenceDetailsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentOccurrence } = req
+    const { appointment } = req
 
     res.render('pages/appointments/occurrence-details/occurrence', {
-      occurrence: appointmentOccurrence,
+      occurrence: appointment,
     })
   }
 }

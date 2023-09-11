@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 import { when } from 'jest-when'
-import fetchBulkAppointment from './fetchBulkAppointment'
-import { BulkAppointmentDetails } from '../../@types/activitiesAPI/types'
+import fetchAppointmentSet from './fetchAppointmentSet'
+import { AppointmentSetDetails } from '../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../@types/express'
 import ActivitiesService from '../../services/activitiesService'
 
@@ -14,13 +14,13 @@ const next = jest.fn()
 
 const activitiesServiceMock = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
-const middleware = fetchBulkAppointment(activitiesServiceMock)
+const middleware = fetchAppointmentSet(activitiesServiceMock)
 
-describe('fetchBulkAppointment', () => {
+describe('fetchAppointmentSet', () => {
   beforeEach(() => {
     req = {
       params: {
-        bulkAppointmentId: 123,
+        appointmentSetId: 123,
       },
     } as unknown as Request
     res = {
@@ -37,34 +37,34 @@ describe('fetchBulkAppointment', () => {
   it('should retrieve bulk appointment from route param', async () => {
     const bulkAppointmentDetails = {
       id: 123,
-    } as BulkAppointmentDetails
+    } as AppointmentSetDetails
 
-    when(activitiesServiceMock.getBulkAppointmentDetails)
+    when(activitiesServiceMock.getAppointmentSetDetails)
       .calledWith(123, res.locals.user)
       .mockResolvedValue(bulkAppointmentDetails)
 
     await middleware(req, res, next)
 
-    expect(req.bulkAppointment).toEqual(bulkAppointmentDetails)
+    expect(req.appointmentSet).toEqual(bulkAppointmentDetails)
     expect(next).toBeCalledTimes(1)
   })
 
   it('should not retrieve bulk appointment if already on request', async () => {
     const bulkAppointmentDetails = {
       id: 123,
-    } as BulkAppointmentDetails
+    } as AppointmentSetDetails
 
-    req.bulkAppointment = bulkAppointmentDetails
+    req.appointmentSet = bulkAppointmentDetails
 
     await middleware(req, res, next)
 
-    expect(activitiesServiceMock.getBulkAppointmentDetails).not.toBeCalled()
-    expect(req.bulkAppointment).toEqual(bulkAppointmentDetails)
+    expect(activitiesServiceMock.getAppointmentSetDetails).not.toBeCalled()
+    expect(req.appointmentSet).toEqual(bulkAppointmentDetails)
     expect(next).toBeCalledTimes(1)
   })
 
   it('should catch errors while retrieving bulk appointment and pass to next', async () => {
-    when(activitiesServiceMock.getBulkAppointmentDetails)
+    when(activitiesServiceMock.getAppointmentSetDetails)
       .calledWith(123, res.locals.user)
       .mockRejectedValue(new Error('Some error'))
 

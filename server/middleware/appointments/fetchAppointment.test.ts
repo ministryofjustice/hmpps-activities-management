@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express'
 import { when } from 'jest-when'
-import fetchAppointment from './fetchAppointment'
 import { AppointmentDetails } from '../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../@types/express'
 import ActivitiesService from '../../services/activitiesService'
+import fetchAppointment from './fetchAppointment'
 
 jest.mock('../../services/activitiesService')
 
@@ -36,7 +36,7 @@ describe('fetchAppointment', () => {
     jest.resetAllMocks()
   })
 
-  it('should retrieve appointment from route param', async () => {
+  it('should retrieve appointment occurrence from route param', async () => {
     const appointmentDetails = {
       id: 123,
       category: {
@@ -59,7 +59,7 @@ describe('fetchAppointment', () => {
     expect(next).toBeCalledTimes(1)
   })
 
-  it('should catch errors while retrieving appointment and pass to next', async () => {
+  it('should catch errors while retrieving appointment occurrence and pass to next', async () => {
     when(activitiesServiceMock.getAppointmentDetails)
       .calledWith(123, res.locals.user)
       .mockRejectedValue(new Error('Some error'))

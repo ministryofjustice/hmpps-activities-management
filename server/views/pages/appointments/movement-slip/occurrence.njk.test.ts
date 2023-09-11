@@ -3,7 +3,7 @@ import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
-import { AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 
@@ -17,7 +17,7 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
         description: 'Moorland (HMP & YOI)',
       },
     },
-    appointmentOccurrence: {} as AppointmentOccurrenceDetails,
+    appointmentOccurrence: {} as AppointmentDetails,
     now: new Date(),
   }
   const tomorrow = addDays(new Date(), 1)
@@ -64,7 +64,7 @@ describe('Views - Appointments Management - Occurrence Movement Slip', () => {
       },
       updated: null,
       updatedBy: null,
-    } as AppointmentOccurrenceDetails
+    } as AppointmentDetails
 
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
   })
