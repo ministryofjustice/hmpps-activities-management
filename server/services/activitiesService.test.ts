@@ -502,7 +502,9 @@ describe('Activities Service', () => {
       const journey: DeallocateFromActivityJourney = {
         allocationsToRemove: ['123456'],
         scheduleId: 1,
-        activityName: 'Maths',
+        activity: {
+          activityName: 'Maths',
+        },
         prisoners: [{ name: 'Fred', prisonerNumber: '123456', cellLocation: 'cell 1' }],
         deallocationDate: { day: 31, month: 5, year: 2023 } as SimpleDate,
         deallocationReason: 'PERSONAL',

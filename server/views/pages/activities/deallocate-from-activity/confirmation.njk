@@ -11,9 +11,9 @@
         <div class="govuk-grid-column-two-thirds">
             {% if deallocateJourney.allocationsToRemove | length == 1  %}
                 {% set title = "You've scheduled " + deallocateJourney.prisoners[0].name + ", " +
-                    deallocateJourney.prisoners[0].prisonerNumber + " to be taken off " + deallocateJourney.activityName %}
+                    deallocateJourney.prisoners[0].prisonerNumber + " to be taken off " + deallocateJourney.activity.activityName %}
             {% else %}
-                {% set title = "You've scheduled " + deallocateJourney.prisoners | length + " people to be taken off " + deallocateJourney.activityName %}
+                {% set title = "You've scheduled " + deallocateJourney.prisoners | length + " people to be taken off " + deallocateJourney.activity.activityName %}
             {% endif %}
 
             {{ govukPanel({
@@ -22,7 +22,7 @@
 
             {% if deallocateJourney.allocationsToRemove | length > 1 %}
                 <p class="govuk-body">
-                    {{ deallocateJourney.allocationsToRemove | length }} people will be taken off {{ deallocateJourney.activityName }}:
+                    {{ deallocateJourney.allocationsToRemove | length }} people will be taken off {{ deallocateJourney.activity.activityName }}:
                 </p>
                 <ul class='govuk-list govuk-list--bullet govuk-!-margin-bottom-6'>
                     {% for prisoner in deallocateJourney.prisoners %}
@@ -31,7 +31,7 @@
                 </ul>
             {% endif %}
 
-            <a href="/activities/allocation-dashboard/{{ deallocateJourney.scheduleId }}" class="govuk-link govuk-link--no-visited-state">Finish and return to {{ deallocateJourney.activityName }}</a>
+            <p class="govuk-body"><a href="/activities/allocation-dashboard/{{ deallocateJourney.scheduleId }}" class="govuk-link govuk-link--no-visited-state">Finish and return to {{ deallocateJourney.activity.activityName }}</a></p>
         </div>
     </div>
 {% endblock %}
