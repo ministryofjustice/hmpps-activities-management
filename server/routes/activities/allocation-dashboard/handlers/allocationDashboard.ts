@@ -142,7 +142,10 @@ export default class AllocationDashboardRoutes {
     const { selectedAllocations } = req.body
     const { user } = res.locals
 
-    const schedule = await this.activitiesService.getActivitySchedule(+req.params.activityId, user)
+    const [schedule, prisoners] = await Promise.all([
+      this.activitiesService.getActivitySchedule(+req.params.activityId, user),
+      this.prisonService.searchInmatesByPrisonerNumbers(selectedAllocations, user),
+    ])
 
     const allocations = schedule.allocations
       .filter(alloc => selectedAllocations.includes(alloc.prisonerNumber))
@@ -151,19 +154,17 @@ export default class AllocationDashboardRoutes {
     req.session.deallocateJourney = {
       allocationsToRemove: selectedAllocations,
       scheduleId: schedule.id,
-      activityName: schedule.activity.description,
       latestAllocationStartDate: allocations[allocations.length - 1].startDate,
+      activity: {
+        activityName: schedule.activity.description,
+        endDate: schedule.endDate,
+      },
+      prisoners: prisoners.map(i => ({
+        name: convertToTitleCase(`${i.firstName} ${i.lastName}`),
+        prisonerNumber: i.prisonerNumber,
+        cellLocation: i.cellLocation,
+      })),
     }
-
-    req.session.deallocateJourney.prisoners = await this.prisonService
-      .searchInmatesByPrisonerNumbers(selectedAllocations, user)
-      .then(inmates =>
-        inmates.map(i => ({
-          name: convertToTitleCase(`${i.firstName} ${i.lastName}`),
-          prisonerNumber: i.prisonerNumber,
-          cellLocation: i.cellLocation,
-        })),
-      )
 
     res.redirect(`/activities/deallocate/date`)
   }
