@@ -2471,6 +2471,37 @@ export interface components {
        */
       isExpired: boolean
     }
+    /**
+     * @description
+     *     The list of appointments to create
+     */
+    AppointmentSetAppointment: {
+      /**
+       * @description The prisoner attending the appointment
+       * @example A1234BC
+       */
+      prisonerNumber: string
+      /**
+       * Format: partial-time
+       * @description The starting time of the appointment
+       * @example 09:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of the appointment
+       * @example 10:30
+       */
+      endTime: string
+      /**
+       * @description
+       *     Extra information for the prisoner or prisoners attending the appointment. Shown only on the appointments details
+       *     page and on printed movement slips. Wing staff will be notified there is extra information via the unlock list.
+       *
+       * @example This appointment will help adjusting to life outside of prison
+       */
+      extraInformation?: string
+    }
     /** @description The create request with the new appointment set details */
     AppointmentSetCreateRequest: {
       /**
@@ -2517,38 +2548,7 @@ export interface components {
        * @description
        *     The list of appointments to create
        */
-      appointments: components['schemas']['IndividualAppointment'][]
-    }
-    /**
-     * @description
-     *     The list of appointments to create
-     */
-    IndividualAppointment: {
-      /**
-       * @description The prisoner attending the appointment
-       * @example A1234BC
-       */
-      prisonerNumber: string
-      /**
-       * Format: partial-time
-       * @description The starting time of the appointment
-       * @example 09:00
-       */
-      startTime: string
-      /**
-       * Format: partial-time
-       * @description The end time of the appointment
-       * @example 10:30
-       */
-      endTime: string
-      /**
-       * @description
-       *     Extra information for the prisoner or prisoners attending the appointment. Shown only on the appointments details
-       *     page and on printed movement slips. Wing staff will be notified there is extra information via the unlock list.
-       *
-       * @example This appointment will help adjusting to life outside of prison
-       */
-      extraInformation?: string
+      appointments: components['schemas']['AppointmentSetAppointment'][]
     }
     /**
      * @description
@@ -4562,9 +4562,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       first?: boolean
       last?: boolean
       empty?: boolean
@@ -4573,17 +4573,17 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
+      paged?: boolean
+      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
