@@ -45,7 +45,7 @@ export default class LocationRoutes {
     }
 
     if (req.session.appointmentJourney.type === AppointmentType.SET) {
-      res.redirectOrReturn(`bulk-appointment-date`)
+      res.redirectOrReturn(`appointment-set-date`)
     } else {
       res.redirectOrReturn(`date-and-time`)
     }

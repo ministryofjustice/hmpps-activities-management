@@ -1,7 +1,7 @@
 {% macro appointmentTypeCaption(session) %}
   {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     <span class="govuk-caption-l" data-qa="caption">{{ session.appointmentJourney.appointmentName }}</span>
-  {% elseif session.appointmentJourney.type == AppointmentType.BULK %}
+  {% elseif session.appointmentJourney.type == AppointmentType.SET %}
     <span class="govuk-caption-l" data-qa="caption">Schedule a set of back-to-backs</span>
   {% else %}
     <span class="govuk-caption-l" data-qa="caption">Schedule an appointment</span>

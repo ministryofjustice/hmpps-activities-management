@@ -685,7 +685,7 @@ describe('Views - Create Appointment - Schedule', () => {
     it('should display date with change link', () => {
       expect(getAppointmentDetailsValueElement('Date').text().trim()).toEqual(formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
       expect($('[data-qa=change-start-date]').attr('href')).toEqual(
-        'change?property=bulk-appointment-date&preserveHistory=true',
+        'change?property=appointment-set-date&preserveHistory=true',
       )
     })
 
@@ -764,7 +764,7 @@ describe('Views - Create Appointment - Schedule', () => {
       viewContext.prisonerSchedules.forEach(prisonerSchedule => {
         const link = $(`[data-qa=change-appointment-time-prison-number-${prisonerSchedule.prisoner.number}]`)
         expect(link.text()).toContain('Change time')
-        expect(link.attr('href')).toEqual('review-bulk-appointment?preserveHistory=true')
+        expect(link.attr('href')).toEqual('appointment-set-times?preserveHistory=true')
       })
     })
 
@@ -801,7 +801,7 @@ describe('Views - Create Appointment - Schedule', () => {
       )
       const cta = $('.govuk-button')
       expect(cta.text().trim()).toBe('Add a new list')
-      expect(cta.attr('href')).toBe('upload-bulk-appointment?preserveHistory=true')
+      expect(cta.attr('href')).toBe('upload-appointment-set?preserveHistory=true')
     })
 
     it('should display scheduled events', () => {

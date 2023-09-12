@@ -9,7 +9,7 @@ export default class ConfirmationRoutes {
     req.session.appointmentJourney = null
   }
 
-  GET_BULK = async (req: Request, res: Response) => {
+  GET_SET = async (req: Request, res: Response) => {
     const { appointmentSet } = req
 
     res.render('pages/appointments/create-and-edit/confirmation', { appointmentSet })

@@ -76,14 +76,14 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
   describe('GET_BULK', () => {
     it('should render the confirmation page with bulk appointment details', async () => {
-      await handler.GET_BULK(req, res)
+      await handler.GET_SET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         bulkAppointment: req.appointmentSet,
       })
     })
 
     it('should clear session', async () => {
-      await handler.GET_BULK(req, res)
+      await handler.GET_SET(req, res)
       expect(req.session.appointmentJourney).toBeNull()
       expect(req.session.appointmentSetJourney).toBeNull()
     })

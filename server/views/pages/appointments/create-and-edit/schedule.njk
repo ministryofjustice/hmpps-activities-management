@@ -7,7 +7,7 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 
-{% if session.appointmentJourney.type == AppointmentType.BULK %}
+{% if session.appointmentJourney.type == AppointmentType.SET %}
     {% set pageTitle = appointmentJourneyTitle("No attendees for set" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
 {% else %}
     {% set pageTitle = appointmentJourneyTitle("No attendees" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
@@ -21,7 +21,7 @@
             {{ appointmentTypeCaption(session) }}
 
             {% if prisonerSchedules.length == 0 %}
-                {% if session.appointmentJourney.type == AppointmentType.BULK %}
+                {% if session.appointmentJourney.type == AppointmentType.SET %}
                     <h1 class="govuk-heading-l">There are no attendees for this set</h1>
                     <p class="govuk-body">You’ve removed the last attendee for this set of appointments.</p>
                     <p class="govuk-body">You need to add a new list of prison numbers to continue scheduling the set of back-to-backs.</p>
@@ -32,11 +32,11 @@
                 {% endif %}
 
                 {% set addPrisonersHref = ('prisoners/add/how-to-add-prisoners?preserveHistory=true' if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT) or
-                    ("upload-bulk-appointment?preserveHistory=true" if session.appointmentJourney.type == AppointmentType.BULK) or
+                    ("upload-appointment-set?preserveHistory=true" if session.appointmentJourney.type == AppointmentType.SET) or
                     "how-to-add-prisoners?preserveHistory=true" %}
 
                 {{ govukButton({
-                    text: ("Add a new list" if session.appointmentJourney.type == AppointmentType.BULK else "Add someone to the list"),
+                    text: ("Add a new list" if session.appointmentJourney.type == AppointmentType.SET else "Add someone to the list"),
                     href: addPrisonersHref
                 }) }}
             {% else %}
@@ -103,7 +103,7 @@
                                 value: {
                                     text: session.appointmentSetJourney.appointments | length
                                 }
-                            } if session.appointmentJourney.type == AppointmentType.BULK
+                            } if session.appointmentJourney.type == AppointmentType.SET
                         ), appointmentSummary) %}
                     {% endif %}
 
@@ -146,7 +146,7 @@
                             actions: {
                                 items: [
                                     {
-                                        href: 'change?property=bulk-appointment-date&preserveHistory=true' if session.appointmentJourney.type == AppointmentType.BULK else 'change?property=date-and-time&preserveHistory=true',
+                                        href: 'change?property=appointment-set-date&preserveHistory=true' if session.appointmentJourney.type == AppointmentType.SET else 'change?property=date-and-time&preserveHistory=true',
                                         text: "Change",
                                         visuallyHiddenText: "change date",
                                         classes: "govuk-link--no-visited-state",
@@ -199,15 +199,15 @@
                                     <h2 class="govuk-summary-card__title" data-qa="schedule-card-title-prison-number-{{ prisoner.number }}">
                                         <ul class='govuk-list'>
                                             <li><strong>{{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }}</strong></li>
-                                            {% if session.appointmentJourney.type == AppointmentType.BULK %}
+                                            {% if session.appointmentJourney.type == AppointmentType.SET %}
                                                 <li>{{ prisonerSchedule.startTime.hour | padNumber + ":" + prisonerSchedule.startTime.minute | padNumber }} to {{ prisonerSchedule.endTime.hour | padNumber + ":" + prisonerSchedule.endTime.minute | padNumber }}</li>
                                             {% endif %}
                                         </ul>
                                     </h2>
                                     <ul class="govuk-summary-card__actions" data-qa="schedule-card-actions-prison-number-{{ prisoner.number }}">
-                                        {% if session.appointmentJourney.type == AppointmentType.BULK %}
+                                        {% if session.appointmentJourney.type == AppointmentType.SET %}
                                             <li class="govuk-summary-card__action">
-                                                <a class="govuk-link govuk-link--no-visited-state" href="review-bulk-appointment?preserveHistory=true" data-qa="change-appointment-time-prison-number-{{ prisoner.number }}">
+                                                <a class="govuk-link govuk-link--no-visited-state" href="appointment-set-times?preserveHistory=true" data-qa="change-appointment-time-prison-number-{{ prisoner.number }}">
                                                     Change time<span class="govuk-visually-hidden"> of appointment for prison number {{ prisoner.number }}</span>
                                                 </a>
                                             </li>

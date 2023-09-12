@@ -9,8 +9,8 @@
     {% set pageTitle = appointmentJourneyTitle("change location", session.appointmentJourney) %}
     {% set pageHeading = "Enter the new location" %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Appointment set location" if session.appointmentJourney.type == AppointmentType.BULK else "Appointment location", session.appointmentJourney) %}
-    {% set pageHeading = ("Where will the appointments take place?" if session.appointmentJourney.type == AppointmentType.BULK else "Where will the appointment take place?") %}
+    {% set pageTitle = appointmentJourneyTitle("Appointment set location" if session.appointmentJourney.type == AppointmentType.SET else "Appointment location", session.appointmentJourney) %}
+    {% set pageHeading = ("Where will the appointments take place?" if session.appointmentJourney.type == AppointmentType.SET else "Where will the appointment take place?") %}
 {% endif %}
 
 {% set pageId = 'appointments-create-location-page' %}

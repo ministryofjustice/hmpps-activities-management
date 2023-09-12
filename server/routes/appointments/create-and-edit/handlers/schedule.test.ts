@@ -117,7 +117,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'review-bulk-appointment',
+        backLinkHref: 'appointment-set-times',
         isCtaAcceptAndSave: false,
         prisonerSchedules: [],
       })
@@ -283,7 +283,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       )
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'review-bulk-appointment',
+        backLinkHref: 'appointment-set-times',
         prisonerSchedules: [
           {
             prisoner: {
@@ -440,7 +440,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       it('should redirect to bulk appointment comments page for type = BULK', async () => {
         req.session.appointmentJourney.type = AppointmentType.SET
         await handler.POST(req, res)
-        expect(res[redirectMethod]).toHaveBeenCalledWith('bulk-appointment-comments')
+        expect(res[redirectMethod]).toHaveBeenCalledWith('appointment-set-extra-information')
       })
     })
   })

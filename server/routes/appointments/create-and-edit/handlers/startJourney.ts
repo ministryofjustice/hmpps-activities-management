@@ -38,7 +38,7 @@ export default class StartJourneyRoutes {
     req.session.appointmentSetJourney = {
       appointments: [],
     }
-    res.redirect('upload-bulk-appointment')
+    res.redirect('upload-appointment-set')
   }
 
   PRISONER = async (req: Request, res: Response): Promise<void> => {

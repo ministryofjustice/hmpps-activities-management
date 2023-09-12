@@ -81,7 +81,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       ]
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
-        backLinkHref: 'upload-bulk-appointment',
+        backLinkHref: 'upload-appointment-set',
         prisoners: [
           {
             number: 'A1234BC',

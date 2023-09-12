@@ -129,7 +129,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
         id: 26149,
         description: 'Gym',
       })
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('bulk-appointment-date')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('appointment-set-date')
     })
 
     it('validation fails when selected location is not found', async () => {

@@ -11,8 +11,8 @@ import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import RepeatRoutes, { Repeat } from './handlers/repeat'
 import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './handlers/repeatPeriodAndCount'
 import CommentRoutes, { Comment } from './handlers/comment'
-import BulkAppointmentComments from './handlers/appointment-set/appointmentSetExtraInformation'
-import BulkAppointmentAddComment, {
+import AppointmentSetExtraInformationRoutes from './handlers/appointment-set/appointmentSetExtraInformation'
+import AppointmentSetAddExtraInformationRoutes, {
   AppointmentSetAppointmentExtraInformation,
 } from './handlers/appointment-set/appointmentSetAddExtraInformation'
 import CheckAnswersRoutes from './handlers/checkAnswers'
@@ -24,9 +24,9 @@ import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import fetchAppointment from '../../../middleware/appointments/fetchAppointmentSeries'
 import EditAppointmentService from '../../../services/editAppointmentService'
-import UploadBulkAppointment, { AppointmentsList } from './handlers/appointment-set/uploadBulkAppointment'
+import AppointmentSetUploadRoutes, { AppointmentsList } from './handlers/appointment-set/appointmentSetUpload'
 import AppointmentSetDateRoutes, { AppointmentSetDate } from './handlers/appointment-set/appointmentSetDate'
-import ReviewBulkAppointment, { AppointmentTimes } from './handlers/appointment-set/appointmentSetTimes'
+import AppointmentSetTimesRoutes, { AppointmentTimes } from './handlers/appointment-set/appointmentSetTimes'
 import fetchAppointmentSet from '../../../middleware/appointments/fetchAppointmentSet'
 import ScheduleRoutes from './handlers/schedule'
 
@@ -48,15 +48,15 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const repeatHandler = new RepeatRoutes()
   const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
   const commentHandler = new CommentRoutes(editAppointmentService)
-  const bulkAppointmentCommentsHandler = new BulkAppointmentComments()
-  const bulkAppointmentAddCommentHanlder = new BulkAppointmentAddComment()
+  const appointmentSetExtraInformationRoutes = new AppointmentSetExtraInformationRoutes()
+  const appointmentSetAddExtraInformationRoutes = new AppointmentSetAddExtraInformationRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes()
   const howToAddPrisoners = new HowToAddPrisoners()
   const reviewPrisoners = new ReviewPrisoners()
-  const uploadBulkAppointment = new UploadBulkAppointment(new PrisonerListCsvParser(), prisonService)
-  const bulkAppointmentDate = new AppointmentSetDateRoutes()
-  const reviewBulkAppointment = new ReviewBulkAppointment()
+  const appointmentSetUploadRoutes = new AppointmentSetUploadRoutes(new PrisonerListCsvParser(), prisonService)
+  const appointmentSetDateRoutes = new AppointmentSetDateRoutes()
+  const appointmentSetTimesRoutes = new AppointmentSetTimesRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService)
 
   get('/start-individual', startHandler.INDIVIDUAL)
@@ -73,12 +73,12 @@ export default function Create({ prisonService, activitiesService }: Services): 
     validationMiddleware(PrisonerList),
     asyncMiddleware(uploadPrisonerListRoutes.POST),
   )
-  get('/upload-bulk-appointment', uploadBulkAppointment.GET, true)
+  get('/upload-appointment-set', appointmentSetUploadRoutes.GET, true)
   router.post(
-    '/upload-bulk-appointment',
+    '/upload-appointment-set',
     setUpMultipartFormDataParsing(),
     validationMiddleware(AppointmentsList),
-    asyncMiddleware(uploadBulkAppointment.POST),
+    asyncMiddleware(appointmentSetUploadRoutes.POST),
   )
   get('/name', nameHandler.GET, true)
   post('/name', nameHandler.POST, Name)
@@ -95,10 +95,14 @@ export default function Create({ prisonService, activitiesService }: Services): 
   post('/schedule', scheduleRoutes.POST)
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
   get('/change', scheduleRoutes.CHANGE)
-  get('/bulk-appointment-comments', bulkAppointmentCommentsHandler.GET, true)
-  post('/bulk-appointment-comments', bulkAppointmentCommentsHandler.POST)
-  get('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.GET, true)
-  post('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.POST, AppointmentSetAppointmentExtraInformation)
+  get('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.GET, true)
+  post('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.POST)
+  get('/appointment-set-extra-information/:prisonerNumber', appointmentSetAddExtraInformationRoutes.GET, true)
+  post(
+    '/appointment-set-extra-information/:prisonerNumber',
+    appointmentSetAddExtraInformationRoutes.POST,
+    AppointmentSetAppointmentExtraInformation,
+  )
   post('/comment', commentHandler.CREATE, Comment)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
@@ -113,15 +117,15 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/review-prisoners', reviewPrisoners.GET, true)
   post('/review-prisoners', reviewPrisoners.POST)
   get('/review-prisoners/:prisonNumber/remove', reviewPrisoners.REMOVE, true)
-  get('/bulk-appointment-date', bulkAppointmentDate.GET, true)
-  post('/bulk-appointment-date', bulkAppointmentDate.POST, AppointmentSetDate)
-  get('/review-bulk-appointment', reviewBulkAppointment.GET, true)
-  post('/review-bulk-appointment', reviewBulkAppointment.POST, AppointmentTimes)
+  get('/appointment-set-date', appointmentSetDateRoutes.GET, true)
+  post('/appointment-set-date', appointmentSetDateRoutes.POST, AppointmentSetDate)
+  get('/appointment-set-times', appointmentSetTimesRoutes.GET, true)
+  post('/appointment-set-times', appointmentSetTimesRoutes.POST, AppointmentTimes)
   router.get(
     '/set-confirmation/:appointmentSetId',
     fetchAppointmentSet(activitiesService),
     emptyAppointmentJourneyHandler(true),
-    asyncMiddleware(confirmationHandler.GET_BULK),
+    asyncMiddleware(confirmationHandler.GET_SET),
   )
 
   return router

@@ -27,7 +27,7 @@ export default class ScheduleRoutes {
         backLinkHref = 'prisoners/add/review-prisoners'
       }
     } else if (req.session.appointmentJourney.type === AppointmentType.SET) {
-      backLinkHref = 'review-bulk-appointment'
+      backLinkHref = 'appointment-set-times'
     } else {
       backLinkHref = req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
     }
@@ -90,7 +90,7 @@ export default class ScheduleRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const nextRoute =
-      req.session.appointmentJourney.type === AppointmentType.SET ? 'bulk-appointment-comments' : 'comment'
+      req.session.appointmentJourney.type === AppointmentType.SET ? 'appointment-set-extra-information' : 'comment'
     if (req.session.appointmentJourney.createJourneyComplete) return res.redirectOrReturn(nextRoute)
     return res.redirect(nextRoute)
   }

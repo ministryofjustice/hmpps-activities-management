@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import UploadBulkAppointment, { AppointmentsList } from './uploadBulkAppointment'
+import AppointmentSetUploadRoutes, { AppointmentsList } from './appointmentSetUpload'
 import PrisonerListCsvParser from '../../../../../utils/prisonerListCsvParser'
 import PrisonService from '../../../../../services/prisonService'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
@@ -20,8 +20,8 @@ const fsMock: jest.Mocked<typeof fs> = <jest.Mocked<typeof fs>>fs
 const prisonerListCsvParser = new PrisonerListCsvParser() as jest.Mocked<PrisonerListCsvParser>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
-describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', () => {
-  const handler = new UploadBulkAppointment(prisonerListCsvParser, prisonService)
+describe('Route Handlers - Create Appointment Set - Upload', () => {
+  const handler = new AppointmentSetUploadRoutes(prisonerListCsvParser, prisonService)
   let req: Request
   let res: Response
 
@@ -55,21 +55,19 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
   })
 
   describe('GET', () => {
-    it('should render the upload bulk appointment view', async () => {
+    it('should render the upload appointment set view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/appointments/create-and-edit/bulk-appointments/upload-bulk-appointment',
-        { preserveHistory: undefined },
-      )
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/appointment-set/upload', {
+        preserveHistory: undefined,
+      })
     })
 
-    it('should render the upload bulk appointment view with preserve history', async () => {
+    it('should render the upload appointment set view with preserve history', async () => {
       req.query = { preserveHistory: 'true' }
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/appointments/create-and-edit/bulk-appointments/upload-bulk-appointment',
-        { preserveHistory: 'true' },
-      )
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/appointment-set/upload', {
+        preserveHistory: 'true',
+      })
     })
   })
 

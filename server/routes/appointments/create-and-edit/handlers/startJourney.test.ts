@@ -118,7 +118,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
     })
   })
 
-  describe('BULK', () => {
+  describe('SET', () => {
     it('should populate the session with appointment set journey type and redirect to upload by csv page', async () => {
       await handler.SET(req, res)
 
@@ -131,7 +131,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentSetJourney).toEqual({
         appointments: [],
       })
-      expect(res.redirect).toHaveBeenCalledWith('upload-bulk-appointment')
+      expect(res.redirect).toHaveBeenCalledWith('upload-appointment-set')
     })
   })
 

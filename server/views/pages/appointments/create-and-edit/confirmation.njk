@@ -4,7 +4,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Set scheduled" if session.appointmentJourney.type == AppointmentType.BULK else "Appointment scheduled", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Set scheduled" if session.appointmentJourney.type == AppointmentType.SET else "Appointment scheduled", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-confirmation-page' %}
 
 {% block content %}

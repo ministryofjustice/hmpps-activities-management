@@ -16,7 +16,7 @@ export class AppointmentsList {
   file: Express.Multer.File
 }
 
-export default class UploadBulkAppointment {
+export default class AppointmentSetUploadRoutes {
   constructor(
     private readonly prisonerListCsvParser: PrisonerListCsvParser,
     private readonly prisonService: PrisonService,
@@ -25,7 +25,7 @@ export default class UploadBulkAppointment {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { preserveHistory } = req.query
 
-    res.render('pages/appointments/create-and-edit/bulk-appointments/upload-bulk-appointment', { preserveHistory })
+    res.render('pages/appointments/create-and-edit/appointment-set/upload', { preserveHistory })
   }
 
   POST = async (req: Request, res: Response) => {
@@ -54,7 +54,7 @@ export default class UploadBulkAppointment {
       return false
     }
 
-    const newInstances = appointmentInstances.map(instance => {
+    req.session.appointmentSetJourney.appointments = appointmentInstances.map(instance => {
       const prisonerDetails = prisonersDetails.get(instance.prisonerNumber)
 
       return {
@@ -67,8 +67,6 @@ export default class UploadBulkAppointment {
         endTime: instance.endTime,
       }
     })
-
-    req.session.appointmentSetJourney.appointments = newInstances
 
     return res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }

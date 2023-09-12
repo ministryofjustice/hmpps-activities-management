@@ -6,7 +6,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "partials/characterCountInput.njk" import characterCountInput %}
 
-{% set pageTitle = appointmentJourneyTitle("Appointment name set" if session.appointmentJourney.type == AppointmentType.BULK else "Appointment name", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Appointment name set" if session.appointmentJourney.type == AppointmentType.SET else "Appointment name", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-name-page' %}
 {% set backLinkHref = backLinkHref %}
 
@@ -30,7 +30,7 @@
                     name: "categoryCode",
                     type: "search",
                     label: {
-                        text: ("What are the appointments?" if session.appointmentJourney.type == AppointmentType.BULK else "What’s the appointment?"),
+                        text: ("What are the appointments?" if session.appointmentJourney.type == AppointmentType.SET else "What’s the appointment?"),
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
@@ -50,7 +50,7 @@
                         classes: "govuk-label--m"
                     },
                     hint: {
-                        text: ("Use the custom name to add detail about what the appointments are for. It will be displayed in this service and on unlock lists and movement slips." if session.appointmentJourney.type == AppointmentType.BULK else "Use the custom name to add detail about what the appointment is for. It will be displayed in this service and on unlock lists and movement slips.")
+                        text: ("Use the custom name to add detail about what the appointments are for. It will be displayed in this service and on unlock lists and movement slips." if session.appointmentJourney.type == AppointmentType.SET else "Use the custom name to add detail about what the appointment is for. It will be displayed in this service and on unlock lists and movement slips.")
                     },
                     classes: "govuk-input--width-20",
                     value: formResponses.description or session.appointmentJourney.description,

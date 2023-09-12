@@ -8,7 +8,7 @@
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% set pageTitle = appointmentJourneyTitle("Check and confirm set" if session.appointmentJourney.type == AppointmentType.BULK else "Check and confirm appointment details", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Check and confirm set" if session.appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details", session.appointmentJourney) %}
 {% set pageId = 'appointments-create-check-answers-page' %}
 
 {% set summaryListRows = [] %}
@@ -95,7 +95,7 @@
         actions: {
             items: [
                 {
-                    href: 'bulk-appointment-date?preserveHistory=true' if session.appointmentJourney.type == AppointmentType.BULK else 'date-and-time?preserveHistory=true',
+                    href: 'appointment-set-date?preserveHistory=true' if session.appointmentJourney.type == AppointmentType.SET else 'date-and-time?preserveHistory=true',
                     text: "Change",
                     visuallyHiddenText: "change date",
                     classes: "govuk-link--no-visited-state",
@@ -207,7 +207,7 @@
       }
   }), summaryListRows) %}
 {% endif %}
-{% if session.appointmentJourney.type !== AppointmentType.BULK %}
+{% if session.appointmentJourney.type !== AppointmentType.SET %}
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
@@ -230,7 +230,7 @@
         }
     ), summaryListRows) %}
 {% endif %}
-{% if session.appointmentJourney.type == AppointmentType.BULK %}
+{% if session.appointmentJourney.type == AppointmentType.SET %}
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
@@ -259,7 +259,7 @@
 
                 {{ prisonersList() if session.appointmentJourney.type == AppointmentType.GROUP }}
 
-                {{ bulkAppointments() if session.appointmentJourney.type == AppointmentType.BULK }}
+                {{ bulkAppointments() if session.appointmentJourney.type == AppointmentType.SET }}
 
                 <div class="govuk-button-group">
                     {{ govukButton({
@@ -352,7 +352,7 @@
                 actions: {
                     items: [
                         {
-                            href: "review-bulk-appointment?preserveHistory=true",
+                            href: "appointment-set-times?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "change start time",
                             classes: "govuk-link--no-visited-state"
@@ -369,7 +369,7 @@
                 actions: {
                     items: [
                         {
-                            href: "review-bulk-appointment?preserveHistory=true",
+                            href: "appointment-set-times?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "change end time",
                             classes: "govuk-link--no-visited-state"
@@ -386,7 +386,7 @@
                 actions: {
                     items: [
                         {
-                            href: "bulk-appointment-comments/" + appointment.prisoner.number + "?preserveHistory=true",
+                            href: "appointment-set-extra-information/" + appointment.prisoner.number + "?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "change extra information",
                             classes: "govuk-link--no-visited-state"
