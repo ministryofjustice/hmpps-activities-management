@@ -58,10 +58,10 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
     },
   ] as AppointmentLocationSummary[]
   const appointment1 = {
-    appointmentId: 1,
-    appointmentOccurrenceId: 2,
+    appointmentSeriesId: 1,
+    appointmentId: 2,
     appointmentType: 'INDIVIDUAL',
-    allocations: [
+    attendees: [
       {
         prisonerNumber: 'A1111AA',
       },
@@ -82,10 +82,10 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
     maxSequenceNumber: 1,
   }
   const appointment2 = {
-    appointmentId: 2,
-    appointmentOccurrenceId: 3,
+    appointmentSeriesId: 2,
+    appointmentId: 3,
     appointmentType: 'GROUP',
-    allocations: [
+    attendees: [
       {
         prisonerNumber: 'A1111AA',
       },
@@ -112,10 +112,10 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
     maxSequenceNumber: 6,
   }
   const appointment3 = {
-    appointmentId: 3,
-    appointmentOccurrenceId: 4,
+    appointmentSeriesId: 3,
+    appointmentId: 4,
     appointmentType: 'INDIVIDUAL',
-    allocations: [
+    attendees: [
       {
         prisonerNumber: 'A1111AA',
       },

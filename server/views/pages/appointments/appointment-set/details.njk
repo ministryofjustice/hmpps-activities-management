@@ -9,12 +9,12 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% set pageTitle = "Set of back-to-backs overview" %}
-{% set pageId = 'bulk-appointments-view-details-page' %}
+{% set pageId = 'appointment-set-details-page' %}
 
-{% set occurrenceTableRows = [] %}
-{% for occurrence in bulkAppointment.occurrences %}
-    {% set prisoner = occurrence.prisoners[0] %}
-    {% set occurrenceTableRows = (occurrenceTableRows.push([
+{% set appointmentTableRows = [] %}
+{% for appointment in appointmentSet.appointments %}
+    {% set prisoner = appointment.attendees[0].prisoner %}
+    {% set appointmentTableRows = (appointmentTableRows.push([
         {
             html: showProfileLink({
                 name: prisoner | fullName,
@@ -22,40 +22,40 @@
                 cellLocation: prisoner.cellLocation,
                 link: true
             }),
-            attributes: { 'data-qa': 'occurrence-' + occurrence.id + '-prisoner' }
+            attributes: { 'data-qa': 'appointment-' + appointment.id + '-prisoner' }
         }, {
-            text: occurrence.startTime,
+            text: appointment.startTime,
             attributes: {
-                'data-sort-value': occurrence.startDate + occurrence.startTime + prisoner.lastName + prisoner.firstName,
-                'data-qa': 'occurrence-' + occurrence.id + '-start-time'
+                'data-sort-value': appointment.startDate + appointment.startTime + prisoner.lastName + prisoner.firstName,
+                'data-qa': 'appointment-' + appointment.id + '-start-time'
             }
         }, {
-            text: occurrence.endTime,
+            text: appointment.endTime,
             attributes: {
-                'data-sort-value': occurrence.startDate + occurrence.endTime + prisoner.lastName + prisoner.firstName,
-                'data-qa': 'occurrence-' + occurrence.id + '-end-time'
+                'data-sort-value': appointment.startDate + appointment.endTime + prisoner.lastName + prisoner.firstName,
+                'data-qa': 'appointment-' + appointment.id + '-end-time'
             }
         }, {
-            html: (govukTag({ text: "Edited" }) if occurrence.isEdited) +
-            (govukTag({ text: "Cancelled" }) if occurrence.isCancelled),
-            attributes: { 'data-qa': 'occurrence-' + occurrence.id + '-status' }
+            html: (govukTag({ text: "Edited" }) if appointment.isEdited) +
+            (govukTag({ text: "Cancelled" }) if appointment.isCancelled),
+            attributes: { 'data-qa': 'appointment-' + appointment.id + '-status' }
         }, {
-            html: '<a href="/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.id + '"
+            html: '<a href="/appointments/' + appointment.id + '"
                 class="govuk-link--no-visited-state">
-                View' + (' and manage' if occurrence.isCancelled == false and occurrence.isExpired == false) + '<span class="govuk-visually-hidden"> appointment ' + occurrence.id + '</span>
+                View' + (' and manage' if appointment.isCancelled == false and appointment.isExpired == false) + '<span class="govuk-visually-hidden"> appointment ' + appointment.id + '</span>
             </a>',
             classes: 'govuk-!-text-align-right',
-            attributes: { 'data-qa': 'view-and-edit-occurrence-' + occurrence.id }
+            attributes: { 'data-qa': 'view-and-edit-appointment-' + appointment.id }
         }
-    ]), occurrenceTableRows) %}
+    ]), appointmentTableRows) %}
 {% endfor %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ bulkAppointment.appointmentName }} – set of back-to-backs overview</h1>
-            <p class="govuk-body govuk-!-margin-top-1" data-qa='sub-heading'>{{ bulkAppointment.startDate | toDate | formatDate("d MMM yyyy") }}</p>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ appointmentSet.appointmentName }} – set of back-to-backs overview</h1>
+            <p class="govuk-body govuk-!-margin-top-1" data-qa='sub-heading'>{{ appointmentSet.startDate | toDate | formatDate("d MMM yyyy") }}</p>
 
             {{ govukSummaryList({
                 card: {
@@ -69,14 +69,14 @@
                             text: "Created by"
                         },
                         value: {
-                            text: serviceUserName(bulkAppointment.createdBy)
+                            text: serviceUserName(appointmentSet.createdBy)
                         }
                     }, {
                         key: {
                             text: "Date created"
                         },
                         value: {
-                            text: bulkAppointment.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
+                            text: appointmentSet.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
                         }
                     }
                 ],
@@ -85,12 +85,12 @@
 
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">{{ bulkAppointment.occurrences.length + " appointment" + ("s" if bulkAppointment.occurrences.length > 0) }}</h2>
+                    <h2 class="govuk-summary-card__title">{{ appointmentSet.appointments.length + " appointment" + ("s" if appointmentSet.appointments.length > 0) }}</h2>
                     {% if showPrintMovementSlipsLink %}
                         <ul class="govuk-summary-card__actions">
                             <li class="govuk-summary-card__action">
-                                <a class="govuk-link govuk-link--no-visited-state" href="{{ "/appointments/bulk-appointments/" + bulkAppointment.id + "/movement-slip" }}" target="_blank" data-qa="print-movement-slip">
-                                    Print movement slip{{ "s" if bulkAppointment.occurrences.length > 1 }}
+                                <a class="govuk-link govuk-link--no-visited-state" href="{{ "/appointments/set/" + appointmentSet.id + "/movement-slip" }}" target="_blank" data-qa="print-movement-slip">
+                                    Print movement slip{{ "s" if appointmentSet.appointments.length > 1 }}
                                 </a>
                             </li>
                         </ul>
@@ -114,10 +114,10 @@
                                 html: '<span class="govuk-visually-hidden">Actions</span>'
                             }
                         ],
-                        rows: occurrenceTableRows,
+                        rows: appointmentTableRows,
                         attributes: {
                             'data-module': 'moj-sortable-table',
-                            'data-qa': 'appointment-occurrences'
+                            'data-qa': 'appointment-set-appointments'
                         }
                     }) }}
                 </div>

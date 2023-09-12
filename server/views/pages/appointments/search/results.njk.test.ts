@@ -58,11 +58,11 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
       createdBy: 'all',
       results: [
         {
-          appointmentId: 1,
-          appointmentOccurrenceId: 2,
+          appointmentSeriesId: 1,
+          appointmentId: 2,
           appointmentType: 'INDIVIDUAL',
           appointmentName: 'Test appointment name 1 (Test Category 1)',
-          allocations: [
+          attendees: [
             {
               prisonerNumber: 'A1111AA',
             },
@@ -84,11 +84,11 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
           isCancelled: false,
         },
         {
-          appointmentId: 2,
-          appointmentOccurrenceId: 3,
+          appointmentSeriesId: 2,
+          appointmentId: 3,
           appointmentType: 'GROUP',
           appointmentName: 'Test appointment name 2 (Test Category 2)',
-          allocations: [
+          attendees: [
             {
               prisonerNumber: 'A1111AA',
             },
@@ -116,11 +116,11 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
           isCancelled: false,
         },
         {
-          appointmentId: 3,
-          appointmentOccurrenceId: 4,
+          appointmentSeriesId: 3,
+          appointmentId: 4,
           appointmentType: 'GROUP',
           appointmentName: 'Test appointment name 3 (Test Category 3)',
-          allocations: [
+          attendees: [
             {
               prisonerNumber: 'A1111AA',
             },
@@ -170,7 +170,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($('[data-qa=result-prisoner-count-0]').text().trim()).toContain('1-1-1')
     expect($('[data-qa=result-sequence-number-0]').text().trim()).toEqual('1 of 1')
     expect($('[data-qa=view-and-edit-result-0] > a').text()).toContain('Manage details')
-    expect($('[data-qa=view-and-edit-result-0] > a').attr('href')).toEqual('/appointments/1/occurrence/2')
+    expect($('[data-qa=view-and-edit-result-0] > a').attr('href')).toEqual('/appointments/2')
 
     expect($('[data-qa=result-time-1]').text().trim()).toEqual('13:00 to 14:30')
     expect($('[data-qa=result-appointment-name-1]').text().trim()).toEqual('Test appointment name 2 (Test Category 2)')
@@ -179,7 +179,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($('[data-qa=result-sequence-number-1]').text().trim()).toEqual('2 of 6')
     expect($('[data-qa=view-and-edit-result-1] > a').text()).toContain('View')
     expect($('[data-qa=view-and-edit-result-1] > a').text()).not.toContain('Manage details')
-    expect($('[data-qa=view-and-edit-result-1] > a').attr('href')).toEqual('/appointments/2/occurrence/3')
+    expect($('[data-qa=view-and-edit-result-1] > a').attr('href')).toEqual('/appointments/3')
 
     expect($('[data-qa=result-time-2]').text().trim()).toEqual('16:00 to 17:30')
     expect($('[data-qa=result-appointment-name-2]').text().trim()).toEqual('Test appointment name 3 (Test Category 3)')
@@ -188,7 +188,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect($('[data-qa=result-sequence-number-2]').text().trim()).toEqual('2 of 6')
     expect($('[data-qa=view-and-edit-result-2] > a').text()).toContain('View')
     expect($('[data-qa=view-and-edit-result-2] > a').text()).not.toContain('Manage details')
-    expect($('[data-qa=view-and-edit-result-2] > a').attr('href')).toEqual('/appointments/3/occurrence/4')
+    expect($('[data-qa=view-and-edit-result-2] > a').attr('href')).toEqual('/appointments/4')
   })
 
   it('should not display end time when result does not have an end time', () => {

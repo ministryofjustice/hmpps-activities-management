@@ -87,7 +87,7 @@ describe('Views - Appointments Management - Confirm Edit', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('a.govuk-back-link').attr('href')).toEqual('/appointments/1/occurrence/2')
+    expect($('a.govuk-back-link').attr('href')).toEqual('/appointments/2')
   })
 
   it('prisoner list is not shown when adding one prisoner', () => {

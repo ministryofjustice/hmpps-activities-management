@@ -11,28 +11,28 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ govukPanel({
-                titleText: "Set of back-to-backs scheduled" if bulkAppointment else "Appointment scheduled"
+                titleText: "Set of back-to-backs scheduled" if appointmentSet else "Appointment scheduled"
             }) }}
             <p class="govuk-body" data-qa="message">
                 {% if appointment.appointmentType == AppointmentType.INDIVIDUAL %}
-                    You have successfully scheduled an appointment for {{ appointment.prisoners[0] | fullName | toTitleCase }}
+                    You have successfully scheduled an appointment for {{ appointment.attendees[0].prisoner | fullName | toTitleCase }}
                 {% elseif appointment.appointmentType == AppointmentType.GROUP %}
-                    You have successfully scheduled an appointment for {{ appointment.prisoners | length }} {{ "person" if appointment.prisoners.length == 1 else "people" }}
-                {% elseif bulkAppointment %}
-                    You have successfully scheduled appointments for {{ bulkAppointment.occurrences | length }} people
+                    You have successfully scheduled an appointment for {{ appointment.attendees | length }} {{ "person" if appointment.attendees.length == 1 else "people" }}
+                {% elseif appointmentSet %}
+                    You have successfully scheduled appointments for {{ appointmentSet.appointments | length }} people
                 {% endif %}
 
-                {% if not appointment.repeat %}
-                    on {{ (appointment.startDate or bulkAppointment.startDate) | toDate | formatDate }}.
+                {% if not appointment.appointmentSeries.schedule %}
+                    on {{ (appointment.startDate or appointmentSet.startDate) | toDate | formatDate }}.
                 {% else %}
                     starting on {{ appointment.startDate | toDate | formatDate }}.
-                    It will repeat {{ ("every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentFrequency.WEEKDAY) +
-                                    ("daily (includes weekends)" if appointment.repeat.period == AppointmentFrequency.DAILY) +
-                                    ("weekly" if appointment.repeat.period == AppointmentFrequency.WEEKLY) +
-                                    ("fortnightly" if appointment.repeat.period == AppointmentFrequency.FORTNIGHTLY) +
-                                    ("monthly" if appointment.repeat.period == AppointmentFrequency.MONTHLY) }}
-                    for {{ appointment.repeat.count }}
-                    {% if appointment.repeat.count == 1 %}
+                    It will repeat {{ ("every weekday (Monday to Friday)" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.WEEKDAY) +
+                                    ("daily (includes weekends)" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.DAILY) +
+                                    ("weekly" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.WEEKLY) +
+                                    ("fortnightly" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.FORTNIGHTLY) +
+                                    ("monthly" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.MONTHLY) }}
+                    for {{ appointment.appointmentSeries.schedule.numberOfAppointments }}
+                    {% if appointment.appointmentSeries.schedule.numberOfAppointments == 1 %}
                         appointment
                     {% else %}
                         appointments
@@ -45,13 +45,13 @@
                 <a href="/appointments" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">Schedule another appointment</a>
             </p>
 
-            {% if bulkAppointment %}
+            {% if appointmentSet %}
                 <p class="govuk-body">
-                    <a href="/appointments/bulk-appointments/{{ bulkAppointment.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View, print movement slips and manage this set of appointments</a>
+                    <a href="/appointments/set/{{ appointmentSet.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View, print movement slips and manage this set of appointments</a>
                 </p>
             {% else %}
                 <p class="govuk-body">
-                    <a href="/appointments/{{ appointment.id }}/occurrence/{{ appointment.occurrences[0].id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View, print movement slips and manage this appointment</a>
+                    <a href="/appointments/{{ appointment.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View, print movement slips and manage this appointment</a>
                 </p>
             {% endif %}
         </div>

@@ -1,10 +1,10 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "pages/appointments/partials/appointment-movement-slip.njk" import occurrenceMovementSlip %}
+{% from "pages/appointments/partials/appointment-movement-slip.njk" import appointmentMovementSlip %}
 
 {% extends "layout.njk" %}
 
 {% set pageTitle = "Appointments Management - Movement Authorisation" %}
-{% set pageId = 'bulk-appointment-movement-slip-page' %}
+{% set pageId = 'appointment-set-movement-slip-page' %}
 
 {% block header %}
 {% endblock %}
@@ -16,19 +16,19 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-l govuk-visually-hidden">{{ "Print movement slip" + ("s" if bulkAppointment.occurrences.length > 1 ) }}</h1>
+            <h1 class="govuk-heading-l govuk-visually-hidden">{{ "Print movement slip" + ("s" if appointmentSet.appointments.length > 1 ) }}</h1>
 
             <div class="govuk-button-group govuk-!-display-none-print">
                 {{ govukButton({
-                    text: "Print movement slip" + ("s" if bulkAppointment.occurrences.length > 1 ),
+                    text: "Print movement slip" + ("s" if appointmentSet.appointments.length > 1 ),
                     classes: "govuk-button--blue js-print no-js-hidden",
                     preventDoubleClick: true
                 }) }}
             </div>
         </div>
     </div>
-    {% for appointmentOccurrence in bulkAppointment.occurrences %}
-        {{ occurrenceMovementSlip(appointmentOccurrence, user.activeCaseLoad.description, now) }}
+    {% for appointment in appointmentSet.appointments %}
+        {{ appointmentMovementSlip(appointment, user.activeCaseLoad.description, now) }}
     {% endfor %}
 {% endblock %}
 

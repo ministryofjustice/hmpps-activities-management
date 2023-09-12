@@ -15,18 +15,18 @@
 {% set backLinkText = "Choose a different date" %}
 {% set backLinkHref = "/appointments/search/select-date" %}
 
-{% macro attendees(allocations) %}
-    {% if allocations | length == 1 %}
-        {% set prisonerDetails = prisonersDetails[allocations[0].prisonerNumber] %}
+{% macro attendees(attendees) %}
+    {% if attendees | length == 1 %}
+        {% set prisonerDetails = prisonersDetails[attendees[0].prisonerNumber] %}
         {{ showProfileLink({
             name: prisonerDetails | firstNameLastName,
-            prisonerNumber: prisonerDetails.prisonerNumber or allocations[0].prisonerNumber,
+            prisonerNumber: prisonerDetails.prisonerNumber or attendees[0].prisonerNumber,
             cellLocation: prisonerDetails.cellLocation or "UNKNOWN",
             link: true,
             classes: 'hmpps-inline-block'
         }) }}
     {% else %}
-        {{ allocations.length }}
+        {{ attendees.length }}
     {% endif %}
 {% endmacro %}
 
@@ -40,7 +40,7 @@
         </div>
     {% endif %}
 
-    <a href="/appointments/{{ result.appointmentId }}/occurrence/{{ result.appointmentOccurrenceId }}" class="govuk-link--no-visited-state">
+    <a href="/appointments/{{ result.appointmentId }}" class="govuk-link--no-visited-state">
         {{ "Manage details" if not result.isExpired and not result.isCancelled else "View" }} <span class="govuk-visually-hidden"> appointment</span>
     </a>
 {% endmacro %}
@@ -59,7 +59,7 @@
             text: result.internalLocation.description,
             attributes: { 'data-qa': 'result-location-' + index }
         }, {
-            html: attendees(result.allocations, prisonersDetails),
+            html: attendees(result.attendees, prisonersDetails),
             attributes: { 'data-qa': 'result-prisoner-count-' + index }
         }, {
             text: result.sequenceNumber + " of " + result.maxSequenceNumber,

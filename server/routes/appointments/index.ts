@@ -34,7 +34,7 @@ export default function routes(services: Services): Router {
   // then redirects to that new url
   router.get('/create/start-individual', appointmentsStartNewJourney('/create/'))
   router.get('/create/start-group', appointmentsStartNewJourney('/create/'))
-  router.get('/create/start-bulk', appointmentsStartNewJourney('/create/'))
+  router.get('/create/start-set', appointmentsStartNewJourney('/create/'))
   router.get('/create/start-prisoner/:prisonNumber', appointmentsStartNewJourney('/create/'))
   // All create routes include the unique journeyId which is used by the populateJourney middleware to associate a
   // distinct mapped session datum with the journey. This prevents journeys in different browser tabs from conflicting
@@ -45,7 +45,7 @@ export default function routes(services: Services): Router {
   // Edit appointment journey routes. These are the starting points for all appointment modification journeys.
   // They use the startNewJourney middleware which adds a unique journeyId into the url after the /edit/ path segment
   // then redirects to that new url
-  const editAppointmentBaseUrl = '/appointment/:appointmentId(\\d+)/edit'
+  const editAppointmentBaseUrl = '/:appointmentId(\\d+)/edit'
   router.get(`${editAppointmentBaseUrl}/start/cancel`, appointmentsStartNewJourney('/edit/'))
   router.get(`${editAppointmentBaseUrl}/start/:property`, appointmentsStartNewJourney('/edit/'))
   router.get(`${editAppointmentBaseUrl}/start/:prisonNumber/remove`, appointmentsStartNewJourney('/edit/'))

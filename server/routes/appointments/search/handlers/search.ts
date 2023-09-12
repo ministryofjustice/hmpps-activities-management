@@ -47,15 +47,15 @@ export default class SearchRoutes {
 
     const appointmentNameFilters = [
       ...categories.map(c => c.description),
-      ...appointments.filter(a => a.appointmentDescription).map(a => a.appointmentName),
+      ...appointments.filter(a => a.customName).map(a => a.appointmentName),
     ]
 
     const results = appointmentName
       ? appointments.filter(a => a.appointmentName === appointmentName || a.category.description === appointmentName)
       : appointments
 
-    // Get prisoner details for appointments with a single allocation
-    const prisonerNumbers = results.flatMap(r => (r.allocations.length === 1 ? r.allocations[0].prisonerNumber : []))
+    // Get prisoner details for appointments with a single attendee
+    const prisonerNumbers = results.flatMap(r => (r.attendees.length === 1 ? r.attendees[0].prisonerNumber : []))
     let prisonersDetails = {}
     if (prisonerNumbers.length > 0) {
       prisonersDetails = (await this.prisonService.searchInmatesByPrisonerNumbers(uniq(prisonerNumbers), user)).reduce(

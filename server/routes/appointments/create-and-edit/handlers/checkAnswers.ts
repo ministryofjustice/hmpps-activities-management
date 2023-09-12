@@ -23,11 +23,11 @@ export default class CheckAnswersRoutes {
     if (appointmentJourney.type === AppointmentType.BULK) {
       const request = this.createBulkAppointmentRequest(req, res)
       response = await this.activitiesService.createAppointmentSet(request, user)
-      res.redirect(`bulk-appointments-confirmation/${response.id}`)
+      res.redirect(`set-confirmation/${response.id}`)
     } else {
       const request = this.createAppointmentRequest(req, res)
       response = await this.activitiesService.createAppointmentSeries(request, user)
-      res.redirect(`confirmation/${response.id}`)
+      res.redirect(`confirmation/${response.appointments[0].id}`)
     }
   }
 
@@ -40,19 +40,19 @@ export default class CheckAnswersRoutes {
       prisonCode: user.activeCaseLoadId,
       prisonerNumbers: appointmentJourney.prisoners.map(p => p.number),
       categoryCode: appointmentJourney.category.code,
-      appointmentDescription: appointmentJourney.customName,
+      customName: appointmentJourney.customName,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
       startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
       startTime: plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString(),
       endTime: plainToInstance(SimpleTime, appointmentJourney.endTime).toIsoString(),
-      comment: appointmentJourney.extraInformation,
+      extraInformation: appointmentJourney.extraInformation,
     } as AppointmentSeriesCreateRequest
 
     if (appointmentJourney.repeat === YesNo.YES) {
-      request.repeat = {
-        period: appointmentJourney.frequency,
-        count: appointmentJourney.numberOfAppointments,
+      request.schedule = {
+        frequency: appointmentJourney.frequency,
+        numberOfAppointments: appointmentJourney.numberOfAppointments,
       }
     }
 

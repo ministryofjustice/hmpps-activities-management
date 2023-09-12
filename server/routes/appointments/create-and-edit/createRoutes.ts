@@ -22,7 +22,7 @@ import ReviewPrisoners from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
-import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
+import fetchAppointment from '../../../middleware/appointments/fetchAppointmentSeries'
 import EditAppointmentService from '../../../services/editAppointmentService'
 import UploadBulkAppointment, { AppointmentsList } from './handlers/bulk-appointments/uploadBulkAppointment'
 import BulkAppointmentDateRoutes, { BulkAppointmentDate } from './handlers/bulk-appointments/bulkAppointmentDate'
@@ -61,7 +61,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
 
   get('/start-individual', startHandler.INDIVIDUAL)
   get('/start-group', startHandler.GROUP)
-  get('/start-bulk', startHandler.BULK)
+  get('/start-set', startHandler.BULK)
   get('/start-prisoner/:prisonNumber', startHandler.PRISONER)
   get('/select-prisoner', selectPrisonerHandler.GET, true)
   post('/select-prisoner', selectPrisonerHandler.SELECT_PRISONER, SelectPrisoner)
@@ -104,7 +104,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   post('/check-answers', checkAnswersHandler.POST)
   router.get(
     '/confirmation/:appointmentId',
-    fetchAppointmentSeries(activitiesService),
+    fetchAppointment(activitiesService),
     emptyAppointmentJourneyHandler(true),
     asyncMiddleware(confirmationHandler.GET),
   )
@@ -118,7 +118,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/review-bulk-appointment', reviewBulkAppointment.GET, true)
   post('/review-bulk-appointment', reviewBulkAppointment.POST, AppointmentTimes)
   router.get(
-    '/bulk-appointments-confirmation/:bulkAppointmentId',
+    '/set-confirmation/:appointmentSetId',
     fetchAppointmentSet(activitiesService),
     emptyAppointmentJourneyHandler(true),
     asyncMiddleware(confirmationHandler.GET_BULK),
