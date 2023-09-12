@@ -48,12 +48,11 @@ export default class PayRoutes {
     const { payRateType } = req.params
     const { iep, bandId } = req.query
 
-    const [incentiveLevels, payBands] = await Promise.all([
+    const [incentiveLevels, payBands, payProfile] = await Promise.all([
       this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user),
       this.activitiesService.getPayBandsForPrison(user),
+      this.prisonService.getPayProfile(user.activeCaseLoadId),
     ])
-
-    const payProfile = await this.prisonService.getPayProfile(user.activeCaseLoadId)
 
     const minimumPayRate = payProfile.minHalfDayRate * 100
     const maximumPayRate = payProfile.maxHalfDayRate * 100
