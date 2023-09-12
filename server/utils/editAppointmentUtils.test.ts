@@ -27,8 +27,8 @@ describe('Edit Appointment Utils', () => {
   const weekTomorrow = addDays(new Date(), 8)
   const weekTomorrowFormatted = formatDate(weekTomorrow, 'EEEE, d MMMM yyyy')
   let req: Request
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentSeriesId = 1
+  const appointmentId = 2
 
   beforeEach(() => {
     req = {
@@ -85,8 +85,8 @@ describe('Edit Appointment Utils', () => {
         } as EditAppointmentJourney,
       },
       params: {
+        appointmentSeriesId,
         appointmentId,
-        occurrenceId,
       },
       flash: jest.fn(),
     } as unknown as Request
@@ -102,19 +102,19 @@ describe('Edit Appointment Utils', () => {
       expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
     })
 
+    it('edit mode null appointment series id', () => {
+      req.params.appointmentSeriesId = null
+      expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
+    })
+
     it('edit mode null appointment id', () => {
       req.params.appointmentId = null
       expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
     })
 
-    it('edit mode null occurrence id', () => {
-      req.params.occurrenceId = null
-      expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
-    })
-
     it('edit', () => {
       expect(getAppointmentBackLinkHref(req, 'name')).toEqual(
-        `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+        `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
       )
     })
   })

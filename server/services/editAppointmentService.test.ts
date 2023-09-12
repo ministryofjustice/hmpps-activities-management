@@ -27,8 +27,8 @@ describe('Edit Appointment Service', () => {
   const weekTomorrowFormatted = formatDate(weekTomorrow, 'EEEE, d MMMM yyyy')
   let req: Request
   let res: Response
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentSeriesId = 1
+  const appointmentId = 2
 
   beforeEach(() => {
     req = {
@@ -87,8 +87,8 @@ describe('Edit Appointment Service', () => {
         } as EditAppointmentJourney,
       },
       params: {
+        appointmentSeriesId,
         appointmentId,
-        occurrenceId,
       },
       flash: jest.fn(),
     } as unknown as Request
@@ -113,7 +113,7 @@ describe('Edit Appointment Service', () => {
       expect(activitiesService.editAppointment).not.toHaveBeenCalled()
       expect(req.session.appointmentJourney).toBeNull()
       expect(req.session.editAppointmentJourney).toBeNull()
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`)
     })
 
     it('when changing the location for a non repeating appointment', async () => {
@@ -138,7 +138,7 @@ describe('Edit Appointment Service', () => {
       expect(req.session.appointmentJourney).toBeNull()
       expect(req.session.editAppointmentJourney).toBeNull()
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+        `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
         "You've changed the location for this appointment",
       )
     })
@@ -159,7 +159,7 @@ describe('Edit Appointment Service', () => {
   })
 
   describe('edit', () => {
-    describe('apply to this occurrence', () => {
+    describe('apply to this appointment', () => {
       it('when cancelling', async () => {
         req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
 
@@ -174,7 +174,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`)
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
       })
@@ -269,7 +269,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the location for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -296,7 +296,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the date for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -322,7 +322,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the time for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -348,7 +348,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the time for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -375,7 +375,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the time for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -407,7 +407,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the time for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -440,7 +440,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the date and time for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -473,7 +473,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the date and time for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -512,7 +512,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the date and time for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -528,13 +528,13 @@ describe('Edit Appointment Service', () => {
         expect(activitiesService.editAppointment).toHaveBeenCalledWith(
           2,
           {
-            comment: 'Updated comment',
+            extraInformation: 'Updated comment',
             applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the extra information for this appointment",
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -542,7 +542,7 @@ describe('Edit Appointment Service', () => {
       })
     })
 
-    describe('apply to this and all future occurrence', () => {
+    describe('apply to this and all future appointments', () => {
       beforeEach(() => {
         req.session.appointmentJourney.repeat = YesNo.YES
       })
@@ -552,7 +552,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
-        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`)
       })
 
       it('when deleting', async () => {
@@ -561,7 +561,7 @@ describe('Edit Appointment Service', () => {
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}`,
+          `/appointments/${appointmentSeriesId}`,
           "You've deleted appointments 2 to 4 in this series",
         )
       })
@@ -575,7 +575,7 @@ describe('Edit Appointment Service', () => {
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the location for appointments 2 to 4 in the series",
         )
       })
@@ -603,13 +603,13 @@ describe('Edit Appointment Service', () => {
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the location for appointments 2 to 3 in the series",
         )
       })
     })
 
-    describe('apply to all future occurrence', () => {
+    describe('apply to all future appointments', () => {
       beforeEach(() => {
         req.session.appointmentJourney.repeat = YesNo.YES
       })
@@ -619,7 +619,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
-        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`)
       })
 
       it('when deleting', async () => {
@@ -628,7 +628,7 @@ describe('Edit Appointment Service', () => {
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}`,
+          `/appointments/${appointmentSeriesId}`,
           "You've deleted appointments 1 to 4 in this series",
         )
       })
@@ -642,7 +642,7 @@ describe('Edit Appointment Service', () => {
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the location for appointments 1 to 4 in the series",
         )
       })
@@ -667,7 +667,7 @@ describe('Edit Appointment Service', () => {
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the location for appointments 3 to 4 in the series",
         )
       })
@@ -695,7 +695,7 @@ describe('Edit Appointment Service', () => {
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+          `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
           "You've changed the location for appointments 1 to 3 in the series",
         )
       })

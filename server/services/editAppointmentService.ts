@@ -18,15 +18,15 @@ import {
   hasAppointmentStartDateChanged,
   hasAppointmentStartTimeChanged,
   isApplyToQuestionRequired,
-  getLastOccurrence,
-  getFirstOccurrence,
+  getLastAppointment,
+  getFirstAppointment,
 } from '../utils/editAppointmentUtils'
 
 export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   async redirectOrEdit(req: Request, res: Response, property: string) {
-    const { appointmentId, occurrenceId } = req.params
+    const { appointmentSeriesId, appointmentId } = req.params
     if (hasAnyAppointmentPropertyChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)) {
       if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
         return res.redirect(`${property}/apply-to`)
@@ -37,13 +37,13 @@ export default class EditAppointmentService {
 
     this.clearSession(req)
 
-    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+    return res.redirect(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`)
   }
 
   async edit(req: Request, res: Response, applyTo: AppointmentApplyTo) {
     const { user } = res.locals
     const { appointmentJourney, editAppointmentJourney } = req.session
-    const { appointmentId, occurrenceId } = req.params
+    const { appointmentSeriesId, appointmentId } = req.params
 
     if (editAppointmentJourney.cancellationReason) {
       const { repeat } = appointmentJourney
@@ -54,10 +54,10 @@ export default class EditAppointmentService {
         applyTo,
       }
 
-      await this.activitiesService.cancelAppointment(+occurrenceId, cancelRequest, user)
+      await this.activitiesService.cancelAppointment(+appointmentId, cancelRequest, user)
 
-      // For delete requests we can't redirect back to the occurrence page. Instead we should provide a more specific
-      // error message and redirect back to a relevent page
+      // For delete requests we can't redirect back to the appointment page. Instead, we should provide a more specific
+      // error message and redirect back to a relevant page
       if (cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
         if (appointmentSet) {
           const successHeading = `You've ${this.getEditedMessage(
@@ -65,11 +65,11 @@ export default class EditAppointmentService {
             editAppointmentJourney,
           )} appointment for ${appointmentJourney.prisoners[0].number} from this set`
 
-          const bulkAppointmentId = appointmentSet.id
+          const appointmentSetId = appointmentSet.id
 
           this.clearSession(req)
 
-          return res.redirectWithSuccess(`/appointments/bulk-appointments/${bulkAppointmentId}`, successHeading)
+          return res.redirectWithSuccess(`/appointments/bulk-appointments/${appointmentSetId}`, successHeading)
         }
         if (repeat === YesNo.YES) {
           const successHeading = `You've ${this.getEditedMessage(
@@ -79,7 +79,7 @@ export default class EditAppointmentService {
 
           this.clearSession(req)
 
-          return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
+          return res.redirectWithSuccess(`/appointments/${appointmentSeriesId}`, successHeading)
         }
         const successHeading = `You've ${this.getEditedMessage(appointmentJourney, editAppointmentJourney)} the ${
           appointmentJourney.appointmentName
@@ -92,44 +92,44 @@ export default class EditAppointmentService {
 
       this.clearSession(req)
 
-      return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+      return res.redirect(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`)
     }
 
-    const occurrenceUpdates = { applyTo } as AppointmentUpdateRequest
+    const request = { applyTo } as AppointmentUpdateRequest
 
     if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
-      occurrenceUpdates.internalLocationId = editAppointmentJourney.location.id
+      request.internalLocationId = editAppointmentJourney.location.id
     }
 
     if (hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)) {
-      occurrenceUpdates.startDate = plainToInstance(SimpleDate, editAppointmentJourney.startDate).toIsoString()
-      // TODO: This is a hack as the API doesn't currently support apply to all future occurrences for date
+      request.startDate = plainToInstance(SimpleDate, editAppointmentJourney.startDate).toIsoString()
+      // TODO: This is a hack as the API doesn't currently support apply to all future appointments for date
       if (applyTo === AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS) {
-        occurrenceUpdates.applyTo = AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS
+        request.applyTo = AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS
       }
     }
 
     if (hasAppointmentStartTimeChanged(appointmentJourney, editAppointmentJourney)) {
-      occurrenceUpdates.startTime = plainToInstance(SimpleTime, editAppointmentJourney.startTime).toIsoString()
+      request.startTime = plainToInstance(SimpleTime, editAppointmentJourney.startTime).toIsoString()
     }
 
     if (hasAppointmentEndTimeChanged(appointmentJourney, editAppointmentJourney)) {
-      occurrenceUpdates.endTime = plainToInstance(SimpleTime, editAppointmentJourney.endTime).toIsoString()
+      request.endTime = plainToInstance(SimpleTime, editAppointmentJourney.endTime).toIsoString()
     }
 
     if (hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)) {
-      occurrenceUpdates.extraInformation = editAppointmentJourney.extraInformation
+      request.extraInformation = editAppointmentJourney.extraInformation
     }
 
     if (editAppointmentJourney.addPrisoners?.length > 0) {
-      occurrenceUpdates.addPrisonerNumbers = editAppointmentJourney.addPrisoners.map(prisoner => prisoner.number)
+      request.addPrisonerNumbers = editAppointmentJourney.addPrisoners.map(prisoner => prisoner.number)
     }
 
     if (editAppointmentJourney.removePrisoner) {
-      occurrenceUpdates.removePrisonerNumbers = [editAppointmentJourney.removePrisoner.prisonerNumber]
+      request.removePrisonerNumbers = [editAppointmentJourney.removePrisoner.prisonerNumber]
     }
 
-    await this.activitiesService.editAppointment(+occurrenceId, occurrenceUpdates, user)
+    await this.activitiesService.editAppointment(+appointmentId, request, user)
 
     const successHeading = `You've ${this.getEditedMessage(
       appointmentJourney,
@@ -138,7 +138,7 @@ export default class EditAppointmentService {
 
     this.clearSession(req)
 
-    return res.redirectWithSuccess(`/appointments/${appointmentId}/occurrence/${occurrenceId}`, successHeading)
+    return res.redirectWithSuccess(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`, successHeading)
   }
 
   private getEditedMessage(appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) {
@@ -160,16 +160,16 @@ export default class EditAppointmentService {
       switch (applyTo) {
         case AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS:
           return `appointments ${editAppointmentJourney.sequenceNumber} to ${
-            getLastOccurrence(editAppointmentJourney).sequenceNumber
+            getLastAppointment(editAppointmentJourney).sequenceNumber
           } in ${backToSeries ? 'this' : 'the'} series`
         case AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS:
-          return `appointments ${getFirstOccurrence(editAppointmentJourney).sequenceNumber} to ${
-            getLastOccurrence(editAppointmentJourney).sequenceNumber
+          return `appointments ${getFirstAppointment(editAppointmentJourney).sequenceNumber} to ${
+            getLastAppointment(editAppointmentJourney).sequenceNumber
           } in ${backToSeries ? 'this' : 'the'} series`
         default:
           if (backToSeries) {
             return `appointment ${editAppointmentJourney.sequenceNumber} of ${
-              getLastOccurrence(editAppointmentJourney).sequenceNumber
+              getLastAppointment(editAppointmentJourney).sequenceNumber
             } in this series`
           }
       }
