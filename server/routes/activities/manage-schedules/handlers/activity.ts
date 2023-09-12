@@ -39,6 +39,7 @@ export default class ActivityRoutes {
 
     req.session.createJourney = {}
     req.session.createJourney.activityId = activity.id
+    req.session.createJourney.scheduleId = activity.schedules[0].id
     req.session.createJourney.category = activity.category
     req.session.createJourney.name = activity.summary
     req.session.createJourney.inCell = activity.inCell

@@ -35,8 +35,8 @@ export default class EndDateRoutes {
     const { user } = res.locals
     let allocations: Allocation[]
     if (req.query && req.query.fromEditActivity) {
-      const { activityId } = req.session.createJourney
-      const schedule = await this.activitiesService.getActivitySchedule(activityId, user)
+      const { scheduleId } = req.session.createJourney
+      const schedule = await this.activitiesService.getActivitySchedule(scheduleId, user)
       if (schedule.allocations.length > 0) {
         allocations = schedule.allocations.sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
         req.session.createJourney.latestAllocationStartDate = new Date(allocations[allocations.length - 1].startDate)
