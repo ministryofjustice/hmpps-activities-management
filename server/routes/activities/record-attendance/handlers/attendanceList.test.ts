@@ -76,8 +76,9 @@ describe('Route Handlers - Attendance List', () => {
         ],
         appointments: [
           {
-            appointmentOccurrenceId: 2,
-            appointmentInstanceId: 2,
+            appointmentSeriesId: 2,
+            appointmentId: 2,
+            appointmentAttendeeId: 2,
             eventType: 'APPOINTMENT',
             eventSource: 'SAA',
             summary: 'Appointment with the guv',
@@ -339,8 +340,9 @@ describe('Route Handlers - Attendance List', () => {
           ],
           appointments: [
             {
-              appointmentInstanceId: 2,
-              appointmentOccurrenceId: 2,
+              appointmentSeriesId: 2,
+              appointmentId: 2,
+              appointmentAttendeeId: 2,
               eventSource: 'SAA',
               eventType: 'APPOINTMENT',
               summary: 'Appointment with the guv',

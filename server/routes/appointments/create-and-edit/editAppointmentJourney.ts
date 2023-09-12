@@ -2,13 +2,13 @@ import { AppointmentSetSummary, PrisonerSummary } from '../../../@types/activiti
 import { AppointmentCancellationReason, AppointmentApplyTo } from '../../../@types/appointments'
 
 export type EditAppointmentJourney = {
-  repeatCount: number
-  occurrences: {
+  numberOfAppointments: number
+  appointments: {
     sequenceNumber: number
     startDate: string
   }[]
   sequenceNumber: number
-  bulkAppointment?: AppointmentSetSummary
+  appointmentSet?: AppointmentSetSummary
   location?: {
     id: number
     description: string
@@ -29,7 +29,7 @@ export type EditAppointmentJourney = {
     minute: number
     date: Date
   }
-  comment?: string
+  extraInformation?: string
   addPrisoners?: {
     number: string
     name: string

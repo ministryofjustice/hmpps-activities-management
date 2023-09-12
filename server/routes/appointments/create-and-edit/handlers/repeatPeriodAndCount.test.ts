@@ -4,7 +4,7 @@ import { validate } from 'class-validator'
 import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './repeatPeriodAndCount'
 import { YesNo } from '../../../../@types/activities'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 
 describe('Route Handlers - Create Appointment - Repeat Period and Count', () => {
   const handler = new RepeatPeriodAndCountRoutes()
@@ -44,7 +44,7 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
   describe('POST', () => {
     it('should save repeat = YES, period and count in session and redirect to schedule page', async () => {
       req.body = {
-        repeatPeriod: AppointmentRepeatPeriod.WEEKLY,
+        repeatPeriod: AppointmentFrequency.WEEKLY,
         repeatCount: 6,
       }
 
@@ -53,14 +53,14 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
-      expect(req.session.appointmentJourney.repeatPeriod).toEqual(AppointmentRepeatPeriod.WEEKLY)
-      expect(req.session.appointmentJourney.repeatCount).toEqual(6)
+      expect(req.session.appointmentJourney.frequency).toEqual(AppointmentFrequency.WEEKLY)
+      expect(req.session.appointmentJourney.numberOfAppointments).toEqual(6)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule')
     })
 
     it('should throw validation error if appointment occurrence allocations exceed 20,000', async () => {
       req.body = {
-        repeatPeriod: AppointmentRepeatPeriod.DAILY,
+        repeatPeriod: AppointmentFrequency.DAILY,
         repeatCount: 350,
       }
 
@@ -109,7 +109,7 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
 
     it('validation fails when repeat count less than 0 is entered', async () => {
       const body = {
-        repeatPeriod: AppointmentRepeatPeriod.WEEKDAY,
+        repeatPeriod: AppointmentFrequency.WEEKDAY,
         repeatCount: 0,
       }
 
@@ -127,11 +127,11 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
     })
 
     it.each([
-      { repeatPeriod: AppointmentRepeatPeriod.WEEKDAY, repeatCount: 261, max: 260 },
-      { repeatPeriod: AppointmentRepeatPeriod.DAILY, repeatCount: 366, max: 365 },
-      { repeatPeriod: AppointmentRepeatPeriod.WEEKLY, repeatCount: 53, max: 52 },
-      { repeatPeriod: AppointmentRepeatPeriod.FORTNIGHTLY, repeatCount: 27, max: 26 },
-      { repeatPeriod: AppointmentRepeatPeriod.MONTHLY, repeatCount: 13, max: 12 },
+      { repeatPeriod: AppointmentFrequency.WEEKDAY, repeatCount: 261, max: 260 },
+      { repeatPeriod: AppointmentFrequency.DAILY, repeatCount: 366, max: 365 },
+      { repeatPeriod: AppointmentFrequency.WEEKLY, repeatCount: 53, max: 52 },
+      { repeatPeriod: AppointmentFrequency.FORTNIGHTLY, repeatCount: 27, max: 26 },
+      { repeatPeriod: AppointmentFrequency.MONTHLY, repeatCount: 13, max: 12 },
     ])(
       'validation fails when repeat period is $repeatPeriod and repeat count greater than $max is entered',
       async ({ repeatPeriod, repeatCount, max }) => {
@@ -156,7 +156,7 @@ describe('Route Handlers - Create Appointment - Repeat Period and Count', () => 
 
     it('passes validation when valid repeat period value is selected and repeat count is entered', async () => {
       const body = {
-        repeatPeriod: AppointmentRepeatPeriod.FORTNIGHTLY,
+        repeatPeriod: AppointmentFrequency.FORTNIGHTLY,
         repeatCount: 3,
       }
 

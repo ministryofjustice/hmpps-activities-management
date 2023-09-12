@@ -11,9 +11,9 @@ import {
   AppointmentSetAppointment,
 } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 import { AppointmentType } from '../appointmentJourney'
-import { BulkAppointmentJourney } from '../bulkAppointmentJourney'
+import { AppointmentSetJourney } from '../appointmentSetJourney'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -73,7 +73,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
           },
           repeat: YesNo.NO,
         },
-        bulkAppointmentJourney: {},
+        appointmentSetJourney: {},
       },
     } as unknown as Request
   })
@@ -150,11 +150,11 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
 
     it('should create the repeat appointment and redirect to confirmation page', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
-      req.session.appointmentJourney.repeatPeriod = AppointmentRepeatPeriod.WEEKLY
-      req.session.appointmentJourney.repeatCount = 6
+      req.session.appointmentJourney.frequency = AppointmentFrequency.WEEKLY
+      req.session.appointmentJourney.numberOfAppointments = 6
 
       expectedRequest.repeat = {
-        period: AppointmentRepeatPeriod.WEEKLY,
+        period: AppointmentFrequency.WEEKLY,
         count: 6,
       }
 
@@ -174,7 +174,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     beforeEach(() => {
       req.session.appointmentJourney.type = AppointmentType.BULK
 
-      req.session.bulkAppointmentJourney = {
+      req.session.appointmentSetJourney = {
         appointments: [
           {
             startTime: {
@@ -205,10 +205,10 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
               name: 'B Prisoner',
               cellLocation: '1-2-4',
             },
-            comment: 'Extra information for B2345CD',
+            extraInformation: 'Extra information for B2345CD',
           },
         ],
-      } as BulkAppointmentJourney
+      } as AppointmentSetJourney
 
       expectedRequest = {
         prisonCode: 'TPR',

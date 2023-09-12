@@ -8,7 +8,7 @@ import {
   AppointmentJourneyMode,
   AppointmentType,
 } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentFrequency } from '../../../../@types/appointments'
 import { formatDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
 
@@ -66,11 +66,11 @@ describe('Views - Appointments Management - Apply to', () => {
             year: weekTomorrow.getFullYear(),
             date: weekTomorrow,
           },
-          repeatPeriod: AppointmentRepeatPeriod.DAILY,
+          frequency: AppointmentFrequency.DAILY,
         },
         editAppointmentJourney: {
-          repeatCount: 3,
-          occurrences: [
+          numberOfAppointments: 3,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: format(weekTomorrow, 'yyyy-MM-dd'),

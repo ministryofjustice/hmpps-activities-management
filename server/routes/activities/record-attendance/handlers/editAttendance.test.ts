@@ -172,8 +172,9 @@ describe('Route Handlers - Edit Attendance', () => {
             {
               eventSource: 'SAA',
               eventType: 'ACTIVITY',
-              appointmentInstanceId: 2,
-              appointmentOccurrenceId: 2,
+              appointmentSeriesId: 2,
+              appointmentId: 2,
+              appointmentAttendeeId: 2,
               summary: 'Appointment with the guv',
               startTime: '15:00',
               endTime: '16:00',

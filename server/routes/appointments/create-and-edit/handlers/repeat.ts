@@ -26,8 +26,8 @@ export default class RepeatRoutes {
     if (repeat === YesNo.YES) {
       if (
         originalRepeat === YesNo.YES &&
-        req.session.appointmentJourney.repeatPeriod !== undefined &&
-        req.session.appointmentJourney.repeatCount !== undefined
+        req.session.appointmentJourney.frequency !== undefined &&
+        req.session.appointmentJourney.numberOfAppointments !== undefined
       ) {
         res.redirectOrReturn(`schedule`)
       } else {

@@ -237,7 +237,7 @@
                 text: "Appointments created"
             },
             value: {
-                text: session.bulkAppointmentJourney.appointments | length
+                text: session.appointmentSetJourney.appointments | length
             }
         }
     ), summaryListRows) %}
@@ -322,9 +322,9 @@
         }) }}
     </div>
 
-    <h2 class="govuk-heading-m">{{ ("Attendee details" if session.bulkAppointmentJourney.appointments.length == 1 else "Details of attendees") }}</h2>
+    <h2 class="govuk-heading-m">{{ ("Attendee details" if session.appointmentSetJourney.appointments.length == 1 else "Details of attendees") }}</h2>
 
-    {% for appointment in session.bulkAppointmentJourney.appointments %}
+    {% for appointment in session.appointmentSetJourney.appointments %}
         {{ govukSummaryList({
             card: {
                 title: {

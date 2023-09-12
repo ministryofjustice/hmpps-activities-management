@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { BulkAppointmentJourney } from '../../bulkAppointmentJourney'
+import { AppointmentSetJourney } from '../../appointmentSetJourney'
 import BulkAppointmentCommentsRoutes from './bulkAppointmentComments'
 
 describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
@@ -20,7 +20,7 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
 
     req = {
       session: {
-        bulkAppointmentJourney: {},
+        appointmentSetJourney: {},
       },
     } as unknown as Request
   })
@@ -36,16 +36,16 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
           prisoner: {
             number: 'A1234BC',
           },
-          comment: 'An appointment comment',
+          extraInformation: 'An appointment comment',
         },
         {
           prisoner: {
             number: 'Z4321YX',
           },
-          comment: 'Another appointment comment',
+          extraInformation: 'Another appointment comment',
         },
-      ] as BulkAppointmentJourney['appointments']
-      req.session.bulkAppointmentJourney.appointments = testPrisonerAppointments
+      ] as AppointmentSetJourney['appointments']
+      req.session.appointmentSetJourney.appointments = testPrisonerAppointments
 
       handler.GET(req, res)
 

@@ -7,7 +7,8 @@ export default class BulkAppointmentDetailsRoutes {
     res.render('pages/appointments/bulk-appointment-details/bulk-appointment', {
       appointmentSet,
       showPrintMovementSlipsLink:
-        appointmentSet.occurrences.filter(occurrence => !occurrence.isCancelled && !occurrence.isExpired).length > 0,
+        appointmentSet.appointments.filter(appointment => !appointment.isCancelled && !appointment.isExpired).length >
+        0,
     })
   }
 }

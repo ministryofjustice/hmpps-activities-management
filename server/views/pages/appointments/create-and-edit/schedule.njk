@@ -101,7 +101,7 @@
                                     text: "Appointments"
                                 },
                                 value: {
-                                    text: session.bulkAppointmentJourney.appointments | length
+                                    text: session.appointmentSetJourney.appointments | length
                                 }
                             } if session.appointmentJourney.type == AppointmentType.BULK
                         ), appointmentSummary) %}

@@ -37,8 +37,8 @@ import {
   AppointmentUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
+import appointmentSeriesDetails from './fixtures/appointment_series_details_1.json'
 import appointmentDetails from './fixtures/appointment_details_1.json'
-import appointmentOccurrenceDetails from './fixtures/appointment_occurrence_details_1.json'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
 import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
@@ -203,27 +203,27 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('getAppointmentDetail', () => {
-    it('should return appointment detail from api when valid appointment id is used', async () => {
+  describe('getAppointmentSeriesDetails', () => {
+    it('should return appointment series detail from api when valid appointment series id is used', async () => {
       when(activitiesApiClient.getAppointmentSeriesDetails)
         .calledWith(12345, user)
-        .mockResolvedValue(appointmentDetails as AppointmentSeriesDetails)
+        .mockResolvedValue(appointmentSeriesDetails as AppointmentSeriesDetails)
 
       const actualResult = await activitiesService.getAppointmentSeriesDetails(12345, user)
 
-      expect(actualResult).toEqual(appointmentDetails)
+      expect(actualResult).toEqual(appointmentSeriesDetails)
     })
   })
 
-  describe('getAppointmentOccurrenceDetail', () => {
-    it('should return appointment occurrence detail from api when valid appointment id is used', async () => {
+  describe('getAppointmentDetails', () => {
+    it('should return appointment detail from api when valid appointment id is used', async () => {
       when(activitiesApiClient.getAppointmentDetails)
         .calledWith(12, user)
-        .mockResolvedValue(appointmentOccurrenceDetails as AppointmentDetails)
+        .mockResolvedValue(appointmentDetails as AppointmentDetails)
 
       const actualResult = await activitiesService.getAppointmentDetails(12, user)
 
-      expect(actualResult).toEqual(appointmentOccurrenceDetails)
+      expect(actualResult).toEqual(appointmentDetails)
     })
   })
 
@@ -252,8 +252,8 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('postCreateAppointment', () => {
-    it('should return created appointment from api when valid request is sent', async () => {
+  describe('createAppointmentSeries', () => {
+    it('should return created appointment series from api when valid request is sent', async () => {
       const request = {
         categoryCode: 'CHAP',
         prisonCode: 'SKI',
@@ -262,8 +262,8 @@ describe('Activities Service', () => {
         startDate: '2023-02-07',
         startTime: '09:00',
         endTime: '10:30',
-        comment: 'This appointment will help adjusting to life outside of prison',
-        appointmentDescription: 'Appointment description',
+        extraInformation: 'This appointment will help adjusting to life outside of prison',
+        customName: 'Appointment description',
         prisonerNumbers: ['A1234BC'],
         appointmentType: AppointmentType.INDIVIDUAL,
       } as AppointmentSeriesCreateRequest
@@ -277,21 +277,26 @@ describe('Activities Service', () => {
         startDate: '2023-02-07',
         startTime: '09:00',
         endTime: '10:30',
-        comment: 'This appointment will help adjusting to life outside of prison',
-        appointmentDescription: 'Appointment description',
-        created: '2023-02-07T15:37:59.266Z',
+        extraInformation: 'This appointment will help adjusting to life outside of prison',
+        customName: 'Appointment description',
+        createdTime: '2023-02-07T15:37:59.266Z',
         createdBy: 'AAA01U',
-        occurrences: [
+        appointments: [
           {
             id: 123456,
+            prisonCode: 'SKI',
+            categoryCode: 'CHAP',
+            customName: 'Appointment description',
             internalLocationId: 123,
             startDate: '2023-02-07',
             startTime: '13:00',
             endTime: '13:30',
-            comment: 'This appointment occurrence has been rescheduled due to staff availability',
-            updated: '2023-02-07T15:37:59.266Z',
+            extraInformation: 'This appointment has been rescheduled due to staff availability',
+            createdTime: '2023-02-07T15:37:59.266Z',
+            createdBy: 'AAA01U',
+            updatedTime: '2023-02-07T15:37:59.266Z',
             updatedBy: 'AAA01U',
-            allocations: [
+            attendees: [
               {
                 id: 123456,
                 prisonerNumber: 'A1234BC',
@@ -365,8 +370,8 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('editAppointmentOccurrence', () => {
-    it('should edit appointment occurrence', async () => {
+  describe('editAppointment', () => {
+    it('should edit appointment', async () => {
       const apiRequest = {
         internalLocationId: 123,
         applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
@@ -378,8 +383,8 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('createBulkAppointment', () => {
-    it('should call API to create and return bulk appointment', async () => {
+  describe('createAppointmentSet', () => {
+    it('should call API to create and return appointment set', async () => {
       const request = {
         prisonCode: 'MDI',
         categoryCode: 'ACTI',
@@ -387,8 +392,18 @@ describe('Activities Service', () => {
         inCell: false,
         startDate: '2023-05-16',
         appointments: [
-          { prisonerNumber: 'A1349DZ', startTime: '13:30', endTime: '14:30', comment: '' } as AppointmentSetAppointment,
-          { prisonerNumber: 'A1350DZ', startTime: '15:00', endTime: '15:00', comment: '' } as AppointmentSetAppointment,
+          {
+            prisonerNumber: 'A1349DZ',
+            startTime: '13:30',
+            endTime: '14:30',
+            extraInformation: '',
+          } as AppointmentSetAppointment,
+          {
+            prisonerNumber: 'A1350DZ',
+            startTime: '15:00',
+            endTime: '15:00',
+            extraInformation: '',
+          } as AppointmentSetAppointment,
         ],
       } as AppointmentSetCreateRequest
 
@@ -413,8 +428,8 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('getBulkAppointmentDetail', () => {
-    it('should return bulk appointment detail from api when valid bulk appointment id is used', async () => {
+  describe('getAppointmentSetDetails', () => {
+    it('should return appointment set detail from api when valid appointment set id is used', async () => {
       const response = {
         id: 12345,
       } as AppointmentSetDetails

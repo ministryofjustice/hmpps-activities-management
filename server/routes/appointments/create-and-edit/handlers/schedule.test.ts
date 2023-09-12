@@ -43,7 +43,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           startDate: simpleDateFromDate(tomorrow),
           prisoners: [],
         },
-        bulkAppointmentJourney: {
+        appointmentSetJourney: {
           appointments: [],
         },
         editAppointmentJourney: {},
@@ -256,7 +256,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
     it('use bulk appointment appointments prisoner for type = BULK', async () => {
       req.session.appointmentJourney.type = AppointmentType.BULK
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentSetJourney.appointments = [
         {
           startTime: {
             hour: 9,
@@ -507,7 +507,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
     it('should remove prisoner appointment from bulk appointment and redirect back to GET', async () => {
       req.session.appointmentJourney.type = AppointmentType.BULK
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -530,7 +530,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',

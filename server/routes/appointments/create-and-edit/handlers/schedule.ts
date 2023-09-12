@@ -17,7 +17,7 @@ export default class ScheduleRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { occurrenceId } = req.params
-    const { appointmentJourney, bulkAppointmentJourney, editAppointmentJourney } = req.session
+    const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
     const { preserveHistory } = req.query
 
     let backLinkHref: string
@@ -34,7 +34,7 @@ export default class ScheduleRoutes {
 
     let prisonNumbers
     if (appointmentJourney.type === AppointmentType.BULK) {
-      prisonNumbers = bulkAppointmentJourney.appointments.map(a => a.prisoner.number)
+      prisonNumbers = appointmentSetJourney.appointments.map(a => a.prisoner.number)
     } else if (editAppointmentJourney?.addPrisoners) {
       prisonNumbers = editAppointmentJourney.addPrisoners.map(p => p.number)
     } else {
@@ -60,7 +60,7 @@ export default class ScheduleRoutes {
 
     let prisonerSchedules
     if (appointmentJourney.type === AppointmentType.BULK) {
-      prisonerSchedules = bulkAppointmentJourney.appointments.map(appointment => ({
+      prisonerSchedules = appointmentSetJourney.appointments.map(appointment => ({
         prisoner: appointment.prisoner,
         startTime: appointment.startTime,
         endTime: appointment.endTime,
@@ -108,7 +108,7 @@ export default class ScheduleRoutes {
     const { prisonNumber } = req.params
 
     if (req.session.appointmentJourney.type === AppointmentType.BULK) {
-      req.session.bulkAppointmentJourney.appointments = req.session.bulkAppointmentJourney.appointments.filter(
+      req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )
     } else if (

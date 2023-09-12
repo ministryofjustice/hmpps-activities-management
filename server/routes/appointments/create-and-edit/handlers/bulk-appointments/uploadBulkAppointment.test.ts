@@ -43,7 +43,7 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
     req = {
       session: {
         appointmentJourney: {},
-        bulkAppointmentJourney: {},
+        appointmentSetJourney: {},
       },
       query: {},
       flash: jest.fn(),
@@ -186,7 +186,7 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
 
       await handler.POST(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -252,7 +252,7 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
 
       await handler.POST(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',
@@ -276,7 +276,7 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
     })
 
     it('should replace appointments in session and redirect to review prisoners page', async () => {
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'XYZ1234',
@@ -337,7 +337,7 @@ describe('Route Handlers - Create Bulk Appointment - Upload Bulk Appointment', (
 
       await handler.POST(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',

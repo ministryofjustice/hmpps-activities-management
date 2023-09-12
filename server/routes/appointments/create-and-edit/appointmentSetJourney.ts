@@ -1,4 +1,4 @@
-export type BulkAppointmentJourney = {
+export type AppointmentSetJourney = {
   appointments?: {
     startTime?: {
       hour: number
@@ -13,6 +13,6 @@ export type BulkAppointmentJourney = {
       name: string
       cellLocation: string
     }
-    comment?: string
+    extraInformation?: string
   }[]
 }

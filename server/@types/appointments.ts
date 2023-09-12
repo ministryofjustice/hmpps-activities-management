@@ -1,4 +1,4 @@
-export enum AppointmentRepeatPeriod {
+export enum AppointmentFrequency {
   WEEKDAY = 'WEEKDAY',
   DAILY = 'DAILY',
   WEEKLY = 'WEEKLY',

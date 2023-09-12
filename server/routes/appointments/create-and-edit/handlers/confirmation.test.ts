@@ -46,7 +46,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
             date: '2023-04-23T13:00:00.000+0100',
           },
         },
-        bulkAppointmentJourney: {},
+        appointmentSetJourney: {},
       },
       appointment: {} as AppointmentSeriesDetails,
       bulkAppointment: {} as AppointmentSetDetails,
@@ -85,7 +85,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should clear session', async () => {
       await handler.GET_BULK(req, res)
       expect(req.session.appointmentJourney).toBeNull()
-      expect(req.session.bulkAppointmentJourney).toBeNull()
+      expect(req.session.appointmentSetJourney).toBeNull()
     })
   })
 })

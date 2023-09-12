@@ -134,7 +134,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
         code: 'MEDO',
         description: 'Medical - Doctor',
       })
-      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(req.session.appointmentJourney.customName).toBeNull()
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
 
@@ -153,7 +153,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
         code: 'CHAP',
         description: 'Chaplaincy',
       })
-      expect(req.session.appointmentJourney.description).toEqual('Bible studies')
+      expect(req.session.appointmentJourney.customName).toEqual('Bible studies')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
 
@@ -168,7 +168,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.appointmentName).toEqual('Bible studies (Chaplaincy)')
-      expect(req.session.appointmentJourney.description).toEqual('Bible studies')
+      expect(req.session.appointmentJourney.customName).toEqual('Bible studies')
     })
 
     it('should set description to null when undefined', async () => {
@@ -182,7 +182,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(req.session.appointmentJourney.customName).toBeNull()
     })
 
     it('should set description to null when null', async () => {
@@ -196,7 +196,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(req.session.appointmentJourney.customName).toBeNull()
     })
 
     it('should set description to null when empty string', async () => {
@@ -210,7 +210,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(req.session.appointmentJourney.customName).toBeNull()
     })
 
     it('should set description to null when whitespace', async () => {
@@ -224,7 +224,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(req.session.appointmentJourney.customName).toBeNull()
     })
 
     it('validation fails when selected category is not found', async () => {

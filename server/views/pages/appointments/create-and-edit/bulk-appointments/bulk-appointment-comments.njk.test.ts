@@ -7,7 +7,7 @@ import {
   AppointmentType,
   AppointmentJourney,
 } from '../../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { BulkAppointmentJourney } from '../../../../../routes/appointments/create-and-edit/bulkAppointmentJourney'
+import { AppointmentSetJourney } from '../../../../../routes/appointments/create-and-edit/appointmentSetJourney'
 
 let $: CheerioAPI
 const view = fs.readFileSync(
@@ -33,7 +33,7 @@ describe('Views - Create Bulk Appointment - Add Comment', () => {
         appointmentJourney: {
           type: AppointmentType.BULK,
         } as AppointmentJourney,
-        bulkAppointmentJourney: {} as BulkAppointmentJourney,
+        appointmentSetJourney: {} as AppointmentSetJourney,
       },
     }
   })

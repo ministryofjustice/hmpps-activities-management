@@ -22,8 +22,8 @@ describe('Route Handlers - Bulk Appointment Details', () => {
       params: {
         id: '10',
       },
-      bulkAppointment: {
-        occurrences: [],
+      appointmentSet: {
+        appointments: [],
       } as unknown as AppointmentSetDetails,
     } as unknown as Request
   })
@@ -37,13 +37,13 @@ describe('Route Handlers - Bulk Appointment Details', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/bulk-appointment-details/bulk-appointment', {
-        bulkAppointment: req.appointmentSet,
+        appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: false,
       })
     })
 
     it('should render print movement slips link when at least one occurrence is not cancelled and not expired', async () => {
-      req.appointmentSet.occurrences = [
+      req.appointmentSet.appointments = [
         {
           isCancelled: false,
           isExpired: true,
@@ -61,13 +61,13 @@ describe('Route Handlers - Bulk Appointment Details', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/bulk-appointment-details/bulk-appointment', {
-        bulkAppointment: req.appointmentSet,
+        appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: true,
       })
     })
 
     it('should not render print movement slips link when all occurrences are either cancelled, expired or both', async () => {
-      req.appointmentSet.occurrences = [
+      req.appointmentSet.appointments = [
         {
           isCancelled: false,
           isExpired: true,
@@ -85,7 +85,7 @@ describe('Route Handlers - Bulk Appointment Details', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/bulk-appointment-details/bulk-appointment', {
-        bulkAppointment: req.appointmentSet,
+        appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: false,
       })
     })

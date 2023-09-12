@@ -36,7 +36,7 @@ describe('Route Handlers - Create Bulk Appointment - Review Bulk Appointment', (
             date: tomorrow,
           },
         },
-        bulkAppointmentJourney: {
+        appointmentSetJourney: {
           appointments: [
             {
               prisoner: {
@@ -81,7 +81,7 @@ describe('Route Handlers - Create Bulk Appointment - Review Bulk Appointment', (
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
         'pages/appointments/create-and-edit/bulk-appointments/review-bulk-appointment',
-        { appointments: req.session.bulkAppointmentJourney.appointments },
+        { appointments: req.session.appointmentSetJourney.appointments },
       )
     })
   })
@@ -174,7 +174,7 @@ describe('Route Handlers - Create Bulk Appointment - Review Bulk Appointment', (
     it('should update and save start time and end time in session and redirect to comment page', async () => {
       await handler.POST(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'ABC1234',
@@ -210,7 +210,7 @@ describe('Route Handlers - Create Bulk Appointment - Review Bulk Appointment', (
 
       await handler.POST(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'ABC1234',

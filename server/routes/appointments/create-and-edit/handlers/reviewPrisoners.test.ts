@@ -30,7 +30,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         editAppointmentJourney: {
           addPrisoners: [],
         },
-        bulkAppointmentJourney: {
+        appointmentSetJourney: {
           appointments: [],
         },
       },
@@ -63,7 +63,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should render the review prisoners view with back to upload bulk appointment', async () => {
       req.session.appointmentJourney.type = AppointmentType.BULK
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -214,7 +214,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should remove appointment and redirect back to GET', async () => {
       req.session.appointmentJourney.type = AppointmentType.BULK
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -237,7 +237,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',

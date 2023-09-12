@@ -47,7 +47,7 @@ export default class EditAppointmentService {
 
     if (editAppointmentJourney.cancellationReason) {
       const { repeat } = appointmentJourney
-      const { cancellationReason, bulkAppointment } = editAppointmentJourney
+      const { cancellationReason, appointmentSet } = editAppointmentJourney
 
       const cancelRequest: AppointmentCancelRequest = {
         cancellationReasonId: +cancellationReason,
@@ -59,13 +59,13 @@ export default class EditAppointmentService {
       // For delete requests we can't redirect back to the occurrence page. Instead we should provide a more specific
       // error message and redirect back to a relevent page
       if (cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
-        if (bulkAppointment) {
+        if (appointmentSet) {
           const successHeading = `You've ${this.getEditedMessage(
             appointmentJourney,
             editAppointmentJourney,
           )} appointment for ${appointmentJourney.prisoners[0].number} from this set`
 
-          const bulkAppointmentId = bulkAppointment.id
+          const bulkAppointmentId = appointmentSet.id
 
           this.clearSession(req)
 
@@ -118,7 +118,7 @@ export default class EditAppointmentService {
     }
 
     if (hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)) {
-      occurrenceUpdates.comment = editAppointmentJourney.comment
+      occurrenceUpdates.extraInformation = editAppointmentJourney.extraInformation
     }
 
     if (editAppointmentJourney.addPrisoners?.length > 0) {

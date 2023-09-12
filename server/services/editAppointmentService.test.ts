@@ -64,8 +64,8 @@ describe('Edit Appointment Service', () => {
           repeat: YesNo.NO,
         } as unknown as AppointmentJourney,
         editAppointmentJourney: {
-          repeatCount: 4,
-          occurrences: [
+          numberOfAppointments: 4,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: formatDate(weekTomorrow, 'yyyy-MM-dd'),
@@ -117,7 +117,7 @@ describe('Edit Appointment Service', () => {
     })
 
     it('when changing the location for a non repeating appointment', async () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 1,
           startDate: formatDate(weekTomorrow, 'yyyy-MM-dd'),
@@ -207,7 +207,7 @@ describe('Edit Appointment Service', () => {
             number: 'A1111A',
           },
         ] as AppointmentJourney['prisoners']
-        req.session.editAppointmentJourney.bulkAppointment = {
+        req.session.editAppointmentJourney.appointmentSet = {
           id: 1,
         } as AppointmentSetSummary
         req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
@@ -520,7 +520,7 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when changing the comment', async () => {
-        req.session.editAppointmentJourney.comment = 'Updated comment'
+        req.session.editAppointmentJourney.extraInformation = 'Updated comment'
 
         await service.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
 
@@ -581,7 +581,7 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when changing the location deleted last appointment', async () => {
-        req.session.editAppointmentJourney.occurrences = [
+        req.session.editAppointmentJourney.appointments = [
           {
             sequenceNumber: 1,
             startDate: '2023-01-01',
@@ -648,7 +648,7 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when changing the location two remaining appointments', async () => {
-        req.session.editAppointmentJourney.occurrences = [
+        req.session.editAppointmentJourney.appointments = [
           {
             sequenceNumber: 3,
             startDate: '2023-01-01',
@@ -673,7 +673,7 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when changing the location deleted last appointment', async () => {
-        req.session.editAppointmentJourney.occurrences = [
+        req.session.editAppointmentJourney.appointments = [
           {
             sequenceNumber: 1,
             startDate: '2023-01-01',

@@ -6,7 +6,7 @@ import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentSeriesDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 
 const view = fs.readFileSync('server/views/pages/appointments/details/appointment.njk')
 
@@ -49,11 +49,11 @@ describe('Views - Appointments Management - Appointment Details', () => {
   })
 
   it.each([
-    { repeatPeriod: AppointmentRepeatPeriod.WEEKDAY, expectedText: 'Every weekday (Monday to Friday)' },
-    { repeatPeriod: AppointmentRepeatPeriod.DAILY, expectedText: 'Daily (includes weekends)' },
-    { repeatPeriod: AppointmentRepeatPeriod.WEEKLY, expectedText: 'Weekly' },
-    { repeatPeriod: AppointmentRepeatPeriod.FORTNIGHTLY, expectedText: 'Fortnightly' },
-    { repeatPeriod: AppointmentRepeatPeriod.MONTHLY, expectedText: 'Monthly' },
+    { repeatPeriod: AppointmentFrequency.WEEKDAY, expectedText: 'Every weekday (Monday to Friday)' },
+    { repeatPeriod: AppointmentFrequency.DAILY, expectedText: 'Daily (includes weekends)' },
+    { repeatPeriod: AppointmentFrequency.WEEKLY, expectedText: 'Weekly' },
+    { repeatPeriod: AppointmentFrequency.FORTNIGHTLY, expectedText: 'Fortnightly' },
+    { repeatPeriod: AppointmentFrequency.MONTHLY, expectedText: 'Monthly' },
   ])(
     'should display frequency $repeatPeriod as $expectedText when repeat is not null',
     ({ repeatPeriod, expectedText }) => {
@@ -70,7 +70,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
 
   it('should display repeat occurrences when repeat is not null', () => {
     viewContext.appointment.repeat = {
-      period: AppointmentRepeatPeriod.WEEKLY,
+      period: AppointmentFrequency.WEEKLY,
       count: 6,
     }
 
@@ -81,7 +81,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
 
   it('should display occurrences when repeat is not null', () => {
     viewContext.appointment.repeat = {
-      period: AppointmentRepeatPeriod.WEEKLY,
+      period: AppointmentFrequency.WEEKLY,
       count: 6,
     }
 
@@ -94,7 +94,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
     const tomorrow = addDays(new Date(), 1)
     const nextWeek = addDays(new Date(), 8)
     viewContext.appointment.repeat = {
-      period: AppointmentRepeatPeriod.WEEKLY,
+      period: AppointmentFrequency.WEEKLY,
       count: 2,
     }
     viewContext.appointment.occurrences = [

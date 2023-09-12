@@ -97,7 +97,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         createJourneyComplete: false,
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
   })
@@ -113,7 +113,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         prisoners: [],
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('how-to-add-prisoners')
     })
   })
@@ -128,7 +128,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         createJourneyComplete: false,
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toEqual({
+      expect(req.session.appointmentSetJourney).toEqual({
         appointments: [],
       })
       expect(res.redirect).toHaveBeenCalledWith('upload-bulk-appointment')
@@ -151,7 +151,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         prisoners: [],
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
     })
 
@@ -182,7 +182,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         fromPrisonNumberProfile: 'A1234BC',
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
     })
   })
@@ -207,7 +207,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).toBeUndefined()
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('back')
     })
 
@@ -258,13 +258,13 @@ describe('Route Handlers - Create Appointment - Start', () => {
           minute: 0,
         },
         repeat: YesNo.YES,
-        repeatCount: 3,
-        repeatPeriod: 'WEEKLY',
+        numberOfAppointments: 3,
+        frequency: 'WEEKLY',
       } as AppointmentJourney
 
       const editAppointmentJourneySession = {
-        repeatCount: 3,
-        occurrences: [
+        numberOfAppointments: 3,
+        appointments: [
           {
             sequenceNumber: 2,
             startDate: '2023-04-20',
@@ -281,7 +281,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).toEqual(appointmentJourneySession)
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../location')
     })
 
@@ -329,7 +329,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).toBeUndefined()
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('back')
     })
 
@@ -339,8 +339,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       }
 
       const editAppointmentJourneySession = {
-        repeatCount: 3,
-        occurrences: [
+        numberOfAppointments: 3,
+        appointments: [
           {
             sequenceNumber: 2,
             startDate: '2023-04-20',
@@ -363,7 +363,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../remove/apply-to')
     })
 
@@ -383,8 +383,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       }
 
       const editAppointmentJourneySession = {
-        repeatCount: 3,
-        occurrences: [
+        numberOfAppointments: 3,
+        appointments: [
           {
             sequenceNumber: 2,
             startDate: '2023-04-20',
@@ -404,7 +404,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../remove/confirm')
     })
   })
@@ -424,8 +424,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     it('should populate the session and redirect to how to add prisoners', async () => {
       const editAppointmentJourneySession = {
-        repeatCount: 3,
-        occurrences: [
+        numberOfAppointments: 3,
+        appointments: [
           {
             sequenceNumber: 2,
             startDate: '2023-04-20',
@@ -443,7 +443,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../../prisoners/add/how-to-add-prisoners')
     })
   })
@@ -463,8 +463,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     it('should populate the session and redirect to cancellation reasons', async () => {
       const editAppointmentJourneySession = {
-        repeatCount: 3,
-        occurrences: [
+        numberOfAppointments: 3,
+        appointments: [
           {
             sequenceNumber: 2,
             startDate: '2023-04-20',
@@ -481,7 +481,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../cancel/reason')
     })
   })

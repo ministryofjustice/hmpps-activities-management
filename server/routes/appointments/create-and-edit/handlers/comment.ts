@@ -26,7 +26,7 @@ export default class CommentRoutes {
   CREATE = async (req: Request, res: Response): Promise<void> => {
     const { comment } = req.body
 
-    req.session.appointmentJourney.comment = comment
+    req.session.appointmentJourney.extraInformation = comment
 
     res.redirect(`check-answers`)
   }
@@ -34,7 +34,7 @@ export default class CommentRoutes {
   EDIT = async (req: Request, res: Response): Promise<void> => {
     const { comment } = req.body
 
-    req.session.editAppointmentJourney.comment = comment
+    req.session.editAppointmentJourney.extraInformation = comment
 
     await this.editAppointmentService.redirectOrEdit(req, res, 'comment')
   }

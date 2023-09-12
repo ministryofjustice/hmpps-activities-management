@@ -8,25 +8,28 @@ export class BulkAppointmentComment {
 
 export default class BulkAppointmentAddCommentRoutes {
   GET = async (req: Request, res: Response) => {
-    const { appointments } = req.session.bulkAppointmentJourney
+    const { appointments } = req.session.appointmentSetJourney
     const { prisonerNumber } = req.params
 
     // Prisoner not found, redirect back
     const appointment = appointments.find(a => a?.prisoner.number === prisonerNumber)
     if (!appointment) return res.redirect('../bulk-appointment-comments')
 
-    const { prisoner, comment } = appointment
+    const { prisoner, extraInformation } = appointment
 
-    return res.render('pages/appointments/create-and-edit/bulk-appointments/add-comment', { prisoner, comment })
+    return res.render('pages/appointments/create-and-edit/bulk-appointments/add-comment', {
+      prisoner,
+      extraInformation,
+    })
   }
 
   POST = async (req: Request, res: Response) => {
     const { comment } = req.body
-    const { appointments } = req.session.bulkAppointmentJourney
+    const { appointments } = req.session.appointmentSetJourney
     const { prisonerNumber } = req.params
 
     const appointment = appointments.find(a => a?.prisoner.number === prisonerNumber)
-    if (appointment) appointment.comment = comment
+    if (appointment) appointment.extraInformation = comment
 
     if (req.query?.preserveHistory) res.redirect(`../check-answers`)
     else res.redirect('../bulk-appointment-comments')

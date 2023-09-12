@@ -25,9 +25,9 @@ describe('Route Handlers - Movement Slip', () => {
       params: {
         id: '10',
       },
-      bulkAppointment: {
+      appointmentSet: {
         id: '12',
-        occurrences: [],
+        appointments: [],
       } as unknown as AppointmentSetDetails,
     } as unknown as Request
   })
@@ -41,12 +41,12 @@ describe('Route Handlers - Movement Slip', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/bulk-appointment', {
-        bulkAppointment: req.appointmentSet,
+        appointmentSet: req.appointmentSet,
       })
     })
 
     it('should only render movement slips for occurrences that are not cancelled and not expired', async () => {
-      req.appointmentSet.occurrences = [
+      req.appointmentSet.appointments = [
         {
           isCancelled: false,
           isExpired: true,
@@ -64,9 +64,9 @@ describe('Route Handlers - Movement Slip', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/bulk-appointment', {
-        bulkAppointment: {
+        appointmentSet: {
           id: '12',
-          occurrences: [
+          appointments: [
             {
               isCancelled: false,
               isExpired: false,

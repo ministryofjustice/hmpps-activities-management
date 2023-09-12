@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import BulkAppointmentAddComment, { BulkAppointmentComment } from './bulkAppointmentAddComment'
-import { BulkAppointmentJourney } from '../../bulkAppointmentJourney'
+import { AppointmentSetJourney } from '../../appointmentSetJourney'
 
 describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
   const handler = new BulkAppointmentAddComment()
@@ -25,7 +25,7 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
 
     req = {
       session: {
-        bulkAppointmentJourney: {},
+        appointmentSetJourney: {},
       },
       params: {},
       flash: jest.fn(),
@@ -42,11 +42,10 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
         prisoner: {
           number: 'A1234BC',
         },
-        comment: 'An appointment comment',
       }
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
-      ] as BulkAppointmentJourney['appointments']
+      ] as AppointmentSetJourney['appointments']
 
       req.params = {
         prisonerNumber: 'A1234BC',
@@ -56,7 +55,7 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/bulk-appointments/add-comment', {
         prisoner: testPrisonerAppointment.prisoner,
-        comment: testPrisonerAppointment.comment,
+        extraInformation: testPrisonerAppointment.extraInformation,
       })
     })
 
@@ -67,9 +66,9 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
         },
         comment: 'An appointment comment',
       }
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
-      ] as BulkAppointmentJourney['appointments']
+      ] as AppointmentSetJourney['appointments']
 
       req.params = {
         prisonerNumber: 'INVALID',
@@ -89,9 +88,9 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
           number: 'A1234BC',
         },
       }
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
-      ] as BulkAppointmentJourney['appointments']
+      ] as AppointmentSetJourney['appointments']
 
       req.body = {
         comment: 'A comment',
@@ -100,11 +99,11 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
         prisonerNumber: 'A1234BC',
       }
 
-      expect(req.session.bulkAppointmentJourney.appointments[0].comment).toBeUndefined()
+      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toBeUndefined()
 
       handler.POST(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments[0].comment).toEqual('A comment')
+      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('A comment')
       expect(res.redirect).toHaveBeenCalledWith('../bulk-appointment-comments')
     })
 
@@ -115,9 +114,9 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
         },
         comment: 'A comment',
       }
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
-      ] as BulkAppointmentJourney['appointments']
+      ] as AppointmentSetJourney['appointments']
 
       req.body = {
         comment: 'A different comment',
@@ -126,11 +125,11 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
         prisonerNumber: 'A1234BC',
       }
 
-      expect(req.session.bulkAppointmentJourney.appointments[0].comment).toEqual('A comment')
+      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('A comment')
 
       handler.POST(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments[0].comment).toEqual('A different comment')
+      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('A different comment')
       expect(res.redirect).toHaveBeenCalledWith('../bulk-appointment-comments')
     })
 
@@ -141,9 +140,9 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
         },
         comment: 'A comment',
       }
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
-      ] as BulkAppointmentJourney['appointments']
+      ] as AppointmentSetJourney['appointments']
 
       req.body = {
         comment: 'A comment',
@@ -154,8 +153,8 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
 
       handler.POST(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments).toHaveLength(1)
-      expect(req.session.bulkAppointmentJourney.appointments[0].comment).toEqual('A comment')
+      expect(req.session.appointmentSetJourney.appointments).toHaveLength(1)
+      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('A comment')
       expect(res.redirect).toHaveBeenCalledWith('../bulk-appointment-comments')
     })
   })

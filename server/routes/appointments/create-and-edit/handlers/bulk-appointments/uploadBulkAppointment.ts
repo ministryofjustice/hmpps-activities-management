@@ -68,7 +68,7 @@ export default class UploadBulkAppointment {
       }
     })
 
-    req.session.bulkAppointmentJourney.appointments = newInstances
+    req.session.appointmentSetJourney.appointments = newInstances
 
     return res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }

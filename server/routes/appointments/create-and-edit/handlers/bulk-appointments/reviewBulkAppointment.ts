@@ -22,7 +22,7 @@ export class AppointmentTimes {
 
 export default class ReviewBulkAppointmentRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointments } = req.session.bulkAppointmentJourney
+    const { appointments } = req.session.appointmentSetJourney
 
     res.render('pages/appointments/create-and-edit/bulk-appointments/review-bulk-appointment', { appointments })
   }
@@ -45,7 +45,7 @@ export default class ReviewBulkAppointmentRoutes {
 
     const { startDate } = req.session.appointmentJourney
 
-    const appointments = req.session.bulkAppointmentJourney.appointments.map(appointment => ({
+    const appointments = req.session.appointmentSetJourney.appointments.map(appointment => ({
       prisoner: appointment.prisoner,
       startTime: {
         hour: startTimeObj[appointment.prisoner.number].hour,
@@ -88,7 +88,7 @@ export default class ReviewBulkAppointmentRoutes {
       return res.validationFailed()
     }
 
-    req.session.bulkAppointmentJourney.appointments = appointments
+    req.session.appointmentSetJourney.appointments = appointments
 
     return res.redirect(`schedule${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }

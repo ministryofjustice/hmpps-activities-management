@@ -1,0 +1,38 @@
+{
+  "id": 12345,
+  "category": {
+    "code": "CHAP",
+    "description": "Chaplaincy"
+  },
+  "prisonCode": "MDI",
+  "internalLocation": {
+    "id": 26963,
+    "prisonCode": "MDI",
+    "description": "HB1 Doctors"
+  },
+  "inCell": false,
+  "startDate": "2023-02-17",
+  "startTime": "09:00",
+  "endTime": "10:30",
+  "extraInformation": "This appointment will help adjusting to life outside of prison",
+  "createdTime": "2023-02-17T17:34:03",
+  "createdBy": {
+    "id": 486797,
+    "username": "AAA01U",
+    "firstName": "TEST",
+    "lastName": "USER"
+  },
+  "updatedTime": null,
+  "updatedBy": null,
+  "appointments": [
+    {
+      "id": 123456,
+      "sequenceNumber": 1,
+      "startDate": "2023-02-17",
+      "startTime": "09:00",
+      "endTime": "10:30",
+      "isEdited": false,
+      "isCancelled": false
+    }
+  ]
+}

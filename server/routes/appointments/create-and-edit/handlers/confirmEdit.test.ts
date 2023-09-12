@@ -36,8 +36,8 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
           },
         },
         editAppointmentJourney: {
-          repeatCount: 4,
-          occurrences: [
+          numberOfAppointments: 4,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: format(weekTomorrow, 'yyyy-MM-dd'),

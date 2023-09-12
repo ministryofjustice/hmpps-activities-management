@@ -11,7 +11,7 @@ import { RecordAttendanceRequests } from '../../routes/activities/record-attenda
 // eslint-disable-next-line import/no-cycle
 import { ActivitiesFilters } from '../activities'
 import { AppointmentSeriesDetails, AppointmentDetails, AppointmentSetDetails } from '../activitiesAPI/types'
-import { BulkAppointmentJourney } from '../../routes/appointments/create-and-edit/bulkAppointmentJourney'
+import { AppointmentSetJourney } from '../../routes/appointments/create-and-edit/appointmentSetJourney'
 import { DeallocateFromActivityJourney } from '../../routes/activities/deallocate-from-activity/journey'
 import { AttendanceSummaryJourney } from '../../routes/activities/daily-attendance-summary/journey'
 import { UnlockListJourney } from '../../routes/activities/unlock-list/journey'
@@ -30,15 +30,15 @@ declare module 'express-session' {
     createJourney: CreateAnActivityJourney
     allocateJourney: AllocateToActivityJourney
     deallocateJourney: DeallocateFromActivityJourney
-    // The following three session data properties; appointmentJourney, editAppointmentJourney and bulkAppointmentJourney
+    // The following three session data properties; appointmentJourney, appointmentSetJourney and editAppointmentJourney
     // are overridden by the populateJourney middleware. That middleware redirects the getter and setter to use the
     // sessionDataMap below. As a result, these properties are virtual and are not directly set. They exist
     // to allow pre-existing access as if there was only one journey per session e.g. req.session.appointmentJourney
     appointmentJourney: AppointmentJourney
     // See comment above
-    editAppointmentJourney: EditAppointmentJourney
+    appointmentSetJourney: AppointmentSetJourney
     // See comment above
-    bulkAppointmentJourney: BulkAppointmentJourney
+    editAppointmentJourney: EditAppointmentJourney
     calendarSpikeJourney: CalendarSpikeJourney
     attendanceSummaryJourney: AttendanceSummaryJourney
     unlockListJourney: UnlockListJourney
@@ -55,7 +55,7 @@ declare module 'express-session' {
 export type SessionDatum = {
   instanceUnixEpoch: number
   appointmentJourney: AppointmentJourney
-  bulkAppointmentJourney: BulkAppointmentJourney
+  appointmentSetJourney: AppointmentSetJourney
   editAppointmentJourney: EditAppointmentJourney
 }
 

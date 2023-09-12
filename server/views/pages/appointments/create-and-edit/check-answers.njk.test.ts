@@ -6,7 +6,7 @@ import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentType, AppointmentJourney } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 
 let $: CheerioAPI
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/check-answers.njk')
@@ -76,11 +76,11 @@ describe('Views - Create Appointment - Check Answers', () => {
   })
 
   it.each([
-    { repeatPeriod: AppointmentRepeatPeriod.WEEKDAY, expectedText: 'Every weekday (Monday to Friday)' },
-    { repeatPeriod: AppointmentRepeatPeriod.DAILY, expectedText: 'Daily (includes weekends)' },
-    { repeatPeriod: AppointmentRepeatPeriod.WEEKLY, expectedText: 'Weekly' },
-    { repeatPeriod: AppointmentRepeatPeriod.FORTNIGHTLY, expectedText: 'Fortnightly' },
-    { repeatPeriod: AppointmentRepeatPeriod.MONTHLY, expectedText: 'Monthly' },
+    { repeatPeriod: AppointmentFrequency.WEEKDAY, expectedText: 'Every weekday (Monday to Friday)' },
+    { repeatPeriod: AppointmentFrequency.DAILY, expectedText: 'Daily (includes weekends)' },
+    { repeatPeriod: AppointmentFrequency.WEEKLY, expectedText: 'Weekly' },
+    { repeatPeriod: AppointmentFrequency.FORTNIGHTLY, expectedText: 'Fortnightly' },
+    { repeatPeriod: AppointmentFrequency.MONTHLY, expectedText: 'Monthly' },
   ])('should display frequency $repeatPeriod as $expectedText when repeat = YES', ({ repeatPeriod, expectedText }) => {
     viewContext.session.appointmentJourney.repeat = YesNo.YES
     viewContext.session.appointmentJourney.repeatPeriod = repeatPeriod

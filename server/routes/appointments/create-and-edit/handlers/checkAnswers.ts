@@ -40,19 +40,19 @@ export default class CheckAnswersRoutes {
       prisonCode: user.activeCaseLoadId,
       prisonerNumbers: appointmentJourney.prisoners.map(p => p.number),
       categoryCode: appointmentJourney.category.code,
-      appointmentDescription: appointmentJourney.description,
+      appointmentDescription: appointmentJourney.customName,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
       startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
       startTime: plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString(),
       endTime: plainToInstance(SimpleTime, appointmentJourney.endTime).toIsoString(),
-      comment: appointmentJourney.comment,
+      comment: appointmentJourney.extraInformation,
     } as AppointmentSeriesCreateRequest
 
     if (appointmentJourney.repeat === YesNo.YES) {
       request.repeat = {
-        period: appointmentJourney.repeatPeriod,
-        count: appointmentJourney.repeatCount,
+        period: appointmentJourney.frequency,
+        count: appointmentJourney.numberOfAppointments,
       }
     }
 
@@ -61,20 +61,20 @@ export default class CheckAnswersRoutes {
 
   private createBulkAppointmentRequest(req: Request, res: Response) {
     const { user } = res.locals
-    const { appointmentJourney, bulkAppointmentJourney } = req.session
+    const { appointmentJourney, appointmentSetJourney } = req.session
 
     return {
       prisonCode: user.activeCaseLoadId,
       categoryCode: appointmentJourney.category.code,
-      appointmentDescription: appointmentJourney.description,
+      appointmentDescription: appointmentJourney.customName,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
       startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
-      appointments: bulkAppointmentJourney.appointments.map(appointment => ({
+      appointments: appointmentSetJourney.appointments.map(appointment => ({
         prisonerNumber: appointment.prisoner.number,
         startTime: plainToInstance(SimpleTime, appointment.startTime).toIsoString(),
         endTime: plainToInstance(SimpleTime, appointment.endTime).toIsoString(),
-        comment: appointment.comment,
+        comment: appointment.extraInformation,
       })),
     } as AppointmentSetCreateRequest
   }

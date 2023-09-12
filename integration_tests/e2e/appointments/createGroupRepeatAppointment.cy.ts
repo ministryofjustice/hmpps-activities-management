@@ -24,7 +24,7 @@ import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmat
 import { formatDate } from '../../../server/utils/utils'
 import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/uploadPrisonerListPage'
 import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
-import { AppointmentRepeatPeriod } from '../../../server/@types/appointments'
+import { AppointmentFrequency } from '../../../server/@types/appointments'
 import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
@@ -35,7 +35,7 @@ context('Create group appointment', () => {
   const weekTomorrowFormatted = formatDate(weekTomorrow, 'yyyy-MM-dd')
   // To pass validation we must ensure the appointment details start date is set to tomorrow
   getRepeatGroupAppointmentDetails.startDate = tomorrowFormatted
-  getRepeatGroupAppointmentDetails.repeat.period = AppointmentRepeatPeriod.DAILY
+  getRepeatGroupAppointmentDetails.repeat.period = AppointmentFrequency.DAILY
   getRepeatGroupAppointmentDetails.repeat.count = 7
   getRepeatGroupAppointmentDetails.occurrences[0].startDate = tomorrowFormatted
   getRepeatGroupAppointmentDetails.occurrences[1].startDate = weekTomorrowFormatted

@@ -3,7 +3,7 @@ import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentType, AppointmentJourney } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/repeat-period-and-count.njk')
 
@@ -49,11 +49,11 @@ describe('Views - Create Appointment - Repeat Period and Count', () => {
   })
 
   it.each([
-    AppointmentRepeatPeriod.WEEKDAY,
-    AppointmentRepeatPeriod.DAILY,
-    AppointmentRepeatPeriod.WEEKLY,
-    AppointmentRepeatPeriod.FORTNIGHTLY,
-    AppointmentRepeatPeriod.MONTHLY,
+    AppointmentFrequency.WEEKDAY,
+    AppointmentFrequency.DAILY,
+    AppointmentFrequency.WEEKLY,
+    AppointmentFrequency.FORTNIGHTLY,
+    AppointmentFrequency.MONTHLY,
   ])('should check correct input based on form response %s', repeatPeriod => {
     viewContext.formResponses = {
       repeatPeriod,
@@ -67,13 +67,13 @@ describe('Views - Create Appointment - Repeat Period and Count', () => {
   })
 
   it.each([
-    AppointmentRepeatPeriod.WEEKDAY,
-    AppointmentRepeatPeriod.DAILY,
-    AppointmentRepeatPeriod.WEEKLY,
-    AppointmentRepeatPeriod.FORTNIGHTLY,
-    AppointmentRepeatPeriod.MONTHLY,
+    AppointmentFrequency.WEEKDAY,
+    AppointmentFrequency.DAILY,
+    AppointmentFrequency.WEEKLY,
+    AppointmentFrequency.FORTNIGHTLY,
+    AppointmentFrequency.MONTHLY,
   ])('should check correct input based on session value response %s', repeatPeriod => {
-    viewContext.session.appointmentJourney.repeatPeriod = repeatPeriod
+    viewContext.session.appointmentJourney.frequency = repeatPeriod
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -84,15 +84,15 @@ describe('Views - Create Appointment - Repeat Period and Count', () => {
 
   it('should prioritise form response value over session value', () => {
     viewContext.formResponses = {
-      repeatPeriod: AppointmentRepeatPeriod.WEEKLY,
+      repeatPeriod: AppointmentFrequency.WEEKLY,
     }
-    viewContext.session.appointmentJourney.repeatPeriod = AppointmentRepeatPeriod.FORTNIGHTLY
+    viewContext.session.appointmentJourney.frequency = AppointmentFrequency.FORTNIGHTLY
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     const checked = $("[name='repeatPeriod']:checked")
     expect(checked.length).toEqual(1)
-    expect(checked.val()).toEqual(AppointmentRepeatPeriod.WEEKLY.toString())
+    expect(checked.val()).toEqual(AppointmentFrequency.WEEKLY.toString())
   })
 
   describe('Individual Appointment', () => {

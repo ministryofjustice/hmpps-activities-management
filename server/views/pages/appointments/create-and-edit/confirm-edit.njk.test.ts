@@ -44,8 +44,8 @@ describe('Views - Appointments Management - Confirm Edit', () => {
           },
         },
         editAppointmentJourney: {
-          repeatCount: 3,
-          occurrences: [
+          numberOfAppointments: 3,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: format(weekTomorrow, 'yyyy-MM-dd'),

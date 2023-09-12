@@ -29,7 +29,7 @@ export default class ReviewPrisonerRoutes {
         properties,
       })
     } else if (req.session.appointmentJourney.type === AppointmentType.BULK) {
-      prisoners = req.session.bulkAppointmentJourney.appointments.map(appointment => appointment.prisoner)
+      prisoners = req.session.appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
     } else {
       prisoners = req.session.appointmentJourney.prisoners
     }
@@ -59,7 +59,7 @@ export default class ReviewPrisonerRoutes {
     const { prisonNumber } = req.params
 
     if (req.session.appointmentJourney.type === AppointmentType.BULK) {
-      req.session.bulkAppointmentJourney.appointments = req.session.bulkAppointmentJourney.appointments.filter(
+      req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )
     } else {

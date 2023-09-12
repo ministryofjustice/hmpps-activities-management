@@ -17,8 +17,8 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
     req = {
       session: {
         editAppointmentJourney: {
-          repeatCount: 4,
-          occurrences: [
+          numberOfAppointments: 4,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: '2023-01-01',
@@ -78,7 +78,7 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
     })
 
     it('should save apply to in session and redirect to confirm', async () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 2,
           startDate: '2023-01-02',

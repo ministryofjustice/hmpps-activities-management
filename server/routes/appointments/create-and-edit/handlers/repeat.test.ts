@@ -4,7 +4,7 @@ import { validate } from 'class-validator'
 import RepeatRoutes, { Repeat } from './repeat'
 import { YesNo } from '../../../../@types/activities'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 
 describe('Route Handlers - Create Appointment - Repeat', () => {
   const handler = new RepeatRoutes()
@@ -71,8 +71,8 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
 
     it('should redirect to repeat period and count page page when repeat = YES has not changed but repeat period is not set', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
-      req.session.appointmentJourney.repeatPeriod = undefined
-      req.session.appointmentJourney.repeatCount = 6
+      req.session.appointmentJourney.frequency = undefined
+      req.session.appointmentJourney.numberOfAppointments = 6
       req.body = {
         repeat: YesNo.YES,
       }
@@ -85,8 +85,8 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
 
     it('should redirect to repeat period and count page page when repeat = YES has not changed but repeat count is not set', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
-      req.session.appointmentJourney.repeatPeriod = AppointmentRepeatPeriod.FORTNIGHTLY
-      req.session.appointmentJourney.repeatCount = undefined
+      req.session.appointmentJourney.frequency = AppointmentFrequency.FORTNIGHTLY
+      req.session.appointmentJourney.numberOfAppointments = undefined
       req.body = {
         repeat: YesNo.YES,
       }
@@ -99,8 +99,8 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
 
     it('should redirect to schedule page when repeat = YES has not changed and repeat period and count are set', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
-      req.session.appointmentJourney.repeatPeriod = AppointmentRepeatPeriod.DAILY
-      req.session.appointmentJourney.repeatCount = 7
+      req.session.appointmentJourney.frequency = AppointmentFrequency.DAILY
+      req.session.appointmentJourney.numberOfAppointments = 7
       req.body = {
         repeat: YesNo.YES,
       }

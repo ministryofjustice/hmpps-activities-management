@@ -4,7 +4,7 @@ import fs from 'fs'
 import { addDays, format } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 import { AppointmentSeriesDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 
@@ -44,11 +44,11 @@ describe('Views - Create Appointment - Check Answers', () => {
   })
 
   it.each([
-    { repeatPeriod: AppointmentRepeatPeriod.WEEKDAY, expectedText: 'every weekday (Monday to Friday)' },
-    { repeatPeriod: AppointmentRepeatPeriod.DAILY, expectedText: 'daily (includes weekends)' },
-    { repeatPeriod: AppointmentRepeatPeriod.WEEKLY, expectedText: 'weekly' },
-    { repeatPeriod: AppointmentRepeatPeriod.FORTNIGHTLY, expectedText: 'fortnightly' },
-    { repeatPeriod: AppointmentRepeatPeriod.MONTHLY, expectedText: 'monthly' },
+    { repeatPeriod: AppointmentFrequency.WEEKDAY, expectedText: 'every weekday (Monday to Friday)' },
+    { repeatPeriod: AppointmentFrequency.DAILY, expectedText: 'daily (includes weekends)' },
+    { repeatPeriod: AppointmentFrequency.WEEKLY, expectedText: 'weekly' },
+    { repeatPeriod: AppointmentFrequency.FORTNIGHTLY, expectedText: 'fortnightly' },
+    { repeatPeriod: AppointmentFrequency.MONTHLY, expectedText: 'monthly' },
   ])(
     'frequency $repeatPeriod should be displayed as $expectedText with occurrences when repeat = YES',
     ({ repeatPeriod, expectedText }) => {

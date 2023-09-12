@@ -5,8 +5,8 @@ export default class BulkAppointmentMovementSlipRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentSet } = req
 
-    appointmentSet.occurrences = appointmentSet.occurrences.filter(
-      occurrence => !occurrence.isCancelled && !occurrence.isExpired,
+    appointmentSet.appointments = appointmentSet.appointments.filter(
+      appointment => !appointment.isCancelled && !appointment.isExpired,
     )
 
     res.render('pages/appointments/movement-slip/bulk-appointment', { appointmentSet })
@@ -17,7 +17,7 @@ export default class BulkAppointmentMovementSlipRoutes {
     }
 
     const eventMetrics = {
-      movementSlipCount: appointmentSet.occurrences.length,
+      movementSlipCount: appointmentSet.appointments.length,
     }
 
     trackEvent({

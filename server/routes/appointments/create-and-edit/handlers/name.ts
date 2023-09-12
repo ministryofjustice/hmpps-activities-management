@@ -52,10 +52,10 @@ export default class NameRoutes {
     }
 
     if (description?.trim()) {
-      req.session.appointmentJourney.description = description.trim()
-      req.session.appointmentJourney.appointmentName = `${req.session.appointmentJourney.description} (${req.session.appointmentJourney.category.description})`
+      req.session.appointmentJourney.customName = description.trim()
+      req.session.appointmentJourney.appointmentName = `${req.session.appointmentJourney.customName} (${req.session.appointmentJourney.category.description})`
     } else {
-      req.session.appointmentJourney.description = null
+      req.session.appointmentJourney.customName = null
       req.session.appointmentJourney.appointmentName = category.description
     }
 

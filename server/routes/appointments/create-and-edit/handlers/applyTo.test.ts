@@ -5,7 +5,7 @@ import { addDays, format } from 'date-fns'
 import ApplyToRoutes, { ApplyTo } from './applyTo'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { AppointmentApplyTo, AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentApplyTo, AppointmentFrequency } from '../../../../@types/appointments'
 import { getAppointmentApplyToOptions, getRepeatFrequencyText } from '../../../../utils/editAppointmentUtils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
@@ -29,7 +29,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
-          repeatPeriod: AppointmentRepeatPeriod.DAILY,
+          repeatPeriod: AppointmentFrequency.DAILY,
           startDate: {
             day: weekTomorrow.getDate(),
             month: weekTomorrow.getMonth() + 1,
@@ -38,8 +38,8 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
           },
         },
         editAppointmentJourney: {
-          repeatCount: 4,
-          occurrences: [
+          numberOfAppointments: 4,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: format(weekTomorrow, 'yyyy-MM-dd'),

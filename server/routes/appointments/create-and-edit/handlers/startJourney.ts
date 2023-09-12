@@ -3,7 +3,7 @@ import { isValid } from 'date-fns'
 import { formatDate, parseDate } from '../../../../utils/utils'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentRepeatPeriod, AppointmentApplyTo } from '../../../../@types/appointments'
+import { AppointmentFrequency, AppointmentApplyTo } from '../../../../@types/appointments'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 import PrisonService from '../../../../services/prisonService'
 
@@ -35,7 +35,7 @@ export default class StartJourneyRoutes {
       type: AppointmentType.BULK,
       createJourneyComplete: false,
     }
-    req.session.bulkAppointmentJourney = {
+    req.session.appointmentSetJourney = {
       appointments: [],
     }
     res.redirect('upload-bulk-appointment')
@@ -142,9 +142,9 @@ export default class StartJourneyRoutes {
       },
       endTime: null,
       repeat: appointment.repeat ? YesNo.YES : YesNo.NO,
-      repeatPeriod: appointment.repeat?.period as AppointmentRepeatPeriod,
-      repeatCount: appointment.repeat?.count,
-      comment: appointment.comment,
+      frequency: appointment.repeat?.period as AppointmentFrequency,
+      numberOfAppointments: appointment.repeat?.count,
+      extraInformation: appointment.comment,
     }
 
     if (isValid(endTime)) {
@@ -156,13 +156,13 @@ export default class StartJourneyRoutes {
     }
 
     req.session.editAppointmentJourney = {
-      repeatCount: appointment.repeat?.count ?? 1,
-      occurrences: appointmentSeries.occurrences.map(occurrence => ({
+      numberOfAppointments: appointment.repeat?.count ?? 1,
+      appointments: appointmentSeries.occurrences.map(occurrence => ({
         sequenceNumber: occurrence.sequenceNumber,
         startDate: occurrence.startDate,
       })),
       sequenceNumber: appointment.sequenceNumber,
-      bulkAppointment: appointment.bulkAppointment,
+      appointmentSet: appointment.bulkAppointment,
     }
   }
 }

@@ -33,8 +33,8 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     it('should redirect back to occurrence details page when the appointment journey data is not in session', async () => {
       req.session.appointmentJourney = null
       req.session.editAppointmentJourney = {
-        repeatCount: 1,
-        occurrences: [
+        numberOfAppointments: 1,
+        appointments: [
           {
             sequenceNumber: 1,
             startDate: '2023-01-01',
@@ -66,8 +66,8 @@ describe('emptyEditAppointmentJourneyHandler', () => {
         appointmentName: 'appointment name',
       }
       req.session.editAppointmentJourney = {
-        repeatCount: 1,
-        occurrences: [
+        numberOfAppointments: 1,
+        appointments: [
           {
             sequenceNumber: 1,
             startDate: '2023-01-01',

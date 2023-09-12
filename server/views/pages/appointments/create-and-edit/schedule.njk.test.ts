@@ -9,7 +9,7 @@ import {
   AppointmentJourneyMode,
   AppointmentType,
 } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { BulkAppointmentJourney } from '../../../../routes/appointments/create-and-edit/bulkAppointmentJourney'
+import { AppointmentSetJourney } from '../../../../routes/appointments/create-and-edit/appointmentSetJourney'
 import { EventSource, EventType } from '../../../../@types/activities'
 import { convertToTitleCase, formatDate, padNumber } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
@@ -114,7 +114,7 @@ describe('Views - Create Appointment - Schedule', () => {
   let viewContext = {
     session: {
       appointmentJourney: {} as AppointmentJourney,
-      bulkAppointmentJourney: {} as BulkAppointmentJourney,
+      appointmentSetJourney: {} as AppointmentSetJourney,
       editAppointmentJourney: {} as EditAppointmentJourney,
     },
     prisonerSchedules: [] as {
@@ -151,7 +151,7 @@ describe('Views - Create Appointment - Schedule', () => {
             date: formatDate(tomorrow, 'yyyy-MM-dd'),
           },
         } as unknown as AppointmentJourney,
-        bulkAppointmentJourney: {} as BulkAppointmentJourney,
+        appointmentSetJourney: {} as AppointmentSetJourney,
         editAppointmentJourney: {} as EditAppointmentJourney,
       },
       prisonerSchedules: [],
@@ -607,7 +607,7 @@ describe('Views - Create Appointment - Schedule', () => {
   describe('Bulk Appointment', () => {
     beforeEach(() => {
       viewContext.session.appointmentJourney.type = AppointmentType.BULK
-      viewContext.session.bulkAppointmentJourney.appointments = [
+      viewContext.session.appointmentSetJourney.appointments = [
         {
           startTime: { hour: 9, minute: 0 },
           endTime: { hour: 9, minute: 15 },
@@ -659,7 +659,7 @@ describe('Views - Create Appointment - Schedule', () => {
           prisoner: { number: 'J1234KL', name: 'TEST10 PRISONER10', cellLocation: '1-1-10' },
         },
       ]
-      viewContext.prisonerSchedules = viewContext.session.bulkAppointmentJourney.appointments.map(appointment => ({
+      viewContext.prisonerSchedules = viewContext.session.appointmentSetJourney.appointments.map(appointment => ({
         prisoner: appointment.prisoner,
         startTime: appointment.startTime,
         endTime: appointment.endTime,
@@ -694,17 +694,17 @@ describe('Views - Create Appointment - Schedule', () => {
     })
 
     it('should display "Continue" top call to action for eleven appointments', () => {
-      viewContext.session.bulkAppointmentJourney.appointments.push({
+      viewContext.session.appointmentSetJourney.appointments.push({
         startTime: { hour: 11, minute: 30 },
         endTime: { hour: 11, minute: 45 },
         prisoner: { number: 'K2345LM', name: 'TEST11 PRISONER11', cellLocation: '1-1-11' },
       })
       viewContext.prisonerSchedules.push({
-        prisoner: viewContext.session.bulkAppointmentJourney.appointments[10].prisoner,
-        startTime: viewContext.session.bulkAppointmentJourney.appointments[10].startTime,
-        endTime: viewContext.session.bulkAppointmentJourney.appointments[10].endTime,
+        prisoner: viewContext.session.appointmentSetJourney.appointments[10].prisoner,
+        startTime: viewContext.session.appointmentSetJourney.appointments[10].startTime,
+        endTime: viewContext.session.appointmentSetJourney.appointments[10].endTime,
         scheduledEvents: getScheduledEventsForPrisoner(
-          viewContext.session.bulkAppointmentJourney.appointments[10].prisoner,
+          viewContext.session.appointmentSetJourney.appointments[10].prisoner,
         ),
       })
 
@@ -787,7 +787,7 @@ describe('Views - Create Appointment - Schedule', () => {
     })
 
     it('should only display list is empty and someone must be added when attendee list is empty', () => {
-      viewContext.session.bulkAppointmentJourney.appointments = []
+      viewContext.session.appointmentSetJourney.appointments = []
       viewContext.prisonerSchedules = []
 
       $ = cheerio.load(compiledTemplate.render(viewContext))

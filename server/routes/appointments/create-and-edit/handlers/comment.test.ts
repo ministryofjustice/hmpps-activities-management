@@ -82,7 +82,7 @@ describe('Route Handlers - Create Appointment - Comment', () => {
 
       await handler.CREATE(req, res)
 
-      expect(req.session.appointmentJourney.comment).toEqual('Appointment level comment')
+      expect(req.session.appointmentJourney.extraInformation).toEqual('Appointment level comment')
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })
@@ -102,7 +102,7 @@ describe('Route Handlers - Create Appointment - Comment', () => {
 
       await handler.EDIT(req, res)
 
-      expect(req.session.editAppointmentJourney.comment).toEqual('Updated appointment level comment')
+      expect(req.session.editAppointmentJourney.extraInformation).toEqual('Updated appointment level comment')
       expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'comment')
     })
   })

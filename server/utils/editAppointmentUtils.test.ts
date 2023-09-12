@@ -11,7 +11,7 @@ import {
   AppointmentApplyTo,
   AppointmentApplyToOption,
   AppointmentCancellationReason,
-  AppointmentRepeatPeriod,
+  AppointmentFrequency,
 } from '../@types/appointments'
 import {
   getAppointmentApplyToOptions,
@@ -62,8 +62,8 @@ describe('Edit Appointment Utils', () => {
           },
         } as unknown as AppointmentJourney,
         editAppointmentJourney: {
-          repeatCount: 4,
-          occurrences: [
+          numberOfAppointments: 4,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: '2023-01-01',
@@ -121,7 +121,7 @@ describe('Edit Appointment Utils', () => {
 
   describe('is apply to question required', () => {
     it('change future non repeating appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
@@ -133,15 +133,15 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('change past non repeating appointment', () => {
-      req.session.editAppointmentJourney.repeatCount = 1
-      req.session.editAppointmentJourney.occurrences = []
+      req.session.editAppointmentJourney.numberOfAppointments = 1
+      req.session.editAppointmentJourney.appointments = []
       req.session.editAppointmentJourney.sequenceNumber = 1
 
       expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
     })
 
     it('repeating appointment change single remaining appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 4,
           startDate: '2023-01-01',
@@ -153,14 +153,14 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment no remaining appointments change past appointment', () => {
-      req.session.editAppointmentJourney.occurrences = []
+      req.session.editAppointmentJourney.appointments = []
       req.session.editAppointmentJourney.sequenceNumber = 3
 
       expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
     })
 
     it('repeating appointment two remaining appointments change first appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 3,
           startDate: '2023-01-01',
@@ -401,7 +401,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('when changing the comment', () => {
-      req.session.editAppointmentJourney.comment = 'Updated comment'
+      req.session.editAppointmentJourney.extraInformation = 'Updated comment'
 
       expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
         'change the extra information for',
@@ -415,7 +415,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('when removing the comment', () => {
-      req.session.editAppointmentJourney.comment = ''
+      req.session.editAppointmentJourney.extraInformation = ''
 
       expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
         'change the extra information for',
@@ -491,7 +491,7 @@ describe('Edit Appointment Utils', () => {
 
   describe('get appointment apply to options', () => {
     it('change future non repeating appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
@@ -508,7 +508,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment change single remaining appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 4,
           startDate: '2023-01-01',
@@ -542,7 +542,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment two remaining appointments change first appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 3,
           startDate: '2023-01-03',
@@ -569,7 +569,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment deleted appointment change first appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
@@ -755,19 +755,19 @@ describe('Edit Appointment Utils', () => {
   describe('appointment frequency text', () => {
     it.each([
       ['null', null, null],
-      ['week day', AppointmentRepeatPeriod.WEEKDAY, 'week day'],
-      ['day', AppointmentRepeatPeriod.DAILY, 'day'],
-      ['week', AppointmentRepeatPeriod.WEEKLY, 'week'],
-      ['fortnight', AppointmentRepeatPeriod.FORTNIGHTLY, 'fortnight'],
-      ['month', AppointmentRepeatPeriod.MONTHLY, 'month'],
+      ['week day', AppointmentFrequency.WEEKDAY, 'week day'],
+      ['day', AppointmentFrequency.DAILY, 'day'],
+      ['week', AppointmentFrequency.WEEKLY, 'week'],
+      ['fortnight', AppointmentFrequency.FORTNIGHTLY, 'fortnight'],
+      ['month', AppointmentFrequency.MONTHLY, 'month'],
       ['unknown value', 'UNKNOWN', null],
     ])(
       'should return correct frequency text for %s',
-      (_: string, repeatPeriod: AppointmentRepeatPeriod, expectedFrequencyNoun: string) => {
+      (_: string, repeatPeriod: AppointmentFrequency, expectedFrequencyNoun: string) => {
         req.session.appointmentJourney = {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
-          repeatPeriod,
+          frequency: repeatPeriod,
         }
 
         const expectedText = expectedFrequencyNoun ? `This appointment repeats every ${expectedFrequencyNoun}` : null

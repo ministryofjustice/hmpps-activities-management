@@ -3,30 +3,30 @@ import { Expose, Type } from 'class-transformer'
 import { IsEnum, Min } from 'class-validator'
 import { YesNo } from '../../../../@types/activities'
 import MaxWhenDependentPropertyValueIs from '../../../../validators/maxWhenDependentPropertyValueIs'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 
 export class RepeatPeriodAndCount {
   @Expose()
-  @IsEnum(AppointmentRepeatPeriod, { message: 'Select how often the appointment will repeat' })
-  repeatPeriod: AppointmentRepeatPeriod
+  @IsEnum(AppointmentFrequency, { message: 'Select how often the appointment will repeat' })
+  repeatPeriod: AppointmentFrequency
 
   @Expose()
   @Type(() => Number)
   @Min(1, { message: 'Enter how many times the appointment will repeat up to a maximum of one year' })
-  @MaxWhenDependentPropertyValueIs(260, 'repeatPeriod', AppointmentRepeatPeriod.WEEKDAY, {
+  @MaxWhenDependentPropertyValueIs(260, 'repeatPeriod', AppointmentFrequency.WEEKDAY, {
     message: 'Number of appointments must be $constraint1 or fewer',
   })
-  @MaxWhenDependentPropertyValueIs(365, 'repeatPeriod', AppointmentRepeatPeriod.DAILY, {
+  @MaxWhenDependentPropertyValueIs(365, 'repeatPeriod', AppointmentFrequency.DAILY, {
     message: 'Number of appointments must be $constraint1 or fewer',
   })
-  @MaxWhenDependentPropertyValueIs(52, 'repeatPeriod', AppointmentRepeatPeriod.WEEKLY, {
+  @MaxWhenDependentPropertyValueIs(52, 'repeatPeriod', AppointmentFrequency.WEEKLY, {
     message: 'Number of appointments must be $constraint1 or fewer',
   })
-  @MaxWhenDependentPropertyValueIs(26, 'repeatPeriod', AppointmentRepeatPeriod.FORTNIGHTLY, {
+  @MaxWhenDependentPropertyValueIs(26, 'repeatPeriod', AppointmentFrequency.FORTNIGHTLY, {
     message: 'Number of appointments must be $constraint1 or fewer',
   })
   @Min(1, { message: 'Enter how many times the appointment will repeat up to a maximum of one year' })
-  @MaxWhenDependentPropertyValueIs(12, 'repeatPeriod', AppointmentRepeatPeriod.MONTHLY, {
+  @MaxWhenDependentPropertyValueIs(12, 'repeatPeriod', AppointmentFrequency.MONTHLY, {
     message: 'Number of appointments must be $constraint1 or fewer',
   })
   repeatCount: number
@@ -53,8 +53,8 @@ export default class RepeatPeriodAndCountRoutes {
     }
 
     req.session.appointmentJourney.repeat = YesNo.YES
-    req.session.appointmentJourney.repeatPeriod = repeatPeriod
-    req.session.appointmentJourney.repeatCount = repeatCount
+    req.session.appointmentJourney.frequency = repeatPeriod
+    req.session.appointmentJourney.numberOfAppointments = repeatCount
 
     return res.redirectOrReturn(`schedule`)
   }
