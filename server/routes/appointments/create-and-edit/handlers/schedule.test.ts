@@ -112,7 +112,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     })
 
     it('should render the schedule view with back to review bulk appointment page', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.appointmentJourney.type = AppointmentType.SET
 
       await handler.GET(req, res)
 
@@ -255,7 +255,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     })
 
     it('use bulk appointment appointments prisoner for type = BULK', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.appointmentJourney.type = AppointmentType.SET
       req.session.appointmentSetJourney.appointments = [
         {
           startTime: {
@@ -438,7 +438,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       })
 
       it('should redirect to bulk appointment comments page for type = BULK', async () => {
-        req.session.appointmentJourney.type = AppointmentType.BULK
+        req.session.appointmentJourney.type = AppointmentType.SET
         await handler.POST(req, res)
         expect(res[redirectMethod]).toHaveBeenCalledWith('bulk-appointment-comments')
       })
@@ -506,7 +506,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     })
 
     it('should remove prisoner appointment from bulk appointment and redirect back to GET', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.appointmentJourney.type = AppointmentType.SET
       req.session.appointmentSetJourney.appointments = [
         {
           prisoner: {

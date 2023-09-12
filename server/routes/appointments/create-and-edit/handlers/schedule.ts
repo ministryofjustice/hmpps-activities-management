@@ -26,14 +26,14 @@ export default class ScheduleRoutes {
       if (editAppointmentJourney?.addPrisoners) {
         backLinkHref = 'prisoners/add/review-prisoners'
       }
-    } else if (req.session.appointmentJourney.type === AppointmentType.BULK) {
+    } else if (req.session.appointmentJourney.type === AppointmentType.SET) {
       backLinkHref = 'review-bulk-appointment'
     } else {
       backLinkHref = req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-period-and-count' : 'repeat'
     }
 
     let prisonNumbers
-    if (appointmentJourney.type === AppointmentType.BULK) {
+    if (appointmentJourney.type === AppointmentType.SET) {
       prisonNumbers = appointmentSetJourney.appointments.map(a => a.prisoner.number)
     } else if (editAppointmentJourney?.addPrisoners) {
       prisonNumbers = editAppointmentJourney.addPrisoners.map(p => p.number)
@@ -59,7 +59,7 @@ export default class ScheduleRoutes {
       ])
 
     let prisonerSchedules
-    if (appointmentJourney.type === AppointmentType.BULK) {
+    if (appointmentJourney.type === AppointmentType.SET) {
       prisonerSchedules = appointmentSetJourney.appointments.map(appointment => ({
         prisoner: appointment.prisoner,
         startTime: appointment.startTime,
@@ -90,7 +90,7 @@ export default class ScheduleRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const nextRoute =
-      req.session.appointmentJourney.type === AppointmentType.BULK ? 'bulk-appointment-comments' : 'comment'
+      req.session.appointmentJourney.type === AppointmentType.SET ? 'bulk-appointment-comments' : 'comment'
     if (req.session.appointmentJourney.createJourneyComplete) return res.redirectOrReturn(nextRoute)
     return res.redirect(nextRoute)
   }
@@ -107,7 +107,7 @@ export default class ScheduleRoutes {
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
 
-    if (req.session.appointmentJourney.type === AppointmentType.BULK) {
+    if (req.session.appointmentJourney.type === AppointmentType.SET) {
       req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )

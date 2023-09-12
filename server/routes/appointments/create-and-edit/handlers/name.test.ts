@@ -105,7 +105,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
     })
 
     it('should render the name view with back link for type = BULK', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.appointmentJourney.type = AppointmentType.SET
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
 

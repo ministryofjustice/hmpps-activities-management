@@ -32,7 +32,7 @@ export default class StartJourneyRoutes {
   BULK = async (req: Request, res: Response): Promise<void> => {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
-      type: AppointmentType.BULK,
+      type: AppointmentType.SET,
       createJourneyComplete: false,
     }
     req.session.appointmentSetJourney = {

@@ -31,7 +31,7 @@ describe('Views - Create Bulk Appointment - Add Comment', () => {
     viewContext = {
       session: {
         appointmentJourney: {
-          type: AppointmentType.BULK,
+          type: AppointmentType.SET,
         } as AppointmentJourney,
         appointmentSetJourney: {} as AppointmentSetJourney,
       },

@@ -20,8 +20,8 @@ export default class CheckAnswersRoutes {
     const { appointmentJourney } = req.session
 
     let response
-    if (appointmentJourney.type === AppointmentType.BULK) {
-      const request = this.createBulkAppointmentRequest(req, res)
+    if (appointmentJourney.type === AppointmentType.SET) {
+      const request = this.createAppointmentSetRequest(req, res)
       response = await this.activitiesService.createAppointmentSet(request, user)
       res.redirect(`set-confirmation/${response.id}`)
     } else {
@@ -59,14 +59,14 @@ export default class CheckAnswersRoutes {
     return request
   }
 
-  private createBulkAppointmentRequest(req: Request, res: Response) {
+  private createAppointmentSetRequest(req: Request, res: Response) {
     const { user } = res.locals
     const { appointmentJourney, appointmentSetJourney } = req.session
 
     return {
       prisonCode: user.activeCaseLoadId,
       categoryCode: appointmentJourney.category.code,
-      appointmentDescription: appointmentJourney.customName,
+      customName: appointmentJourney.customName,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
       startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
@@ -74,7 +74,7 @@ export default class CheckAnswersRoutes {
         prisonerNumber: appointment.prisoner.number,
         startTime: plainToInstance(SimpleTime, appointment.startTime).toIsoString(),
         endTime: plainToInstance(SimpleTime, appointment.endTime).toIsoString(),
-        comment: appointment.extraInformation,
+        extraInformation: appointment.extraInformation,
       })),
     } as AppointmentSetCreateRequest
   }

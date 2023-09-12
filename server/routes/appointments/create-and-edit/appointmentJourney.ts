@@ -4,7 +4,7 @@ import { AppointmentFrequency } from '../../../@types/appointments'
 export enum AppointmentType {
   INDIVIDUAL = 'INDIVIDUAL',
   GROUP = 'GROUP',
-  BULK = 'BULK',
+  SET = 'SET',
 }
 
 export enum AppointmentJourneyMode {

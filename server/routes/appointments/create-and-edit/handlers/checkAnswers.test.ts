@@ -4,6 +4,7 @@ import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import {
+  Appointment,
   AppointmentSeries,
   AppointmentSeriesCreateRequest,
   AppointmentSet,
@@ -115,18 +116,18 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         startDate: '2023-04-23',
         startTime: '09:30',
         endTime: '13:00',
-        comment: '',
-        created: '2023-02-07T15:37:59.266Z',
+        extraInformation: '',
+        createdTime: '2023-02-07T15:37:59.266Z',
         createdBy: 'test.user',
-        occurrences: [
+        appointments: [
           {
             id: 16,
             internalLocationId: 32,
             startDate: '2023-04-23',
             startTime: '09:30',
             endTime: '13:00',
-            comment: null,
-            allocations: [
+            extraInformation: null,
+            attendees: [
               {
                 id: 17,
                 prisonerNumber: 'A1234BC',
@@ -138,14 +139,14 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
       } as AppointmentSeries
     })
 
-    it('should create the appointment and redirect to confirmation page', async () => {
+    it('should create the appointment series and redirect to confirmation page', async () => {
       when(activitiesService.createAppointmentSeries)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
       expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
-      expect(res.redirect).toHaveBeenCalledWith('confirmation/15')
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
     })
 
     it('should create the repeat appointment and redirect to confirmation page', async () => {
@@ -153,9 +154,9 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
       req.session.appointmentJourney.frequency = AppointmentFrequency.WEEKLY
       req.session.appointmentJourney.numberOfAppointments = 6
 
-      expectedRequest.repeat = {
-        period: AppointmentFrequency.WEEKLY,
-        count: 6,
+      expectedRequest.schedule = {
+        frequency: AppointmentFrequency.WEEKLY,
+        numberOfAppointments: 6,
       }
 
       when(activitiesService.createAppointmentSeries)
@@ -167,12 +168,12 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     })
   })
 
-  describe('POST bulk', () => {
+  describe('POST set', () => {
     let expectedRequest: AppointmentSetCreateRequest
     let expectedResponse: AppointmentSet
 
     beforeEach(() => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.appointmentJourney.type = AppointmentType.SET
 
       req.session.appointmentSetJourney = {
         appointments: [
@@ -222,7 +223,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             prisonerNumber: 'B2345CD',
             startTime: '14:00',
             endTime: '14:30',
-            comment: 'Extra information for B2345CD',
+            extraInformation: 'Extra information for B2345CD',
           } as AppointmentSetAppointment,
         ],
       } as AppointmentSetCreateRequest
@@ -233,81 +234,61 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         categoryCode: 'MEDO',
         internalLocationId: 32,
         startDate: '2023-04-23',
-        created: '2023-02-07T15:37:59.266Z',
+        createdTime: '2023-02-07T15:37:59.266Z',
         createdBy: 'test.user',
         appointments: [
           {
-            id: 15,
-            appointmentType: 'INDIVIDUAL',
+            id: 16,
+            sequenceNumber: 1,
             prisonCode: 'TPR',
             categoryCode: 'MEDO',
             internalLocationId: 32,
             startDate: '2023-04-23',
             startTime: '13:30',
             endTime: '14:00',
-            comment: '',
-            created: '2023-02-07T15:37:59.266Z',
+            extraInformation: '',
+            createdTime: '2023-02-07T15:37:59.266Z',
             createdBy: 'test.user',
-            occurrences: [
+            attendees: [
               {
-                id: 16,
-                internalLocationId: 32,
-                startDate: '2023-04-23',
-                startTime: '13:30',
-                endTime: '14:00',
-                comment: null,
-                allocations: [
-                  {
-                    id: 17,
-                    prisonerNumber: 'A1234BC',
-                    bookingId: 456,
-                  },
-                ],
+                id: 17,
+                prisonerNumber: 'A1234BC',
+                bookingId: 456,
               },
             ],
-          } as AppointmentSeries,
+          } as Appointment,
           {
-            id: 16,
-            appointmentType: 'INDIVIDUAL',
+            id: 17,
+            sequenceNumber: 1,
             prisonCode: 'TPR',
             categoryCode: 'MEDO',
             internalLocationId: 32,
             startDate: '2023-04-23',
             startTime: '14:00',
             endTime: '14:30',
-            comment: '',
-            created: '2023-02-07T15:37:59.266Z',
+            extraInformation: '',
+            createdTime: '2023-02-07T15:37:59.266Z',
             createdBy: 'test.user',
-            occurrences: [
+            attendees: [
               {
-                id: 17,
-                internalLocationId: 32,
-                startDate: '2023-04-23',
-                startTime: '14:00',
-                endTime: '14:30',
-                comment: null,
-                allocations: [
-                  {
-                    id: 18,
-                    prisonerNumber: 'B2345CD',
-                    bookingId: 457,
-                  },
-                ],
+                id: 18,
+                prisonerNumber: 'B2345CD',
+                bookingId: 457,
               },
             ],
-          } as AppointmentSeries,
+          } as Appointment,
         ],
       } as AppointmentSet
     })
 
-    it('should create the bulk appointment and redirect to confirmation page', async () => {
+    it('should create the appointment set and redirect to confirmation page', async () => {
       when(activitiesService.createAppointmentSet)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
       expect(activitiesService.createAppointmentSet).toHaveBeenCalledWith(expectedRequest, res.locals.user)
-      expect(res.redirect).toHaveBeenCalledWith('bulk-appointments-confirmation/14')
+      expect(res.redirect).toHaveBeenCalledWith('set-confirmation/14')
     })
   })
 })

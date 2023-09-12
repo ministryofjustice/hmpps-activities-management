@@ -124,7 +124,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
-        type: AppointmentType.BULK,
+        type: AppointmentType.SET,
         createJourneyComplete: false,
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()

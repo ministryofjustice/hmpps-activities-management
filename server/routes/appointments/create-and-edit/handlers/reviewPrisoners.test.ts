@@ -62,7 +62,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should render the review prisoners view with back to upload bulk appointment', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.appointmentJourney.type = AppointmentType.SET
       req.session.appointmentSetJourney.appointments = [
         {
           prisoner: {
@@ -213,7 +213,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should remove appointment and redirect back to GET', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.appointmentJourney.type = AppointmentType.SET
       req.session.appointmentSetJourney.appointments = [
         {
           prisoner: {

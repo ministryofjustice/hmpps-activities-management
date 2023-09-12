@@ -606,7 +606,7 @@ describe('Views - Create Appointment - Schedule', () => {
 
   describe('Bulk Appointment', () => {
     beforeEach(() => {
-      viewContext.session.appointmentJourney.type = AppointmentType.BULK
+      viewContext.session.appointmentJourney.type = AppointmentType.SET
       viewContext.session.appointmentSetJourney.appointments = [
         {
           startTime: { hour: 9, minute: 0 },

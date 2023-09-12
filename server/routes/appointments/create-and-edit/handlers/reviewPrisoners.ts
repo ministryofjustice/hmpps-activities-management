@@ -10,7 +10,7 @@ export default class ReviewPrisonerRoutes {
     const { preserveHistory } = req.query
 
     let backLinkHref =
-      appointmentJourney.type === AppointmentType.BULK ? 'upload-bulk-appointment' : 'how-to-add-prisoners'
+      appointmentJourney.type === AppointmentType.SET ? 'upload-bulk-appointment' : 'how-to-add-prisoners'
     if (appointmentJourney.fromPrisonNumberProfile) {
       backLinkHref = `${config.dpsUrl}/prisoner/${appointmentJourney.fromPrisonNumberProfile}`
     }
@@ -28,7 +28,7 @@ export default class ReviewPrisonerRoutes {
         eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
         properties,
       })
-    } else if (req.session.appointmentJourney.type === AppointmentType.BULK) {
+    } else if (req.session.appointmentJourney.type === AppointmentType.SET) {
       prisoners = req.session.appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
     } else {
       prisoners = req.session.appointmentJourney.prisoners
@@ -58,7 +58,7 @@ export default class ReviewPrisonerRoutes {
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
 
-    if (req.session.appointmentJourney.type === AppointmentType.BULK) {
+    if (req.session.appointmentJourney.type === AppointmentType.SET) {
       req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )

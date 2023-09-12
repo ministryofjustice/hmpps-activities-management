@@ -116,7 +116,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
     })
 
     it('should save selected location in session and redirect to bulk appointment date page', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.appointmentJourney.type = AppointmentType.SET
       req.body = {
         locationId: 26149,
       }
