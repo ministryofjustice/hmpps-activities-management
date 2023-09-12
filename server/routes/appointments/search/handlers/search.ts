@@ -47,8 +47,8 @@ export default class SearchRoutes {
 
     const appointmentNameFilters = [
       ...categories.map(c => c.description),
-      ...appointments.filter(a => a.customName).map(a => a.appointmentName),
-    ]
+      ...new Set(appointments.filter(a => a.customName).map(a => a.appointmentName)),
+    ].sort()
 
     const results = appointmentName
       ? appointments.filter(a => a.appointmentName === appointmentName || a.category.description === appointmentName)

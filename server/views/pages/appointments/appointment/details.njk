@@ -9,7 +9,7 @@
 {% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
 {% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
 
-{% set pageTitle = appointment.appointmentName + (' single' if appointment.repeat) + ' appointment details' %}
+{% set pageTitle = appointment.appointmentName + (' single' if appointment.appointmentSeries.schedule) + ' appointment details' %}
 {% set pageId = 'appointment-details-page' %}
 
 {% set occurenceLink = '/appointments/' + appointment.id  %}
@@ -38,7 +38,7 @@
                 }) }}
             {% endif %}
 
-            {% if appointment.repeat %}
+            {% if appointment.appointmentSeries.schedule %}
                 {{ govukSummaryList({
                     card: {
                         title: {
@@ -47,7 +47,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/appointments/" + appointment.appointmentId,
+                                    href: "/appointments/series/" + appointment.appointmentSeries.id,
                                     text: "View series",
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { 'data-qa': 'view-series' }
@@ -61,18 +61,18 @@
                                 text: "Frequency"
                             },
                             value: {
-                                text: ("Every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentFrequency.WEEKDAY) +
-                                ("Daily (includes weekends)" if appointment.repeat.period == AppointmentFrequency.DAILY) +
-                                ("Weekly" if appointment.repeat.period == AppointmentFrequency.WEEKLY) +
-                                ("Fortnightly" if appointment.repeat.period == AppointmentFrequency.FORTNIGHTLY) +
-                                ("Monthly" if appointment.repeat.period == AppointmentFrequency.MONTHLY)
+                                text: ("Every weekday (Monday to Friday)" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.WEEKDAY) +
+                                ("Daily (includes weekends)" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.DAILY) +
+                                ("Weekly" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.WEEKLY) +
+                                ("Fortnightly" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.FORTNIGHTLY) +
+                                ("Monthly" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.MONTHLY)
                             }
                         }, {
                             key: {
                                 text: "Appointment"
                             },
                             value: {
-                                text: appointment.sequenceNumber + " of " + appointment.repeat.count
+                                text: appointment.sequenceNumber + " of " + appointment.appointmentSeries.schedule.numberOfAppointments
                             }
                         }
                     ],
@@ -231,7 +231,7 @@
                         value: {
                             text: appointment.updatedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
                         }
-                    } if appointment.updated
+                    } if appointment.updatedTime
                 ],
                 attributes: { 'data-qa': 'appointment-history' }
             }) }}
