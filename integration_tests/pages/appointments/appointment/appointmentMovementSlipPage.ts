@@ -24,5 +24,6 @@ export default class AppointmentMovementSlipPage extends Page {
   assertEndTime = (hour: number, minute: number) =>
     cy.get('[data-qa=time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
-  assertExtraInformation = (extraInformation: string) => cy.get('[data-qa=extra-information]').contains(extraInformation)
+  assertExtraInformation = (extraInformation: string) =>
+    cy.get('[data-qa=extra-information]').contains(extraInformation)
 }

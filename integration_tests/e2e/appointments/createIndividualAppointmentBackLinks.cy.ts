@@ -12,6 +12,7 @@ import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentL
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSeries.json'
 import getAppointmentSeriesDetails from '../../fixtures/activitiesApi/getAppointmentSeriesDetails.json'
+import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
@@ -44,6 +45,7 @@ context('Create individual appointment - back links', () => {
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
     cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
+    cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
   })
 
   it('Create individual appointment - back links', () => {
