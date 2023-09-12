@@ -31,7 +31,7 @@ export default class RepeatRoutes {
       ) {
         res.redirectOrReturn(`schedule`)
       } else {
-        res.redirect(`repeat-period-and-count${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
+        res.redirect(`repeat-frequency-and-count${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
       }
     } else {
       res.redirectOrReturn(`schedule`)

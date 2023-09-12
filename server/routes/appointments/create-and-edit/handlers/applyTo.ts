@@ -17,12 +17,11 @@ export default class ApplyToRoutes {
   constructor(private readonly editAppointmentService: EditAppointmentService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentId, occurrenceId, property } = req.params
+    const { appointmentId, property } = req.params
     const { appointmentJourney } = req.session
 
     res.render('pages/appointments/create-and-edit/apply-to', {
       appointmentId,
-      occurrenceId,
       property,
       applyToOptions: getAppointmentApplyToOptions(req),
       frequencyText: getRepeatFrequencyText(appointmentJourney),

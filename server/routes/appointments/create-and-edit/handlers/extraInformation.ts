@@ -5,17 +5,17 @@ import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
-export class Comment {
+export class ExtraInformation {
   @Expose()
   @MaxLength(4000, { message: 'You must enter extra information which has no more than 4,000 characters' })
-  comment: string
+  extraInformation: string
 }
 
-export default class CommentRoutes {
+export default class ExtraInformationRoutes {
   constructor(private readonly editAppointmentService: EditAppointmentService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/appointments/create-and-edit/comment', {
+    res.render('pages/appointments/create-and-edit/extra-information', {
       backLinkHref: getAppointmentBackLinkHref(req, 'schedule'),
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
@@ -24,18 +24,18 @@ export default class CommentRoutes {
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
-    const { comment } = req.body
+    const { extraInformation } = req.body
 
-    req.session.appointmentJourney.extraInformation = comment
+    req.session.appointmentJourney.extraInformation = extraInformation
 
     res.redirect(`check-answers`)
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const { comment } = req.body
+    const { extraInformation } = req.body
 
-    req.session.editAppointmentJourney.extraInformation = comment
+    req.session.editAppointmentJourney.extraInformation = extraInformation
 
-    await this.editAppointmentService.redirectOrEdit(req, res, 'comment')
+    await this.editAppointmentService.redirectOrEdit(req, res, 'extra-information')
   }
 }

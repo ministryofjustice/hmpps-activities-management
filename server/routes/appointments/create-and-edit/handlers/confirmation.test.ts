@@ -74,8 +74,8 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     })
   })
 
-  describe('GET_BULK', () => {
-    it('should render the confirmation page with bulk appointment details', async () => {
+  describe('GET_SET', () => {
+    it('should render the confirmation page with appointment set details', async () => {
       await handler.GET_SET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         bulkAppointment: req.appointmentSet,

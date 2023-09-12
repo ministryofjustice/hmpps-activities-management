@@ -39,7 +39,7 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
   })
 
   describe('GET', () => {
-    it('retrieves prisoner appointment and renders add comment page with correct context', async () => {
+    it('retrieves prisoner appointment and renders add extra information page with correct context', async () => {
       const testPrisonerAppointment = {
         prisoner: {
           number: 'A1234BC',

@@ -10,11 +10,7 @@ import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointmen
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 
 export const getAppointmentBackLinkHref = (req: Request, defaultBackLinkHref: string) => {
-  if (
-    req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-    req.params.appointmentSeriesId &&
-    req.params.appointmentId
-  ) {
+  if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT && req.params.appointmentId) {
     return `/appointments/${req.params.appointmentId}`
   }
 

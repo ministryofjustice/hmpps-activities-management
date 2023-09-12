@@ -20,8 +20,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
   const handler = new LocationRoutes(activitiesService, editAppointmentService)
   let req: Request
   let res: Response
-  const appointmentId = '1'
-  const occurrenceId = '2'
+  const appointmentId = '2'
 
   const locations = [
     {
@@ -79,11 +78,10 @@ describe('Route Handlers - Create Appointment - Location', () => {
       })
     })
 
-    it('should render the location view with back to occurrence details and accept and save', async () => {
+    it('should render the location view with back to appointment details and accept and save', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.params = {
         appointmentId,
-        occurrenceId,
       }
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
@@ -115,7 +113,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
     })
 
-    it('should save selected location in session and redirect to bulk appointment date page', async () => {
+    it('should save selected location in session and redirect to appointment set date page', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
       req.body = {
         locationId: 26149,
@@ -152,11 +150,10 @@ describe('Route Handlers - Create Appointment - Location', () => {
     beforeEach(() => {
       req.params = {
         appointmentId: '2',
-        occurrenceId: '12',
       }
     })
 
-    it('should update the occurrence and call redirect or edit', async () => {
+    it('should update the appointment and call redirect or edit', async () => {
       req.body = {
         locationId: 26149,
       }

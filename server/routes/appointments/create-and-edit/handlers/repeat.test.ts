@@ -46,7 +46,7 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule')
     })
 
-    it('should save repeat = YES in session and redirect to repeat period and count page', async () => {
+    it('should save repeat = YES in session and redirect to repeat frequency and count page', async () => {
       req.body = {
         repeat: YesNo.YES,
       }
@@ -54,10 +54,10 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
-      expect(res.redirect).toHaveBeenCalledWith('repeat-period-and-count')
+      expect(res.redirect).toHaveBeenCalledWith('repeat-frequency-and-count')
     })
 
-    it('should not save repeat = YES in session if previously was NO and redirect to repeat period and count page', async () => {
+    it('should not save repeat = YES in session if previously was NO and redirect to repeat frequency and count page', async () => {
       req.session.appointmentJourney.repeat = YesNo.NO
       req.body = {
         repeat: YesNo.YES,
@@ -66,10 +66,10 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.NO)
-      expect(res.redirect).toHaveBeenCalledWith('repeat-period-and-count')
+      expect(res.redirect).toHaveBeenCalledWith('repeat-frequency-and-count')
     })
 
-    it('should redirect to repeat period and count page page when repeat = YES has not changed but repeat period is not set', async () => {
+    it('should redirect to repeat frequency and count page page when repeat = YES has not changed but repeat frequency is not set', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
       req.session.appointmentJourney.frequency = undefined
       req.session.appointmentJourney.numberOfAppointments = 6
@@ -80,10 +80,10 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
-      expect(res.redirect).toHaveBeenCalledWith('repeat-period-and-count')
+      expect(res.redirect).toHaveBeenCalledWith('repeat-frequency-and-count')
     })
 
-    it('should redirect to repeat period and count page page when repeat = YES has not changed but repeat count is not set', async () => {
+    it('should redirect to repeat frequency and count page page when repeat = YES has not changed but repeat count is not set', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
       req.session.appointmentJourney.frequency = AppointmentFrequency.FORTNIGHTLY
       req.session.appointmentJourney.numberOfAppointments = undefined
@@ -94,10 +94,10 @@ describe('Route Handlers - Create Appointment - Repeat', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
-      expect(res.redirect).toHaveBeenCalledWith('repeat-period-and-count')
+      expect(res.redirect).toHaveBeenCalledWith('repeat-frequency-and-count')
     })
 
-    it('should redirect to schedule page when repeat = YES has not changed and repeat period and count are set', async () => {
+    it('should redirect to schedule page when repeat = YES has not changed and repeat frequency and count are set', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
       req.session.appointmentJourney.frequency = AppointmentFrequency.DAILY
       req.session.appointmentJourney.numberOfAppointments = 7

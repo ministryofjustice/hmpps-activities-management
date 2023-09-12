@@ -99,19 +99,19 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       })
     })
 
-    it('should render the schedule view with back to repeat period and count page', async () => {
+    it('should render the schedule view with back to repeat frequency and count page', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'repeat-period-and-count',
+        backLinkHref: 'repeat-frequency-and-count',
         isCtaAcceptAndSave: false,
         prisonerSchedules: [],
       })
     })
 
-    it('should render the schedule view with back to review bulk appointment page', async () => {
+    it('should render the schedule view with back to appointment set times page', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
 
       await handler.GET(req, res)
@@ -254,7 +254,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       })
     })
 
-    it('use bulk appointment appointments prisoner for type = BULK', async () => {
+    it('use appointment set appointments prisoner for type = SET', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
       req.session.appointmentSetJourney.appointments = [
         {
@@ -425,19 +425,19 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         req.session.appointmentJourney.createJourneyComplete = createJourneyComplete
       })
 
-      it('should redirect to comment page for type = INDIVIDUAL', async () => {
+      it('should redirect to extra information page for type = INDIVIDUAL', async () => {
         req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
         await handler.POST(req, res)
-        expect(res[redirectMethod]).toHaveBeenCalledWith('comment')
+        expect(res[redirectMethod]).toHaveBeenCalledWith('extra-information')
       })
 
-      it('should redirect to comment page for type = GROUP', async () => {
+      it('should redirect to extra information page for type = GROUP', async () => {
         req.session.appointmentJourney.type = AppointmentType.GROUP
         await handler.POST(req, res)
-        expect(res[redirectMethod]).toHaveBeenCalledWith('comment')
+        expect(res[redirectMethod]).toHaveBeenCalledWith('extra-information')
       })
 
-      it('should redirect to bulk appointment comments page for type = BULK', async () => {
+      it('should redirect to appointment set extra information page for type = SET', async () => {
         req.session.appointmentJourney.type = AppointmentType.SET
         await handler.POST(req, res)
         expect(res[redirectMethod]).toHaveBeenCalledWith('appointment-set-extra-information')
@@ -505,7 +505,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       expect(res.redirect).toBeCalledWith('../../schedule')
     })
 
-    it('should remove prisoner appointment from bulk appointment and redirect back to GET', async () => {
+    it('should remove prisoner appointment from appointment set and redirect back to GET', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
       req.session.appointmentSetJourney.appointments = [
         {

@@ -19,8 +19,7 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
   const weekTomorrow = addDays(new Date(), 8)
   let req: Request
   let res: Response
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentId = 2
 
   beforeEach(() => {
     req = {
@@ -61,7 +60,6 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
       },
       params: {
         appointmentId,
-        occurrenceId,
       },
     } as unknown as Request
 
@@ -77,14 +75,13 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirm-edit', {
         appointmentId,
-        occurrenceId,
         startDate: new Date(req.session.appointmentJourney.startDate.date),
       })
     })
   })
 
   describe('POST', () => {
-    it('should redirect to occurrence details page', async () => {
+    it('should redirect to appointment details page', async () => {
       req.body = {
         confirm: YesNo.NO,
       }

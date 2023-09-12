@@ -19,8 +19,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
   const weekTomorrow = addDays(new Date(), 8)
   let req: Request
   let res: Response
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentId = 2
   const property = 'location'
 
   beforeEach(() => {
@@ -29,7 +28,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
-          repeatPeriod: AppointmentFrequency.DAILY,
+          repeatFrequency: AppointmentFrequency.DAILY,
           startDate: {
             day: weekTomorrow.getDate(),
             month: weekTomorrow.getMonth() + 1,
@@ -62,7 +61,6 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
       },
       params: {
         appointmentId,
-        occurrenceId,
         property,
       },
     } as unknown as Request
@@ -81,7 +79,6 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/apply-to', {
         appointmentId,
-        occurrenceId,
         property,
         applyToOptions: getAppointmentApplyToOptions(req),
         frequencyText: getRepeatFrequencyText(req.session.appointmentJourney),

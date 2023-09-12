@@ -10,8 +10,7 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
   const handler = new CancellationReasonRoutes()
   let req: Request
   let res: Response
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentId = 2
 
   beforeEach(() => {
     req = {
@@ -41,7 +40,6 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
       },
       params: {
         appointmentId,
-        occurrenceId,
       },
     } as unknown as Request
 
@@ -60,7 +58,6 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/cancellation-reason', {
         appointmentId,
-        occurrenceId,
       })
     })
   })

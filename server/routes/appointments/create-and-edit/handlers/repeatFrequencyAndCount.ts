@@ -5,56 +5,56 @@ import { YesNo } from '../../../../@types/activities'
 import MaxWhenDependentPropertyValueIs from '../../../../validators/maxWhenDependentPropertyValueIs'
 import { AppointmentFrequency } from '../../../../@types/appointments'
 
-export class RepeatPeriodAndCount {
+export class RepeatFrequencyAndCount {
   @Expose()
   @IsEnum(AppointmentFrequency, { message: 'Select how often the appointment will repeat' })
-  repeatPeriod: AppointmentFrequency
+  frequency: AppointmentFrequency
 
   @Expose()
   @Type(() => Number)
   @Min(1, { message: 'Enter how many times the appointment will repeat up to a maximum of one year' })
-  @MaxWhenDependentPropertyValueIs(260, 'repeatPeriod', AppointmentFrequency.WEEKDAY, {
+  @MaxWhenDependentPropertyValueIs(260, 'frequency', AppointmentFrequency.WEEKDAY, {
     message: 'Number of appointments must be $constraint1 or fewer',
   })
-  @MaxWhenDependentPropertyValueIs(365, 'repeatPeriod', AppointmentFrequency.DAILY, {
+  @MaxWhenDependentPropertyValueIs(365, 'frequency', AppointmentFrequency.DAILY, {
     message: 'Number of appointments must be $constraint1 or fewer',
   })
-  @MaxWhenDependentPropertyValueIs(52, 'repeatPeriod', AppointmentFrequency.WEEKLY, {
+  @MaxWhenDependentPropertyValueIs(52, 'frequency', AppointmentFrequency.WEEKLY, {
     message: 'Number of appointments must be $constraint1 or fewer',
   })
-  @MaxWhenDependentPropertyValueIs(26, 'repeatPeriod', AppointmentFrequency.FORTNIGHTLY, {
+  @MaxWhenDependentPropertyValueIs(26, 'frequency', AppointmentFrequency.FORTNIGHTLY, {
     message: 'Number of appointments must be $constraint1 or fewer',
   })
   @Min(1, { message: 'Enter how many times the appointment will repeat up to a maximum of one year' })
-  @MaxWhenDependentPropertyValueIs(12, 'repeatPeriod', AppointmentFrequency.MONTHLY, {
+  @MaxWhenDependentPropertyValueIs(12, 'frequency', AppointmentFrequency.MONTHLY, {
     message: 'Number of appointments must be $constraint1 or fewer',
   })
-  repeatCount: number
+  numberOfAppointments: number
 }
 
-export default class RepeatPeriodAndCountRoutes {
+export default class RepeatFrequencyAndCountRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/appointments/create-and-edit/repeat-period-and-count')
+    res.render('pages/appointments/create-and-edit/repeat-frequency-and-count')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const maxOccurrenceAllocations = 20000
+    const maxAppointmentInstances = 20000
 
-    const { repeatPeriod, repeatCount } = req.body
+    const { frequency, numberOfAppointments } = req.body
     const prisonersCount = req.session.appointmentJourney.prisoners.length
 
-    if (prisonersCount * repeatCount > maxOccurrenceAllocations) {
+    if (prisonersCount * numberOfAppointments > maxAppointmentInstances) {
       return res.validationFailed(
-        'repeatCount',
+        'numberOfAppointments',
         `You cannot schedule more than ${Math.floor(
-          maxOccurrenceAllocations / prisonersCount,
+          maxAppointmentInstances / prisonersCount,
         )} appointments for this number of attendees.`,
       )
     }
 
     req.session.appointmentJourney.repeat = YesNo.YES
-    req.session.appointmentJourney.frequency = repeatPeriod
-    req.session.appointmentJourney.numberOfAppointments = repeatCount
+    req.session.appointmentJourney.frequency = frequency
+    req.session.appointmentJourney.numberOfAppointments = numberOfAppointments
 
     return res.redirectOrReturn(`schedule`)
   }

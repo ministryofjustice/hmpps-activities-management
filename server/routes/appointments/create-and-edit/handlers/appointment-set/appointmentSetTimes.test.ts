@@ -170,7 +170,7 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
       expect(res.addValidationError).toHaveBeenCalledWith(`endTime-XYZ4321`, 'Select an end time after the start time')
     })
 
-    it('should update and save start time and end time in session and redirect to comment page', async () => {
+    it('should update and save start time and end time in session and redirect to extra information page', async () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentSetJourney.appointments).toEqual([
@@ -204,7 +204,7 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
       expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
 
-    it('should update and save start time and end time in session and redirect to comment page with preserve history', async () => {
+    it('should update and save start time and end time in session and redirect to extra information page with preserve history', async () => {
       req.query = { preserveHistory: 'true' }
 
       await handler.POST(req, res)

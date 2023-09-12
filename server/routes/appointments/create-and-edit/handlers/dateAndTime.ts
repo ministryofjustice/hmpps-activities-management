@@ -54,7 +54,7 @@ export default class DateAndTimeRoutes {
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentId, occurrenceId } = req.params
+    const { appointmentId } = req.params
 
     this.setTimeAndDate(req, 'editAppointmentJourney')
 

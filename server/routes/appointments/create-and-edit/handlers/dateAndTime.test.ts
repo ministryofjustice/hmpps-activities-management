@@ -19,8 +19,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   const handler = new DateAndTimeRoutes()
   let req: Request
   let res: Response
-  const appointmentId = '1'
-  const occurrenceId = '2'
+  const appointmentId = '2'
 
   beforeEach(() => {
     res = {
@@ -54,11 +53,10 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       })
     })
 
-    it('should render the date and time view with back to occurrence details', async () => {
+    it('should render the date and time view with back to appointment details', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.params = {
         appointmentId,
-        occurrenceId,
       }
 
       await handler.GET(req, res)
@@ -129,7 +127,6 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     beforeEach(() => {
       req.params = {
         appointmentId: '2',
-        occurrenceId: '12',
       }
 
       req.session.appointmentJourney = {
@@ -159,7 +156,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       } as unknown as AppointmentJourney
     })
 
-    it('should update the occurrence date and redirect to schedule', async () => {
+    it('should update the appointment date and redirect to schedule', async () => {
       const nextWeek = simpleDateFromDate(addDays(new Date(), 7))
       req.body.startDate = nextWeek
 
@@ -174,7 +171,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
 
-    it('should update the occurrence start time and end time and redirect to schedule', async () => {
+    it('should update the appointment start time and end time and redirect to schedule', async () => {
       const startTime = plainToInstance(SimpleTime, {
         hour: 10,
         minute: 30,
@@ -202,7 +199,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
 
-    it('should update the occurrence date, start time and end time and redirect to schedule', async () => {
+    it('should update the appointment date, start time and end time and redirect to schedule', async () => {
       const nextWeek = simpleDateFromDate(addDays(new Date(), 7))
       const startTime = plainToInstance(SimpleTime, {
         hour: 10,
@@ -238,7 +235,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
 
-    it('should clear the journey and redirect back to occurrence page if no changes are made', async () => {
+    it('should clear the journey and redirect back to appointment page if no changes are made', async () => {
       const nextWeek = simpleDateFromDate(addDays(new Date(), 7))
       const startTime = plainToInstance(SimpleTime, {
         hour: 10,

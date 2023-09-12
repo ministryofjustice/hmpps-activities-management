@@ -187,7 +187,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
     })
   })
 
-  describe('EDIT_OCCURRENCE', () => {
+  describe('EDIT', () => {
     beforeEach(() => {
       res = {
         redirect: jest.fn(),

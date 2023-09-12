@@ -9,16 +9,16 @@ import NameRoutes, { Name } from './handlers/name'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import RepeatRoutes, { Repeat } from './handlers/repeat'
-import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './handlers/repeatPeriodAndCount'
-import CommentRoutes, { Comment } from './handlers/comment'
+import RepeatFrequencyAndCountRoutes, { RepeatFrequencyAndCount } from './handlers/repeatFrequencyAndCount'
+import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
 import AppointmentSetExtraInformationRoutes from './handlers/appointment-set/appointmentSetExtraInformation'
 import AppointmentSetAddExtraInformationRoutes, {
   AppointmentSetAppointmentExtraInformation,
 } from './handlers/appointment-set/appointmentSetAddExtraInformation'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
-import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
-import ReviewPrisoners from './handlers/reviewPrisoners'
+import HowToAddPrisonerRoutes, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
+import ReviewPrisonerRoutes from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
@@ -39,33 +39,33 @@ export default function Create({ prisonService, activitiesService }: Services): 
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const editAppointmentService = new EditAppointmentService(activitiesService)
-  const startHandler = new StartJourneyRoutes(prisonService)
-  const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
+  const startJourneyRoutes = new StartJourneyRoutes(prisonService)
+  const selectPrisonerRoutes = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const nameHandler = new NameRoutes(activitiesService)
-  const locationHandler = new LocationRoutes(activitiesService, editAppointmentService)
-  const dateAndTimeHandler = new DateAndTimeRoutes()
-  const repeatHandler = new RepeatRoutes()
-  const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
-  const commentHandler = new CommentRoutes(editAppointmentService)
+  const nameRoutes = new NameRoutes(activitiesService)
+  const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
+  const dateAndTimeRoutes = new DateAndTimeRoutes()
+  const repeatRoutes = new RepeatRoutes()
+  const repeatFrequencyAndCountRoutes = new RepeatFrequencyAndCountRoutes()
+  const extraInformationRoutes = new ExtraInformationRoutes(editAppointmentService)
   const appointmentSetExtraInformationRoutes = new AppointmentSetExtraInformationRoutes()
   const appointmentSetAddExtraInformationRoutes = new AppointmentSetAddExtraInformationRoutes()
-  const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
-  const confirmationHandler = new ConfirmationRoutes()
-  const howToAddPrisoners = new HowToAddPrisoners()
-  const reviewPrisoners = new ReviewPrisoners()
+  const checkAnswersRoutes = new CheckAnswersRoutes(activitiesService)
+  const confirmationRoutes = new ConfirmationRoutes()
+  const howToAddPrisonerRoutes = new HowToAddPrisonerRoutes()
+  const reviewPrisonerRoutes = new ReviewPrisonerRoutes()
   const appointmentSetUploadRoutes = new AppointmentSetUploadRoutes(new PrisonerListCsvParser(), prisonService)
   const appointmentSetDateRoutes = new AppointmentSetDateRoutes()
   const appointmentSetTimesRoutes = new AppointmentSetTimesRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService)
 
-  get('/start-individual', startHandler.INDIVIDUAL)
-  get('/start-group', startHandler.GROUP)
-  get('/start-set', startHandler.SET)
-  get('/start-prisoner/:prisonNumber', startHandler.PRISONER)
-  get('/select-prisoner', selectPrisonerHandler.GET, true)
-  post('/select-prisoner', selectPrisonerHandler.SELECT_PRISONER, SelectPrisoner)
-  post('/search-prisoner', selectPrisonerHandler.SEARCH, PrisonerSearch)
+  get('/start-individual', startJourneyRoutes.INDIVIDUAL)
+  get('/start-group', startJourneyRoutes.GROUP)
+  get('/start-set', startJourneyRoutes.SET)
+  get('/start-prisoner/:prisonNumber', startJourneyRoutes.PRISONER)
+  get('/select-prisoner', selectPrisonerRoutes.GET, true)
+  post('/select-prisoner', selectPrisonerRoutes.SELECT_PRISONER, SelectPrisoner)
+  post('/search-prisoner', selectPrisonerRoutes.SEARCH, PrisonerSearch)
   get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
   router.post(
     '/upload-prisoner-list',
@@ -80,17 +80,17 @@ export default function Create({ prisonService, activitiesService }: Services): 
     validationMiddleware(AppointmentsList),
     asyncMiddleware(appointmentSetUploadRoutes.POST),
   )
-  get('/name', nameHandler.GET, true)
-  post('/name', nameHandler.POST, Name)
-  get('/location', locationHandler.GET, true)
-  post('/location', locationHandler.CREATE, Location)
-  get('/date-and-time', dateAndTimeHandler.GET, true)
-  post('/date-and-time', dateAndTimeHandler.CREATE, DateAndTime)
-  get('/repeat', repeatHandler.GET, true)
-  post('/repeat', repeatHandler.POST, Repeat)
-  get('/repeat-period-and-count', repeatPeriodAndCountHandler.GET, true)
-  post('/repeat-period-and-count', repeatPeriodAndCountHandler.POST, RepeatPeriodAndCount)
-  get('/comment', commentHandler.GET, true)
+  get('/name', nameRoutes.GET, true)
+  post('/name', nameRoutes.POST, Name)
+  get('/location', locationRoutes.GET, true)
+  post('/location', locationRoutes.CREATE, Location)
+  get('/date-and-time', dateAndTimeRoutes.GET, true)
+  post('/date-and-time', dateAndTimeRoutes.CREATE, DateAndTime)
+  get('/repeat', repeatRoutes.GET, true)
+  post('/repeat', repeatRoutes.POST, Repeat)
+  get('/repeat-frequency-and-count', repeatFrequencyAndCountRoutes.GET, true)
+  post('/repeat-frequency-and-count', repeatFrequencyAndCountRoutes.POST, RepeatFrequencyAndCount)
+  get('/extra-information', extraInformationRoutes.GET, true)
   get('/schedule', scheduleRoutes.GET, true)
   post('/schedule', scheduleRoutes.POST)
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
@@ -103,20 +103,20 @@ export default function Create({ prisonService, activitiesService }: Services): 
     appointmentSetAddExtraInformationRoutes.POST,
     AppointmentSetAppointmentExtraInformation,
   )
-  post('/comment', commentHandler.CREATE, Comment)
-  get('/check-answers', checkAnswersHandler.GET, true)
-  post('/check-answers', checkAnswersHandler.POST)
+  post('/extra-information', extraInformationRoutes.CREATE, ExtraInformation)
+  get('/check-answers', checkAnswersRoutes.GET, true)
+  post('/check-answers', checkAnswersRoutes.POST)
   router.get(
     '/confirmation/:appointmentId',
     fetchAppointment(activitiesService),
     emptyAppointmentJourneyHandler(true),
-    asyncMiddleware(confirmationHandler.GET),
+    asyncMiddleware(confirmationRoutes.GET),
   )
-  get('/how-to-add-prisoners', howToAddPrisoners.GET, true)
-  post('/how-to-add-prisoners', howToAddPrisoners.POST, HowToAddPrisonersForm)
-  get('/review-prisoners', reviewPrisoners.GET, true)
-  post('/review-prisoners', reviewPrisoners.POST)
-  get('/review-prisoners/:prisonNumber/remove', reviewPrisoners.REMOVE, true)
+  get('/how-to-add-prisoners', howToAddPrisonerRoutes.GET, true)
+  post('/how-to-add-prisoners', howToAddPrisonerRoutes.POST, HowToAddPrisonersForm)
+  get('/review-prisoners', reviewPrisonerRoutes.GET, true)
+  post('/review-prisoners', reviewPrisonerRoutes.POST)
+  get('/review-prisoners/:prisonNumber/remove', reviewPrisonerRoutes.REMOVE, true)
   get('/appointment-set-date', appointmentSetDateRoutes.GET, true)
   post('/appointment-set-date', appointmentSetDateRoutes.POST, AppointmentSetDate)
   get('/appointment-set-times', appointmentSetTimesRoutes.GET, true)
@@ -125,7 +125,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
     '/set-confirmation/:appointmentSetId',
     fetchAppointmentSet(activitiesService),
     emptyAppointmentJourneyHandler(true),
-    asyncMiddleware(confirmationHandler.GET_SET),
+    asyncMiddleware(confirmationRoutes.GET_SET),
   )
 
   return router

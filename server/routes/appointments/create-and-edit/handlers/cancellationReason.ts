@@ -12,11 +12,10 @@ export class CancellationReason {
 
 export default class CancellationReasonRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentId, occurrenceId } = req.params
+    const { appointmentId } = req.params
 
     res.render('pages/appointments/create-and-edit/cancellation-reason', {
       appointmentId,
-      occurrenceId,
     })
   }
 

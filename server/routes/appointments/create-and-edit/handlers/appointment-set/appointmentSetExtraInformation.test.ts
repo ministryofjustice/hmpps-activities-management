@@ -30,19 +30,19 @@ describe('Route Handlers - Create Appointment Set - Extra Information', () => {
   })
 
   describe('GET', () => {
-    it('retrieves prisoner appointments and renders comments page with correct context', async () => {
+    it('retrieves prisoner appointments and renders extra information page with correct context', async () => {
       const testPrisonerAppointments = [
         {
           prisoner: {
             number: 'A1234BC',
           },
-          extraInformation: 'An appointment comment',
+          extraInformation: 'Appointment extra information',
         },
         {
           prisoner: {
             number: 'Z4321YX',
           },
-          extraInformation: 'Another appointment comment',
+          extraInformation: 'Another appointment extra information',
         },
       ] as AppointmentSetJourney['appointments']
       req.session.appointmentSetJourney.appointments = testPrisonerAppointments

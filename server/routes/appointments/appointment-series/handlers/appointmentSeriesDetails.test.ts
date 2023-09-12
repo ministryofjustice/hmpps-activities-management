@@ -52,7 +52,7 @@ describe('Route Handlers - Appointment Series Details', () => {
       })
     })
 
-    it('should remove occurrences in the past', async () => {
+    it('should remove appointments in the past', async () => {
       const now = new Date()
       const todayOneMinuteInThePast = subMinutes(now, 1)
       const todayOneHourInTheFuture = addHours(now, 1)

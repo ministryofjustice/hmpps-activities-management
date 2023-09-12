@@ -14,17 +14,16 @@ export default class ConfirmEditRoutes {
   constructor(private readonly editAppointmentService: EditAppointmentService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentId, occurrenceId } = req.params
+    const { appointmentId } = req.params
 
     res.render('pages/appointments/create-and-edit/confirm-edit', {
       appointmentId,
-      occurrenceId,
       startDate: new Date(req.session.appointmentJourney.startDate.date),
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentId, occurrenceId } = req.params
+    const { appointmentId } = req.params
     const { confirm } = req.body
 
     if (confirm === YesNo.YES) {
