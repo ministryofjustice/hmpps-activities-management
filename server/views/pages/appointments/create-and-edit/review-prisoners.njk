@@ -30,7 +30,7 @@
                 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
                     <h1 class="govuk-heading-l">There are no attendees to add</h1>
                     <p class="govuk-body">You’ve removed the last new attendee.</p>
-                    <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}/occurrence/{{ occurrenceId }}" class="govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
+                    <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}" class="govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
                 {% elseif session.appointmentJourney.type == AppointmentType.BULK %}
                     <h1 class="govuk-heading-l">There are no attendees for this set</h1>
                     <p class="govuk-body">You’ve removed the last attendee for this set of appointments.</p>

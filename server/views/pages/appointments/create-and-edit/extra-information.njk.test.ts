@@ -10,7 +10,7 @@ import {
 } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
 
-const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/comment.njk')
+const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/extra-information.njk')
 
 describe('Views - Appointments Management - Comment', () => {
   const weekTomorrow = addDays(new Date(), 8)

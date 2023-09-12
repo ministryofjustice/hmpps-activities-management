@@ -11,7 +11,7 @@
     {% set pageTitle = appointmentJourneyTitle("Add extra information", session.appointmentJourney) %}
 {% endif %}
 
-{% set pageId = 'appointments-create-comment-page' %}
+{% set pageId = 'appointment-extra-information-page' %}
 {% set backLinkHref = backLinkHref %}
 
 {% block content %}
@@ -20,14 +20,14 @@
       {{ appointmentTypeCaption(session) }}
       {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
         <h1 class="govuk-heading-l">
-            <label class="govuk-label govuk-label--l" for="comment">Change the extra information (optional)</label>
+            <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information (optional)</label>
         </h1>
         <p class="govuk-body" data-qa="first-paragraph">
             You can change the information about how to prepare for the appointment. Note that changes will not appear on any movement slips that have already been printed.
         </p>
       {% else %}
         <h1 class="govuk-heading-l">
-            <label class="govuk-label govuk-label--l" for="comment">Add extra information (optional)</label>
+            <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
         </h1>
         <p class="govuk-body" data-qa="first-paragraph">
             Add any important information about how to prepare for the appointment. It will be printed on the movement slip.
@@ -40,9 +40,9 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
         <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
           <div class="govuk-form-group">
-            <textarea class="govuk-textarea govuk-js-character-count" id="comment" name="comment" rows="5" aria-describedby="comment-info">{{ formResponses.comment or session.appointmentJourney.comment }}</textarea>
+            <textarea class="govuk-textarea govuk-js-character-count" id="extraInformation" name="extraInformation" rows="5" aria-describedby="extra-information-info">{{ formResponses.extraInformation or session.appointmentJourney.extraInformation }}</textarea>
           </div>
-          <div id="comment-info" class="govuk-hint govuk-character-count__message">
+          <div id="extra-information-info" class="govuk-hint govuk-character-count__message">
             You can enter up to 4000 characters
           </div>
         </div>

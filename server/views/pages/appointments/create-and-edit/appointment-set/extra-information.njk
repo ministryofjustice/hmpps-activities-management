@@ -7,8 +7,8 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
 {% set pageTitle = appointmentJourneyTitle("Add extra information for a set", session.appointmentJourney) %}
-{% set pageId = 'appointments-create-bulk-appointment-comments-page' %}
-{% set backLinkHref = 'review-bulk-appointment' %}
+{% set pageId = 'appointment-set-extra-information-page' %}
+{% set backLinkHref = 'review-appointment-set' %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -35,13 +35,13 @@
                                 'data-qa': 'prisoner-info-cell'
                             }
                         }, {
-                            html: '<span class="preserve-line-breaks">' + appointment.comment | escape + '</span>',
+                            html: '<span class="preserve-line-breaks">' + appointment.extraInformation | escape + '</span>',
                             classes: 'govuk-table__cell--vertical-align-top',
                             attributes: {
-                                'data-qa': 'comment-cell'
+                                'data-qa': 'extra-information-cell'
                             }
                         }, {
-                            html: '<a href="bulk-appointment-comments/' + appointment.prisoner.number + '" class="govuk-link govuk-link--no-visited-state">' + ('Edit' if appointment.comment else 'Add') + ' extra information</a>',
+                            html: '<a href="appointment-set-appointment-extra-information/' + appointment.prisoner.number + '" class="govuk-link govuk-link--no-visited-state">' + ('Edit' if appointment.extraInformation else 'Add') + ' extra information</a>',
                             classes: 'govuk-!-text-align-right govuk-table__cell--vertical-align-top',
                             attributes: {
                                 'data-qa': 'actions-cell'
@@ -52,7 +52,7 @@
 
                 {{ govukTable({
                     attributes: {
-                        'data-qa': 'comments-table'
+                        'data-qa': 'extra-information-table'
                     },
                     head: [
                         {

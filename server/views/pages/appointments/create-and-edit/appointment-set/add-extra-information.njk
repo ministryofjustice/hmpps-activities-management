@@ -6,8 +6,8 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
 {% set pageTitle = appointmentJourneyTitle("Add extra information individual", session.appointmentJourney) %}
-{% set pageId = 'appointments-create-bulk-appointment-add-comment-page' %}
-{% set backLinkHref = 'bulk-appointment-comments' %}
+{% set pageId = 'appointment-set-appointment-extra-information-page' %}
+{% set backLinkHref = 'appointment-set-extra-information' %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -15,7 +15,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ appointmentTypeCaption(session) }}
-                <h1 class="govuk-heading-l"><label for="comment">Add extra information for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }} (optional)</label></h1>
+                <h1 class="govuk-heading-l"><label for="extraInformation">Add extra information for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }} (optional)</label></h1>
 
                 <p class='govuk-body'>Give the attendee extra information about their appointment. This will be printed on their movement slip.</p>
 
@@ -23,10 +23,10 @@
                     hint: {
                         text: 'For example, \'You need to bring all your documents about your case to this meeting with your solicitor.\''
                     },
-                    id: "comment",
-                    name: "comment",
-                    errorMessage: validationErrors | findError("comment"),
-                    value: formResponses.comment or comment,
+                    id: "extraInformation",
+                    name: "extraInformation",
+                    errorMessage: validationErrors | findError("extraInformation"),
+                    value: formResponses.extraInformation or extraInformation,
                     maxlength: "4000"
                 }) }}
 
