@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { AppointmentSetJourney } from '../../appointmentSetJourney'
-import BulkAppointmentCommentsRoutes from './bulkAppointmentComments'
+import AppointmentSetExtraInformationRoutes from './appointmentSetExtraInformation'
 
-describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
-  const handler = new BulkAppointmentCommentsRoutes()
+describe('Route Handlers - Create Appointment Set - Extra Information', () => {
+  const handler = new AppointmentSetExtraInformationRoutes()
   let req: Request
   let res: Response
 
@@ -49,12 +49,9 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
 
       handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/appointments/create-and-edit/bulk-appointments/bulk-appointment-comments',
-        {
-          appointments: testPrisonerAppointments,
-        },
-      )
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/appointment-set/extra-information', {
+        appointments: testPrisonerAppointments,
+      })
     })
   })
 

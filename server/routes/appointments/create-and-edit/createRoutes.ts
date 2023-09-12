@@ -11,10 +11,10 @@ import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import RepeatRoutes, { Repeat } from './handlers/repeat'
 import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './handlers/repeatPeriodAndCount'
 import CommentRoutes, { Comment } from './handlers/comment'
-import BulkAppointmentComments from './handlers/bulk-appointments/bulkAppointmentComments'
+import BulkAppointmentComments from './handlers/appointment-set/appointmentSetExtraInformation'
 import BulkAppointmentAddComment, {
-  BulkAppointmentComment,
-} from './handlers/bulk-appointments/bulkAppointmentAddComment'
+  AppointmentSetAppointmentExtraInformation,
+} from './handlers/appointment-set/appointmentSetAddExtraInformation'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
@@ -24,9 +24,9 @@ import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import fetchAppointment from '../../../middleware/appointments/fetchAppointmentSeries'
 import EditAppointmentService from '../../../services/editAppointmentService'
-import UploadBulkAppointment, { AppointmentsList } from './handlers/bulk-appointments/uploadBulkAppointment'
-import BulkAppointmentDateRoutes, { BulkAppointmentDate } from './handlers/bulk-appointments/bulkAppointmentDate'
-import ReviewBulkAppointment, { AppointmentTimes } from './handlers/bulk-appointments/reviewBulkAppointment'
+import UploadBulkAppointment, { AppointmentsList } from './handlers/appointment-set/uploadBulkAppointment'
+import AppointmentSetDateRoutes, { AppointmentSetDate } from './handlers/appointment-set/appointmentSetDate'
+import ReviewBulkAppointment, { AppointmentTimes } from './handlers/appointment-set/appointmentSetTimes'
 import fetchAppointmentSet from '../../../middleware/appointments/fetchAppointmentSet'
 import ScheduleRoutes from './handlers/schedule'
 
@@ -55,7 +55,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const howToAddPrisoners = new HowToAddPrisoners()
   const reviewPrisoners = new ReviewPrisoners()
   const uploadBulkAppointment = new UploadBulkAppointment(new PrisonerListCsvParser(), prisonService)
-  const bulkAppointmentDate = new BulkAppointmentDateRoutes()
+  const bulkAppointmentDate = new AppointmentSetDateRoutes()
   const reviewBulkAppointment = new ReviewBulkAppointment()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService)
 
@@ -98,7 +98,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   get('/bulk-appointment-comments', bulkAppointmentCommentsHandler.GET, true)
   post('/bulk-appointment-comments', bulkAppointmentCommentsHandler.POST)
   get('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.GET, true)
-  post('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.POST, BulkAppointmentComment)
+  post('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.POST, AppointmentSetAppointmentExtraInformation)
   post('/comment', commentHandler.CREATE, Comment)
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
@@ -114,7 +114,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
   post('/review-prisoners', reviewPrisoners.POST)
   get('/review-prisoners/:prisonNumber/remove', reviewPrisoners.REMOVE, true)
   get('/bulk-appointment-date', bulkAppointmentDate.GET, true)
-  post('/bulk-appointment-date', bulkAppointmentDate.POST, BulkAppointmentDate)
+  post('/bulk-appointment-date', bulkAppointmentDate.POST, AppointmentSetDate)
   get('/review-bulk-appointment', reviewBulkAppointment.GET, true)
   post('/review-bulk-appointment', reviewBulkAppointment.POST, AppointmentTimes)
   router.get(

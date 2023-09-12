@@ -7,7 +7,7 @@ import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../
 
 export class Comment {
   @Expose()
-  @MaxLength(4000, { message: 'You must enter a comment which has no more than 4,000 characters' })
+  @MaxLength(4000, { message: 'You must enter extra information which has no more than 4,000 characters' })
   comment: string
 }
 

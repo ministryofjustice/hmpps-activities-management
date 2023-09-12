@@ -20,11 +20,11 @@ export class AppointmentTimes {
   endTime: Map<string, SimpleTime>
 }
 
-export default class ReviewBulkAppointmentRoutes {
+export default class AppointmentSetTimesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointments } = req.session.appointmentSetJourney
 
-    res.render('pages/appointments/create-and-edit/bulk-appointments/review-bulk-appointment', { appointments })
+    res.render('pages/appointments/create-and-edit/appointment-set/times', { appointments })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

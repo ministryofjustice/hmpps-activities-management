@@ -2,14 +2,14 @@ import { Request, Response } from 'express'
 import { addDays, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import BulkAppointmentDateRoutes, { BulkAppointmentDate } from './bulkAppointmentDate'
+import AppointmentSetDateRoutes, { AppointmentSetDate } from './appointmentSetDate'
 import { simpleDateFromDate } from '../../../../../commonValidationTypes/simpleDate'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 
 const tomorrow = addDays(new Date(), 1)
 
-describe('Route Handlers - Create Bulk Appointment - Bulk Appointment Date', () => {
-  const handler = new BulkAppointmentDateRoutes()
+describe('Route Handlers - Create Appointment Set - Date', () => {
+  const handler = new AppointmentSetDateRoutes()
   let req: Request
   let res: Response
 
@@ -42,9 +42,7 @@ describe('Route Handlers - Create Bulk Appointment - Bulk Appointment Date', () 
   describe('GET', () => {
     it('should render the date and time view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/appointments/create-and-edit/bulk-appointments/bulk-appointment-date',
-      )
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/appointment-set/date')
     })
   })
 
@@ -64,7 +62,7 @@ describe('Route Handlers - Create Bulk Appointment - Bulk Appointment Date', () 
         year: startDate.year,
         date: req.body.startDate.toRichDate(),
       })
-      expect(res.redirectOrReturn).toHaveBeenCalledWith(`review-bulk-appointment`)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith(`appointment-set-times`)
     })
 
     it('should populate return to with schedule', async () => {
@@ -82,7 +80,7 @@ describe('Route Handlers - Create Bulk Appointment - Bulk Appointment Date', () 
     it('validation fails when no date specified', async () => {
       const body = {}
 
-      const requestObject = plainToInstance(BulkAppointmentDate, body)
+      const requestObject = plainToInstance(AppointmentSetDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
@@ -99,7 +97,7 @@ describe('Route Handlers - Create Bulk Appointment - Bulk Appointment Date', () 
         startDate: simpleDateFromDate(yesterday),
       }
 
-      const requestObject = plainToInstance(BulkAppointmentDate, body)
+      const requestObject = plainToInstance(AppointmentSetDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(

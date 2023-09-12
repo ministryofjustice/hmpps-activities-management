@@ -2,11 +2,13 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
-import BulkAppointmentAddComment, { BulkAppointmentComment } from './bulkAppointmentAddComment'
+import AppointmentSetAddExtraInformationRoutes, {
+  AppointmentSetAppointmentExtraInformation,
+} from './appointmentSetAddExtraInformation'
 import { AppointmentSetJourney } from '../../appointmentSetJourney'
 
-describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
-  const handler = new BulkAppointmentAddComment()
+describe('Route Handlers - Create Appointment Set - Add Extra Information', () => {
+  const handler = new AppointmentSetAddExtraInformationRoutes()
   let req: Request
   let res: Response
 
@@ -53,18 +55,21 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
 
       handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/bulk-appointments/add-comment', {
-        prisoner: testPrisonerAppointment.prisoner,
-        extraInformation: undefined,
-      })
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/create-and-edit/appointment-set/add-extra-information',
+        {
+          prisoner: testPrisonerAppointment.prisoner,
+          extraInformation: undefined,
+        },
+      )
     })
 
-    it('fails to find prisoner appointment and redirect to bulk appointment comments review page', async () => {
+    it('fails to find prisoner appointment and redirect to the appointment set extra information page', async () => {
       const testPrisonerAppointment = {
         prisoner: {
           number: 'A1234BC',
         },
-        extraInformation: 'An appointment comment',
+        extraInformation: 'An appointment extra information',
       }
       req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
@@ -76,13 +81,13 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
 
       handler.GET(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('../bulk-appointment-comments')
+      expect(res.redirect).toHaveBeenCalledWith('../appointment-set-extra-information')
       expect(res.render).toHaveBeenCalledTimes(0)
     })
   })
 
   describe('POST', () => {
-    it('adds comment to appointment and redirects back to the comments review page', async () => {
+    it('adds extra information to appointment and redirects back to the appointment set extra information page', async () => {
       const testPrisonerAppointment = {
         prisoner: {
           number: 'A1234BC',
@@ -93,7 +98,7 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
       ] as AppointmentSetJourney['appointments']
 
       req.body = {
-        comment: 'A comment',
+        extraInformation: 'Extra information',
       }
       req.params = {
         prisonerNumber: 'A1234BC',
@@ -103,49 +108,49 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
 
       handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('A comment')
-      expect(res.redirect).toHaveBeenCalledWith('../bulk-appointment-comments')
+      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('Extra information')
+      expect(res.redirect).toHaveBeenCalledWith('../appointment-set-extra-information')
     })
 
-    it('updates existing comment and redirects back to the comments review page', async () => {
+    it('updates existing extra information and redirects back to the appointment set extra information page', async () => {
       const testPrisonerAppointment = {
         prisoner: {
           number: 'A1234BC',
         },
-        extraInformation: 'A comment',
+        extraInformation: 'Extra information',
       }
       req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
       ] as AppointmentSetJourney['appointments']
 
       req.body = {
-        comment: 'A different comment',
+        extraInformation: 'Different extra information',
       }
       req.params = {
         prisonerNumber: 'A1234BC',
       }
 
-      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('A comment')
+      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('Extra information')
 
       handler.POST(req, res)
 
-      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('A different comment')
-      expect(res.redirect).toHaveBeenCalledWith('../bulk-appointment-comments')
+      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('Different extra information')
+      expect(res.redirect).toHaveBeenCalledWith('../appointment-set-extra-information')
     })
 
-    it('fails to find prisoner and redirects back to the comments review page with session unchanged', async () => {
+    it('fails to find prisoner and redirects back to the appointment set extra information page with session unchanged', async () => {
       const testPrisonerAppointment = {
         prisoner: {
           number: 'A1234BC',
         },
-        extraInformation: 'A comment',
+        extraInformation: 'Extra information',
       }
       req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
       ] as AppointmentSetJourney['appointments']
 
       req.body = {
-        comment: 'A comment',
+        extraInformation: 'Different extra information',
       }
       req.params = {
         prisonerNumber: 'INVALID',
@@ -154,28 +159,31 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
       handler.POST(req, res)
 
       expect(req.session.appointmentSetJourney.appointments).toHaveLength(1)
-      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('A comment')
-      expect(res.redirect).toHaveBeenCalledWith('../bulk-appointment-comments')
+      expect(req.session.appointmentSetJourney.appointments[0].extraInformation).toEqual('Extra information')
+      expect(res.redirect).toHaveBeenCalledWith('../appointment-set-extra-information')
     })
   })
 
   describe('Validation', () => {
     it.each([
-      { comment: Array(4001).fill('a').join(''), isValid: false },
-      { comment: Array(4000).fill('a').join(''), isValid: true },
-      { comment: Array(3999).fill('a').join(''), isValid: true },
-    ])('should validate comment character length', async ({ comment, isValid }) => {
+      { extraInformation: Array(4001).fill('a').join(''), isValid: false },
+      { extraInformation: Array(4000).fill('a').join(''), isValid: true },
+      { extraInformation: Array(3999).fill('a').join(''), isValid: true },
+    ])('should validate extra information character length', async ({ extraInformation, isValid }) => {
       const body = {
-        comment,
+        extraInformation,
       }
 
-      const requestObject = plainToInstance(BulkAppointmentComment, body)
+      const requestObject = plainToInstance(AppointmentSetAppointmentExtraInformation, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
       if (isValid) {
         expect(errors).toHaveLength(0)
       } else {
         expect(errors).toEqual([
-          { property: 'comment', error: 'You must enter a comment which has no more than 4,000 characters' },
+          {
+            property: 'extraInformation',
+            error: 'You must enter extra information which has no more than 4,000 characters',
+          },
         ])
       }
     })

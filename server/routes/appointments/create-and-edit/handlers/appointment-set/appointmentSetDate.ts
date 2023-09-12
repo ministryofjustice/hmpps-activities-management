@@ -5,7 +5,7 @@ import SimpleDate from '../../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../../validators/isValidDate'
 import DateIsSameOrAfter from '../../../../../validators/dateIsSameOrAfter'
 
-export class BulkAppointmentDate {
+export class AppointmentSetDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
@@ -15,9 +15,9 @@ export class BulkAppointmentDate {
   startDate: SimpleDate
 }
 
-export default class BulkAppointmentDateRoutes {
+export default class AppointmentSetDateRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/appointments/create-and-edit/bulk-appointments/bulk-appointment-date')
+    res.render('pages/appointments/create-and-edit/appointment-set/date')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -34,6 +34,6 @@ export default class BulkAppointmentDateRoutes {
       date: startDate.toRichDate(),
     }
 
-    res.redirectOrReturn(`review-bulk-appointment`)
+    res.redirectOrReturn(`appointment-set-times`)
   }
 }

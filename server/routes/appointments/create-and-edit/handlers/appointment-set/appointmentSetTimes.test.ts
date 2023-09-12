@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { addDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import ReviewBulkAppointmentRoutes, { AppointmentTimes } from './reviewBulkAppointment'
+import AppointmentSetTimesRoutes, { AppointmentTimes } from './appointmentSetTimes'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import SimpleTime from '../../../../../commonValidationTypes/simpleTime'
 import { simpleDateFromDate } from '../../../../../commonValidationTypes/simpleDate'
@@ -10,8 +10,8 @@ import { simpleDateFromDate } from '../../../../../commonValidationTypes/simpleD
 const yesterday = addDays(new Date(), -1)
 const tomorrow = addDays(new Date(), 1)
 
-describe('Route Handlers - Create Bulk Appointment - Review Bulk Appointment', () => {
-  const handler = new ReviewBulkAppointmentRoutes()
+describe('Route Handlers - Create Appointment Set - Times', () => {
+  const handler = new AppointmentSetTimesRoutes()
   let req: Request
   let res: Response
 
@@ -79,10 +79,9 @@ describe('Route Handlers - Create Bulk Appointment - Review Bulk Appointment', (
   describe('GET', () => {
     it('should render the date and time view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/appointments/create-and-edit/bulk-appointments/review-bulk-appointment',
-        { appointments: req.session.appointmentSetJourney.appointments },
-      )
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/appointment-set/times', {
+        appointments: req.session.appointmentSetJourney.appointments,
+      })
     })
   })
 
