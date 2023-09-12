@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { addDays } from 'date-fns'
-import OccurrenceDetailsRoutes from './occurrenceDetails'
+import AppointmentDetailsRoutes from './appointmentDetails'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 
-describe('Route Handlers - Appointment Occurrence Details', () => {
-  const handler = new OccurrenceDetailsRoutes()
+describe('Route Handlers - Appointment Details', () => {
+  const handler = new AppointmentDetailsRoutes()
   const tomorrow = addDays(new Date(), 1)
 
   let req: Request
@@ -29,9 +29,11 @@ describe('Route Handlers - Appointment Occurrence Details', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      const occurrenceDetails = {
+      const appointment = {
         id: 10,
-        appointmentId: 9,
+        appointmentSeries: {
+          id: 9,
+        },
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
         startTime: '23:59',
       } as AppointmentDetails
@@ -40,13 +42,13 @@ describe('Route Handlers - Appointment Occurrence Details', () => {
         params: {
           id: '10',
         },
-        appointmentOccurrence: occurrenceDetails,
+        appointment,
       } as unknown as Request
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/occurrence-details/occurrence', {
-        occurrence: occurrenceDetails,
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
+        appointment,
       })
     })
   })

@@ -1,18 +1,20 @@
 import { Request, Response } from 'express'
 
-import OccurrenceMovementSlipRoutes from './occurrenceMovementSlip'
+import AppointmentMovementSlipRoutes from './appointmentMovementSlip'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
 describe('Route Handlers - Movement Slip', () => {
-  const handler = new OccurrenceMovementSlipRoutes()
+  const handler = new AppointmentMovementSlipRoutes()
   let req: Request
   let res: Response
 
-  const occurrenceDetails = {
+  const appointment = {
     id: 10,
-    appointmentId: 5,
+    appointmentSeries: {
+      id: 5,
+    },
     sequenceNumber: 2,
     category: {
       code: 'MEOT',
@@ -28,17 +30,17 @@ describe('Route Handlers - Movement Slip', () => {
     startDate: '2023-02-22',
     startTime: '13:00',
     endTime: '13:15',
-    comment: '',
+    extraInformation: '',
     isEdited: false,
     isCancelled: false,
-    created: '2023-02-17T10:22:04',
+    createdTime: '2023-02-17T10:22:04',
     createdBy: {
       firstName: 'John',
       lastName: 'Smith',
     },
-    updated: null,
+    updatedTime: null,
     updatedBy: null,
-    prisoners: [{ prisonerNumber: 'A1350DZ' }],
+    attendees: [{ prisoner: { prisonerNumber: 'A1350DZ' } }],
   } as AppointmentDetails
 
   beforeEach(() => {
@@ -56,7 +58,7 @@ describe('Route Handlers - Movement Slip', () => {
       params: {
         id: '10',
       },
-      appointmentOccurrence: occurrenceDetails,
+      appointment,
     } as unknown as Request
   })
 
@@ -68,8 +70,8 @@ describe('Route Handlers - Movement Slip', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/occurrence', {
-        appointmentOccurrence: occurrenceDetails,
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/movement-slip', {
+        appointment,
       })
     })
   })

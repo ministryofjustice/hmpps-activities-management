@@ -1,7 +1,7 @@
 import { RequestHandler, Router } from 'express'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
-import OccurrenceDetailsRoutes from './handlers/occurrenceDetails'
-import OccurrenceMovementSlipRoutes from './handlers/occurrenceMovementSlip'
+import AppointmentDetailsRoutes from './handlers/appointmentDetails'
+import AppointmentMovementSlipRoutes from './handlers/appointmentMovementSlip'
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
 import { Services } from '../../../services'
 
@@ -11,11 +11,11 @@ export default function Index({ activitiesService }: Services): Router {
   const get = (path: string, handler: RequestHandler) =>
     router.get(path, fetchAppointment(activitiesService), asyncMiddleware(handler))
 
-  const occurrenceDetailsHandler = new OccurrenceDetailsRoutes()
-  const occurrenceMovementSlipHandler = new OccurrenceMovementSlipRoutes()
+  const appointmentDetailsRoutes = new AppointmentDetailsRoutes()
+  const appointmentMovementSlipRoutes = new AppointmentMovementSlipRoutes()
 
-  get('/', occurrenceDetailsHandler.GET)
-  get('/movement-slip', occurrenceMovementSlipHandler.GET)
+  get('/', appointmentDetailsRoutes.GET)
+  get('/movement-slip', appointmentMovementSlipRoutes.GET)
 
   return router
 }

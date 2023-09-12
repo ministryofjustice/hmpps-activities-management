@@ -7,7 +7,7 @@ import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 
-const view = fs.readFileSync('server/views/pages/appointments/movement-slip/occurrence.njk')
+const view = fs.readFileSync('server/views/pages/appointments/movement-slip/details.njk')
 
 describe('Views - Appointments Management - Occurrence Movement Slip', () => {
   let compiledTemplate: Template
