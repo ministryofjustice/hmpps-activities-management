@@ -170,6 +170,7 @@ export default class StartJourneyRoutes {
         },
       ],
       sequenceNumber: appointment.sequenceNumber,
+      appointmentSeries: appointment.appointmentSeries,
       appointmentSet: appointment.appointmentSet,
     }
   }

@@ -3,22 +3,22 @@ function AppointmentEndDate(container) {
 
   var endDateContainer = document.querySelector('.js-appointment-end-date')
 
-  var repeatTimesInput = container.querySelector('#repeatCount')
-  var repeatPeriodInputs = container.querySelectorAll('input[name=repeatPeriod]')
+  var numberOfAppointmentsInput = container.querySelector('#numberOfAppointments')
+  var frequencyInputs = container.querySelectorAll('input[name=frequency]')
 
   function updateEndDate() {
-    var repeatPeriodSelectedInput = container.querySelector('input[name=repeatPeriod]:checked')
-    var appointments = parseInt(repeatTimesInput.value)
+    var frequencySelectedInput = container.querySelector('input[name=frequency]:checked')
+    var appointments = parseInt(numberOfAppointmentsInput.value)
 
-    if (!repeatPeriodSelectedInput || isNaN(appointments) || appointments < 1) {
+    if (!frequencySelectedInput || isNaN(appointments) || appointments < 1) {
       endDateContainer.innerHTML = ''
       return
     }
 
     var startDate = new Date(container.dataset.startDate)
-    var repeatPeriod = repeatPeriodSelectedInput.value
+    var frequency = frequencySelectedInput.value
 
-    var endDate = calculateEndDate(startDate, repeatPeriod, appointments)
+    var endDate = calculateEndDate(startDate, frequency, appointments)
 
     const dateOptions = {
       weekday: 'long',
@@ -31,13 +31,13 @@ function AppointmentEndDate(container) {
     endDateContainer.innerHTML += `<b>${endDate.toLocaleString('en-GB', dateOptions)}</b>`
   }
 
-  repeatTimesInput.addEventListener('keyup', updateEndDate)
-  for (var i = 0; i < repeatPeriodInputs.length; i++) {
-    repeatPeriodInputs[i].addEventListener('change', updateEndDate)
+  numberOfAppointmentsInput.addEventListener('keyup', updateEndDate)
+  for (var i = 0; i < frequencyInputs.length; i++) {
+    frequencyInputs[i].addEventListener('change', updateEndDate)
   }
 }
 
-export function calculateEndDate(startDate, repeatPeriod, appointments) {
+export function calculateEndDate(startDate, frequency, appointments) {
   var endDate = new Date(startDate)
 
   // If the is only one appointment then no calculation is needed, the
@@ -45,7 +45,7 @@ export function calculateEndDate(startDate, repeatPeriod, appointments) {
   if (appointments > 1) {
     var date = endDate.getDate()
 
-    if (repeatPeriod == 'WEEKDAY') {
+    if (frequency == 'WEEKDAY') {
       // Account for starting on a weekend
       if (startDate.getDay() == 0 || startDate.getDay() == 6) {
         // If the start date is on a weekend we can pretend the first
@@ -68,13 +68,13 @@ export function calculateEndDate(startDate, repeatPeriod, appointments) {
 
       // Account for skipping over weekends
       if (endDate.getDay() + remainingDaysToAdd >= 6) date += 2
-    } else if (repeatPeriod == 'DAILY') {
+    } else if (frequency == 'DAILY') {
       date += appointments - 1
-    } else if (repeatPeriod == 'WEEKLY') {
+    } else if (frequency == 'WEEKLY') {
       date += Math.floor(appointments - 1) * 7
-    } else if (repeatPeriod == 'FORTNIGHTLY') {
+    } else if (frequency == 'FORTNIGHTLY') {
       date += Math.floor(appointments - 1) * 14
-    } else if (repeatPeriod == 'MONTHLY') {
+    } else if (frequency == 'MONTHLY') {
       var month = endDate.getMonth()
       month += Math.floor(appointments - 1)
       endDate.setMonth(month)

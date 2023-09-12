@@ -13,6 +13,7 @@ import { formatDate, parseDate } from '../utils/utils'
 import {
   AppointmentCancelRequest,
   AppointmentUpdateRequest,
+  AppointmentSeriesSummary,
   AppointmentSetSummary,
 } from '../@types/activitiesAPI/types'
 import { YesNo } from '../@types/activities'
@@ -27,7 +28,6 @@ describe('Edit Appointment Service', () => {
   const weekTomorrowFormatted = formatDate(weekTomorrow, 'EEEE, d MMMM yyyy')
   let req: Request
   let res: Response
-  const appointmentSeriesId = 1
   const appointmentId = 2
 
   beforeEach(() => {
@@ -87,7 +87,6 @@ describe('Edit Appointment Service', () => {
         } as EditAppointmentJourney,
       },
       params: {
-        appointmentSeriesId,
         appointmentId,
       },
       flash: jest.fn(),
@@ -233,6 +232,9 @@ describe('Edit Appointment Service', () => {
 
       it('when deleting appointment from series', async () => {
         req.session.appointmentJourney.repeat = YesNo.YES
+        req.session.editAppointmentJourney.appointmentSeries = {
+          id: 1,
+        } as AppointmentSeriesSummary
         req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
         await service.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
@@ -247,7 +249,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/1`,
+          `/appointments/series/1`,
           `You've deleted appointment 2 of 4 in this series`,
         )
         expect(req.session.appointmentJourney).toBeNull()
@@ -556,12 +558,15 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when deleting', async () => {
+        req.session.editAppointmentJourney.appointmentSeries = {
+          id: 1,
+        } as AppointmentSeriesSummary
         req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentSeriesId}`,
+          `/appointments/series/1`,
           "You've deleted appointments 2 to 4 in this series",
         )
       })
@@ -623,12 +628,15 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when deleting', async () => {
+        req.session.editAppointmentJourney.appointmentSeries = {
+          id: 1,
+        } as AppointmentSeriesSummary
         req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/${appointmentSeriesId}`,
+          `/appointments/series/1`,
           "You've deleted appointments 1 to 4 in this series",
         )
       })

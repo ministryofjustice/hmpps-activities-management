@@ -28,6 +28,7 @@ export type AppointmentCategorySummary = components['schemas']['AppointmentCateg
 export type AppointmentLocationSummary = components['schemas']['AppointmentLocationSummary']
 export type AppointmentSeries = components['schemas']['AppointmentSeries']
 export type AppointmentSeriesDetails = components['schemas']['AppointmentSeriesDetails']
+export type AppointmentSeriesSummary = components['schemas']['AppointmentSeriesSummary']
 export type AppointmentSet = components['schemas']['AppointmentSet']
 export type AppointmentSetDetails = components['schemas']['AppointmentSetDetails']
 export type AppointmentSetSummary = components['schemas']['AppointmentSetSummary']

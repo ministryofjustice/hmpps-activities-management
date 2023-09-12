@@ -43,11 +43,11 @@ export default class EditAppointmentService {
   async edit(req: Request, res: Response, applyTo: AppointmentApplyTo) {
     const { user } = res.locals
     const { appointmentJourney, editAppointmentJourney } = req.session
-    const { appointmentSeriesId, appointmentId } = req.params
+    const { appointmentId } = req.params
 
     if (editAppointmentJourney.cancellationReason) {
       const { repeat } = appointmentJourney
-      const { cancellationReason, appointmentSet } = editAppointmentJourney
+      const { cancellationReason, appointmentSeries, appointmentSet } = editAppointmentJourney
 
       const cancelRequest: AppointmentCancelRequest = {
         cancellationReasonId: +cancellationReason,
@@ -77,9 +77,11 @@ export default class EditAppointmentService {
             editAppointmentJourney,
           )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo, true)}`
 
+          const appointmentSeriesId = appointmentSeries.id
+
           this.clearSession(req)
 
-          return res.redirectWithSuccess(`/appointments/${appointmentSeriesId}`, successHeading)
+          return res.redirectWithSuccess(`/appointments/series/${appointmentSeriesId}`, successHeading)
         }
         const successHeading = `You've ${this.getEditedMessage(appointmentJourney, editAppointmentJourney)} the ${
           appointmentJourney.appointmentName
