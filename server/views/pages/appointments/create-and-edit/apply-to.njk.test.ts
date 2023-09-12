@@ -15,8 +15,7 @@ import { EditAppointmentJourney } from '../../../../routes/appointments/create-a
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/apply-to.njk')
 
 describe('Views - Appointments Management - Apply to', () => {
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentId = 2
   const weekTomorrow = addDays(new Date(), 8)
   const applyToOptions = [
     {
@@ -41,7 +40,6 @@ describe('Views - Appointments Management - Apply to', () => {
       editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     },
     appointmentId,
-    occurrenceId,
     property: '',
     frequencyText: null as string,
     applyToOptions,
@@ -87,7 +85,6 @@ describe('Views - Appointments Management - Apply to', () => {
         } as EditAppointmentJourney,
       },
       appointmentId,
-      occurrenceId,
       property: 'location',
       frequencyText: 'This appointment repeats every day',
       applyToOptions,

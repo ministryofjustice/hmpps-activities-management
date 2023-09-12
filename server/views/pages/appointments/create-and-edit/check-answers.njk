@@ -219,11 +219,11 @@
             actions: {
                 items: [
                     {
-                        href: "comment?preserveHistory=true",
+                        href: "extra-information?preserveHistory=true",
                         text: "Change",
                         visuallyHiddenText: "change extra information",
                         classes: "govuk-link--no-visited-state",
-                        attributes: { 'data-qa': 'change-comment' }
+                        attributes: { 'data-qa': 'change-extra-information' }
                     }
                 ]
             }
@@ -259,7 +259,7 @@
 
                 {{ prisonersList() if session.appointmentJourney.type == AppointmentType.GROUP }}
 
-                {{ bulkAppointments() if session.appointmentJourney.type == AppointmentType.SET }}
+                {{ appointmentSet() if session.appointmentJourney.type == AppointmentType.SET }}
 
                 <div class="govuk-button-group">
                     {{ govukButton({
@@ -314,7 +314,7 @@
     }) }}
 {% endmacro %}
 
-{% macro bulkAppointments() %}
+{% macro appointmentSet() %}
     <div class="govuk-button-group">
         {{ govukButton({
             text: "Confirm",

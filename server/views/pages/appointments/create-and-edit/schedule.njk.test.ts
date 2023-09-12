@@ -109,7 +109,7 @@ const getScheduledEventsForPrisoner = (prisoner: { number: string }) => [
   },
 ]
 
-describe('Views - Create Appointment - Schedule', () => {
+describe('Views - Appointments Management - Schedule', () => {
   let compiledTemplate: Template
   let viewContext = {
     session: {
@@ -604,7 +604,7 @@ describe('Views - Create Appointment - Schedule', () => {
     })
   })
 
-  describe('Bulk Appointment', () => {
+  describe('Appointment Set', () => {
     beforeEach(() => {
       viewContext.session.appointmentJourney.type = AppointmentType.SET
       viewContext.session.appointmentSetJourney.appointments = [

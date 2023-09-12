@@ -67,7 +67,7 @@ describe('Views - Create Appointment - Check Answers', () => {
     expect(getAppointmentDetailsValueElement('Appointment name').text().trim()).toBe('Bible studies (Chaplaincy)')
   })
 
-  it('should not display repeat frequency or occurrences when repeat = NO', () => {
+  it('should not display repeat frequency or number of appointments when repeat = NO', () => {
     viewContext.session.appointmentJourney.repeat = YesNo.NO
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -89,7 +89,7 @@ describe('Views - Create Appointment - Check Answers', () => {
     expect(getRepeatPeriodValueElement().text().trim()).toEqual(expectedText)
   })
 
-  it('should display repeat occurrences when repeat = YES', () => {
+  it('should display repeat number of appointments when repeat = YES', () => {
     viewContext.session.appointmentJourney.repeat = YesNo.YES
     viewContext.session.appointmentJourney.repeatCount = 6
     $ = cheerio.load(compiledTemplate.render(viewContext))

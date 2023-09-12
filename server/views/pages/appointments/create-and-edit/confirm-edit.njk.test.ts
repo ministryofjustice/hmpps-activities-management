@@ -13,8 +13,7 @@ import { EditAppointmentJourney } from '../../../../routes/appointments/create-a
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/confirm-edit.njk')
 
 describe('Views - Appointments Management - Confirm Edit', () => {
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentId = 2
   const weekTomorrow = addDays(new Date(), 8)
   let compiledTemplate: Template
   let viewContext = {
@@ -23,7 +22,6 @@ describe('Views - Appointments Management - Confirm Edit', () => {
       editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     },
     appointmentId,
-    occurrenceId,
     startDate: weekTomorrow,
   }
 
@@ -63,7 +61,6 @@ describe('Views - Appointments Management - Confirm Edit', () => {
         } as EditAppointmentJourney,
       },
       appointmentId,
-      occurrenceId,
       startDate: weekTomorrow,
     }
   })

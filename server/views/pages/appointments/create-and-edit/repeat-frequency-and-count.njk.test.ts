@@ -7,7 +7,7 @@ import { AppointmentFrequency } from '../../../../@types/appointments'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/repeat-frequency-and-count.njk')
 
-describe('Views - Create Appointment - Repeat Period and Count', () => {
+describe('Views - Create Appointment - Repeat Frequency and Count', () => {
   let compiledTemplate: Template
   let viewContext = {
     session: {
@@ -32,7 +32,7 @@ describe('Views - Create Appointment - Repeat Period and Count', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(
-      $("[name='repeatPeriod']")
+      $("[name='frequency']")
         .map((i, e) => $(e).val())
         .get(),
     ).toEqual(['WEEKDAY', 'DAILY', 'WEEKLY', 'FORTNIGHTLY', 'MONTHLY'])
@@ -42,7 +42,7 @@ describe('Views - Create Appointment - Repeat Period and Count', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(
-      $("label[for^='repeatPeriod']")
+      $("label[for^='frequency']")
         .map((i, e) => $(e).text().trim())
         .get(),
     ).toEqual(['Every weekday (Monday to Friday)', 'Daily (includes weekends)', 'Weekly', 'Fortnightly', 'Monthly'])
@@ -54,16 +54,16 @@ describe('Views - Create Appointment - Repeat Period and Count', () => {
     AppointmentFrequency.WEEKLY,
     AppointmentFrequency.FORTNIGHTLY,
     AppointmentFrequency.MONTHLY,
-  ])('should check correct input based on form response %s', repeatPeriod => {
+  ])('should check correct input based on form response %s', frequency => {
     viewContext.formResponses = {
-      repeatPeriod,
+      frequency,
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    const checked = $("[name='repeatPeriod']:checked")
+    const checked = $("[name='frequency']:checked")
     expect(checked.length).toEqual(1)
-    expect(checked.val()).toEqual(repeatPeriod.toString())
+    expect(checked.val()).toEqual(frequency.toString())
   })
 
   it.each([
@@ -72,25 +72,25 @@ describe('Views - Create Appointment - Repeat Period and Count', () => {
     AppointmentFrequency.WEEKLY,
     AppointmentFrequency.FORTNIGHTLY,
     AppointmentFrequency.MONTHLY,
-  ])('should check correct input based on session value response %s', repeatPeriod => {
-    viewContext.session.appointmentJourney.frequency = repeatPeriod
+  ])('should check correct input based on session value response %s', frequency => {
+    viewContext.session.appointmentJourney.frequency = frequency
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    const checked = $("[name='repeatPeriod']:checked")
+    const checked = $("[name='frequency']:checked")
     expect(checked.length).toEqual(1)
-    expect(checked.val()).toEqual(repeatPeriod.toString())
+    expect(checked.val()).toEqual(frequency.toString())
   })
 
   it('should prioritise form response value over session value', () => {
     viewContext.formResponses = {
-      repeatPeriod: AppointmentFrequency.WEEKLY,
+      frequency: AppointmentFrequency.WEEKLY,
     }
     viewContext.session.appointmentJourney.frequency = AppointmentFrequency.FORTNIGHTLY
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    const checked = $("[name='repeatPeriod']:checked")
+    const checked = $("[name='frequency']:checked")
     expect(checked.length).toEqual(1)
     expect(checked.val()).toEqual(AppointmentFrequency.WEEKLY.toString())
   })

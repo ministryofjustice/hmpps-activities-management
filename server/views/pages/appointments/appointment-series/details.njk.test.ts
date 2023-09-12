@@ -38,7 +38,7 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
     }
   })
 
-  it('should not display schedule frequency or number of occurrences when schedule = null', () => {
+  it('should not display schedule frequency or number of appointments when schedule = null', () => {
     viewContext.appointmentSeries.schedule = null
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))

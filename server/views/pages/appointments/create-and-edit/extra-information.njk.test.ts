@@ -12,7 +12,7 @@ import { EditAppointmentJourney } from '../../../../routes/appointments/create-a
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/extra-information.njk')
 
-describe('Views - Appointments Management - Comment', () => {
+describe('Views - Appointments Management - Extra Information', () => {
   const weekTomorrow = addDays(new Date(), 8)
   let compiledTemplate: Template
   let viewContext = {

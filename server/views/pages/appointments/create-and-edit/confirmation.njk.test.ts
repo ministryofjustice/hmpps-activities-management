@@ -52,7 +52,7 @@ describe('Views - Create Appointment - Confirmation', () => {
     { frequency: AppointmentFrequency.FORTNIGHTLY, expectedText: 'fortnightly' },
     { frequency: AppointmentFrequency.MONTHLY, expectedText: 'monthly' },
   ])(
-    'frequency $frequency should be displayed as $expectedText with occurrences when repeat = YES',
+    'frequency $frequency should be displayed as $expectedText with number of appointments when repeat = YES',
     ({ frequency, expectedText }) => {
       viewContext.appointment = {
         appointmentSeries: { schedule: { frequency, numberOfAppointments: 6 } },

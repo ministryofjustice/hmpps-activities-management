@@ -19,30 +19,30 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <div data-module="appointment-end-date" data-start-date="{{ session.appointmentJourney.startDate.date }}">
-                    {% set repeatPeriod = formResponses.repeatPeriod or session.appointmentJourney.repeatPeriod %}
+                    {% set frequency = formResponses.frequency or session.appointmentJourney.frequency %}
                     {{ govukRadios({
-                        name: "repeatPeriod",
-                        errorMessage: validationErrors | findError('repeatPeriod'),
+                        name: "frequency",
+                        errorMessage: validationErrors | findError('frequency'),
                         items: [
                             {
                                 value: AppointmentFrequency.WEEKDAY,
                                 text: "Every weekday (Monday to Friday)",
-                                checked: repeatPeriod == AppointmentFrequency.WEEKDAY
+                                checked: frequency == AppointmentFrequency.WEEKDAY
                             },
                             {
                                 value: AppointmentFrequency.DAILY,
                                 text: "Daily (includes weekends)",
-                                checked: repeatPeriod == AppointmentFrequency.DAILY
+                                checked: frequency == AppointmentFrequency.DAILY
                             },
                             {
                                 value: AppointmentFrequency.WEEKLY,
                                 text: "Weekly",
-                                checked: repeatPeriod == AppointmentFrequency.WEEKLY
+                                checked: frequency == AppointmentFrequency.WEEKLY
                             },
                             {
                                 value: AppointmentFrequency.FORTNIGHTLY,
                                 text: "Fortnightly",
-                                checked: repeatPeriod == AppointmentFrequency.FORTNIGHTLY
+                                checked: frequency == AppointmentFrequency.FORTNIGHTLY
                             },
                             {
                                 value: AppointmentFrequency.MONTHLY,
@@ -50,14 +50,14 @@
                                 hint: {
                                     text: "On the same date every month or on the last day if there is no matching date"
                                 },
-                                checked: repeatPeriod == AppointmentFrequency.MONTHLY
+                                checked: frequency == AppointmentFrequency.MONTHLY
                             }
                         ]
                     }) }}
 
                     {{ govukInput({
-                        id: "repeatCount",
-                        name: "repeatCount",
+                        id: "numberOfAppointments",
+                        name: "numberOfAppointments",
                         label: {
                             text: "How many times will the appointment repeat?",
                             classes: "govuk-label--m"
@@ -68,8 +68,8 @@
                         classes: "govuk-input--width-3",
                         inputmode: "numeric",
                         spellcheck: false,
-                        errorMessage: validationErrors | findError('repeatCount'),
-                        value: formResponses.repeatCount or session.appointmentJourney.repeatCount
+                        errorMessage: validationErrors | findError('numberOfAppointments'),
+                        value: formResponses.numberOfAppointments or session.appointmentJourney.numberOfAppointments
                     }) }}
 
                     <div data-qa='end-date' class="js-appointment-end-date govuk-body"></div>

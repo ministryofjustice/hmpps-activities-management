@@ -56,7 +56,7 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
       startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
       startTime: '13:00',
       endTime: '13:15',
-      extraInformation: 'Appointment level comment',
+      extraInformation: 'Appointment level extra information',
       isEdited: false,
       isCancelled: false,
       createdTime: '2023-02-17T10:22:04',
@@ -80,14 +80,14 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
     expect($('[data-qa=appointment]').text().trim()).toEqual('Doctors appointment (Medical - Other)')
     expect($('[data-qa=time]').text().trim()).toEqual(`13:00 to 13:15${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
     expect($('[data-qa=location]').text().trim()).toEqual('HB1 Doctors')
-    expect($('[data-qa=extra-information]').text().trim()).toEqual('Appointment level comment')
+    expect($('[data-qa=extra-information]').text().trim()).toEqual('Appointment level extra information')
   })
 
-  it('should not display comment when there is no extra information', () => {
+  it('should not display extra information when there is no extra information', () => {
     viewContext.appointment.extraInformation = ''
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('[data-qa=comment]').length).toBe(0)
+    expect($('[data-qa=extra-information]').length).toBe(0)
   })
 })
