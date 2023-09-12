@@ -61,7 +61,7 @@ export default function Create({ prisonService, activitiesService }: Services): 
 
   get('/start-individual', startHandler.INDIVIDUAL)
   get('/start-group', startHandler.GROUP)
-  get('/start-set', startHandler.BULK)
+  get('/start-set', startHandler.SET)
   get('/start-prisoner/:prisonNumber', startHandler.PRISONER)
   get('/select-prisoner', selectPrisonerHandler.GET, true)
   post('/select-prisoner', selectPrisonerHandler.SELECT_PRISONER, SelectPrisoner)

@@ -29,7 +29,7 @@ export default class StartJourneyRoutes {
     res.redirect('how-to-add-prisoners')
   }
 
-  BULK = async (req: Request, res: Response): Promise<void> => {
+  SET = async (req: Request, res: Response): Promise<void> => {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
       type: AppointmentType.SET,
@@ -81,13 +81,13 @@ export default class StartJourneyRoutes {
     const { appointment } = req
     const { prisonNumber } = req.params
 
-    const prisoner = appointment.prisoners.filter(_ => _.prisonerNumber === prisonNumber)[0]
+    const attendee = appointment.attendees.filter(a => a.prisoner.prisonerNumber === prisonNumber)[0]
 
-    if (!prisoner) return res.redirect('back')
+    if (!attendee?.prisoner) return res.redirect('back')
 
     this.populateEditSession(req)
 
-    req.session.editAppointmentJourney.removePrisoner = prisoner
+    req.session.editAppointmentJourney.removePrisoner = attendee.prisoner
 
     if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
       return res.redirect('../remove/apply-to')
@@ -122,10 +122,13 @@ export default class StartJourneyRoutes {
       mode: AppointmentJourneyMode.EDIT,
       type: AppointmentType[appointment.appointmentType],
       appointmentName: appointmentSeries.appointmentName,
-      prisoners: appointment.prisoners.map(p => ({
-        number: p.prisonerNumber,
-        name: p.lastName !== 'UNKNOWN' ? `${p.firstName} ${p.lastName}` : null,
-        cellLocation: p.cellLocation,
+      prisoners: appointment.attendees.map(attendee => ({
+        number: attendee.prisoner.prisonerNumber,
+        name:
+          attendee.prisoner.lastName !== 'UNKNOWN'
+            ? `${attendee.prisoner.firstName} ${attendee.prisoner.lastName}`
+            : null,
+        cellLocation: attendee.prisoner.cellLocation,
       })),
       category: appointment.category,
       location: appointment.internalLocation,
@@ -141,10 +144,10 @@ export default class StartJourneyRoutes {
         minute: +formatDate(startTime, 'mm'),
       },
       endTime: null,
-      repeat: appointment.repeat ? YesNo.YES : YesNo.NO,
-      frequency: appointment.repeat?.period as AppointmentFrequency,
-      numberOfAppointments: appointment.repeat?.count,
-      extraInformation: appointment.comment,
+      repeat: appointment.appointmentSeries?.schedule ? YesNo.YES : YesNo.NO,
+      frequency: appointment.appointmentSeries?.schedule?.frequency as AppointmentFrequency,
+      numberOfAppointments: appointment.appointmentSeries?.schedule?.numberOfAppointments,
+      extraInformation: appointment.extraInformation,
     }
 
     if (isValid(endTime)) {
@@ -156,13 +159,13 @@ export default class StartJourneyRoutes {
     }
 
     req.session.editAppointmentJourney = {
-      numberOfAppointments: appointment.repeat?.count ?? 1,
-      appointments: appointmentSeries.occurrences.map(occurrence => ({
-        sequenceNumber: occurrence.sequenceNumber,
-        startDate: occurrence.startDate,
+      numberOfAppointments: appointment.appointmentSeries?.schedule?.numberOfAppointments ?? 1,
+      appointments: appointmentSeries.appointments.map(a => ({
+        sequenceNumber: a.sequenceNumber,
+        startDate: a.startDate,
       })),
       sequenceNumber: appointment.sequenceNumber,
-      appointmentSet: appointment.bulkAppointment,
+      appointmentSet: appointment.appointmentSet,
     }
   }
 }

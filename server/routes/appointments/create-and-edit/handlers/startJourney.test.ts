@@ -18,9 +18,9 @@ describe('Route Handlers - Create Appointment - Start', () => {
   const handler = new StartJourneyRoutes(prisonService)
   let req: Request
   let res: Response
-  const appointment = {
+  const appointmentSeries = {
     appointmentName: 'Appointment name (Chaplaincy)',
-    occurrences: [
+    appointments: [
       {
         id: 12,
         sequenceNumber: 2,
@@ -33,9 +33,9 @@ describe('Route Handlers - Create Appointment - Start', () => {
       },
     ],
   } as unknown as AppointmentSeriesDetails
-  const appointmentOccurrence = {
+  const appointment = {
     id: 12,
-    appointmentId: 2,
+    appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3} },
     appointmentType: 'GROUP',
     sequenceNumber: 2,
     category: {
@@ -50,22 +50,22 @@ describe('Route Handlers - Create Appointment - Start', () => {
     startDate: '2023-04-13',
     startTime: '09:00',
     endTime: '10:00',
-    repeat: {
-      period: 'WEEKLY',
-      count: 3,
-    },
-    prisoners: [
+    attendees: [
       {
-        prisonerNumber: 'A1234BC',
-        firstName: 'TEST01',
-        lastName: 'PRISONER01',
-        cellLocation: '1-1-1',
+        prisoner: {
+          prisonerNumber: 'A1234BC',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
+          cellLocation: '1-1-1',
+        },
       },
       {
-        prisonerNumber: 'B2345CD',
-        firstName: 'TEST02',
-        lastName: 'PRISONER02',
-        cellLocation: '2-2-2',
+        prisoner: {
+          prisonerNumber: 'B2345CD',
+          firstName: 'TEST02',
+          lastName: 'PRISONER02',
+          cellLocation: '2-2-2',
+        },
       },
     ],
   } as AppointmentDetails
@@ -119,8 +119,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
   })
 
   describe('BULK', () => {
-    it('should populate the session with bulk appointment journey type and redirect to upload by csv page', async () => {
-      await handler.BULK(req, res)
+    it('should populate the session with appointment set journey type and redirect to upload by csv page', async () => {
+      await handler.SET(req, res)
 
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
@@ -195,8 +195,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       req = {
         session: {},
+        appointmentSeries,
         appointment,
-        appointmentOccurrence,
       } as unknown as Request
     })
 
@@ -211,7 +211,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(res.redirect).toHaveBeenCalledWith('back')
     })
 
-    it('should populate the session with appointment occurrence details and redirect to the correct edit route', async () => {
+    it('should populate the session with appointment details and redirect to the correct edit route', async () => {
       req.params = {
         property: 'location',
       }
@@ -315,8 +315,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       req = {
         session: {},
+        appointmentSeries,
         appointment,
-        appointmentOccurrence,
       } as unknown as Request
     })
 
@@ -369,8 +369,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     it('should populate the session with prisoner details and redirect to confirm', async () => {
       req.appointmentSeries = {
-        ...appointment,
-        occurrences: [
+        ...appointmentSeries,
+        appointments: [
           {
             id: 12,
             sequenceNumber: 2,
@@ -417,8 +417,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       req = {
         session: {},
+        appointmentSeries,
         appointment,
-        appointmentOccurrence,
       } as unknown as Request
     })
 
@@ -456,8 +456,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       req = {
         session: {},
+        appointmentSeries,
         appointment,
-        appointmentOccurrence,
       } as unknown as Request
     })
 
