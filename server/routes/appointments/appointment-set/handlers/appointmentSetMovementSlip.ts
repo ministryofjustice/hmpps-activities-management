@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
 
-export default class BulkAppointmentMovementSlipRoutes {
+export default class AppointmentSetMovementSlipRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentSet } = req
 
@@ -9,11 +9,11 @@ export default class BulkAppointmentMovementSlipRoutes {
       appointment => !appointment.isCancelled && !appointment.isExpired,
     )
 
-    res.render('pages/appointments/movement-slip/bulk-appointment', { appointmentSet })
+    res.render('pages/appointments/appointment-set/movement-slip', { appointmentSet })
     const properties = {
       username: res.locals.user.username,
       prisonCode: appointmentSet.prisonCode,
-      bulkAppointmentId: appointmentSet.id.toString(),
+      appointmentSetId: appointmentSet.id.toString(),
     }
 
     const eventMetrics = {
@@ -21,7 +21,7 @@ export default class BulkAppointmentMovementSlipRoutes {
     }
 
     trackEvent({
-      eventName: 'SAA-Appointments-Movement-Slips-Printed',
+      eventName: 'SAA-Appointment-Set-Movement-Slips-Printed',
       properties,
       eventMetrics,
     })

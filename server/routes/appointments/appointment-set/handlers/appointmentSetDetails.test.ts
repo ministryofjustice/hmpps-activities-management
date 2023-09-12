@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import BulkAppointmentDetailsRoutes from './bulkAppointmentDetails'
+import AppointmentSetDetailsRoutes from './appointmentSetDetails'
 import { AppointmentDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
 
-describe('Route Handlers - Bulk Appointment Details', () => {
-  const handler = new BulkAppointmentDetailsRoutes()
+describe('Route Handlers - Appointment Set Details', () => {
+  const handler = new AppointmentSetDetailsRoutes()
   let req: Request
   let res: Response
 
@@ -36,13 +36,13 @@ describe('Route Handlers - Bulk Appointment Details', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/bulk-appointment-details/bulk-appointment', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-set/details', {
         appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: false,
       })
     })
 
-    it('should render print movement slips link when at least one occurrence is not cancelled and not expired', async () => {
+    it('should render print movement slips link when at least one appointment is not cancelled and not expired', async () => {
       req.appointmentSet.appointments = [
         {
           isCancelled: false,
@@ -60,13 +60,13 @@ describe('Route Handlers - Bulk Appointment Details', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/bulk-appointment-details/bulk-appointment', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-set/details', {
         appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: true,
       })
     })
 
-    it('should not render print movement slips link when all occurrences are either cancelled, expired or both', async () => {
+    it('should not render print movement slips link when all appointments are either cancelled, expired or both', async () => {
       req.appointmentSet.appointments = [
         {
           isCancelled: false,
@@ -84,7 +84,7 @@ describe('Route Handlers - Bulk Appointment Details', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/bulk-appointment-details/bulk-appointment', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-set/details', {
         appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: false,
       })

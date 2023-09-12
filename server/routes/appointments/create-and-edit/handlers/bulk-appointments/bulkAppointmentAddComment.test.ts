@@ -55,7 +55,7 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/bulk-appointments/add-comment', {
         prisoner: testPrisonerAppointment.prisoner,
-        extraInformation: testPrisonerAppointment.extraInformation,
+        extraInformation: undefined,
       })
     })
 
@@ -64,7 +64,7 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
         prisoner: {
           number: 'A1234BC',
         },
-        comment: 'An appointment comment',
+        extraInformation: 'An appointment comment',
       }
       req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
@@ -112,7 +112,7 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
         prisoner: {
           number: 'A1234BC',
         },
-        comment: 'A comment',
+        extraInformation: 'A comment',
       }
       req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,
@@ -138,7 +138,7 @@ describe('Route Handlers - Create Bulk Appointment - Add Comment', () => {
         prisoner: {
           number: 'A1234BC',
         },
-        comment: 'A comment',
+        extraInformation: 'A comment',
       }
       req.session.appointmentSetJourney.appointments = [
         testPrisonerAppointment,

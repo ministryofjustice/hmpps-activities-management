@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
 
-import BulkAppointmentMovementSlipRoutes from './bulkAppointmentMovementSlip'
+import AppointmentSetMovementSlipRoutes from './appointmentSetMovementSlip'
 import { AppointmentDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
-describe('Route Handlers - Movement Slip', () => {
-  const handler = new BulkAppointmentMovementSlipRoutes()
+describe('Route Handlers - Appointment Set - Movement Slip', () => {
+  const handler = new AppointmentSetMovementSlipRoutes()
   let req: Request
   let res: Response
 
@@ -40,12 +40,12 @@ describe('Route Handlers - Movement Slip', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/bulk-appointment', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-set/movement-slip', {
         appointmentSet: req.appointmentSet,
       })
     })
 
-    it('should only render movement slips for occurrences that are not cancelled and not expired', async () => {
+    it('should only render movement slips for appointments that are not cancelled and not expired', async () => {
       req.appointmentSet.appointments = [
         {
           isCancelled: false,
@@ -63,7 +63,7 @@ describe('Route Handlers - Movement Slip', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/movement-slip/bulk-appointment', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-set/movement-slip', {
         appointmentSet: {
           id: '12',
           appointments: [

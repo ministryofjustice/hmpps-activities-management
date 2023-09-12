@@ -1,7 +1,7 @@
 import { RequestHandler, Router } from 'express'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
-import BulkAppointmentDetailsRoutes from './handlers/bulkAppointmentDetails'
-import BulkAppointmentMovementSlipRoutes from './handlers/bulkAppointmentMovementSlip'
+import AppointmentSetDetailsRoutes from './handlers/appointmentSetDetails'
+import AppointmentSetMovementSlipRoutes from './handlers/appointmentSetMovementSlip'
 
 import { Services } from '../../../services'
 import fetchAppointmentSet from '../../../middleware/appointments/fetchAppointmentSet'
@@ -12,11 +12,11 @@ export default function Index({ activitiesService }: Services): Router {
   const get = (path: string, handler: RequestHandler) =>
     router.get(path, fetchAppointmentSet(activitiesService), asyncMiddleware(handler))
 
-  const bulkAppointmentDetailsHandler = new BulkAppointmentDetailsRoutes()
-  const bulkAppointmentMovementSlipHandler = new BulkAppointmentMovementSlipRoutes()
+  const appointmentSetDetailsRoutes = new AppointmentSetDetailsRoutes()
+  const appointmentSetMovementSlipRoutes = new AppointmentSetMovementSlipRoutes()
 
-  get('/', bulkAppointmentDetailsHandler.GET)
-  get('/movement-slip', bulkAppointmentMovementSlipHandler.GET)
+  get('/', appointmentSetDetailsRoutes.GET)
+  get('/movement-slip', appointmentSetMovementSlipRoutes.GET)
 
   return router
 }
