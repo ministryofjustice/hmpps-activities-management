@@ -5,7 +5,7 @@ import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentType, AppointmentJourney } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentFrequency } from '../../../../@types/appointments'
 
-const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/repeat-period-and-count.njk')
+const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/repeat-frequency-and-count.njk')
 
 describe('Views - Create Appointment - Repeat Period and Count', () => {
   let compiledTemplate: Template

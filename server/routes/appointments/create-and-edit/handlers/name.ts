@@ -10,7 +10,7 @@ export class Name {
   categoryCode: string
 
   @MaxLength(40, { message: 'You must enter a custom name which has no more than 40 characters' })
-  description: string
+  customName: string
 }
 
 export default class NameRoutes {
@@ -35,7 +35,7 @@ export default class NameRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { categoryCode, description } = req.body
+    const { categoryCode, customName } = req.body
     const { user } = res.locals
 
     const category = await this.activitiesService
@@ -51,8 +51,8 @@ export default class NameRoutes {
       description: category.description,
     }
 
-    if (description?.trim()) {
-      req.session.appointmentJourney.customName = description.trim()
+    if (customName?.trim()) {
+      req.session.appointmentJourney.customName = customName.trim()
       req.session.appointmentJourney.appointmentName = `${req.session.appointmentJourney.customName} (${req.session.appointmentJourney.category.description})`
     } else {
       req.session.appointmentJourney.customName = null

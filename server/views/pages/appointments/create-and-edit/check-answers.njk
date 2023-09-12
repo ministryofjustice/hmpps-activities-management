@@ -9,7 +9,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% set pageTitle = appointmentJourneyTitle("Check and confirm set" if session.appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details", session.appointmentJourney) %}
-{% set pageId = 'appointments-create-check-answers-page' %}
+{% set pageId = 'appointment-check-answers-page' %}
 
 {% set summaryListRows = [] %}
 

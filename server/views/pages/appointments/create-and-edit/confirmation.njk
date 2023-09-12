@@ -5,7 +5,7 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
 {% set pageTitle = appointmentJourneyTitle("Set scheduled" if session.appointmentJourney.type == AppointmentType.SET else "Appointment scheduled", session.appointmentJourney) %}
-{% set pageId = 'appointments-create-confirmation-page' %}
+{% set pageId = 'appointment-scheduled-confirmation-page' %}
 
 {% block content %}
     <div class="govuk-grid-row">

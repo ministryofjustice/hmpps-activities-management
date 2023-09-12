@@ -8,7 +8,7 @@
 
 {% set editMessage = getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) %}
 {% set pageTitle = appointmentJourneyTitle(editMessage + ' which appointments', session.appointmentJourney) %}
-{% set pageId = 'appointments-manage-apply-to-page' %}
+{% set pageId = 'appointment-apply-to-page' %}
 {% if property == 'date-and-time' %}
     {% set backLinkHref = '../schedule'  %}
 {% elseif property ==  'prisoners/add' %}

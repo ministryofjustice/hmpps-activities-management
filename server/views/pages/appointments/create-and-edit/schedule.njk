@@ -12,7 +12,7 @@
 {% else %}
     {% set pageTitle = appointmentJourneyTitle("No attendees" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
 {% endif %}
-{% set pageId = 'appointments-schedule-page' %}
+{% set pageId = 'appointment-schedule-page' %}
 {% set backLinkHref = backLinkHref %}
 
 {% block content %}
