@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 
-export default class AppointmentDetailsRoutes {
+export default class AppointmentSeriesDetailsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentSeries } = req
 
-    res.render('pages/appointments/details/appointment', { appointmentSeries: appointment })
+    res.render('pages/appointments/appointment-series/details', { appointmentSeries })
   }
 }

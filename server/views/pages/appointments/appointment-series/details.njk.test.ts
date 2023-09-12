@@ -8,7 +8,7 @@ import { AppointmentSeriesDetails } from '../../../../@types/activitiesAPI/types
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentFrequency } from '../../../../@types/appointments'
 
-const view = fs.readFileSync('server/views/pages/appointments/details/appointment.njk')
+const view = fs.readFileSync('server/views/pages/appointments/details/details.njk')
 
 const getSummaryListValueElement = ($: CheerioAPI, listIdentifier: string, heading: string) =>
   $(`[data-qa=${listIdentifier}] > .govuk-summary-list__row > .govuk-summary-list__key:contains("${heading}")`)
@@ -19,7 +19,7 @@ const getAppointmentDetailsValueElement = ($: CheerioAPI, heading: string) =>
 const getRepeatPeriodValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Frequency')
 const getRepeatCountValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Number of appointments')
 
-describe('Views - Appointments Management - Appointment Details', () => {
+describe('Views - Appointments Management - Appointment Series Details', () => {
   let compiledTemplate: Template
   let viewContext = {
     appointment: {} as AppointmentSeriesDetails,

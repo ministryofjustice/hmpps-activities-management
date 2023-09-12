@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { addHours, subMinutes } from 'date-fns'
-import AppointmentDetailsRoutes from './appointmentDetails'
+import AppointmentSeriesDetailsRoutes from './appointmentSeriesDetails'
 import { AppointmentSeriesDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 
-describe('Route Handlers - Appointment Details', () => {
-  const handler = new AppointmentDetailsRoutes()
+describe('Route Handlers - Appointment Series Details', () => {
+  const handler = new AppointmentSeriesDetailsRoutes()
   let req: Request
   let res: Response
 
@@ -24,8 +24,8 @@ describe('Route Handlers - Appointment Details', () => {
       params: {
         id: '10',
       },
-      appointment: {
-        occurrences: [
+      appointmentSeries: {
+        appointments: [
           {
             id: 10,
             sequenceNumber: 1,
@@ -47,8 +47,8 @@ describe('Route Handlers - Appointment Details', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/details/appointment', {
-        appointment: req.appointmentSeries,
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-series/details', {
+        appointmentSeries: req.appointmentSeries,
       })
     })
 
@@ -57,15 +57,15 @@ describe('Route Handlers - Appointment Details', () => {
       const todayOneMinuteInThePast = subMinutes(now, 1)
       const todayOneHourInTheFuture = addHours(now, 1)
 
-      req.appointmentSeries.occurrences[0].startDate = formatDate(todayOneMinuteInThePast, 'yyyy-MM-dd')
-      req.appointmentSeries.occurrences[0].startTime = formatDate(todayOneMinuteInThePast, 'HH:mm')
-      req.appointmentSeries.occurrences[1].startDate = formatDate(todayOneHourInTheFuture, 'yyyy-MM-dd')
-      req.appointmentSeries.occurrences[1].startTime = formatDate(todayOneHourInTheFuture, 'HH:mm')
+      req.appointmentSeries.appointments[0].startDate = formatDate(todayOneMinuteInThePast, 'yyyy-MM-dd')
+      req.appointmentSeries.appointments[0].startTime = formatDate(todayOneMinuteInThePast, 'HH:mm')
+      req.appointmentSeries.appointments[1].startDate = formatDate(todayOneHourInTheFuture, 'yyyy-MM-dd')
+      req.appointmentSeries.appointments[1].startTime = formatDate(todayOneHourInTheFuture, 'HH:mm')
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/details/appointment', {
-        appointment: req.appointmentSeries,
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-series/details', {
+        appointmentSeries: req.appointmentSeries,
       })
     })
   })

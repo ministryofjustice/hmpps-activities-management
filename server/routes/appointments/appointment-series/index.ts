@@ -1,6 +1,6 @@
 import { RequestHandler, Router } from 'express'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
-import AppointmentDetailsRoutes from './handlers/appointmentDetails'
+import AppointmentSeriesDetailsRoutes from './handlers/appointmentSeriesDetails'
 
 import { Services } from '../../../services'
 import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
@@ -11,9 +11,9 @@ export default function Index({ activitiesService }: Services): Router {
   const get = (path: string, handler: RequestHandler) =>
     router.get(path, fetchAppointmentSeries(activitiesService), asyncMiddleware(handler))
 
-  const appointmentDetailsHandler = new AppointmentDetailsRoutes()
+  const appointmentSeriesDetailsRoutes = new AppointmentSeriesDetailsRoutes()
 
-  get('/', appointmentDetailsHandler.GET)
+  get('/', appointmentSeriesDetailsRoutes.GET)
 
   return router
 }
