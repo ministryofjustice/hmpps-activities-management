@@ -120,7 +120,10 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
         expect(errors).toHaveLength(0)
       } else {
         expect(errors).toEqual([
-          { property: 'extraInformation', error: 'You must enter extra information which has no more than 4,000 characters' },
+          {
+            property: 'extraInformation',
+            error: 'You must enter extra information which has no more than 4,000 characters',
+          },
         ])
       }
     })

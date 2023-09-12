@@ -34,36 +34,36 @@ describe('fetchAppointmentSet', () => {
     jest.resetAllMocks()
   })
 
-  it('should retrieve bulk appointment from route param', async () => {
-    const bulkAppointmentDetails = {
+  it('should retrieve appointment set from route param', async () => {
+    const appointmentSetDetails = {
       id: 123,
     } as AppointmentSetDetails
 
     when(activitiesServiceMock.getAppointmentSetDetails)
       .calledWith(123, res.locals.user)
-      .mockResolvedValue(bulkAppointmentDetails)
+      .mockResolvedValue(appointmentSetDetails)
 
     await middleware(req, res, next)
 
-    expect(req.appointmentSet).toEqual(bulkAppointmentDetails)
+    expect(req.appointmentSet).toEqual(appointmentSetDetails)
     expect(next).toBeCalledTimes(1)
   })
 
-  it('should not retrieve bulk appointment if already on request', async () => {
-    const bulkAppointmentDetails = {
+  it('should not retrieve appointment set if already on request', async () => {
+    const appointmentSetDetails = {
       id: 123,
     } as AppointmentSetDetails
 
-    req.appointmentSet = bulkAppointmentDetails
+    req.appointmentSet = appointmentSetDetails
 
     await middleware(req, res, next)
 
     expect(activitiesServiceMock.getAppointmentSetDetails).not.toBeCalled()
-    expect(req.appointmentSet).toEqual(bulkAppointmentDetails)
+    expect(req.appointmentSet).toEqual(appointmentSetDetails)
     expect(next).toBeCalledTimes(1)
   })
 
-  it('should catch errors while retrieving bulk appointment and pass to next', async () => {
+  it('should catch errors while retrieving appointment set and pass to next', async () => {
     when(activitiesServiceMock.getAppointmentSetDetails)
       .calledWith(123, res.locals.user)
       .mockRejectedValue(new Error('Some error'))

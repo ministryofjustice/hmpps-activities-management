@@ -64,7 +64,9 @@ describe('Views - Create Appointment Set - Add Extra Information', () => {
 
     expect($('[data-qa="extra-information-table"] tr').length).toEqual(4)
 
-    expect(getPrisonerExtraInformationTableCell('A1234AA', 'extra-information-cell').text()).toEqual('Appointment extra information')
+    expect(getPrisonerExtraInformationTableCell('A1234AA', 'extra-information-cell').text()).toEqual(
+      'Appointment extra information',
+    )
     expect(getPrisonerExtraInformationTableCell('A1234AA', 'actions-cell').text()).toEqual('Edit extra information')
 
     expect(getPrisonerExtraInformationTableCell('Z4321YX', 'extra-information-cell').text()).toEqual('')

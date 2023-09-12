@@ -12,7 +12,7 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
         req.appointmentSet = await activitiesService.getAppointmentSetDetails(appointmentSetId, user)
       }
     } catch (error) {
-      logger.error(error, `Failed to fetch bulk appointment, id: ${appointmentSetId}`)
+      logger.error(error, `Failed to fetch appointment set, id: ${appointmentSetId}`)
       return next(error)
     }
     return next()

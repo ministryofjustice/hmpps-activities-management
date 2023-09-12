@@ -126,7 +126,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   describe('EDIT', () => {
     beforeEach(() => {
       req.params = {
-        appointmentId: '2',
+        appointmentId: '12',
       }
 
       req.session.appointmentJourney = {

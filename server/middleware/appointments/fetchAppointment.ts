@@ -12,7 +12,7 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
         req.appointment = await activitiesService.getAppointmentDetails(appointmentId, user)
       }
     } catch (error) {
-      logger.error(error, `Failed to fetch appointment occurrence, id: ${appointmentId}`)
+      logger.error(error, `Failed to fetch appointment, id: ${appointmentId}`)
       return next(error)
     }
     return next()

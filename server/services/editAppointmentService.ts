@@ -26,7 +26,7 @@ export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   async redirectOrEdit(req: Request, res: Response, property: string) {
-    const { appointmentSeriesId, appointmentId } = req.params
+    const { appointmentId } = req.params
     if (hasAnyAppointmentPropertyChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)) {
       if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
         return res.redirect(`${property}/apply-to`)
@@ -69,7 +69,7 @@ export default class EditAppointmentService {
 
           this.clearSession(req)
 
-          return res.redirectWithSuccess(`/appointments/bulk-appointments/${appointmentSetId}`, successHeading)
+          return res.redirectWithSuccess(`/appointments/set/${appointmentSetId}`, successHeading)
         }
         if (repeat === YesNo.YES) {
           const successHeading = `You've ${this.getEditedMessage(

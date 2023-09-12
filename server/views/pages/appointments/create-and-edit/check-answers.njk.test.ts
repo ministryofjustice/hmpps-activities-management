@@ -21,8 +21,8 @@ const getPrisonerDetailsValueElement = (heading: string) =>
     .parent()
     .find('.govuk-summary-list__value')
 
-const getRepeatPeriodValueElement = () => getAppointmentDetailsValueElement('Frequency')
-const getRepeatCountValueElement = () => getAppointmentDetailsValueElement('Number of appointments')
+const getFrequencyValueElement = () => getAppointmentDetailsValueElement('Frequency')
+const getNumberOfAppointmentsValueElement = () => getAppointmentDetailsValueElement('Number of appointments')
 const getIndividualPrisonerValueElement = (qaAttr: string) =>
   getAppointmentDetailsValueElement('Attendee').find(`[data-qa="${qaAttr}"]`)
 const getPrisonerListValueElement = (qaAttr: string, index: number) =>
@@ -71,30 +71,30 @@ describe('Views - Create Appointment - Check Answers', () => {
     viewContext.session.appointmentJourney.repeat = YesNo.NO
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect(getRepeatPeriodValueElement().length).toBe(0)
-    expect(getRepeatCountValueElement().length).toBe(0)
+    expect(getFrequencyValueElement().length).toBe(0)
+    expect(getNumberOfAppointmentsValueElement().length).toBe(0)
   })
 
   it.each([
-    { repeatPeriod: AppointmentFrequency.WEEKDAY, expectedText: 'Every weekday (Monday to Friday)' },
-    { repeatPeriod: AppointmentFrequency.DAILY, expectedText: 'Daily (includes weekends)' },
-    { repeatPeriod: AppointmentFrequency.WEEKLY, expectedText: 'Weekly' },
-    { repeatPeriod: AppointmentFrequency.FORTNIGHTLY, expectedText: 'Fortnightly' },
-    { repeatPeriod: AppointmentFrequency.MONTHLY, expectedText: 'Monthly' },
-  ])('should display frequency $repeatPeriod as $expectedText when repeat = YES', ({ repeatPeriod, expectedText }) => {
+    { frequency: AppointmentFrequency.WEEKDAY, expectedText: 'Every weekday (Monday to Friday)' },
+    { frequency: AppointmentFrequency.DAILY, expectedText: 'Daily (includes weekends)' },
+    { frequency: AppointmentFrequency.WEEKLY, expectedText: 'Weekly' },
+    { frequency: AppointmentFrequency.FORTNIGHTLY, expectedText: 'Fortnightly' },
+    { frequency: AppointmentFrequency.MONTHLY, expectedText: 'Monthly' },
+  ])('should display frequency $frequency as $expectedText when repeat = YES', ({ frequency, expectedText }) => {
     viewContext.session.appointmentJourney.repeat = YesNo.YES
-    viewContext.session.appointmentJourney.repeatPeriod = repeatPeriod
+    viewContext.session.appointmentJourney.frequency = frequency
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect(getRepeatPeriodValueElement().text().trim()).toEqual(expectedText)
+    expect(getFrequencyValueElement().text().trim()).toEqual(expectedText)
   })
 
   it('should display repeat number of appointments when repeat = YES', () => {
     viewContext.session.appointmentJourney.repeat = YesNo.YES
-    viewContext.session.appointmentJourney.repeatCount = 6
+    viewContext.session.appointmentJourney.numberOfAppointments = 6
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect(getRepeatCountValueElement().text().trim()).toEqual('6')
+    expect(getNumberOfAppointmentsValueElement().text().trim()).toEqual('6')
   })
 
   describe('Individual Appointment', () => {

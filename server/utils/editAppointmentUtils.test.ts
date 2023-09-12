@@ -754,11 +754,11 @@ describe('Edit Appointment Utils', () => {
       ['unknown value', 'UNKNOWN', null],
     ])(
       'should return correct frequency text for %s',
-      (_: string, repeatPeriod: AppointmentFrequency, expectedFrequencyNoun: string) => {
+      (_: string, frequency: AppointmentFrequency, expectedFrequencyNoun: string) => {
         req.session.appointmentJourney = {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
-          frequency: repeatPeriod,
+          frequency,
         }
 
         const expectedText = expectedFrequencyNoun ? `This appointment repeats every ${expectedFrequencyNoun}` : null

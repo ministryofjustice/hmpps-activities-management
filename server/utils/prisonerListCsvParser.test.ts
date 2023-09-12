@@ -82,7 +82,7 @@ describe('getPrisonNumbers', () => {
 describe('getAppointments', () => {
   it('should return appointments when file is empty', async () => {
     const appointments = await parser.getAppointments({
-      path: 'server/utils/fixtures/bulk-appointment/empty-appointment-set.csv',
+      path: 'server/utils/fixtures/appointment-set/empty-appointment-set.csv',
     } as unknown as Express.Multer.File)
 
     expect(appointments.length).toBe(0)
@@ -91,7 +91,7 @@ describe('getAppointments', () => {
 
   it('should return appointments without header row', async () => {
     const appointments = await parser.getAppointments({
-      path: 'server/utils/fixtures/bulk-appointment/appointment-set.csv',
+      path: 'server/utils/fixtures/appointment-set/appointment-set.csv',
     } as unknown as Express.Multer.File)
 
     expect(appointments).toEqual([
@@ -123,7 +123,7 @@ describe('getAppointments', () => {
 
   it('should return appointments when header row not included', async () => {
     const appointments = await parser.getAppointments({
-      path: 'server/utils/fixtures/bulk-appointment/appointment-set-no-header.csv',
+      path: 'server/utils/fixtures/appointment-set/appointment-set-no-header.csv',
     } as unknown as Express.Multer.File)
 
     expect(appointments).toEqual([
@@ -155,7 +155,7 @@ describe('getAppointments', () => {
 
   it('should return unique appointments', async () => {
     const appointments = await parser.getAppointments({
-      path: 'server/utils/fixtures/bulk-appointment/appointment-set-duplicates.csv',
+      path: 'server/utils/fixtures/appointment-set/appointment-set-duplicates.csv',
     } as unknown as Express.Multer.File)
 
     expect(appointments).toEqual([

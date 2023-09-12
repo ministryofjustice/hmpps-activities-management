@@ -42,7 +42,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       description: 'Gym - Weights',
     },
   ] as AppointmentCategorySummary[]
-  const appointmentNameFilters = ['Chaplaincy', 'Medical - Doctor', 'Gym - Weights']
+  const appointmentNameFilters = ['Chaplaincy', 'Gym - Weights', 'Medical - Doctor']
   const locations = [
     {
       id: 26152,

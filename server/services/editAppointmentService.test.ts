@@ -224,7 +224,7 @@ describe('Edit Appointment Service', () => {
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/bulk-appointments/1`,
+          `/appointments/set/1`,
           `You've deleted appointment for A1111A from this set`,
         )
         expect(req.session.appointmentJourney).toBeNull()

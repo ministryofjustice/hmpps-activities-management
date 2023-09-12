@@ -49,7 +49,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
         appointmentSetJourney: {},
       },
       appointment: {} as AppointmentSeriesDetails,
-      bulkAppointment: {} as AppointmentSetDetails,
+      appointmentSet: {} as AppointmentSetDetails,
       params: {
         id: '1',
       },
@@ -64,7 +64,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should render the confirmation page with appointment details', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
-        appointment: req.appointmentSeries,
+        appointment: req.appointment,
       })
     })
 
@@ -78,7 +78,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should render the confirmation page with appointment set details', async () => {
       await handler.GET_SET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
-        bulkAppointment: req.appointmentSet,
+        appointmentSet: req.appointmentSet,
       })
     })
 

@@ -35,9 +35,10 @@ describe('Route Handlers - Create Appointment - Start', () => {
   } as unknown as AppointmentSeriesDetails
   const appointment = {
     id: 12,
-    appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3} },
+    appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
     appointmentType: 'GROUP',
     sequenceNumber: 2,
+    appointmentName: 'Appointment name (Chaplaincy)',
     category: {
       code: 'CHAP',
       description: 'Chaplaincy',

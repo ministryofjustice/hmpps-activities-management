@@ -96,7 +96,7 @@ describe('populateJourney', () => {
     const unMappedJourney = {
       appointmentName: 'Not from mapped session data',
     } as AppointmentJourney
-    const unMappedBulkJourney = {
+    const unMappedSetJourney = {
       appointments: [
         {
           extraInformation: 'Not from mapped session data',
@@ -109,7 +109,7 @@ describe('populateJourney', () => {
 
     beforeEach(() => {
       req.session.appointmentJourney = unMappedJourney
-      req.session.appointmentSetJourney = unMappedBulkJourney
+      req.session.appointmentSetJourney = unMappedSetJourney
       req.session.editAppointmentJourney = unMappedEditJourney
       req.session.sessionDataMap = new Map<string, SessionDatum>()
       req.session.sessionDataMap[journeyId] = appointmentSessionDatum
@@ -119,7 +119,7 @@ describe('populateJourney', () => {
 
     it('should return session mapped data using journey id parameter', async () => {
       expect(req.session.appointmentJourney).toBe(unMappedJourney)
-      expect(req.session.appointmentSetJourney).toBe(unMappedBulkJourney)
+      expect(req.session.appointmentSetJourney).toBe(unMappedSetJourney)
       expect(req.session.editAppointmentJourney).toBe(unMappedEditJourney)
 
       middleware(req, res, next)
@@ -164,7 +164,7 @@ describe('populateJourney', () => {
     const updatedJourney = {
       appointmentName: 'Updated session data',
     } as AppointmentJourney
-    const updatedBulkJourney = {
+    const updatedSetJourney = {
       appointments: [
         {
           extraInformation: 'Updated session data',
@@ -190,15 +190,15 @@ describe('populateJourney', () => {
       expect(req.session.sessionDataMap[journeyId]).toBe(appointmentSessionDatum)
 
       req.session.appointmentJourney = updatedJourney
-      req.session.appointmentSetJourney = updatedBulkJourney
+      req.session.appointmentSetJourney = updatedSetJourney
       req.session.editAppointmentJourney = updatedEditJourney
 
       expect(req.session.appointmentJourney).toBe(updatedJourney)
-      expect(req.session.appointmentSetJourney).toBe(updatedBulkJourney)
+      expect(req.session.appointmentSetJourney).toBe(updatedSetJourney)
       expect(req.session.editAppointmentJourney).toBe(updatedEditJourney)
       expect(req.session.sessionDataMap[journeyId]).toStrictEqual({
         appointmentJourney: updatedJourney,
-        appointmentSetJourney: updatedBulkJourney,
+        appointmentSetJourney: updatedSetJourney,
         editAppointmentJourney: updatedEditJourney,
       } as SessionDatum)
     })

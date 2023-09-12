@@ -169,20 +169,20 @@
           text: "Frequency"
       },
       value: {
-          text: ("Every weekday (Monday to Friday)" if session.appointmentJourney.repeatPeriod == AppointmentFrequency.WEEKDAY) +
-                ("Daily (includes weekends)" if session.appointmentJourney.repeatPeriod == AppointmentFrequency.DAILY) +
-                ("Weekly" if session.appointmentJourney.repeatPeriod == AppointmentFrequency.WEEKLY) +
-                ("Fortnightly" if session.appointmentJourney.repeatPeriod == AppointmentFrequency.FORTNIGHTLY) +
-                ("Monthly" if session.appointmentJourney.repeatPeriod == AppointmentFrequency.MONTHLY)
+          text: ("Every weekday (Monday to Friday)" if session.appointmentJourney.frequency == AppointmentFrequency.WEEKDAY) +
+                ("Daily (includes weekends)" if session.appointmentJourney.frequency == AppointmentFrequency.DAILY) +
+                ("Weekly" if session.appointmentJourney.frequency == AppointmentFrequency.WEEKLY) +
+                ("Fortnightly" if session.appointmentJourney.frequency == AppointmentFrequency.FORTNIGHTLY) +
+                ("Monthly" if session.appointmentJourney.frequency == AppointmentFrequency.MONTHLY)
       },
       actions: {
           items: [
               {
                   href: "repeat-frequency-and-count?preserveHistory=true",
                   text: "Change",
-                  visuallyHiddenText: "change repeat period",
+                  visuallyHiddenText: "change frequency",
                   classes: "govuk-link--no-visited-state",
-                  attributes: { 'data-qa': 'change-repeat-period' }
+                  attributes: { 'data-qa': 'change-repeat-frequency' }
               }
           ]
       }
@@ -192,7 +192,7 @@
           text: "Number of appointments"
       },
       value: {
-          text: session.appointmentJourney.repeatCount
+          text: session.appointmentJourney.numberOfAppointments
       },
       actions: {
           items: [
@@ -201,7 +201,7 @@
                   text: "Change",
                   visuallyHiddenText: "change number of appointments",
                   classes: "govuk-link--no-visited-state",
-                  attributes: { 'data-qa': 'change-repeat-count' }
+                  attributes: { 'data-qa': 'change-number-of-appointments' }
               }
           ]
       }

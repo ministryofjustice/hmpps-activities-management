@@ -16,8 +16,9 @@ const getSummaryListValueElement = ($: CheerioAPI, listIdentifier: string, headi
     .find('.govuk-summary-list__value')
 const getAppointmentDetailsValueElement = ($: CheerioAPI, heading: string) =>
   getSummaryListValueElement($, 'appointment-series-details', heading)
-const getRepeatPeriodValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Frequency')
-const getRepeatCountValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Number of appointments')
+const getFrequencyValueElement = ($: CheerioAPI) => getAppointmentDetailsValueElement($, 'Frequency')
+const getNumberOfAppointmentsValueElement = ($: CheerioAPI) =>
+  getAppointmentDetailsValueElement($, 'Number of appointments')
 
 describe('Views - Appointments Management - Appointment Series Details', () => {
   let compiledTemplate: Template
@@ -43,8 +44,8 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect(getRepeatPeriodValueElement($).length).toBe(0)
-    expect(getRepeatCountValueElement($).length).toBe(0)
+    expect(getFrequencyValueElement($).length).toBe(0)
+    expect(getNumberOfAppointmentsValueElement($).length).toBe(0)
     expect($('[data-qa=appointment-series-details]').length).toBe(0)
   })
 
@@ -55,7 +56,7 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
     { frequency: AppointmentFrequency.FORTNIGHTLY, expectedText: 'Fortnightly' },
     { frequency: AppointmentFrequency.MONTHLY, expectedText: 'Monthly' },
   ])(
-    'should display frequency $repeatPeriod as $expectedText when schedule is not null',
+    'should display frequency $frequency as $expectedText when schedule is not null',
     ({ frequency, expectedText }) => {
       viewContext.appointmentSeries.schedule = {
         frequency,
@@ -64,7 +65,7 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
 
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-      expect(getRepeatPeriodValueElement($).text().trim()).toEqual(expectedText)
+      expect(getFrequencyValueElement($).text().trim()).toEqual(expectedText)
     },
   )
 
@@ -76,7 +77,7 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect(getRepeatCountValueElement($).text().trim()).toBe('6')
+    expect(getNumberOfAppointmentsValueElement($).text().trim()).toBe('6')
   })
 
   it('should display appointments when schedule is not null', () => {

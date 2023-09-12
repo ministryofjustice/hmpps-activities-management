@@ -394,7 +394,7 @@ describe('activitiesApiClient', () => {
       } as AppointmentSeriesDetails
 
       fakeActivitiesApi
-        .get('/appointments/12345/details')
+        .get('/appointment-series/12345/details')
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
