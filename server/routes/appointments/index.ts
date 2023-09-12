@@ -2,10 +2,10 @@ import { Router } from 'express'
 import appointmentsHomeRoutes from './home'
 import appointmentsCreateRoutes from './create-and-edit/createRoutes'
 import appointmentsEditRoutes from './create-and-edit/editRoutes'
-import appointmentDetailsRoutes from './appointment-series'
-import appointmentOccurrenceDetailsRoutes from './appointment'
+import appointmentSeriesDetailsRoutes from './appointment-series'
+import appointmentSetDetailsRoutes from './appointment-set'
+import appointmentDetailsRoutes from './appointment'
 import appointmentSearchRoutes from './search'
-import bulkAppointmentDetailsRoutes from './appointment-set'
 import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
@@ -25,9 +25,9 @@ export default function routes(services: Services): Router {
 
   // Search and view appointment routes
   router.use('/search', appointmentSearchRoutes(services))
+  router.use('/series/:appointmentSeriesId(\\d+)', appointmentSeriesDetailsRoutes(services))
+  router.use('/set/:appointmentSetId(\\d+)', appointmentSetDetailsRoutes(services))
   router.use('/:appointmentId(\\d+)', appointmentDetailsRoutes(services))
-  router.use('/:appointmentId(\\d+)/occurrence/:occurrenceId(\\d+)', appointmentOccurrenceDetailsRoutes(services))
-  router.use('/bulk-appointments/:bulkAppointmentId(\\d+)', bulkAppointmentDetailsRoutes(services))
 
   // Create appointment journey routes. These are the starting points for the three appointment type creation journeys.
   // They use the startNewJourney middleware which adds a unique journeyId into the url after the /create/ path segment
@@ -45,7 +45,7 @@ export default function routes(services: Services): Router {
   // Edit appointment journey routes. These are the starting points for all appointment modification journeys.
   // They use the startNewJourney middleware which adds a unique journeyId into the url after the /edit/ path segment
   // then redirects to that new url
-  const editAppointmentBaseUrl = '/:appointmentId(\\d+)/occurrence/:occurrenceId(\\d+)/edit'
+  const editAppointmentBaseUrl = '/appointment/:appointmentId(\\d+)/edit'
   router.get(`${editAppointmentBaseUrl}/start/cancel`, appointmentsStartNewJourney('/edit/'))
   router.get(`${editAppointmentBaseUrl}/start/:property`, appointmentsStartNewJourney('/edit/'))
   router.get(`${editAppointmentBaseUrl}/start/:prisonNumber/remove`, appointmentsStartNewJourney('/edit/'))

@@ -169,11 +169,11 @@
           text: "Frequency"
       },
       value: {
-          text: ("Every weekday (Monday to Friday)" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY) +
-                ("Daily (includes weekends)" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.DAILY) +
-                ("Weekly" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKLY) +
-                ("Fortnightly" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY) +
-                ("Monthly" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.MONTHLY)
+          text: ("Every weekday (Monday to Friday)" if session.appointmentJourney.repeatPeriod == AppointmentFrequency.WEEKDAY) +
+                ("Daily (includes weekends)" if session.appointmentJourney.repeatPeriod == AppointmentFrequency.DAILY) +
+                ("Weekly" if session.appointmentJourney.repeatPeriod == AppointmentFrequency.WEEKLY) +
+                ("Fortnightly" if session.appointmentJourney.repeatPeriod == AppointmentFrequency.FORTNIGHTLY) +
+                ("Monthly" if session.appointmentJourney.repeatPeriod == AppointmentFrequency.MONTHLY)
       },
       actions: {
           items: [

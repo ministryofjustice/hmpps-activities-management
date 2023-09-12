@@ -68,7 +68,7 @@ describe('Route Handlers - Create Appointment - Comment', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/comment', {
-        backLinkHref: `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+        backLinkHref: `/appointments/${appointmentId}`,
         isCtaAcceptAndSave: true,
       })
     })

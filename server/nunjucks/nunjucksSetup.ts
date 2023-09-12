@@ -156,7 +156,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('EventType', EventType)
   njkEnv.addGlobal('EventSource', EventSource)
   njkEnv.addGlobal('TimeSlot', TimeSlot)
-  njkEnv.addGlobal('AppointmentRepeatPeriod', AppointmentFrequency)
+  njkEnv.addGlobal('AppointmentFrequency', AppointmentFrequency)
   njkEnv.addGlobal('AppointmentType', AppointmentType)
   njkEnv.addGlobal('AppointmentJourneyMode', AppointmentJourneyMode)
   njkEnv.addGlobal('AppointmentApplyTo', AppointmentApplyTo)

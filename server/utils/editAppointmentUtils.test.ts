@@ -114,7 +114,7 @@ describe('Edit Appointment Utils', () => {
 
     it('edit', () => {
       expect(getAppointmentBackLinkHref(req, 'name')).toEqual(
-        `/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`,
+        `/appointments/${appointmentId}`,
       )
     })
   })

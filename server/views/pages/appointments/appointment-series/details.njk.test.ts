@@ -8,7 +8,7 @@ import { AppointmentSeriesDetails } from '../../../../@types/activitiesAPI/types
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentFrequency } from '../../../../@types/appointments'
 
-const view = fs.readFileSync('server/views/pages/appointments/details/details.njk')
+const view = fs.readFileSync('server/views/pages/appointments/appointment-series/details.njk')
 
 const getSummaryListValueElement = ($: CheerioAPI, listIdentifier: string, heading: string) =>
   $(`[data-qa=${listIdentifier}] > .govuk-summary-list__row > .govuk-summary-list__key:contains("${heading}")`)
@@ -22,7 +22,7 @@ const getRepeatCountValueElement = ($: CheerioAPI) => getAppointmentDetailsValue
 describe('Views - Appointments Management - Appointment Series Details', () => {
   let compiledTemplate: Template
   let viewContext = {
-    appointment: {} as AppointmentSeriesDetails,
+    appointmentSeries: {} as AppointmentSeriesDetails,
   }
 
   const njkEnv = registerNunjucks()
@@ -31,15 +31,15 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     const tomorrow = addDays(new Date(), 1)
     viewContext = {
-      appointment: {
+      appointmentSeries: {
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
-        created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
+        createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentSeriesDetails,
     }
   })
 
-  it('should not display repeat frequency or occurrences when repeat = null', () => {
-    viewContext.appointment.repeat = null
+  it('should not display schedule frequency or number of occurrences when schedule = null', () => {
+    viewContext.appointmentSeries.schedule = null
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -49,17 +49,17 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
   })
 
   it.each([
-    { repeatPeriod: AppointmentFrequency.WEEKDAY, expectedText: 'Every weekday (Monday to Friday)' },
-    { repeatPeriod: AppointmentFrequency.DAILY, expectedText: 'Daily (includes weekends)' },
-    { repeatPeriod: AppointmentFrequency.WEEKLY, expectedText: 'Weekly' },
-    { repeatPeriod: AppointmentFrequency.FORTNIGHTLY, expectedText: 'Fortnightly' },
-    { repeatPeriod: AppointmentFrequency.MONTHLY, expectedText: 'Monthly' },
+    { frequency: AppointmentFrequency.WEEKDAY, expectedText: 'Every weekday (Monday to Friday)' },
+    { frequency: AppointmentFrequency.DAILY, expectedText: 'Daily (includes weekends)' },
+    { frequency: AppointmentFrequency.WEEKLY, expectedText: 'Weekly' },
+    { frequency: AppointmentFrequency.FORTNIGHTLY, expectedText: 'Fortnightly' },
+    { frequency: AppointmentFrequency.MONTHLY, expectedText: 'Monthly' },
   ])(
-    'should display frequency $repeatPeriod as $expectedText when repeat is not null',
-    ({ repeatPeriod, expectedText }) => {
-      viewContext.appointment.repeat = {
-        period: repeatPeriod,
-        count: 6,
+    'should display frequency $repeatPeriod as $expectedText when schedule is not null',
+    ({ frequency, expectedText }) => {
+      viewContext.appointmentSeries.schedule = {
+        frequency,
+        numberOfAppointments: 6,
       }
 
       const $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -68,10 +68,10 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
     },
   )
 
-  it('should display repeat occurrences when repeat is not null', () => {
-    viewContext.appointment.repeat = {
-      period: AppointmentFrequency.WEEKLY,
-      count: 6,
+  it('should display number of appointments when schedule is not null', () => {
+    viewContext.appointmentSeries.schedule = {
+      frequency: AppointmentFrequency.WEEKLY,
+      numberOfAppointments: 6,
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -79,10 +79,10 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
     expect(getRepeatCountValueElement($).text().trim()).toBe('6')
   })
 
-  it('should display occurrences when repeat is not null', () => {
-    viewContext.appointment.repeat = {
-      period: AppointmentFrequency.WEEKLY,
-      count: 6,
+  it('should display appointments when schedule is not null', () => {
+    viewContext.appointmentSeries.schedule = {
+      frequency: AppointmentFrequency.WEEKLY,
+      numberOfAppointments: 6,
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -90,14 +90,14 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
     expect($('[data-qa=appointment-series-details]').length).toBe(1)
   })
 
-  it('should show updated occurrences as edited', () => {
+  it('should show updated appointments as edited', () => {
     const tomorrow = addDays(new Date(), 1)
     const nextWeek = addDays(new Date(), 8)
-    viewContext.appointment.repeat = {
-      period: AppointmentFrequency.WEEKLY,
-      count: 2,
+    viewContext.appointmentSeries.schedule = {
+      frequency: AppointmentFrequency.WEEKLY,
+      numberOfAppointments: 2,
     }
-    viewContext.appointment.occurrences = [
+    viewContext.appointmentSeries.appointments = [
       {
         id: 100,
         sequenceNumber: 1,
@@ -107,19 +107,12 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
         id: 101,
         sequenceNumber: 2,
         startDate: formatDate(nextWeek, 'yyyy-MM-dd'),
-        updated: '2023-02-20T10:00:00',
-        updatedBy: {
-          id: 231232,
-          username: 'USER1',
-          firstName: 'john',
-          lastName: 'smith',
-        },
         isEdited: true,
       },
-    ] as unknown as AppointmentSeriesDetails['occurrences']
+    ] as unknown as AppointmentSeriesDetails['appointments']
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
-    expect($('[data-qa=occurrence-status-1]').text()).not.toContain('Edited')
-    expect($('[data-qa=occurrence-status-2]').text()).toContain('Edited')
+    expect($('[data-qa=appointment-status-1]').text()).not.toContain('Edited')
+    expect($('[data-qa=appointment-status-2]').text()).toContain('Edited')
   })
 })

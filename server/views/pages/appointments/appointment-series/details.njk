@@ -7,43 +7,43 @@
 
 {% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
 
-{% set pageTitle = appointment.appointmentName + ' series overview' %}
-{% set pageId = 'appointments-view-details-page' %}
+{% set pageTitle = appointmentSeries.appointmentName + ' series overview' %}
+{% set pageId = 'appointment-series-details-page' %}
 
-{% set occurrenceTableRows = [] %}
-{% for occurrence in appointment.occurrences %}
-    {% set occurrenceDate = occurrence.startDate | toDate %}
-    {% set occurrenceTableRows = (occurrenceTableRows.push([
+{% set appointmentTableRows = [] %}
+{% for appointment in appointmentSeries.appointments %}
+    {% set appointmentDate = appointment.startDate | toDate %}
+    {% set appointmentTableRows = (appointmentTableRows.push([
         {
-            text: occurrence.sequenceNumber,
+            text: appointment.sequenceNumber,
             classes: "govuk-!-font-weight-regular govuk-!-text-align-right",
-            attributes: { 'data-qa': 'occurrence-sequence-no-' + occurrence.sequenceNumber }
+            attributes: { 'data-qa': 'appointment-sequence-no-' + appointment.sequenceNumber }
         }, {
-            text: occurrenceDate | formatDate('d MMM yyyy'),
-            attributes: { 'data-qa': 'occurrence-date-' + occurrence.sequenceNumber }
+            text: appointmentDate | formatDate('d MMM yyyy'),
+            attributes: { 'data-qa': 'appointment-date-' + appointment.sequenceNumber }
         }, {
-            html: (govukTag({ text: "Edited" }) if occurrence.isEdited) +
-                  (govukTag({ text: "Cancelled" }) if occurrence.isCancelled),
-            attributes: { 'data-qa': 'occurrence-status-' + occurrence.sequenceNumber }
+            html: (govukTag({ text: "Edited" }) if appointment.isEdited) +
+                  (govukTag({ text: "Cancelled" }) if appointment.isCancelled),
+            attributes: { 'data-qa': 'appointment-status-' + appointment.sequenceNumber }
         }, {
-            html: '<a href="/appointments/' + appointment.id + '/occurrence/' + occurrence.id + '"
+            html: '<a href="/appointments/' + appointment.id + '"
                 class="govuk-link--no-visited-state">' +
-                ('Manage details' if not occurrence.isExpired and not occurrence.isCancelled else 'View') +
-                '<span class="govuk-visually-hidden">' + (' of' if not occurrence.isExpired and not occurrence.isCancelled) + ' appointment on ' + (occurrenceDate | formatDate('d MMM yyyy')) + '</span>
+                ('Manage details' if not appointment.isExpired and not appointment.isCancelled else 'View') +
+                '<span class="govuk-visually-hidden">' + (' of' if not appointment.isExpired and not appointment.isCancelled) + ' appointment on ' + (appointmentDate | formatDate('d MMM yyyy')) + '</span>
             </a>',
             classes: 'govuk-!-text-align-right',
-            attributes: { 'data-qa': 'view-and-edit-occurrence-' + occurrence.sequenceNumber }
+            attributes: { 'data-qa': 'view-and-edit-appointment-' + appointment.sequenceNumber }
         }
-    ]), occurrenceTableRows) %}
+    ]), appointmentTableRows) %}
 {% endfor %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-            <h1 class="govuk-heading-l">{{ appointment.appointmentName }} – series overview</h1>
+            <h1 class="govuk-heading-l">{{ appointmentSeries.appointmentName }} – series overview</h1>
 
-            {% if appointment.repeat %}
+            {% if appointmentSeries.schedule %}
                 {{ govukSummaryList({
                     card: {
                         title: {
@@ -56,32 +56,32 @@
                                 text: "Frequency"
                             },
                             value: {
-                                text: ("Every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
-                                ("Daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
-                                ("Weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
-                                ("Fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
-                                ("Monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY)
+                                text: ("Every weekday (Monday to Friday)" if appointmentSeries.schedule.frequency == AppointmentFrequency.WEEKDAY) +
+                                ("Daily (includes weekends)" if appointmentSeries.schedule.frequency == AppointmentFrequency.DAILY) +
+                                ("Weekly" if appointmentSeries.schedule.frequency == AppointmentFrequency.WEEKLY) +
+                                ("Fortnightly" if appointmentSeries.schedule.frequency == AppointmentFrequency.FORTNIGHTLY) +
+                                ("Monthly" if appointmentSeries.schedule.frequency == AppointmentFrequency.MONTHLY)
                             }
                         }, {
                             key: {
                                 text: "Number of appointments"
                             },
                             value: {
-                                text: appointment.repeat.count
+                                text: appointmentSeries.schedule.numberOfAppointments
                             }
                         }, {
                             key: {
                             text: "Created by"
                         },
                             value: {
-                            text: serviceUserName(appointment.createdBy)
+                            text: serviceUserName(appointmentSeries.createdBy)
                         }
                         }, {
                             key: {
                                 text: "Date created"
                             },
                             value: {
-                                text: appointment.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
+                                text: appointmentSeries.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
                             }
                         }
                     ],
@@ -98,7 +98,7 @@
                         head: [
                             {
                                 text: "Appointment",
-                                classes: 'govuk-table__header govuk-table__header--occurrence-count'
+                                classes: 'govuk-table__header govuk-table__header--appointment-sequence'
                             }, {
                                 text: "Date",
                                 classes: 'govuk-table__header'
@@ -108,8 +108,8 @@
                                 html: '<span class="govuk-visually-hidden">Actions</span>'
                             }
                         ],
-                        rows: occurrenceTableRows,
-                        attributes: { 'data-qa': 'appointment-occurrences' }
+                        rows: appointmentTableRows,
+                        attributes: { 'data-qa': 'appointment-appointments' }
                     }) }}
                 </div>
             </div>

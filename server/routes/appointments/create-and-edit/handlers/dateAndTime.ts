@@ -65,7 +65,7 @@ export default class DateAndTimeRoutes {
     req.session.appointmentJourney = null
     req.session.editAppointmentJourney = null
 
-    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+    return res.redirect(`/appointments/${appointmentId}`)
   }
 
   private setTimeAndDate(req: Request, journeyName: string) {

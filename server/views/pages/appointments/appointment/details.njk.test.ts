@@ -7,13 +7,13 @@ import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 
-const view = fs.readFileSync('server/views/pages/appointments/occurrence-details/details.njk')
+const view = fs.readFileSync('server/views/pages/appointments/appointment/details.njk')
 
-describe('Views - Appointments Management - Appointment Occurrence Details', () => {
+describe('Views - Appointments Management - Appointment Details', () => {
   let compiledTemplate: Template
   const tomorrow = addDays(new Date(), 1)
-  let viewContext: { occurrence: AppointmentDetails } = {
-    occurrence: {} as AppointmentDetails,
+  let viewContext: { appointment: AppointmentDetails } = {
+    appointment: {} as AppointmentDetails,
   }
 
   const njkEnv = registerNunjucks()
@@ -21,30 +21,32 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
   beforeEach(() => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
-      occurrence: {
+      appointment: {
         id: 10,
-        appointmentId: 5,
+        appointmentSeries: { id: 5 },
         appointmentType: AppointmentType.INDIVIDUAL,
-        prisoners: [
+        attendees: [
           {
-            firstName: 'TEST',
-            lastName: 'PRISONER',
-            prisonerNumber: 'A1234BC',
-            prisonCode: 'MDI',
-            cellLocation: '1-2-3',
+            prisoner: {
+              firstName: 'TEST',
+              lastName: 'PRISONER',
+              prisonerNumber: 'A1234BC',
+              prisonCode: 'MDI',
+              cellLocation: '1-2-3',
+            },
           },
         ],
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
         startTime: '23:59',
         isCancelled: false,
         isExpired: false,
-        created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
+        createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
     }
   })
 
   it('should display name in heading', () => {
-    viewContext.occurrence.appointmentName = 'Test Category'
+    viewContext.appointment.appointmentName = 'Test Category'
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -63,9 +65,9 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
     expect($('[data-qa=print-movement-slips]').attr('target')).toBe('_blank')
   })
 
-  it('should show updated by if occurrence has been updated', () => {
-    viewContext.occurrence.updated = formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss")
-    viewContext.occurrence.updatedBy = {
+  it('should show updated by if appointment has been updated', () => {
+    viewContext.appointment.updatedTime = formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss")
+    viewContext.appointment.updatedBy = {
       id: 123,
       username: 'joebloggs',
       firstName: 'Joe',
@@ -80,31 +82,35 @@ describe('Views - Appointments Management - Appointment Occurrence Details', () 
 
   it('should show number of attendees for group appointments', () => {
     viewContext = {
-      occurrence: {
+      appointment: {
         id: 10,
-        appointmentId: 5,
+        appointmentSeries: { id: 5 },
         appointmentType: AppointmentType.GROUP,
-        prisoners: [
+        attendees: [
           {
-            firstName: 'TEST 1',
-            lastName: 'PRISONER 1',
-            prisonerNumber: 'A1234BC',
-            prisonCode: 'MDI',
-            cellLocation: '1-2-3',
+            prisoner: {
+              firstName: 'TEST 1',
+              lastName: 'PRISONER 1',
+              prisonerNumber: 'A1234BC',
+              prisonCode: 'MDI',
+              cellLocation: '1-2-3',
+            },
           },
           {
-            firstName: 'TEST 2',
-            lastName: 'PRISONER 2',
-            prisonerNumber: 'A1234BD',
-            prisonCode: 'MDI',
-            cellLocation: '1-2-3',
+            prisoner: {
+              firstName: 'TEST 2',
+              lastName: 'PRISONER 2',
+              prisonerNumber: 'A1234BD',
+              prisonCode: 'MDI',
+              cellLocation: '1-2-3',
+            },
           },
         ],
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
         startTime: '23:59',
         isCancelled: false,
         isExpired: false,
-        created: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
+        createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
     }
 

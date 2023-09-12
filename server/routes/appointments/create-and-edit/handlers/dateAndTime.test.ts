@@ -64,7 +64,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/date-and-time', {
-        backLinkHref: `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+        backLinkHref: `/appointments/${appointmentId}`,
       })
     })
   })
@@ -274,7 +274,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
       expect(req.session.editAppointmentJourney).toBeNull()
       expect(req.session.appointmentJourney).toBeNull()
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/2/occurrence/12`)
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/12`)
     })
   })
 

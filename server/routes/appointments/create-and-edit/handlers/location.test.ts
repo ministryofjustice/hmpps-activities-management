@@ -92,7 +92,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/location', {
         locations,
-        backLinkHref: `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
+        backLinkHref: `/appointments/${appointmentId}`,
         isCtaAcceptAndSave: true,
       })
     })

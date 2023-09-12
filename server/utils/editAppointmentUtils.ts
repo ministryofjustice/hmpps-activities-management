@@ -15,7 +15,7 @@ export const getAppointmentBackLinkHref = (req: Request, defaultBackLinkHref: st
     req.params.appointmentSeriesId &&
     req.params.appointmentId
   ) {
-    return `/appointments/${req.params.appointmentSeriesId}/occurrence/${req.params.appointmentId}`
+    return `/appointments/${req.params.appointmentId}`
   }
 
   return defaultBackLinkHref

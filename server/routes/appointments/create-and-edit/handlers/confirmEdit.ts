@@ -31,6 +31,6 @@ export default class ConfirmEditRoutes {
       return this.editAppointmentService.edit(req, res, req.session.editAppointmentJourney.applyTo)
     }
 
-    return res.redirect(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+    return res.redirect(`/appointments/${appointmentId}`)
   }
 }

@@ -37,7 +37,7 @@ export default class EditAppointmentService {
 
     this.clearSession(req)
 
-    return res.redirect(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`)
+    return res.redirect(`/appointments/${appointmentId}`)
   }
 
   async edit(req: Request, res: Response, applyTo: AppointmentApplyTo) {
@@ -92,7 +92,7 @@ export default class EditAppointmentService {
 
       this.clearSession(req)
 
-      return res.redirect(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`)
+      return res.redirect(`/appointments/${appointmentId}`)
     }
 
     const request = { applyTo } as AppointmentUpdateRequest
@@ -138,7 +138,7 @@ export default class EditAppointmentService {
 
     this.clearSession(req)
 
-    return res.redirectWithSuccess(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`, successHeading)
+    return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
   }
 
   private getEditedMessage(appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) {

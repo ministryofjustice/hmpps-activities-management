@@ -44,7 +44,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
       }
       await middleware(req, res, next)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`)
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
     })
 
     it('should redirect back to appointment details page when the edit appointment journey data is not in session', async () => {
@@ -56,7 +56,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
       req.session.editAppointmentJourney = null
       await middleware(req, res, next)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentSeriesId}/occurrence/${appointmentId}`)
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
     })
 
     it('should continue if both journeys data exists in session', async () => {

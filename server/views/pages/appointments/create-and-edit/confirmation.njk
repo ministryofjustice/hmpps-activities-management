@@ -26,11 +26,11 @@
                     on {{ (appointment.startDate or bulkAppointment.startDate) | toDate | formatDate }}.
                 {% else %}
                     starting on {{ appointment.startDate | toDate | formatDate }}.
-                    It will repeat {{ ("every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
-                                    ("daily (includes weekends)" if appointment.repeat.period == AppointmentRepeatPeriod.DAILY) +
-                                    ("weekly" if appointment.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
-                                    ("fortnightly" if appointment.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
-                                    ("monthly" if appointment.repeat.period == AppointmentRepeatPeriod.MONTHLY) }}
+                    It will repeat {{ ("every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentFrequency.WEEKDAY) +
+                                    ("daily (includes weekends)" if appointment.repeat.period == AppointmentFrequency.DAILY) +
+                                    ("weekly" if appointment.repeat.period == AppointmentFrequency.WEEKLY) +
+                                    ("fortnightly" if appointment.repeat.period == AppointmentFrequency.FORTNIGHTLY) +
+                                    ("monthly" if appointment.repeat.period == AppointmentFrequency.MONTHLY) }}
                     for {{ appointment.repeat.count }}
                     {% if appointment.repeat.count == 1 %}
                         appointment

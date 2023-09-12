@@ -6,21 +6,21 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
-{% from "pages/appointments/partials/prisoner-list.njk" import prisonerList %}
+{% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
 {% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
 
-{% set pageTitle = occurrence.appointmentName + (' single' if occurrence.repeat) + ' appointment details' %}
-{% set pageId = 'appointment-occurrence-view-details-page' %}
+{% set pageTitle = appointment.appointmentName + (' single' if appointment.repeat) + ' appointment details' %}
+{% set pageId = 'appointment-details-page' %}
 
-{% set occurenceLink = '/appointments/' + occurrence.appointmentId + '/occurrence/' + occurrence.id  %}
+{% set occurenceLink = '/appointments/' + appointment.id  %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {% if occurrence.isCancelled %}
+            {% if appointment.isCancelled %}
                 {% set cancelledAppointmentHeadingHtml %}
                     <h3 class="govuk-notification-banner__heading">Appointment cancelled</h3>
-                    <p class="govuk-body">This appointment was cancelled by {{ occurrence.cancelledBy | fullName | toTitleCase | initialiseName }} on {{ occurrence.cancelled | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
+                    <p class="govuk-body">This appointment was cancelled by {{ appointment.cancelledBy | fullName | toTitleCase | initialiseName }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
@@ -29,16 +29,16 @@
             {% endif %}
 
             <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ occurrence.appointmentName }}</h1>
-            <p class="govuk-body govuk-!-margin-top-1" data-qa='sub-heading'>{{ occurrence.startDate | toDate | formatDate }}</p>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ appointment.appointmentName }}</h1>
+            <p class="govuk-body govuk-!-margin-top-1" data-qa='sub-heading'>{{ appointment.startDate | toDate | formatDate }}</p>
 
-            {% if occurrence.bulkAppointment %}
+            {% if appointment.appointmentSet %}
                 {{ govukInsetText({
-                    html: 'This appointment was scheduled in a <strong>set of ' + occurrence.bulkAppointment.appointmentCount + '</strong>. You can <a href="/appointments/bulk-appointments/' + occurrence.bulkAppointment.id + '">view the set</a> to print all movement slips at once.'
+                    html: 'This appointment was scheduled in a <strong>set of ' + appointment.appointmentSet.appointmentCount + '</strong>. You can <a href="/appointments/set/' + appointment.appointmentSet.id + '">view the set</a> to print all movement slips at once.'
                 }) }}
             {% endif %}
 
-            {% if occurrence.repeat %}
+            {% if appointment.repeat %}
                 {{ govukSummaryList({
                     card: {
                         title: {
@@ -47,7 +47,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/appointments/" + occurrence.appointmentId,
+                                    href: "/appointments/" + appointment.appointmentId,
                                     text: "View series",
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { 'data-qa': 'view-series' }
@@ -61,18 +61,18 @@
                                 text: "Frequency"
                             },
                             value: {
-                                text: ("Every weekday (Monday to Friday)" if occurrence.repeat.period == AppointmentRepeatPeriod.WEEKDAY) +
-                                ("Daily (includes weekends)" if occurrence.repeat.period == AppointmentRepeatPeriod.DAILY) +
-                                ("Weekly" if occurrence.repeat.period == AppointmentRepeatPeriod.WEEKLY) +
-                                ("Fortnightly" if occurrence.repeat.period == AppointmentRepeatPeriod.FORTNIGHTLY) +
-                                ("Monthly" if occurrence.repeat.period == AppointmentRepeatPeriod.MONTHLY)
+                                text: ("Every weekday (Monday to Friday)" if appointment.repeat.period == AppointmentFrequency.WEEKDAY) +
+                                ("Daily (includes weekends)" if appointment.repeat.period == AppointmentFrequency.DAILY) +
+                                ("Weekly" if appointment.repeat.period == AppointmentFrequency.WEEKLY) +
+                                ("Fortnightly" if appointment.repeat.period == AppointmentFrequency.FORTNIGHTLY) +
+                                ("Monthly" if appointment.repeat.period == AppointmentFrequency.MONTHLY)
                             }
                         }, {
                             key: {
                                 text: "Appointment"
                             },
                             value: {
-                                text: occurrence.sequenceNumber + " of " + occurrence.repeat.count
+                                text: appointment.sequenceNumber + " of " + appointment.repeat.count
                             }
                         }
                     ],
@@ -94,7 +94,7 @@
                                 attributes: { 'data-qa': 'cancel-appointment' }
                             }
                         ]
-                    } if occurrence.isCancelled == false and occurrence.isExpired == false
+                    } if appointment.isCancelled == false and appointment.isExpired == false
                 },
                 rows: [
                     {
@@ -102,14 +102,14 @@
                             text: "Appointment name"
                         },
                         value: {
-                            text: occurrence.appointmentName
+                            text: appointment.appointmentName
                         }
                     }, {
                         key: {
                             text: "Location"
                         },
                         value: {
-                            text: occurrence.internalLocation.description
+                            text: appointment.internalLocation.description
                         },
                         actions: {
                             items: [
@@ -120,13 +120,13 @@
                                     attributes: { 'data-qa': 'change-location' }
                                 }
                             ]
-                        } if occurrence.isCancelled == false and occurrence.isExpired == false
+                        } if appointment.isCancelled == false and appointment.isExpired == false
                     }, {
                         key: {
                             text: "Date"
                         },
                         value: {
-                            text: occurrence.startDate | toDate | formatDate
+                            text: appointment.startDate | toDate | formatDate
                         },
                         actions: {
                             items: [
@@ -137,13 +137,13 @@
                                     attributes: { 'data-qa': 'change-date' }
                                 }
                             ]
-                        } if occurrence.isCancelled == false and occurrence.isExpired == false
+                        } if appointment.isCancelled == false and appointment.isExpired == false
                     }, {
                         key: {
                             text: "Start time"
                         },
                         value: {
-                            text: occurrence.startTime
+                            text: appointment.startTime
                         },
                         actions: {
                             items: [
@@ -154,13 +154,13 @@
                                     attributes: { 'data-qa': 'change-start-time' }
                                 }
                             ]
-                        } if occurrence.isCancelled == false and occurrence.isExpired == false
+                        } if appointment.isCancelled == false and appointment.isExpired == false
                     }, {
                         key: {
                             text: "End time"
                         },
                         value: {
-                            text: occurrence.endTime
+                            text: appointment.endTime
                         },
                         actions: {
                             items: [
@@ -171,13 +171,13 @@
                                     attributes: { 'data-qa': 'change-end-time' }
                                 }
                             ]
-                        } if occurrence.isCancelled == false and occurrence.isExpired == false
+                        } if appointment.isCancelled == false and appointment.isExpired == false
                     }, {
                         key: {
                             text: "Extra information"
                         },
                         value: {
-                            html: '<span class="preserve-line-breaks">' + (occurrence.comment | escape) + '</span>'
+                            html: '<span class="preserve-line-breaks">' + (appointment.comment | escape) + '</span>'
                         },
                         actions: {
                             items: [
@@ -188,13 +188,13 @@
                                     attributes: { 'data-qa': 'change-comment' }
                                 }
                             ]
-                        } if occurrence.isCancelled == false and occurrence.isExpired == false
+                        } if appointment.isCancelled == false and appointment.isExpired == false
                     }
                 ],
                 attributes: { 'data-qa': 'appointment-details' }
             }) }}
 
-            {{ prisonerList(occurrence) }}
+            {{ attendeeList(appointment) }}
 
             {{ govukSummaryList({
                 card: {
@@ -208,30 +208,30 @@
                         text: "Created by"
                     },
                         value: {
-                            text: serviceUserName(occurrence.createdBy)
+                            text: serviceUserName(appointment.createdBy)
                         }
                     }, {
                         key: {
                             text: "Date created"
                         },
                         value: {
-                            text: occurrence.created | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
+                            text: appointment.createdTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
                         }
                     }, {
                         key: {
                             text: "Last edited by"
                         },
                         value: {
-                            text: serviceUserName(occurrence.updatedBy)
+                            text: serviceUserName(appointment.updatedBy)
                         }
-                    } if occurrence.updatedBy, {
+                    } if appointment.updatedBy, {
                         key: {
                             text: "Date last edited"
                         },
                         value: {
-                            text: occurrence.updated | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
+                            text: appointment.updatedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
                         }
-                    } if occurrence.updated
+                    } if appointment.updated
                 ],
                 attributes: { 'data-qa': 'appointment-history' }
             }) }}

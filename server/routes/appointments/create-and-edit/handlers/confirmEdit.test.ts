@@ -91,7 +91,7 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
     })
 
     it('should edit', async () => {

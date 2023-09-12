@@ -25,32 +25,32 @@
                         errorMessage: validationErrors | findError('repeatPeriod'),
                         items: [
                             {
-                                value: AppointmentRepeatPeriod.WEEKDAY,
+                                value: AppointmentFrequency.WEEKDAY,
                                 text: "Every weekday (Monday to Friday)",
-                                checked: repeatPeriod == AppointmentRepeatPeriod.WEEKDAY
+                                checked: repeatPeriod == AppointmentFrequency.WEEKDAY
                             },
                             {
-                                value: AppointmentRepeatPeriod.DAILY,
+                                value: AppointmentFrequency.DAILY,
                                 text: "Daily (includes weekends)",
-                                checked: repeatPeriod == AppointmentRepeatPeriod.DAILY
+                                checked: repeatPeriod == AppointmentFrequency.DAILY
                             },
                             {
-                                value: AppointmentRepeatPeriod.WEEKLY,
+                                value: AppointmentFrequency.WEEKLY,
                                 text: "Weekly",
-                                checked: repeatPeriod == AppointmentRepeatPeriod.WEEKLY
+                                checked: repeatPeriod == AppointmentFrequency.WEEKLY
                             },
                             {
-                                value: AppointmentRepeatPeriod.FORTNIGHTLY,
+                                value: AppointmentFrequency.FORTNIGHTLY,
                                 text: "Fortnightly",
-                                checked: repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY
+                                checked: repeatPeriod == AppointmentFrequency.FORTNIGHTLY
                             },
                             {
-                                value: AppointmentRepeatPeriod.MONTHLY,
+                                value: AppointmentFrequency.MONTHLY,
                                 text: "Monthly",
                                 hint: {
                                     text: "On the same date every month or on the last day if there is no matching date"
                                 },
-                                checked: repeatPeriod == AppointmentRepeatPeriod.MONTHLY
+                                checked: repeatPeriod == AppointmentFrequency.MONTHLY
                             }
                         ]
                     }) }}

@@ -7,19 +7,18 @@ import validationMiddleware from '../../../middleware/validationMiddleware'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
-
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const searchHandler = new SearchRoutes(activitiesService, prisonService)
-  const selectDateHandler = new SelectDateRoutes()
+  const searchRoutes = new SearchRoutes(activitiesService, prisonService)
+  const selectDateRoutes = new SelectDateRoutes()
 
-  get('/', searchHandler.GET)
-  post('/', searchHandler.POST, Search)
+  get('/', searchRoutes.GET)
+  post('/', searchRoutes.POST, Search)
 
-  get('/select-date', selectDateHandler.GET)
-  post('/select-date', selectDateHandler.POST, SelectDate)
+  get('/select-date', selectDateRoutes.GET)
+  post('/select-date', selectDateRoutes.POST, SelectDate)
 
   return router
 }

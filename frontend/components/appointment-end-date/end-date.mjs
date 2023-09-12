@@ -8,10 +8,9 @@ function AppointmentEndDate(container) {
 
   function updateEndDate() {
     var repeatPeriodSelectedInput = container.querySelector('input[name=repeatPeriod]:checked')
-    // "Occurrences" is less ambiguous for these calculations
-    var occurrences = parseInt(repeatTimesInput.value)
+    var appointments = parseInt(repeatTimesInput.value)
 
-    if (!repeatPeriodSelectedInput || isNaN(occurrences) || occurrences < 1) {
+    if (!repeatPeriodSelectedInput || isNaN(appointments) || appointments < 1) {
       endDateContainer.innerHTML = ''
       return
     }
@@ -19,7 +18,7 @@ function AppointmentEndDate(container) {
     var startDate = new Date(container.dataset.startDate)
     var repeatPeriod = repeatPeriodSelectedInput.value
 
-    var endDate = calculateEndDate(startDate, repeatPeriod, occurrences)
+    var endDate = calculateEndDate(startDate, repeatPeriod, appointments)
 
     const dateOptions = {
       weekday: 'long',
@@ -38,46 +37,46 @@ function AppointmentEndDate(container) {
   }
 }
 
-export function calculateEndDate(startDate, repeatPeriod, occurrences) {
+export function calculateEndDate(startDate, repeatPeriod, appointments) {
   var endDate = new Date(startDate)
 
-  // If the appointment only occurs once then no calculation is needed, the
+  // If the is only one appointment then no calculation is needed, the
   // end date is the start date
-  if (occurrences > 1) {
+  if (appointments > 1) {
     var date = endDate.getDate()
 
     if (repeatPeriod == 'WEEKDAY') {
       // Account for starting on a weekend
       if (startDate.getDay() == 0 || startDate.getDay() == 6) {
         // If the start date is on a weekend we can pretend the first
-        // occurrence is on the Friday before to keep our calculations happy
+        // appointment is on the Friday before to keep our calculations happy
         if (startDate.getDay() == 0) date -= 2
         else if (startDate.getDay() == 6) date -= 1
         endDate.setDate(date)
       }
 
-      // Ignore the first occurrence as it's the start day
-      occurrences -= 1
+      // Ignore the first appointment as it's the start day
+      appointments -= 1
 
       // Calculate the number of weeks to add to the start date
-      var weeksToAdd = Math.floor(occurrences / 5)
+      var weeksToAdd = Math.floor(appointments / 5)
       date += weeksToAdd * 7
 
       // Calculate the remaining days to add
-      var remainingDaysToAdd = Math.floor(occurrences % 5)
+      var remainingDaysToAdd = Math.floor(appointments % 5)
       date += remainingDaysToAdd
 
       // Account for skipping over weekends
       if (endDate.getDay() + remainingDaysToAdd >= 6) date += 2
     } else if (repeatPeriod == 'DAILY') {
-      date += occurrences - 1
+      date += appointments - 1
     } else if (repeatPeriod == 'WEEKLY') {
-      date += Math.floor(occurrences - 1) * 7
+      date += Math.floor(appointments - 1) * 7
     } else if (repeatPeriod == 'FORTNIGHTLY') {
-      date += Math.floor(occurrences - 1) * 14
+      date += Math.floor(appointments - 1) * 14
     } else if (repeatPeriod == 'MONTHLY') {
       var month = endDate.getMonth()
-      month += Math.floor(occurrences - 1)
+      month += Math.floor(appointments - 1)
       endDate.setMonth(month)
 
       // When setting the month, if the day doesn't exist for updated date

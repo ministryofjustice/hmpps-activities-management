@@ -218,7 +218,7 @@
             {% if event.eventType == 'ACTIVITY' and event.eventSource =='SAA' %}
                 <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list">{{ event.summary }}</a>
             {% elseif event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
-                <a href="/appointments/{{ event.appointmentSeriesId }}/occurrence/{{ event.appointmentId }}">{{ event.summary }}</a>
+                <a href="/appointments/{{ event.appointmentId }}">{{ event.summary }}</a>
                 {% if event.cancelled %}
                     <div>{{ govukTag({ text: 'Cancelled Appointment', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
                 {% else %}
