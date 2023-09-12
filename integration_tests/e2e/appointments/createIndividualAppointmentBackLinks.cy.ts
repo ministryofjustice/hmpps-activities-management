@@ -10,14 +10,14 @@ import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
-import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
-import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
+import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSeries.json'
+import getAppointmentSeriesDetails from '../../fixtures/activitiesApi/getAppointmentSeriesDetails.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
-import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
-import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
+import ExtraInformationPage from '../../pages/appointments/create-and-edit/extraInformationPage'
+import RepeatFrequencyAndCountPage from '../../pages/appointments/create-and-edit/repeatFrequencyAndCountPage'
 import { formatDate } from '../../../server/utils/utils'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
@@ -25,8 +25,8 @@ context('Create individual appointment - back links', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   // To pass validation we must ensure the appointment details start date is set to tomorrow
-  getAppointmentDetails.startDate = tomorrowFormatted
-  getAppointmentDetails.occurrences[0].startDate = getAppointmentDetails.startDate
+  getAppointmentSeriesDetails.startDate = tomorrowFormatted
+  getAppointmentSeriesDetails.appointments[0].startDate = getAppointmentSeriesDetails.startDate
   getScheduledEvents.activities
     .filter(e => e.prisonerNumber === 'A7789DY')
     .forEach(e => {
@@ -42,8 +42,8 @@ context('Create individual appointment - back links', () => {
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
-    cy.stubEndpoint('POST', '/appointments', getAppointment)
-    cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
+    cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
+    cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
   })
 
   it('Create individual appointment - back links', () => {
@@ -82,10 +82,10 @@ context('Create individual appointment - back links', () => {
     const schedulePage = Page.verifyOnPage(SchedulePage)
     schedulePage.continue()
 
-    const commentPage = Page.verifyOnPage(CommentPage)
+    const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
 
     // Click through back links
-    commentPage.back()
+    extraInformationPage.back()
     Page.verifyOnPage(SchedulePage)
 
     schedulePage.back()
@@ -110,7 +110,7 @@ context('Create individual appointment - back links', () => {
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
 
-    // Continue to comment page
+    // Continue to extra information page
     selectPrisonerPage.continue()
     namePage.continue()
     locationPage.continue()
@@ -118,8 +118,8 @@ context('Create individual appointment - back links', () => {
     repeatPage.continue()
     schedulePage.continue()
 
-    Page.verifyOnPage(CommentPage)
-    commentPage.continue()
+    Page.verifyOnPage(ExtraInformationPage)
+    extraInformationPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertNoBackLink()
@@ -165,17 +165,17 @@ context('Create individual appointment - back links', () => {
     Page.verifyOnPage(RepeatPage)
     repeatPage.selectRepeat('Yes')
     repeatPage.continue()
-    const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-    repeatPeriodAndCountPage.selectRepeatPeriod('Every weekday (Monday to Friday)')
-    repeatPeriodAndCountPage.enterRepeatCount('5')
-    repeatPeriodAndCountPage.back()
+    const repeatFrequencyAndCountPage = Page.verifyOnPage(RepeatFrequencyAndCountPage)
+    repeatFrequencyAndCountPage.selectFrequency('Every weekday (Monday to Friday)')
+    repeatFrequencyAndCountPage.enterNumberOfAppointments('5')
+    repeatFrequencyAndCountPage.back()
     Page.verifyOnPage(RepeatPage)
     repeatPage.back()
     checkAnswersPage.assertRepeat('No')
 
-    checkAnswersPage.changeComment()
-    Page.verifyOnPage(CommentPage)
-    commentPage.back()
+    checkAnswersPage.changeExtraInformation()
+    Page.verifyOnPage(ExtraInformationPage)
+    extraInformationPage.back()
     Page.verifyOnPage(CheckAnswersPage)
 
     checkAnswersPage.createAppointment()

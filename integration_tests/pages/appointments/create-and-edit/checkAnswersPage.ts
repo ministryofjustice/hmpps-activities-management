@@ -3,7 +3,7 @@ import Page from '../../page'
 
 export default class CheckAnswersPage extends Page {
   constructor() {
-    super('appointments-create-check-answers-page')
+    super('appointment-check-answers-page')
   }
 
   assertAppointmentDetail = (header: string, value: string) =>
@@ -33,11 +33,11 @@ export default class CheckAnswersPage extends Page {
 
   assertRepeat = (option: string) => this.assertAppointmentDetail('Repeats', option)
 
-  assertRepeatPeriod = (option: string) => this.assertAppointmentDetail('Frequency', option)
+  assertFrequency = (option: string) => this.assertAppointmentDetail('Frequency', option)
 
-  assertRepeatCount = (option: string) => this.assertAppointmentDetail('Number of appointments', option)
+  assertNumberOfAppointments = (option: string) => this.assertAppointmentDetail('Number of appointments', option)
 
-  assertComment = (comment: string) => this.assertAppointmentDetail('Extra information', comment)
+  assertExtraInformation = (comment: string) => this.assertAppointmentDetail('Extra information', comment)
 
   changePrisoner = () => cy.get('[data-qa=change-prisoner]').click()
 
@@ -53,11 +53,11 @@ export default class CheckAnswersPage extends Page {
 
   changeRepeat = () => cy.get('[data-qa=change-repeat]').click()
 
-  changeRepeatPeriod = () => cy.get('[data-qa=change-repeat-period]').click()
+  changeFrequency = () => cy.get('[data-qa=change-frequency]').click()
 
-  changeRepeatCount = () => cy.get('[data-qa=change-repeat-count]').click()
+  changeNumberOfAppointments = () => cy.get('[data-qa=change-number-of-appointments]').click()
 
-  changeComment = () => cy.get('[data-qa=change-comment]').click()
+  changeExtraInformation = () => cy.get('[data-qa=change-extra-information]').click()
 
   createAppointment = () => cy.get('button').contains('Confirm').click()
 }

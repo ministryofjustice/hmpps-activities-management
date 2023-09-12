@@ -1,9 +1,9 @@
 import { format } from 'date-fns'
 import Page from '../../page'
 
-export default class OccurrenceDetailsPage extends Page {
+export default class AppointmentDetailsPage extends Page {
   constructor() {
-    super('appointment-occurrence-view-details-page')
+    super('appointment-details-page')
   }
 
   printMovementSlipLink = () => cy.get('[data-qa=print-movement-slips]')
@@ -25,7 +25,7 @@ export default class OccurrenceDetailsPage extends Page {
       .contains(cellLocation)
   }
 
-  assertCategory = (category: string) => this.assertAppointmentDetail('Appointment name', category)
+  assertName = (category: string) => this.assertAppointmentDetail('Appointment name', category)
 
   assertLocation = (location: string) => this.assertAppointmentDetail('Location', location)
 

@@ -10,26 +10,26 @@ import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
-import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
+import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSeries.json'
+import getAppointmentSeriesDetails from '../../fixtures/activitiesApi/getAppointmentSeriesDetails.json'
 import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
-import getOccurrenceDetails from '../../fixtures/activitiesApi/getOccurrenceDetails.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
-import OccurrenceMovementSlip from '../../pages/appointments/movementSlip/occurrenceMovementSlip'
+import AppointmentMovementSlipPage from '../../pages/appointments/appointment/appointmentMovementSlipPage'
 import { formatDate } from '../../../server/utils/utils'
-import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
-import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
+import AppointmentDetailsPage from '../../pages/appointments/appointment/appointmentDetailsPage'
+import ExtraInformationPage from '../../pages/appointments/create-and-edit/extraInformationPage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
 context('Create individual appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   // To pass validation we must ensure the appointment details start date is set to tomorrow
+  getAppointmentSeriesDetails.startDate = tomorrowFormatted
+  getAppointmentSeriesDetails.appointments[0].startDate = getAppointmentSeriesDetails.startDate
   getAppointmentDetails.startDate = tomorrowFormatted
-  getAppointmentDetails.occurrences[0].startDate = getAppointmentDetails.startDate
-  getOccurrenceDetails.startDate = tomorrowFormatted
   getScheduledEvents.activities
     .filter(e => e.prisonerNumber === 'A7789DY')
     .forEach(e => {
@@ -45,9 +45,9 @@ context('Create individual appointment', () => {
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
-    cy.stubEndpoint('POST', '/appointments', getAppointment)
-    cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
-    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getOccurrenceDetails)
+    cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
+    cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
+    cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
   })
 
   it('Should complete create individual appointment journey', () => {
@@ -89,9 +89,9 @@ context('Create individual appointment', () => {
     const schedulePage = Page.verifyOnPage(SchedulePage)
     schedulePage.continue()
 
-    const commentPage = Page.verifyOnPage(CommentPage)
-    commentPage.enterComment('Appointment level comment')
-    commentPage.continue()
+    const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
+    extraInformationPage.enterExtraInformation('Appointment extra information')
+    extraInformationPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
@@ -101,7 +101,7 @@ context('Create individual appointment', () => {
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.assertRepeat('No')
-    checkAnswersPage.assertComment('Appointment level comment')
+    checkAnswersPage.assertExtraInformation('Appointment extra information')
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
@@ -116,9 +116,9 @@ context('Create individual appointment', () => {
 
     confirmationPage.viewAppointmentLink().click()
 
-    const appointmentDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
     appointmentDetailsPage.assertNoAppointmentSeriesDetails()
-    appointmentDetailsPage.assertCategory('Chaplaincy')
+    appointmentDetailsPage.assertName('Chaplaincy')
     appointmentDetailsPage.assertLocation('Chapel')
     appointmentDetailsPage.assertStartDate(tomorrow)
     appointmentDetailsPage.assertStartTime(14, 0)
@@ -130,13 +130,13 @@ context('Create individual appointment', () => {
     appointmentDetailsPage.printMovementSlipLink().invoke('removeAttr', 'target')
     appointmentDetailsPage.printMovementSlipLink().click()
 
-    const individualMovementSlipPage = Page.verifyOnPage(OccurrenceMovementSlip)
+    const individualMovementSlipPage = Page.verifyOnPage(AppointmentMovementSlipPage)
     individualMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
-    individualMovementSlipPage.assertCategory('Chaplaincy')
+    individualMovementSlipPage.assertName('Chaplaincy')
     individualMovementSlipPage.assertLocation('Chapel')
     individualMovementSlipPage.assertStartDate(tomorrow)
     individualMovementSlipPage.assertStartTime(14, 0)
     individualMovementSlipPage.assertEndTime(15, 30)
-    individualMovementSlipPage.assertComments('Appointment occurrence level comment')
+    individualMovementSlipPage.assertExtraInformation('Appointment extra information')
   })
 })

@@ -1,0 +1,49 @@
+{
+  "id": 10,
+  "appointmentName": "Chaplaincy",
+  "category": {
+    "code": "CHAP",
+    "description": "Chaplaincy"
+  },
+  "prisonCode": "MDI",
+  "internalLocation": {
+    "id": 26152,
+    "prisonCode": "MDI",
+    "description": "Chapel"
+  },
+  "inCell": false,
+  "startDate": "2023-02-22",
+  "startTime": "14:00",
+  "endTime": "15:30",
+  "schedule": {
+    "frequency": "WEEKLY",
+    "numberOfAppointments": 2
+  },
+  "appointmentType": "INDIVIDUAL",
+  "extraInformation": "Repeat appointment series extra information",
+  "createdTime": "2023-02-20T10:00:00",
+  "createdBy": {
+    "id": 231232,
+    "username": "USER1",
+    "firstName": "john",
+    "lastName": "smith"
+  },
+  "updatedTime": null,
+  "updatedBy": null,
+  "appointments": [
+    {
+      "id": 11,
+      "sequenceNumber": 1,
+      "startDate": "2023-02-22",
+      "startTime": "14:00",
+      "endTime": "15:30"
+    },
+    {
+      "id": 12,
+      "sequenceNumber": 2,
+      "startDate": "2023-02-29",
+      "startTime": "14:00",
+      "endTime": "15:30"
+    }
+  ]
+}

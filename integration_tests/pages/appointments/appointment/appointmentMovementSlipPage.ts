@@ -1,9 +1,9 @@
 import Page from '../../page'
 import { formatDate } from '../../../../server/utils/utils'
 
-export default class OccurrenceMovementSlip extends Page {
+export default class AppointmentMovementSlipPage extends Page {
   constructor() {
-    super('occurrence-movement-slip-page')
+    super('appointment-movement-slip-page')
   }
 
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {
@@ -12,7 +12,7 @@ export default class OccurrenceMovementSlip extends Page {
     cy.get('[data-qa=cell-location]').contains(cellLocation)
   }
 
-  assertCategory = (category: string) => cy.get('[data-qa=appointment]').contains(category)
+  assertName = (name: string) => cy.get('[data-qa=appointment]').contains(name)
 
   assertLocation = (location: string) => cy.get('[data-qa=location]').contains(location)
 
@@ -24,5 +24,5 @@ export default class OccurrenceMovementSlip extends Page {
   assertEndTime = (hour: number, minute: number) =>
     cy.get('[data-qa=time]').contains(`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
-  assertComments = (comments: string) => cy.get('[data-qa=extra-information]').contains(comments)
+  assertExtraInformation = (extraInformation: string) => cy.get('[data-qa=extra-information]').contains(extraInformation)
 }

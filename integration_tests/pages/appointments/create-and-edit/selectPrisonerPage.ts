@@ -2,7 +2,7 @@ import Page from '../../page'
 
 export default class SelectPrisonerPage extends Page {
   constructor() {
-    super('appointments-create-select-prisoner-page')
+    super('appointment-select-prisoner-page')
   }
 
   enterPrisonerNumber = (prisonerNumber: string) => this.getInputByName('query').clear().type(prisonerNumber)

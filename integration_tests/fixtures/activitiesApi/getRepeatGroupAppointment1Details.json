@@ -1,9 +1,13 @@
 {
   "id": 11,
   "appointmentSeries": {
-    "id": 10
+    "id": 10,
+    "schedule": {
+      "frequency": "WEEKLY",
+      "numberOfAppointments": 2
+    }
   },
-  "sequenceNumber": 2,
+  "sequenceNumber": 1,
   "category": {
     "code": "CHAP",
     "description": "Chaplaincy"

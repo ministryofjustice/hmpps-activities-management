@@ -10,21 +10,20 @@ import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
-import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
-import getRepeatAppointmentDetails from '../../fixtures/activitiesApi/getRepeatAppointmentDetails.json'
-import getRepeatOccurrence1Details from '../../fixtures/activitiesApi/getRepeatOccurrence1Details.json'
-import getRepeatOccurrence2Details from '../../fixtures/activitiesApi/getRepeatOccurrence2Details.json'
+import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSeries.json'
+import getRepeatAppointmentSeriesDetails from '../../fixtures/activitiesApi/getRepeatAppointmentSeriesDetails.json'
+import getRepeatAppointment1Details from '../../fixtures/activitiesApi/getRepeatAppointment1Details.json'
+import getRepeatAppointment2Details from '../../fixtures/activitiesApi/getRepeatAppointment2Details.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
-import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
+import RepeatFrequencyAndCountPage from '../../pages/appointments/create-and-edit/repeatFrequencyAndCountPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
-import AppointmentDetailsPage from '../../pages/appointments/details/appointmentDetails'
-import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
-import OccurrenceMovementSlip from '../../pages/appointments/movementSlip/occurrenceMovementSlip'
-import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
-import getOccurrenceDetails from '../../fixtures/activitiesApi/getOccurrenceDetails.json'
+import AppointmentSeriesDetailsPage from '../../pages/appointments/appointment-series/appointmentSeriesDetailsPage'
+import AppointmentDetailsPage from '../../pages/appointments/appointment/appointmentDetailsPage'
+import AppointmentMovementSlipPage from '../../pages/appointments/appointment/appointmentMovementSlipPage'
+import ExtraInformationPage from '../../pages/appointments/create-and-edit/extraInformationPage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
 context('Individual repeat appointment', () => {
@@ -33,12 +32,11 @@ context('Individual repeat appointment', () => {
   const weekTomorrow = addWeeks(tomorrow, 1)
   const weekTomorrowFormatted = formatDate(weekTomorrow, 'yyyy-MM-dd')
   // To pass validation we must ensure the appointment details start date are set to the future
-  getRepeatAppointmentDetails.startDate = tomorrowFormatted
-  getRepeatAppointmentDetails.occurrences[0].startDate = tomorrowFormatted
-  getRepeatAppointmentDetails.occurrences[1].startDate = weekTomorrowFormatted
-  getRepeatOccurrence1Details.startDate = tomorrowFormatted
-  getRepeatOccurrence2Details.startDate = weekTomorrowFormatted
-  getOccurrenceDetails.startDate = tomorrowFormatted
+  getRepeatAppointmentSeriesDetails.startDate = tomorrowFormatted
+  getRepeatAppointmentSeriesDetails.appointments[0].startDate = tomorrowFormatted
+  getRepeatAppointmentSeriesDetails.appointments[1].startDate = weekTomorrowFormatted
+  getRepeatAppointment1Details.startDate = tomorrowFormatted
+  getRepeatAppointment2Details.startDate = weekTomorrowFormatted
   getScheduledEvents.activities
     .filter(e => e.prisonerNumber === 'A7789DY')
     .forEach(e => {
@@ -54,10 +52,10 @@ context('Individual repeat appointment', () => {
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
-    cy.stubEndpoint('POST', '/appointments', getAppointment)
-    cy.stubEndpoint('GET', '/appointment-details/10', getRepeatAppointmentDetails)
-    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getRepeatOccurrence1Details)
-    cy.stubEndpoint('GET', '/appointment-occurrence-details/12', getRepeatOccurrence2Details)
+    cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
+    cy.stubEndpoint('GET', '/appointment-series/10/details', getRepeatAppointmentSeriesDetails)
+    cy.stubEndpoint('GET', '/appointments/11/details', getRepeatAppointment1Details)
+    cy.stubEndpoint('GET', '/appointments/12/details', getRepeatAppointment2Details)
 
     // Move through create individual appointment to repeat page
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -94,21 +92,21 @@ context('Individual repeat appointment', () => {
       repeatPage.selectRepeat('Yes')
       repeatPage.continue()
 
-      const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-      repeatPeriodAndCountPage.selectRepeatPeriod('Weekly')
-      repeatPeriodAndCountPage.enterRepeatCount('2')
-      repeatPeriodAndCountPage.continue()
+      const repeatFrequencyAndCountPage = Page.verifyOnPage(RepeatFrequencyAndCountPage)
+      repeatFrequencyAndCountPage.selectFrequency('Weekly')
+      repeatFrequencyAndCountPage.enterNumberOfAppointments('2')
+      repeatFrequencyAndCountPage.continue()
 
       const schedulePage = Page.verifyOnPage(SchedulePage)
       schedulePage.continue()
 
-      const commentPage = Page.verifyOnPage(CommentPage)
-      commentPage.continue()
+      const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
+      extraInformationPage.continue()
 
       const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.assertRepeat('Yes')
-      checkAnswersPage.assertRepeatPeriod('Weekly')
-      checkAnswersPage.assertRepeatCount('2')
+      checkAnswersPage.assertFrequency('Weekly')
+      checkAnswersPage.assertNumberOfAppointments('2')
       checkAnswersPage.createAppointment()
 
       const confirmationPage = Page.verifyOnPage(ConfirmationPage)
@@ -121,55 +119,55 @@ context('Individual repeat appointment', () => {
 
       confirmationPage.viewAppointmentLink().click()
 
-      const occurrenceDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
-      occurrenceDetailsPage.assertAppointmentSeriesDetails()
-      occurrenceDetailsPage.assertViewSeriesLink()
-      occurrenceDetailsPage.viewSeriesLink().click()
-
       const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
       appointmentDetailsPage.assertAppointmentSeriesDetails()
-      appointmentDetailsPage.assertRepeatPeriod('Weekly')
-      appointmentDetailsPage.assertRepeatCount('2')
-      appointmentDetailsPage.assertOccurrences(
+      appointmentDetailsPage.assertViewSeriesLink()
+      appointmentDetailsPage.viewSeriesLink().click()
+
+      const appointmentSeriesDetailsPage = Page.verifyOnPage(AppointmentSeriesDetailsPage)
+      appointmentSeriesDetailsPage.assertAppointmentSeriesDetails()
+      appointmentSeriesDetailsPage.assertFrequency('Weekly')
+      appointmentSeriesDetailsPage.assertNumberOfAppointments('2')
+      appointmentSeriesDetailsPage.assertAppointments(
         new Map([
           [1, formatDate(tomorrow, 'd MMM yyyy')],
           [2, formatDate(weekTomorrow, 'd MMM yyyy')],
         ]),
       )
+      appointmentSeriesDetailsPage.assertCreatedBy('J. Smith')
+
+      // View appointment
+      appointmentSeriesDetailsPage.manageAppointmentLink(2).click()
+      Page.verifyOnPage(AppointmentDetailsPage)
+      appointmentDetailsPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
+      appointmentDetailsPage.assertName('Chaplaincy')
+      appointmentDetailsPage.assertLocation('Chapel')
+      appointmentDetailsPage.assertStartDate(weekTomorrow)
+      appointmentDetailsPage.assertStartTime(14, 0)
+      appointmentDetailsPage.assertEndTime(15, 30)
       appointmentDetailsPage.assertCreatedBy('J. Smith')
+      appointmentDetailsPage.assertPrintMovementSlipLink()
 
-      // View appointment occurrence
-      appointmentDetailsPage.viewEditOccurrenceLink(2).click()
-      Page.verifyOnPage(OccurrenceDetailsPage)
-      occurrenceDetailsPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
-      occurrenceDetailsPage.assertCategory('Chaplaincy')
-      occurrenceDetailsPage.assertLocation('Chapel')
-      occurrenceDetailsPage.assertStartDate(weekTomorrow)
-      occurrenceDetailsPage.assertStartTime(14, 0)
-      occurrenceDetailsPage.assertEndTime(15, 30)
-      occurrenceDetailsPage.assertCreatedBy('J. Smith')
-      occurrenceDetailsPage.assertPrintMovementSlipLink()
+      // Go back to appointment series details
+      appointmentDetailsPage.viewSeriesLink().click()
+      Page.verifyOnPage(AppointmentSeriesDetailsPage)
 
-      // Go back to appointment details
-      occurrenceDetailsPage.viewSeriesLink().click()
+      // Print appointment movement slip
+      appointmentSeriesDetailsPage.manageAppointmentLink(2).click()
       Page.verifyOnPage(AppointmentDetailsPage)
 
-      // Print occurrence movement slip
-      appointmentDetailsPage.viewEditOccurrenceLink(2).click()
-      Page.verifyOnPage(OccurrenceDetailsPage)
+      appointmentDetailsPage.printMovementSlipLink().invoke('removeAttr', 'target')
+      appointmentDetailsPage.printMovementSlipLink().click()
 
-      occurrenceDetailsPage.printMovementSlipLink().invoke('removeAttr', 'target')
-      occurrenceDetailsPage.printMovementSlipLink().click()
-
-      const occurrenceMovementSlipPage = Page.verifyOnPage(OccurrenceMovementSlip)
-      occurrenceMovementSlipPage.assertComments('Appointment occurrence level comment')
-      occurrenceMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
-      occurrenceMovementSlipPage.assertCategory('Chaplaincy')
-      occurrenceMovementSlipPage.assertLocation('Chapel')
-      occurrenceMovementSlipPage.assertStartDate(weekTomorrow)
-      occurrenceMovementSlipPage.assertStartTime(14, 0)
-      occurrenceMovementSlipPage.assertEndTime(15, 30)
-      occurrenceMovementSlipPage.assertComments('Appointment occurrence level comment')
+      const appointmentMovementSlipPage = Page.verifyOnPage(AppointmentMovementSlipPage)
+      appointmentMovementSlipPage.assertExtraInformation('Appointment extra information')
+      appointmentMovementSlipPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', 'MDI-1-3')
+      appointmentMovementSlipPage.assertName('Chaplaincy')
+      appointmentMovementSlipPage.assertLocation('Chapel')
+      appointmentMovementSlipPage.assertStartDate(weekTomorrow)
+      appointmentMovementSlipPage.assertStartTime(14, 0)
+      appointmentMovementSlipPage.assertEndTime(15, 30)
+      appointmentMovementSlipPage.assertExtraInformation('Appointment extra information')
     })
 
     it('Create individual repeat appointment - back links', () => {
@@ -177,10 +175,10 @@ context('Individual repeat appointment', () => {
       repeatPage.selectRepeat('Yes')
       repeatPage.continue()
 
-      const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
+      const repeatFrequencyAndCountPage = Page.verifyOnPage(RepeatFrequencyAndCountPage)
 
       // Click through back links
-      repeatPeriodAndCountPage.back()
+      repeatFrequencyAndCountPage.back()
       Page.verifyOnPage(RepeatPage)
       repeatPage.assertRepeat('Yes')
 
@@ -190,20 +188,20 @@ context('Individual repeat appointment', () => {
       dateAndTimePage.assertStartTime(14, 0)
       dateAndTimePage.assertEndTime(15, 30)
 
-      // Continue to repeat period and count page
+      // Continue to repeat frequency and count page
       dateAndTimePage.continue()
       repeatPage.continue()
 
-      Page.verifyOnPage(RepeatPeriodAndCountPage)
-      repeatPeriodAndCountPage.selectRepeatPeriod('Daily (includes weekends)')
-      repeatPeriodAndCountPage.enterRepeatCount('7')
-      repeatPeriodAndCountPage.continue()
+      Page.verifyOnPage(RepeatFrequencyAndCountPage)
+      repeatFrequencyAndCountPage.selectFrequency('Daily (includes weekends)')
+      repeatFrequencyAndCountPage.enterNumberOfAppointments('7')
+      repeatFrequencyAndCountPage.continue()
 
       const schedulePage = Page.verifyOnPage(SchedulePage)
       schedulePage.continue()
 
-      const commentPage = Page.verifyOnPage(CommentPage)
-      commentPage.continue()
+      const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
+      extraInformationPage.continue()
 
       const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.assertNoBackLink()
@@ -214,13 +212,13 @@ context('Individual repeat appointment', () => {
       dateAndTimePage.back()
       Page.verifyOnPage(CheckAnswersPage)
 
-      checkAnswersPage.changeRepeatPeriod()
-      Page.verifyOnPage(RepeatPeriodAndCountPage)
+      checkAnswersPage.changeFrequency()
+      Page.verifyOnPage(RepeatFrequencyAndCountPage)
       dateAndTimePage.back()
       Page.verifyOnPage(CheckAnswersPage)
 
-      checkAnswersPage.changeRepeatCount()
-      Page.verifyOnPage(RepeatPeriodAndCountPage)
+      checkAnswersPage.changeNumberOfAppointments()
+      Page.verifyOnPage(RepeatFrequencyAndCountPage)
       dateAndTimePage.back()
       Page.verifyOnPage(CheckAnswersPage)
     })
@@ -233,8 +231,8 @@ context('Individual repeat appointment', () => {
       const schedulePage = Page.verifyOnPage(SchedulePage)
       schedulePage.continue()
 
-      const commentPage = Page.verifyOnPage(CommentPage)
-      commentPage.continue()
+      const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
+      extraInformationPage.continue()
 
       const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.assertRepeat('No')
@@ -246,12 +244,12 @@ context('Individual repeat appointment', () => {
       repeatPage.selectRepeat('Yes')
       repeatPage.continue()
 
-      const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-      repeatPeriodAndCountPage.selectRepeatPeriod('Every weekday (Monday to Friday)')
-      repeatPeriodAndCountPage.enterRepeatCount('5')
+      const repeatFrequencyAndCountPage = Page.verifyOnPage(RepeatFrequencyAndCountPage)
+      repeatFrequencyAndCountPage.selectFrequency('Every weekday (Monday to Friday)')
+      repeatFrequencyAndCountPage.enterNumberOfAppointments('5')
 
       // Go back to change answer page and confirm that repeat is still 'No'
-      repeatPeriodAndCountPage.back()
+      repeatFrequencyAndCountPage.back()
       Page.verifyOnPage(RepeatPage)
       repeatPage.back()
 
@@ -265,15 +263,15 @@ context('Individual repeat appointment', () => {
       repeatPage.selectRepeat('Yes')
       repeatPage.continue()
 
-      Page.verifyOnPage(RepeatPeriodAndCountPage)
-      repeatPeriodAndCountPage.selectRepeatPeriod('Daily (includes weekends)')
-      repeatPeriodAndCountPage.enterRepeatCount('7')
-      repeatPeriodAndCountPage.continue()
+      Page.verifyOnPage(RepeatFrequencyAndCountPage)
+      repeatFrequencyAndCountPage.selectFrequency('Daily (includes weekends)')
+      repeatFrequencyAndCountPage.enterNumberOfAppointments('7')
+      repeatFrequencyAndCountPage.continue()
 
       Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.assertRepeat('Yes')
-      checkAnswersPage.assertRepeatPeriod('Daily (includes weekends)')
-      checkAnswersPage.assertRepeatCount('7')
+      checkAnswersPage.assertFrequency('Daily (includes weekends)')
+      checkAnswersPage.assertNumberOfAppointments('7')
 
       // Click to change repeat from yes but keep yes selected
       checkAnswersPage.changeRepeat()
@@ -283,22 +281,22 @@ context('Individual repeat appointment', () => {
       repeatPage.continue()
       Page.verifyOnPage(CheckAnswersPage)
 
-      // Change repeat period and count
-      checkAnswersPage.changeRepeatPeriod()
-      Page.verifyOnPage(RepeatPeriodAndCountPage)
-      repeatPeriodAndCountPage.assertRepeatPeriod('Daily (includes weekends)')
-      repeatPeriodAndCountPage.selectRepeatPeriod('Fortnightly')
-      repeatPeriodAndCountPage.continue()
+      // Change repeat frequency and count
+      checkAnswersPage.changeFrequency()
+      Page.verifyOnPage(RepeatFrequencyAndCountPage)
+      repeatFrequencyAndCountPage.assertFrequency('Daily (includes weekends)')
+      repeatFrequencyAndCountPage.selectFrequency('Fortnightly')
+      repeatFrequencyAndCountPage.continue()
       Page.verifyOnPage(CheckAnswersPage)
-      checkAnswersPage.assertRepeatPeriod('Fortnightly')
+      checkAnswersPage.assertFrequency('Fortnightly')
 
-      checkAnswersPage.changeRepeatCount()
-      Page.verifyOnPage(RepeatPeriodAndCountPage)
-      repeatPeriodAndCountPage.assertRepeatCount('7')
-      repeatPeriodAndCountPage.enterRepeatCount('4')
-      repeatPeriodAndCountPage.continue()
+      checkAnswersPage.changeNumberOfAppointments()
+      Page.verifyOnPage(RepeatFrequencyAndCountPage)
+      repeatFrequencyAndCountPage.assertNumberOfAppointments('7')
+      repeatFrequencyAndCountPage.enterNumberOfAppointments('4')
+      repeatFrequencyAndCountPage.continue()
       Page.verifyOnPage(CheckAnswersPage)
-      checkAnswersPage.assertRepeatCount('4')
+      checkAnswersPage.assertNumberOfAppointments('4')
     })
   })
 
@@ -311,46 +309,46 @@ context('Individual repeat appointment', () => {
 
     describe('Every weekday', () => {
       it(`should display end date`, () => {
-        const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-        repeatPeriodAndCountPage.selectRepeatPeriod('Every weekday')
-        repeatPeriodAndCountPage.enterRepeatCount('1')
-        repeatPeriodAndCountPage.assertEndDate(format(tomorrow, 'EEEE, d MMMM yyyy'))
+        const repeatFrequencyAndCountPage = Page.verifyOnPage(RepeatFrequencyAndCountPage)
+        repeatFrequencyAndCountPage.selectFrequency('Every weekday')
+        repeatFrequencyAndCountPage.enterNumberOfAppointments('1')
+        repeatFrequencyAndCountPage.assertEndDate(format(tomorrow, 'EEEE, d MMMM yyyy'))
       })
     })
 
     describe('Daily', () => {
       it(`should display correct end date`, () => {
-        const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-        repeatPeriodAndCountPage.selectRepeatPeriod('Daily')
-        repeatPeriodAndCountPage.enterRepeatCount('3')
-        repeatPeriodAndCountPage.assertEndDate(format(addDays(tomorrow, 2), 'EEEE, d MMMM yyyy'))
+        const repeatFrequencyAndCountPage = Page.verifyOnPage(RepeatFrequencyAndCountPage)
+        repeatFrequencyAndCountPage.selectFrequency('Daily')
+        repeatFrequencyAndCountPage.enterNumberOfAppointments('3')
+        repeatFrequencyAndCountPage.assertEndDate(format(addDays(tomorrow, 2), 'EEEE, d MMMM yyyy'))
       })
     })
 
     describe('Weekly', () => {
       it(`should display correct end date`, () => {
-        const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-        repeatPeriodAndCountPage.selectRepeatPeriod('Weekly')
-        repeatPeriodAndCountPage.enterRepeatCount('3')
-        repeatPeriodAndCountPage.assertEndDate(format(addWeeks(tomorrow, 2), 'EEEE, d MMMM yyyy'))
+        const repeatFrequencyAndCountPage = Page.verifyOnPage(RepeatFrequencyAndCountPage)
+        repeatFrequencyAndCountPage.selectFrequency('Weekly')
+        repeatFrequencyAndCountPage.enterNumberOfAppointments('3')
+        repeatFrequencyAndCountPage.assertEndDate(format(addWeeks(tomorrow, 2), 'EEEE, d MMMM yyyy'))
       })
     })
 
     describe('should display correct end date', () => {
       it(`should display correct end date`, () => {
-        const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-        repeatPeriodAndCountPage.selectRepeatPeriod('Fortnightly')
-        repeatPeriodAndCountPage.enterRepeatCount('3')
-        repeatPeriodAndCountPage.assertEndDate(format(addWeeks(tomorrow, 2 * 2), 'EEEE, d MMMM yyyy'))
+        const repeatFrequencyAndCountPage = Page.verifyOnPage(RepeatFrequencyAndCountPage)
+        repeatFrequencyAndCountPage.selectFrequency('Fortnightly')
+        repeatFrequencyAndCountPage.enterNumberOfAppointments('3')
+        repeatFrequencyAndCountPage.assertEndDate(format(addWeeks(tomorrow, 2 * 2), 'EEEE, d MMMM yyyy'))
       })
     })
 
     describe('Monthly', () => {
       it(`should display end date`, () => {
-        const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-        repeatPeriodAndCountPage.selectRepeatPeriod('Monthly')
-        repeatPeriodAndCountPage.enterRepeatCount('3')
-        repeatPeriodAndCountPage.assertEndDate(format(addMonths(tomorrow, 2), 'EEEE, d MMMM yyyy'))
+        const repeatFrequencyAndCountPage = Page.verifyOnPage(RepeatFrequencyAndCountPage)
+        repeatFrequencyAndCountPage.selectFrequency('Monthly')
+        repeatFrequencyAndCountPage.enterNumberOfAppointments('3')
+        repeatFrequencyAndCountPage.assertEndDate(format(addMonths(tomorrow, 2), 'EEEE, d MMMM yyyy'))
       })
     })
   })
