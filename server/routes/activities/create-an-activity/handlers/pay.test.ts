@@ -376,7 +376,11 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       expect(errors).toEqual(
         expect.arrayContaining([
-          { property: 'bandId', error: 'A rate for the selected band and incentive level combination already exists' },
+          {
+            property: 'bandId',
+            error:
+              'You can only use each pay band once for an incentive level. Select a pay band which has not already been used',
+          },
         ]),
       )
     })
@@ -399,7 +403,10 @@ describe('Route Handlers - Create an activity - Pay', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { error: 'Enter a pay amount that is at least the minimum pay and no more than maximum pay', property: 'rate' },
+        {
+          error: 'Enter a pay amount that is at least £0.7 (minimum pay) and no more than £1 (maximum pay)',
+          property: 'rate',
+        },
       ])
     })
 
@@ -421,7 +428,10 @@ describe('Route Handlers - Create an activity - Pay', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { error: 'Enter a pay amount that is at least the minimum pay and no more than maximum pay', property: 'rate' },
+        {
+          error: 'Enter a pay amount that is at least £0.7 (minimum pay) and no more than £1 (maximum pay)',
+          property: 'rate',
+        },
       ])
     })
 

@@ -17,7 +17,7 @@ export class StartDate {
     message: (args: ValidationArguments) => {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
       const activityStartDate = formatDate(new Date(allocateJourney.activity.startDate), 'dd-MM-yyyy')
-      return `Enter a date on or after the activity's scheduled start date , ${activityStartDate}`
+      return `Enter a date on or after the activity's scheduled start date, ${activityStartDate}`
     },
   })
   @DateIsSameOrBefore(o => o.allocateJourney.activity.endDate, {
