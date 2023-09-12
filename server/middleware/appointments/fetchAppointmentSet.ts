@@ -5,10 +5,10 @@ import ActivitiesService from '../../services/activitiesService'
 export default (activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
     const { user } = res.locals
-    const { appointmentSet } = req
-    const appointmentSetId = +req.params.appointmentSetId
+    const { appointment, appointmentSet } = req
+    const appointmentSetId = appointment?.appointmentSet?.id ?? +req.params.appointmentSetId
     try {
-      if (appointmentSet?.id !== appointmentSetId) {
+      if (appointmentSetId && !Number.isNaN(appointmentSetId) && appointmentSet?.id !== appointmentSetId) {
         req.appointmentSet = await activitiesService.getAppointmentSetDetails(appointmentSetId, user)
       }
     } catch (error) {

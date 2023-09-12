@@ -43,8 +43,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
 
   router.get(
     '/start/cancel',
-    fetchAppointmentSeries(activitiesService),
     fetchAppointment(activitiesService),
+    fetchAppointmentSeries(activitiesService),
     startHandler.CANCEL,
   )
   get('/cancel/reason', cancellationReasonRoutes.GET, true)
@@ -57,8 +57,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   // Edit property routes
   router.get(
     '/start/:property',
-    fetchAppointmentSeries(activitiesService),
     fetchAppointment(activitiesService),
+    fetchAppointmentSeries(activitiesService),
     startHandler.EDIT,
   )
   get('/location', locationRoutes.GET, true)
@@ -76,8 +76,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   // Remove prisoner routes
   router.get(
     '/start/:prisonNumber/remove',
-    fetchAppointmentSeries(activitiesService),
     fetchAppointment(activitiesService),
+    fetchAppointmentSeries(activitiesService),
     startHandler.REMOVE_PRISONER,
   )
   get('/:prisonNumber/remove/confirm', confirmEditRoutes.GET, true)
@@ -93,8 +93,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
 
   router.get(
     '/start/prisoners/add',
-    fetchAppointmentSeries(activitiesService),
     fetchAppointment(activitiesService),
+    fetchAppointmentSeries(activitiesService),
     startHandler.ADD_PRISONERS,
   )
   get('/prisoners/add/how-to-add-prisoners', howToAddPrisoners.GET, true)

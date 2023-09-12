@@ -6,15 +6,15 @@ import { parseDate } from '../../utils/utils'
 export default (activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
     const { user } = res.locals
-    const { appointmentSeries } = req
-    const appointmentSeriesId = +req.params.appointmentSeriesId
+    const { appointment, appointmentSeries } = req
+    const appointmentSeriesId = appointment?.appointmentSeries?.id ?? +req.params.appointmentSeriesId
     try {
-      if (appointmentSeries?.id !== appointmentSeriesId) {
+      if (appointmentSeriesId && !Number.isNaN(appointmentSeriesId) && appointmentSeries?.id !== appointmentSeriesId) {
         req.appointmentSeries = await activitiesService.getAppointmentSeriesDetails(appointmentSeriesId, user)
 
         const now = new Date()
         req.appointmentSeries.appointments = req.appointmentSeries.appointments.filter(
-          appointment => parseDate(`${appointment.startDate}T${appointment.startTime}`, "yyyy-MM-dd'T'HH:mm") >= now,
+          a => parseDate(`${a.startDate}T${a.startTime}`, "yyyy-MM-dd'T'HH:mm") >= now,
         )
       }
     } catch (error) {
