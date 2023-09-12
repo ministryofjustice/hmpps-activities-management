@@ -16,7 +16,7 @@ export default class ScheduleRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { occurrenceId } = req.params
+    const { appointmentId } = req.params
     const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
     const { preserveHistory } = req.query
 
@@ -51,7 +51,7 @@ export default class ScheduleRoutes {
       )
       .then(response => [
         ...response.activities,
-        ...response.appointments.filter(e => e.appointmentOccurrenceId !== +occurrenceId),
+        ...response.appointments.filter(e => e.appointmentId !== +appointmentId),
         ...response.courtHearings,
         ...response.visits,
         ...response.externalTransfers,

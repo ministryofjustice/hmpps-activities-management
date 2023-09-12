@@ -87,7 +87,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
   describe('GET', () => {
     it('should render the schedule view with back to repeat page', async () => {
-      req.params.occurrenceId = '1'
+      req.params.appointmentId = '1'
       req.session.appointmentJourney.repeat = YesNo.NO
 
       await handler.GET(req, res)
@@ -313,8 +313,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       })
     })
 
-    it('should not display current appointment occurrence as a clash', async () => {
-      req.params.occurrenceId = '1'
+    it('should not display current appointment as a clash', async () => {
+      req.params.appointmentId = '1'
       req.session.appointmentJourney.type = AppointmentType.GROUP
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
@@ -325,8 +325,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       }
       req.session.appointmentJourney.prisoners = [prisoner]
 
-      const appointmentEvent1 = { appointmentOccurrenceId: 1, prisonerNumber: prisoner.number }
-      const appointmentEvent2 = { appointmentOccurrenceId: 2, prisonerNumber: prisoner.number }
+      const appointmentEvent1 = { appointmentId: 1, prisonerNumber: prisoner.number }
+      const appointmentEvent2 = { appointmentId: 2, prisonerNumber: prisoner.number }
       const appointmentEvents = {
         activities: [],
         appointments: [appointmentEvent1, appointmentEvent2],
