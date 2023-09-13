@@ -9,7 +9,7 @@ import EndDateRoutes, { EndDate } from './endDate'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -49,6 +49,35 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         endDate: undefined,
         startDate: formatDate(new Date(), 'yyyy-MM-dd'),
       })
+    })
+
+    it('should render the expected view in edit mode', async () => {
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(2))
+        .mockResolvedValueOnce({
+          id: 1,
+          activity: { id: 1 },
+          description: 'Maths',
+          internalLocation: { description: 'Education room 1' },
+          startDate: '2023-07-26',
+          allocations: [{ startDate: '2023-07-26' }],
+        } as unknown as ActivitySchedule)
+
+      req = {
+        session: {
+          createJourney: { startDate: simpleDateFromDate(new Date()), activityId: 1, scheduleId: 2 },
+        },
+        query: {
+          fromEditActivity: true,
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/end-date', {
+        endDate: undefined,
+        startDate: formatDate(new Date(), 'yyyy-MM-dd'),
+      })
+      expect(req.session.createJourney.latestAllocationStartDate).toEqual(new Date('2023-07-26'))
     })
   })
 

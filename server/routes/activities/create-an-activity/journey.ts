@@ -19,6 +19,7 @@ export type Slots = {
 
 export type CreateAnActivityJourney = {
   activityId?: number
+  scheduleId?: number
   category?: {
     id: number
     code: string

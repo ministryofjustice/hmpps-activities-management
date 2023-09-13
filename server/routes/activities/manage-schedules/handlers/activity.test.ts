@@ -146,6 +146,7 @@ describe('Route Handlers - View Activity', () => {
         currentWeek: 1,
         attendanceCount: 0,
       })
+      expect(req.session.createJourney.scheduleId).toEqual([activitySchedule][0].id)
     })
   })
 })
