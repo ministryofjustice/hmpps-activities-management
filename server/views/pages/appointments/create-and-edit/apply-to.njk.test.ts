@@ -8,28 +8,27 @@ import {
   AppointmentJourneyMode,
   AppointmentType,
 } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentFrequency } from '../../../../@types/appointments'
 import { formatDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/apply-to.njk')
 
 describe('Views - Appointments Management - Apply to', () => {
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentId = 2
   const weekTomorrow = addDays(new Date(), 8)
   const applyToOptions = [
     {
-      applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+      applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
       description: `Just this one - ${formatDate(weekTomorrow, 'EEEE, d MMMM yyyy')} (2 of 3)`,
     },
     {
-      applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+      applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
       description: 'This one and the appointment that comes after it in the series',
       additionalDescription: `You’re changing appointments 2 to 3`,
     },
     {
-      applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
+      applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
       description: 'This one and all the appointments in the series that haven’t happened yet',
       additionalDescription: `You’re changing appointments 1 to 2`,
     },
@@ -41,7 +40,6 @@ describe('Views - Appointments Management - Apply to', () => {
       editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     },
     appointmentId,
-    occurrenceId,
     property: '',
     frequencyText: null as string,
     applyToOptions,
@@ -66,11 +64,11 @@ describe('Views - Appointments Management - Apply to', () => {
             year: weekTomorrow.getFullYear(),
             date: weekTomorrow,
           },
-          repeatPeriod: AppointmentRepeatPeriod.DAILY,
+          frequency: AppointmentFrequency.DAILY,
         },
         editAppointmentJourney: {
-          repeatCount: 3,
-          occurrences: [
+          numberOfAppointments: 3,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: format(weekTomorrow, 'yyyy-MM-dd'),
@@ -87,7 +85,6 @@ describe('Views - Appointments Management - Apply to', () => {
         } as EditAppointmentJourney,
       },
       appointmentId,
-      occurrenceId,
       property: 'location',
       frequencyText: 'This appointment repeats every day',
       applyToOptions,

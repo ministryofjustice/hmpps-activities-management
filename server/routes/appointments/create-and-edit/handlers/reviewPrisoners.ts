@@ -5,12 +5,12 @@ import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
 
 export default class ReviewPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentId, occurrenceId } = req.params
+    const { appointmentId } = req.params
     const { appointmentJourney } = req.session
     const { preserveHistory } = req.query
 
     let backLinkHref =
-      appointmentJourney.type === AppointmentType.BULK ? 'upload-bulk-appointment' : 'how-to-add-prisoners'
+      appointmentJourney.type === AppointmentType.SET ? 'upload-appointment-set' : 'how-to-add-prisoners'
     if (appointmentJourney.fromPrisonNumberProfile) {
       backLinkHref = `${config.dpsUrl}/prisoner/${appointmentJourney.fromPrisonNumberProfile}`
     }
@@ -28,15 +28,14 @@ export default class ReviewPrisonerRoutes {
         eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
         properties,
       })
-    } else if (req.session.appointmentJourney.type === AppointmentType.BULK) {
-      prisoners = req.session.bulkAppointmentJourney.appointments.map(appointment => appointment.prisoner)
+    } else if (req.session.appointmentJourney.type === AppointmentType.SET) {
+      prisoners = req.session.appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
     } else {
       prisoners = req.session.appointmentJourney.prisoners
     }
 
     res.render('pages/appointments/create-and-edit/review-prisoners', {
       appointmentId,
-      occurrenceId,
       backLinkHref,
       preserveHistory,
       prisoners,
@@ -58,8 +57,8 @@ export default class ReviewPrisonerRoutes {
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
 
-    if (req.session.appointmentJourney.type === AppointmentType.BULK) {
-      req.session.bulkAppointmentJourney.appointments = req.session.bulkAppointmentJourney.appointments.filter(
+    if (req.session.appointmentJourney.type === AppointmentType.SET) {
+      req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.filter(
         appointment => appointment.prisoner.number !== prisonNumber,
       )
     } else {

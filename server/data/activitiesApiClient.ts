@@ -15,27 +15,27 @@ import {
   Activity,
   ActivityCreateRequest,
   PrisonPayBand,
-  Appointment,
+  AppointmentSeries,
   AppointmentCategorySummary,
-  AppointmentCreateRequest,
+  AppointmentSeriesCreateRequest,
   AttendanceReason,
+  AppointmentSeriesDetails,
   AppointmentDetails,
-  AppointmentOccurrenceDetails,
   ScheduleInstanceCancelRequest,
   UncancelScheduledInstanceRequest,
   PageActivityCandidate,
-  AppointmentOccurrenceUpdateRequest,
+  AppointmentUpdateRequest,
   AppointmentLocationSummary,
   AllAttendance,
   RolloutPrisonPlan,
-  AppointmentOccurrenceSearchRequest,
-  AppointmentOccurrenceSearchResult,
+  AppointmentSearchRequest,
+  AppointmentSearchResult,
   ActivityUpdateRequest,
   AllocationUpdateRequest,
-  AppointmentOccurrenceCancelRequest,
-  BulkAppointmentsRequest,
-  BulkAppointment,
-  BulkAppointmentDetails,
+  AppointmentCancelRequest,
+  AppointmentSetCreateRequest,
+  AppointmentSet,
+  AppointmentSetDetails,
   EventReviewSearchResults,
   DeallocationReason,
   PrisonerDeallocationRequest,
@@ -282,20 +282,17 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
+  async getAppointmentSeriesDetails(appointmentSeriesId: number, user: ServiceUser): Promise<AppointmentSeriesDetails> {
     return this.get({
-      path: `/appointment-details/${appointmentId}`,
+      path: `/appointment-series/${appointmentSeriesId}/details`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
-  async getAppointmentOccurrenceDetails(
-    appointmentOccurrenceId: number,
-    user: ServiceUser,
-  ): Promise<AppointmentOccurrenceDetails> {
+  async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
     return this.get({
-      path: `/appointment-occurrence-details/${appointmentOccurrenceId}`,
+      path: `/appointments/${appointmentId}/details`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
@@ -317,30 +314,30 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async postCreateAppointment(appointment: AppointmentCreateRequest, user: ServiceUser): Promise<Appointment> {
-    return this.post({
-      path: `/appointments`,
-      authToken: user.token,
-      headers: CASELOAD_HEADER(user.activeCaseLoadId),
-      data: appointment,
-    })
-  }
-
-  async postCreateBulkAppointment(
-    bulkAppointments: BulkAppointmentsRequest,
+  async postCreateAppointmentSeries(
+    request: AppointmentSeriesCreateRequest,
     user: ServiceUser,
-  ): Promise<BulkAppointment> {
+  ): Promise<AppointmentSeries> {
     return this.post({
-      path: `/bulk-appointments`,
+      path: `/appointment-series`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
-      data: bulkAppointments,
+      data: request,
     })
   }
 
-  async getBulkAppointmentDetails(bulkAppointmentId: number, user: ServiceUser): Promise<BulkAppointmentDetails> {
+  async postCreateAppointmentSet(request: AppointmentSetCreateRequest, user: ServiceUser): Promise<AppointmentSet> {
+    return this.post({
+      path: `/appointment-set`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: request,
+    })
+  }
+
+  async getAppointmentSetDetails(appointmentSetId: number, user: ServiceUser): Promise<AppointmentSetDetails> {
     return this.get({
-      path: `/bulk-appointment-details/${bulkAppointmentId}`,
+      path: `/appointment-set/${appointmentSetId}/details`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
@@ -378,16 +375,16 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async editAppointmentOccurrence(
-    occurrenceId: number,
-    occurrenceDetails: AppointmentOccurrenceUpdateRequest,
+  async patchUpdateAppointment(
+    appointmentId: number,
+    request: AppointmentUpdateRequest,
     user: ServiceUser,
   ): Promise<void> {
     return this.patch({
-      path: `/appointment-occurrences/${occurrenceId}`,
+      path: `/appointments/${appointmentId}`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
-      data: occurrenceDetails,
+      data: request,
     })
   }
 
@@ -423,29 +420,25 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async searchAppointmentOccurrences(
+  async searchAppointments(
     prisonCode: string,
-    searchRequest: AppointmentOccurrenceSearchRequest,
+    request: AppointmentSearchRequest,
     user: ServiceUser,
-  ): Promise<AppointmentOccurrenceSearchResult[]> {
+  ): Promise<AppointmentSearchResult[]> {
     return this.post({
-      path: `/appointment-occurrences/${prisonCode}/search`,
+      path: `/appointments/${prisonCode}/search`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
-      data: searchRequest,
+      data: request,
     })
   }
 
-  async cancelAppointmentOccurrence(
-    occurrenceId: number,
-    cancelRequest: AppointmentOccurrenceCancelRequest,
-    user: ServiceUser,
-  ): Promise<void> {
+  async cancelAppointments(appointmentId: number, request: AppointmentCancelRequest, user: ServiceUser): Promise<void> {
     return this.put({
-      path: `/appointment-occurrences/${occurrenceId}/cancel`,
+      path: `/appointments/${appointmentId}/cancel`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
-      data: cancelRequest,
+      data: request,
     })
   }
 

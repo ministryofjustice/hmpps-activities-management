@@ -19,8 +19,7 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
   const weekTomorrow = addDays(new Date(), 8)
   let req: Request
   let res: Response
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentId = 2
 
   beforeEach(() => {
     req = {
@@ -36,8 +35,8 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
           },
         },
         editAppointmentJourney: {
-          repeatCount: 4,
-          occurrences: [
+          numberOfAppointments: 4,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: format(weekTomorrow, 'yyyy-MM-dd'),
@@ -56,12 +55,11 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
             },
           ],
           sequenceNumber: 2,
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
         } as EditAppointmentJourney,
       },
       params: {
         appointmentId,
-        occurrenceId,
       },
     } as unknown as Request
 
@@ -77,21 +75,20 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirm-edit', {
         appointmentId,
-        occurrenceId,
         startDate: new Date(req.session.appointmentJourney.startDate.date),
       })
     })
   })
 
   describe('POST', () => {
-    it('should redirect to occurrence details page', async () => {
+    it('should redirect to appointment details page', async () => {
       req.body = {
         confirm: YesNo.NO,
       }
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
     })
 
     it('should edit', async () => {
@@ -101,7 +98,7 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
 
       await handler.POST(req, res)
 
-      expect(editAppointmentService.edit).toHaveBeenCalledWith(req, res, AppointmentApplyTo.THIS_OCCURRENCE)
+      expect(editAppointmentService.edit).toHaveBeenCalledWith(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
     })
   })
 

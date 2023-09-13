@@ -4,13 +4,13 @@ import fs from 'fs'
 import { addDays, format } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/confirmation.njk')
 
-describe('Views - Create Appointment - Check Answers', () => {
+describe('Views - Create Appointment - Confirmation', () => {
   let compiledTemplate: Template
   const tomorrow = addDays(new Date(), 1)
   const viewContext = {
@@ -23,17 +23,19 @@ describe('Views - Create Appointment - Check Answers', () => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
   })
 
-  it('should not display repeat frequency or occurrences when repeat = NO', () => {
+  it('should not display repeat frequency or number of appointments when no schedule is defined', () => {
     viewContext.appointment = {
+      appointmentSeries: { schedule: null },
       appointmentType: AppointmentType.INDIVIDUAL,
       startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
-      prisoners: [
+      attendees: [
         {
-          firstName: 'TEST',
-          lastName: 'PRISONER',
+          prisoner: {
+            firstName: 'TEST',
+            lastName: 'PRISONER',
+          },
         },
       ],
-      repeat: null,
     } as AppointmentDetails
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -44,27 +46,26 @@ describe('Views - Create Appointment - Check Answers', () => {
   })
 
   it.each([
-    { repeatPeriod: AppointmentRepeatPeriod.WEEKDAY, expectedText: 'every weekday (Monday to Friday)' },
-    { repeatPeriod: AppointmentRepeatPeriod.DAILY, expectedText: 'daily (includes weekends)' },
-    { repeatPeriod: AppointmentRepeatPeriod.WEEKLY, expectedText: 'weekly' },
-    { repeatPeriod: AppointmentRepeatPeriod.FORTNIGHTLY, expectedText: 'fortnightly' },
-    { repeatPeriod: AppointmentRepeatPeriod.MONTHLY, expectedText: 'monthly' },
+    { frequency: AppointmentFrequency.WEEKDAY, expectedText: 'every weekday (Monday to Friday)' },
+    { frequency: AppointmentFrequency.DAILY, expectedText: 'daily (includes weekends)' },
+    { frequency: AppointmentFrequency.WEEKLY, expectedText: 'weekly' },
+    { frequency: AppointmentFrequency.FORTNIGHTLY, expectedText: 'fortnightly' },
+    { frequency: AppointmentFrequency.MONTHLY, expectedText: 'monthly' },
   ])(
-    'frequency $repeatPeriod should be displayed as $expectedText with occurrences when repeat = YES',
-    ({ repeatPeriod, expectedText }) => {
+    'frequency $frequency should be displayed as $expectedText with number of appointments when repeat = YES',
+    ({ frequency, expectedText }) => {
       viewContext.appointment = {
+        appointmentSeries: { schedule: { frequency, numberOfAppointments: 6 } },
         appointmentType: AppointmentType.INDIVIDUAL,
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
-        prisoners: [
+        attendees: [
           {
-            firstName: 'TEST',
-            lastName: 'PRISONER',
+            prisoner: {
+              firstName: 'TEST',
+              lastName: 'PRISONER',
+            },
           },
         ],
-        repeat: {
-          period: repeatPeriod,
-          count: 6,
-        },
       } as AppointmentDetails
 
       const $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -81,23 +82,29 @@ describe('Views - Create Appointment - Check Answers', () => {
   describe('Group Appointment', () => {
     it('should display number of prisoners added to appointment', () => {
       viewContext.appointment = {
+        appointmentSeries: { schedule: null },
         appointmentType: AppointmentType.GROUP,
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
-        prisoners: [
+        attendees: [
           {
-            firstName: 'TEST',
-            lastName: 'PRISONER',
+            prisoner: {
+              firstName: 'TEST',
+              lastName: 'PRISONER',
+            },
           },
           {
-            firstName: 'SECOND',
-            lastName: 'PRISONER',
+            prisoner: {
+              firstName: 'SECOND',
+              lastName: 'PRISONER',
+            },
           },
           {
-            firstName: 'THIRD',
-            lastName: 'PRISONER',
+            prisoner: {
+              firstName: 'THIRD',
+              lastName: 'PRISONER',
+            },
           },
         ],
-        repeat: null,
       } as AppointmentDetails
 
       const $ = cheerio.load(compiledTemplate.render(viewContext))

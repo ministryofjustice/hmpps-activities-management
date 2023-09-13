@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express'
 import { when } from 'jest-when'
-import fetchAppointment from './fetchAppointment'
 import { AppointmentDetails } from '../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../@types/express'
 import ActivitiesService from '../../services/activitiesService'
+import fetchAppointment from './fetchAppointment'
 
 jest.mock('../../services/activitiesService')
 

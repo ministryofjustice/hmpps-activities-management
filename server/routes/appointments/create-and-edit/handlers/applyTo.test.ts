@@ -5,7 +5,7 @@ import { addDays, format } from 'date-fns'
 import ApplyToRoutes, { ApplyTo } from './applyTo'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { AppointmentApplyTo, AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentApplyTo, AppointmentFrequency } from '../../../../@types/appointments'
 import { getAppointmentApplyToOptions, getRepeatFrequencyText } from '../../../../utils/editAppointmentUtils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
@@ -19,8 +19,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
   const weekTomorrow = addDays(new Date(), 8)
   let req: Request
   let res: Response
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentId = 2
   const property = 'location'
 
   beforeEach(() => {
@@ -29,7 +28,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
-          repeatPeriod: AppointmentRepeatPeriod.DAILY,
+          repeatFrequency: AppointmentFrequency.DAILY,
           startDate: {
             day: weekTomorrow.getDate(),
             month: weekTomorrow.getMonth() + 1,
@@ -38,8 +37,8 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
           },
         },
         editAppointmentJourney: {
-          repeatCount: 4,
-          occurrences: [
+          numberOfAppointments: 4,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: format(weekTomorrow, 'yyyy-MM-dd'),
@@ -62,7 +61,6 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
       },
       params: {
         appointmentId,
-        occurrenceId,
         property,
       },
     } as unknown as Request
@@ -81,7 +79,6 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/apply-to', {
         appointmentId,
-        occurrenceId,
         property,
         applyToOptions: getAppointmentApplyToOptions(req),
         frequencyText: getRepeatFrequencyText(req.session.appointmentJourney),
@@ -92,16 +89,16 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
   describe('POST', () => {
     it('should save apply to in session and edit', async () => {
       req.body = {
-        applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+        applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.editAppointmentJourney.applyTo).toEqual(AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES)
+      expect(req.session.editAppointmentJourney.applyTo).toEqual(AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
       expect(editAppointmentService.edit).toHaveBeenCalledWith(
         req,
         res,
-        AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+        AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
       )
     })
   })
@@ -143,7 +140,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
 
     it('passes validation when valid apply to value is selected', async () => {
       const body = {
-        applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+        applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
       }
 
       const requestObject = plainToInstance(ApplyTo, body)

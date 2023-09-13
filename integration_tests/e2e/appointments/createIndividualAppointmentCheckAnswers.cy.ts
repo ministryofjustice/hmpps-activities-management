@@ -12,15 +12,16 @@ import getPrisonerA1350DZ from '../../fixtures/prisonerSearchApi/getPrisoner-MDI
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
-import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
+import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSeries.json'
+import getAppointmentSeriesDetails from '../../fixtures/activitiesApi/getAppointmentSeriesDetails.json'
 import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
-import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
-import RepeatPeriodAndCountPage from '../../pages/appointments/create-and-edit/repeatPeriodAndCountPage'
+import ExtraInformationPage from '../../pages/appointments/create-and-edit/extraInformationPage'
+import RepeatFrequencyAndCountPage from '../../pages/appointments/create-and-edit/repeatFrequencyAndCountPage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
 context('Create individual appointment - check answers change links', () => {
@@ -28,10 +29,11 @@ context('Create individual appointment - check answers change links', () => {
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   const dayAfterTomorrow = addDays(new Date(), 2)
   const dayAfterTomorrowFormatted = formatDate(dayAfterTomorrow, 'yyyy-MM-dd')
-  getAppointmentDetails.startDate = dayAfterTomorrowFormatted
-  getAppointmentDetails.occurrences[0].startDate = getAppointmentDetails.startDate
-  getAppointmentDetails.prisoners[0].firstName = 'DAVID'
-  getAppointmentDetails.prisoners[0].lastName = 'WINCHURCH'
+  getAppointmentSeriesDetails.startDate = dayAfterTomorrowFormatted
+  getAppointmentSeriesDetails.appointments[0].startDate = getAppointmentSeriesDetails.startDate
+  getAppointmentDetails.startDate = getAppointmentSeriesDetails.startDate
+  getAppointmentDetails.attendees[0].prisoner.firstName = 'DAVID'
+  getAppointmentDetails.attendees[0].prisoner.lastName = 'WINCHURCH'
   getScheduledEvents.activities
     .filter(e => e.prisonerNumber === 'A7789DY')
     .forEach(e => {
@@ -55,8 +57,9 @@ context('Create individual appointment - check answers change links', () => {
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${dayAfterTomorrowFormatted}`, getScheduledEvents)
-    cy.stubEndpoint('POST', '/appointments', getAppointment)
-    cy.stubEndpoint('GET', '/appointment-details/10', getAppointmentDetails)
+    cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
+    cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
+    cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
   })
 
   it('Create individual appointment - check answers change links', () => {
@@ -95,8 +98,8 @@ context('Create individual appointment - check answers change links', () => {
     const schedulePage = Page.verifyOnPage(SchedulePage)
     schedulePage.continue()
 
-    const commentPage = Page.verifyOnPage(CommentPage)
-    commentPage.continue()
+    const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
+    extraInformationPage.continue()
 
     // Verify initial answers
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
@@ -107,7 +110,7 @@ context('Create individual appointment - check answers change links', () => {
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.assertRepeat('No')
-    checkAnswersPage.assertComment('')
+    checkAnswersPage.assertExtraInformation('')
 
     // Change each answer
     checkAnswersPage.changePrisoner()
@@ -172,20 +175,20 @@ context('Create individual appointment - check answers change links', () => {
     Page.verifyOnPage(RepeatPage)
     repeatPage.selectRepeat('Yes')
     repeatPage.continue()
-    const repeatPeriodAndCountPage = Page.verifyOnPage(RepeatPeriodAndCountPage)
-    repeatPeriodAndCountPage.selectRepeatPeriod('Every weekday')
-    repeatPeriodAndCountPage.enterRepeatCount('10')
-    repeatPeriodAndCountPage.continue()
+    const repeatFrequencyAndCountPage = Page.verifyOnPage(RepeatFrequencyAndCountPage)
+    repeatFrequencyAndCountPage.selectFrequency('Every weekday')
+    repeatFrequencyAndCountPage.enterNumberOfAppointments('10')
+    repeatFrequencyAndCountPage.continue()
     Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertRepeat('Yes')
-    checkAnswersPage.assertRepeatPeriod('Every weekday')
-    checkAnswersPage.assertRepeatCount('10')
+    checkAnswersPage.assertFrequency('Every weekday')
+    checkAnswersPage.assertNumberOfAppointments('10')
 
-    checkAnswersPage.changeComment()
-    Page.verifyOnPage(CommentPage)
-    commentPage.enterComment('Appointment level comment')
-    commentPage.continue()
-    checkAnswersPage.assertComment('Appointment level comment')
+    checkAnswersPage.changeExtraInformation()
+    Page.verifyOnPage(ExtraInformationPage)
+    extraInformationPage.enterExtraInformation('Appointment extra information')
+    extraInformationPage.continue()
+    checkAnswersPage.assertExtraInformation('Appointment extra information')
 
     checkAnswersPage.createAppointment()
 

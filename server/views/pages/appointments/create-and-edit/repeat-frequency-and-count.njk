@@ -1,0 +1,84 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+
+{% set pageTitle = appointmentJourneyTitle("Repeat appointment details", session.appointmentJourney) %}
+{% set pageId = 'appointment-repeat-frequency-and-count-page' %}
+{% set backLinkHref = "repeat" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            <h1 class="govuk-heading-l">How often will the appointment repeat?</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <div data-module="appointment-end-date" data-start-date="{{ session.appointmentJourney.startDate.date }}">
+                    {% set frequency = formResponses.frequency or session.appointmentJourney.frequency %}
+                    {{ govukRadios({
+                        name: "frequency",
+                        errorMessage: validationErrors | findError('frequency'),
+                        items: [
+                            {
+                                value: AppointmentFrequency.WEEKDAY,
+                                text: "Every weekday (Monday to Friday)",
+                                checked: frequency == AppointmentFrequency.WEEKDAY
+                            },
+                            {
+                                value: AppointmentFrequency.DAILY,
+                                text: "Daily (includes weekends)",
+                                checked: frequency == AppointmentFrequency.DAILY
+                            },
+                            {
+                                value: AppointmentFrequency.WEEKLY,
+                                text: "Weekly",
+                                checked: frequency == AppointmentFrequency.WEEKLY
+                            },
+                            {
+                                value: AppointmentFrequency.FORTNIGHTLY,
+                                text: "Fortnightly",
+                                checked: frequency == AppointmentFrequency.FORTNIGHTLY
+                            },
+                            {
+                                value: AppointmentFrequency.MONTHLY,
+                                text: "Monthly",
+                                hint: {
+                                    text: "On the same date every month or on the last day if there is no matching date"
+                                },
+                                checked: frequency == AppointmentFrequency.MONTHLY
+                            }
+                        ]
+                    }) }}
+
+                    {{ govukInput({
+                        id: "numberOfAppointments",
+                        name: "numberOfAppointments",
+                        label: {
+                            text: "How many times will the appointment repeat?",
+                            classes: "govuk-label--m"
+                        },
+                        hint: {
+                            text: "Enter the number of times the appointment will repeat up to a maximum of one year"
+                        },
+                        classes: "govuk-input--width-3",
+                        inputmode: "numeric",
+                        spellcheck: false,
+                        errorMessage: validationErrors | findError('numberOfAppointments'),
+                        value: formResponses.numberOfAppointments or session.appointmentJourney.numberOfAppointments
+                    }) }}
+
+                    <div data-qa='end-date' class="js-appointment-end-date govuk-body"></div>
+                </div>
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

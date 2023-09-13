@@ -5,7 +5,7 @@ import { uniq } from 'lodash'
 import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AppointmentOccurrenceSearchRequest } from '../../../../@types/activitiesAPI/types'
+import { AppointmentSearchRequest } from '../../../../@types/activitiesAPI/types'
 import { toDate, toDateString } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 
@@ -37,25 +37,25 @@ export default class SearchRoutes {
       internalLocationId: locationId ? +locationId : null,
       prisonerNumbers: prisonerNumber ? [prisonerNumber] : null,
       createdBy: createdBy && createdBy !== 'all' ? createdBy : null,
-    } as AppointmentOccurrenceSearchRequest
+    } as AppointmentSearchRequest
 
     const [categories, locations, appointments] = await Promise.all([
       this.activitiesService.getAppointmentCategories(user),
       this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user),
-      this.activitiesService.searchAppointmentOccurrences(user.activeCaseLoadId, request, user),
+      this.activitiesService.searchAppointments(user.activeCaseLoadId, request, user),
     ])
 
     const appointmentNameFilters = [
       ...categories.map(c => c.description),
-      ...appointments.filter(a => a.appointmentDescription).map(a => a.appointmentName),
-    ]
+      ...new Set(appointments.filter(a => a.customName).map(a => a.appointmentName)),
+    ].sort()
 
     const results = appointmentName
       ? appointments.filter(a => a.appointmentName === appointmentName || a.category.description === appointmentName)
       : appointments
 
-    // Get prisoner details for appointments with a single allocation
-    const prisonerNumbers = results.flatMap(r => (r.allocations.length === 1 ? r.allocations[0].prisonerNumber : []))
+    // Get prisoner details for appointments with a single attendee
+    const prisonerNumbers = results.flatMap(r => (r.attendees.length === 1 ? r.attendees[0].prisonerNumber : []))
     let prisonersDetails = {}
     if (prisonerNumbers.length > 0) {
       prisonersDetails = (await this.prisonService.searchInmatesByPrisonerNumbers(uniq(prisonerNumbers), user)).reduce(

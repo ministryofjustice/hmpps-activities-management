@@ -4,7 +4,7 @@ import StartJourneyRoutes from './handlers/startJourney'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ScheduleRoutes from './handlers/schedule'
-import CommentRoutes, { Comment } from './handlers/comment'
+import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
 import ApplyToRoutes, { ApplyTo } from './handlers/applyTo'
 import ConfirmEditRoutes, { ConfirmEdit } from './handlers/confirmEdit'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
@@ -14,9 +14,9 @@ import ReviewPrisoners from './handlers/reviewPrisoners'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyEditAppointmentJourneyHandler from '../../../middleware/emptyEditAppointmentJourneyHandler'
-import fetchAppointmentOccurrence from '../../../middleware/appointments/fetchAppointmentOccurrence'
-import EditAppointmentService from '../../../services/editAppointmentService'
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
+import EditAppointmentService from '../../../services/editAppointmentService'
+import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import CancellationReasonRoutes, { CancellationReason } from './handlers/cancellationReason'
@@ -30,11 +30,11 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const editAppointmentService = new EditAppointmentService(activitiesService)
-  const startHandler = new StartJourneyRoutes(prisonService)
+  const startJourneyRoutes = new StartJourneyRoutes(prisonService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeRoutes = new DateAndTimeRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService)
-  const commentHandler = new CommentRoutes(editAppointmentService)
+  const extraInformationRoutes = new ExtraInformationRoutes(editAppointmentService)
   const confirmEditRoutes = new ConfirmEditRoutes(editAppointmentService)
   const applyToRoutes = new ApplyToRoutes(editAppointmentService)
 
@@ -44,8 +44,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   router.get(
     '/start/cancel',
     fetchAppointment(activitiesService),
-    fetchAppointmentOccurrence(activitiesService),
-    startHandler.CANCEL,
+    fetchAppointmentSeries(activitiesService),
+    startJourneyRoutes.CANCEL,
   )
   get('/cancel/reason', cancellationReasonRoutes.GET, true)
   post('/cancel/reason', cancellationReasonRoutes.POST, CancellationReason)
@@ -58,8 +58,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   router.get(
     '/start/:property',
     fetchAppointment(activitiesService),
-    fetchAppointmentOccurrence(activitiesService),
-    startHandler.EDIT,
+    fetchAppointmentSeries(activitiesService),
+    startJourneyRoutes.EDIT,
   )
   get('/location', locationRoutes.GET, true)
   post('/location', locationRoutes.EDIT, Location)
@@ -68,8 +68,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   get('/schedule', scheduleRoutes.GET, true)
   post('/schedule', scheduleRoutes.EDIT)
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
-  get('/comment', commentHandler.GET, true)
-  post('/comment', commentHandler.EDIT, Comment)
+  get('/extra-information', extraInformationRoutes.GET, true)
+  post('/extra-information', extraInformationRoutes.EDIT, ExtraInformation)
   get('/:property/apply-to', applyToRoutes.GET, true)
   post('/:property/apply-to', applyToRoutes.POST, ApplyTo)
 
@@ -77,8 +77,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   router.get(
     '/start/:prisonNumber/remove',
     fetchAppointment(activitiesService),
-    fetchAppointmentOccurrence(activitiesService),
-    startHandler.REMOVE_PRISONER,
+    fetchAppointmentSeries(activitiesService),
+    startJourneyRoutes.REMOVE_PRISONER,
   )
   get('/:prisonNumber/remove/confirm', confirmEditRoutes.GET, true)
   post('/:prisonNumber/remove/confirm', confirmEditRoutes.POST, ConfirmEdit)
@@ -94,8 +94,8 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   router.get(
     '/start/prisoners/add',
     fetchAppointment(activitiesService),
-    fetchAppointmentOccurrence(activitiesService),
-    startHandler.ADD_PRISONERS,
+    fetchAppointmentSeries(activitiesService),
+    startJourneyRoutes.ADD_PRISONERS,
   )
   get('/prisoners/add/how-to-add-prisoners', howToAddPrisoners.GET, true)
   post('/prisoners/add/how-to-add-prisoners', howToAddPrisoners.POST, HowToAddPrisonersForm)

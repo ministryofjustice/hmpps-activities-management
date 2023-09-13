@@ -6,8 +6,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
   const handler = new ReviewPrisoners()
   let req: Request
   let res: Response
-  const appointmentId = '1'
-  const occurrenceId = '2'
+  const appointmentId = '2'
 
   beforeEach(() => {
     res = {
@@ -30,7 +29,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         editAppointmentJourney: {
           addPrisoners: [],
         },
-        bulkAppointmentJourney: {
+        appointmentSetJourney: {
           appointments: [],
         },
       },
@@ -61,9 +60,9 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       })
     })
 
-    it('should render the review prisoners view with back to upload bulk appointment', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
-      req.session.bulkAppointmentJourney.appointments = [
+    it('should render the review prisoners view with back to upload appointment set', async () => {
+      req.session.appointmentJourney.type = AppointmentType.SET
+      req.session.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -81,7 +80,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       ]
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
-        backLinkHref: 'upload-bulk-appointment',
+        backLinkHref: 'upload-appointment-set',
         prisoners: [
           {
             number: 'A1234BC',
@@ -109,7 +108,6 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     it('should render the review prisoners view with ids, added prisoners and back to how to add prisoners', async () => {
       req.params = {
         appointmentId,
-        occurrenceId,
       }
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       const prisoners = [
@@ -128,7 +126,6 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         appointmentId,
-        occurrenceId,
         backLinkHref: 'how-to-add-prisoners',
         prisoners,
       })
@@ -213,8 +210,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should remove appointment and redirect back to GET', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
-      req.session.bulkAppointmentJourney.appointments = [
+      req.session.appointmentJourney.type = AppointmentType.SET
+      req.session.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -237,7 +234,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',

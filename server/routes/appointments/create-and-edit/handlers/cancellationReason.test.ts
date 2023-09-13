@@ -10,15 +10,14 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
   const handler = new CancellationReasonRoutes()
   let req: Request
   let res: Response
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentId = 2
 
   beforeEach(() => {
     req = {
       session: {
         editAppointmentJourney: {
-          repeatCount: 4,
-          occurrences: [
+          numberOfAppointments: 4,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: '2023-01-01',
@@ -41,7 +40,6 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
       },
       params: {
         appointmentId,
-        occurrenceId,
       },
     } as unknown as Request
 
@@ -60,7 +58,6 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/cancellation-reason', {
         appointmentId,
-        occurrenceId,
       })
     })
   })
@@ -78,7 +75,7 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
     })
 
     it('should save apply to in session and redirect to confirm', async () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 2,
           startDate: '2023-01-02',

@@ -8,8 +8,8 @@
 
 {% set editMessage = getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) %}
 {% set pageTitle = appointmentJourneyTitle(editMessage + ' this appointment', session.appointmentJourney) %}
-{% set pageId = 'appointments-confirm-edit-page' %}
-{% set backLinkHref = ("review-prisoners" if session.editAppointmentJourney.addPrisoners else "/appointments/" + appointmentId + "/occurrence/" + occurrenceId) %}
+{% set pageId = 'appointment-confirm-edit-page' %}
+{% set backLinkHref = ("review-prisoners" if session.editAppointmentJourney.addPrisoners else "/appointments/" + appointmentId) %}
 
 {% block content %}
     <div class="govuk-grid-row">

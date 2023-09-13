@@ -43,7 +43,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           startDate: simpleDateFromDate(tomorrow),
           prisoners: [],
         },
-        bulkAppointmentJourney: {
+        appointmentSetJourney: {
           appointments: [],
         },
         editAppointmentJourney: {},
@@ -87,7 +87,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
   describe('GET', () => {
     it('should render the schedule view with back to repeat page', async () => {
-      req.params.occurrenceId = '1'
+      req.params.appointmentId = '1'
       req.session.appointmentJourney.repeat = YesNo.NO
 
       await handler.GET(req, res)
@@ -99,25 +99,25 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       })
     })
 
-    it('should render the schedule view with back to repeat period and count page', async () => {
+    it('should render the schedule view with back to repeat frequency and count page', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'repeat-period-and-count',
+        backLinkHref: 'repeat-frequency-and-count',
         isCtaAcceptAndSave: false,
         prisonerSchedules: [],
       })
     })
 
-    it('should render the schedule view with back to review bulk appointment page', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+    it('should render the schedule view with back to appointment set times page', async () => {
+      req.session.appointmentJourney.type = AppointmentType.SET
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'review-bulk-appointment',
+        backLinkHref: 'appointment-set-times',
         isCtaAcceptAndSave: false,
         prisonerSchedules: [],
       })
@@ -254,9 +254,9 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       })
     })
 
-    it('use bulk appointment appointments prisoner for type = BULK', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
-      req.session.bulkAppointmentJourney.appointments = [
+    it('use appointment set appointments prisoner for type = SET', async () => {
+      req.session.appointmentJourney.type = AppointmentType.SET
+      req.session.appointmentSetJourney.appointments = [
         {
           startTime: {
             hour: 9,
@@ -283,7 +283,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       )
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'review-bulk-appointment',
+        backLinkHref: 'appointment-set-times',
         prisonerSchedules: [
           {
             prisoner: {
@@ -313,8 +313,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       })
     })
 
-    it('should not display current appointment occurrence as a clash', async () => {
-      req.params.occurrenceId = '1'
+    it('should not display current appointment as a clash', async () => {
+      req.params.appointmentId = '1'
       req.session.appointmentJourney.type = AppointmentType.GROUP
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
@@ -325,8 +325,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       }
       req.session.appointmentJourney.prisoners = [prisoner]
 
-      const appointmentEvent1 = { appointmentOccurrenceId: 1, prisonerNumber: prisoner.number }
-      const appointmentEvent2 = { appointmentOccurrenceId: 2, prisonerNumber: prisoner.number }
+      const appointmentEvent1 = { appointmentId: 1, prisonerNumber: prisoner.number }
+      const appointmentEvent2 = { appointmentId: 2, prisonerNumber: prisoner.number }
       const appointmentEvents = {
         activities: [],
         appointments: [appointmentEvent1, appointmentEvent2],
@@ -425,22 +425,22 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         req.session.appointmentJourney.createJourneyComplete = createJourneyComplete
       })
 
-      it('should redirect to comment page for type = INDIVIDUAL', async () => {
+      it('should redirect to extra information page for type = INDIVIDUAL', async () => {
         req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
         await handler.POST(req, res)
-        expect(res[redirectMethod]).toHaveBeenCalledWith('comment')
+        expect(res[redirectMethod]).toHaveBeenCalledWith('extra-information')
       })
 
-      it('should redirect to comment page for type = GROUP', async () => {
+      it('should redirect to extra information page for type = GROUP', async () => {
         req.session.appointmentJourney.type = AppointmentType.GROUP
         await handler.POST(req, res)
-        expect(res[redirectMethod]).toHaveBeenCalledWith('comment')
+        expect(res[redirectMethod]).toHaveBeenCalledWith('extra-information')
       })
 
-      it('should redirect to bulk appointment comments page for type = BULK', async () => {
-        req.session.appointmentJourney.type = AppointmentType.BULK
+      it('should redirect to appointment set extra information page for type = SET', async () => {
+        req.session.appointmentJourney.type = AppointmentType.SET
         await handler.POST(req, res)
-        expect(res[redirectMethod]).toHaveBeenCalledWith('bulk-appointment-comments')
+        expect(res[redirectMethod]).toHaveBeenCalledWith('appointment-set-extra-information')
       })
     })
   })
@@ -505,9 +505,9 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       expect(res.redirect).toBeCalledWith('../../schedule')
     })
 
-    it('should remove prisoner appointment from bulk appointment and redirect back to GET', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
-      req.session.bulkAppointmentJourney.appointments = [
+    it('should remove prisoner appointment from appointment set and redirect back to GET', async () => {
+      req.session.appointmentJourney.type = AppointmentType.SET
+      req.session.appointmentSetJourney.appointments = [
         {
           prisoner: {
             number: 'A1234BC',
@@ -530,7 +530,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       await handler.REMOVE(req, res)
 
-      expect(req.session.bulkAppointmentJourney.appointments).toEqual([
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
         {
           prisoner: {
             number: 'A1234BC',

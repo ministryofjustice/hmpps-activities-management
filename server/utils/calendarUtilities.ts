@@ -27,13 +27,13 @@ function getCalendarConfig(referenceDate: Date, calendarView = CalendarView.WEEK
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// This type doesnt exist yet - dummy for spike's sake
+// This type doesn't exist yet - dummy for spike's sake
 function filterActivitiesForDay(activities: any[], day: Date) {
   return activities.filter(activity => isSameDay(activity.start, day))
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// This type doesnt exist yet - dummy for spike's sake
+// This type doesn't exist yet - dummy for spike's sake
 function sortActivitiesByStartTime(activities: any[]) {
   return activities.sort((a, b) => compareAsc(a.start, b.start))
 }

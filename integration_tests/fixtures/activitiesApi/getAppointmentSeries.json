@@ -1,0 +1,39 @@
+{
+  "id": 10,
+  "categoryCode": "CHAP",
+  "prisonCode": "MDI",
+  "internalLocationId": 26152,
+  "inCell": false,
+  "startDate": "2023-02-22",
+  "startTime": "14:00",
+  "endTime": "15:30",
+  "extraInformation": "",
+  "createdTime": "2023-02-20T10:00:00",
+  "createdBy": "USER1",
+  "updatedTime": null,
+  "updatedBy": null,
+  "schedule": null,
+  "appointments": [
+    {
+      "id": 11,
+      "internalLocationId": 26152,
+      "inCell": false,
+      "startDate": "2023-02-22",
+      "startTime": "14:00",
+      "endTime": "15:30",
+      "extraInformation": null,
+      "isCancelled": false,
+      "createdTime": "2023-02-20T10:00:00",
+      "createdBy": "USER1",
+      "updatedTime": null,
+      "updatedByTime": null,
+      "attendees": [
+        {
+          "id": 12,
+          "prisonerNumber": "A8644DY",
+          "bookingId": 456
+        }
+      ]
+    }
+  ]
+}

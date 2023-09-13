@@ -1,0 +1,38 @@
+{
+  "id": 10,
+  "category": {
+    "code": "CHAP",
+    "description": "Chaplaincy"
+  },
+  "prisonCode": "MDI",
+  "appointmentName": "Chaplain Meeting (Chaplaincy)",
+  "internalLocation": {
+    "id": 26152,
+    "prisonCode": "MDI",
+    "description": "Chapel"
+  },
+  "inCell": false,
+  "startDate": "2023-02-22",
+  "startTime": "14:00",
+  "endTime": "15:30",
+  "appointmentType": "GROUP",
+  "extraInformation": "Appointment series extra information",
+  "createdTime": "2023-02-20T10:00:00",
+  "createdBy": {
+    "id": 231232,
+    "username": "USER1",
+    "firstName": "john",
+    "lastName": "smith"
+  },
+  "updatedTime": null,
+  "updatedBy": null,
+  "appointments": [
+    {
+      "id": 11,
+      "sequenceNumber": 1,
+      "startDate": "2023-02-22",
+      "startTime": "14:00",
+      "endTime": "15:30"
+    }
+  ]
+}

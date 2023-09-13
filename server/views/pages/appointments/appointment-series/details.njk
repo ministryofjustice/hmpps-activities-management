@@ -1,0 +1,118 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
+
+{% set pageTitle = appointmentSeries.appointmentName + ' series overview' %}
+{% set pageId = 'appointment-series-details-page' %}
+
+{% set appointmentTableRows = [] %}
+{% for appointment in appointmentSeries.appointments %}
+    {% set appointmentDate = appointment.startDate | toDate %}
+    {% set appointmentTableRows = (appointmentTableRows.push([
+        {
+            text: appointment.sequenceNumber,
+            classes: "govuk-!-font-weight-regular govuk-!-text-align-right",
+            attributes: { 'data-qa': 'appointment-sequence-no-' + appointment.sequenceNumber }
+        }, {
+            text: appointmentDate | formatDate('d MMM yyyy'),
+            attributes: { 'data-qa': 'appointment-date-' + appointment.sequenceNumber }
+        }, {
+            html: (govukTag({ text: "Edited" }) if appointment.isEdited) +
+                  (govukTag({ text: "Cancelled" }) if appointment.isCancelled),
+            attributes: { 'data-qa': 'appointment-status-' + appointment.sequenceNumber }
+        }, {
+            html: '<a href="/appointments/' + appointment.id + '"
+                class="govuk-link--no-visited-state">' +
+                ('Manage details' if not appointment.isExpired and not appointment.isCancelled else 'View') +
+                '<span class="govuk-visually-hidden">' + (' of' if not appointment.isExpired and not appointment.isCancelled) + ' appointment on ' + (appointmentDate | formatDate('d MMM yyyy')) + '</span>
+            </a>',
+            classes: 'govuk-!-text-align-right',
+            attributes: { 'data-qa': 'view-and-edit-appointment-' + appointment.sequenceNumber }
+        }
+    ]), appointmentTableRows) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+            <h1 class="govuk-heading-l">{{ appointmentSeries.appointmentName }} – series overview</h1>
+
+            {% if appointmentSeries.schedule %}
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Series details"
+                        }
+                    },
+                    rows: [
+                        {
+                            key: {
+                                text: "Frequency"
+                            },
+                            value: {
+                                text: ("Every weekday (Monday to Friday)" if appointmentSeries.schedule.frequency == AppointmentFrequency.WEEKDAY) +
+                                ("Daily (includes weekends)" if appointmentSeries.schedule.frequency == AppointmentFrequency.DAILY) +
+                                ("Weekly" if appointmentSeries.schedule.frequency == AppointmentFrequency.WEEKLY) +
+                                ("Fortnightly" if appointmentSeries.schedule.frequency == AppointmentFrequency.FORTNIGHTLY) +
+                                ("Monthly" if appointmentSeries.schedule.frequency == AppointmentFrequency.MONTHLY)
+                            }
+                        }, {
+                            key: {
+                                text: "Number of appointments"
+                            },
+                            value: {
+                                text: appointmentSeries.schedule.numberOfAppointments
+                            }
+                        }, {
+                            key: {
+                            text: "Created by"
+                        },
+                            value: {
+                            text: serviceUserName(appointmentSeries.createdBy)
+                        }
+                        }, {
+                            key: {
+                                text: "Date created"
+                            },
+                            value: {
+                                text: appointmentSeries.createdTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
+                            }
+                        }
+                    ],
+                    attributes: { 'data-qa': 'appointment-series-details' }
+                }) }}
+            {% endif %}
+
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Remaining appointments</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    {{ govukTable({
+                        head: [
+                            {
+                                text: "Appointment",
+                                classes: 'govuk-table__header govuk-table__header--appointment-sequence'
+                            }, {
+                                text: "Date",
+                                classes: 'govuk-table__header'
+                            }, {
+                                html: '<span class="govuk-visually-hidden">Status</span>'
+                            }, {
+                                html: '<span class="govuk-visually-hidden">Actions</span>'
+                            }
+                        ],
+                        rows: appointmentTableRows,
+                        attributes: { 'data-qa': 'appointment-appointments' }
+                    }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

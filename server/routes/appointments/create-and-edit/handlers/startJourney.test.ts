@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import StartJourneyRoutes from './startJourney'
-import { AppointmentDetails, AppointmentOccurrenceDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentSeriesDetails, AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { parseDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { YesNo } from '../../../../@types/activities'
@@ -18,9 +18,9 @@ describe('Route Handlers - Create Appointment - Start', () => {
   const handler = new StartJourneyRoutes(prisonService)
   let req: Request
   let res: Response
-  const appointment = {
+  const appointmentSeries = {
     appointmentName: 'Appointment name (Chaplaincy)',
-    occurrences: [
+    appointments: [
       {
         id: 12,
         sequenceNumber: 2,
@@ -32,12 +32,13 @@ describe('Route Handlers - Create Appointment - Start', () => {
         startDate: '2023-04-27',
       },
     ],
-  } as unknown as AppointmentDetails
-  const appointmentOccurrence = {
+  } as unknown as AppointmentSeriesDetails
+  const appointment = {
     id: 12,
-    appointmentId: 2,
+    appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
     appointmentType: 'GROUP',
     sequenceNumber: 2,
+    appointmentName: 'Appointment name (Chaplaincy)',
     category: {
       code: 'CHAP',
       description: 'Chaplaincy',
@@ -50,25 +51,25 @@ describe('Route Handlers - Create Appointment - Start', () => {
     startDate: '2023-04-13',
     startTime: '09:00',
     endTime: '10:00',
-    repeat: {
-      period: 'WEEKLY',
-      count: 3,
-    },
-    prisoners: [
+    attendees: [
       {
-        prisonerNumber: 'A1234BC',
-        firstName: 'TEST01',
-        lastName: 'PRISONER01',
-        cellLocation: '1-1-1',
+        prisoner: {
+          prisonerNumber: 'A1234BC',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
+          cellLocation: '1-1-1',
+        },
       },
       {
-        prisonerNumber: 'B2345CD',
-        firstName: 'TEST02',
-        lastName: 'PRISONER02',
-        cellLocation: '2-2-2',
+        prisoner: {
+          prisonerNumber: 'B2345CD',
+          firstName: 'TEST02',
+          lastName: 'PRISONER02',
+          cellLocation: '2-2-2',
+        },
       },
     ],
-  } as AppointmentOccurrenceDetails
+  } as AppointmentDetails
 
   beforeEach(() => {
     res = {
@@ -97,7 +98,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         createJourneyComplete: false,
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
   })
@@ -113,25 +114,25 @@ describe('Route Handlers - Create Appointment - Start', () => {
         prisoners: [],
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('how-to-add-prisoners')
     })
   })
 
-  describe('BULK', () => {
-    it('should populate the session with bulk appointment journey type and redirect to upload by csv page', async () => {
-      await handler.BULK(req, res)
+  describe('SET', () => {
+    it('should populate the session with appointment set journey type and redirect to upload by csv page', async () => {
+      await handler.SET(req, res)
 
       expect(req.session.appointmentJourney).toEqual({
         mode: AppointmentJourneyMode.CREATE,
-        type: AppointmentType.BULK,
+        type: AppointmentType.SET,
         createJourneyComplete: false,
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toEqual({
+      expect(req.session.appointmentSetJourney).toEqual({
         appointments: [],
       })
-      expect(res.redirect).toHaveBeenCalledWith('upload-bulk-appointment')
+      expect(res.redirect).toHaveBeenCalledWith('upload-appointment-set')
     })
   })
 
@@ -151,7 +152,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         prisoners: [],
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
     })
 
@@ -182,12 +183,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
         fromPrisonNumberProfile: 'A1234BC',
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
     })
   })
 
-  describe('EDIT_OCCURRENCE', () => {
+  describe('EDIT', () => {
     beforeEach(() => {
       res = {
         redirect: jest.fn(),
@@ -195,8 +196,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       req = {
         session: {},
+        appointmentSeries,
         appointment,
-        appointmentOccurrence,
       } as unknown as Request
     })
 
@@ -207,11 +208,11 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).toBeUndefined()
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('back')
     })
 
-    it('should populate the session with appointment occurrence details and redirect to the correct edit route', async () => {
+    it('should populate the session with appointment details and redirect to the correct edit route', async () => {
       req.params = {
         property: 'location',
       }
@@ -258,13 +259,13 @@ describe('Route Handlers - Create Appointment - Start', () => {
           minute: 0,
         },
         repeat: YesNo.YES,
-        repeatCount: 3,
-        repeatPeriod: 'WEEKLY',
+        numberOfAppointments: 3,
+        frequency: 'WEEKLY',
       } as AppointmentJourney
 
       const editAppointmentJourneySession = {
-        repeatCount: 3,
-        occurrences: [
+        numberOfAppointments: 3,
+        appointments: [
           {
             sequenceNumber: 2,
             startDate: '2023-04-20',
@@ -275,18 +276,19 @@ describe('Route Handlers - Create Appointment - Start', () => {
           },
         ],
         sequenceNumber: 2,
+        appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
       } as EditAppointmentJourney
 
       await handler.EDIT(req, res)
 
       expect(req.session.appointmentJourney).toEqual(appointmentJourneySession)
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../location')
     })
 
     it('should accept an invalid end date value', async () => {
-      req.appointmentOccurrence.endTime = null
+      req.appointment.endTime = null
       req.params = {
         property: 'location',
       }
@@ -315,8 +317,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       req = {
         session: {},
+        appointmentSeries,
         appointment,
-        appointmentOccurrence,
       } as unknown as Request
     })
 
@@ -329,7 +331,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).toBeUndefined()
       expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('back')
     })
 
@@ -339,8 +341,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
       }
 
       const editAppointmentJourneySession = {
-        repeatCount: 3,
-        occurrences: [
+        numberOfAppointments: 3,
+        appointments: [
           {
             sequenceNumber: 2,
             startDate: '2023-04-20',
@@ -351,6 +353,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
           },
         ],
         sequenceNumber: 2,
+        appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
         removePrisoner: {
           prisonerNumber: 'B2345CD',
           firstName: 'TEST02',
@@ -363,48 +366,49 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../remove/apply-to')
     })
 
     it('should populate the session with prisoner details and redirect to confirm', async () => {
-      req.appointment = {
-        ...appointment,
-        occurrences: [
+      req.appointmentSeries = {
+        ...appointmentSeries,
+        appointments: [
           {
             id: 12,
             sequenceNumber: 2,
             startDate: '2023-04-20',
           },
         ],
-      } as unknown as AppointmentDetails
+      } as unknown as AppointmentSeriesDetails
       req.params = {
         prisonNumber: 'A1234BC',
       }
 
       const editAppointmentJourneySession = {
-        repeatCount: 3,
-        occurrences: [
+        numberOfAppointments: 3,
+        appointments: [
           {
             sequenceNumber: 2,
             startDate: '2023-04-20',
           },
         ],
         sequenceNumber: 2,
+        appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
         removePrisoner: {
           prisonerNumber: 'A1234BC',
           firstName: 'TEST01',
           lastName: 'PRISONER01',
           cellLocation: '1-1-1',
         },
-        applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+        applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
       } as EditAppointmentJourney
 
       await handler.REMOVE_PRISONER(req, res)
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../remove/confirm')
     })
   })
@@ -417,15 +421,15 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       req = {
         session: {},
+        appointmentSeries,
         appointment,
-        appointmentOccurrence,
       } as unknown as Request
     })
 
     it('should populate the session and redirect to how to add prisoners', async () => {
       const editAppointmentJourneySession = {
-        repeatCount: 3,
-        occurrences: [
+        numberOfAppointments: 3,
+        appointments: [
           {
             sequenceNumber: 2,
             startDate: '2023-04-20',
@@ -436,6 +440,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
           },
         ],
         sequenceNumber: 2,
+        appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
         addPrisoners: [],
       } as EditAppointmentJourney
 
@@ -443,7 +448,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../../prisoners/add/how-to-add-prisoners')
     })
   })
@@ -456,15 +461,15 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       req = {
         session: {},
+        appointmentSeries,
         appointment,
-        appointmentOccurrence,
       } as unknown as Request
     })
 
     it('should populate the session and redirect to cancellation reasons', async () => {
       const editAppointmentJourneySession = {
-        repeatCount: 3,
-        occurrences: [
+        numberOfAppointments: 3,
+        appointments: [
           {
             sequenceNumber: 2,
             startDate: '2023-04-20',
@@ -475,13 +480,14 @@ describe('Route Handlers - Create Appointment - Start', () => {
           },
         ],
         sequenceNumber: 2,
+        appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
       } as EditAppointmentJourney
 
       await handler.CANCEL(req, res)
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
-      expect(req.session.bulkAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('../cancel/reason')
     })
   })

@@ -41,8 +41,8 @@ describe('Views - Appointments Management - Location', () => {
           },
         },
         editAppointmentJourney: {
-          repeatCount: 3,
-          occurrences: [
+          numberOfAppointments: 3,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: format(weekTomorrow, 'yyyy-MM-dd'),
@@ -71,11 +71,11 @@ describe('Views - Appointments Management - Location', () => {
   })
 
   it('back link href contains view context back link href', () => {
-    viewContext.backLinkHref = '/appointments/1/occurrence/2'
+    viewContext.backLinkHref = '/appointments/2'
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('a.govuk-back-link').attr('href')).toEqual('/appointments/1/occurrence/2')
+    expect($('a.govuk-back-link').attr('href')).toEqual('/appointments/2')
   })
 
   it('create content', () => {

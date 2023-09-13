@@ -7,9 +7,9 @@ export default function Index(): Router {
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
-  const homeHandler = new HomeRoutes()
+  const homeRoutes = new HomeRoutes()
 
-  get('/', homeHandler.GET)
+  get('/', homeRoutes.GET)
 
   return router
 }

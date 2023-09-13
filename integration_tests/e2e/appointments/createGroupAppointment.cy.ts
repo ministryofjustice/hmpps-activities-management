@@ -11,9 +11,9 @@ import getPrisonPrisonersA8644DYA1351DZ from '../../fixtures/prisonerSearchApi/p
 import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
 import getAppointmentLocations from '../../fixtures/prisonApi/getMdiAppointmentLocations.json'
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
-import getAppointment from '../../fixtures/activitiesApi/getAppointment.json'
+import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSeries.json'
+import getGroupAppointmentSeriesDetails from '../../fixtures/activitiesApi/getGroupAppointmentSeriesDetails.json'
 import getGroupAppointmentDetails from '../../fixtures/activitiesApi/getGroupAppointmentDetails.json'
-import getGroupOccurrenceDetails from '../../fixtures/activitiesApi/getGroupOccurrenceDetails.json'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
@@ -22,17 +22,17 @@ import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnsw
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
 import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/uploadPrisonerListPage'
-import OccurrenceDetailsPage from '../../pages/appointments/occurrenceDetails/occurrenceDetails'
-import CommentPage from '../../pages/appointments/create-and-edit/commentPage'
+import AppointmentDetailsPage from '../../pages/appointments/appointment/appointmentDetailsPage'
+import ExtraInformationPage from '../../pages/appointments/create-and-edit/extraInformationPage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   // To pass validation we must ensure the appointment details start date is set to tomorrow
+  getGroupAppointmentSeriesDetails.startDate = tomorrowFormatted
+  getGroupAppointmentSeriesDetails.appointments[0].startDate = getGroupAppointmentSeriesDetails.startDate
   getGroupAppointmentDetails.startDate = tomorrowFormatted
-  getGroupAppointmentDetails.occurrences[0].startDate = getGroupAppointmentDetails.startDate
-  getGroupOccurrenceDetails.startDate = tomorrowFormatted
   getScheduledEvents.activities
     .filter(e => e.prisonerNumber === 'A7789DY')
     .forEach(e => {
@@ -59,9 +59,9 @@ context('Create group appointment', () => {
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
-    cy.stubEndpoint('POST', '/appointments', getAppointment)
-    cy.stubEndpoint('GET', '/appointment-details/10', getGroupAppointmentDetails)
-    cy.stubEndpoint('GET', '/appointment-occurrence-details/11', getGroupOccurrenceDetails)
+    cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
+    cy.stubEndpoint('GET', '/appointment-series/10/details', getGroupAppointmentSeriesDetails)
+    cy.stubEndpoint('GET', '/appointments/11/details', getGroupAppointmentDetails)
   })
 
   it('Should complete create group appointment journey', () => {
@@ -132,8 +132,8 @@ context('Create group appointment', () => {
     const schedulePage = Page.verifyOnPage(SchedulePage)
     schedulePage.continue()
 
-    const commentPage = Page.verifyOnPage(CommentPage)
-    commentPage.continue()
+    const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
+    extraInformationPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerInList('Winchurch, David', 'A1350DZ')
@@ -158,9 +158,9 @@ context('Create group appointment', () => {
 
     confirmationPage.viewAppointmentLink().click()
 
-    const appointmentDetailsPage = Page.verifyOnPage(OccurrenceDetailsPage)
+    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
     appointmentDetailsPage.assertNoAppointmentSeriesDetails()
-    appointmentDetailsPage.assertCategory('Chaplaincy')
+    appointmentDetailsPage.assertName('Chaplaincy')
     appointmentDetailsPage.assertLocation('Chapel')
     appointmentDetailsPage.assertStartDate(tomorrow)
     appointmentDetailsPage.assertStartTime(14, 0)

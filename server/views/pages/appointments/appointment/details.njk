@@ -1,0 +1,240 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
+{% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
+
+{% set pageTitle = appointment.appointmentName + (' single' if appointment.appointmentSeries.schedule) + ' appointment details' %}
+{% set pageId = 'appointment-details-page' %}
+
+{% set occurenceLink = '/appointments/' + appointment.id  %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% if appointment.isCancelled %}
+                {% set cancelledAppointmentHeadingHtml %}
+                    <h3 class="govuk-notification-banner__heading">Appointment cancelled</h3>
+                    <p class="govuk-body">This appointment was cancelled by {{ appointment.cancelledBy | fullName | toTitleCase | initialiseName }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
+                {% endset %}
+                {{ govukNotificationBanner({
+                    type: 'important',
+                    html: cancelledAppointmentHeadingHtml
+                }) }}
+            {% endif %}
+
+            <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ appointment.appointmentName }}</h1>
+            <p class="govuk-body govuk-!-margin-top-1" data-qa='sub-heading'>{{ appointment.startDate | toDate | formatDate }}</p>
+
+            {% if appointment.appointmentSet %}
+                {{ govukInsetText({
+                    html: 'This appointment was scheduled in a <strong>set of ' + appointment.appointmentSet.appointmentCount + '</strong>. You can <a href="/appointments/set/' + appointment.appointmentSet.id + '">view the set</a> to print all movement slips at once.'
+                }) }}
+            {% endif %}
+
+            {% if appointment.appointmentSeries.schedule %}
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Series details"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/appointments/series/" + appointment.appointmentSeries.id,
+                                    text: "View series",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'view-series' }
+                                }
+                            ]
+                        }
+                    },
+                    rows: [
+                        {
+                            key: {
+                                text: "Frequency"
+                            },
+                            value: {
+                                text: ("Every weekday (Monday to Friday)" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.WEEKDAY) +
+                                ("Daily (includes weekends)" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.DAILY) +
+                                ("Weekly" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.WEEKLY) +
+                                ("Fortnightly" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.FORTNIGHTLY) +
+                                ("Monthly" if appointment.appointmentSeries.schedule.frequency == AppointmentFrequency.MONTHLY)
+                            }
+                        }, {
+                            key: {
+                                text: "Appointment"
+                            },
+                            value: {
+                                text: appointment.sequenceNumber + " of " + appointment.appointmentSeries.schedule.numberOfAppointments
+                            }
+                        }
+                    ],
+                    attributes: { 'data-qa': 'appointment-series-details' }
+                }) }}
+            {% endif %}
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Appointment details"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: occurenceLink + "/edit/start/cancel",
+                                text: "Cancel appointment",
+                                classes: "govuk-link--no-visited-state",
+                                attributes: { 'data-qa': 'cancel-appointment' }
+                            }
+                        ]
+                    } if appointment.isCancelled == false and appointment.isExpired == false
+                },
+                rows: [
+                    {
+                        key: {
+                            text: "Appointment name"
+                        },
+                        value: {
+                            text: appointment.appointmentName
+                        }
+                    }, {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: appointment.internalLocation.description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: occurenceLink + "/edit/start/location",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-location' }
+                                }
+                            ]
+                        } if appointment.isCancelled == false and appointment.isExpired == false
+                    }, {
+                        key: {
+                            text: "Date"
+                        },
+                        value: {
+                            text: appointment.startDate | toDate | formatDate
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: occurenceLink + "/edit/start/date-and-time",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-date' }
+                                }
+                            ]
+                        } if appointment.isCancelled == false and appointment.isExpired == false
+                    }, {
+                        key: {
+                            text: "Start time"
+                        },
+                        value: {
+                            text: appointment.startTime
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: occurenceLink + "/edit/start/date-and-time",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-start-time' }
+                                }
+                            ]
+                        } if appointment.isCancelled == false and appointment.isExpired == false
+                    }, {
+                        key: {
+                            text: "End time"
+                        },
+                        value: {
+                            text: appointment.endTime
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: occurenceLink + "/edit/start/date-and-time",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-end-time' }
+                                }
+                            ]
+                        } if appointment.isCancelled == false and appointment.isExpired == false
+                    }, {
+                        key: {
+                            text: "Extra information"
+                        },
+                        value: {
+                            html: '<span class="preserve-line-breaks">' + (appointment.extraInformation | escape) + '</span>'
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: occurenceLink + "/edit/start/extra-information",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-extra-information' }
+                                }
+                            ]
+                        } if appointment.isCancelled == false and appointment.isExpired == false
+                    }
+                ],
+                attributes: { 'data-qa': 'appointment-details' }
+            }) }}
+
+            {{ attendeeList(appointment) }}
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Appointment history"
+                    }
+                },
+                rows: [
+                    {
+                        key: {
+                        text: "Created by"
+                    },
+                        value: {
+                            text: serviceUserName(appointment.createdBy)
+                        }
+                    }, {
+                        key: {
+                            text: "Date created"
+                        },
+                        value: {
+                            text: appointment.createdTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
+                        }
+                    }, {
+                        key: {
+                            text: "Last edited by"
+                        },
+                        value: {
+                            text: serviceUserName(appointment.updatedBy)
+                        }
+                    } if appointment.updatedBy, {
+                        key: {
+                            text: "Date last edited"
+                        },
+                        value: {
+                            text: appointment.updatedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
+                        }
+                    } if appointment.updatedTime
+                ],
+                attributes: { 'data-qa': 'appointment-history' }
+            }) }}
+        </div>
+    </div>
+{% endblock %}

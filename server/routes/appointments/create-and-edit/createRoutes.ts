@@ -9,25 +9,25 @@ import NameRoutes, { Name } from './handlers/name'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import RepeatRoutes, { Repeat } from './handlers/repeat'
-import RepeatPeriodAndCountRoutes, { RepeatPeriodAndCount } from './handlers/repeatPeriodAndCount'
-import CommentRoutes, { Comment } from './handlers/comment'
-import BulkAppointmentComments from './handlers/bulk-appointments/bulkAppointmentComments'
-import BulkAppointmentAddComment, {
-  BulkAppointmentComment,
-} from './handlers/bulk-appointments/bulkAppointmentAddComment'
+import RepeatFrequencyAndCountRoutes, { RepeatFrequencyAndCount } from './handlers/repeatFrequencyAndCount'
+import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
+import AppointmentSetExtraInformationRoutes from './handlers/appointment-set/appointmentSetExtraInformation'
+import AppointmentSetAddExtraInformationRoutes, {
+  AppointmentSetAppointmentExtraInformation,
+} from './handlers/appointment-set/appointmentSetAddExtraInformation'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
-import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
-import ReviewPrisoners from './handlers/reviewPrisoners'
+import HowToAddPrisonerRoutes, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
+import ReviewPrisonerRoutes from './handlers/reviewPrisoners'
 import { Services } from '../../../services'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
 import EditAppointmentService from '../../../services/editAppointmentService'
-import UploadBulkAppointment, { AppointmentsList } from './handlers/bulk-appointments/uploadBulkAppointment'
-import BulkAppointmentDateRoutes, { BulkAppointmentDate } from './handlers/bulk-appointments/bulkAppointmentDate'
-import ReviewBulkAppointment, { AppointmentTimes } from './handlers/bulk-appointments/reviewBulkAppointment'
-import fetchBulkAppointment from '../../../middleware/appointments/fetchBulkAppointment'
+import AppointmentSetUploadRoutes, { AppointmentsList } from './handlers/appointment-set/appointmentSetUpload'
+import AppointmentSetDateRoutes, { AppointmentSetDate } from './handlers/appointment-set/appointmentSetDate'
+import AppointmentSetTimesRoutes, { AppointmentTimes } from './handlers/appointment-set/appointmentSetTimes'
+import fetchAppointmentSet from '../../../middleware/appointments/fetchAppointmentSet'
 import ScheduleRoutes from './handlers/schedule'
 
 export default function Create({ prisonService, activitiesService }: Services): Router {
@@ -39,33 +39,33 @@ export default function Create({ prisonService, activitiesService }: Services): 
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const editAppointmentService = new EditAppointmentService(activitiesService)
-  const startHandler = new StartJourneyRoutes(prisonService)
-  const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
+  const startJourneyRoutes = new StartJourneyRoutes(prisonService)
+  const selectPrisonerRoutes = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const nameHandler = new NameRoutes(activitiesService)
-  const locationHandler = new LocationRoutes(activitiesService, editAppointmentService)
-  const dateAndTimeHandler = new DateAndTimeRoutes()
-  const repeatHandler = new RepeatRoutes()
-  const repeatPeriodAndCountHandler = new RepeatPeriodAndCountRoutes()
-  const commentHandler = new CommentRoutes(editAppointmentService)
-  const bulkAppointmentCommentsHandler = new BulkAppointmentComments()
-  const bulkAppointmentAddCommentHanlder = new BulkAppointmentAddComment()
-  const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
-  const confirmationHandler = new ConfirmationRoutes()
-  const howToAddPrisoners = new HowToAddPrisoners()
-  const reviewPrisoners = new ReviewPrisoners()
-  const uploadBulkAppointment = new UploadBulkAppointment(new PrisonerListCsvParser(), prisonService)
-  const bulkAppointmentDate = new BulkAppointmentDateRoutes()
-  const reviewBulkAppointment = new ReviewBulkAppointment()
+  const nameRoutes = new NameRoutes(activitiesService)
+  const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
+  const dateAndTimeRoutes = new DateAndTimeRoutes()
+  const repeatRoutes = new RepeatRoutes()
+  const repeatFrequencyAndCountRoutes = new RepeatFrequencyAndCountRoutes()
+  const extraInformationRoutes = new ExtraInformationRoutes(editAppointmentService)
+  const appointmentSetExtraInformationRoutes = new AppointmentSetExtraInformationRoutes()
+  const appointmentSetAddExtraInformationRoutes = new AppointmentSetAddExtraInformationRoutes()
+  const checkAnswersRoutes = new CheckAnswersRoutes(activitiesService)
+  const confirmationRoutes = new ConfirmationRoutes()
+  const howToAddPrisonerRoutes = new HowToAddPrisonerRoutes()
+  const reviewPrisonerRoutes = new ReviewPrisonerRoutes()
+  const appointmentSetUploadRoutes = new AppointmentSetUploadRoutes(new PrisonerListCsvParser(), prisonService)
+  const appointmentSetDateRoutes = new AppointmentSetDateRoutes()
+  const appointmentSetTimesRoutes = new AppointmentSetTimesRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService)
 
-  get('/start-individual', startHandler.INDIVIDUAL)
-  get('/start-group', startHandler.GROUP)
-  get('/start-bulk', startHandler.BULK)
-  get('/start-prisoner/:prisonNumber', startHandler.PRISONER)
-  get('/select-prisoner', selectPrisonerHandler.GET, true)
-  post('/select-prisoner', selectPrisonerHandler.SELECT_PRISONER, SelectPrisoner)
-  post('/search-prisoner', selectPrisonerHandler.SEARCH, PrisonerSearch)
+  get('/start-individual', startJourneyRoutes.INDIVIDUAL)
+  get('/start-group', startJourneyRoutes.GROUP)
+  get('/start-set', startJourneyRoutes.SET)
+  get('/start-prisoner/:prisonNumber', startJourneyRoutes.PRISONER)
+  get('/select-prisoner', selectPrisonerRoutes.GET, true)
+  post('/select-prisoner', selectPrisonerRoutes.SELECT_PRISONER, SelectPrisoner)
+  post('/search-prisoner', selectPrisonerRoutes.SEARCH, PrisonerSearch)
   get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
   router.post(
     '/upload-prisoner-list',
@@ -73,55 +73,59 @@ export default function Create({ prisonService, activitiesService }: Services): 
     validationMiddleware(PrisonerList),
     asyncMiddleware(uploadPrisonerListRoutes.POST),
   )
-  get('/upload-bulk-appointment', uploadBulkAppointment.GET, true)
+  get('/upload-appointment-set', appointmentSetUploadRoutes.GET, true)
   router.post(
-    '/upload-bulk-appointment',
+    '/upload-appointment-set',
     setUpMultipartFormDataParsing(),
     validationMiddleware(AppointmentsList),
-    asyncMiddleware(uploadBulkAppointment.POST),
+    asyncMiddleware(appointmentSetUploadRoutes.POST),
   )
-  get('/name', nameHandler.GET, true)
-  post('/name', nameHandler.POST, Name)
-  get('/location', locationHandler.GET, true)
-  post('/location', locationHandler.CREATE, Location)
-  get('/date-and-time', dateAndTimeHandler.GET, true)
-  post('/date-and-time', dateAndTimeHandler.CREATE, DateAndTime)
-  get('/repeat', repeatHandler.GET, true)
-  post('/repeat', repeatHandler.POST, Repeat)
-  get('/repeat-period-and-count', repeatPeriodAndCountHandler.GET, true)
-  post('/repeat-period-and-count', repeatPeriodAndCountHandler.POST, RepeatPeriodAndCount)
-  get('/comment', commentHandler.GET, true)
+  get('/name', nameRoutes.GET, true)
+  post('/name', nameRoutes.POST, Name)
+  get('/location', locationRoutes.GET, true)
+  post('/location', locationRoutes.CREATE, Location)
+  get('/date-and-time', dateAndTimeRoutes.GET, true)
+  post('/date-and-time', dateAndTimeRoutes.CREATE, DateAndTime)
+  get('/repeat', repeatRoutes.GET, true)
+  post('/repeat', repeatRoutes.POST, Repeat)
+  get('/repeat-frequency-and-count', repeatFrequencyAndCountRoutes.GET, true)
+  post('/repeat-frequency-and-count', repeatFrequencyAndCountRoutes.POST, RepeatFrequencyAndCount)
+  get('/extra-information', extraInformationRoutes.GET, true)
   get('/schedule', scheduleRoutes.GET, true)
   post('/schedule', scheduleRoutes.POST)
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
   get('/change', scheduleRoutes.CHANGE)
-  get('/bulk-appointment-comments', bulkAppointmentCommentsHandler.GET, true)
-  post('/bulk-appointment-comments', bulkAppointmentCommentsHandler.POST)
-  get('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.GET, true)
-  post('/bulk-appointment-comments/:prisonerNumber', bulkAppointmentAddCommentHanlder.POST, BulkAppointmentComment)
-  post('/comment', commentHandler.CREATE, Comment)
-  get('/check-answers', checkAnswersHandler.GET, true)
-  post('/check-answers', checkAnswersHandler.POST)
+  get('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.GET, true)
+  post('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.POST)
+  get('/appointment-set-extra-information/:prisonerNumber', appointmentSetAddExtraInformationRoutes.GET, true)
+  post(
+    '/appointment-set-extra-information/:prisonerNumber',
+    appointmentSetAddExtraInformationRoutes.POST,
+    AppointmentSetAppointmentExtraInformation,
+  )
+  post('/extra-information', extraInformationRoutes.CREATE, ExtraInformation)
+  get('/check-answers', checkAnswersRoutes.GET, true)
+  post('/check-answers', checkAnswersRoutes.POST)
   router.get(
     '/confirmation/:appointmentId',
     fetchAppointment(activitiesService),
     emptyAppointmentJourneyHandler(true),
-    asyncMiddleware(confirmationHandler.GET),
+    asyncMiddleware(confirmationRoutes.GET),
   )
-  get('/how-to-add-prisoners', howToAddPrisoners.GET, true)
-  post('/how-to-add-prisoners', howToAddPrisoners.POST, HowToAddPrisonersForm)
-  get('/review-prisoners', reviewPrisoners.GET, true)
-  post('/review-prisoners', reviewPrisoners.POST)
-  get('/review-prisoners/:prisonNumber/remove', reviewPrisoners.REMOVE, true)
-  get('/bulk-appointment-date', bulkAppointmentDate.GET, true)
-  post('/bulk-appointment-date', bulkAppointmentDate.POST, BulkAppointmentDate)
-  get('/review-bulk-appointment', reviewBulkAppointment.GET, true)
-  post('/review-bulk-appointment', reviewBulkAppointment.POST, AppointmentTimes)
+  get('/how-to-add-prisoners', howToAddPrisonerRoutes.GET, true)
+  post('/how-to-add-prisoners', howToAddPrisonerRoutes.POST, HowToAddPrisonersForm)
+  get('/review-prisoners', reviewPrisonerRoutes.GET, true)
+  post('/review-prisoners', reviewPrisonerRoutes.POST)
+  get('/review-prisoners/:prisonNumber/remove', reviewPrisonerRoutes.REMOVE, true)
+  get('/appointment-set-date', appointmentSetDateRoutes.GET, true)
+  post('/appointment-set-date', appointmentSetDateRoutes.POST, AppointmentSetDate)
+  get('/appointment-set-times', appointmentSetTimesRoutes.GET, true)
+  post('/appointment-set-times', appointmentSetTimesRoutes.POST, AppointmentTimes)
   router.get(
-    '/bulk-appointments-confirmation/:bulkAppointmentId',
-    fetchBulkAppointment(activitiesService),
+    '/set-confirmation/:appointmentSetId',
+    fetchAppointmentSet(activitiesService),
     emptyAppointmentJourneyHandler(true),
-    asyncMiddleware(confirmationHandler.GET_BULK),
+    asyncMiddleware(confirmationRoutes.GET_SET),
   )
 
   return router

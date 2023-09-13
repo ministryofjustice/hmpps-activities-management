@@ -1,0 +1,41 @@
+{% macro appointmentMovementSlip(appointment, caseLoadDescription, printedAt) %}
+    {% macro labelAndValue(label, value, rowClasses, valueClasses) %}
+        <div class="movement-slip__summary__row {{ rowClasses }}">
+            <dt class="movement-slip__summary__row__key">{{ label }}</dt>
+            <dd class="movement-slip__summary__row__value {{ valueClasses }}" data-qa="{{ label.toLowerCase().replace(" ","-").replace(" ","-") }}">{{ value | safe }}</dd>
+        </div>
+    {% endmacro %}
+
+    {% macro appointmentTime(appointment) -%}
+        {{ appointment.startTime }}{% if appointment.endTime %} to {{ appointment.endTime }}{% endif %}
+    {%- endmacro %}
+
+    {% for attendee in appointment.attendees %}
+        {% set prisoner = attendee.prisoner %}
+        <div class="movement-slip">
+            <div class="govuk-heading-m movement-slip-header">{{ caseLoadDescription }} <span class="govuk-!-font-weight-regular">Movement authorisation slip</span></div>
+            <h2 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa="prisoner-name-and-number">
+                {% if prisoner | fullName %}{{ prisoner | fullName | toTitleCase }}, {% endif %}{{ prisoner.prisonerNumber }}
+            </h2>
+            <span class="govuk-caption-m govuk-!-margin-bottom-3" data-qa="cell-location">
+                {% if prisoner.cellLocation == "UNKNOWN"%}
+                    No matching cell location
+                {% else %}
+                    {{ prisoner.prisonCode + '-' + prisoner.cellLocation }}
+                {% endif %}
+            </span>
+
+            <dl class='movement-slip__summary'>
+                {{ labelAndValue('Appointment', appointment.appointmentName | escape) }}
+                {{ labelAndValue('Time', '<ul class="govuk-list">' +
+                    '<li>' + appointmentTime(appointment) + '</li>' +
+                    '<li>' + (appointment.startDate | toDate | formatDate) + '</li>' +
+                '</ul>') }}
+                {{ labelAndValue('Location', appointment.internalLocation.description) }}
+                {{ labelAndValue('Extra information', appointment.extraInformation | escape, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointment.extraInformation }}
+            </dl>
+
+            <p class="govuk-body-s movement-slip-footer">Printed at {{ printedAt | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}</p>
+        </div>
+    {% endfor %}
+{% endmacro %}

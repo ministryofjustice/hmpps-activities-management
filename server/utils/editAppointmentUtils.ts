@@ -3,26 +3,22 @@ import {
   AppointmentApplyTo,
   AppointmentApplyToOption,
   AppointmentCancellationReason,
-  AppointmentRepeatPeriod,
+  AppointmentFrequency,
 } from '../@types/appointments'
 import { convertToTitleCase, formatDate, fullName } from './utils'
 import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 
 export const getAppointmentBackLinkHref = (req: Request, defaultBackLinkHref: string) => {
-  if (
-    req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-    req.params.appointmentId &&
-    req.params.occurrenceId
-  ) {
-    return `/appointments/${req.params.appointmentId}/occurrence/${req.params.occurrenceId}`
+  if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT && req.params.appointmentId) {
+    return `/appointments/${req.params.appointmentId}`
   }
 
   return defaultBackLinkHref
 }
 
 export const isApplyToQuestionRequired = (editAppointmentJourney: EditAppointmentJourney) =>
-  editAppointmentJourney.occurrences?.length > 1
+  editAppointmentJourney.appointments?.length > 1
 
 export const getAppointmentEditMessage = (
   appointmentJourney: AppointmentJourney,
@@ -182,51 +178,51 @@ export const getAppointmentApplyToOptions = (req: Request) => {
 
   const applyToOptions = [
     {
-      applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+      applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
       description: `Just this one - ${formatDate(new Date(appointmentJourney.startDate.date), 'EEEE, d MMMM yyyy')} (${
-        getOccurrence(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.sequenceNumber
-      } of ${getLastOccurrence(editAppointmentJourney)?.sequenceNumber})`,
+        getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.sequenceNumber
+      } of ${getLastAppointment(editAppointmentJourney)?.sequenceNumber})`,
     },
   ] as AppointmentApplyToOption[]
 
   if (isApplyToQuestionRequired(editAppointmentJourney)) {
-    if (isFirstRemainingOccurrence(editAppointmentJourney) || !isLastRemainingOccurrence(editAppointmentJourney)) {
+    if (isFirstRemainingAppointment(editAppointmentJourney) || !isLastRemainingAppointment(editAppointmentJourney)) {
       applyToOptions.push({
-        applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
-        description: isSecondLastRemainingOccurrence(editAppointmentJourney)
+        applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+        description: isSecondLastRemainingAppointment(editAppointmentJourney)
           ? 'This one and the appointment that comes after it in the series'
           : 'This one and all the appointments that come after it in the series',
         additionalDescription: `You're ${getEditHintAction(appointmentJourney, editAppointmentJourney)} the following ${
-          getLastOccurrence(editAppointmentJourney).sequenceNumber - editAppointmentJourney.sequenceNumber + 1
+          getLastAppointment(editAppointmentJourney).sequenceNumber - editAppointmentJourney.sequenceNumber + 1
         } appointments:<br>${formatDate(
-          getOccurrence(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.startDate,
+          getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.startDate,
           'd MMMM yyyy',
         )} (${editAppointmentJourney.sequenceNumber} of ${
-          getLastOccurrence(editAppointmentJourney).sequenceNumber
-        }) to ${formatDate(getLastOccurrence(editAppointmentJourney).startDate, 'd MMMM yyyy')} (${
-          getLastOccurrence(editAppointmentJourney).sequenceNumber
-        } of ${getLastOccurrence(editAppointmentJourney).sequenceNumber})`,
+          getLastAppointment(editAppointmentJourney).sequenceNumber
+        }) to ${formatDate(getLastAppointment(editAppointmentJourney).startDate, 'd MMMM yyyy')} (${
+          getLastAppointment(editAppointmentJourney).sequenceNumber
+        } of ${getLastAppointment(editAppointmentJourney).sequenceNumber})`,
       })
     }
 
     if (
-      !isFirstRemainingOccurrence(editAppointmentJourney) &&
+      !isFirstRemainingAppointment(editAppointmentJourney) &&
       !hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)
     ) {
       applyToOptions.push({
-        applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
+        applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
         description: "This one and all the appointments in the series that haven't happened yet",
         additionalDescription: `You're ${getEditHintAction(appointmentJourney, editAppointmentJourney)} the following ${
-          getLastOccurrence(editAppointmentJourney).sequenceNumber -
-          getFirstOccurrence(editAppointmentJourney).sequenceNumber +
+          getLastAppointment(editAppointmentJourney).sequenceNumber -
+          getFirstAppointment(editAppointmentJourney).sequenceNumber +
           1
-        } appointments:<br>${formatDate(getFirstOccurrence(editAppointmentJourney).startDate, 'd MMMM yyyy')} (${
-          getFirstOccurrence(editAppointmentJourney).sequenceNumber
-        } of ${getLastOccurrence(editAppointmentJourney).sequenceNumber}) to ${formatDate(
-          getLastOccurrence(editAppointmentJourney).startDate,
+        } appointments:<br>${formatDate(getFirstAppointment(editAppointmentJourney).startDate, 'd MMMM yyyy')} (${
+          getFirstAppointment(editAppointmentJourney).sequenceNumber
+        } of ${getLastAppointment(editAppointmentJourney).sequenceNumber}) to ${formatDate(
+          getLastAppointment(editAppointmentJourney).startDate,
           'd MMMM yyyy',
-        )} (${getLastOccurrence(editAppointmentJourney).sequenceNumber} of ${
-          getLastOccurrence(editAppointmentJourney).sequenceNumber
+        )} (${getLastAppointment(editAppointmentJourney).sequenceNumber} of ${
+          getLastAppointment(editAppointmentJourney).sequenceNumber
         })`,
       })
     }
@@ -237,20 +233,20 @@ export const getAppointmentApplyToOptions = (req: Request) => {
 
 export const getRepeatFrequencyText = (appointmentJourney: AppointmentJourney) => {
   let frequencyText = 'This appointment repeats every '
-  switch (appointmentJourney.repeatPeriod) {
-    case AppointmentRepeatPeriod.WEEKDAY:
+  switch (appointmentJourney.frequency) {
+    case AppointmentFrequency.WEEKDAY:
       frequencyText += 'week day'
       break
-    case AppointmentRepeatPeriod.DAILY:
+    case AppointmentFrequency.DAILY:
       frequencyText += 'day'
       break
-    case AppointmentRepeatPeriod.WEEKLY:
+    case AppointmentFrequency.WEEKLY:
       frequencyText += 'week'
       break
-    case AppointmentRepeatPeriod.FORTNIGHTLY:
+    case AppointmentFrequency.FORTNIGHTLY:
       frequencyText += 'fortnight'
       break
-    case AppointmentRepeatPeriod.MONTHLY:
+    case AppointmentFrequency.MONTHLY:
       frequencyText += 'month'
       break
     default:
@@ -284,27 +280,27 @@ const getEditHintAction = (appointmentJourney: AppointmentJourney, editAppointme
   return 'changing'
 }
 
-export const getOrderedOccurrences = (editAppointmentJourney: EditAppointmentJourney) =>
-  editAppointmentJourney.occurrences.sort((a, b) => a.sequenceNumber - b.sequenceNumber)
+export const getOrderedAppointments = (editAppointmentJourney: EditAppointmentJourney) =>
+  editAppointmentJourney.appointments.sort((a, b) => a.sequenceNumber - b.sequenceNumber)
 
-export const getFirstOccurrence = (editAppointmentJourney: EditAppointmentJourney) =>
-  getOrderedOccurrences(editAppointmentJourney)[0]
+export const getFirstAppointment = (editAppointmentJourney: EditAppointmentJourney) =>
+  getOrderedAppointments(editAppointmentJourney)[0]
 
-export const getLastOccurrence = (editAppointmentJourney: EditAppointmentJourney) =>
-  getOrderedOccurrences(editAppointmentJourney).slice(-1)[0]
+export const getLastAppointment = (editAppointmentJourney: EditAppointmentJourney) =>
+  getOrderedAppointments(editAppointmentJourney).slice(-1)[0]
 
-const getOccurrence = (sequenceNumber: number, editAppointmentJourney: EditAppointmentJourney) =>
-  editAppointmentJourney.occurrences.find(o => o.sequenceNumber === sequenceNumber)
+const getAppointment = (sequenceNumber: number, editAppointmentJourney: EditAppointmentJourney) =>
+  editAppointmentJourney.appointments.find(o => o.sequenceNumber === sequenceNumber)
 
-const isFirstRemainingOccurrence = (editAppointmentJourney: EditAppointmentJourney) =>
-  editAppointmentJourney.sequenceNumber === getFirstOccurrence(editAppointmentJourney).sequenceNumber
+const isFirstRemainingAppointment = (editAppointmentJourney: EditAppointmentJourney) =>
+  editAppointmentJourney.sequenceNumber === getFirstAppointment(editAppointmentJourney).sequenceNumber
 
-const isSecondLastRemainingOccurrence = (editAppointmentJourney: EditAppointmentJourney) =>
-  editAppointmentJourney.occurrences.length > 2 &&
-  editAppointmentJourney.sequenceNumber === getOrderedOccurrences(editAppointmentJourney).slice(-2)[0]?.sequenceNumber
+const isSecondLastRemainingAppointment = (editAppointmentJourney: EditAppointmentJourney) =>
+  editAppointmentJourney.appointments.length > 2 &&
+  editAppointmentJourney.sequenceNumber === getOrderedAppointments(editAppointmentJourney).slice(-2)[0]?.sequenceNumber
 
-const isLastRemainingOccurrence = (editAppointmentJourney: EditAppointmentJourney) =>
-  editAppointmentJourney.sequenceNumber === getLastOccurrence(editAppointmentJourney).sequenceNumber
+const isLastRemainingAppointment = (editAppointmentJourney: EditAppointmentJourney) =>
+  editAppointmentJourney.sequenceNumber === getLastAppointment(editAppointmentJourney).sequenceNumber
 
 export const hasAnyAppointmentPropertyChanged = (
   appointmentJourney: AppointmentJourney,
@@ -357,7 +353,9 @@ export const hasAppointmentEndTimeChanged = (
 export const hasAppointmentCommentChanged = (
   appointmentJourney: AppointmentJourney,
   editAppointmentJourney: EditAppointmentJourney,
-) => editAppointmentJourney.comment !== undefined && appointmentJourney.comment !== editAppointmentJourney.comment
+) =>
+  editAppointmentJourney.extraInformation !== undefined &&
+  appointmentJourney.extraInformation !== editAppointmentJourney.extraInformation
 
 export const hasAppointmentAttendeesChanged = (editAppointmentJourney: EditAppointmentJourney) =>
   editAppointmentJourney.addPrisoners || editAppointmentJourney.removePrisoner

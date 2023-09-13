@@ -7,8 +7,8 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
 {% set pageTitle = appointmentJourneyTitle("show cancelled appointment", session.appointmentJourney) %}
-{% set pageId = 'appointments-cancel-reason-page' %}
-{% set backLinkHref = "/appointments/" + appointmentId + "/occurrence/" + occurrenceId %}
+{% set pageId = 'appointment-cancellation-reason-page' %}
+{% set backLinkHref = "/appointments/" + appointmentId %}
 
 {% block content %}
     <div class="govuk-grid-row">

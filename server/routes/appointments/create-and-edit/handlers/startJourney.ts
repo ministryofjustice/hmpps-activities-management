@@ -3,7 +3,7 @@ import { isValid } from 'date-fns'
 import { formatDate, parseDate } from '../../../../utils/utils'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentRepeatPeriod, AppointmentApplyTo } from '../../../../@types/appointments'
+import { AppointmentFrequency, AppointmentApplyTo } from '../../../../@types/appointments'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 import PrisonService from '../../../../services/prisonService'
 
@@ -29,16 +29,16 @@ export default class StartJourneyRoutes {
     res.redirect('how-to-add-prisoners')
   }
 
-  BULK = async (req: Request, res: Response): Promise<void> => {
+  SET = async (req: Request, res: Response): Promise<void> => {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
-      type: AppointmentType.BULK,
+      type: AppointmentType.SET,
       createJourneyComplete: false,
     }
-    req.session.bulkAppointmentJourney = {
+    req.session.appointmentSetJourney = {
       appointments: [],
     }
-    res.redirect('upload-bulk-appointment')
+    res.redirect('upload-appointment-set')
   }
 
   PRISONER = async (req: Request, res: Response): Promise<void> => {
@@ -78,22 +78,22 @@ export default class StartJourneyRoutes {
   }
 
   REMOVE_PRISONER = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentOccurrence } = req
+    const { appointment } = req
     const { prisonNumber } = req.params
 
-    const prisoner = appointmentOccurrence.prisoners.filter(_ => _.prisonerNumber === prisonNumber)[0]
+    const attendee = appointment.attendees.filter(a => a.prisoner.prisonerNumber === prisonNumber)[0]
 
-    if (!prisoner) return res.redirect('back')
+    if (!attendee?.prisoner) return res.redirect('back')
 
     this.populateEditSession(req)
 
-    req.session.editAppointmentJourney.removePrisoner = prisoner
+    req.session.editAppointmentJourney.removePrisoner = attendee.prisoner
 
     if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
       return res.redirect('../remove/apply-to')
     }
 
-    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_OCCURRENCE
+    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_APPOINTMENT
 
     return res.redirect('../remove/confirm')
   }
@@ -112,29 +112,26 @@ export default class StartJourneyRoutes {
   }
 
   private populateEditSession(req: Request) {
-    const { appointment, appointmentOccurrence } = req
+    const { appointmentSeries, appointment } = req
 
-    const startDate = parseDate(appointmentOccurrence.startDate)
-    const startTime = parseDate(
-      `${appointmentOccurrence.startDate}T${appointmentOccurrence.startTime}`,
-      "yyyy-MM-dd'T'HH:mm",
-    )
-    const endTime = parseDate(
-      `${appointmentOccurrence.startDate}T${appointmentOccurrence.endTime}`,
-      "yyyy-MM-dd'T'HH:mm",
-    )
+    const startDate = parseDate(appointment.startDate)
+    const startTime = parseDate(`${appointment.startDate}T${appointment.startTime}`, "yyyy-MM-dd'T'HH:mm")
+    const endTime = parseDate(`${appointment.startDate}T${appointment.endTime}`, "yyyy-MM-dd'T'HH:mm")
 
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.EDIT,
-      type: AppointmentType[appointmentOccurrence.appointmentType],
+      type: AppointmentType[appointment.appointmentType],
       appointmentName: appointment.appointmentName,
-      prisoners: appointmentOccurrence.prisoners.map(p => ({
-        number: p.prisonerNumber,
-        name: p.lastName !== 'UNKNOWN' ? `${p.firstName} ${p.lastName}` : null,
-        cellLocation: p.cellLocation,
+      prisoners: appointment.attendees.map(attendee => ({
+        number: attendee.prisoner.prisonerNumber,
+        name:
+          attendee.prisoner.lastName !== 'UNKNOWN'
+            ? `${attendee.prisoner.firstName} ${attendee.prisoner.lastName}`
+            : null,
+        cellLocation: attendee.prisoner.cellLocation,
       })),
-      category: appointmentOccurrence.category,
-      location: appointmentOccurrence.internalLocation,
+      category: appointment.category,
+      location: appointment.internalLocation,
       startDate: {
         date: startDate,
         day: +formatDate(startDate, 'dd'),
@@ -147,10 +144,10 @@ export default class StartJourneyRoutes {
         minute: +formatDate(startTime, 'mm'),
       },
       endTime: null,
-      repeat: appointmentOccurrence.repeat ? YesNo.YES : YesNo.NO,
-      repeatPeriod: appointmentOccurrence.repeat?.period as AppointmentRepeatPeriod,
-      repeatCount: appointmentOccurrence.repeat?.count,
-      comment: appointmentOccurrence.comment,
+      repeat: appointment.appointmentSeries?.schedule ? YesNo.YES : YesNo.NO,
+      frequency: appointment.appointmentSeries?.schedule?.frequency as AppointmentFrequency,
+      numberOfAppointments: appointment.appointmentSeries?.schedule?.numberOfAppointments,
+      extraInformation: appointment.extraInformation,
     }
 
     if (isValid(endTime)) {
@@ -162,13 +159,19 @@ export default class StartJourneyRoutes {
     }
 
     req.session.editAppointmentJourney = {
-      repeatCount: appointmentOccurrence.repeat?.count ?? 1,
-      occurrences: appointment.occurrences.map(occurrence => ({
-        sequenceNumber: occurrence.sequenceNumber,
-        startDate: occurrence.startDate,
-      })),
-      sequenceNumber: appointmentOccurrence.sequenceNumber,
-      bulkAppointment: appointmentOccurrence.bulkAppointment,
+      numberOfAppointments: appointment.appointmentSeries?.schedule?.numberOfAppointments ?? 1,
+      appointments: appointmentSeries?.appointments.map(a => ({
+        sequenceNumber: a.sequenceNumber,
+        startDate: a.startDate,
+      })) ?? [
+        {
+          sequenceNumber: appointment.sequenceNumber,
+          startDate: appointment.startDate,
+        },
+      ],
+      sequenceNumber: appointment.sequenceNumber,
+      appointmentSeries: appointment.appointmentSeries,
+      appointmentSet: appointment.appointmentSet,
     }
   }
 }

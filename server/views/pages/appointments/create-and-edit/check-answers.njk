@@ -8,8 +8,8 @@
 {% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% set pageTitle = appointmentJourneyTitle("Check and confirm set" if session.appointmentJourney.type == AppointmentType.BULK else "Check and confirm appointment details", session.appointmentJourney) %}
-{% set pageId = 'appointments-create-check-answers-page' %}
+{% set pageTitle = appointmentJourneyTitle("Check and confirm set" if session.appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details", session.appointmentJourney) %}
+{% set pageId = 'appointment-check-answers-page' %}
 
 {% set summaryListRows = [] %}
 
@@ -95,7 +95,7 @@
         actions: {
             items: [
                 {
-                    href: 'bulk-appointment-date?preserveHistory=true' if session.appointmentJourney.type == AppointmentType.BULK else 'date-and-time?preserveHistory=true',
+                    href: 'appointment-set-date?preserveHistory=true' if session.appointmentJourney.type == AppointmentType.SET else 'date-and-time?preserveHistory=true',
                     text: "Change",
                     visuallyHiddenText: "change date",
                     classes: "govuk-link--no-visited-state",
@@ -169,20 +169,20 @@
           text: "Frequency"
       },
       value: {
-          text: ("Every weekday (Monday to Friday)" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKDAY) +
-                ("Daily (includes weekends)" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.DAILY) +
-                ("Weekly" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.WEEKLY) +
-                ("Fortnightly" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.FORTNIGHTLY) +
-                ("Monthly" if session.appointmentJourney.repeatPeriod == AppointmentRepeatPeriod.MONTHLY)
+          text: ("Every weekday (Monday to Friday)" if session.appointmentJourney.frequency == AppointmentFrequency.WEEKDAY) +
+                ("Daily (includes weekends)" if session.appointmentJourney.frequency == AppointmentFrequency.DAILY) +
+                ("Weekly" if session.appointmentJourney.frequency == AppointmentFrequency.WEEKLY) +
+                ("Fortnightly" if session.appointmentJourney.frequency == AppointmentFrequency.FORTNIGHTLY) +
+                ("Monthly" if session.appointmentJourney.frequency == AppointmentFrequency.MONTHLY)
       },
       actions: {
           items: [
               {
-                  href: "repeat-period-and-count?preserveHistory=true",
+                  href: "repeat-frequency-and-count?preserveHistory=true",
                   text: "Change",
-                  visuallyHiddenText: "change repeat period",
+                  visuallyHiddenText: "change frequency",
                   classes: "govuk-link--no-visited-state",
-                  attributes: { 'data-qa': 'change-repeat-period' }
+                  attributes: { 'data-qa': 'change-frequency' }
               }
           ]
       }
@@ -192,52 +192,52 @@
           text: "Number of appointments"
       },
       value: {
-          text: session.appointmentJourney.repeatCount
+          text: session.appointmentJourney.numberOfAppointments
       },
       actions: {
           items: [
               {
-                  href: "repeat-period-and-count?preserveHistory=true",
+                  href: "repeat-frequency-and-count?preserveHistory=true",
                   text: "Change",
                   visuallyHiddenText: "change number of appointments",
                   classes: "govuk-link--no-visited-state",
-                  attributes: { 'data-qa': 'change-repeat-count' }
+                  attributes: { 'data-qa': 'change-number-of-appointments' }
               }
           ]
       }
   }), summaryListRows) %}
 {% endif %}
-{% if session.appointmentJourney.type !== AppointmentType.BULK %}
+{% if session.appointmentJourney.type !== AppointmentType.SET %}
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
                 text: "Extra information"
             },
             value: {
-                html: '<span class="preserve-line-breaks">' + (session.appointmentJourney.comment | escape) + '</span>'
+                html: '<span class="preserve-line-breaks">' + (session.appointmentJourney.extraInformation | escape) + '</span>'
             },
             actions: {
                 items: [
                     {
-                        href: "comment?preserveHistory=true",
+                        href: "extra-information?preserveHistory=true",
                         text: "Change",
                         visuallyHiddenText: "change extra information",
                         classes: "govuk-link--no-visited-state",
-                        attributes: { 'data-qa': 'change-comment' }
+                        attributes: { 'data-qa': 'change-extra-information' }
                     }
                 ]
             }
         }
     ), summaryListRows) %}
 {% endif %}
-{% if session.appointmentJourney.type == AppointmentType.BULK %}
+{% if session.appointmentJourney.type == AppointmentType.SET %}
     {% set summaryListRows = (summaryListRows.push(
         {
             key: {
                 text: "Appointments created"
             },
             value: {
-                text: session.bulkAppointmentJourney.appointments | length
+                text: session.appointmentSetJourney.appointments | length
             }
         }
     ), summaryListRows) %}
@@ -259,7 +259,7 @@
 
                 {{ prisonersList() if session.appointmentJourney.type == AppointmentType.GROUP }}
 
-                {{ bulkAppointments() if session.appointmentJourney.type == AppointmentType.BULK }}
+                {{ appointmentSet() if session.appointmentJourney.type == AppointmentType.SET }}
 
                 <div class="govuk-button-group">
                     {{ govukButton({
@@ -314,7 +314,7 @@
     }) }}
 {% endmacro %}
 
-{% macro bulkAppointments() %}
+{% macro appointmentSet() %}
     <div class="govuk-button-group">
         {{ govukButton({
             text: "Confirm",
@@ -322,9 +322,9 @@
         }) }}
     </div>
 
-    <h2 class="govuk-heading-m">{{ ("Attendee details" if session.bulkAppointmentJourney.appointments.length == 1 else "Details of attendees") }}</h2>
+    <h2 class="govuk-heading-m">{{ ("Attendee details" if session.appointmentSetJourney.appointments.length == 1 else "Details of attendees") }}</h2>
 
-    {% for appointment in session.bulkAppointmentJourney.appointments %}
+    {% for appointment in session.appointmentSetJourney.appointments %}
         {{ govukSummaryList({
             card: {
                 title: {
@@ -352,7 +352,7 @@
                 actions: {
                     items: [
                         {
-                            href: "review-bulk-appointment?preserveHistory=true",
+                            href: "appointment-set-times?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "change start time",
                             classes: "govuk-link--no-visited-state"
@@ -369,7 +369,7 @@
                 actions: {
                     items: [
                         {
-                            href: "review-bulk-appointment?preserveHistory=true",
+                            href: "appointment-set-times?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "change end time",
                             classes: "govuk-link--no-visited-state"
@@ -381,12 +381,12 @@
                     text: "Extra information"
                 },
                 value: {
-                    html: '<span class="preserve-line-breaks">' + appointment.comment | escape + '</span>'
+                    html: '<span class="preserve-line-breaks">' + appointment.extraInformation | escape + '</span>'
                 },
                 actions: {
                     items: [
                         {
-                            href: "bulk-appointment-comments/" + appointment.prisoner.number + "?preserveHistory=true",
+                            href: "appointment-set-extra-information/" + appointment.prisoner.number + "?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "change extra information",
                             classes: "govuk-link--no-visited-state"

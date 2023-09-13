@@ -12,14 +12,14 @@
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     {% set pageTitle = appointmentJourneyTitle("no attendees added" if prisoners.length == 0 else "Review additional attendee" + ("s" if prisoners.length > 1), session.appointmentJourney) %}
 {% else %}
-    {% if session.appointmentJourney.type == AppointmentType.BULK %}
+    {% if session.appointmentJourney.type == AppointmentType.SET %}
         {% set pageTitle = appointmentJourneyTitle("No attendees for set" if prisoners.length == 0 else "Review back-to-backs list", session.appointmentJourney) %}
     {% else %}
         {% set pageTitle = appointmentJourneyTitle("No attendees" if prisoners.length == 0 else "Review attendee list", session.appointmentJourney) %}
     {% endif %}
 {% endif %}
 
-{% set pageId = 'appointments-create-review-prisoners-page' %}
+{% set pageId = 'appointment-review-prisoners-page' %}
 {% set backLinkHref = backLinkHref %}
 
 {% block content %}
@@ -30,8 +30,8 @@
                 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
                     <h1 class="govuk-heading-l">There are no attendees to add</h1>
                     <p class="govuk-body">You’ve removed the last new attendee.</p>
-                    <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}/occurrence/{{ occurrenceId }}" class="govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
-                {% elseif session.appointmentJourney.type == AppointmentType.BULK %}
+                    <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}" class="govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
+                {% elseif session.appointmentJourney.type == AppointmentType.SET %}
                     <h1 class="govuk-heading-l">There are no attendees for this set</h1>
                     <p class="govuk-body">You’ve removed the last attendee for this set of appointments.</p>
                     <p class="govuk-body">You need to add a new list of prison numbers to continue scheduling the set of back-to-backs.</p>
@@ -43,9 +43,9 @@
             {% else %}
                 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
                     <h1 class="govuk-heading-l">{{ "Review the additional attendee" + ("s" if prisoners.length > 1) }}</h1>
-                {% elseif session.appointmentJourney.type == AppointmentType.BULK %}
+                {% elseif session.appointmentJourney.type == AppointmentType.SET %}
                     <h1 class="govuk-heading-l">Review who you’re scheduling appointments for</h1>
-                    <p class="govuk-body">You can remove anyone who is not required. If you want to add someone, change the list of prison numbers in the CSV file and <a href="upload-bulk-appointment" class="govuk-link--no-visited-state">upload it again</a>.</p>
+                    <p class="govuk-body">You can remove anyone who is not required. If you want to add someone, change the list of prison numbers in the CSV file and <a href="upload-appointment-set" class="govuk-link--no-visited-state">upload it again</a>.</p>
                 {% else %}
                     <h1 class="govuk-heading-l">Review who’s attending the appointment</h1>
                     <p class="govuk-body">Add or remove people, or continue with the current {{ "attendee" if prisoners.length == 1 else "list of attendees" }}.</p>
@@ -80,8 +80,8 @@
 
             {% if prisoners.length == 0 %}
                 {{ govukButton({
-                    text: ("Add a new list" if session.appointmentJourney.type == AppointmentType.BULK else "Add someone to the list"),
-                    href: ("upload-bulk-appointment" if session.appointmentJourney.type == AppointmentType.BULK else "how-to-add-prisoners") + ('?preserveHistory=true' if preserveHistory else ''),
+                    text: ("Add a new list" if session.appointmentJourney.type == AppointmentType.SET else "Add someone to the list"),
+                    href: ("upload-appointment-set" if session.appointmentJourney.type == AppointmentType.SET else "how-to-add-prisoners") + ('?preserveHistory=true' if preserveHistory else ''),
                     attributes: { 'data-qa': 'add-prisoner-primary' }
                 }) }}
             {% else %}
@@ -107,7 +107,7 @@
                     rows: prisonersList
                 }) }}
 
-            {% if session.appointmentJourney.type != AppointmentType.BULK %}
+            {% if session.appointmentJourney.type != AppointmentType.SET %}
                 <div class="govuk-button-group">
                     {{ govukButton({
                         text: "Add another person",

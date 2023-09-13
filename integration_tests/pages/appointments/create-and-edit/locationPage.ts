@@ -2,7 +2,7 @@ import Page from '../../page'
 
 export default class LocationPage extends Page {
   constructor() {
-    super('appointments-create-location-page')
+    super('appointment-location-page')
   }
 
   selectLocation = (location: string) => this.getInputById('locationId').clear().type(location)

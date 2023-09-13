@@ -1,0 +1,75 @@
+{
+  "id": 11,
+  "appointmentSeries": {
+    "id": 10,
+    "schedule": {
+      "frequency": "WEEKLY",
+      "numberOfAppointments": 2
+    }
+  },
+  "sequenceNumber": 1,
+  "category": {
+    "code": "CHAP",
+    "description": "Chaplaincy"
+  },
+  "prisonCode": "MDI",
+  "appointmentName": "Chaplain Meeting (Chaplaincy)",
+  "internalLocation": {
+    "id": 26152,
+    "prisonCode": "MDI",
+    "description": "Chapel"
+  },
+  "inCell": false,
+  "startDate": "2023-02-22",
+  "startTime": "14:00",
+  "endTime": "15:30",
+  "appointmentType": "GROUP",
+  "extraInformation": "Appointment extra information",
+  "isEdited": false,
+  "isCancelled": false,
+  "isExpired": false,
+  "createdTime": "2023-02-20T10:00:00",
+  "createdBy": {
+    "id": 231232,
+    "username": "USER1",
+    "firstName": "john",
+    "lastName": "smith"
+  },
+  "updatedTime": null,
+  "updatedBy": null,
+  "attendees": [
+    {
+      "id": 12,
+      "prisoner": {
+        "prisonerNumber": "A8644DY",
+        "bookingId": 1202189,
+        "firstName": "STEPHEN",
+        "lastName": "GREGS",
+        "prisonCode": "MDI",
+        "cellLocation": "1-3"
+      }
+    },
+    {
+      "id": 13,
+      "prisoner": {
+        "prisonerNumber": "A1350DZ",
+        "bookingId": 1205032,
+        "firstName": "DAVID",
+        "lastName": "WINCHURCH",
+        "prisonCode": "MDI",
+        "cellLocation": "2-2-024"
+      }
+    },
+    {
+      "id": 14,
+      "prisoner": {
+        "prisonerNumber": "A1351DZ",
+        "bookingId": 1205033,
+        "firstName": "LEE",
+        "lastName": "JACOBSON",
+        "prisonCode": "MDI",
+        "cellLocation": "1"
+      }
+    }
+  ]
+}

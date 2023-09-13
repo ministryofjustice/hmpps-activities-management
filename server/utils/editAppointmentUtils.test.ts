@@ -11,7 +11,7 @@ import {
   AppointmentApplyTo,
   AppointmentApplyToOption,
   AppointmentCancellationReason,
-  AppointmentRepeatPeriod,
+  AppointmentFrequency,
 } from '../@types/appointments'
 import {
   getAppointmentApplyToOptions,
@@ -27,8 +27,7 @@ describe('Edit Appointment Utils', () => {
   const weekTomorrow = addDays(new Date(), 8)
   const weekTomorrowFormatted = formatDate(weekTomorrow, 'EEEE, d MMMM yyyy')
   let req: Request
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentId = 2
 
   beforeEach(() => {
     req = {
@@ -62,8 +61,8 @@ describe('Edit Appointment Utils', () => {
           },
         } as unknown as AppointmentJourney,
         editAppointmentJourney: {
-          repeatCount: 4,
-          occurrences: [
+          numberOfAppointments: 4,
+          appointments: [
             {
               sequenceNumber: 1,
               startDate: '2023-01-01',
@@ -86,7 +85,6 @@ describe('Edit Appointment Utils', () => {
       },
       params: {
         appointmentId,
-        occurrenceId,
       },
       flash: jest.fn(),
     } as unknown as Request
@@ -107,21 +105,14 @@ describe('Edit Appointment Utils', () => {
       expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
     })
 
-    it('edit mode null occurrence id', () => {
-      req.params.occurrenceId = null
-      expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
-    })
-
     it('edit', () => {
-      expect(getAppointmentBackLinkHref(req, 'name')).toEqual(
-        `/appointments/${appointmentId}/occurrence/${occurrenceId}`,
-      )
+      expect(getAppointmentBackLinkHref(req, 'name')).toEqual(`/appointments/${appointmentId}`)
     })
   })
 
   describe('is apply to question required', () => {
     it('change future non repeating appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
@@ -133,15 +124,15 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('change past non repeating appointment', () => {
-      req.session.editAppointmentJourney.repeatCount = 1
-      req.session.editAppointmentJourney.occurrences = []
+      req.session.editAppointmentJourney.numberOfAppointments = 1
+      req.session.editAppointmentJourney.appointments = []
       req.session.editAppointmentJourney.sequenceNumber = 1
 
       expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
     })
 
     it('repeating appointment change single remaining appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 4,
           startDate: '2023-01-01',
@@ -153,14 +144,14 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment no remaining appointments change past appointment', () => {
-      req.session.editAppointmentJourney.occurrences = []
+      req.session.editAppointmentJourney.appointments = []
       req.session.editAppointmentJourney.sequenceNumber = 3
 
       expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
     })
 
     it('repeating appointment two remaining appointments change first appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 3,
           startDate: '2023-01-01',
@@ -401,7 +392,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('when changing the comment', () => {
-      req.session.editAppointmentJourney.comment = 'Updated comment'
+      req.session.editAppointmentJourney.extraInformation = 'Updated comment'
 
       expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
         'change the extra information for',
@@ -415,7 +406,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('when removing the comment', () => {
-      req.session.editAppointmentJourney.comment = ''
+      req.session.editAppointmentJourney.extraInformation = ''
 
       expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
         'change the extra information for',
@@ -491,7 +482,7 @@ describe('Edit Appointment Utils', () => {
 
   describe('get appointment apply to options', () => {
     it('change future non repeating appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
@@ -501,14 +492,14 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (1 of 1)`,
         },
       ] as AppointmentApplyToOption[])
     })
 
     it('repeating appointment change single remaining appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 4,
           startDate: '2023-01-01',
@@ -518,7 +509,7 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (4 of 4)`,
         },
       ] as AppointmentApplyToOption[])
@@ -529,11 +520,11 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (1 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: 'This one and all the appointments that come after it in the series',
           additionalDescription:
             "You're changing the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
@@ -542,7 +533,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment two remaining appointments change first appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 3,
           startDate: '2023-01-03',
@@ -556,11 +547,11 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (3 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: 'This one and all the appointments that come after it in the series',
           additionalDescription:
             "You're changing the following 2 appointments:<br>3 January 2023 (3 of 4) to 4 January 2023 (4 of 4)",
@@ -569,7 +560,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment deleted appointment change first appointment', () => {
-      req.session.editAppointmentJourney.occurrences = [
+      req.session.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
@@ -587,11 +578,11 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (1 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: 'This one and all the appointments that come after it in the series',
           additionalDescription:
             "You're changing the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
@@ -604,17 +595,17 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (2 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: 'This one and all the appointments that come after it in the series',
           additionalDescription:
             "You're changing the following 3 appointments:<br>2 January 2023 (2 of 4) to 4 January 2023 (4 of 4)",
         },
         {
-          applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
           description: "This one and all the appointments in the series that haven't happened yet",
           additionalDescription:
             "You're changing the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
@@ -627,17 +618,17 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (3 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: 'This one and the appointment that comes after it in the series',
           additionalDescription:
             "You're changing the following 2 appointments:<br>3 January 2023 (3 of 4) to 4 January 2023 (4 of 4)",
         },
         {
-          applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
           description: "This one and all the appointments in the series that haven't happened yet",
           additionalDescription:
             "You're changing the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
@@ -650,11 +641,11 @@ describe('Edit Appointment Utils', () => {
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
-          applyTo: AppointmentApplyTo.THIS_OCCURRENCE,
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           description: `Just this one - ${weekTomorrowFormatted} (4 of 4)`,
         },
         {
-          applyTo: AppointmentApplyTo.ALL_FUTURE_OCCURRENCES,
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
           description: "This one and all the appointments in the series that haven't happened yet",
           additionalDescription:
             "You're changing the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
@@ -755,19 +746,19 @@ describe('Edit Appointment Utils', () => {
   describe('appointment frequency text', () => {
     it.each([
       ['null', null, null],
-      ['week day', AppointmentRepeatPeriod.WEEKDAY, 'week day'],
-      ['day', AppointmentRepeatPeriod.DAILY, 'day'],
-      ['week', AppointmentRepeatPeriod.WEEKLY, 'week'],
-      ['fortnight', AppointmentRepeatPeriod.FORTNIGHTLY, 'fortnight'],
-      ['month', AppointmentRepeatPeriod.MONTHLY, 'month'],
+      ['week day', AppointmentFrequency.WEEKDAY, 'week day'],
+      ['day', AppointmentFrequency.DAILY, 'day'],
+      ['week', AppointmentFrequency.WEEKLY, 'week'],
+      ['fortnight', AppointmentFrequency.FORTNIGHTLY, 'fortnight'],
+      ['month', AppointmentFrequency.MONTHLY, 'month'],
       ['unknown value', 'UNKNOWN', null],
     ])(
       'should return correct frequency text for %s',
-      (_: string, repeatPeriod: AppointmentRepeatPeriod, expectedFrequencyNoun: string) => {
+      (_: string, frequency: AppointmentFrequency, expectedFrequencyNoun: string) => {
         req.session.appointmentJourney = {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
-          repeatPeriod,
+          frequency,
         }
 
         const expectedText = expectedFrequencyNoun ? `This appointment repeats every ${expectedFrequencyNoun}` : null

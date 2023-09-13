@@ -5,15 +5,16 @@ import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import {
   Appointment,
-  AppointmentCreateRequest,
-  BulkAppointment,
-  BulkAppointmentsRequest,
-  IndividualAppointment,
+  AppointmentSeries,
+  AppointmentSeriesCreateRequest,
+  AppointmentSet,
+  AppointmentSetCreateRequest,
+  AppointmentSetAppointment,
 } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentRepeatPeriod } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 import { AppointmentType } from '../appointmentJourney'
-import { BulkAppointmentJourney } from '../bulkAppointmentJourney'
+import { AppointmentSetJourney } from '../appointmentSetJourney'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -73,7 +74,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
           },
           repeat: YesNo.NO,
         },
-        bulkAppointmentJourney: {},
+        appointmentSetJourney: {},
       },
     } as unknown as Request
   })
@@ -90,8 +91,8 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
   })
 
   describe('POST', () => {
-    let expectedRequest: AppointmentCreateRequest
-    let expectedResponse: Appointment
+    let expectedRequest: AppointmentSeriesCreateRequest
+    let expectedResponse: AppointmentSeries
 
     beforeEach(() => {
       expectedRequest = {
@@ -104,7 +105,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         startTime: '09:30',
         endTime: '13:00',
         prisonerNumbers: ['A1234BC'],
-      } as AppointmentCreateRequest
+      } as AppointmentSeriesCreateRequest
 
       expectedResponse = {
         id: 15,
@@ -115,18 +116,18 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         startDate: '2023-04-23',
         startTime: '09:30',
         endTime: '13:00',
-        comment: '',
-        created: '2023-02-07T15:37:59.266Z',
+        extraInformation: '',
+        createdTime: '2023-02-07T15:37:59.266Z',
         createdBy: 'test.user',
-        occurrences: [
+        appointments: [
           {
             id: 16,
             internalLocationId: 32,
             startDate: '2023-04-23',
             startTime: '09:30',
             endTime: '13:00',
-            comment: null,
-            allocations: [
+            extraInformation: null,
+            attendees: [
               {
                 id: 17,
                 prisonerNumber: 'A1234BC',
@@ -135,46 +136,46 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             ],
           },
         ],
-      } as Appointment
+      } as AppointmentSeries
     })
 
-    it('should create the appointment and redirect to confirmation page', async () => {
-      when(activitiesService.createAppointment)
+    it('should create the appointment series and redirect to confirmation page', async () => {
+      when(activitiesService.createAppointmentSeries)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
-      expect(activitiesService.createAppointment).toHaveBeenCalledWith(expectedRequest, res.locals.user)
-      expect(res.redirect).toHaveBeenCalledWith('confirmation/15')
+      expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
     })
 
     it('should create the repeat appointment and redirect to confirmation page', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
-      req.session.appointmentJourney.repeatPeriod = AppointmentRepeatPeriod.WEEKLY
-      req.session.appointmentJourney.repeatCount = 6
+      req.session.appointmentJourney.frequency = AppointmentFrequency.WEEKLY
+      req.session.appointmentJourney.numberOfAppointments = 6
 
-      expectedRequest.repeat = {
-        period: AppointmentRepeatPeriod.WEEKLY,
-        count: 6,
+      expectedRequest.schedule = {
+        frequency: AppointmentFrequency.WEEKLY,
+        numberOfAppointments: 6,
       }
 
-      when(activitiesService.createAppointment)
+      when(activitiesService.createAppointmentSeries)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
-      expect(activitiesService.createAppointment).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
     })
   })
 
-  describe('POST bulk', () => {
-    let expectedRequest: BulkAppointmentsRequest
-    let expectedResponse: BulkAppointment
+  describe('POST set', () => {
+    let expectedRequest: AppointmentSetCreateRequest
+    let expectedResponse: AppointmentSet
 
     beforeEach(() => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+      req.session.appointmentJourney.type = AppointmentType.SET
 
-      req.session.bulkAppointmentJourney = {
+      req.session.appointmentSetJourney = {
         appointments: [
           {
             startTime: {
@@ -205,10 +206,10 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
               name: 'B Prisoner',
               cellLocation: '1-2-4',
             },
-            comment: 'Extra information for B2345CD',
+            extraInformation: 'Extra information for B2345CD',
           },
         ],
-      } as BulkAppointmentJourney
+      } as AppointmentSetJourney
 
       expectedRequest = {
         prisonCode: 'TPR',
@@ -217,15 +218,15 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         inCell: false,
         startDate: '2023-04-23',
         appointments: [
-          { prisonerNumber: 'A1234BC', startTime: '13:30', endTime: '14:00' } as IndividualAppointment,
+          { prisonerNumber: 'A1234BC', startTime: '13:30', endTime: '14:00' } as AppointmentSetAppointment,
           {
             prisonerNumber: 'B2345CD',
             startTime: '14:00',
             endTime: '14:30',
-            comment: 'Extra information for B2345CD',
-          } as IndividualAppointment,
+            extraInformation: 'Extra information for B2345CD',
+          } as AppointmentSetAppointment,
         ],
-      } as BulkAppointmentsRequest
+      } as AppointmentSetCreateRequest
 
       expectedResponse = {
         id: 14,
@@ -233,81 +234,61 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         categoryCode: 'MEDO',
         internalLocationId: 32,
         startDate: '2023-04-23',
-        created: '2023-02-07T15:37:59.266Z',
+        createdTime: '2023-02-07T15:37:59.266Z',
         createdBy: 'test.user',
         appointments: [
           {
-            id: 15,
-            appointmentType: 'INDIVIDUAL',
+            id: 16,
+            sequenceNumber: 1,
             prisonCode: 'TPR',
             categoryCode: 'MEDO',
             internalLocationId: 32,
             startDate: '2023-04-23',
             startTime: '13:30',
             endTime: '14:00',
-            comment: '',
-            created: '2023-02-07T15:37:59.266Z',
+            extraInformation: '',
+            createdTime: '2023-02-07T15:37:59.266Z',
             createdBy: 'test.user',
-            occurrences: [
+            attendees: [
               {
-                id: 16,
-                internalLocationId: 32,
-                startDate: '2023-04-23',
-                startTime: '13:30',
-                endTime: '14:00',
-                comment: null,
-                allocations: [
-                  {
-                    id: 17,
-                    prisonerNumber: 'A1234BC',
-                    bookingId: 456,
-                  },
-                ],
+                id: 17,
+                prisonerNumber: 'A1234BC',
+                bookingId: 456,
               },
             ],
           } as Appointment,
           {
-            id: 16,
-            appointmentType: 'INDIVIDUAL',
+            id: 17,
+            sequenceNumber: 1,
             prisonCode: 'TPR',
             categoryCode: 'MEDO',
             internalLocationId: 32,
             startDate: '2023-04-23',
             startTime: '14:00',
             endTime: '14:30',
-            comment: '',
-            created: '2023-02-07T15:37:59.266Z',
+            extraInformation: '',
+            createdTime: '2023-02-07T15:37:59.266Z',
             createdBy: 'test.user',
-            occurrences: [
+            attendees: [
               {
-                id: 17,
-                internalLocationId: 32,
-                startDate: '2023-04-23',
-                startTime: '14:00',
-                endTime: '14:30',
-                comment: null,
-                allocations: [
-                  {
-                    id: 18,
-                    prisonerNumber: 'B2345CD',
-                    bookingId: 457,
-                  },
-                ],
+                id: 18,
+                prisonerNumber: 'B2345CD',
+                bookingId: 457,
               },
             ],
           } as Appointment,
         ],
-      } as BulkAppointment
+      } as AppointmentSet
     })
 
-    it('should create the bulk appointment and redirect to confirmation page', async () => {
-      when(activitiesService.createBulkAppointment)
+    it('should create the appointment set and redirect to confirmation page', async () => {
+      when(activitiesService.createAppointmentSet)
         .calledWith(atLeast(expectedRequest))
         .mockResolvedValueOnce(expectedResponse)
 
       await handler.POST(req, res)
-      expect(activitiesService.createBulkAppointment).toHaveBeenCalledWith(expectedRequest, res.locals.user)
-      expect(res.redirect).toHaveBeenCalledWith('bulk-appointments-confirmation/14')
+      expect(activitiesService.createAppointmentSet).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('set-confirmation/14')
     })
   })
 })

@@ -29,8 +29,7 @@ export default class CalendarSpikeRoutes {
             locationCode: e.internalLocationCode,
             locationDescription: e.internalLocationDescription,
             categoryDescription: e.categoryDescription,
-            appointmentOccurrenceId:
-              e.eventType === 'APPOINTMENT' && e.eventSource === 'SAA' ? e.appointmentOccurrenceId : null,
+            appointmentId: e.eventType === 'APPOINTMENT' && e.eventSource === 'SAA' ? e.appointmentId : null,
             scheduledInstanceId: e.eventType === 'ACTIVITY' && e.eventSource === 'SAA' ? e.scheduledInstanceId : null,
           })),
         )

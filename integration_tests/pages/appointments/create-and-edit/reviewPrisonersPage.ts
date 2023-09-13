@@ -2,7 +2,7 @@ import Page from '../../page'
 
 export default class ReviewPrisonersPage extends Page {
   constructor() {
-    super('appointments-create-review-prisoners-page')
+    super('appointment-review-prisoners-page')
   }
 
   addAnotherPrisoner = () => cy.get('[data-qa="add-prisoner-secondary"]').contains('Add another person').click()

@@ -104,8 +104,8 @@ describe('Route Handlers - Create Appointment - Name', () => {
       })
     })
 
-    it('should render the name view with back link for type = BULK', async () => {
-      req.session.appointmentJourney.type = AppointmentType.BULK
+    it('should render the name view with back link for type = SET', async () => {
+      req.session.appointmentJourney.type = AppointmentType.SET
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
 
@@ -134,14 +134,14 @@ describe('Route Handlers - Create Appointment - Name', () => {
         code: 'MEDO',
         description: 'Medical - Doctor',
       })
-      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(req.session.appointmentJourney.customName).toBeNull()
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
 
-    it('should save selected category and description in session, use description and category description as appointment name and redirect to location page', async () => {
+    it('should save selected category and custom name in session, use custom name and category description as appointment name and redirect to location page', async () => {
       req.body = {
         categoryCode: 'CHAP',
-        description: 'Bible studies',
+        customName: 'Bible studies',
       }
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -153,14 +153,14 @@ describe('Route Handlers - Create Appointment - Name', () => {
         code: 'CHAP',
         description: 'Chaplaincy',
       })
-      expect(req.session.appointmentJourney.description).toEqual('Bible studies')
+      expect(req.session.appointmentJourney.customName).toEqual('Bible studies')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
 
-    it('should trim description', async () => {
+    it('should trim custom name', async () => {
       req.body = {
         categoryCode: 'CHAP',
-        description: '    Bible studies   ',
+        customName: '    Bible studies   ',
       }
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -168,13 +168,13 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.appointmentName).toEqual('Bible studies (Chaplaincy)')
-      expect(req.session.appointmentJourney.description).toEqual('Bible studies')
+      expect(req.session.appointmentJourney.customName).toEqual('Bible studies')
     })
 
-    it('should set description to null when undefined', async () => {
+    it('should set custom name to null when undefined', async () => {
       req.body = {
         categoryCode: 'CHAP',
-        description: undefined,
+        customName: undefined,
       }
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -182,13 +182,13 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(req.session.appointmentJourney.customName).toBeNull()
     })
 
-    it('should set description to null when null', async () => {
+    it('should set custom name to null when null', async () => {
       req.body = {
         categoryCode: 'CHAP',
-        description: null,
+        customName: null,
       }
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -196,13 +196,13 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(req.session.appointmentJourney.customName).toBeNull()
     })
 
-    it('should set description to null when empty string', async () => {
+    it('should set custom name to null when empty string', async () => {
       req.body = {
         categoryCode: 'CHAP',
-        description: '',
+        customName: '',
       }
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -210,13 +210,13 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(req.session.appointmentJourney.customName).toBeNull()
     })
 
-    it('should set description to null when whitespace', async () => {
+    it('should set custom name to null when whitespace', async () => {
       req.body = {
         categoryCode: 'CHAP',
-        description: '   ',
+        customName: '   ',
       }
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -224,7 +224,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.POST(req, res)
 
       expect(req.session.appointmentJourney.appointmentName).toEqual('Chaplaincy')
-      expect(req.session.appointmentJourney.description).toBeNull()
+      expect(req.session.appointmentJourney.customName).toBeNull()
     })
 
     it('validation fails when selected category is not found', async () => {
@@ -252,10 +252,10 @@ describe('Route Handlers - Create Appointment - Name', () => {
       )
     })
 
-    it('validation fails when description is 41 characters', async () => {
+    it('validation fails when custom name is 41 characters', async () => {
       const body = {
         categoryCode: 'GYMW',
-        description: 'a'.repeat(41),
+        customName: 'a'.repeat(41),
       }
 
       const requestObject = plainToInstance(Name, body)
@@ -263,7 +263,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
       expect(errors).toEqual(
         expect.arrayContaining([
-          { property: 'description', error: 'You must enter a custom name which has no more than 40 characters' },
+          { property: 'customName', error: 'You must enter a custom name which has no more than 40 characters' },
         ]),
       )
     })
@@ -271,7 +271,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
     it('passes validation when valid category code is selected', async () => {
       const body = {
         categoryCode: 'GYMW',
-        description: '',
+        customName: '',
       }
 
       const requestObject = plainToInstance(Name, body)
@@ -280,10 +280,10 @@ describe('Route Handlers - Create Appointment - Name', () => {
       expect(errors).toHaveLength(0)
     })
 
-    it('passes validation when valid category code is selected and description is less than 41 characters', async () => {
+    it('passes validation when valid category code is selected and custom name is less than 41 characters', async () => {
       const body = {
         categoryCode: 'GYMW',
-        description: 'a'.repeat(40),
+        customName: 'a'.repeat(40),
       }
 
       const requestObject = plainToInstance(Name, body)

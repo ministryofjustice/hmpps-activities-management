@@ -3,7 +3,7 @@ import { SessionDatum } from '../@types/express'
 
 const journeys = [
   'appointmentJourney',
-  'bulkAppointmentJourney',
+  'appointmentSetJourney',
   'editAppointmentJourney',
   'attendanceSummaryJourney',
   'unlockListJourney',

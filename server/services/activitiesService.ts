@@ -15,26 +15,26 @@ import {
   ActivityCreateRequest,
   PrisonPayBand,
   PrisonerScheduledEvents,
-  Appointment,
+  AppointmentSeries,
   AppointmentCategorySummary,
-  AppointmentCreateRequest,
+  AppointmentSeriesCreateRequest,
   AttendanceReason,
+  AppointmentSeriesDetails,
   AppointmentDetails,
-  AppointmentOccurrenceDetails,
   ScheduleInstanceCancelRequest,
   UncancelScheduledInstanceRequest,
   Attendance,
-  AppointmentOccurrenceUpdateRequest,
+  AppointmentUpdateRequest,
   PageActivityCandidate,
   AppointmentLocationSummary,
-  AppointmentOccurrenceSearchRequest,
+  AppointmentSearchRequest,
   AllAttendance,
   ActivityUpdateRequest,
   AllocationUpdateRequest,
-  AppointmentOccurrenceCancelRequest,
-  BulkAppointmentsRequest,
-  BulkAppointment,
-  BulkAppointmentDetails,
+  AppointmentCancelRequest,
+  AppointmentSetCreateRequest,
+  AppointmentSet,
+  AppointmentSetDetails,
   EventReviewSearchResults,
   PrisonerDeallocationRequest,
   DeallocationReasonCode,
@@ -168,15 +168,12 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getPrisonerAllocations(user.activeCaseLoadId, prisonerNumbers, user)
   }
 
-  async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
-    return this.activitiesApiClient.getAppointmentDetails(appointmentId, user)
+  async getAppointmentSeriesDetails(appointmentSeriesId: number, user: ServiceUser): Promise<AppointmentSeriesDetails> {
+    return this.activitiesApiClient.getAppointmentSeriesDetails(appointmentSeriesId, user)
   }
 
-  async getAppointmentOccurrenceDetails(
-    appointmentOccurrenceId: number,
-    user: ServiceUser,
-  ): Promise<AppointmentOccurrenceDetails> {
-    return this.activitiesApiClient.getAppointmentOccurrenceDetails(appointmentOccurrenceId, user)
+  async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
+    return this.activitiesApiClient.getAppointmentDetails(appointmentId, user)
   }
 
   async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategorySummary[]> {
@@ -187,8 +184,8 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAppointmentLocations(prisonCode, user)
   }
 
-  createAppointment(appointment: AppointmentCreateRequest, user: ServiceUser): Promise<Appointment> {
-    return this.activitiesApiClient.postCreateAppointment(appointment, user)
+  createAppointmentSeries(request: AppointmentSeriesCreateRequest, user: ServiceUser): Promise<AppointmentSeries> {
+    return this.activitiesApiClient.postCreateAppointmentSeries(request, user)
   }
 
   async cancelScheduledActivity(
@@ -239,12 +236,8 @@ export default class ActivitiesService {
     )
   }
 
-  async editAppointmentOccurrence(
-    occurrenceId: number,
-    occurrenceUpdates: AppointmentOccurrenceUpdateRequest,
-    user: ServiceUser,
-  ) {
-    return this.activitiesApiClient.editAppointmentOccurrence(occurrenceId, occurrenceUpdates, user)
+  async editAppointment(appointmentId: number, request: AppointmentUpdateRequest, user: ServiceUser) {
+    return this.activitiesApiClient.patchUpdateAppointment(appointmentId, request, user)
   }
 
   getPrisonRolloutPlan(prisonCode: string) {
@@ -255,28 +248,20 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAllAttendance(sessionDate, user)
   }
 
-  async searchAppointmentOccurrences(
-    prisonCode: string,
-    searchRequest: AppointmentOccurrenceSearchRequest,
-    user: ServiceUser,
-  ) {
-    return this.activitiesApiClient.searchAppointmentOccurrences(prisonCode, searchRequest, user)
+  async searchAppointments(prisonCode: string, request: AppointmentSearchRequest, user: ServiceUser) {
+    return this.activitiesApiClient.searchAppointments(prisonCode, request, user)
   }
 
-  async cancelAppointmentOccurrence(
-    occurrenceId: number,
-    cancelRequest: AppointmentOccurrenceCancelRequest,
-    user: ServiceUser,
-  ) {
-    return this.activitiesApiClient.cancelAppointmentOccurrence(occurrenceId, cancelRequest, user)
+  async cancelAppointment(appointmentId: number, request: AppointmentCancelRequest, user: ServiceUser) {
+    return this.activitiesApiClient.cancelAppointments(appointmentId, request, user)
   }
 
-  async createBulkAppointment(appointment: BulkAppointmentsRequest, user: ServiceUser): Promise<BulkAppointment> {
-    return this.activitiesApiClient.postCreateBulkAppointment(appointment, user)
+  async createAppointmentSet(request: AppointmentSetCreateRequest, user: ServiceUser): Promise<AppointmentSet> {
+    return this.activitiesApiClient.postCreateAppointmentSet(request, user)
   }
 
-  async getBulkAppointmentDetails(bulkAppointmentId: number, user: ServiceUser): Promise<BulkAppointmentDetails> {
-    return this.activitiesApiClient.getBulkAppointmentDetails(bulkAppointmentId, user)
+  async getAppointmentSetDetails(appointmentSetId: number, user: ServiceUser): Promise<AppointmentSetDetails> {
+    return this.activitiesApiClient.getAppointmentSetDetails(appointmentSetId, user)
   }
 
   async getChangeEvents(

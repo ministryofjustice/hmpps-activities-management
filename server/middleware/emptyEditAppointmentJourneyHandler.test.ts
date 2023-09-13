@@ -6,15 +6,15 @@ describe('emptyEditAppointmentJourneyHandler', () => {
   let req: Request
   let res: Response
   const next = jest.fn()
-  const appointmentId = 1
-  const occurrenceId = 2
+  const appointmentSeriesId = 1
+  const appointmentId = 2
 
   beforeEach(() => {
     req = {
       session: {},
       params: {
+        appointmentSeriesId,
         appointmentId,
-        occurrenceId,
       },
     } as unknown as Request
 
@@ -30,11 +30,11 @@ describe('emptyEditAppointmentJourneyHandler', () => {
   describe('step requires active appointment and edit appointment journeys in session', () => {
     const middleware = emptyEditAppointmentJourneyHandler(true)
 
-    it('should redirect back to occurrence details page when the appointment journey data is not in session', async () => {
+    it('should redirect back to appointment details page when the appointment journey data is not in session', async () => {
       req.session.appointmentJourney = null
       req.session.editAppointmentJourney = {
-        repeatCount: 1,
-        occurrences: [
+        numberOfAppointments: 1,
+        appointments: [
           {
             sequenceNumber: 1,
             startDate: '2023-01-01',
@@ -44,10 +44,10 @@ describe('emptyEditAppointmentJourneyHandler', () => {
       }
       await middleware(req, res, next)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
     })
 
-    it('should redirect back to occurrence details page when the edit appointment journey data is not in session', async () => {
+    it('should redirect back to appointment details page when the edit appointment journey data is not in session', async () => {
       req.session.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
         type: AppointmentType.INDIVIDUAL,
@@ -56,7 +56,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
       req.session.editAppointmentJourney = null
       await middleware(req, res, next)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}/occurrence/${occurrenceId}`)
+      expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
     })
 
     it('should continue if both journeys data exists in session', async () => {
@@ -66,8 +66,8 @@ describe('emptyEditAppointmentJourneyHandler', () => {
         appointmentName: 'appointment name',
       }
       req.session.editAppointmentJourney = {
-        repeatCount: 1,
-        occurrences: [
+        numberOfAppointments: 1,
+        appointments: [
           {
             sequenceNumber: 1,
             startDate: '2023-01-01',

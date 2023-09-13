@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
-import { AppointmentCreateRequest, BulkAppointmentsRequest } from '../../../../@types/activitiesAPI/types'
+import { AppointmentSeriesCreateRequest, AppointmentSetCreateRequest } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentType } from '../appointmentJourney'
 
@@ -20,14 +20,14 @@ export default class CheckAnswersRoutes {
     const { appointmentJourney } = req.session
 
     let response
-    if (appointmentJourney.type === AppointmentType.BULK) {
-      const request = this.createBulkAppointmentRequest(req, res)
-      response = await this.activitiesService.createBulkAppointment(request, user)
-      res.redirect(`bulk-appointments-confirmation/${response.id}`)
+    if (appointmentJourney.type === AppointmentType.SET) {
+      const request = this.createAppointmentSetRequest(req, res)
+      response = await this.activitiesService.createAppointmentSet(request, user)
+      res.redirect(`set-confirmation/${response.id}`)
     } else {
       const request = this.createAppointmentRequest(req, res)
-      response = await this.activitiesService.createAppointment(request, user)
-      res.redirect(`confirmation/${response.id}`)
+      response = await this.activitiesService.createAppointmentSeries(request, user)
+      res.redirect(`confirmation/${response.appointments[0].id}`)
     }
   }
 
@@ -40,42 +40,42 @@ export default class CheckAnswersRoutes {
       prisonCode: user.activeCaseLoadId,
       prisonerNumbers: appointmentJourney.prisoners.map(p => p.number),
       categoryCode: appointmentJourney.category.code,
-      appointmentDescription: appointmentJourney.description,
+      customName: appointmentJourney.customName,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
       startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
       startTime: plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString(),
       endTime: plainToInstance(SimpleTime, appointmentJourney.endTime).toIsoString(),
-      comment: appointmentJourney.comment,
-    } as AppointmentCreateRequest
+      extraInformation: appointmentJourney.extraInformation,
+    } as AppointmentSeriesCreateRequest
 
     if (appointmentJourney.repeat === YesNo.YES) {
-      request.repeat = {
-        period: appointmentJourney.repeatPeriod,
-        count: appointmentJourney.repeatCount,
+      request.schedule = {
+        frequency: appointmentJourney.frequency,
+        numberOfAppointments: appointmentJourney.numberOfAppointments,
       }
     }
 
     return request
   }
 
-  private createBulkAppointmentRequest(req: Request, res: Response) {
+  private createAppointmentSetRequest(req: Request, res: Response) {
     const { user } = res.locals
-    const { appointmentJourney, bulkAppointmentJourney } = req.session
+    const { appointmentJourney, appointmentSetJourney } = req.session
 
     return {
       prisonCode: user.activeCaseLoadId,
       categoryCode: appointmentJourney.category.code,
-      appointmentDescription: appointmentJourney.description,
+      customName: appointmentJourney.customName,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
       startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
-      appointments: bulkAppointmentJourney.appointments.map(appointment => ({
+      appointments: appointmentSetJourney.appointments.map(appointment => ({
         prisonerNumber: appointment.prisoner.number,
         startTime: plainToInstance(SimpleTime, appointment.startTime).toIsoString(),
         endTime: plainToInstance(SimpleTime, appointment.endTime).toIsoString(),
-        comment: appointment.comment,
+        extraInformation: appointment.extraInformation,
       })),
-    } as BulkAppointmentsRequest
+    } as AppointmentSetCreateRequest
   }
 }

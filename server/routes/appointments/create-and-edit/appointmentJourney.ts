@@ -1,10 +1,10 @@
 import { YesNo } from '../../../@types/activities'
-import { AppointmentRepeatPeriod } from '../../../@types/appointments'
+import { AppointmentFrequency } from '../../../@types/appointments'
 
 export enum AppointmentType {
   INDIVIDUAL = 'INDIVIDUAL',
   GROUP = 'GROUP',
-  BULK = 'BULK',
+  SET = 'SET',
 }
 
 export enum AppointmentJourneyMode {
@@ -26,7 +26,7 @@ export type AppointmentJourney = {
     code: string
     description: string
   }
-  description?: string
+  customName?: string
   location?: {
     id: number
     description: string
@@ -48,9 +48,9 @@ export type AppointmentJourney = {
     date: Date
   }
   repeat?: YesNo
-  repeatPeriod?: AppointmentRepeatPeriod
-  repeatCount?: number
-  comment?: string
+  frequency?: AppointmentFrequency
+  numberOfAppointments?: number
+  extraInformation?: string
 
   fromPrisonNumberProfile?: string
 }
