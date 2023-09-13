@@ -9,7 +9,7 @@ import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -45,6 +45,34 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/start-date', {
         endDate: undefined,
       })
+    })
+
+    it('should render the expected view in edit mode', async () => {
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(2))
+        .mockResolvedValueOnce({
+          id: 1,
+          activity: { id: 1 },
+          description: 'English',
+          internalLocation: { description: 'Education room 1' },
+          startDate: '2023-07-26',
+          allocations: [{ startDate: '2023-07-27' }],
+        } as unknown as ActivitySchedule)
+
+      req = {
+        session: {
+          createJourney: { endDate: simpleDateFromDate(new Date()), activityId: 1, scheduleId: 2 },
+        },
+        query: {
+          fromEditActivity: true,
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/start-date', {
+        endDate: formatDate(new Date(), 'yyyy-MM-dd'),
+      })
+      expect(req.session.createJourney.earliestAllocationStartDate).toEqual(new Date('2023-07-27'))
     })
   })
 
