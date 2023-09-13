@@ -290,6 +290,28 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getAllocationsWithParams', () => {
+    it('should return data from api', async () => {
+      const response = [
+        {
+          id: 1,
+          prisonerNumber: '1234567',
+        },
+      ] as Allocation[]
+
+      fakeActivitiesApi
+        .get('/schedules/1/allocations?date=2023-01-01')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getAllocationsWithParams(1, { date: '2023-01-01' }, user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getPrisonerAllocations', () => {
     it('should return data from api', async () => {
       const response = [

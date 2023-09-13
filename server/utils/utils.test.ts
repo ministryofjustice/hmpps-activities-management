@@ -21,6 +21,7 @@ import {
   toTimeItems,
   parseDate,
   toFixed,
+  asString,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
@@ -257,7 +258,7 @@ describe('utils', () => {
       ] as Attendance[]
 
       expect(getAttendanceSummary(attendance)).toEqual({
-        allocated: 3,
+        attendanceCount: 3,
         attended: 1,
         attendedPercentage: '33',
         notAttended: 1,
@@ -377,6 +378,18 @@ describe('utils', () => {
       const number: number = null
       const fixedPointString = toFixed(number, 2)
       expect(fixedPointString).toEqual(null)
+    })
+  })
+
+  describe('asString', () => {
+    it.each([
+      { test: 'null', value: null, expected: '' },
+      { test: 'undefined', value: undefined, expected: '' },
+      { test: 'string', value: 'a string', expected: 'a string' },
+      { test: 'array', value: ['value 1', 'value 2'], expected: 'value 1' },
+      { test: 'object', value: { test: 'test' }, expected: { test: 'test' }.toString() },
+    ])('%test asString(%value)', ({ value, expected }) => {
+      expect(asString(value)).toEqual(expected)
     })
   })
 })

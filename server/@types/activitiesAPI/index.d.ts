@@ -201,6 +201,13 @@ export interface paths {
      */
     post: operations['triggerCreateScheduledInstancesJob']
   }
+  '/job/activities-metrics': {
+    /**
+     * Trigger the job to generate activity metrics
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    post: operations['triggerActivityMetricsJob']
+  }
   '/event-review/prison/{prison}/acknowledge': {
     /**
      * Acknowledge a list of change of circumstance events in the prison.
@@ -424,6 +431,17 @@ export interface paths {
      * * ACTIVITY_ADMIN
      */
     get: operations['getAttendancesByScheduledInstance']
+  }
+  '/scheduled-instances/attendance-summary': {
+    /**
+     * Attendance summary of activity sessions for a given date
+     * @description Attendance summary of activity sessions for a given date
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    get: operations['attendanceSummary']
   }
   '/rollout/{prisonCode}': {
     /**
@@ -2030,6 +2048,155 @@ export interface components {
       /**
        * @description
        *     The username of the user authenticated via NOMIS/HMPPS auth that modified the appointment
+       *
+       * @example AAA01U
+       */
+      updatedBy?: string
+    }
+    /**
+     * @description
+     *   Represents an appointment instance for a specific prisoner to attend at the specified location, date and time.
+     *   The fully denormalised representation of the appointment series, appointments and attendees equivalent to a row in
+     *   the NOMIS OFFENDER_IND_SCHEDULES table.
+     *   Appointment instances do not exist as database records and are the product of the join between appointment attendees,
+     *   appointments and appointment series.
+     *   The appointment attendee id is used for the appointment instance id as there is a one to one relationship between an
+     *   appointment attendee and appointment instances.
+     *   Appointment instances are used primarily for the one way sync to NOMIS.
+     */
+    AppointmentInstance: {
+      /**
+       * Format: int64
+       * @description
+       *     The internally generated identifier for this appointment instance. N.B. this is the appointment attendee id due to
+       *     there being a one to one relationship between an appointment attendee and appointment instances.
+       *
+       * @example 123456
+       */
+      id: number
+      /**
+       * Format: int64
+       * @description The internally generated identifier for the appointment series
+       * @example 1234
+       */
+      appointmentSeriesId: number
+      /**
+       * Format: int64
+       * @description The internally generated identifier for the appointment
+       * @example 12345
+       */
+      appointmentId: number
+      /**
+       * Format: int64
+       * @description
+       *     The internally generated identifier for the appointment attendee. N.B. this is used as the appointment instance id
+       *     due to there being a one to one relationship between an appointment attendee and appointment instances.
+       *
+       * @example 123456
+       */
+      appointmentAttendeeId: number
+      /**
+       * @description The appointment type (INDIVIDUAL or GROUP)
+       * @example INDIVIDUAL
+       * @enum {string}
+       */
+      appointmentType: 'INDIVIDUAL' | 'GROUP'
+      /**
+       * @description The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description The NOMIS OFFENDERS.OFFENDER_ID_DISPLAY value for mapping to a prisoner record in NOMIS
+       * @example A1234BC
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
+       * @example 456
+       */
+      bookingId: number
+      /**
+       * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
+       * @example CHAP
+       */
+      categoryCode: string
+      /**
+       * @description
+       *     Free text name further describing the appointment instance. Used as part of the appointment name with the
+       *     format "Appointment description (Category description) if specified.
+       *
+       * @example Meeting with the governor
+       */
+      customName?: string
+      /**
+       * Format: int64
+       * @description
+       *     The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
+       *     Will be null if in cell = true
+       *
+       * @example 123
+       */
+      internalLocationId?: number
+      /**
+       * @description
+       *     Flag to indicate if the location of the appointment instance is in cell rather than an internal prison location.
+       *     Internal location id should be null if in cell = true
+       *
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * Format: date
+       * @description The date of the appointment instance
+       */
+      appointmentDate: string
+      /**
+       * Format: partial-time
+       * @description The starting time of the appointment instance
+       * @example 09:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of the appointment instance
+       * @example 10:30
+       */
+      endTime?: string
+      /**
+       * @description
+       *     Extra information for the prisoner attending this appointment instance.
+       *     Shown only on the appointments details page and on printed movement slips. Wing staff will be notified there is
+       *     extra information via the unlock list.
+       *
+       * @example This appointment will help adjusting to life outside of prison
+       */
+      extraInformation?: string
+      /**
+       * Format: date-time
+       * @description The date and time this appointment instance was created. Will not change
+       */
+      createdTime: string
+      /**
+       * @description
+       *     The username of the user authenticated via HMPPS auth that created the appointment instance.
+       *     Usually a NOMIS username
+       *
+       * @example AAA01U
+       */
+      createdBy: string
+      /**
+       * Format: date-time
+       * @description
+       *     The date and time this appointment instance was last changed.
+       *     Will be null if this appointment instance has not been altered since it was created
+       */
+      updatedTime?: string
+      /**
+       * @description
+       *     The username of the user authenticated via HMPPS auth that edited this appointment instance.
+       *     Will be null if this appointment instance has not been altered since it was created
        *
        * @example AAA01U
        */
@@ -4552,20 +4719,20 @@ export interface components {
       releaseDate?: string
     }
     PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
+      first?: boolean
       /** Format: int32 */
       numberOfElements?: number
-      first?: boolean
+      pageable?: components['schemas']['PageableObject']
       last?: boolean
       empty?: boolean
     }
@@ -4573,12 +4740,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      paged?: boolean
-      unpaged?: boolean
-      /** Format: int32 */
-      pageNumber?: number
       /** Format: int32 */
       pageSize?: number
+      /** Format: int32 */
+      pageNumber?: number
+      paged?: boolean
+      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
@@ -4712,6 +4879,117 @@ export interface components {
        * @example 2022-10-21
        */
       endDate?: string
+    }
+    /** @description Attendance summary details */
+    AttendanceSummaryDetails: {
+      /**
+       * Format: int64
+       * @description The number of prisoners allocated to this scheduled instance
+       * @example 5
+       */
+      allocations: number
+      /**
+       * Format: int64
+       * @description The number of attendees for this scheduled instance
+       * @example 5
+       */
+      attendees?: number
+      /**
+       * Format: int64
+       * @description The number of attendance records not recorded
+       * @example 2
+       */
+      notRecorded?: number
+      /**
+       * Format: int64
+       * @description The number of attendance recorded marked as attended
+       * @example 2
+       */
+      attended?: number
+      /**
+       * Format: int64
+       * @description The number of attendance recorded marked as absence
+       * @example 1
+       */
+      absences?: number
+      /**
+       * Format: int64
+       * @description The number of attendance recorded marked as paid
+       * @example 2
+       */
+      paid?: number
+    }
+    /** @description An overview of attendance details for scheduled instances */
+    ScheduledInstanceAttendanceSummary: {
+      /**
+       * Format: int64
+       * @description The id of the scheduled instance
+       * @example 10
+       */
+      scheduledInstanceId: number
+      /**
+       * Format: int64
+       * @description The id of the activity
+       * @example 1
+       */
+      activityId: number
+      /**
+       * Format: int64
+       * @description The id of the activity schedule
+       * @example 2
+       */
+      activityScheduleId: number
+      /**
+       * @description Summary of the activity
+       * @example Maths 1
+       */
+      summary: string
+      /**
+       * Format: int64
+       * @description Category id of the activity
+       * @example 2
+       */
+      categoryId: number
+      /**
+       * Format: date
+       * @description The date of the scheduled instance
+       * @example 2023-03-30
+       */
+      sessionDate: string
+      /**
+       * Format: partial-time
+       * @description The start time of the scheduled instance
+       * @example 09:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of the scheduled instance
+       * @example 12:00
+       */
+      endTime: string
+      /**
+       * @description Flag to indicate if the location of the activity is in cell
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is on wing
+       * @example false
+       */
+      onWing: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is off wing and not in a listed location
+       * @example false
+       */
+      offWing: boolean
+      internalLocation?: components['schemas']['InternalLocation']
+      /**
+       * @description Flag to indicate if the scheduled instance has been cancelled
+       * @example false
+       */
+      cancelled: boolean
+      attendanceSummary: components['schemas']['AttendanceSummaryDetails']
     }
     /** @description Describes the rollout plan of a prison which may or may not be rolled out */
     RolloutPrisonPlan: {
@@ -5582,155 +5860,6 @@ export interface components {
        */
       isCancelled: boolean
     }
-    /**
-     * @description
-     *   Represents an appointment instance for a specific prisoner to attend at the specified location, date and time.
-     *   The fully denormalised representation of the appointment series, appointments and attendees equivalent to a row in
-     *   the NOMIS OFFENDER_IND_SCHEDULES table.
-     *   Appointment instances do not exist as database records and are the product of the join between appointment attendees,
-     *   appointments and appointment series.
-     *   The appointment attendee id is used for the appointment instance id as there is a one to one relationship between an
-     *   appointment attendee and appointment instances.
-     *   Appointment instances are used primarily for the one way sync to NOMIS.
-     */
-    AppointmentInstance: {
-      /**
-       * Format: int64
-       * @description
-       *     The internally generated identifier for this appointment instance. N.B. this is the appointment attendee id due to
-       *     there being a one to one relationship between an appointment attendee and appointment instances.
-       *
-       * @example 123456
-       */
-      id: number
-      /**
-       * Format: int64
-       * @description The internally generated identifier for the appointment series
-       * @example 1234
-       */
-      appointmentSeriesId: number
-      /**
-       * Format: int64
-       * @description The internally generated identifier for the appointment
-       * @example 12345
-       */
-      appointmentId: number
-      /**
-       * Format: int64
-       * @description
-       *     The internally generated identifier for the appointment attendee. N.B. this is used as the appointment instance id
-       *     due to there being a one to one relationship between an appointment attendee and appointment instances.
-       *
-       * @example 123456
-       */
-      appointmentAttendeeId: number
-      /**
-       * @description The appointment type (INDIVIDUAL or GROUP)
-       * @example INDIVIDUAL
-       * @enum {string}
-       */
-      appointmentType: 'INDIVIDUAL' | 'GROUP'
-      /**
-       * @description The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS
-       * @example SKI
-       */
-      prisonCode: string
-      /**
-       * @description The NOMIS OFFENDERS.OFFENDER_ID_DISPLAY value for mapping to a prisoner record in NOMIS
-       * @example A1234BC
-       */
-      prisonerNumber: string
-      /**
-       * Format: int64
-       * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
-       * @example 456
-       */
-      bookingId: number
-      /**
-       * @description The NOMIS REFERENCE_CODES.CODE (DOMAIN = 'INT_SCH_RSN') value for mapping to NOMIS
-       * @example CHAP
-       */
-      categoryCode: string
-      /**
-       * @description
-       *     Free text name further describing the appointment instance. Used as part of the appointment name with the
-       *     format "Appointment description (Category description) if specified.
-       *
-       * @example Meeting with the governor
-       */
-      customName?: string
-      /**
-       * Format: int64
-       * @description
-       *     The NOMIS AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID value for mapping to NOMIS.
-       *     Will be null if in cell = true
-       *
-       * @example 123
-       */
-      internalLocationId?: number
-      /**
-       * @description
-       *     Flag to indicate if the location of the appointment instance is in cell rather than an internal prison location.
-       *     Internal location id should be null if in cell = true
-       *
-       * @example false
-       */
-      inCell: boolean
-      /**
-       * Format: date
-       * @description The date of the appointment instance
-       */
-      appointmentDate: string
-      /**
-       * Format: partial-time
-       * @description The starting time of the appointment instance
-       * @example 09:00
-       */
-      startTime: string
-      /**
-       * Format: partial-time
-       * @description The end time of the appointment instance
-       * @example 10:30
-       */
-      endTime?: string
-      /**
-       * @description
-       *     Extra information for the prisoner attending this appointment instance.
-       *     Shown only on the appointments details page and on printed movement slips. Wing staff will be notified there is
-       *     extra information via the unlock list.
-       *
-       * @example This appointment will help adjusting to life outside of prison
-       */
-      extraInformation?: string
-      /**
-       * Format: date-time
-       * @description The date and time this appointment instance was created. Will not change
-       */
-      created: string
-      /**
-       * @description
-       *     The username of the user authenticated via HMPPS auth that created the appointment instance.
-       *     Usually a NOMIS username
-       *
-       * @example AAA01U
-       */
-      createdBy: string
-      /**
-       * Format: date-time
-       * @description
-       *     The date and time this appointment instance was last changed.
-       *     Will be null if this appointment instance has not been altered since it was created
-       */
-      updated?: string
-      /**
-       * @description
-       *     The username of the user authenticated via HMPPS auth that edited this appointment instance.
-       *     Will be null if this appointment instance has not been altered since it was created
-       *
-       * @example AAA01U
-       */
-      updatedBy?: string
-    }
     /** @description A basic activity, schedule and category for use where limited IDs only are required */
     ActivityBasic: {
       /**
@@ -5805,7 +5934,7 @@ export interface operations {
    */
   deallocate: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6045,7 +6174,7 @@ export interface operations {
    */
   cancelAppointment: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6094,11 +6223,13 @@ export interface operations {
    */
   getAllocationsBy: {
     parameters: {
-      query?: {
+      query: {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
+        /** @description If provided will filter allocations by the given date. Format YYYY-MM-DD. */
+        date?: string
       }
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6323,7 +6454,7 @@ export interface operations {
    */
   prisonerAllocations: {
     parameters: {
-      query?: {
+      query: {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
       }
@@ -6456,7 +6587,7 @@ export interface operations {
       /** @description The appointment was migrated. */
       201: {
         content: {
-          'application/json': components['schemas']['AppointmentSeries']
+          'application/json': components['schemas']['AppointmentInstance']
         }
       }
       /** @description Bad request */
@@ -6479,7 +6610,7 @@ export interface operations {
    */
   triggerManageAttendanceRecordsJob: {
     parameters: {
-      query?: {
+      query: {
         /** @description If true will run the attendance expiry process in addition to other features. Defaults to false. */
         withExpiry?: boolean
       }
@@ -6502,7 +6633,7 @@ export interface operations {
    */
   triggerManageAllocationsJob: {
     parameters: {
-      query?: {
+      query: {
         /** @description If true will run the activate pending allocations process. Defaults to false. */
         withActivate?: boolean
         /** @description If true will run the deallocate allocations process. Defaults to false. */
@@ -6523,6 +6654,20 @@ export interface operations {
    * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
    */
   triggerCreateScheduledInstancesJob: {
+    responses: {
+      /** @description Created */
+      201: {
+        content: {
+          'text/plain': string
+        }
+      }
+    }
+  }
+  /**
+   * Trigger the job to generate activity metrics
+   * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+   */
+  triggerActivityMetricsJob: {
     responses: {
       /** @description Created */
       201: {
@@ -6595,7 +6740,7 @@ export interface operations {
    */
   getAuditRecords: {
     parameters: {
-      query?: {
+      query: {
         page?: number
         size?: number
         sortDirection?: string
@@ -6639,7 +6784,7 @@ export interface operations {
    */
   searchAppointments: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6684,7 +6829,7 @@ export interface operations {
    */
   createAppointmentSet: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
     }
@@ -6726,7 +6871,7 @@ export interface operations {
    */
   createAppointmentSeries: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
     }
@@ -6766,7 +6911,7 @@ export interface operations {
    */
   addToWaitingList: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6821,7 +6966,7 @@ export interface operations {
    */
   create: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
     }
@@ -6867,7 +7012,7 @@ export interface operations {
    */
   getWaitingListById: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6910,7 +7055,7 @@ export interface operations {
    */
   updateWaitingList: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6965,7 +7110,7 @@ export interface operations {
    */
   getAppointmentById: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7005,7 +7150,7 @@ export interface operations {
    */
   updateAppointment: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7107,7 +7252,7 @@ export interface operations {
    */
   update_1: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7211,7 +7356,7 @@ export interface operations {
    */
   getScheduleId: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7255,7 +7400,7 @@ export interface operations {
    */
   getWaitingListApplicationsBy: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7350,7 +7495,7 @@ export interface operations {
    */
   candidates: {
     parameters: {
-      query?: {
+      query: {
         suitableIncentiveLevel?: string[]
         suitableRiskLevel?: string[]
         suitableForEmployed?: boolean
@@ -7362,7 +7507,7 @@ export interface operations {
         /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
         sort?: string[]
       }
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7413,7 +7558,7 @@ export interface operations {
    */
   getScheduledInstanceById: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7489,6 +7634,65 @@ export interface operations {
     }
   }
   /**
+   * Attendance summary of activity sessions for a given date
+   * @description Attendance summary of activity sessions for a given date
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  attendanceSummary: {
+    parameters: {
+      query: {
+        /**
+         * @description The prison code of the prison to return an attendance summary for
+         * @example MDI
+         */
+        prisonCode: string
+        /**
+         * @description The date of the attendance summary. Format, YYYY-MM-DD.
+         * @example 2023-09-20
+         */
+        date: string
+      }
+      header: {
+        'Caseload-Id'?: string
+      }
+    }
+    responses: {
+      /** @description Attendance summary */
+      200: {
+        content: {
+          'application/json': components['schemas']['ScheduledInstanceAttendanceSummary'][]
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The scheduled instance was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Get a prison's rollout plan by prison code
    * @description Returns a single prison and its activities management service rollout plan by its unique code.
    *
@@ -7530,7 +7734,7 @@ export interface operations {
    */
   getDlqMessages: {
     parameters: {
-      query?: {
+      query: {
         maxMessages?: number
       }
       path: {
@@ -7600,7 +7804,7 @@ export interface operations {
    */
   getSchedulesByPrisonCode: {
     parameters: {
-      query?: {
+      query: {
         /** @description Date of activity, default today */
         date?: string
         /** @description AM, PM or ED */
@@ -7678,7 +7882,7 @@ export interface operations {
    */
   getScheduledPrisonLocations: {
     parameters: {
-      query?: {
+      query: {
         /** @description Date of activity, default today */
         date?: string
         /** @description AM, PM or ED */
@@ -7761,7 +7965,7 @@ export interface operations {
    */
   getActivities: {
     parameters: {
-      query?: {
+      query: {
         excludeArchived?: boolean
       }
       path: {
@@ -8138,7 +8342,7 @@ export interface operations {
    */
   getAppointmentDetailsById: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8176,7 +8380,7 @@ export interface operations {
    */
   getAppointmentSetById: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8214,7 +8418,7 @@ export interface operations {
    */
   getAppointmentSetDetailsById: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8252,7 +8456,7 @@ export interface operations {
    */
   getAppointmentSeriesById: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8290,7 +8494,7 @@ export interface operations {
    */
   getAppointmentDetailsById_1: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8357,7 +8561,7 @@ export interface operations {
    */
   getAppointmentInstanceById: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8420,7 +8624,7 @@ export interface operations {
    */
   getAllocationById: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8526,7 +8730,7 @@ export interface operations {
    */
   getActivityById: {
     parameters: {
-      header?: {
+      header: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8611,7 +8815,7 @@ export interface operations {
    */
   getActivityByIdWithFilters: {
     parameters: {
-      query?: {
+      query: {
         /** @description The date of the earliest scheduled instances to include. Defaults to newer than 1 month ago. */
         earliestSessionDate?: string
       }

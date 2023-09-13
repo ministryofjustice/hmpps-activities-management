@@ -302,21 +302,21 @@ export const existsInStringArray = (key: string, arr: string[]): boolean => {
 }
 
 export const getAttendanceSummary = (attendance: Attendance[]) => {
-  const allocated = attendance.length
+  const attendanceCount = attendance.length
   const attended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason.code === 'ATTENDED').length
   const notAttended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason.code !== 'ATTENDED').length
-  const notRecorded = allocated - attended - notAttended
-  let attendedPercentage = '0'
-  let notAttendedPercentage = '0'
-  let notRecordedPercentage = '0'
-  if (allocated > 0) {
-    attendedPercentage = toFixed((attended / allocated) * 100, 0)
-    notAttendedPercentage = toFixed((notAttended / allocated) * 100, 0)
-    notRecordedPercentage = toFixed((notRecorded / allocated) * 100, 0)
+  const notRecorded = attendanceCount - attended - notAttended
+  let attendedPercentage = '-'
+  let notAttendedPercentage = '-'
+  let notRecordedPercentage = '-'
+  if (attendanceCount > 0) {
+    attendedPercentage = toFixed((attended / attendanceCount) * 100, 0)
+    notAttendedPercentage = toFixed((notAttended / attendanceCount) * 100, 0)
+    notRecordedPercentage = toFixed((notRecorded / attendanceCount) * 100, 0)
   }
 
   return {
-    allocated,
+    attendanceCount,
     attended,
     notAttended,
     notRecorded,
@@ -335,6 +335,11 @@ export const toMoney = (x: number): string => `£${(x / 100).toFixed(2)}`
 
 export const convertToArray = (maybeArray: string | string[]): string[] => {
   return maybeArray ? [maybeArray].flat() : []
+}
+
+export const asString = (value: unknown): string => {
+  const v = Array.isArray(value) ? value[0] : value
+  return v != null ? `${v}` : ''
 }
 
 export const convertToNumberArray = (maybeArray: string | string[]): number[] => {

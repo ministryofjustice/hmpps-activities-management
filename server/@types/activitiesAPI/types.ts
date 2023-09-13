@@ -1,4 +1,4 @@
-import { components } from '.'
+import { components, operations } from '.'
 
 export type Activity = components['schemas']['Activity']
 export type RolloutPrisonPlan = components['schemas']['RolloutPrisonPlan']
@@ -57,3 +57,5 @@ export type ActivityPay = components['schemas']['ActivityPay']
 export type WaitingListApplicationRequest = components['schemas']['WaitingListApplicationRequest']
 export type WaitingListApplication = components['schemas']['WaitingListApplication']
 export type WaitingListApplicationUpdateRequest = components['schemas']['WaitingListApplicationUpdateRequest']
+export type ScheduledInstanceAttendanceSummary = components['schemas']['ScheduledInstanceAttendanceSummary']
+export type GetAllocationsParams = operations['getAllocationsBy']['parameters']['query']

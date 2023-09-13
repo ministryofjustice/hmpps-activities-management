@@ -41,9 +41,13 @@
 
 
 {% macro attendanceTag(status, code) %}
-    {% if status === 'COMPLETED' %}
-        {{ govukTag(attendanceTags[code]) }}
+    {% if status %}
+      {% if status === 'COMPLETED' %}
+          {{ govukTag(attendanceTags[code]) }}
+      {% else %}
+        Not recorded {{ "yet" if attendance.editable }}
+      {% endif %}
     {% else %}
-      Not recorded {{ "yet" if attendance.editable }}
+      -
     {% endif %}
 {% endmacro %}

@@ -1,13 +1,14 @@
 import { Request, Response } from 'express'
-import { startOfToday, endOfDay } from 'date-fns'
+import { startOfToday, startOfDay } from 'date-fns'
 import { Expose, Transform } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import { eventClashes, getAttendanceSummary, toDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
-import { Attendance } from '../../../../@types/activitiesAPI/types'
+import { Attendance, ScheduledEvent } from '../../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
+import { Prisoner } from '../../../../@types/activities'
 
 export class AttendanceList {
   @Expose()
@@ -16,63 +17,77 @@ export class AttendanceList {
   selectedAttendances: number[]
 }
 
+export interface ScheduledInstanceAttendance {
+  prisoner: Prisoner
+  attendance?: Attendance
+  otherEvents: ScheduledEvent[]
+}
+
 export default class AttendanceListRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
 
   private RELEVANT_ALERT_CODES = ['HA', 'XA', 'RCON', 'XEL', 'RNO121', 'PEEP', 'XRF', 'XSA', 'XTACT']
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const instanceId = req.params.id
+    const instanceId = +req.params.id
     const { user } = res.locals
 
-    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user).then(i => ({
+    let attendance: ScheduledInstanceAttendance[] = []
+
+    const instance = await this.activitiesService.getScheduledActivity(instanceId, user).then(i => ({
       ...i,
-      isAmendable: endOfDay(toDate(i.date)) > startOfToday(),
+      isAmendable: startOfDay(toDate(i.date)) >= startOfToday(),
     }))
 
-    const prisonerNumbers = instance.attendances.map(a => a.prisonerNumber)
+    let prisonerNumbers: string[] = []
 
-    const otherScheduledEvents =
-      prisonerNumbers?.length > 0
-        ? await this.activitiesService
-            .getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user)
-            .then(response => [
-              ...response.activities,
-              ...response.appointments,
-              ...response.courtHearings,
-              ...response.visits,
-            ])
-            .then(events => events.filter(e => e.scheduledInstanceId !== +instanceId))
-            .then(events => events.filter(e => eventClashes(e, instance)))
-        : []
+    if (startOfDay(toDate(instance.date)) > startOfToday()) {
+      const allocations = await this.activitiesService.getAllocationsWithParams(
+        instance.activitySchedule.id,
+        { date: instance.date },
+        user,
+      )
+      prisonerNumbers = allocations.map(a => a.prisonerNumber)
+    } else {
+      prisonerNumbers = instance.attendances.map(a => a.prisonerNumber)
+    }
 
-    const attendees =
-      prisonerNumbers?.length > 0
-        ? await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user).then(inmates =>
-            inmates.map(i => ({
-              name: `${i.firstName} ${i.lastName}`,
-              prisonerNumber: i.prisonerNumber,
-              location: i.cellLocation,
-              alerts: i.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
-              category: i.category,
-              otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
-              attendance: instance.attendances.find(a => a.prisonerNumber === i.prisonerNumber),
-              status: i.status,
-            })),
-          )
-        : []
+    if (prisonerNumbers.length > 0) {
+      const [attendees, otherEvents] = await Promise.all([
+        this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
+        this.activitiesService.getScheduledEventsForPrisoners(toDate(instance.date), prisonerNumbers, user),
+      ])
 
-    return res.render('pages/activities/record-attendance/attendance-list', {
-      activity: {
-        name: instance.activitySchedule.activity.summary,
-        location: instance.activitySchedule.internalLocation?.description,
-        inCell: instance.activitySchedule.activity.inCell,
-        onWing: instance.activitySchedule.activity.onWing,
-        offWing: instance.activitySchedule.activity.offWing,
-        ...getAttendanceSummary(instance.attendances),
-      },
+      const allEvents = [
+        ...otherEvents.activities,
+        ...otherEvents.appointments,
+        ...otherEvents.courtHearings,
+        ...otherEvents.visits,
+      ]
+
+      attendance = attendees.map(att => {
+        const prisonerEvents = allEvents
+          .filter(e => e.prisonerNumber === att.prisonerNumber)
+          .filter(e => e.scheduledInstanceId !== instanceId)
+          .filter(e => eventClashes(e, instance))
+
+        const attendee = {
+          ...att,
+          alerts: att.alerts.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
+        }
+
+        return {
+          prisoner: attendee,
+          attendance: instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber),
+          otherEvents: prisonerEvents,
+        }
+      })
+    }
+
+    res.render('pages/activities/record-attendance/attendance-list', {
       instance,
-      attendees,
+      attendance,
+      attendanceSummary: getAttendanceSummary(instance.attendances),
     })
   }
 

@@ -33,7 +33,7 @@
             {% endif %}
 
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
-                {{ activity.name }} - record attendance
+                {{ instance.activitySchedule.activity.summary }} - record attendance
                 <span class="govuk-caption-l">
                     {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.startTime | getTimeSlotFromTime | upper }})
                 </span>
@@ -41,7 +41,11 @@
                     {{ instance.date | toDate | formatDate }}
                 </span>
                 <span class="govuk-caption-l">
-                    {{ ("In cell" if activity.inCell) or ("On wing" if activity.onWing) or ("Off wing" if activity.offWing) or activity.location | capitalize }}
+                    {{ 
+                        ("In cell" if instance.activitySchedule.activity.inCell) or 
+                        ("On wing" if instance.activitySchedule.activity.onWing) or 
+                        ("Off wing" if instance.activitySchedule.activity.offWing) or 
+                        instance.activitySchedule.activity.location | capitalize }}
                 </span>
             </h1>
 
@@ -67,19 +71,31 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">{{ activity.allocated }} {{ "person" if activity.allocated == 1 else "people" }} allocated</h2>
+            <h2 class="govuk-heading-m">{{ attendance | length }} {{ "person" if attendance | length == 1 else "people" }} allocated</h2>
             <ul class="govuk-list">
                 <li>
                     <span>Attended:</span>
-                    <span class="govuk-!-font-weight-bold">{{ activity.attended }}</span> ({{ activity.attendedPercentage }}%)
+                    {% if attendanceSummary.attendanceCount == 0 %}
+                        -
+                    {% else %}
+                        <span class="govuk-!-font-weight-bold">{{ activity.attended }}</span>({{ activity.attendedPercentage }}%)
+                    {% endif %}
                 </li>
                 <li>
                     <span>Absent:</span>
-                    <span class="govuk-!-font-weight-bold">{{ activity.notAttended }}</span> ({{ activity.notAttendedPercentage }}%)
+                    {% if attendanceSummary.attendanceCount == 0 %}
+                        -
+                    {% else %}
+                        <span class="govuk-!-font-weight-bold">{{ activity.notAttended }}</span> ({{ activity.notAttendedPercentage }}%)
+                    {% endif %}
                 </li>
                 <li>
                     <span>Not recorded:</span>
-                    <span class="govuk-!-font-weight-bold">{{ activity.notRecorded }}</span> ({{ activity.notRecordedPercentage }}%)
+                    {% if attendanceSummary.attendanceCount == 0 %}
+                        -
+                    {% else %}
+                        <span class="govuk-!-font-weight-bold">{{ activity.notRecorded }}</span> ({{ activity.notRecordedPercentage }}%)
+                    {% endif %}
                 </li>
             </ul>
         </div>
@@ -96,10 +112,10 @@
     <hr class="print-only"/>
 
     {% set rows = [] %}
-    {% for attendee in attendees | sort(false, false, 'location') %}
+    {% for attendee in attendance | sort(false, false, 'location') %}
         {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + attendee.name,
-            value: attendee.attendance.id + '-' + attendee.prisonerNumber,
+            visuallyHiddenText: 'Select ' + attendee.prisoner | firstNameLastName | toTitleCase | prisonerName,
+            value: attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
             selectable: attendee.attendance.status === "WAITING" and attendee.attendance.editable,
 
             items: [
@@ -108,22 +124,25 @@
                     classes: 'govuk-table_cell print-only'
                 },
                 {
-                    html: '<a href="' + dpsUrl + '/prisoner/' + attendee.prisonerNumber + '"
-                                class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + attendee.name | toTitleCase | prisonerName + '
+                    html: '<a href="' + dpsUrl + '/prisoner/' + attendee.prisoner.prisonerNumber + '"
+                                class="govuk-link govuk-link--no-visited-state"
+                                target="_blank"
+                                rel="noopener noreferrer">
+                                ' + attendee.prisoner | firstNameLastName | toTitleCase | prisonerName + ' <span class="govuk-visually-hidden">(opens in new tab)</span>
                             </a>
-                            <div class="govuk-hint govuk-!-margin-bottom-0 govuk-!-font-size-16">' + attendee.prisonerNumber + '</div>',
+                            <div class="govuk-hint govuk-!-margin-bottom-0 govuk-!-font-size-16">' + attendee.prisoner.prisonerNumber + '</div>',
                     attributes: {
                         "data-qa": "prisoner-details"
                     }
                 },
                 {
-                    html: locationHtml(attendee.location, attendee.status),
+                    html: locationHtml(attendee.prisoner.cellLocation, attendee.prisoner.status),
                     attributes: {
                         "data-qa": "location"
                     }
                 },
                 {
-                    html: alertsList({ alerts: attendee.alerts, category: attendee.category }),
+                    html: alertsList({ alerts: attendee.prisoner.alerts, category: attendee.prisoner.category }),
                     classes: 'hmpps-max-width-240',
                     attributes: {
                         "data-qa": "alert-list"
@@ -227,18 +246,20 @@
 {% endmacro %}
 
 {% macro renderPayStatus(attendance) %}
-    {% if attendance.issuePayment %}
-        {{ govukTag({
-            text: "Pay",
-            classes: "govuk-tag--green"
-           })
-        }}
-    {% elseif attendance.status !=  'WAITING' %}
-        {{ govukTag({
-            text: "No pay",
-            classes: "govuk-tag--red"
-           })
-        }}
+    {% if attendance %}
+        {% if attendance.issuePayment %}
+            {{ govukTag({
+                text: "Pay",
+                classes: "govuk-tag--green"
+            })
+            }}
+        {% elseif attendance.status !=  'WAITING' %}
+            {{ govukTag({
+                text: "No pay",
+                classes: "govuk-tag--red"
+            })
+            }}
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
@@ -250,8 +271,8 @@
 
   {% macro locationHtml(location, status) %}
              {% if location == 'CSWAP' and status == 'ACTIVE OUT'%}
-                  --
+                  -
              {% else %}
-                 {{ location }}
+                 {{ location or '-' }}
              {% endif %}
   {% endmacro %}

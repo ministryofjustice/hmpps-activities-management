@@ -64,7 +64,7 @@ describe('Route Handlers - Select period', () => {
       }
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`activities?date=2022-12-1`)
+      expect(res.redirect).toHaveBeenCalledWith(`activities?date=2022-12-01`)
     })
   })
 
@@ -130,7 +130,7 @@ describe('Route Handlers - Select period', () => {
       const requestObject = plainToInstance(TimePeriod, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'date', error: "Enter a date on or before today's date" }])
+      expect(errors).toEqual([{ property: 'date', error: 'Enter a date up to 60 days in the future.' }])
     })
 
     it('passes validation', async () => {

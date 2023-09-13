@@ -45,6 +45,8 @@ import {
   WaitingListApplication,
   WaitingListApplicationUpdateRequest,
   ActivitySummary,
+  ScheduledInstanceAttendanceSummary,
+  GetAllocationsParams,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -252,9 +254,17 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   }
 
   async getAllocations(scheduleId: number, user: ServiceUser): Promise<Allocation[]> {
+    return this.getAllocationsWithParams(scheduleId, { activeOnly: true }, user)
+  }
+
+  async getAllocationsWithParams(
+    scheduleId: number,
+    params: GetAllocationsParams,
+    user: ServiceUser,
+  ): Promise<Allocation[]> {
     return this.get({
       path: `/schedules/${scheduleId}/allocations`,
-      query: { activeOnly: true },
+      query: params,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
@@ -538,6 +548,22 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: updateWaitlistRequest,
+    })
+  }
+
+  async getScheduledInstanceAttendanceSummary(
+    prisonCode: string,
+    sessionDate: Date,
+    user: ServiceUser,
+  ): Promise<ScheduledInstanceAttendanceSummary[]> {
+    return this.get({
+      path: `/scheduled-instances/attendance-summary`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      query: {
+        prisonCode,
+        date: toDateString(sessionDate),
+      },
     })
   }
 }

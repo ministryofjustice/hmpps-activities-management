@@ -1,4 +1,4 @@
-import { ActivityCategory, Attendance, InternalLocation, ScheduledEvent } from './activitiesAPI/types'
+import { Attendance, InternalLocation, ScheduledEvent } from './activitiesAPI/types'
 import { Alert } from './prisonApiImport/types'
 
 export type PrisonerAlert = {
@@ -44,21 +44,6 @@ export type UnlockListItem = {
   events?: ScheduledEvent[]
   status: string
   isLeavingWing: boolean
-}
-
-export type FilterItem = {
-  value: string
-  text: string
-  checked: boolean
-}
-
-export type ActivitiesFilters = {
-  activityDate: Date
-  searchTerm: string
-  categories: ActivityCategory[]
-  sessionFilters: FilterItem[]
-  categoryFilters: FilterItem[]
-  locationFilters: FilterItem[]
 }
 
 export type SubLocationCellPattern = {
