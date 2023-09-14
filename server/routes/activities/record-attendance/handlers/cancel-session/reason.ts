@@ -5,8 +5,8 @@ import cancellationReasons from '../../cancellationReasons'
 
 export class CancelReasonForm {
   @Expose()
-  @IsNotEmpty({ message: 'Enter a reason for cancelling the session' })
-  @IsIn(Object.keys(cancellationReasons), { message: 'Invalid cancellation reason' })
+  @IsNotEmpty({ message: "Select why you're cancelling the session" })
+  @IsIn(Object.keys(cancellationReasons), { message: "Select why you're cancelling the session" })
   reason: string
 
   @Expose()

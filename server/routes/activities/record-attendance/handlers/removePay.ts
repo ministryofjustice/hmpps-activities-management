@@ -13,7 +13,7 @@ enum RemovePayOptions {
 
 export class RemovePay {
   @Expose()
-  @IsIn(Object.values(RemovePayOptions), { message: 'Select a remove pay option' })
+  @IsIn(Object.values(RemovePayOptions), { message: "Confirm if you want to remove this person's pay or not" })
   removePayOption: string
 }
 export default class RemovePayRoutes {
