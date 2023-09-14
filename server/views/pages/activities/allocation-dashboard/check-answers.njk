@@ -34,7 +34,7 @@
                                     classes: "govuk-tag--green"
                                 }) }}
                             {% else %}
-                                <a href="/activities/allocation-dashboard/{{ allocation.id }}/start-date"
+                                <a href="/activities/allocation-dashboard/{{ allocation.id }}/start-date?preserveHistory=true"
                                    class="govuk-link govuk-link--no-visited-state">
                                     Change
                                 </a>
@@ -50,12 +50,12 @@
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             {% if allocation.endDate %}
-                                <a href="/activities/allocation-dashboard/{{ allocation.id }}/end-date-option"
+                                <a href="/activities/allocation-dashboard/{{ allocation.id }}/end-date-option?preserveHistory=true"
                                    class="govuk-link govuk-link--no-visited-state">
                                     Change
                                 </a>
                             {% else %}
-                                <a href="/activities/allocation-dashboard/{{ allocation.id }}/end-date"
+                                <a href="/activities/allocation-dashboard/{{ allocation.id }}/end-date?preserveHistory=true"
                                    class="govuk-link govuk-link--no-visited-state">
                                     Change
                                 </a>
@@ -71,7 +71,7 @@
                                           {{ allocation.plannedDeallocation.plannedReason.description }}
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
-                                            <a href="/activities/allocation-dashboard/{{ allocation.id }}/reason"
+                                            <a href="/activities/allocation-dashboard/{{ allocation.id }}/reason?preserveHistory=true"
                                                class="govuk-link govuk-link--no-visited-state">
                                                 Change
                                             </a>
@@ -90,7 +90,7 @@
                             {% if isOnlyPay %}
                                 <div>No alternative</div><div>pay rates</div>
                             {% else %}
-                                <a href="/activities/allocation-dashboard/{{ allocation.id }}/pay-band"
+                                <a href="/activities/allocation-dashboard/{{ allocation.id }}/pay-band?preserveHistory=true"
                                    class="govuk-link govuk-link--no-visited-state">
                                     Change
                                 </a>

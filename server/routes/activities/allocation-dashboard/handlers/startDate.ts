@@ -55,7 +55,7 @@ export default class StartDateRoutes {
     const { user } = res.locals
     const { allocationId } = req.params
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
-    const { scheduleId, prisonerNumber } = allocation
+    const { activityId, prisonerNumber } = allocation
     const startDate = simpleDateFromDate(new Date(allocation.startDate))
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
     const prisonerName = convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)
@@ -63,7 +63,7 @@ export default class StartDateRoutes {
     res.render(`pages/activities/allocation-dashboard/start-date`, {
       startDate,
       endDate: allocation.endDate ? allocation.endDate : undefined,
-      scheduleId,
+      activityId,
       allocationId,
       prisonerNumber,
       prisonerName,
@@ -72,7 +72,7 @@ export default class StartDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { startDate, allocationId, prisonerNumber, scheduleId } = req.body
+    const { startDate, allocationId, prisonerNumber, activityId } = req.body
     const { user } = res.locals
     const prisonCode = user.activeCaseLoadId
     const allocation = {
@@ -81,8 +81,8 @@ export default class StartDateRoutes {
     await this.activitiesService.updateAllocation(prisonCode, allocationId, allocation)
     const successMessage = `We've updated the start date for this allocation`
 
-    res.redirectOrReturnWithSuccess(
-      `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
+    res.redirectWithSuccess(
+      `/activities/allocation-dashboard/${activityId}/check-allocation/${prisonerNumber}`,
       'Allocation updated',
       successMessage,
     )

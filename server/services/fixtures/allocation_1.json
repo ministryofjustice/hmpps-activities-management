@@ -3,6 +3,7 @@
   "prisonerNumber": "ABC123",
   "bookingId": 1205033,
   "activitySummary": "Maths Level 1",
+  "activityId": 2,
   "scheduleId": 2,
   "scheduleDescription": "Maths Level 1",
   "isUnemployment": false,

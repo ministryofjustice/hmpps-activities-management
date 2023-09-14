@@ -5,7 +5,7 @@ import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import PayBandRoutes, { PayBand } from './payBand'
 import atLeast from '../../../../../jest.setup'
-import { Activity, ActivitySchedule, Allocation } from '../../../../@types/activitiesAPI/types'
+import { Activity, Allocation } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -30,8 +30,7 @@ describe('Route Handlers - Edit Allocation - Pay band', () => {
         },
       },
       render: jest.fn(),
-      redirectOrReturn: jest.fn(),
-      redirectOrReturnWithSuccess: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -40,21 +39,6 @@ describe('Route Handlers - Edit Allocation - Pay band', () => {
       },
     } as unknown as Request
 
-    when(activitiesService.getActivitySchedule)
-      .calledWith(atLeast(1))
-      .mockResolvedValue({
-        scheduleId: 1,
-        activity: { id: 1, minimumIncentiveLevel: 'Basic' },
-        allocations: [
-          {
-            id: 1,
-            prisonerNumber: 'ABC123',
-            bookingId: 1,
-            activitySummary: 'Maths Level 1',
-            prisonPayBand: { id: 1, alias: 'Low' },
-          },
-        ],
-      } as unknown as ActivitySchedule)
     when(prisonService.getPrisonerIepSummary)
       .calledWith(atLeast('ABC123'))
       .mockResolvedValue({
@@ -68,6 +52,7 @@ describe('Route Handlers - Edit Allocation - Pay band', () => {
       prisonerNumber: 'ABC123',
       bookingId: 1,
       activitySummary: 'Maths Level 1',
+      activityId: 1,
       scheduleId: 1,
       scheduleDescription: '',
       isUnemployment: false,
@@ -128,7 +113,7 @@ describe('Route Handlers - Edit Allocation - Pay band', () => {
         prisonerName: 'John Smith',
         prisonerNumber: 'ABC123',
         incentiveLevel: 'Standard',
-        scheduleId: 1,
+        activityId: 1,
         allocationId: 1,
         payBandId: 1,
         payBands: [
@@ -148,13 +133,13 @@ describe('Route Handlers - Edit Allocation - Pay band', () => {
       req.body = {
         payBand: 2,
         allocationId: 1,
-        scheduleId: 1,
+        activityId: 1,
         prisonerNumber: 'ABC123',
       }
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/allocation-dashboard/1/check-allocation/ABC123',
         'Allocation updated',
         "We've updated the pay rate for this allocation",

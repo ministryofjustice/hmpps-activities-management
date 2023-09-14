@@ -26,8 +26,8 @@ describe('Route Handlers - Edit allocation - End Date option', () => {
         },
       },
       render: jest.fn(),
-      redirectOrReturn: jest.fn(),
-      redirectOrReturnWithSuccess: jest.fn(),
+      redirect: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -49,7 +49,7 @@ describe('Route Handlers - Edit allocation - End Date option', () => {
         allocation,
         allocationId: 1,
         prisonerNumber: 'ABC123',
-        scheduleId: 2,
+        activityId: 2,
       })
     })
   })
@@ -62,7 +62,7 @@ describe('Route Handlers - Edit allocation - End Date option', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date')
+      expect(res.redirect).toHaveBeenCalledWith('end-date')
     })
 
     it('should save entered end date in database', async () => {
@@ -78,14 +78,14 @@ describe('Route Handlers - Edit allocation - End Date option', () => {
         session: {},
         body: {
           endDateOption: 'remove',
-          scheduleId: 1,
+          activityId: 1,
           prisonerNumber: 'ABC123',
         },
       } as unknown as Request
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/allocation-dashboard/1/check-allocation/ABC123',
         'Allocation updated',
         "We've removed the end date for this allocation",

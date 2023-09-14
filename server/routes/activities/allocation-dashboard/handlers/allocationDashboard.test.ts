@@ -10,7 +10,6 @@ import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashb
 import atLeast from '../../../../../jest.setup'
 import {
   Activity,
-  ActivitySchedule,
   Allocation,
   PrisonerAllocations,
   WaitingListApplication,
@@ -46,7 +45,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     category: { code: 'EDUCATION', id: 1, name: 'Education' },
     createdBy: '',
     createdTime: '',
-    description: '',
+    description: 'A basic maths course suitable for introduction to the subject',
     eligibilityRules: [],
     endDate: toDateString(nextWeek),
     inCell: false,
@@ -665,9 +664,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     ] as Prisoner[]
 
     beforeEach(() => {
-      when(activitiesService.getActivitySchedule)
-        .calledWith(atLeast(1))
-        .mockResolvedValue(activitySchedule as unknown as ActivitySchedule)
+      when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValue(mockActivity)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(atLeast(['G4793VF', 'A9477DY']))
@@ -685,8 +682,9 @@ describe('Route Handlers - Allocation dashboard', () => {
         scheduleId: 1,
         latestAllocationStartDate: '2022-10-10',
         activity: {
+          id: 1,
           activityName: 'A basic maths course suitable for introduction to the subject',
-          endDate: '2024-08-01',
+          endDate: toDateString(nextWeek),
         },
         prisoners: prisoners.map(i => ({
           name: convertToTitleCase(`${i.firstName} ${i.lastName}`),

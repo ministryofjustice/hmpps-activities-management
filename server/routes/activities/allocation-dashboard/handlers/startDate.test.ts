@@ -31,8 +31,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         },
       },
       render: jest.fn(),
-      redirectOrReturn: jest.fn(),
-      redirectOrReturnWithSuccess: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -49,6 +48,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       bookingId: 1,
       activitySummary: 'Maths Level 1',
       scheduleId: 1,
+      activityId: 1,
       scheduleDescription: '',
       isUnemployment: false,
       startDate: '2023-01-01',
@@ -84,7 +84,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         endDate: '2023-01-31',
         prisonerName: 'John Smith',
         prisonerNumber: 'ABC123',
-        scheduleId: 1,
+        activityId: 1,
         startDate: expect.objectContaining({
           day: 1,
           month: 1,
@@ -104,13 +104,13 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         startDate,
         endDate: formatDate(subDays(today, 1), 'yyyy-MM-dd'),
         allocationId: 1,
-        scheduleId: 1,
+        activityId: 1,
         prisonerNumber: 'ABC123',
       }
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/allocation-dashboard/1/check-allocation/ABC123',
         'Allocation updated',
         "We've updated the start date for this allocation",

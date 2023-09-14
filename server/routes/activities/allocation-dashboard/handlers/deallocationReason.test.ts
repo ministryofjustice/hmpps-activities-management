@@ -24,7 +24,7 @@ describe('Route Handlers - Deallocation reason', () => {
         user: {},
       },
       render: jest.fn(),
-      redirectOrReturnWithSuccess: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -36,6 +36,7 @@ describe('Route Handlers - Deallocation reason', () => {
             prisonerNumber: 'ABC123',
           },
           activity: {
+            activityId: 1,
             scheduleId: 1,
           },
         },
@@ -62,7 +63,7 @@ describe('Route Handlers - Deallocation reason', () => {
       }
 
       await handler.POST(req, res)
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         `/activities/allocation-dashboard/1/check-allocation/ABC123`,
         'Allocation updated',
         "We've updated the reason for ending this allocation",

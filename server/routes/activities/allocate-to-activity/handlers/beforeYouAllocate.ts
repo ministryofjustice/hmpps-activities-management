@@ -24,9 +24,9 @@ export default class BeforeYouAllocateRoutes {
 
   POST = async (req: Request, res: Response) => {
     const { confirm } = req.body
-    const { scheduleId } = req.session.allocateJourney.activity
+    const { activityId } = req.session.allocateJourney.activity
 
     if (confirm === 'yes') return res.redirect('start-date')
-    return res.redirect(`/activities/allocation-dashboard/${scheduleId}#candidates-tab`)
+    return res.redirect(`/activities/allocation-dashboard/${activityId}#candidates-tab`)
   }
 }

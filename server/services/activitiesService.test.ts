@@ -521,6 +521,7 @@ describe('Activities Service', () => {
         allocationsToRemove: ['123456'],
         scheduleId: 1,
         activity: {
+          id: 1,
           activityName: 'Maths',
         },
         prisoners: [{ name: 'Fred', prisonerNumber: '123456', cellLocation: 'cell 1' }],

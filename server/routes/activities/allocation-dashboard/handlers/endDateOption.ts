@@ -17,10 +17,10 @@ export default class EndDateOptionRoutes {
     const { user } = res.locals
     const { allocationId } = req.params
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
-    const { scheduleId } = allocation
+    const { activityId } = allocation
     const { prisonerNumber } = allocation
     res.render('pages/activities/allocation-dashboard/end-date-option', {
-      scheduleId,
+      activityId,
       allocationId,
       prisonerNumber,
       allocation,
@@ -29,10 +29,10 @@ export default class EndDateOptionRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     if (req.body.endDateOption === 'change') {
-      return res.redirectOrReturn(`end-date`)
+      return res.redirect(`end-date`)
     }
     const { user } = res.locals
-    const { allocationId, prisonerNumber, scheduleId } = req.body
+    const { allocationId, prisonerNumber, activityId } = req.body
     const prisonCode = user.activeCaseLoadId
     const allocation = {
       removeEndDate: true,
@@ -40,8 +40,8 @@ export default class EndDateOptionRoutes {
     await this.activitiesService.updateAllocation(prisonCode, allocationId, allocation)
     const successMessage = `We've removed the end date for this allocation`
 
-    return res.redirectOrReturnWithSuccess(
-      `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
+    return res.redirectWithSuccess(
+      `/activities/allocation-dashboard/${activityId}/check-allocation/${prisonerNumber}`,
       'Allocation updated',
       successMessage,
     )

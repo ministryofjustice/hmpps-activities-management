@@ -6,7 +6,7 @@
 
 {% set pageTitle = applicationName + " - Edit allocation - Start date" %}
 {% set pageId = 'edit-allocation-start-date-page' %}
-{% set backLinkHref = '/activities/allocation-dashboard/'+ scheduleId + '/check-allocation/' +prisonerNumber %}
+{% set backLinkHref = '/activities/allocation-dashboard/'+ activityId + '/check-allocation/' +prisonerNumber %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -32,13 +32,13 @@
                 }) }}
                 <input type="hidden" id="endDate" name="endDate" value="{{ endDate }}">
                 <input type="hidden" id="allocationId" name="allocationId" value="{{ allocationId }}">
-                <input type="hidden" id="scheduleId" name="scheduleId" value="{{ scheduleId }}">
+                <input type="hidden" id="activityId" name="activityId" value="{{ activityId }}">
                 <input type="hidden" id="prisonerNumber" name="prisonerNumber" value="{{ prisonerNumber }}">
                 <div class="govuk-button-group">
                   {{ govukButton({
                     text: "Update start date"
                   }) }}
-                    <a class="govuk-link js-backlink" href="/activities/allocation-dashboard/{{scheduleId}}/check-allocation/{{prisonerNumber}}">Cancel</a>
+                    <a class="govuk-link js-backlink" href="/activities/allocation-dashboard/{{activityId}}/check-allocation/{{prisonerNumber}}">Cancel</a>
                 </div>
             </form>
         </div>
