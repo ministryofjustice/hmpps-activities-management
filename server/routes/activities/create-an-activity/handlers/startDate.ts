@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, plainToInstance, Type } from 'class-transformer'
-import { IsNotEmpty, ValidateNested, ValidationArguments } from 'class-validator'
+import { IsNotEmpty, ValidateNested } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import DateIsBeforeOtherProperty from '../../../../validators/dateIsBeforeOtherProperty'
@@ -9,7 +9,6 @@ import { ActivityUpdateRequest, Allocation } from '../../../../@types/activities
 import ActivitiesService from '../../../../services/activitiesService'
 import DateIsAfter from '../../../../validators/dateIsAfter'
 import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
-import { CreateAnActivityJourney } from '../journey'
 
 export class StartDate {
   @Expose()
@@ -19,12 +18,8 @@ export class StartDate {
   @IsValidDate({ message: 'Enter a valid start date' })
   @DateIsBeforeOtherProperty('endDate', { message: 'Enter a date before the end date' })
   @DateIsAfter(new Date(), { message: 'Activity start date must be in the future' })
-  @DateIsSameOrBefore(o => plainToInstance(SimpleDate, o.createJourney?.startDate)?.toRichDate(), {
-    message: (args: ValidationArguments) => {
-      const { createJourney } = args.object as { createJourney: CreateAnActivityJourney }
-      const allocationStartDate = formatDate(new Date(createJourney.earliestAllocationStartDate), 'dd-MM-yyyy')
-      return `Enter a date before the first allocation start date, ${allocationStartDate}`
-    },
+  @DateIsSameOrBefore(o => o.createJourney?.earliestAllocationStartDate ?? null, {
+    message: `Enter a date on or before the first allocation start date`,
   })
   startDate: SimpleDate
 
