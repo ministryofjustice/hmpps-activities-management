@@ -41,6 +41,7 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
             payBand: { id: 1, alias: 'A' },
           },
           activity: {
+            activityId: 1,
             scheduleId: 1,
             name: 'Maths',
             location: 'Education room 1',

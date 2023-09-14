@@ -5,7 +5,7 @@
 
 {% set pageTitle = applicationName + " - Edit allocation - End Date option" %}
 {% set pageId = 'edit-allocation-end-date-option-page' %}
-{% set backLinkHref = '/activities/allocation-dashboard/'+ scheduleId + '/check-allocation/' +prisonerNumber %}
+{% set backLinkHref = '/activities/allocation-dashboard/'+ activityId + '/check-allocation/' + prisonerNumber %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -15,7 +15,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <input type="hidden" id="allocationId" name="allocationId" value="{{ allocationId }}">
-                <input type="hidden" id="scheduleId" name="scheduleId" value="{{ scheduleId }}">
+                <input type="hidden" id="activityId" name="activityId" value="{{ activityId }}">
                 <input type="hidden" id="prisonerNumber" name="prisonerNumber" value="{{ prisonerNumber }}">
 
                 {{ govukRadios({

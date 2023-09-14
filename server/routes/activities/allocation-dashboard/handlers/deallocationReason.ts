@@ -29,7 +29,7 @@ export default class DeallocationReasonRoutes {
     const { allocationId } = req.params
     const { endDate } = req.session.allocateJourney
     const { prisonerNumber } = req.session.allocateJourney.inmate
-    const { scheduleId } = req.session.allocateJourney.activity
+    const { activityId } = req.session.allocateJourney.activity
     const { user } = res.locals
     const prisonCode = user.activeCaseLoadId
     const allocation = {
@@ -39,8 +39,8 @@ export default class DeallocationReasonRoutes {
     await this.activitiesService.updateAllocation(prisonCode, +allocationId, allocation)
     const successMessage = `We've updated the reason for ending this allocation`
 
-    res.redirectOrReturnWithSuccess(
-      `/activities/allocation-dashboard/${scheduleId}/check-allocation/${prisonerNumber}`,
+    res.redirectWithSuccess(
+      `/activities/allocation-dashboard/${activityId}/check-allocation/${prisonerNumber}`,
       'Allocation updated',
       successMessage,
     )

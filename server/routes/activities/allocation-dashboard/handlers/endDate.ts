@@ -45,7 +45,7 @@ export default class EndDateRoutes {
     const { user } = res.locals
     const { allocationId } = req.params
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
-    const { scheduleId } = allocation
+    const { activityId } = allocation
     const { prisonerNumber } = allocation
     const endDate = allocation.endDate ? simpleDateFromDate(new Date(allocation.endDate)) : undefined
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
@@ -53,7 +53,7 @@ export default class EndDateRoutes {
 
     res.render(`pages/activities/allocation-dashboard/end-date`, {
       endDate,
-      scheduleId,
+      activityId,
       allocationId,
       prisonerNumber,
       prisonerName,
@@ -63,6 +63,6 @@ export default class EndDateRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.allocateJourney.endDate = req.body.endDate
-    res.redirectOrReturn('reason')
+    res.redirect('reason')
   }
 }

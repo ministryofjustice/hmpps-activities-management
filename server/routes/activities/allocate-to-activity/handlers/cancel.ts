@@ -22,7 +22,7 @@ export default class CancelRoutes {
 
     if (choice === 'yes') {
       req.session.allocateJourney = null
-      res.redirect(`/activities/allocation-dashboard/${activity.scheduleId}#candidates-tab`)
+      res.redirect(`/activities/allocation-dashboard/${activity.activityId}#candidates-tab`)
     } else {
       res.redirect(returnTo)
     }

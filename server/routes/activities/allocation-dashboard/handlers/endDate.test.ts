@@ -31,8 +31,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
         },
       },
       render: jest.fn(),
-      redirectOrReturn: jest.fn(),
-      redirectOrReturnWithSuccess: jest.fn(),
+      redirect: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -61,6 +60,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       bookingId: 1,
       activitySummary: 'Maths Level 1',
       scheduleId: 1,
+      activityId: 1,
       scheduleDescription: '',
       isUnemployment: false,
       startDate: '2023-01-01',
@@ -95,7 +95,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
         allocationId: 1,
         prisonerName: 'John Smith',
         prisonerNumber: 'ABC123',
-        scheduleId: 1,
+        activityId: 1,
         endDate: expect.objectContaining({
           day: 31,
           month: 1,
@@ -121,7 +121,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
+      expect(res.redirect).toHaveBeenCalledWith('reason')
     })
   })
 

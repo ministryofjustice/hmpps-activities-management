@@ -4,7 +4,7 @@ import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import atLeast from '../../../../../jest.setup'
-import { Activity, ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import { Activity } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { IepSummary } from '../../../../@types/incentivesApi/types'
 import CheckAllocationRoutes from './checkAllocation'
@@ -40,7 +40,7 @@ describe('Route Handlers - Allocation dashboard', () => {
     req = {
       params: {
         activityId: 1,
-        prisonerNumber: 'ABC123',
+        prisonerNumber: 'G4793VF',
       },
       session: {
         allocateJourney: {
@@ -60,31 +60,15 @@ describe('Route Handlers - Allocation dashboard', () => {
 
   describe('GET', () => {
     beforeEach(() => {
-      when(activitiesService.getActivitySchedule)
-        .calledWith(atLeast(1))
-        .mockResolvedValue({
-          scheduleId: 1,
-          activity: { id: 1, minimumIncentiveLevel: 'Basic' },
-          allocations: [
-            {
-              id: 1,
-              prisonerNumber: 'ABC123',
-              bookingId: 1,
-              activitySummary: 'Maths Level 1',
-              prisonPayBand: { id: 1, alias: 'Low' },
-            },
-          ],
-        } as unknown as ActivitySchedule)
-
       const prisonerInfo = {
-        prisonerNumber: 'ABC123',
+        prisonerNumber: 'G4793VF',
         firstName: 'John',
         lastName: 'Smith',
         cellLocation: '1-1-1',
       } as Prisoner
 
       when(prisonService.getInmateByPrisonerNumber)
-        .calledWith('ABC123', res.locals.user)
+        .calledWith('G4793VF', res.locals.user)
         .mockResolvedValue(prisonerInfo)
 
       when(activitiesService.getActivity)
@@ -116,7 +100,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         } as unknown as Activity)
 
       when(prisonService.getPrisonerIepSummary)
-        .calledWith(atLeast('ABC123'))
+        .calledWith(atLeast('G4793VF'))
         .mockResolvedValue({
           iepLevel: 'Standard',
         } as IepSummary)
@@ -126,15 +110,14 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/check-answers', {
-        allocation: {
+        allocation: expect.objectContaining({
           id: 1,
-          prisonerNumber: 'ABC123',
-          bookingId: 1,
-          activitySummary: 'Maths Level 1',
-          prisonPayBand: { id: 1, alias: 'Low' },
-        },
+          prisonerNumber: 'G4793VF',
+          activitySummary: 'Maths level 1',
+          prisonPayBand: expect.objectContaining({ id: 1, alias: 'A' }),
+        }),
         isOnlyPay: true,
-        isStarted: false,
+        isStarted: true,
         pay: { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         prisonerName: 'John Smith',
       })
