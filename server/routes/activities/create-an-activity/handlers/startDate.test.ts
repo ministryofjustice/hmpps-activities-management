@@ -202,5 +202,24 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
 
       expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date before the end date' }])
     })
+
+    it('validation fails if start date is not before or same as earliest allocation start date', async () => {
+      const today = new Date()
+      const startDate = simpleDateFromDate(addDays(today, 2))
+
+      const body = { startDate }
+
+      const requestObject = plainToInstance(StartDate, {
+        ...body,
+        createJourney: {
+          earliestAllocationStartDate: addDays(today, 1),
+        },
+      })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        { property: 'startDate', error: 'Enter a date on or before the first allocation start date' },
+      ])
+    })
   })
 })
