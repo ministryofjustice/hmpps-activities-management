@@ -19,11 +19,11 @@ export class StartDate {
   @IsValidDate({ message: 'Enter a valid start date' })
   @DateIsBeforeOtherProperty('endDate', { message: 'Enter a date before the end date' })
   @DateIsAfter(new Date(), { message: 'Activity start date must be in the future' })
-  @DateIsSameOrBefore(o => plainToInstance(SimpleDate, o.createJourney?.startDate)?.toRichDate(), {
+  @DateIsSameOrBefore(o => o.createJourney?.earliestAllocationStartDate ?? null, {
     message: (args: ValidationArguments) => {
       const { createJourney } = args.object as { createJourney: CreateAnActivityJourney }
       const allocationStartDate = formatDate(new Date(createJourney.earliestAllocationStartDate), 'dd-MM-yyyy')
-      return `Enter a date before the first allocation start date, ${allocationStartDate}`
+      return `Enter a date on or before the first allocation start date, ${allocationStartDate}`
     },
   })
   startDate: SimpleDate

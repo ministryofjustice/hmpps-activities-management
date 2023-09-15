@@ -38,7 +38,13 @@ export class StartDate {
     },
   })
   @DateIsAfter(new Date(), { message: "Enter a date after today's date" })
-  @IsValidDate({ message: 'Enter a valid start date' })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
+      const activityStartDate = formatDate(new Date(allocateJourney.activity.startDate), 'dd-MM-yyyy')
+      return `Enter a date on or after the activity's scheduled start date, ${activityStartDate}`
+    },
+  })
   startDate: SimpleDate
 }
 

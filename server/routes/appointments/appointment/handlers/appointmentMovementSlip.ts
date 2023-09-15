@@ -8,7 +8,7 @@ export default class AppointmentMovementSlipRoutes {
     res.render('pages/appointments/appointment/movement-slip', { appointment })
 
     const properties = {
-      username: res.locals.user.username,
+      user: res.locals.user.username,
       prisonCode: res.locals.user.activeCaseLoadId,
       appointmentId: appointment.id.toString(),
     }

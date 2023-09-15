@@ -6,7 +6,8 @@
 
 {% set pageTitle = applicationName + " - Create an activity - Check pay" %}
 {% set pageId = 'check-pay-page' %}
-{% set backLinkHref = "pay" %}
+{% set backLinkText = 'Back to risk level' %}
+{% set backLinkHref = "risk-level" %}
 
 {% block content %}
     {% set preserveHistoryText = "?preserveHistory=true" if session.req.query.preserveHistory else "" %}
@@ -80,9 +81,14 @@
                     }
                 ), rows) %}
             {% endfor %}
+
             {{ govukSummaryList({
                 rows: rows
-            }) }}
+            }) if rows | length }}
+
+            {% if flatPay | length == 0 and incentiveLevelPays | length == 0 %}
+                <p class="govuk-body">No pay rates have been set for this activity. You must set at least one pay rate.</p>
+            {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
