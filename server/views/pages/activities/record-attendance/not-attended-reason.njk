@@ -13,25 +13,26 @@
 {% set pageId = 'not-attended-reason-page' %}
 {% set backLinkHref = "attendance-list" %}
 
-{% macro nestedReasonData(reason, prisoner, validationErrors, formResponses) %}
+{% macro nestedReasonData(index, reason, prisoner, validationErrors, formResponses) %}
     {% if reason.code === "SICK" %}
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
                 text: "Should they be paid?"
             },
-            name: "notAttendedData["  + prisoner.prisonerNumber + "][sickPay]",
-            errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][sickPay]"),
+            idPrefix: 'notAttendedData-' + index + "-sickPay",
+            name: "notAttendedData[" + index + "][sickPay]",
+            errorMessage: validationErrors | findError("notAttendedData-" + index + "-sickPay"),
             items: [
                 {
-                    value: true,
+                    value: YesNo.YES,
                     text: "Yes",
-                    checked: formResponses.notAttendedData[prisoner.prisonerNumber].sickPay == "true"
+                    checked: formResponses.notAttendedData[index].sickPay == YesNo.YES
                 },
                 {
-                    value: false,
+                    value: YesNo.NO,
                     text: "No",
-                    checked: formResponses.notAttendedData[prisoner.prisonerNumber].sickPay == "false"
+                    checked: formResponses.notAttendedData[index].sickPay == YesNo.NO
                 }
             ]
         }) }}
@@ -39,12 +40,12 @@
             label: {
                 text: "Can you provide more detail? (optional)"
             },
-            id: "notAttendedData-"  + prisoner.prisonerNumber + "-moreDetail",
-            name: "notAttendedData["  + prisoner.prisonerNumber + "][moreDetail]",
-            maxwords: 100,
+            id: "notAttendedData-"  + index + "-moreDetail",
+            name: "notAttendedData[" + index + "][moreDetail]",
+            maxlength: 100,
             classes: "govuk-!-width-one-half",
-            errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][moreDetail]"),
-            value: formResponses.notAttendedData[prisoner.prisonerNumber].moreDetail
+            errorMessage: validationErrors | findError("notAttendedData-" + index + "-moreDetail"),
+            value: formResponses.notAttendedData[index].moreDetail
         }) }}
     {% endif %}
     {% if reason.captureCaseNote %}
@@ -56,31 +57,32 @@
             label: {
                 text: "Add a case note"
             },
-            id: "notAttendedData-"  + prisoner.prisonerNumber + "-caseNote",
-            name: "notAttendedData["  + prisoner.prisonerNumber + "][caseNote]",
+            id: "notAttendedData-"  + index + "-caseNote",
+            name: "notAttendedData[" + index + "][caseNote]",
             classes: "govuk-!-width-one-half",
-            errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][caseNote]"),
-            value: formResponses.notAttendedData[prisoner.prisonerNumber].caseNote,
-            maxlength: "4000"
+            errorMessage: validationErrors | findError("notAttendedData-" + index + "-caseNote"),
+            value: formResponses.notAttendedData[index].caseNote,
+            maxlength: 4000
         }) }}
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
                 text: "Should this be recorded as an incentive level warning?"
             },
-            name: "notAttendedData["  + prisoner.prisonerNumber + "][incentiveLevelWarningIssued]",
-            errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][incentiveLevelWarningIssued]"),
+            idPrefix: "notAttendedData-" + index + "-incentiveLevelWarningIssued",
+            name: "notAttendedData[" + index + "][incentiveLevelWarningIssued]",
+            errorMessage: validationErrors | findError("notAttendedData-" + index + "-incentiveLevelWarningIssued"),
             items: [
                 {
-                    value: true,
+                    value: YesNo.YES,
                     text: "Yes",
-                    checked: formResponses.notAttendedData[prisoner.prisonerNumber].incentiveLevelWarningIssued == "true"
+                    checked: formResponses.notAttendedData[index].incentiveLevelWarningIssued == YesNo.YES
 
                 },
                 {
-                    value: false,
+                    value: YesNo.NO,
                     text: "No",
-                    checked: formResponses.notAttendedData[prisoner.prisonerNumber].incentiveLevelWarningIssued == "false"
+                    checked: formResponses.notAttendedData[index].incentiveLevelWarningIssued == YesNo.NO
                 }
             ]
         }) }}
@@ -96,18 +98,19 @@
             hint: {
                 text: "Should they be paid?"
             },
-            name: "notAttendedData["  + prisoner.prisonerNumber + "][restPay]",
-            errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][restPay]"),
+            idPrefix: "notAttendedData-" + index + "-restPay",
+            name: "notAttendedData["  + index + "][restPay]",
+            errorMessage: validationErrors | findError("notAttendedData-"  + index + "-restPay"),
             items: [
                 {
-                    value: true,
+                    value: YesNo.YES,
                     text: "Yes",
-                    checked: formResponses.notAttendedData[prisoner.prisonerNumber].restPay == "true"
+                    checked: formResponses.notAttendedData[index].restPay == YesNo.YES
                 },
                 {
-                    value: false,
+                    value: YesNo.NO,
                     text: "No",
-                    checked: formResponses.notAttendedData[prisoner.prisonerNumber].restPay == "false"
+                    checked: formResponses.notAttendedData[index].restPay == YesNo.NO
                 }
             ]
         }) }}
@@ -121,30 +124,31 @@
             label: {
                 text: "Add an absence reason"
             },
-            maxwords: 100,
-            id: "notAttendedData-"  + prisoner.prisonerNumber + "-absenceReason",
-            name: "notAttendedData["  + prisoner.prisonerNumber + "][absenceReason]",
+            maxlength: 100,
+            id: "notAttendedData-"  + index + "-otherAbsenceReason",
+            name: "notAttendedData["  + index + "][otherAbsenceReason]",
             classes: "govuk-!-width-one-half",
-            errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][absenceReason]"),
-            value: formResponses.notAttendedData[prisoner.prisonerNumber].absenceReason
+            errorMessage: validationErrors | findError("notAttendedData-"  + index + "-otherAbsenceReason"),
+            value: formResponses.notAttendedData[index].otherAbsenceReason
         }) }}
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
                 text: "Was the absence acceptable? If it was, they will be paid."
             },
-            name: "notAttendedData["  + prisoner.prisonerNumber + "][absencePay]",
-            errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][absencePay]"),
+            idPrefix: "notAttendedData-"  + index + "-otherAbsencePay",
+            name: "notAttendedData["  + index + "][otherAbsencePay]",
+            errorMessage: validationErrors | findError("notAttendedData-"  + index + "-otherAbsencePay"),
             items: [
                 {
-                    value: true,
+                    value: YesNo.YES,
                     text: "Yes",
-                    checked: formResponses.notAttendedData[prisoner.prisonerNumber].absencePay == "true"
+                    checked: formResponses.notAttendedData[index].otherAbsencePay == YesNo.YES
                 },
                 {
-                    value: false,
+                    value: YesNo.NO,
                     text: "No",
-                    checked: formResponses.notAttendedData[prisoner.prisonerNumber].absencePay == "false"
+                    checked: formResponses.notAttendedData[index].otherAbsencePay == YesNo.NO
 
                 }
             ]
@@ -160,6 +164,7 @@
             {% endif %}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
                 {% for prisoner in selectedPrisoners %}
                     {% set hasActivityClash = false %}
                     {% for event in prisoner.otherEvents %}
@@ -168,17 +173,22 @@
                         {% endif %}
                     {% endfor %}
 
+                    {% set prisonerIndex = loop.index0 %}
+
+                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerNumber]" }}" value="{{ prisoner.prisonerNumber }}" />
+                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerName]" }}" value="{{ prisoner.prisonerName | toTitleCase }}" />
+
                     {% set notAttendedReasonOptions = [] %}
                      {% for notAttendedReason in notAttendedReasons %}
                         {% if (notAttendedReason.code != "CLASH") or (prisoner.otherEvents|length and not hasActivityClash) %}
                             {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
                                  {
-                                     value: notAttendedReason.code,
-                                     text: notAttendedReason.description,
-                                     conditional: {
-                                         html: nestedReasonData(notAttendedReason, prisoner, validationErrors, formResponses)
-                                     },
-                                     checked: formResponses.notAttendedData[prisoner.prisonerNumber].notAttendedReason == notAttendedReason.code
+                                    value: notAttendedReason.code,
+                                    text: notAttendedReason.description,
+                                    conditional: {
+                                        html: nestedReasonData(prisonerIndex, notAttendedReason, prisoner, validationErrors, formResponses)
+                                    },
+                                    checked: formResponses.notAttendedData[prisonerIndex].notAttendedReason == notAttendedReason.code
                                  }
                             ), notAttendedReasonOptions) %}
                         {% endif %}
@@ -197,8 +207,9 @@
                                 classes: "govuk-label"
                             }
                         },
-                        name: "notAttendedData["  + prisoner.prisonerNumber + "][notAttendedReason]",
-                        errorMessage: validationErrors | findError("notAttendedData["  + prisoner.prisonerNumber + "][notAttendedReason]"),
+                        idPrefix: "notAttendedData-"  + prisonerIndex + "-notAttendedReason",
+                        name: "notAttendedData[" + prisonerIndex + "][notAttendedReason]",
+                        errorMessage: validationErrors | findError("notAttendedData-"  + prisonerIndex + "-notAttendedReason"),
                         items: notAttendedReasonOptions
                     }) }}
                 {% endfor %}

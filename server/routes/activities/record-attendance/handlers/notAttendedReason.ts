@@ -1,30 +1,72 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import _ from 'lodash'
+import { Type } from 'class-transformer'
+import {
+  ValidateNested,
+  ValidateIf,
+  IsEnum,
+  MaxLength,
+  ValidationArguments,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AttendanceUpdateRequest } from '../../../../@types/activitiesAPI/types'
-import NotAttendedData, {
-  AbsenceReasonRequired,
-  CaseNoteRequired,
-  IncentiveLevelWarningRequired,
-  PayRequired,
-  ReasonEnteredForAllPrisoners,
-} from '../../../../validators/validateNotAttendedData'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import { convertToTitleCase } from '../../../../utils/utils'
+import { YesNo } from '../../../../@types/activities'
 
-export class NotAttendedReason {
-  @Expose()
-  @Type(() => NotAttendedData)
-  @ReasonEnteredForAllPrisoners({ message: 'Enter an absence reason for all prisoners' })
-  @AbsenceReasonRequired({ message: 'Please enter a reason for the absence' })
-  @PayRequired({ message: 'Please specify whether the prisoner should be paid' })
-  @CaseNoteRequired({ message: 'Please enter a case note' })
-  @IncentiveLevelWarningRequired({
-    message: 'Please specify whether this should be recorded as an incentive level warning',
+const getPrisonerName = (args: ValidationArguments) => (args.object as NotAttendedData)?.prisonerName
+
+export class NotAttendedData {
+  prisonerNumber: string
+
+  prisonerName: string
+
+  @IsEnum(AttendanceReason, { message: args => `Select an absence reason for ${getPrisonerName(args)}` })
+  notAttendedReason: AttendanceReason
+
+  @ValidateIf(o => AttendanceReason.SICK === o.notAttendedReason)
+  @IsEnum(YesNo, { message: (args: ValidationArguments) => `Select if ${getPrisonerName(args)} should be paid` })
+  sickPay?: YesNo
+
+  @ValidateIf(o => AttendanceReason.REST === o.notAttendedReason)
+  @IsEnum(YesNo, { message: (args: ValidationArguments) => `Select if ${getPrisonerName(args)} should be paid` })
+  restPay?: YesNo
+
+  @ValidateIf(o => AttendanceReason.OTHER === o.notAttendedReason)
+  @IsNotEmpty({ message: args => `Enter an absence reason for ${getPrisonerName(args)}` })
+  @MaxLength(100, { message: 'Absence reason must be $constraint1 characters or less' })
+  otherAbsenceReason?: string
+
+  @ValidateIf(o => AttendanceReason.OTHER === o.notAttendedReason)
+  @IsEnum(YesNo, {
+    message: (args: ValidationArguments) =>
+      `Select if this is an acceptable absence for ${getPrisonerName(args)} and they should be paid`,
   })
-  notAttendedData: NotAttendedData
+  otherAbsencePay?: YesNo
+
+  @ValidateIf(o => AttendanceReason.SICK === o.notAttendedReason)
+  @IsOptional()
+  @MaxLength(100, { message: 'Additional details must be $constraint1 characters or less' })
+  moreDetail?: string
+
+  @ValidateIf(o => AttendanceReason.REFUSED === o.notAttendedReason)
+  @IsNotEmpty({ message: args => `Enter a case note for ${getPrisonerName(args)}` })
+  @MaxLength(4000, { message: 'Case note must be $constraint1 characters or less' })
+  caseNote?: string
+
+  @ValidateIf(o => AttendanceReason.REFUSED === o.notAttendedReason)
+  @IsEnum(YesNo, {
+    message: (args: ValidationArguments) =>
+      `Select if there should be an incentive level warning for ${getPrisonerName(args)}`,
+  })
+  incentiveLevelWarningIssued?: YesNo
+}
+
+export class NotAttendedForm {
+  @Type(() => NotAttendedData)
+  @ValidateNested({ each: true })
+  notAttendedData: NotAttendedData[]
 }
 
 export default class NotAttendedReasonRoutes {
@@ -34,12 +76,11 @@ export default class NotAttendedReasonRoutes {
     const { user } = res.locals
     const { selectedPrisoners } = req.session.notAttendedJourney
 
-    const notAttendedReasons = await this.activitiesService
-      .getAttendanceReasons(user)
-      .then(reasons => reasons.filter(r => r.displayInAbsence))
-      .then(reasons => _.sortBy(reasons, 'displaySequence'))
+    const notAttendedReasons = (await this.activitiesService.getAttendanceReasons(user))
+      .filter(r => r.displayInAbsence)
+      .sort((r1, r2) => r1.displaySequence - r2.displaySequence)
 
-    return res.render('pages/activities/record-attendance/not-attended-reason', {
+    res.render('pages/activities/record-attendance/not-attended-reason', {
       notAttendedReasons,
       selectedPrisoners,
     })
@@ -47,45 +88,41 @@ export default class NotAttendedReasonRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { notAttendedData }: { notAttendedData: NotAttendedData } = req.body
-    const attendanceUpdates: AttendanceUpdateRequest[] = []
-
+    const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
     const { selectedPrisoners } = req.session.notAttendedJourney
 
-    selectedPrisoners.forEach(selectedPrisoner => {
-      attendanceUpdates.push({
+    const attendanceUpdates = selectedPrisoners.map(selectedPrisoner => {
+      const prisonerAttendance = notAttendedData.find(a => a.prisonerNumber === selectedPrisoner.prisonerNumber)
+
+      const issuePayment =
+        [prisonerAttendance.sickPay, prisonerAttendance.restPay, prisonerAttendance.otherAbsencePay].includes(
+          YesNo.YES,
+        ) || [AttendanceReason.NOT_REQUIRED, AttendanceReason.CLASH].includes(prisonerAttendance.notAttendedReason)
+
+      const incentiveLevelWarning =
+        prisonerAttendance.notAttendedReason === AttendanceReason.REFUSED &&
+        prisonerAttendance.incentiveLevelWarningIssued === YesNo.YES
+
+      return {
         id: selectedPrisoner.attendanceId,
         prisonCode: user.activeCaseLoadId,
         status: AttendanceStatus.COMPLETED,
-        attendanceReason: notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason,
-        comment: notAttendedData[selectedPrisoner.prisonerNumber].moreDetail,
-        issuePayment:
-          (notAttendedData[selectedPrisoner.prisonerNumber].sickPay
-            ? notAttendedData[selectedPrisoner.prisonerNumber].sickPay
-            : false) ||
-          (notAttendedData[selectedPrisoner.prisonerNumber].restPay
-            ? notAttendedData[selectedPrisoner.prisonerNumber].restPay
-            : false) ||
-          (notAttendedData[selectedPrisoner.prisonerNumber].absencePay
-            ? notAttendedData[selectedPrisoner.prisonerNumber].absencePay
-            : false) ||
-          notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason === AttendanceReason.NOT_REQUIRED ||
-          notAttendedData[selectedPrisoner.prisonerNumber].notAttendedReason === AttendanceReason.CLASH,
-        caseNote: notAttendedData[selectedPrisoner.prisonerNumber].caseNote,
-        incentiveLevelWarningIssued: notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
-          ? notAttendedData[selectedPrisoner.prisonerNumber].incentiveLevelWarningIssued
-          : false,
-        otherAbsenceReason: notAttendedData[selectedPrisoner.prisonerNumber].absenceReason,
-      })
+        attendanceReason: prisonerAttendance.notAttendedReason,
+        comment: prisonerAttendance.moreDetail,
+        issuePayment,
+        caseNote: prisonerAttendance.caseNote,
+        incentiveLevelWarningIssued: incentiveLevelWarning,
+        otherAbsenceReason: prisonerAttendance.otherAbsenceReason,
+      }
     })
 
     await this.activitiesService.updateAttendances(attendanceUpdates, user)
 
-    const successMessage =
+    const successMessage = `We've saved attendance details for ${
       selectedPrisoners.length === 1
-        ? `We've saved attendance details for ${convertToTitleCase(selectedPrisoners[0].prisonerName)}`
-        : `We've saved attendance details for ${selectedPrisoners.length} people`
-
-    return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
+        ? convertToTitleCase(selectedPrisoners[0].prisonerName)
+        : `${selectedPrisoners.length} people`
+    }`
+    res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
   }
 }

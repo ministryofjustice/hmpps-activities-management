@@ -60,10 +60,10 @@ context('Record non attendance', () => {
     attendanceListPage.markAsNotAttended()
 
     const notAttendedReasonPage = Page.verifyOnPage(NotAttendedReasonPage)
-    notAttendedReasonPage.selectRadio('notAttendedData[G5897GP][notAttendedReason]')
-    notAttendedReasonPage.selectRadio('notAttendedData[G5897GP][sickPay]')
-    notAttendedReasonPage.selectRadio('notAttendedData[G7218GI][notAttendedReason]')
-    notAttendedReasonPage.selectRadio('notAttendedData[G7218GI][sickPay]')
+    notAttendedReasonPage.selectRadio('notAttendedData[0][notAttendedReason]')
+    notAttendedReasonPage.selectRadio('notAttendedData[0][sickPay]')
+    notAttendedReasonPage.selectRadio('notAttendedData[1][notAttendedReason]')
+    notAttendedReasonPage.selectRadio('notAttendedData[1][sickPay]')
     notAttendedReasonPage.submit()
 
     Page.verifyOnPage(AttendanceListPage)
