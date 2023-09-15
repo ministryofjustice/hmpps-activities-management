@@ -15,7 +15,7 @@ export class DeallocationDate {
   @DateIsSameOrAfter(o => new Date(o.deallocateJourney.latestAllocationStartDate), {
     message: (args: ValidationArguments) => {
       const { deallocateJourney } = args.object as { deallocateJourney: DeallocateFromActivityJourney }
-      const allocationStartDate = formatDate(new Date(deallocateJourney.latestAllocationStartDate), 'dd-MM-yyyy')
+      const allocationStartDate = formatDate(new Date(deallocateJourney.latestAllocationStartDate), 'd MMMM yyyy')
       return `Enter a date on or after the allocation start date, ${allocationStartDate}`
     },
   })
@@ -24,7 +24,8 @@ export class DeallocationDate {
     {
       message: (args: ValidationArguments) => {
         const { deallocateJourney } = args.object as { deallocateJourney: DeallocateFromActivityJourney }
-        return `Enter a date on or before the activity's scheduled end date, ${deallocateJourney.activity.endDate}`
+        const activityEndDate = formatDate(new Date(deallocateJourney.activity.endDate), 'd MMMM yyyy')
+        return `Enter a date on or before the activity's scheduled end date, ${activityEndDate}`
       },
     },
   )
