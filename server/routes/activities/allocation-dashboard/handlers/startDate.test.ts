@@ -166,10 +166,16 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         },
       }
 
+      const formattedStartDate = formatDate(yesterday, 'd MMMM yyyy')
       const requestObject = plainToInstance(StartDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'startDate', error: "Enter a date on or after today's date" }])
+      expect(errors).toEqual([
+        {
+          property: 'startDate',
+          error: `Enter a date on or after the activity's scheduled start date , ${formattedStartDate}`,
+        },
+      ])
     })
 
     it('validation fails if start date is not before or same as end date', async () => {
