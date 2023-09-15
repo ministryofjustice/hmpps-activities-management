@@ -55,6 +55,18 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-rate-type')
     })
 
+    it('should save the selected risk level in session and redirect to check pay page if pay exists', async () => {
+      req.body = {
+        riskLevel: 'high',
+      }
+      req.session.createJourney.flat = [{ bandId: 1, bandAlias: 'low', displaySequence: 1, rate: 100 }]
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.riskLevel).toEqual('high')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-pay')
+    })
+
     it('should save entered risk level in database', async () => {
       const updatedActivity = {
         riskLevel: 'high',
