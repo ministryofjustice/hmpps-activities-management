@@ -175,11 +175,11 @@
         {% endset %}
 
         {% set currentlyAllocatedHtml %}
-            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+            <div class="govuk-!-margin-bottom-0">
                 <a href='{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
-                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer"> {{ row.name | toTitleCase }}
+                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">{{ row.name | toTitleCase | prisonerName }}
                 </a>
-            </h2>
+            </div>
             <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.prisonerNumber }} </div>
             {% if row.cellLocation == 'CSWAP' %}
                 <div class="govuk-hint govuk-!-margin-bottom-1"> --</div>
@@ -202,15 +202,12 @@
         {% endset %}
 
         {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + row.name | toTitleCase,
+            visuallyHiddenText: 'Select ' + row.name | toTitleCase | prisonerName,
             value: row.prisonerNumber,
             selectable: true,
             items: [
                 {
-                    html: currentlyAllocatedHtml,
-                    attributes: {
-                        "data-sort-value": row.name
-                    }
+                    html: currentlyAllocatedHtml
                 },
                 {
 
@@ -300,7 +297,7 @@
                 {% set riskLevelOptions = [
                     {
                         value: 'Any Workplace Risk Assessment',
-                        text: 'Any Workplace Risk Assessment',
+                        text: 'Any workplace risk assessment',
                         selected: filters.riskLevelFilter == 'Any Workplace Risk Assessment'
                     },
                     {
@@ -320,7 +317,7 @@
                     },
                     {
                         value: 'No Workplace Risk Assessment',
-                        text: 'No Workplace Risk Assessment',
+                        text: 'No workplace risk assessment',
                         selected: filters.riskLevelFilter == 'No Workplace Risk Assessment'
                     }
                 ] %}
@@ -336,7 +333,7 @@
                 {% set incentiveLevelOptions = [
                     {
                         value: suitableForIep,
-                        text: 'Suitable incentive levels: ' + suitableForIep,
+                        text: 'Any suitable incentive level',
                         selected: filters.incentiveLevelFilter == suitableForIep
                     }
                 ] %}
@@ -352,7 +349,7 @@
                 {% set incentiveLevelOptions = (incentiveLevelOptions.push(
                     {
                         value: 'All Incentive Levels',
-                        text: 'All Incentive Levels',
+                        text: 'All incentive levels',
                         selected: filters.incentiveLevelFilter == 'All Incentive Levels'
                     }
                 ), incentiveLevelOptions) %}
@@ -415,24 +412,21 @@
             </ul>
         {% endset %}
         {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + row.name | toTitleCase,
+            visuallyHiddenText: 'Select ' + row.name | toTitleCase | prisonerName,
             value: row.waitlistApplicationId,
             selectable: true,
             forbiddenActionId: 'waitlist-action-1' if row.status != 'APPROVED',
             items: [
                 {
                     html: '
-                        <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                        <div class="govuk-!-margin-bottom-0">
                             <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
-                               class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase + '
+                               class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase | prisonerName + '
                             </a>
-                        </h2>
+                        </div>
                         <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
                         <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
-                    ',
-                    attributes: {
-                        "data-sort-value": row.name
-                    }
+                    '
                 },
                 {
                     text: row.requestDate | formatDate('d MMMM yyyy')
@@ -550,7 +544,7 @@
                 {% set riskLevelOptions = [
                     {
                         value: 'Any Workplace Risk Assessment',
-                        text: 'Any Workplace Risk Assessment',
+                        text: 'Any workplace risk assessment',
                         selected: filters.riskLevelFilter == 'Any Workplace Risk Assessment'
                     },
                     {
@@ -587,7 +581,7 @@
                 {% set incentiveLevelOptions = [
                     {
                         value: suitableForIep,
-                        text: 'Suitable incentive levels: ' + suitableForIep,
+                        text: 'Any suitable incentive level',
                         selected: filters.incentiveLevelFilter == suitableForIep
                     }
                 ] %}
@@ -603,7 +597,7 @@
                 {% set incentiveLevelOptions = (incentiveLevelOptions.push(
                     {
                         value: 'All Incentive Levels',
-                        text: 'All Incentive Levels',
+                        text: 'All incentive levels',
                         selected: filters.incentiveLevelFilter == 'All Incentive Levels'
                     }
                 ), incentiveLevelOptions) %}
@@ -638,14 +632,14 @@
             </ul>
         {% endset %}
         {% set candidatesHtml %}
-            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+            <div class="govuk-!-margin-bottom-0">
                 <a href='{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
-                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer"> {{ row.name | toTitleCase }}
+                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">{{ row.name | toTitleCase | prisonerName }}
                 </a>
-            </h2>
+            </div>
             <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.prisonerNumber }}</div>
             {% if row.cellLocation == 'CSWAP' %}
-                <div class="govuk-hint govuk-!-margin-bottom-1"> ---</div>
+                <div class="govuk-hint govuk-!-margin-bottom-1">--</div>
             {% else %}
                 <div class="govuk-hint govuk-!-margin-bottom-1">{{ row.cellLocation }}</div>
             {% endif %}
@@ -716,7 +710,7 @@
 {% endset %}
 
 {% set scheduleHtml %}
-    <p>This schedule {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
+    <p>This activity {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
     {% for week, slots in dailySlots %}
         {% set rows = [] %}
         {% if scheduleWeeks > 1 %}

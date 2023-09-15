@@ -12,28 +12,29 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.deallocateJourney.activity.activityName }}</span>
-            {% if session.deallocateJourney.allocationsToRemove | length == 1 %}
-                <span class="govuk-heading-xl">When is {{ session.deallocateJourney.prisoners[0].name }}'s last day on this activity?</span>
-            {% else %}
-                <span class="govuk-heading-xl">When is the last day for {{ session.deallocateJourney.allocationsToRemove | length }} people on this activity?</span>
-            {% endif %}
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <input type="hidden" id="startDate" name="startDate" value="{{ session.deallocateJourney.latestAllocationStartDate }}">
+                
+                <span class="govuk-caption-xl">{{ session.deallocateJourney.activity.activityName }}</span>
+
+                {% set pageHeading %}
+                    {% if session.deallocateJourney.allocationsToRemove | length == 1 %}
+                        When is {{ session.deallocateJourney.prisoners[0].name }}'s last day on this activity?
+                    {% else %}
+                        When is the last day for {{ session.deallocateJourney.allocationsToRemove | length }} people on this activity?
+                    {% endif %}
+                {% endset %}
 
                 {{ datePicker({
                     id: 'deallocationDate',
                     label: {
-                        text: "Deallocation date",
-                        classes: "govuk-visually-hidden"
+                        text: pageHeading,
+                        classes: "govuk-fieldset__legend--xl",
+                        isPageHeading: true
                     },
                     hint: {
-                        text: "For example, " + now | formatDate('dd MM yyyy')
+                        text: "For example, " + exampleDate()
                     },
                     renderedErrorMessage: validationErrors | findError('deallocationDate'),
                     validationErrors: validationErrors,
