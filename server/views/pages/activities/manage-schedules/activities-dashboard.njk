@@ -12,15 +12,14 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-xl">Activities dashboard</h1>
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Activities dashboard</h1>
+            <p class="govuk-body-l">Select an activity to edit details including pay rates, requirements and schedule. You can also end an activity.</p>
         </div>
     </div>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <p class="govuk-body">Select an activity to edit details including pay rates, requirements and schedule. You can also end an activity.</p>
-            
             <div class="moj-filter-layout" data-module="activities-list-filter">
                 <form method='GET'>
                     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

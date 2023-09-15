@@ -34,13 +34,13 @@ describe('Views - Allocation dashboard', () => {
         .map((i, e) => $(e).text())
         .get(),
     ).toEqual([
-      'Suitable incentive levels: Basic, Enhanced',
+      'Any suitable incentive level',
       'Basic',
       'Standard',
       'Enhanced',
       'Enhanced 2',
       'Enhanced 3',
-      'All Incentive Levels',
+      'All incentive levels',
     ])
   })
 })

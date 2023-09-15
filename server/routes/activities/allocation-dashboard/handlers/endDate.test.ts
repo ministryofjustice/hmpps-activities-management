@@ -184,7 +184,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'endDate', error: 'Enter a date on or after the allocation start date, 27-08-2023' },
+        { property: 'endDate', error: 'Enter a date on or after the allocation start date, 27 August 2023' },
       ])
     })
 

@@ -165,7 +165,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'startDate', error: "Enter a date on or after the activity's scheduled start date, 04-04-2024" },
+        { property: 'startDate', error: "Enter a date on or after the activity's scheduled start date, 4 April 2024" },
       ])
     })
 
@@ -190,7 +190,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       expect(errors).toEqual([
         {
           property: 'startDate',
-          error: `Enter a date on or before the activity's scheduled end date, 04-04-2022`,
+          error: `Enter a date on or before the activity's scheduled end date, 4 April 2022`,
         },
       ])
     })

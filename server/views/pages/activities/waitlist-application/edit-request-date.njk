@@ -27,8 +27,8 @@
                     },
                     hint: {
                         html: '
-                            <div>If the application has not been dated, use today\'s date.</div>
-                            <div>For example, 28 7 2023</div>
+                            <p class="govuk-body">If the application has not been dated, use today\'s date.</p>
+                            <p class="govuk-hint">For example, ' + exampleDate() + '</p>
                         '
                     },
                     renderedErrorMessage: validationErrors | findError('requestDate'),

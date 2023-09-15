@@ -15,7 +15,7 @@ export class EndDate {
   @DateIsSameOrBefore(o => o.allocateJourney?.activity.endDate, {
     message: (args: ValidationArguments) => {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
-      const endDate = formatDate(new Date(allocateJourney?.activity.endDate), 'dd-MM-yyyy')
+      const endDate = formatDate(new Date(allocateJourney?.activity.endDate), 'd MMMM yyyy')
       return `Enter a date on or before the activity's scheduled end date, ${endDate}`
     },
   })
@@ -24,7 +24,7 @@ export class EndDate {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
       const allocationStartDate = formatDate(
         plainToInstance(SimpleDate, allocateJourney?.startDate)?.toRichDate(),
-        'dd-MM-yyyy',
+        'd MMMM yyyy',
       )
       return `Enter a date on or after the allocation start date, ${allocationStartDate}`
     },
