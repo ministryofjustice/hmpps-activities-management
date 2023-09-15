@@ -133,14 +133,14 @@ export default class ScheduleRoutes {
     const { property, preserveHistory } = req.query
     const propertyAsString: string = property as string
     const properties = {
-      username: res.locals.user.username,
+      user: res.locals.user.username,
       prisonCode: res.locals.user.activeCaseLoadId,
-      propertyName: propertyAsString,
       appointmentJourneyMode: req.session.appointmentJourney.mode,
+      property: propertyAsString,
     }
 
     trackEvent({
-      eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
+      eventName: 'SAA-Appointment-Change-From-Schedule',
       properties,
     })
 

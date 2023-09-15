@@ -19,13 +19,14 @@ export default class ReviewPrisonerRoutes {
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
       prisoners = req.session.editAppointmentJourney.addPrisoners
       const properties = {
-        username: res.locals.user.username,
+        user: res.locals.user.username,
         prisonCode: res.locals.user.activeCaseLoadId,
         appointmentJourneyMode: req.session.appointmentJourney.mode,
+        property: 'attendees',
       }
 
       trackEvent({
-        eventName: 'SAA-Appointments-Appointment-Change-From-Schedule',
+        eventName: 'SAA-Appointment-Change-From-Schedule',
         properties,
       })
     } else if (req.session.appointmentJourney.type === AppointmentType.SET) {
