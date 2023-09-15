@@ -166,7 +166,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         },
       }
 
-      const formattedStartDate = formatDate(yesterday, 'dd-MM-yyyy')
+      const formattedStartDate = formatDate(yesterday, 'd MMMM yyyy')
       const requestObject = plainToInstance(StartDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
