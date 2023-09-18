@@ -6,18 +6,15 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
-    "copy-views": "cp -R server/views dist/server/",
     "compile-assets": "grunt",
-    "watch-ts": "tsc -w",
-    "watch-views": "nodemon --watch server/views -e html,njk -x npm run copy-views",
-    "watch-node": "DEBUG=gov-starter-server* nodemon --watch dist/ dist/server.js | bunyan -o short",
-    "watch-assets": "grunt watch",
-    "build": "rm -rf dist && npm run compile-assets && tsc && npm run copy-views",
+    "watch-node": "ts-node-dev --respawn server.ts",
+    "watch-assets": "npm run build:dev && grunt watch",
+    "build": "npm run compile-assets && tsc",
+    "build:dev": "npx grunt clean-dev-build",
     "start": "node $NODE_OPTIONS -r dotenv/config dist/server.js | bunyan -o short",
-    "start:dev": "npm run build && concurrently -k -p \"[{name}]\" -n \"Views,TypeScript,Node,Sass\" -c \"yellow.bold,cyan.bold,green.bold,blue.bold\" \"npm run watch-views\" \"npm run watch-ts\" \"npm run watch-node\" \"npm run watch-assets\"",
+    "start:dev": "NODE_ENV=live-development concurrently --kill-signal=SIGKILL -k -p \"[{name}]\" -n \"TypeScript,Assets\" -c \"green.bold,blue.bold\" \"npm run watch-node\" \"npm run watch-assets\"",
     "start-feature": "export $(cat feature.env) && node $NODE_DEBUG_OPTION dist/server.js | bunyan -o short",
-    "watch-node-feature": "export $(cat feature.env) && nodemon --watch dist/ $NODE_DEBUG_OPTION dist/server.js | bunyan -o short",
-    "start-feature:dev": "npm run build && concurrently -k -p \"[{name}]\" -n \"Views,TypeScript,Node,Sass\" -c \"yellow.bold,cyan.bold,green.bold,blue.bold\" \"npm run watch-views\" \"npm run watch-ts\" \"npm run watch-node-feature\" \"npm run watch-assets\"",
+    "start-feature:dev": "export $(cat feature.env) && npm run start:dev",
     "record-build-info": "node ./bin/record-build-info",
     "lint": "eslint . --cache --max-warnings 0",
     "lint:fix": "eslint . --cache --max-warnings 0 --fix",
@@ -67,17 +64,6 @@
       "node",
       "ts"
     ]
-  },
-  "nodemonConfig": {
-    "ignore": [
-      ".circleci/*",
-      "migrations/*",
-      "node_modules/*",
-      "test/*",
-      "integration_tests/*"
-    ],
-    "delay": 2500,
-    "ext": "js,json,html,njk"
   },
   "lint-staged": {
     "*.{ts,js,css}": [
@@ -174,7 +160,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-unused-imports": "^3.0.0",
     "grunt": "^1.6.1",
-    "grunt-contrib-concat": "^2.1.0",
+    "grunt-contrib-clean": "^2.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-sass": "^2.0.0",
     "grunt-contrib-uglify": "^5.2.2",
@@ -189,7 +175,6 @@
     "lint-staged": "^13.2.3",
     "mocha-junit-reporter": "^2.2.1",
     "nock": "^13.3.1",
-    "nodemon": "^3.0.1",
     "openapi-typescript": "^6.3.4",
     "prettier": "^2.8.8",
     "prettier-plugin-jinja-template": "^0.5.0",
@@ -197,6 +182,7 @@
     "sass": "^1.63.6",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.1.6"
   },
   "overrides": {

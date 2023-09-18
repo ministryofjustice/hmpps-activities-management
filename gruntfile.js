@@ -10,7 +10,7 @@ module.exports = grunt => {
         options: {
           'no-source-map': '',
           quiet: true,
-          style: 'compressed',
+          style: process.env.NODE_ENV === 'live-development' ? 'expanded' : 'compressed',
           loadPath: ['.', 'node_modules/govuk-frontend', 'node_modules/@ministryofjustice/frontend'],
         },
         files: {
@@ -27,30 +27,14 @@ module.exports = grunt => {
       },
       main: {
         files: {
-          'assets/javascript/activities.js': 'frontend/index.js',
+          'assets/javascript/activities.min.js': 'frontend/index.js',
         },
-      },
-    },
-    concat: {
-      css: {
-        src: [
-          'node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css',
-          'assets/stylesheets/application.css',
-        ],
-        dest: 'assets/stylesheets/application.css',
-      },
-      cssIe8: {
-        src: [
-          'assets/stylesheets/application-ie8.css',
-          'node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css',
-        ],
-        dest: 'assets/stylesheets/application-ie8.css',
       },
     },
     uglify: {
       dist: {
         files: {
-          'assets/javascript/activities.min.js': 'assets/javascript/activities.js',
+          'assets/javascript/activities.min.js': 'assets/javascript/activities.min.js',
         },
       },
     },
@@ -83,21 +67,38 @@ module.exports = grunt => {
           },
         ],
       },
+      views: {
+        files: [
+          {
+            expand: true,
+            cwd: 'server/views',
+            src: ['./**/*'],
+            dest: 'dist/server/views/',
+          },
+        ],
+      },
     },
+    clean: ['dist'],
     watch: {
       scripts: {
         files: ['frontend/**/*.{mjs,js}', 'frontend/**/*.scss'],
-        tasks: ['default'],
+        tasks: ['dev-build'],
+      },
+      views: {
+        files: ['server/views/**/*.njk'],
+        tasks: ['copy:views'],
       },
     },
   })
 
   grunt.loadNpmTasks('grunt-contrib-sass')
-  grunt.loadNpmTasks('grunt-contrib-concat')
   grunt.loadNpmTasks('grunt-contrib-uglify')
   grunt.loadNpmTasks('grunt-contrib-copy')
   grunt.loadNpmTasks('grunt-contrib-watch')
+  grunt.loadNpmTasks('grunt-contrib-clean')
   grunt.loadNpmTasks('grunt-rollup')
 
-  grunt.registerTask('default', ['sass', 'concat:css', 'concat:cssIe8', 'rollup', 'uglify', 'copy'])
+  grunt.registerTask('default', ['clean', 'sass', 'rollup', 'uglify', 'copy'])
+  grunt.registerTask('dev-build', ['sass', 'rollup', 'copy'])
+  grunt.registerTask('clean-dev-build', ['clean', 'dev-build'])
 }
