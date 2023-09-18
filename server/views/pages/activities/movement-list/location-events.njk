@@ -8,7 +8,7 @@
 {% set backLinkHref = "choose-details" %}
 
 {% macro locationActions(location) %}
-    <a href="location-events?locations={{ location.id }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
+    <a href="?location-events={{ location.id }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
         View movement list
     </a>
 {% endmacro %}
@@ -41,6 +41,17 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h2 class="govuk-heading-m">{{ locations | length }} location{{ "s" if locations | length != 1 }}</h2>
+            <div class="moj-action-bar govuk-!-display-none-print">
+                <div class="moj-action-bar__filter"></div>
+                {{ mojButtonMenu({
+                    items: [{
+                        attributes: { id: 'print-movement-list' },
+                        text: "Print this movement list",
+                        classes: "govuk-button--blue js-print no-js-hidden",
+                        preventDoubleClick: true
+                    }]
+                }) }}
+            </div>
 
             {{ govukTable({
                 attributes: {
