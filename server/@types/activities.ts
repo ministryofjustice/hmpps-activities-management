@@ -54,6 +54,7 @@ export type MovementListItem = {
   status: string
   alerts?: Alert[]
   events?: ScheduledEvent[]
+  clashingEvents?: ScheduledEvent[]
 }
 
 export type SubLocationCellPattern = {

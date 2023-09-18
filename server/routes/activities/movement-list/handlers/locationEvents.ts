@@ -26,6 +26,61 @@ export default class LocationEventsRoutes {
         lastName: 'PRISONER',
         cellLocation: '1-2-3',
         status: 'IN',
+        events: [
+          {
+            eventSource: 'SAA',
+            eventType: 'ACTIVITY',
+            summary: 'Activity name',
+            startTime: '09:00',
+            endTime: '12:00',
+          },
+        ],
+        clashingEvents: [
+          {
+            eventSource: 'SAA',
+            eventType: 'ACTIVITY',
+            summary: 'Activity name',
+            startTime: '09:00',
+            endTime: '12:00',
+          },
+          {
+            eventSource: 'SAA',
+            eventType: 'ACTIVITY',
+            summary: 'Activity name',
+            suspended: true,
+            startTime: '09:00',
+            endTime: '12:00',
+          },
+          {
+            eventSource: 'SAA',
+            eventType: 'APPOINTMENT',
+            summary: 'Chaplaincy',
+            startTime: '10:00',
+            endTime: '11:00',
+          },
+          {
+            eventSource: 'SAA',
+            eventType: 'APPOINTMENT',
+            summary: 'Chaplaincy',
+            cancelled: true,
+            startTime: '10:00',
+            endTime: '11:00',
+          },
+          {
+            eventSource: 'SAA',
+            eventType: 'APPOINTMENT',
+            summary: 'Chaplaincy',
+            comments: 'Extra information',
+            startTime: '10:00',
+            endTime: '11:00',
+          },
+          {
+            eventSource: 'SAA',
+            eventType: 'APPOINTMENT',
+            summary: 'Chaplaincy',
+            startTime: '10:00',
+          },
+        ],
       },
     ] as MovementListItem[]
 
