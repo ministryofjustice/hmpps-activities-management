@@ -19,7 +19,15 @@ export default class LocationEventsRoutes {
     }))
 
     // TODO: replace with await this.activitiesService.getLocationEvents(user) when implemented
-    const locationEvents = [] as MovementListItem[]
+    const locationEvents = [
+      {
+        prisonerNumber: 'A1234BC',
+        firstName: 'TEST',
+        lastName: 'PRISONER',
+        cellLocation: '1-2-3',
+        status: 'IN',
+      },
+    ] as MovementListItem[]
 
     return res.render('pages/activities/movement-list/location-events', {
       dateOption,
