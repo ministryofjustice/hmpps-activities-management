@@ -1,26 +1,12 @@
 import { Request, Response } from 'express'
-import { addDays, format } from 'date-fns'
-import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
-import { toDate } from '../../../../utils/utils'
+import { simpleDateFromDateOption } from '../../../../commonValidationTypes/simpleDate'
 import DateOption from '../../../../enum/dateOption'
 
 export default class LocationsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { dateOption, timeSlot } = req.query
+    const { dateOption, date, timeSlot } = req.query
 
-    let simpleDate: SimpleDate
-    switch (dateOption) {
-      case DateOption.TODAY:
-        simpleDate = simpleDateFromDate(new Date())
-        break
-      case DateOption.TOMORROW:
-        simpleDate = simpleDateFromDate(addDays(new Date(), 1))
-        break
-      default:
-        simpleDate = simpleDateFromDate(toDate(req.query.date as string))
-        break
-    }
-
+    const simpleDate = simpleDateFromDateOption(dateOption as DateOption, date as string)
     if (!simpleDate) {
       return res.redirect(`choose-details`)
     }
@@ -43,7 +29,7 @@ export default class LocationsRoutes {
 
     return res.render('pages/activities/movement-list/locations', {
       dateOption,
-      date: format(simpleDate.toRichDate(), 'yyyy-MM-dd'),
+      date: simpleDate.toIsoString(),
       timeSlot,
       locations,
     })

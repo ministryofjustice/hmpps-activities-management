@@ -3,36 +3,26 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
 
-{% set pageTitle = "Locations with activities or appointments in this session" %}
-{% set pageId = 'movement-list-locations-page' %}
-{% set backLinkHref = "choose-details" %}
+{% set pageTitle = locations[0].description + " - movement list" %}
+{% set pageId = 'movement-list-location-events-page' %}
+{% set backLinkHref = "locations?dateOption=" + dateOption + ("&date=" + date if dateOption == DateOption.OTHER) + "&timeSlot=" + timeSlot %}
 
-{% macro locationActions(location) %}
-    <a href="?location-events={{ location.id }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
-        View movement list
-    </a>
-{% endmacro %}
-
-{% set locationsTableRows = [] %}
-{% set index = 0 %}
-{% for location in locations %}
-    {% set locationsTableRows = (locationsTableRows.push([
+{% set locationEventsTableRows = [] %}
+{% for locationEvent in locationEvents %}
+    {% set locationEventsTableRows = (locationEventsTableRows.push([
         {
-            text: location.description,
-            attributes: { 'data-qa': 'location-' + index + '-description' }
+            text: locationEvent.description,
+            attributes: { 'data-qa': 'locationEvent-' + loop.index + '-description' }
         }, {
-            html: locationActions(location),
-            classes: 'govuk-!-text-align-right',
-            attributes: { 'data-qa': 'location-' + index + '-view-movement-list' }
+            text: locationEvent.prisonerNumber
         }
-    ]), locationsTableRows) %}
-    {% set index = index + 1 %}
+    ]), locationEventsTableRows) %}
 {% endfor %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l govuk-!-margin-0">Locations with activities or appointments in this session</h1>
+            <h1 class="govuk-heading-l govuk-!-margin-0">{{ locations[0].description }} - movement list</h1>
             <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot | upper }} session</span>
             <span class="govuk-caption-l govuk-!-margin-bottom-6" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
         </div>
@@ -40,9 +30,8 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <h2 class="govuk-heading-m">{{ locations | length }} location{{ "s" if locations | length != 1 }}</h2>
+            <h2 class="govuk-heading-m">{{ "1 person allocated" if locationEvents | length == 1 else locationEvents | length + " people allocated" }}</h2>
             <div class="moj-action-bar govuk-!-display-none-print">
-                <div class="moj-action-bar__filter"></div>
                 {{ mojButtonMenu({
                     items: [{
                         attributes: { id: 'print-movement-list' },
@@ -56,18 +45,17 @@
             {{ govukTable({
                 attributes: {
                     'data-module': 'moj-sortable-table',
-                    'data-qa': 'locations'
+                    'data-qa': 'location-events'
                 },
                 head: [
                     {
                         text: "Location",
                         attributes: { "aria-sort": "ascending" }
-                    },
-                    {
-                        html: '<span class="govuk-visually-hidden">Actions</span>',
-                        classes: 'action-column'
+                    }, {
+                        text: "Location",
+                        attributes: { "aria-sort": "ascending" }
                     }],
-                rows: locationsTableRows
+                rows: locationEventsTableRows
             }) }}
         </div>
     </div>

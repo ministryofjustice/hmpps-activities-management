@@ -8,25 +8,23 @@
 {% set backLinkHref = "choose-details" %}
 
 {% macro locationActions(location) %}
-    <a href="location-events?locations={{ location.id }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
+    <a href="location-events?locationIds={{ location.id }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
         View movement list
     </a>
 {% endmacro %}
 
 {% set locationsTableRows = [] %}
-{% set index = 0 %}
 {% for location in locations %}
     {% set locationsTableRows = (locationsTableRows.push([
         {
             text: location.description,
-            attributes: { 'data-qa': 'location-' + index + '-description' }
+            attributes: { 'data-qa': 'location-' + loop.index + '-description' }
         }, {
             html: locationActions(location),
             classes: 'govuk-!-text-align-right',
-            attributes: { 'data-qa': 'location-' + index + '-view-movement-list' }
+            attributes: { 'data-qa': 'location-' + loop.index + '-view-movement-list' }
         }
     ]), locationsTableRows) %}
-    {% set index = index + 1 %}
 {% endfor %}
 
 {% block content %}

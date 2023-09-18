@@ -46,6 +46,16 @@ export type UnlockListItem = {
   isLeavingWing: boolean
 }
 
+export type MovementListItem = {
+  prisonerNumber: string
+  firstName: string
+  lastName: string
+  cellLocation: string
+  status: string
+  alerts?: Alert[]
+  events?: ScheduledEvent[]
+}
+
 export type SubLocationCellPattern = {
   subLocation: string
   locationPrefix: string

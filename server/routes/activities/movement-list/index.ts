@@ -3,6 +3,7 @@ import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import ChooseDetailsRoutes, { DateAndTimeSlot } from './handlers/chooseDetails'
 import LocationsRoutes from './handlers/locations'
+import LocationEventsRoutes from './handlers/locationEvents'
 
 export default function Index(): Router {
   const router = Router({ mergeParams: true })
@@ -13,10 +14,12 @@ export default function Index(): Router {
 
   const chooseDetailsRoutes = new ChooseDetailsRoutes()
   const locationsRoutes = new LocationsRoutes()
+  const locationEventsRoutes = new LocationEventsRoutes()
 
   get('/choose-details', chooseDetailsRoutes.GET)
   post('/choose-details', chooseDetailsRoutes.POST, DateAndTimeSlot)
   get('/locations', locationsRoutes.GET)
+  get('/location-events', locationEventsRoutes.GET)
 
   return router
 }

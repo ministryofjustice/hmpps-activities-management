@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsIn, ValidateIf, ValidateNested } from 'class-validator'
-import { format, addDays } from 'date-fns'
+import { addDays } from 'date-fns'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
@@ -34,7 +34,7 @@ export default class ChooseDetailsRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { dateOption, timeSlot } = req.body
 
-    const dateQuery = dateOption === DateOption.OTHER ? `&date=${format(req.body.date.toRichDate(), 'yyyy-MM-dd')}` : ''
+    const dateQuery = dateOption === DateOption.OTHER ? `&date=${req.body.date.toIsoString()}` : ''
 
     return res.redirect(`locations?dateOption=${dateOption}${dateQuery}&timeSlot=${timeSlot}`)
   }
