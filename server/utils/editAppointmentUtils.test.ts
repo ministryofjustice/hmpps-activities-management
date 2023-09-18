@@ -16,7 +16,6 @@ import {
 import {
   getAppointmentApplyToOptions,
   getAppointmentEditMessage,
-  getAppointmentBackLinkHref,
   isApplyToQuestionRequired,
   getRepeatFrequencyText,
   getConfirmAppointmentEditCta,
@@ -92,22 +91,6 @@ describe('Edit Appointment Utils', () => {
 
   afterEach(() => {
     jest.resetAllMocks()
-  })
-
-  describe('getAppointmentBackLinkHref', () => {
-    it('create mode', () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
-      expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
-    })
-
-    it('edit mode null appointment id', () => {
-      req.params.appointmentId = null
-      expect(getAppointmentBackLinkHref(req, 'name')).toEqual('name')
-    })
-
-    it('edit', () => {
-      expect(getAppointmentBackLinkHref(req, 'name')).toEqual(`/appointments/${appointmentId}`)
-    })
   })
 
   describe('is apply to question required', () => {

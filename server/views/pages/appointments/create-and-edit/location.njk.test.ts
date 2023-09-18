@@ -64,20 +64,6 @@ describe('Views - Appointments Management - Location', () => {
     }
   })
 
-  it('back link href contains default view context back link href', () => {
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('a.govuk-back-link').attr('href')).toEqual('name')
-  })
-
-  it('back link href contains view context back link href', () => {
-    viewContext.backLinkHref = '/appointments/2'
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('a.govuk-back-link').attr('href')).toEqual('/appointments/2')
-  })
-
   it('create content', () => {
     viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
 

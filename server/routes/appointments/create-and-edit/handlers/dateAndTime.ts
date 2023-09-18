@@ -8,7 +8,7 @@ import IsValidTime from '../../../../validators/isValidTime'
 import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
-import { getAppointmentBackLinkHref, hasAnyAppointmentPropertyChanged } from '../../../../utils/editAppointmentUtils'
+import { hasAnyAppointmentPropertyChanged } from '../../../../utils/editAppointmentUtils'
 
 export class DateAndTime {
   @Expose()
@@ -38,9 +38,7 @@ export class DateAndTime {
 
 export default class DateAndTimeRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/appointments/create-and-edit/date-and-time', {
-      backLinkHref: getAppointmentBackLinkHref(req, 'location'),
-    })
+    res.render('pages/appointments/create-and-edit/date-and-time')
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {

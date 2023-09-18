@@ -5,7 +5,6 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import ExtraInformationRoutes, { ExtraInformation } from './extraInformation'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentJourneyMode } from '../appointmentJourney'
 
 jest.mock('../../../../services/editAppointmentService')
 
@@ -46,28 +45,13 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
   })
 
   describe('GET', () => {
-    it('should render the extra information view with back to schedule and continue', async () => {
+    it('should render the extra information view', async () => {
       req.session.appointmentJourney.repeat = YesNo.NO
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/extra-information', {
-        backLinkHref: 'schedule',
         isCtaAcceptAndSave: false,
-      })
-    })
-
-    it('should render the extra information view with back to appointment details and accept and save', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      req.params = {
-        appointmentId,
-      }
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/extra-information', {
-        backLinkHref: `/appointments/${appointmentId}`,
-        isCtaAcceptAndSave: true,
       })
     })
   })

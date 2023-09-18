@@ -86,57 +86,31 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
   })
 
   describe('GET', () => {
-    it('should render the schedule view with back to repeat page', async () => {
+    it('should render the schedule view', async () => {
       req.params.appointmentId = '1'
       req.session.appointmentJourney.repeat = YesNo.NO
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'repeat',
         isCtaAcceptAndSave: false,
         prisonerSchedules: [],
       })
     })
 
-    it('should render the schedule view with back to repeat frequency and count page', async () => {
-      req.session.appointmentJourney.repeat = YesNo.YES
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'repeat-frequency-and-count',
-        isCtaAcceptAndSave: false,
-        prisonerSchedules: [],
-      })
-    })
-
-    it('should render the schedule view with back to appointment set times page', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'appointment-set-times',
-        isCtaAcceptAndSave: false,
-        prisonerSchedules: [],
-      })
-    })
-
-    it('should render the schedule view with back to date and time page', async () => {
+    it('should render the schedule view with CTA save', async () => {
       req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'date-and-time',
         prisonerSchedules: [],
         isCtaAcceptAndSave: true,
       })
     })
 
-    it('should render the schedule view with back to date and time page', async () => {
+    it('should render the schedule view with prisoner schedules', async () => {
       req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.session.editAppointmentJourney.addPrisoners = [
@@ -150,7 +124,6 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'prisoners/add/review-prisoners',
         isCtaAcceptAndSave: true,
         prisonerSchedules: [
           {
@@ -191,7 +164,6 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       )
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'repeat',
         prisonerSchedules: [
           {
             prisoner: {
@@ -232,7 +204,6 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       )
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'repeat',
         prisonerSchedules: [
           {
             prisoner: {
@@ -283,7 +254,6 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       )
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'appointment-set-times',
         prisonerSchedules: [
           {
             prisoner: {
@@ -376,7 +346,6 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        backLinkHref: 'date-and-time',
         prisonerSchedules: [
           {
             prisoner: {

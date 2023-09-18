@@ -12,7 +12,7 @@
 
 {% set pageTitle = applicationName + " - Daily attendance list" %}
 {% set pageId = 'daily-attendance-detail-page' %}
-{% set backLinkHref = "/activities/attendance-summary/summary?date=" + activityDate | formatDate('yyyy-MM-dd') %}
+{% set jsBackLink = true %}
 
 {% block content %}
     {% set filterOptionsHtml %}

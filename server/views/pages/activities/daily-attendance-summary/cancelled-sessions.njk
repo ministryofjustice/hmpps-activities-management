@@ -10,7 +10,7 @@
 
 {% set pageTitle = applicationName + " - Cancelled Sessions" %}
 {% set pageId = 'cancelled-sessions-detail-page' %}
-{% set backLinkHref = "summary?date=" + activityDate | formatDate('yyyy-MM-dd') %}
+{% set jsBackLink = true %}
 
 {% block content %}
     <form id="filter-form" method="POST" action="update-filters" novalidate>

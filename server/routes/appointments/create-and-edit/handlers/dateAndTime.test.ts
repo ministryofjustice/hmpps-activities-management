@@ -45,25 +45,10 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   })
 
   describe('GET', () => {
-    it('should render the date and time view with back to name and continue', async () => {
+    it('should render the date and time view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/date-and-time', {
-        backLinkHref: 'location',
-      })
-    })
-
-    it('should render the date and time view with back to appointment details', async () => {
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      req.params = {
-        appointmentId,
-      }
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/date-and-time', {
-        backLinkHref: `/appointments/${appointmentId}`,
-      })
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/date-and-time')
     })
   })
 

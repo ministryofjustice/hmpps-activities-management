@@ -16,7 +16,7 @@
 {% endif %}
 
 {% set pageId = 'appointment-select-prisoner-page' %}
-{% set backLinkHref = "how-to-add-prisoners" if session.appointmentJourney.type == AppointmentType.GROUP else '/appointments' %}
+{% set jsBackLink = true %}
 
 {% block content %}
     {{ appointmentTypeCaption(session) }}

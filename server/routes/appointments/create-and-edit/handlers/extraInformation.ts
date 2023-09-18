@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer'
 import { MaxLength } from 'class-validator'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
-import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class ExtraInformation {
   @Expose()
@@ -16,7 +16,6 @@ export default class ExtraInformationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/appointments/create-and-edit/extra-information', {
-      backLinkHref: getAppointmentBackLinkHref(req, 'schedule'),
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.session.editAppointmentJourney),

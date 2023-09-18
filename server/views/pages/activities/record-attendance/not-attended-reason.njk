@@ -11,7 +11,7 @@
 
 {% set pageTitle = applicationName + " - Record attendance - Not Attended Reason" %}
 {% set pageId = 'not-attended-reason-page' %}
-{% set backLinkHref = "attendance-list" %}
+{% set jsBackLink = true %}
 
 {% macro nestedReasonData(index, reason, prisoner, validationErrors, formResponses) %}
     {% if reason.code === "SICK" %}

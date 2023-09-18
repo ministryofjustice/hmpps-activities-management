@@ -66,19 +66,18 @@ describe('Route Handlers - Create Appointment - Location', () => {
   })
 
   describe('GET', () => {
-    it('should render the location view with back to name and continue', async () => {
+    it('should render the location view', async () => {
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/location', {
         locations,
-        backLinkHref: 'name',
         isCtaAcceptAndSave: false,
       })
     })
 
-    it('should render the location view with back to appointment details and accept and save', async () => {
+    it('should render the location view with accept and save', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.params = {
         appointmentId,
@@ -90,7 +89,6 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/location', {
         locations,
-        backLinkHref: `/appointments/${appointmentId}`,
         isCtaAcceptAndSave: true,
       })
     })

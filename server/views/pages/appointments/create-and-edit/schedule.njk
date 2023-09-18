@@ -13,7 +13,7 @@
     {% set pageTitle = appointmentJourneyTitle("No attendees" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
 {% endif %}
 {% set pageId = 'appointment-schedule-page' %}
-{% set backLinkHref = backLinkHref %}
+{% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">

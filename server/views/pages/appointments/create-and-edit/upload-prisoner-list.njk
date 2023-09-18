@@ -8,7 +8,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Upload list", session.appointmentJourney) %}
 {% set pageId = 'appointment-upload-prisoner-list-page' %}
-{% set backLinkHref = "how-to-add-prisoners" %}
+{% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -44,4 +44,3 @@
    <p class="govuk-body">A CSV file is a type of spreadsheet. Download the template if you need one, then add the relevant prison numbers. When you upload it to this service a list of attendees will be created.</p>
    <p class="govuk-body">Download the <a href="/assets/downloads/prisoner-list.csv" download>prison number list template</a> (CSV, 1kb)</p>
 {% endmacro %}
-

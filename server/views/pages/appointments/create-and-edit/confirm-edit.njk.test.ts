@@ -65,28 +65,6 @@ describe('Views - Appointments Management - Confirm Edit', () => {
     }
   })
 
-  it('back link href contains review prisoners when redirected from add prisoners page', () => {
-    viewContext.session.editAppointmentJourney.addPrisoners = [
-      {
-        number: 'A1234BC',
-        name: 'TEST PRISONER',
-        cellLocation: '1-1-1',
-      },
-    ]
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('a.govuk-back-link').attr('href')).toEqual('review-prisoners')
-  })
-
-  it('back link href does not contain review prisoners when redirected from cancel or remove prisoner', () => {
-    viewContext.session.editAppointmentJourney.addPrisoners = null
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('a.govuk-back-link').attr('href')).toEqual('/appointments/2')
-  })
-
   it('prisoner list is not shown when adding one prisoner', () => {
     viewContext.session.editAppointmentJourney.addPrisoners = [
       {
