@@ -1,7 +1,7 @@
 import { RequestHandler, Router } from 'express'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
-import ChoseDetailsRouter, { DateAndTimeSlot } from './handlers/chooseDetails'
+import ChooseDetailsRoutes, { DateAndTimeSlot } from './handlers/chooseDetails'
 
 export default function Index(): Router {
   const router = Router()
@@ -10,10 +10,10 @@ export default function Index(): Router {
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const choseDetailsRouter = new ChoseDetailsRouter()
+  const chooseDetailsRoutes = new ChooseDetailsRoutes()
 
-  get('/choose-details', choseDetailsRouter.GET)
-  post('/choose-details', choseDetailsRouter.POST, DateAndTimeSlot)
+  get('/choose-details', chooseDetailsRoutes.GET)
+  post('/choose-details', chooseDetailsRoutes.POST, DateAndTimeSlot)
 
   return router
 }

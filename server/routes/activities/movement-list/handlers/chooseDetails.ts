@@ -26,7 +26,7 @@ export class DateAndTimeSlot {
   timeSlot: string
 }
 
-export default class SelectDateAndLocationRoutes {
+export default class ChooseDetailsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/activities/movement-list/choose-details')
   }
