@@ -11,6 +11,7 @@
 
 {% set pageTitle = appointment.appointmentName + (' single' if appointment.appointmentSeries.schedule) + ' appointment details' %}
 {% set pageId = 'appointment-details-page' %}
+{% set jsBackLink = true %}
 
 {% set occurenceLink = '/appointments/' + appointment.id  %}
 
