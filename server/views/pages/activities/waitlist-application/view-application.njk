@@ -53,7 +53,7 @@
                         },
                         value: {
                             html:   waitlistStatusBadge(status) +
-                                    '<div class="govuk-!-font-size-16 govuk-hint govuk-!-margin-top-2">Last changed ' + lastUpdated | parseISODate | formatDate('do MMMM yyyy HH:mm:ss') + '</div>'
+                                    (('<div class="govuk-!-font-size-16 govuk-hint govuk-!-margin-top-2">Last changed ' + statusUpdatedTime | parseISODate | formatDate('do MMMM yyyy HH:mm:ss') + '</div>') if statusUpdatedTime)
                         },
                         actions: {
                             items: [

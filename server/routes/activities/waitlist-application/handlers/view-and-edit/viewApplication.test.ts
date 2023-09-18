@@ -57,6 +57,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
           requestedDate: '2023-07-31',
           requestedBy: 'Self-requested',
           comments: 'test comment',
+          statusUpdatedTime: null,
         } as WaitingListApplication)
 
       prisonService.getInmateByPrisonerNumber = jest.fn()
@@ -107,7 +108,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
         requester: 'Self-requested',
         comment: 'test comment',
         status: 'PENDING',
-        lastUpdated: '2023-08-16',
+        statusUpdatedTime: null,
         activityId: 1,
         isMostRecent: true,
         isNotAlreadyAllocated: true,
