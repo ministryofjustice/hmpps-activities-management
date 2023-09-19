@@ -78,7 +78,7 @@
                     {% if attendanceSummary.attendanceCount == 0 %}
                         -
                     {% else %}
-                        <span class="govuk-!-font-weight-bold">{{ activity.attended }}</span>({{ activity.attendedPercentage }}%)
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span>({{ attendanceSummary.attendedPercentage }}%)
                     {% endif %}
                 </li>
                 <li>
@@ -86,7 +86,7 @@
                     {% if attendanceSummary.attendanceCount == 0 %}
                         -
                     {% else %}
-                        <span class="govuk-!-font-weight-bold">{{ activity.notAttended }}</span> ({{ activity.notAttendedPercentage }}%)
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
                     {% endif %}
                 </li>
                 <li>
@@ -94,7 +94,7 @@
                     {% if attendanceSummary.attendanceCount == 0 %}
                         -
                     {% else %}
-                        <span class="govuk-!-font-weight-bold">{{ activity.notRecorded }}</span> ({{ activity.notRecordedPercentage }}%)
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
                     {% endif %}
                 </li>
             </ul>
