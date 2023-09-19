@@ -5,6 +5,7 @@
 {% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
 {% from "components/alertsList.njk" import alertsList %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = locations[0].description + " - movement list" %}
 {% set pageId = 'movement-list-location-events-page' %}
@@ -18,20 +19,20 @@
             {% for event in events %}
                 {% if not loop.first %}<hr class="mid-grey-tint-20-hr" />{% endif %}
 
-                {% if event.eventType === 'ACTIVITY' and event.eventSource === 'SAA' %}
+                {% if event.eventType == EventType.ACTIVITY %}
                     <div>
-                        <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list?preserveHistory=true"
-                           class="govuk-link govuk-link--no-visited-state">
+                        <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list"
+                           class="govuk-link govuk-link--no-visited-state" target="_blank">
                             {{ event.summary | trim }}
                         </a>
                     </div>
                     {% if event.suspended %}
                         <div class="govuk-!-margin-top-1 govuk-!-margin-bottom-1">{{ govukTag({ text: 'Prisoner suspended', classes: 'govuk-tag--red-border govuk-tag--small' }) }}</div>
                     {% endif %}
-                {% elseif event.eventType === 'APPOINTMENT' and event.eventSource === 'SAA'%}
+                {% elseif event.eventType == EventType.APPOINTMENT%}
                     <div>
-                        <a href="/appointments/{{ event.appointmentId }}?preserveHistory=true"
-                           class="govuk-link govuk-link--no-visited-state">
+                        <a href="/appointments/{{ event.appointmentId }}"
+                           class="govuk-link govuk-link--no-visited-state" target="_blank">
                             {{ event.summary | trim }}
                         </a>
                     </div>
@@ -49,10 +50,12 @@
                     <div>{{ event.summary | trim }}</div>
                 {% endif %}
 
-                <div class='govuk-hint govuk-!-font-size-16 govuk-!-margin-bottom-0'>{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
+                {% if event.eventType != EventType.EXTERNAL_TRANSFER and event.eventType != EventType.COURT_HEARING %}
+                    <div class='govuk-hint govuk-!-font-size-16 govuk-!-margin-bottom-0'>{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
 
-                {% if event.internalLocationId != locations[0].id %}
-                    <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
+                    {% if event.internalLocationId != locations[0].id %}
+                        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
         </div>
@@ -68,9 +71,9 @@
                 prisonerNumber: locationEvent.prisonerNumber,
                 link: true
             }),
-            attributes: { 'data-qa': 'location-event-' + loop.index + '-prisoner' }
+            attributes: { 'data-qa': 'location-event-' + loop.index + '-prisoner', "data-sort-value": (locationEvent.firstName + " " + locationEvent.lastName) | toTitleCase | prisonerName(false) }
         }, {
-            text: locationEvent.cellLocation,
+            text: statusBasedCellLocation(locationEvent.cellLocation, locationEvent.status),
             attributes: { 'data-qa': 'location-event-' + loop.index + '-cell-location' }
         }, {
             html: alertsList({ alerts: locationEvent.alerts, category: locationEvent.category }),

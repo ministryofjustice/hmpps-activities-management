@@ -9,6 +9,8 @@ import { eventClashes } from '../../../../utils/utils'
 export default class LocationEventsRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
 
+  private RELEVANT_ALERT_CODES = ['HA', 'PEEP', 'XEL', 'XCU']
+
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { locationIds, dateOption, date, timeSlot } = req.query
@@ -39,6 +41,9 @@ export default class LocationEventsRoutes {
       ...otherEvents.appointments,
       ...otherEvents.visits,
       ...otherEvents.adjudications,
+      // TODO: Should these be shown?
+      // ...otherEvents.courtHearings,
+      // ...otherEvents.externalTransfers,
     ]
 
     const locationEvents = prisoners.map(p => {
@@ -67,6 +72,7 @@ export default class LocationEventsRoutes {
 
       return {
         ...p,
+        alerts: p.alerts.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
         events: prisonerEvents,
         clashingEvents: prisonerClashingEvents,
       } as MovementListItem

@@ -1,0 +1,7 @@
+{% macro statusBasedCellLocation(cellLocation, status) -%}
+  {% if (cellLocation == 'CSWAP' and status == 'ACTIVE OUT') or status == 'INACTIVE OUT' %}
+    -
+  {% else %}
+    {{ cellLocation or '-' }}
+  {% endif %}
+{%- endmacro %}

@@ -357,7 +357,10 @@ export const eventClashes = (event: ScheduledEvent, thisEvent: { startTime: stri
       timeToDate(event.startTime),
       event.endTime ? timeToDate(event.endTime) : endOfDay(timeToDate(event.startTime)),
     ),
-    toInterval(timeToDate(thisEvent.startTime), timeToDate(thisEvent.endTime)),
+    toInterval(
+      timeToDate(thisEvent.startTime),
+      thisEvent.endTime ? timeToDate(thisEvent.endTime) : endOfDay(timeToDate(thisEvent.startTime)),
+    ),
   )
 }
 
