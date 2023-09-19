@@ -16,7 +16,7 @@ import enGBLocale, {
 import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
-import { Activity, Attendance, ScheduledActivity, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
+import { Activity, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 // eslint-disable-next-line import/no-cycle
 import { CreateAnActivityJourney } from '../routes/activities/create-an-activity/journey'

@@ -47,7 +47,8 @@ import {
   ActivitySummary,
   ScheduledInstanceAttendanceSummary,
   GetAllocationsParams,
-  InternalLocationEventsSummary, InternalLocationEvents,
+  InternalLocationEventsSummary,
+  InternalLocationEvents,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'

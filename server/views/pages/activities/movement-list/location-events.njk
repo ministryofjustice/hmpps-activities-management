@@ -50,6 +50,10 @@
                 {% endif %}
 
                 <div class='govuk-hint govuk-!-font-size-16 govuk-!-margin-bottom-0'>{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
+
+                {% if event.internalLocationId != locations[0].id %}
+                    <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
+                {% endif %}
             {% endfor %}
         </div>
     {% endif %}

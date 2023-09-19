@@ -1,5 +1,6 @@
 import { Attendance, InternalLocation, ScheduledEvent } from './activitiesAPI/types'
 import { Alert } from './prisonApiImport/types'
+import { PrisonerAlert as PrisonerSearchAlert } from './prisonerOffenderSearchImport/types'
 
 export type PrisonerAlert = {
   alertType: string
@@ -51,8 +52,9 @@ export type MovementListItem = {
   firstName: string
   lastName: string
   cellLocation: string
+  category: string
   status: string
-  alerts?: Alert[]
+  alerts?: PrisonerSearchAlert[]
   events?: ScheduledEvent[]
   clashingEvents?: ScheduledEvent[]
 }
