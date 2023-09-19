@@ -19,7 +19,6 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   const handler = new DateAndTimeRoutes()
   let req: Request
   let res: Response
-  const appointmentId = '2'
 
   beforeEach(() => {
     res = {
