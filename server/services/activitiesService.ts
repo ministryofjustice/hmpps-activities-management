@@ -328,4 +328,8 @@ export default class ActivitiesService {
   ) {
     return this.activitiesApiClient.patchWaitlistApplication(applicationId, updateWaitlistRequest, user)
   }
+
+  async getInternalLocationEventsSummaries(prisonCode: string, date: string, user: ServiceUser, timeSlot?: string) {
+    return this.activitiesApiClient.getInternalLocationEventsSummaries(prisonCode, date, user, timeSlot)
+  }
 }
