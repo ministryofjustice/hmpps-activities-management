@@ -8,7 +8,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("show cancelled appointment", session.appointmentJourney) %}
 {% set pageId = 'appointment-cancellation-reason-page' %}
-{% set backLinkHref = "/appointments/" + appointmentId %}
+{% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">

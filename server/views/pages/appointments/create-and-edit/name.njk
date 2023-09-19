@@ -8,7 +8,7 @@
 
 {% set pageTitle = appointmentJourneyTitle("Appointment name set" if session.appointmentJourney.type == AppointmentType.SET else "Appointment name", session.appointmentJourney) %}
 {% set pageId = 'appointment-name-page' %}
-{% set backLinkHref = backLinkHref %}
+{% set jsBackLink = true %}
 
 {% set options = [{ value: "-", text: "" }] %}
 {% for category in categories %}

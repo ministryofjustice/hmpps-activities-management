@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
-import { YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
@@ -19,18 +18,6 @@ export default class ScheduleRoutes {
     const { appointmentId } = req.params
     const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
     const { preserveHistory } = req.query
-
-    let backLinkHref: string
-    if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
-      backLinkHref = 'date-and-time'
-      if (editAppointmentJourney?.addPrisoners) {
-        backLinkHref = 'prisoners/add/review-prisoners'
-      }
-    } else if (req.session.appointmentJourney.type === AppointmentType.SET) {
-      backLinkHref = 'appointment-set-times'
-    } else {
-      backLinkHref = req.session.appointmentJourney.repeat === YesNo.YES ? 'repeat-frequency-and-count' : 'repeat'
-    }
 
     let prisonNumbers
     if (appointmentJourney.type === AppointmentType.SET) {
@@ -79,7 +66,6 @@ export default class ScheduleRoutes {
     }
 
     res.render('pages/appointments/create-and-edit/schedule', {
-      backLinkHref,
       preserveHistory,
       prisonerSchedules,
       isCtaAcceptAndSave:

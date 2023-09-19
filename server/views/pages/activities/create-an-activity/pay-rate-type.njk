@@ -6,7 +6,7 @@
 
 {% set pageTitle = applicationName + " - Create an activity - Pay Rate option" %}
 {% set pageId = 'create-activity-pay-rate-type-page' %}
-{% set backLinkHref = "/activities/schedule/activities/" + session.createJourney.activityId if session.req.query.fromEditActivity else "risk-level" %}
+{% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">

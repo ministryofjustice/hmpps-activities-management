@@ -6,8 +6,8 @@
 
 {% set pageTitle = applicationName + " - Create an activity - Check pay" %}
 {% set pageId = 'check-pay-page' %}
-{% set backLinkText = 'Back to risk level' %}
-{% set backLinkHref = "risk-level" %}
+{% set hardBackLinkText = 'Back to risk level' %}
+{% set hardBackLinkHref = "risk-level" %}
 
 {% block content %}
     {% set preserveHistoryText = "?preserveHistory=true" if session.req.query.preserveHistory else "" %}

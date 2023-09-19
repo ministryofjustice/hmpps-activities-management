@@ -9,13 +9,7 @@
 {% set editMessage = getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) %}
 {% set pageTitle = appointmentJourneyTitle(editMessage + ' which appointments', session.appointmentJourney) %}
 {% set pageId = 'appointment-apply-to-page' %}
-{% if property == 'date-and-time' %}
-    {% set backLinkHref = '../schedule'  %}
-{% elseif property ==  'prisoners/add' %}
-    {% set backLinkHref = '../../schedule' %}
-{% else %}
-    {% set backLinkHref = ('../' + property if property else "/appointments/" + appointmentId) %}
-{% endif %}
+{% set jsBackLink = true %}
 
 {% set applyToItems = [] %}
 {% for applyToOption in applyToOptions %}

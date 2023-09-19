@@ -11,7 +11,7 @@
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'activities-page' %}
-{% set backLinkHref = "select-period" %}
+{% set jsBackLink = true %}
 
 {% set filterParams = (('&searchTerm=' + session.req.query.searchTerm) if session.req.query.searchTerm else '') +
     (('&sessionFilters=' + session.req.query.sessionFilters) if session.req.query.sessionFilters else '') +

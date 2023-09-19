@@ -6,16 +6,8 @@ import {
   AppointmentFrequency,
 } from '../@types/appointments'
 import { convertToTitleCase, formatDate, fullName } from './utils'
-import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
-
-export const getAppointmentBackLinkHref = (req: Request, defaultBackLinkHref: string) => {
-  if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT && req.params.appointmentId) {
-    return `/appointments/${req.params.appointmentId}`
-  }
-
-  return defaultBackLinkHref
-}
 
 export const isApplyToQuestionRequired = (editAppointmentJourney: EditAppointmentJourney) =>
   editAppointmentJourney.appointments?.length > 1

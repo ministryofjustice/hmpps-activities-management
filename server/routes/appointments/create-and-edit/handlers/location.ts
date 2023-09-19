@@ -4,7 +4,7 @@ import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
-import { getAppointmentBackLinkHref, isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class Location {
   @Expose()
@@ -25,7 +25,6 @@ export default class LocationRoutes {
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
     res.render('pages/appointments/create-and-edit/location', {
-      backLinkHref: getAppointmentBackLinkHref(req, 'name'),
       locations,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&

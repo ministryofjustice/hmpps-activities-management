@@ -1,7 +1,6 @@
 import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
 import { Request, Response } from 'express'
-import { getAppointmentBackLinkHref } from '../../../../utils/editAppointmentUtils'
 
 export enum HowToAddOptions {
   SEARCH = 'SEARCH',
@@ -18,7 +17,6 @@ export default class HowToAddPrisonerRoutes {
     const { preserveHistory } = req.query
 
     res.render('pages/appointments/create-and-edit/how-to-add-prisoners', {
-      backLinkHref: getAppointmentBackLinkHref(req, '/appointments'),
       preserveHistory,
       HowToAddOptions,
     })

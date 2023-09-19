@@ -28,7 +28,6 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
     it('should render the how to add prisoners view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/how-to-add-prisoners', {
-        backLinkHref: '/appointments',
         HowToAddOptions,
       })
     })
@@ -37,7 +36,6 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
       req.query = { preserveHistory: 'true' }
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/how-to-add-prisoners', {
-        backLinkHref: '/appointments',
         preserveHistory: 'true',
         HowToAddOptions,
       })

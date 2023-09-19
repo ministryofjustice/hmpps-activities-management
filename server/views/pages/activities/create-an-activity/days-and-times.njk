@@ -10,11 +10,7 @@
 
 {% set pageTitle = applicationName + " - Create a schedule - Days and times" %}
 {% set pageId = 'create-schedule-days-and-times-page' %}
-{% if session.req.params.weekNumber > 1 %}
-    {% set backLinkHref = session.req.params.weekNumber - 1 %}
-{% else %}
-    {% set backLinkHref = "../schedule-frequency" %}
-{% endif %}
+{% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">

@@ -7,12 +7,7 @@
 
 {% set pageTitle = applicationName + " - Edit allocation - End date" %}
 {% set pageId = 'edit-allocation-end-date-page' %}
-
-{% if endDate %}
-    {% set backLinkHref = '/activities/allocation-dashboard/' + allocationId + '/end-date-option' %}
-{% else %}
-    {% set backLinkHref = '/activities/allocation-dashboard/'+ activityId + '/check-allocation/' + prisonerNumber %}
-{% endif %}
+{% set jsBackLink = true %}
 
 
 {% block content %}

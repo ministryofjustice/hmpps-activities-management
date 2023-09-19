@@ -12,13 +12,19 @@
   html: 'This is a new service – your feedback will help us to improve it.'
 }) }}
 
-{% if backLinkHref or (serviceReturnLinkHref and serviceReturnLinkText) %}
+{% if jsBackLink or (hardBackLinkHref and hardBackLinkText) or (serviceReturnLinkHref and serviceReturnLinkText) %}
   <nav class="govuk-!-display-none-print">
-    {% if backLinkHref %}
+    {% if jsBackLink %}
       {{ govukBackLink({
-        text: backLinkText or "Back",
-        href: backLinkHref,
+        text: "Back",
         classes: 'js-backlink'
+      }) }}
+    {% endif %}
+
+    {% if hardBackLinkHref and hardBackLinkText %}
+      {{ govukBackLink({
+        text: hardBackLinkText,
+        href: hardBackLinkHref
       }) }}
     {% endif %}
 

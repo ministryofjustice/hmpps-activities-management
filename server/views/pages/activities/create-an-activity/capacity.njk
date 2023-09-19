@@ -7,7 +7,7 @@
 
 {% set pageTitle = applicationName + " - Create a schedule - Capacity" %}
 {% set pageId = 'create-schedule-capacity-page' %}
-{% set backLinkHref = "bank-holiday-option" if session.createJourney.category.code == "SAA_NOT_IN_WORK" else "location" %}
+{% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
