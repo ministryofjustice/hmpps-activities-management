@@ -61,6 +61,21 @@ export class NotAttendedData {
       `Select if there should be an incentive level warning for ${getPrisonerName(args)}`,
   })
   incentiveLevelWarningIssued?: YesNo
+
+  getCaseNote = () => (this.notAttendedReason === AttendanceReason.REFUSED ? this.caseNote : null)
+
+  getIssuePayment() {
+    if (this.sickPay && this.notAttendedReason === AttendanceReason.SICK) return true
+    if (this.restPay && this.notAttendedReason === AttendanceReason.REST) return true
+    return [AttendanceReason.NOT_REQUIRED, AttendanceReason.CLASH].includes(this.notAttendedReason)
+  }
+
+  getIncentiveLevelWarning = () =>
+    this.notAttendedReason === AttendanceReason.REFUSED && this.incentiveLevelWarningIssued === YesNo.YES
+
+  getMoreDetails = () => (this.notAttendedReason === AttendanceReason.SICK ? this.moreDetail : null)
+
+  getOtherAbsenceReason = () => (this.notAttendedReason === AttendanceReason.OTHER ? this.otherAbsenceReason : null)
 }
 
 export class NotAttendedForm {
@@ -93,26 +108,18 @@ export default class NotAttendedReasonRoutes {
 
     const attendanceUpdates = selectedPrisoners.map(selectedPrisoner => {
       const prisonerAttendance = notAttendedData.find(a => a.prisonerNumber === selectedPrisoner.prisonerNumber)
-
-      const issuePayment =
-        [prisonerAttendance.sickPay, prisonerAttendance.restPay, prisonerAttendance.otherAbsencePay].includes(
-          YesNo.YES,
-        ) || [AttendanceReason.NOT_REQUIRED, AttendanceReason.CLASH].includes(prisonerAttendance.notAttendedReason)
-
-      const incentiveLevelWarning =
-        prisonerAttendance.notAttendedReason === AttendanceReason.REFUSED &&
-        prisonerAttendance.incentiveLevelWarningIssued === YesNo.YES
+      if (!prisonerAttendance) return null
 
       return {
         id: selectedPrisoner.attendanceId,
         prisonCode: user.activeCaseLoadId,
         status: AttendanceStatus.COMPLETED,
         attendanceReason: prisonerAttendance.notAttendedReason,
-        comment: prisonerAttendance.moreDetail,
-        issuePayment,
-        caseNote: prisonerAttendance.caseNote,
-        incentiveLevelWarningIssued: incentiveLevelWarning,
-        otherAbsenceReason: prisonerAttendance.otherAbsenceReason,
+        comment: prisonerAttendance.getMoreDetails(),
+        issuePayment: prisonerAttendance.getIssuePayment(),
+        caseNote: prisonerAttendance.getCaseNote(),
+        incentiveLevelWarningIssued: prisonerAttendance.getIncentiveLevelWarning(),
+        otherAbsenceReason: prisonerAttendance.getOtherAbsenceReason(),
       }
     })
 
