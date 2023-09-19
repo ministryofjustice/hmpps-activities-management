@@ -6,12 +6,16 @@
 
 {% set pageTitle = applicationName + " - Create an activity - Check pay" %}
 {% set pageId = 'check-pay-page' %}
-{% set hardBackLinkText = 'Back to risk level' %}
-{% set hardBackLinkHref = "risk-level" %}
+
+{% if session.req.query.preserveHistory %}
+    {% set jsBackLink = true %}
+{% else %}
+    {% set hardBackLinkText = 'Back to risk level' %}
+    {% set hardBackLinkHref = "risk-level" %}
+{% endif %}
 
 {% block content %}
-    {% set preserveHistoryText = "?preserveHistory=true" if session.req.query.preserveHistory else "" %}
-    {% set fromEditText = "&fromEditActivity=true" if preserveHistoryText and session.req.query.fromEditActivity else "" %}
+    {% set preserveHistoryText = "preserveHistory=true" if session.req.query.preserveHistory else "" %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
@@ -32,12 +36,12 @@
                             actions: {
                                 items: [
                                     {
-                                        href: "pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText + "&preserveHistory=true",
+                                        href: "pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + (("&" + preserveHistoryText) if preserveHistoryText),
                                         text: "Change",
                                         visuallyHiddenText: "change pay rate"
                                     },
                                     {
-                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + fromEditText + "&preserveHistory=true",
+                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + (("&" + preserveHistoryText) if preserveHistoryText),
                                         text: "Remove",
                                         visuallyHiddenText: "remove pay rate"
                                     }
@@ -67,12 +71,12 @@
                         actions: {
                             items: [
                                 {
-                                    href: "pay/flat?bandId=" + flatRate.bandId + "&preserveHistory=true",
+                                    href: "pay/flat?bandId=" + flatRate.bandId + (("&" + preserveHistoryText) if preserveHistoryText),
                                     text: "Change",
                                     visuallyHiddenText: "change pay rate"
                                 },
                                 {
-                                    href: "remove-flat-rate?bandId=" + flatRate.bandId + fromEditText + "&preserveHistory=true",
+                                    href: "remove-flat-rate?bandId=" + flatRate.bandId + (("&" + preserveHistoryText) if preserveHistoryText),
                                     text: "Remove",
                                     visuallyHiddenText: "remove flat rate"
                                 }
@@ -95,10 +99,10 @@
                 <div class="govuk-button-group">
                     {{ govukButton({
                         text: "Confirm"
-                    }) }}
+                    }) if flatPay | length > 0 or incentiveLevelPays | length > 0 }}
                     {{ govukButton({
                         text: "Add another pay rate",
-                        href: 'pay-rate-type' + preserveHistoryText + fromEditText,
+                        href: 'pay-rate-type' + (("?" + preserveHistoryText) if preserveHistoryText),
                         classes: "govuk-button--secondary"
                     }) }}
                 </div>
