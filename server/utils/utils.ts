@@ -348,7 +348,7 @@ export const convertToNumberArray = (maybeArray: string | string[]): number[] =>
     .filter(item => item)
 }
 
-export const eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity) => {
+export const eventClashes = (event: ScheduledEvent, thisEvent: { startTime: string; endTime?: string }) => {
   const timeToDate = (time: string) => parse(time, 'HH:mm', new Date())
   const toInterval = (start: Date, end: Date) => ({ start, end })
 
@@ -357,7 +357,7 @@ export const eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActiv
       timeToDate(event.startTime),
       event.endTime ? timeToDate(event.endTime) : endOfDay(timeToDate(event.startTime)),
     ),
-    toInterval(timeToDate(thisActivity.startTime), timeToDate(thisActivity.endTime)),
+    toInterval(timeToDate(thisEvent.startTime), timeToDate(thisEvent.endTime)),
   )
 }
 

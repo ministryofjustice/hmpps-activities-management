@@ -14,18 +14,17 @@ export default class LocationsRoutes {
     if (!simpleDate) {
       return res.redirect(`choose-details`)
     }
-    const dateIsoString = simpleDate.toIsoString()
 
     const locations = await this.activitiesService.getInternalLocationEventsSummaries(
       user.activeCaseLoadId,
-      dateIsoString,
+      simpleDate.toRichDate(),
       user,
       timeSlot as string,
     )
 
     return res.render('pages/activities/movement-list/locations', {
       dateOption,
-      date: dateIsoString,
+      date: simpleDate.toIsoString(),
       timeSlot,
       locations,
     })

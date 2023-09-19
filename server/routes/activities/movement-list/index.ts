@@ -6,7 +6,7 @@ import ChooseDetailsRoutes, { DateAndTimeSlot } from './handlers/chooseDetails'
 import LocationsRoutes from './handlers/locations'
 import LocationEventsRoutes from './handlers/locationEvents'
 
-export default function Index({ activitiesService }: Services): Router {
+export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -15,7 +15,7 @@ export default function Index({ activitiesService }: Services): Router {
 
   const chooseDetailsRoutes = new ChooseDetailsRoutes()
   const locationsRoutes = new LocationsRoutes(activitiesService)
-  const locationEventsRoutes = new LocationEventsRoutes()
+  const locationEventsRoutes = new LocationEventsRoutes(activitiesService, prisonService)
 
   get('/choose-details', chooseDetailsRoutes.GET)
   post('/choose-details', chooseDetailsRoutes.POST, DateAndTimeSlot)

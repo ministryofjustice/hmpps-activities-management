@@ -47,7 +47,7 @@ import {
   ActivitySummary,
   ScheduledInstanceAttendanceSummary,
   GetAllocationsParams,
-  InternalLocationEventsSummary,
+  InternalLocationEventsSummary, InternalLocationEvents,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -577,6 +577,22 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/locations/prison/${prisonCode}/events-summaries`,
       query: { date, timeSlot },
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async getInternalLocationEvents(
+    prisonCode: string,
+    date: string,
+    internalLocationIds: number[],
+    user: ServiceUser,
+    timeSlot?: string,
+  ): Promise<InternalLocationEvents[]> {
+    return this.post({
+      path: `/scheduled-events/prison/${prisonCode}/locations`,
+      query: { date, timeSlot },
+      data: internalLocationIds,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
