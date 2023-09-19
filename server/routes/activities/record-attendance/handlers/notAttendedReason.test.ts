@@ -4,10 +4,11 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import NotAttendedReasonRoutes, { NotAttendedData, NotAttendedForm } from './notAttendedReason'
-import { AttendanceReason } from '../../../../@types/activitiesAPI/types'
+import { AttendanceReason, AttendanceUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import AttendanceReasons from '../../../../enum/attendanceReason'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import AttendanceStatus from '../../../../enum/attendanceStatus'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -24,6 +25,7 @@ describe('Route Handlers - Non Attendance', () => {
       locals: {
         user: {
           username: 'joebloggs',
+          activeCaseLoadId: 'MDI',
         },
       },
       render: jest.fn(),
@@ -37,18 +39,19 @@ describe('Route Handlers - Non Attendance', () => {
           selectedPrisoners: [{ attendanceId: 1, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' }],
         },
       },
-      body: {
+      body: plainToInstance(NotAttendedForm, {
         notAttendedData: [
           {
             prisonerNumber: 'ABC123',
             prisonerName: 'JOE BLOGGS',
-            notAttendedReason: 'SICK',
+            notAttendedReason: AttendanceReasons.SICK,
             moreDetail: '',
-            caseNote: '',
-            absenceReason: '',
+            caseNote: null,
+            otherAbsenceReason: null,
+            sickPay: YesNo.YES,
           },
         ],
-      },
+      }),
     } as unknown as Request
   })
 
@@ -112,11 +115,23 @@ describe('Route Handlers - Non Attendance', () => {
     })
   })
 
-  describe('NOT_ATTENDED', () => {
+  describe('POST', () => {
+    const expectedAttendance = {
+      id: 1,
+      prisonCode: 'MDI',
+      status: AttendanceStatus.COMPLETED,
+      attendanceReason: AttendanceReasons.SICK,
+      incentiveLevelWarningIssued: false,
+      issuePayment: true,
+      comment: '',
+      caseNote: null,
+      otherAbsenceReason: null,
+    } as AttendanceUpdateRequest
+
     it('non attendance should be redirected to the non attendance page', async () => {
       await handler.POST(req, res)
 
-      expect(activitiesService.updateAttendances).toBeCalledTimes(1)
+      expect(activitiesService.updateAttendances).toBeCalledWith([expectedAttendance], res.locals.user)
       expect(res.redirectWithSuccess).toBeCalledWith(
         'attendance-list',
         'Attendance recorded',
@@ -391,6 +406,84 @@ describe('Route Handlers - Non Attendance', () => {
         property: 'incentiveLevelWarningIssued',
         error: 'Select if there should be an incentive level warning for Joe Bloggs',
       })
+    })
+
+    it('should not set case note when attendance reason not "REFUSED"', async () => {
+      const request = {
+        notAttendedData: [
+          {
+            ...attenance,
+            notAttendedReason: AttendanceReasons.SICK,
+            caseNote: 'case note',
+          },
+        ],
+      } as NotAttendedForm
+
+      const requestObject = plainToInstance(NotAttendedForm, request)
+      expect(requestObject.notAttendedData[0].getCaseNote()).toBeNull()
+    })
+
+    it('should not issue payment if attendance reason is "REFUSED"', async () => {
+      const request = {
+        notAttendedData: [
+          {
+            ...attenance,
+            notAttendedReason: AttendanceReasons.REFUSED,
+            sickPay: YesNo.YES,
+            restPay: YesNo.YES,
+          },
+        ],
+      } as NotAttendedForm
+
+      const requestObject = plainToInstance(NotAttendedForm, request)
+      expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(false)
+    })
+
+    it('should always issue payment if attendance reason is "CLASH"', async () => {
+      const request = {
+        notAttendedData: [
+          {
+            ...attenance,
+            notAttendedReason: AttendanceReasons.CLASH,
+            sickPay: YesNo.NO,
+            restPay: YesNo.NO,
+          },
+        ],
+      } as NotAttendedForm
+
+      const requestObject = plainToInstance(NotAttendedForm, request)
+      expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(true)
+    })
+
+    it('should always issue payment if attendance reason is "NOT_REQUIRED"', async () => {
+      const request = {
+        notAttendedData: [
+          {
+            ...attenance,
+            notAttendedReason: AttendanceReasons.NOT_REQUIRED,
+            sickPay: YesNo.NO,
+            restPay: YesNo.NO,
+          },
+        ],
+      } as NotAttendedForm
+
+      const requestObject = plainToInstance(NotAttendedForm, request)
+      expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(true)
+    })
+
+    it('should not issue incentive level warning if attendance reason is not "REFUSED"', async () => {
+      const request = {
+        notAttendedData: [
+          {
+            ...attenance,
+            notAttendedReason: AttendanceReasons.SICK,
+            incentiveLevelWarningIssued: YesNo.YES,
+          },
+        ],
+      } as NotAttendedForm
+
+      const requestObject = plainToInstance(NotAttendedForm, request)
+      expect(requestObject.notAttendedData[0].getIncentiveLevelWarning()).toEqual(false)
     })
   })
 })
