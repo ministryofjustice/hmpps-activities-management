@@ -134,6 +134,21 @@ export interface paths {
      */
     post: operations['getScheduledEventsForMultiplePrisoners']
   }
+  '/scheduled-events/prison/{prisonCode}/locations': {
+    /**
+     * Get a list of scheduled events for a prison and list of internal location ids numbers for a date and optional time slot
+     * @description
+     *       Returns scheduled events for the prison, internal location ids, single date and an optional time slot.
+     *       This endpoint only returns activities and appointments and these come from the local database.
+     *       This endpoint supports the creation of movement lists.
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    post: operations['getScheduledEventsForMultipleLocations']
+  }
   '/prisons/{prisonCode}/prisoner-allocations': {
     /**
      * Get all allocations for prisoners
@@ -1579,6 +1594,41 @@ export interface components {
        * @description The event priority - configurable by prison, or via defaults.
        */
       priority: number
+    }
+    /**
+     * @description
+     *   The details of an internal location that has events scheduled to take place there. Supports movement lists.
+     *   Contains additional information about the events taking place at the location.
+     *   The system of record for internal locations is NOMIS and they are managed in that application.
+     */
+    InternalLocationEvents: {
+      /**
+       * Format: int64
+       * @description
+       *     The id of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID in NOMIS.
+       *
+       * @example 27723
+       */
+      id: number
+      /**
+       * @description
+       *     The prison code/agency id of the internal location. Mapped from AGENCY_LOCATIONS.AGY_LOC_ID in NOMIS.
+       *
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description The code of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.DESCRIPTION
+       * @example EDUC-ED1-ED1
+       */
+      code: string
+      /**
+       * @description The description of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.USER_DESC
+       * @example Education 1
+       */
+      description: string
+      /** @description Collection of scheduled events due to take place at the internal location */
+      events: components['schemas']['ScheduledEvent'][]
     }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
@@ -4752,9 +4802,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       first?: boolean
       last?: boolean
       empty?: boolean
@@ -4763,17 +4813,17 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      paged?: boolean
-      unpaged?: boolean
-      /** Format: int32 */
-      pageNumber?: number
       /** Format: int32 */
       pageSize?: number
+      /** Format: int32 */
+      pageNumber?: number
+      paged?: boolean
+      unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -6473,6 +6523,69 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['PrisonerScheduledEvents']
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Get a list of scheduled events for a prison and list of internal location ids numbers for a date and optional time slot
+   * @description
+   *       Returns scheduled events for the prison, internal location ids, single date and an optional time slot.
+   *       This endpoint only returns activities and appointments and these come from the local database.
+   *       This endpoint supports the creation of movement lists.
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  getScheduledEventsForMultipleLocations: {
+    parameters: {
+      query: {
+        /** @description The exact date to return events for (required) in format YYYY-MM-DD */
+        date: string
+        /** @description Time slot of the events (optional). If supplied, one of AM, PM or ED. */
+        timeSlot?: 'AM' | 'PM' | 'ED'
+      }
+      path: {
+        /** @description The 3-character prison code. */
+        prisonCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': number[]
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more scheduled events found */
+      200: {
+        content: {
+          'application/json': components['schemas']['InternalLocationEvents'][]
         }
       }
       /** @description Invalid request */
