@@ -62,7 +62,7 @@ export default class ViewApplicationRoutes {
       requester: application.requestedBy,
       comment: application.comments,
       status: application.status,
-      lastUpdated: application.updatedTime || application.creationTime,
+      statusUpdatedTime: application.statusUpdatedTime,
       activityId: application.activityId,
       isMostRecent,
       isNotAlreadyAllocated,

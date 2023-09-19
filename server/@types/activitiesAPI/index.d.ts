@@ -3978,6 +3978,11 @@ export interface components {
        */
       status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
       /**
+       * Format: date-time
+       * @description The date and time the waiting list status was last updated
+       */
+      statusUpdatedTime: string
+      /**
        * Format: date
        * @description The past or present date on which the waiting list was requested
        * @example 2023-06-23
