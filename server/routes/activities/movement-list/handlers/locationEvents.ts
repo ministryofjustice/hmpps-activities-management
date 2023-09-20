@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { simpleDateFromDateOption } from '../../../../commonValidationTypes/simpleDate'
 import DateOption from '../../../../enum/dateOption'
-import { EventType, MovementListItem } from '../../../../@types/activities'
+import { EventType, MovementListLocation, MovementListPrisonerEvents } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { eventClashes } from '../../../../utils/utils'
@@ -20,7 +20,7 @@ export default class LocationEventsRoutes {
       return res.redirect(`choose-details`)
     }
 
-    const locations = await this.activitiesService.getInternalLocationEvents(
+    const internalLocationEvents = await this.activitiesService.getInternalLocationEvents(
       user.activeCaseLoadId,
       simpleDate.toRichDate(),
       (locationIds as string).split(',').map(id => parseInt(id, 10)),
@@ -28,9 +28,12 @@ export default class LocationEventsRoutes {
       timeSlot as string,
     )
 
-    const events = locations.flatMap(l => l.events)
-    const prisonerNumbers = [...new Set(events.map(e => e.prisonerNumber))]
+    if (internalLocationEvents.length === 0) {
+      const dateQuery = dateOption === DateOption.OTHER ? `&date=${simpleDate.toIsoString()}` : ''
+      return res.redirect(`locations?dateOption=${dateOption}${dateQuery}&timeSlot=${timeSlot}`)
+    }
 
+    const prisonerNumbers = [...new Set(internalLocationEvents.flatMap(l => l.events).map(e => e.prisonerNumber))]
     const [prisoners, otherEvents] = await Promise.all([
       this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
       this.activitiesService.getScheduledEventsForPrisoners(simpleDate.toRichDate(), prisonerNumbers, user),
@@ -46,44 +49,49 @@ export default class LocationEventsRoutes {
       // ...otherEvents.externalTransfers,
     ]
 
-    const locationEvents = prisoners.map(p => {
-      const prisonerEvents = events.filter(e => e.prisonerNumber === p.prisonerNumber)
+    const locations = internalLocationEvents.map(
+      l =>
+        ({
+          ...l,
+          prisonerEvents: prisoners.map(p => {
+            const events = l.events.filter(e => e.prisonerNumber === p.prisonerNumber)
 
-      const prisonerClashingEvents = allEvents
-        .filter(e => e.prisonerNumber === p.prisonerNumber)
-        // Exclude any activities for the prisoner scheduled at the current location
-        .filter(
-          e =>
-            !prisonerEvents
-              .filter(pe => pe.eventType === EventType.ACTIVITY)
-              .map(pe => pe.scheduledInstanceId)
-              .includes(e.scheduledInstanceId),
-        )
-        // Exclude any appointments for the prisoner scheduled at the current location
-        .filter(
-          e =>
-            !prisonerEvents
-              .filter(pe => pe.eventType === EventType.APPOINTMENT)
-              .map(pe => pe.appointmentId)
-              .includes(e.appointmentId),
-        )
-        // Exclude any event not considered a clash
-        .filter(e => prisonerEvents.filter(pe => eventClashes(e, pe)).length > 0)
+            const clashingEvents = allEvents
+              .filter(ce => ce.prisonerNumber === p.prisonerNumber)
+              // Exclude any activities for the prisoner scheduled at the current location
+              .filter(
+                ce =>
+                  !events
+                    .filter(e => e.eventType === EventType.ACTIVITY)
+                    .map(e => e.scheduledInstanceId)
+                    .includes(ce.scheduledInstanceId),
+              )
+              // Exclude any appointments for the prisoner scheduled at the current location
+              .filter(
+                ce =>
+                  !events
+                    .filter(e => e.eventType === EventType.APPOINTMENT)
+                    .map(e => e.appointmentId)
+                    .includes(ce.appointmentId),
+              )
+              // Exclude any event not considered a clash
+              .filter(ce => events.filter(e => eventClashes(ce, e)).length > 0)
 
-      return {
-        ...p,
-        alerts: p.alerts.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
-        events: prisonerEvents,
-        clashingEvents: prisonerClashingEvents,
-      } as MovementListItem
-    })
+            return {
+              ...p,
+              alerts: p.alerts.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
+              events,
+              clashingEvents,
+            } as MovementListPrisonerEvents
+          }),
+        } as MovementListLocation),
+    )
 
     return res.render('pages/activities/movement-list/location-events', {
       dateOption,
       date: simpleDate.toIsoString(),
       timeSlot,
       locations,
-      locationEvents,
     })
   }
 }

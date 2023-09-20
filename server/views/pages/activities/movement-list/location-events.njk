@@ -7,7 +7,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
-{% set pageTitle = locations[0].description + " - movement list" %}
+{% set pageTitle = locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations" %}
 {% set pageId = 'movement-list-location-events-page' %}
 {% set backLinkHref = "locations?dateOption=" + dateOption + ("&date=" + date if dateOption == DateOption.OTHER) + "&timeSlot=" + timeSlot %}
 
@@ -62,78 +62,99 @@
     {% endif %}
 {% endmacro %}
 
-{% set locationEventsTableRows = [] %}
-{% for locationEvent in locationEvents %}
-    {% set locationEventsTableRows = (locationEventsTableRows.push([
-        {
-            html: showProfileLink({
-                name: locationEvent.firstName + " " + locationEvent.lastName,
-                prisonerNumber: locationEvent.prisonerNumber,
-                link: true
-            }),
-            attributes: { 'data-qa': 'location-event-' + loop.index + '-prisoner', "data-sort-value": (locationEvent.firstName + " " + locationEvent.lastName) | toTitleCase | prisonerName(false) }
-        }, {
-            text: statusBasedCellLocation(locationEvent.cellLocation, locationEvent.status),
-            attributes: { 'data-qa': 'location-event-' + loop.index + '-cell-location' }
-        }, {
-            html: alertsList({ alerts: locationEvent.alerts, category: locationEvent.category }),
-            attributes: { 'data-qa': 'location-event-' + loop.index + '-alerts' }
-        }, {
-            html: showEvents(locationEvent.events),
-            attributes: { 'data-qa': 'location-event-' + loop.index + '-activity' }
-        }, {
-            html: showEvents(locationEvent.clashingEvents),
-            attributes: { 'data-qa': 'location-event-' + loop.index + '-clashing-events' }
-        }
-    ]), locationEventsTableRows) %}
-{% endfor %}
-
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l govuk-!-margin-0">{{ locations[0].description }} - movement list</h1>
-            <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot | upper }} session</span>
-            <span class="govuk-caption-l govuk-!-margin-bottom-6" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
-        </div>
-    </div>
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <h2 class="govuk-heading-m">{{ "1 person allocated" if locationEvents | length == 1 else locationEvents | length + " people allocated" }}</h2>
-            <div class="moj-action-bar govuk-!-display-none-print">
-                {{ mojButtonMenu({
-                    items: [{
-                        attributes: { id: 'print-movement-list' },
-                        text: "Print this movement list",
-                        classes: "govuk-button--blue js-print no-js-hidden",
-                        preventDoubleClick: true
-                    }]
-                }) }}
-            </div>
-
-            {{ govukTable({
-                attributes: {
-                    'data-module': 'moj-sortable-table',
-                    'data-qa': 'location-events'
-                },
-                head: [
-                    {
-                        text: "Name",
-                        attributes: { "aria-sort": "none" }
-                    }, {
-                        text: "Cell location",
-                        attributes: { "aria-sort": "ascending" }
-                    }, {
-                        text: "Relevant alerts"
-                    }, {
-                        text: "Activity",
-                        attributes: { "aria-sort": "none" }
-                    }, {
-                        text: "Clashing events",
-                        attributes: { "aria-sort": "none" }
-                    }],
-                rows: locationEventsTableRows
+    {% if locations | length > 1 %}
+        <div class="moj-action-bar govuk-!-display-none-print">
+            {{ mojButtonMenu({
+                items: [{
+                    attributes: { id: 'print-movement-lists' },
+                    text: "Print these movement lists",
+                    classes: "govuk-button--blue js-print no-js-hidden",
+                    preventDoubleClick: true
+                }]
             }) }}
         </div>
-    </div>
+    {% endif %}
+
+    {% for location in locations %}
+        {% set locationIndex = loop.index %}
+        {% set prisonerEventsTableRows = [] %}
+        {% for prisonerEvents in location.prisonerEvents %}
+            {% set prisonerEventsTableRows = (prisonerEventsTableRows.push([
+                {
+                    html: showProfileLink({
+                        name: prisonerEvents.firstName + " " + prisonerEvents.lastName,
+                        prisonerNumber: prisonerEvents.prisonerNumber,
+                        link: true
+                    }),
+                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-name-and-number', "data-sort-value": (prisonerEvents.firstName + " " + prisonerEvents.lastName) | toTitleCase | prisonerName(false) }
+                }, {
+                    text: statusBasedCellLocation(prisonerEvents.cellLocation, prisonerEvents.status),
+                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-cell-location' }
+                }, {
+                    html: alertsList({ alerts: prisonerEvents.alerts, category: prisonerEvents.category }),
+                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-alerts' }
+                }, {
+                    html: showEvents(prisonerEvents.events),
+                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events' }
+                }, {
+                    html: showEvents(prisonerEvents.clashingEvents),
+                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-clashing-events' }
+                }
+            ]), prisonerEventsTableRows) %}
+        {% endfor %}
+
+        <div class="movement-list">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-l govuk-!-margin-0">{{ location.description }} - movement list</h1>
+                    <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot | upper }} session</span>
+                    <span class="govuk-caption-l govuk-!-margin-bottom-6" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-m">{{ "1 person allocated" if location.prisonerEvents | length == 1 else location.prisonerEvents | length + " people allocated" }}</h2>
+
+                    {% if locations | length == 1 %}
+                        <div class="moj-action-bar govuk-!-display-none-print">
+                            {{ mojButtonMenu({
+                                items: [{
+                                    attributes: { id: 'print-movement-list' },
+                                    text: "Print this movement list",
+                                    classes: "govuk-button--blue js-print no-js-hidden",
+                                    preventDoubleClick: true
+                                }]
+                            }) }}
+                        </div>
+                    {% endif %}
+
+                    {{ govukTable({
+                        attributes: {
+                            'data-module': 'moj-sortable-table',
+                            'data-qa': 'location-' + locationIndex + '-prisoner-events'
+                        },
+                        head: [
+                            {
+                                text: "Name",
+                                attributes: { "aria-sort": "none" }
+                            }, {
+                                text: "Cell location",
+                                attributes: { "aria-sort": "ascending" }
+                            }, {
+                                text: "Relevant alerts"
+                            }, {
+                                text: "Activity",
+                                attributes: { "aria-sort": "none" }
+                            }, {
+                                text: "Clashing events",
+                                attributes: { "aria-sort": "none" }
+                            }],
+                        rows: prisonerEventsTableRows
+                    }) }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}

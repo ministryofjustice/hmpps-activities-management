@@ -47,7 +47,14 @@ export type UnlockListItem = {
   isLeavingWing: boolean
 }
 
-export type MovementListItem = {
+export type MovementListLocation = {
+  id: number
+  code: string
+  description: string
+  prisonerEvents: MovementListPrisonerEvents[]
+}
+
+export type MovementListPrisonerEvents = {
   prisonerNumber: string
   firstName: string
   lastName: string
