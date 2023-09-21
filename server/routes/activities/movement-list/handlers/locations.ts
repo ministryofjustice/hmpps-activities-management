@@ -12,7 +12,7 @@ export default class LocationsRoutes {
 
     const simpleDate = simpleDateFromDateOption(dateOption as DateOption, date as string)
     if (!simpleDate) {
-      return res.redirect(`choose-details`)
+      return res.redirect('choose-details')
     }
 
     const locations = await this.activitiesService.getInternalLocationEventsSummaries(

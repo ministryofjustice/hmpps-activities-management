@@ -2,14 +2,14 @@ import { Request, Response } from 'express'
 import { addDays, addWeeks, format, getDate, getMonth, getYear } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import ChooseDetailsHandler, { DateAndTimeSlot } from './chooseDetails'
+import ChooseDetailsRoutes, { DateAndTimeSlot } from './chooseDetails'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import DateOption from '../../../../enum/dateOption'
 import TimeSlot from '../../../../enum/timeSlot'
 
 describe('Movement list routes - choose details', () => {
-  const handler = new ChooseDetailsHandler()
+  const handler = new ChooseDetailsRoutes()
   let req: Request
   let res: Response
 
@@ -25,6 +25,9 @@ describe('Movement list routes - choose details', () => {
     } as unknown as Response
 
     req = {} as unknown as Request
+  })
+
+  afterEach(() => {
     jest.resetAllMocks()
   })
 
