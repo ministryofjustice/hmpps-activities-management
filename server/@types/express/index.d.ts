@@ -47,6 +47,8 @@ declare module 'express-session' {
     // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
     // middlewares and the appointment routes in index.ts
     sessionDataMap: Map<string, SessionDatum>
+    // Journey Start Time Unix Epoch
+    journeyStartTime: number
   }
 }
 
