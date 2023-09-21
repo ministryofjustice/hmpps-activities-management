@@ -1,0 +1,24 @@
+{% macro earliestReleaseDate(erd) %}
+    {% if not erd.releaseDate %}
+        {% if erd.isConvictedUnsentenced %}
+            <div>Not sentenced</div>
+            <div class='govuk-hint govuk-!-margin-bottom-0'>Convicted unsentenced</div>
+        {% elseif erd.isImmigrationDetainee %}
+            <div>Not sentenced</div>
+            <div class='govuk-hint govuk-!-margin-bottom-0'>Immigration detainee</div>
+        {% elseif erd.isRemand %}
+            <div>Not sentenced</div>
+            <div class='govuk-hint govuk-!-margin-bottom-0'>Remand</div>
+        {% elseif erd.isIndeterminateSentence %}
+            <div>No release date</div>
+            <div class='govuk-hint govuk-!-margin-bottom-0'>Indeterminate sentence</div>
+        {% else %}
+            <div>Error. Check sentence details</div>
+        {% endif %}
+    {% else %}
+        <div>{{ erd.releaseDate | formatDate('dd MMMM yyyy') }}</div>
+        {% if erd.isTariffDate %}
+            <div class='govuk-hint govuk-!-margin-bottom-0'>Tariff date</div>
+        {% endif %}
+    {% endif %}
+{% endmacro %}

@@ -68,7 +68,9 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
         },
         releaseDate: {
           suitable: true,
-          earliestReleaseDate: formatISO(tomorrow),
+          earliestReleaseDate: {
+            releaseDate: formatISO(tomorrow),
+          },
         },
         nonAssociation: {
           suitable: true,

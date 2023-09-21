@@ -10,6 +10,7 @@ import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashb
 import atLeast from '../../../../../jest.setup'
 import {
   Activity,
+  ActivityCandidate,
   Allocation,
   PrisonerAllocations,
   WaitingListApplication,
@@ -206,8 +207,10 @@ describe('Route Handlers - Allocation dashboard', () => {
               prisonerNumber: 'A0013DZ',
               cellLocation: '4-2-009',
               otherAllocations: [],
-              releaseDate: null,
-            },
+              earliestReleaseDate: {
+                releaseDate: null,
+              },
+            } as ActivityCandidate,
           ],
         })
       when(activitiesService.fetchActivityWaitlist)

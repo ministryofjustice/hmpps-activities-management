@@ -690,6 +690,7 @@ export interface paths {
      * Requires one of the following roles:
      * * PRISON
      * * ACTIVITY_ADMIN
+     * * NOMIS_ACTIVITIES
      */
     get: operations['getAppointmentInstanceById']
   }
@@ -1645,6 +1646,11 @@ export interface components {
        */
       status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
       plannedDeallocation?: components['schemas']['PlannedDeallocation']
+      /** @description The name of the prisoner. Included only if includePrisonerSummary = true */
+      prisonerName?: string
+      /** @description The cell location of the prisoner. Included only if includePrisonerSummary = true */
+      cellLocation?: string
+      earliestReleaseDate?: components['schemas']['EarliestReleaseDate']
     }
     /**
      * @description The code and descriptive reason why this prisoner was deallocated from the activity
@@ -1661,6 +1667,25 @@ export interface components {
        * @example Released from prison
        */
       description: string
+    }
+    /** @description Summary of a prisoner's sentence and resulting earliest release date */
+    EarliestReleaseDate: {
+      /**
+       * Format: date
+       * @description The prisoner's earliest release date
+       * @example 2027-09-20
+       */
+      releaseDate?: string
+      /** @description The prisoner's earliest release date is the tariff date */
+      isTariffDate: boolean
+      /** @description The prisoner's sentence is indeterminate */
+      isIndeterminateSentence: boolean
+      /** @description The prisoner is an immigration detainee */
+      isImmigrationDetainee: boolean
+      /** @description The prisoner is convicted and unsentenced */
+      isConvictedUnsentenced: boolean
+      /** @description The prisoner is on remand */
+      isRemand: boolean
     }
     /** @description Describes one instance of a planned deallocation */
     PlannedDeallocation: {
@@ -3981,7 +4006,7 @@ export interface components {
        * Format: date-time
        * @description The date and time the waiting list status was last updated
        */
-      statusUpdatedTime: string
+      statusUpdatedTime?: string
       /**
        * Format: date
        * @description The past or present date on which the waiting list was requested
@@ -4651,11 +4676,7 @@ export interface components {
        * @example true
        */
       suitable: boolean
-      /**
-       * Format: date
-       * @description The prisoner's earliest release date
-       */
-      earliestReleaseDate?: string
+      earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     /**
      * @description The phone number associated with the address
@@ -4714,31 +4735,26 @@ export interface components {
        * @example MDI-1-1-101
        */
       cellLocation?: string
-      /** @description Any activities the candidate is currently allocated to */
+      /** @description Any activities the candidate is currently allocated to (excluding ended) */
       otherAllocations: components['schemas']['Allocation'][]
-      /**
-       * Format: date
-       * @description The candidate's earliest release date
-       * @example 2027-01-24
-       */
-      releaseDate?: string
+      earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      first?: boolean
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
-      last?: boolean
       empty?: boolean
     }
     PageableObject: {
@@ -4746,9 +4762,9 @@ export interface components {
       offset?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
-      pageSize?: number
-      /** Format: int32 */
       pageNumber?: number
+      /** Format: int32 */
+      pageSize?: number
       paged?: boolean
       unpaged?: boolean
     }
@@ -5939,7 +5955,7 @@ export interface operations {
    */
   deallocate: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6179,7 +6195,7 @@ export interface operations {
    */
   cancelAppointment: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6228,13 +6244,15 @@ export interface operations {
    */
   getAllocationsBy: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
+        /** @description If true will fetch and add prisoner details from prisoner search. Defaults to false. */
+        includePrisonerSummary?: boolean
         /** @description If provided will filter allocations by the given date. Format YYYY-MM-DD. */
         date?: string
       }
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6459,7 +6477,7 @@ export interface operations {
    */
   prisonerAllocations: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
       }
@@ -6615,7 +6633,7 @@ export interface operations {
    */
   triggerManageAttendanceRecordsJob: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will run the attendance expiry process in addition to other features. Defaults to false. */
         withExpiry?: boolean
       }
@@ -6638,7 +6656,7 @@ export interface operations {
    */
   triggerManageAllocationsJob: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will run the activate pending allocations process. Defaults to false. */
         withActivate?: boolean
         /** @description If true will run the deallocate allocations process. Defaults to false. */
@@ -6745,7 +6763,7 @@ export interface operations {
    */
   getAuditRecords: {
     parameters: {
-      query: {
+      query?: {
         page?: number
         size?: number
         sortDirection?: string
@@ -6789,7 +6807,7 @@ export interface operations {
    */
   searchAppointments: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6834,7 +6852,7 @@ export interface operations {
    */
   createAppointmentSet: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -6876,7 +6894,7 @@ export interface operations {
    */
   createAppointmentSeries: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -6916,7 +6934,7 @@ export interface operations {
    */
   addToWaitingList: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6971,7 +6989,7 @@ export interface operations {
    */
   create: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -7017,7 +7035,7 @@ export interface operations {
    */
   getWaitingListById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7060,7 +7078,7 @@ export interface operations {
    */
   updateWaitingList: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7115,7 +7133,7 @@ export interface operations {
    */
   getAppointmentById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7155,7 +7173,7 @@ export interface operations {
    */
   updateAppointment: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7257,7 +7275,7 @@ export interface operations {
    */
   update_1: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7361,7 +7379,7 @@ export interface operations {
    */
   getScheduleId: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7405,7 +7423,7 @@ export interface operations {
    */
   getWaitingListApplicationsBy: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7500,7 +7518,7 @@ export interface operations {
    */
   candidates: {
     parameters: {
-      query: {
+      query?: {
         suitableIncentiveLevel?: string[]
         suitableRiskLevel?: string[]
         suitableForEmployed?: boolean
@@ -7512,7 +7530,7 @@ export interface operations {
         /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
         sort?: string[]
       }
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7563,7 +7581,7 @@ export interface operations {
    */
   getScheduledInstanceById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7660,7 +7678,7 @@ export interface operations {
          */
         date: string
       }
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -7739,7 +7757,7 @@ export interface operations {
    */
   getDlqMessages: {
     parameters: {
-      query: {
+      query?: {
         maxMessages?: number
       }
       path: {
@@ -7809,7 +7827,7 @@ export interface operations {
    */
   getSchedulesByPrisonCode: {
     parameters: {
-      query: {
+      query?: {
         /** @description Date of activity, default today */
         date?: string
         /** @description AM, PM or ED */
@@ -7887,7 +7905,7 @@ export interface operations {
    */
   getScheduledPrisonLocations: {
     parameters: {
-      query: {
+      query?: {
         /** @description Date of activity, default today */
         date?: string
         /** @description AM, PM or ED */
@@ -7970,7 +7988,7 @@ export interface operations {
    */
   getActivities: {
     parameters: {
-      query: {
+      query?: {
         excludeArchived?: boolean
       }
       path: {
@@ -8347,7 +8365,7 @@ export interface operations {
    */
   getAppointmentDetailsById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8385,7 +8403,7 @@ export interface operations {
    */
   getAppointmentSetById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8423,7 +8441,7 @@ export interface operations {
    */
   getAppointmentSetDetailsById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8461,7 +8479,7 @@ export interface operations {
    */
   getAppointmentSeriesById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8499,7 +8517,7 @@ export interface operations {
    */
   getAppointmentDetailsById_1: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8563,10 +8581,11 @@ export interface operations {
    * Requires one of the following roles:
    * * PRISON
    * * ACTIVITY_ADMIN
+   * * NOMIS_ACTIVITIES
    */
   getAppointmentInstanceById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8629,7 +8648,7 @@ export interface operations {
    */
   getAllocationById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8735,7 +8754,7 @@ export interface operations {
    */
   getActivityById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8820,7 +8839,7 @@ export interface operations {
    */
   getActivityByIdWithFilters: {
     parameters: {
-      query: {
+      query?: {
         /** @description The date of the earliest scheduled instances to include. Defaults to newer than 1 month ago. */
         earliestSessionDate?: string
       }

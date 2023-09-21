@@ -257,6 +257,10 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.getAllocationsWithParams(scheduleId, { activeOnly: true }, user)
   }
 
+  async getAllocationsWithPrisonerInfo(scheduleId: number, user: ServiceUser): Promise<Allocation[]> {
+    return this.getAllocationsWithParams(scheduleId, { activeOnly: true, includePrisonerSummary: true }, user)
+  }
+
   async getAllocationsWithParams(
     scheduleId: number,
     params: GetAllocationsParams,
