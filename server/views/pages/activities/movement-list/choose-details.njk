@@ -1,0 +1,100 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/datePicker.njk" import datePicker %}
+
+{% set pageTitle = "Choose movement list details" %}
+{% set pageId = 'movement-list-choose-details-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-l">Choose movement list details</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+                {% set otherDateHintHtml %}
+                  <div>For example, {{ exampleDate() }}</div>
+                  <div>You can get movement lists for dates up to 60 days from today.</div>
+                {% endset %}
+
+                {{ govukRadios({
+                    name: "dateOption",
+                    fieldset: {
+                        legend: {
+                            text: "Movement date",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                        text: "You can get movement lists for dates up to 60 days from today."
+                    },
+                    errorMessage: validationErrors | findError('dateOption'),
+                    items: [
+                        {
+                            value: DateOption.TODAY,
+                            text: "Today - " + now | formatDate('d MMMM yyyy', false),
+                            checked: formResponses.dateOption == DateOption.TODAY
+                        },
+                        {
+                            value: DateOption.TOMORROW,
+                            text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
+                            checked: formResponses.dateOption == DateOption.TOMORROW
+                        },
+                        {
+                            value: DateOption.OTHER,
+                            text: "A different date",
+                            label: { text: "Movement date "},
+                            checked: formResponses.dateOption == DateOption.OTHER,
+                            conditional: { html:
+                              datePicker({
+                                id: 'date',
+                                hint: { html: otherDateHintHtml },
+                                renderedErrorMessage: validationErrors | findError('date'),
+                                validationErrors: validationErrors,
+                                formResponses: formResponses.date
+                              })
+                           }
+                        }
+                    ]
+                }) }}
+
+                {{ govukRadios({
+                    name: "timeSlot",
+                    fieldset: {
+                        legend: {
+                            text: "Time period",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('timeSlot'),
+                    items: [
+                        {
+                            value: TimeSlot.AM,
+                            text: "AM (morning)",
+                            checked: formResponses.timeSlot == TimeSlot.AM
+                        },
+                        {
+                            value: TimeSlot.PM,
+                            text: "PM (afternoon)",
+                            checked: formResponses.timeSlot == TimeSlot.PM
+                        },
+                        {
+                            value: TimeSlot.ED,
+                            text: "ED (evening)",
+                            checked: formResponses.timeSlot == TimeSlot.ED
+                        }
+                    ]
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
