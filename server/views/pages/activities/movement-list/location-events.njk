@@ -9,7 +9,7 @@
 
 {% set pageTitle = locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations" %}
 {% set pageId = 'movement-list-location-events-page' %}
-{% set backLinkHref = "locations?dateOption=" + dateOption + ("&date=" + date if dateOption == DateOption.OTHER) + "&timeSlot=" + timeSlot %}
+{% set jsBackLink = true %}
 
 {% macro showEvents(events) %}
     {% if events | length == 0 %}

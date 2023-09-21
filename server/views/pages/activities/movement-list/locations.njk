@@ -5,7 +5,7 @@
 
 {% set pageTitle = "Locations with activities or appointments in this session" %}
 {% set pageId = 'movement-list-locations-page' %}
-{% set backLinkHref = "choose-details" %}
+{% set jsBackLink = true %}
 
 {% macro locationActions(location) %}
     <a href="location-events?locationIds={{ location.id }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
