@@ -4,7 +4,8 @@ import DateOption from '../../../../enum/dateOption'
 import { EventType, MovementListLocation, MovementListPrisonerEvents } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import { eventClashes } from '../../../../utils/utils'
+import { eventClashes, scheduledEventSort } from '../../../../utils/utils'
+import { ScheduledEvent } from '../../../../@types/activitiesAPI/types'
 
 export default class LocationEventsRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
@@ -44,38 +45,39 @@ export default class LocationEventsRoutes {
       ...otherEvents.appointments,
       ...otherEvents.visits,
       ...otherEvents.adjudications,
-      // TODO: Should these be shown?
-      // ...otherEvents.courtHearings,
-      // ...otherEvents.externalTransfers,
-    ]
+      ...otherEvents.courtHearings,
+      ...otherEvents.externalTransfers,
+    ] as ScheduledEvent[]
 
     const locations = internalLocationEvents.map(
       l =>
         ({
           ...l,
           prisonerEvents: prisoners.map(p => {
-            const events = l.events.filter(e => e.prisonerNumber === p.prisonerNumber)
+            const events = scheduledEventSort(l.events.filter(e => e.prisonerNumber === p.prisonerNumber))
 
-            const clashingEvents = allEvents
-              .filter(ce => ce.prisonerNumber === p.prisonerNumber)
-              // Exclude any activities for the prisoner scheduled at the current location
-              .filter(
-                ce =>
-                  !events
-                    .filter(e => e.eventType === EventType.ACTIVITY)
-                    .map(e => e.scheduledInstanceId)
-                    .includes(ce.scheduledInstanceId),
-              )
-              // Exclude any appointments for the prisoner scheduled at the current location
-              .filter(
-                ce =>
-                  !events
-                    .filter(e => e.eventType === EventType.APPOINTMENT)
-                    .map(e => e.appointmentId)
-                    .includes(ce.appointmentId),
-              )
-              // Exclude any event not considered a clash
-              .filter(ce => events.filter(e => eventClashes(ce, e)).length > 0)
+            const clashingEvents = scheduledEventSort(
+              allEvents
+                .filter(ce => ce.prisonerNumber === p.prisonerNumber)
+                // Exclude any activities for the prisoner scheduled at the current location
+                .filter(
+                  ce =>
+                    !events
+                      .filter(e => e.eventType === EventType.ACTIVITY)
+                      .map(e => e.scheduledInstanceId)
+                      .includes(ce.scheduledInstanceId),
+                )
+                // Exclude any appointments for the prisoner scheduled at the current location
+                .filter(
+                  ce =>
+                    !events
+                      .filter(e => e.eventType === EventType.APPOINTMENT)
+                      .map(e => e.appointmentId)
+                      .includes(ce.appointmentId),
+                )
+                // Exclude any event not considered a clash
+                .filter(ce => events.filter(e => eventClashes(ce, e)).length > 0),
+            )
 
             return {
               ...p,

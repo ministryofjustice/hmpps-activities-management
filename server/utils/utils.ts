@@ -401,3 +401,14 @@ export const setAttribute = (object: { [key: string]: string }, key: string, val
 export const removeUndefined = (arr: object[]) => arr.filter(Boolean)
 
 export const getScheduleIdFromActivity = (activity: Activity) => activity.schedules[0].id
+
+// Events should be sorted by time, then event name (summary)
+export const scheduledEventSort = (data: ScheduledEvent[]): ScheduledEvent[] => {
+  return data.sort((p1, p2) => {
+    if (p1.startTime < p2.startTime) return -1
+    if (p1.startTime > p2.startTime) return 1
+    if (p1.summary.toLowerCase() < p2.summary.toLowerCase()) return -1
+    if (p1.summary.toLowerCase() > p2.summary.toLowerCase()) return 1
+    return 0
+  })
+}

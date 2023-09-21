@@ -1,5 +1,4 @@
 import { when } from 'jest-when'
-import PrisonApiClient from '../data/prisonApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
@@ -8,11 +7,9 @@ import { PagePrisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { PrisonerScheduledEvents } from '../@types/activitiesAPI/types'
 import atLeast from '../../jest.setup'
 
-jest.mock('../data/prisonApiClient')
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
 
-const prisonApiClient = new PrisonApiClient() as jest.Mocked<PrisonApiClient>
 const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
 const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
 
@@ -182,7 +179,7 @@ const scheduledEvents = {
   ],
 } as PrisonerScheduledEvents
 
-const unlockListService = new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient)
+const unlockListService = new UnlockListService(prisonerSearchApiClient, activitiesApiClient)
 
 describe('Unlock list service', () => {
   beforeEach(() => {
