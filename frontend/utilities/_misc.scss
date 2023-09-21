@@ -91,6 +91,11 @@ body {
   border-top: 1px solid govuk-tint(govuk-colour("mid-grey"), 20);
 }
 
+.dashed-mid-grey-tint-20-hr {
+  border: none;
+  border-top: 1px dashed govuk-tint(govuk-colour("mid-grey"), 20);
+}
+
 .govuk-list {
   margin-bottom: 0;
 }

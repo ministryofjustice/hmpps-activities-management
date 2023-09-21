@@ -11,6 +11,10 @@
 }
 
 @include govuk-media-query($media-type: print) {
+  .print-hide {
+    display: none;
+  }
+
   // govuk-frontend overrides
   .govuk-heading-l {
     font-size: 19pt;
@@ -89,12 +93,10 @@
   }
 
   .govuk-tag {
-    margin: 0;
-    margin-bottom: 5px;
+    background-color: govuk-colour("dark-grey");
     font-size: 6pt;
-    color: red;
-    background-color: transparent;
-    border: 1px solid red;
+    padding: 4px 5px 2px 5px;
+    margin-bottom: 2px;
   }
 
   .print-align-right {
