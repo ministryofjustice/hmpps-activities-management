@@ -1,0 +1,37 @@
+.unlock-list-event {
+  display: flex;
+  justify-content: space-between;
+}
+
+.print-columns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.notes-column-width {
+  width: 140px;
+}
+
+@include govuk-media-query($from: 1000px) {
+  .notes-column-width {
+    width: 180px;
+  }
+}
+
+@include govuk-media-query($until: tablet) {
+  .notes-column-width {
+    width: 120px;
+  }
+}
+
+.checkbox-container {
+  width: 153px
+}
+
+@include govuk-media-query($until: tablet) {
+  .checkbox-container {
+    width: 129px
+  }
+}

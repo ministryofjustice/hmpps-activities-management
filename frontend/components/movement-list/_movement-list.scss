@@ -75,12 +75,5 @@
     &__location {
       @include govuk-responsive-margin(3, "bottom");
     }
-
-    &__location-events {
-      &__cancelled-tag {
-        color: govuk-colour("white");
-        background-color: govuk-colour("black") !important;
-      }
-    }
   }
 }
