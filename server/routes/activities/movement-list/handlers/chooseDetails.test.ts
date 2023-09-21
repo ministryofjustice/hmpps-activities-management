@@ -13,11 +13,13 @@ describe('Movement list routes - choose details', () => {
   let req: Request
   let res: Response
 
+  const prisonCode = 'MDI'
+
   beforeEach(() => {
     res = {
       locals: {
         user: {
-          activeCaseLoadId: 'MDI',
+          activeCaseLoadId: prisonCode,
         },
       },
       render: jest.fn(),

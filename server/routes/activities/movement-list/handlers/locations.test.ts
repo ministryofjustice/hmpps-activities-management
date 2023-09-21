@@ -11,15 +11,17 @@ jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
-describe('Movement list routes - choose details', () => {
+describe('Movement list routes - locations', () => {
   const handler = new LocationsRoutes(activitiesService)
   let req: Request
   let res: Response
 
+  const prisonCode = 'MDI'
+
   const locations = [
     {
       id: 1,
-      prisonCode: 'MDI',
+      prisonCode,
       code: 'EDUC-ED1-ED1',
       description: 'Education 1',
     },
@@ -29,7 +31,7 @@ describe('Movement list routes - choose details', () => {
     res = {
       locals: {
         user: {
-          activeCaseLoadId: 'MDI',
+          activeCaseLoadId: prisonCode,
         },
       },
       render: jest.fn(),
@@ -66,7 +68,7 @@ describe('Movement list routes - choose details', () => {
       })
     })
 
-    it('redirects back when date is invalid', async () => {
+    it('redirects to choose details when date is invalid', async () => {
       const dateOption = DateOption.OTHER
       const date = 'invalid'
       const timeSlot = TimeSlot.AM
