@@ -17,13 +17,15 @@ export default class RemovePayRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { iep } = req.query
     const bandId = +req.query.bandId
+    const { preserveHistory } = req.query
+    const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
     const pay = req.session.createJourney.pay.findIndex(p => p.bandId === bandId && p.incentiveLevel === iep)
     if (pay < 0) {
       if (req.query && req.query.fromEditActivity) {
         return res.redirect('/activities/schedule/check-pay?preserveHistory=true')
       }
-      return res.redirect('check-pay')
+      return res.redirect(`check-pay${preserveHistoryString}`)
     }
 
     return res.render(`pages/activities/create-an-activity/remove-pay`, { iep, bandId })
@@ -32,18 +34,20 @@ export default class RemovePayRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { iep, choice } = req.body
     const bandId = +req.body.bandId
+    const { preserveHistory } = req.query
+    const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
     if (choice !== 'yes') {
       if (req.query && req.query.fromEditActivity) {
         return res.redirect('/activities/schedule/check-pay?preserveHistory=true')
       }
-      return res.redirect('check-pay')
+      return res.redirect(`check-pay${preserveHistoryString}`)
     }
 
     const payIndex = req.session.createJourney.pay.findIndex(p => p.bandId === bandId && p.incentiveLevel === iep)
 
     // Not found, do nothing and redirect back
-    if (payIndex < 0) return res.redirect('check-pay')
+    if (payIndex < 0) return res.redirect(`check-pay${preserveHistoryString}`)
 
     const payInfo = req.session.createJourney.pay[payIndex]
     req.session.createJourney.pay.splice(payIndex, 1)
@@ -52,7 +56,7 @@ export default class RemovePayRoutes {
       return this.updateActivity(req, res)
     }
     return res.redirectWithSuccess(
-      'check-pay',
+      `check-pay${preserveHistoryString}`,
       `${payInfo.incentiveLevel} incentive level rate ${payInfo.bandAlias} removed`,
     )
   }
