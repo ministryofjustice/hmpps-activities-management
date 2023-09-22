@@ -103,6 +103,7 @@ export function registerNunjucks(app?: express.Express): Environment {
     {
       autoescape: true,
       express: app,
+      watch: process.env.NODE_ENV === 'live-development',
     },
   )
 
