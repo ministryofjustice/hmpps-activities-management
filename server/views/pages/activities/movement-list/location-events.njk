@@ -7,7 +7,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
-{% set pageTitle = locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations" %}
+{% set pageTitle = (locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations") + " - " + date | toDate | formatDate + " " + timeSlot | upper + " session" %}
 {% set pageId = 'movement-list-location-events-page' %}
 {% set jsBackLink = true %}
 
