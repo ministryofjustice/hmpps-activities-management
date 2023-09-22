@@ -83,10 +83,16 @@ module.exports = grunt => {
       scripts: {
         files: ['frontend/**/*.{mjs,js}', 'frontend/**/*.scss'],
         tasks: ['dev-build'],
+        options: {
+          interrupt: true,
+        },
       },
       views: {
         files: ['server/views/**/*.njk'],
         tasks: ['copy:views'],
+        options: {
+          interrupt: true,
+        },
       },
     },
   })
