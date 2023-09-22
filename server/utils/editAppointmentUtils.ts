@@ -68,7 +68,7 @@ export const getConfirmAppointmentEditCta = (
   editAppointmentJourney: EditAppointmentJourney,
 ) => {
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
-    return 'Cancel appointment'
+    return 'Confirm'
   }
 
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
@@ -227,7 +227,7 @@ export const getRepeatFrequencyText = (appointmentJourney: AppointmentJourney) =
   let frequencyText = 'This appointment repeats every '
   switch (appointmentJourney.frequency) {
     case AppointmentFrequency.WEEKDAY:
-      frequencyText += 'week day'
+      frequencyText += 'weekday (Monday to Friday)'
       break
     case AppointmentFrequency.DAILY:
       frequencyText += 'day'

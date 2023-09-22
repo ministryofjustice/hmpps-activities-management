@@ -8,8 +8,9 @@
 {% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
-{% set pageTitle = "Set of back-to-backs overview" %}
+{% set pageTitle = appointmentSet.appointmentName + ' – set overview' %}
 {% set pageId = 'appointment-set-details-page' %}
+{% set jsBackLink = true %}
 
 {% set appointmentTableRows = [] %}
 {% for appointment in appointmentSet.appointments %}
@@ -54,8 +55,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ appointmentSet.appointmentName }} – set of back-to-backs overview</h1>
-            <p class="govuk-body govuk-!-margin-top-1" data-qa='sub-heading'>{{ appointmentSet.startDate | toDate | formatDate("d MMM yyyy") }}</p>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ appointmentSet.appointmentName }} – set overview</h1>
+            <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ appointmentSet.startDate | toDate | formatDate }}</span>
 
             {{ govukSummaryList({
                 card: {

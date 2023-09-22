@@ -71,7 +71,7 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     expect($('h1').text()).toContain('Add extra information')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'Add any important information about how to prepare for the appointment. It will be printed on the movement slip.',
+      'Add any important information for who’s attending about how to prepare for their appointment. It will be printed on their movement slip.',
     )
   })
 
@@ -82,7 +82,7 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     expect($('h1').text()).toContain('Change the extra information')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'You can change the information about how to prepare for the appointment. Note that changes will not appear on any movement slips that have already been printed.',
+      'Add or edit any important information for who’s attending about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.',
     )
   })
 
