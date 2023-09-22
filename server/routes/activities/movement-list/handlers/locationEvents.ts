@@ -53,39 +53,45 @@ export default class LocationEventsRoutes {
       l =>
         ({
           ...l,
-          prisonerEvents: prisoners.map(p => {
-            const events = scheduledEventSort(l.events.filter(e => e.prisonerNumber === p.prisonerNumber))
+          prisonerEvents: prisoners
+            .map(p => {
+              const events = scheduledEventSort(l.events.filter(e => e.prisonerNumber === p.prisonerNumber))
 
-            const clashingEvents = scheduledEventSort(
-              allEvents
-                .filter(ce => ce.prisonerNumber === p.prisonerNumber)
-                // Exclude any activities for the prisoner scheduled at the current location
-                .filter(
-                  ce =>
-                    !events
-                      .filter(e => e.eventType === EventType.ACTIVITY)
-                      .map(e => e.scheduledInstanceId)
-                      .includes(ce.scheduledInstanceId),
-                )
-                // Exclude any appointments for the prisoner scheduled at the current location
-                .filter(
-                  ce =>
-                    !events
-                      .filter(e => e.eventType === EventType.APPOINTMENT)
-                      .map(e => e.appointmentId)
-                      .includes(ce.appointmentId),
-                )
-                // Exclude any event not considered a clash
-                .filter(ce => events.filter(e => eventClashes(ce, e)).length > 0),
-            )
+              if (events.length === 0) {
+                return null
+              }
 
-            return {
-              ...p,
-              alerts: p.alerts.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
-              events,
-              clashingEvents,
-            } as MovementListPrisonerEvents
-          }),
+              const clashingEvents = scheduledEventSort(
+                allEvents
+                  .filter(ce => ce.prisonerNumber === p.prisonerNumber)
+                  // Exclude any activities for the prisoner scheduled at the current location
+                  .filter(
+                    ce =>
+                      !events
+                        .filter(e => e.eventType === EventType.ACTIVITY)
+                        .map(e => e.scheduledInstanceId)
+                        .includes(ce.scheduledInstanceId),
+                  )
+                  // Exclude any appointments for the prisoner scheduled at the current location
+                  .filter(
+                    ce =>
+                      !events
+                        .filter(e => e.eventType === EventType.APPOINTMENT)
+                        .map(e => e.appointmentId)
+                        .includes(ce.appointmentId),
+                  )
+                  // Exclude any event not considered a clash
+                  .filter(ce => events.filter(e => eventClashes(ce, e)).length > 0),
+              )
+
+              return {
+                ...p,
+                alerts: p.alerts.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
+                events,
+                clashingEvents,
+              } as MovementListPrisonerEvents
+            })
+            .filter(pe => pe),
         } as MovementListLocation),
     )
 
