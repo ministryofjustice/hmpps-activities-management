@@ -17,6 +17,7 @@ import {
   AppointmentSetSummary,
 } from '../@types/activitiesAPI/types'
 import { YesNo } from '../@types/activities'
+import config from '../config'
 
 jest.mock('./activitiesService')
 
@@ -98,6 +99,7 @@ describe('Edit Appointment Service', () => {
       },
       redirect: jest.fn(),
       redirectWithSuccess: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
   })
 
@@ -706,6 +708,60 @@ describe('Edit Appointment Service', () => {
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 1 to 3 in the series",
         )
+      })
+
+      it('when adding prisoners to the appointment', async () => {
+        req.session.editAppointmentJourney.addPrisoners = [
+          {
+            number: 'A1234BC',
+            name: 'TEST PRISONER1',
+            cellLocation: '1-1-1',
+          },
+          {
+            number: 'B2345CD',
+            name: 'TEST PRISONER2',
+            cellLocation: '1-1-1',
+          },
+        ]
+
+        await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+
+        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+          `/appointments/${appointmentId}`,
+          "You've added these people to appointments 1 to 4 in the series",
+        )
+      })
+
+      it('when adding prisoners to the appointment and exceeding "MAX_APPOINTMENT_INSTANCES"', async () => {
+        const { maxAppointmentInstances } = config.appointmentsConfig
+
+        const numberOfAppointments = 100
+        req.session.editAppointmentJourney.numberOfAppointments = numberOfAppointments
+        req.session.editAppointmentJourney.appointments = Array(numberOfAppointments)
+          .fill(null)
+          .map((_, i) => ({
+            sequenceNumber: i + 1,
+            startDate: formatDate(addDays(weekTomorrow, i), 'yyyy-MM-dd'),
+          }))
+
+        const maxAllowedPrisoners = Math.floor(maxAppointmentInstances / 100)
+
+        // Add 1 more than allowed
+        req.session.editAppointmentJourney.addPrisoners = Array(maxAllowedPrisoners + 1)
+          .fill(null)
+          .map((_, i) => ({
+            number: `A${i}BC`,
+            name: 'TEST PRISONER',
+            cellLocation: '1-1-1',
+          }))
+
+        await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+
+        expect(res.validationFailed).toHaveBeenCalledWith(
+          'applyTo',
+          `You cannot add more than ${maxAllowedPrisoners} attendees for this number of appointments.`,
+        )
+        expect(res.redirectWithSuccess).toHaveBeenCalledTimes(0)
       })
     })
   })
