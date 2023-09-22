@@ -40,16 +40,24 @@
       font-size: 6pt;
     }
 
-    .printed-page {
-      background: none;
-    }
-
     .govuk-table {
       font-size: 8pt;
 
       .govuk-table__header {
         font-size: 10pt;
       }
+
+      .govuk-table__cell {
+        padding: 3px 6px 3px 0;
+      }
+    }
+
+    .govuk-tag {
+      margin-bottom: 2px;
+    }
+
+    .dashed-mid-grey-tint-20-hr {
+      border-top: 1px dashed govuk-tint(govuk-colour("mid-grey"), 6);
     }
 
     .alerts-list > li {
