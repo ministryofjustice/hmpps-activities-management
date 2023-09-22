@@ -1,14 +1,11 @@
 import { SubLocationCellPattern, UnlockListItem } from '../@types/activities'
-import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
-import { ScheduledEvent } from '../@types/activitiesAPI/types'
-import { toDateString } from '../utils/utils'
+import { scheduledEventSort, toDateString } from '../utils/utils'
 
 export default class UnlockListService {
   constructor(
-    private readonly prisonApiClient: PrisonApiClient,
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
     private readonly activitiesApiClient: ActivitiesApiClient,
   ) {}
@@ -101,7 +98,7 @@ export default class UnlockListService {
       return {
         ...prisoner,
         isLeavingWing: this.isLeaving(allEventsForPrisoner),
-        events: this.unlockListSort(allEventsForPrisoner),
+        events: scheduledEventSort(allEventsForPrisoner),
       } as UnlockListItem
     })
 
@@ -155,16 +152,5 @@ export default class UnlockListService {
     }
     // Where a location has no sub-locations e.g. Segregation unit, there will be no cell-patterns to match against.
     return ''
-  }
-
-  // Events should be sorted by time, then event name (summary)
-  private unlockListSort = (data: ScheduledEvent[]): ScheduledEvent[] => {
-    return data.sort((p1, p2) => {
-      if (p1.startTime < p2.startTime) return -1
-      if (p1.startTime > p2.startTime) return 1
-      if (p1.summary.toLowerCase() < p2.summary.toLowerCase()) return -1
-      if (p1.summary.toLowerCase() > p2.summary.toLowerCase()) return 1
-      return 0
-    })
   }
 }

@@ -59,3 +59,5 @@ export type WaitingListApplication = components['schemas']['WaitingListApplicati
 export type WaitingListApplicationUpdateRequest = components['schemas']['WaitingListApplicationUpdateRequest']
 export type ScheduledInstanceAttendanceSummary = components['schemas']['ScheduledInstanceAttendanceSummary']
 export type GetAllocationsParams = operations['getAllocationsBy']['parameters']['query']
+export type InternalLocationEvents = components['schemas']['InternalLocationEvents']
+export type InternalLocationEventsSummary = components['schemas']['InternalLocationEventsSummary']

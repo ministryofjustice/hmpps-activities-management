@@ -1,0 +1,160 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
+{% from "components/alertsList.njk" import alertsList %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+
+{% set pageTitle = locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations" %}
+{% set pageId = 'movement-list-location-events-page' %}
+{% set jsBackLink = true %}
+
+{% macro showEvents(events) %}
+    {% if events | length == 0 %}
+        <span>None</span>
+    {% else %}
+        <div>
+            {% for event in events %}
+                {% if not loop.first %}<hr class="mid-grey-tint-20-hr" />{% endif %}
+
+                {% if event.eventType == EventType.ACTIVITY %}
+                    <div>
+                        <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list"
+                           class="govuk-link govuk-link--no-visited-state" target="_blank">
+                            {{ event.summary | trim }}
+                        </a>
+                    </div>
+                    {% if event.suspended %}
+                        <div class="govuk-!-margin-top-1 govuk-!-margin-bottom-1">{{ govukTag({ text: 'Prisoner suspended', classes: 'govuk-tag--red-border govuk-tag--small' }) }}</div>
+                    {% endif %}
+                {% elseif event.eventType == EventType.APPOINTMENT%}
+                    <div>
+                        <a href="/appointments/{{ event.appointmentId }}"
+                           class="govuk-link govuk-link--no-visited-state" target="_blank">
+                            {{ event.summary | trim }}
+                        </a>
+                    </div>
+                    <div class="govuk-!-margin-bottom-1">
+                        {% if event.cancelled %}
+                        <div>{{ govukTag({ text: 'Cancelled Appointment', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
+                        {% else %}
+                            <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+                        {% endif %}
+                    </div>
+                    {% if event.comments %}
+                        <div class="govuk-!-margin-bottom-1">{{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow' }) }}</div>
+                    {% endif %}
+                {% else %}
+                    <div>{{ event.summary | trim }}</div>
+                {% endif %}
+
+                {% if event.eventType != EventType.EXTERNAL_TRANSFER and event.eventType != EventType.COURT_HEARING %}
+                    <div class='govuk-hint govuk-!-font-size-16 govuk-!-margin-bottom-0'>{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
+
+                    {% if event.internalLocationId != locations[0].id %}
+                        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    {% if locations | length > 1 %}
+        <div class="moj-action-bar govuk-!-display-none-print">
+            {{ mojButtonMenu({
+                items: [{
+                    attributes: { id: 'print-movement-lists' },
+                    text: "Print these movement lists",
+                    classes: "govuk-button--blue js-print no-js-hidden",
+                    preventDoubleClick: true
+                }]
+            }) }}
+        </div>
+    {% endif %}
+
+    {% for location in locations %}
+        {% set locationIndex = loop.index %}
+        {% set prisonerEventsTableRows = [] %}
+        {% for prisonerEvents in location.prisonerEvents %}
+            {% set prisonerEventsTableRows = (prisonerEventsTableRows.push([
+                {
+                    html: showProfileLink({
+                        name: prisonerEvents.firstName + " " + prisonerEvents.lastName,
+                        prisonerNumber: prisonerEvents.prisonerNumber,
+                        link: true
+                    }),
+                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-name-and-number', "data-sort-value": (prisonerEvents.firstName + " " + prisonerEvents.lastName) | toTitleCase | prisonerName(false) }
+                }, {
+                    text: statusBasedCellLocation(prisonerEvents.cellLocation, prisonerEvents.status),
+                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-cell-location' }
+                }, {
+                    html: alertsList({ alerts: prisonerEvents.alerts, category: prisonerEvents.category }),
+                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-alerts' }
+                }, {
+                    html: showEvents(prisonerEvents.events),
+                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events' }
+                }, {
+                    html: showEvents(prisonerEvents.clashingEvents),
+                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-clashing-events' }
+                }
+            ]), prisonerEventsTableRows) %}
+        {% endfor %}
+
+        <div class="movement-list">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-l govuk-!-margin-0">{{ location.description }} - movement list</h1>
+                    <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot | upper }} session</span>
+                    <span class="govuk-caption-l govuk-!-margin-bottom-6" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
+                </div>
+            </div>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-m">{{ "1 person allocated" if location.prisonerEvents | length == 1 else location.prisonerEvents | length + " people allocated" }}</h2>
+
+                    {% if locations | length == 1 %}
+                        <div class="moj-action-bar govuk-!-display-none-print">
+                            {{ mojButtonMenu({
+                                items: [{
+                                    attributes: { id: 'print-movement-list' },
+                                    text: "Print this movement list",
+                                    classes: "govuk-button--blue js-print no-js-hidden",
+                                    preventDoubleClick: true
+                                }]
+                            }) }}
+                        </div>
+                    {% endif %}
+
+                    {{ govukTable({
+                        attributes: {
+                            'data-module': 'moj-sortable-table',
+                            'data-qa': 'location-' + locationIndex + '-prisoner-events'
+                        },
+                        head: [
+                            {
+                                text: "Name",
+                                attributes: { "aria-sort": "none" }
+                            }, {
+                                text: "Cell location",
+                                attributes: { "aria-sort": "ascending" }
+                            }, {
+                                text: "Relevant alerts"
+                            }, {
+                                text: "Activity",
+                                attributes: { "aria-sort": "none" }
+                            }, {
+                                text: "Clashing events",
+                                attributes: { "aria-sort": "none" }
+                            }],
+                        rows: prisonerEventsTableRows
+                    }) }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

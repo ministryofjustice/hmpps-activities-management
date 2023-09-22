@@ -2,22 +2,24 @@ import { Request, Response } from 'express'
 import { addDays, addWeeks, format, getDate, getMonth, getYear } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import ChooseDetailsHandler, { DateAndTimeSlot } from './chooseDetails'
+import ChooseDetailsRoutes, { DateAndTimeSlot } from './chooseDetails'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import DateOption from '../../../../enum/dateOption'
 import TimeSlot from '../../../../enum/timeSlot'
 
 describe('Movement list routes - choose details', () => {
-  const handler = new ChooseDetailsHandler()
+  const handler = new ChooseDetailsRoutes()
   let req: Request
   let res: Response
+
+  const prisonCode = 'MDI'
 
   beforeEach(() => {
     res = {
       locals: {
         user: {
-          activeCaseLoadId: 'MDI',
+          activeCaseLoadId: prisonCode,
         },
       },
       render: jest.fn(),
@@ -25,6 +27,9 @@ describe('Movement list routes - choose details', () => {
     } as unknown as Response
 
     req = {} as unknown as Request
+  })
+
+  afterEach(() => {
     jest.resetAllMocks()
   })
 
@@ -37,37 +42,29 @@ describe('Movement list routes - choose details', () => {
   })
 
   describe('POST', () => {
-    it("redirects with today's date and am time slot", async () => {
+    it('redirects with today date option and am time slot', async () => {
       req.body = {
         dateOption: DateOption.TODAY,
         timeSlot: TimeSlot.AM,
       }
 
-      const expectedDateValue = format(new Date(), 'yyyy-MM-dd')
-
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(
-        `locations?dateOption=${DateOption.TODAY}date=${expectedDateValue}&timeSlot=${TimeSlot.AM}`,
-      )
+      expect(res.redirect).toHaveBeenCalledWith(`locations?dateOption=${DateOption.TODAY}&timeSlot=${TimeSlot.AM}`)
     })
 
-    it("redirects with tomorrow's date and pm time slot", async () => {
+    it('redirects with tomorrow date option and pm time slot', async () => {
       req.body = {
         dateOption: DateOption.TOMORROW,
         timeSlot: TimeSlot.PM,
       }
 
-      const expectedDateValue = format(addDays(new Date(), 1), 'yyyy-MM-dd')
-
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(
-        `locations?dateOption=${DateOption.TOMORROW}date=${expectedDateValue}&timeSlot=${TimeSlot.PM}`,
-      )
+      expect(res.redirect).toHaveBeenCalledWith(`locations?dateOption=${DateOption.TOMORROW}&timeSlot=${TimeSlot.PM}`)
     })
 
-    it('redirects with entered date and ed time slot', async () => {
+    it('redirects with other date option entered date and ed time slot', async () => {
       const nextWeek = addWeeks(new Date(), 1)
 
       req.body = {
@@ -85,7 +82,7 @@ describe('Movement list routes - choose details', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `locations?dateOption=${DateOption.OTHER}date=${expectedDateValue}&timeSlot=${TimeSlot.ED}`,
+        `locations?dateOption=${DateOption.OTHER}&date=${expectedDateValue}&timeSlot=${TimeSlot.ED}`,
       )
     })
   })

@@ -1,8 +1,9 @@
 import { Expose, plainToInstance, Type } from 'class-transformer'
 import { IsInt, Max, Min } from 'class-validator'
-import { getDate, getMonth, getYear, isValid, parse } from 'date-fns'
+import { addDays, getDate, getMonth, getYear, isValid, parse } from 'date-fns'
 // eslint-disable-next-line import/no-cycle
-import { formatDate } from '../utils/utils'
+import { formatDate, toDate } from '../utils/utils'
+import DateOption from '../enum/dateOption'
 
 const DAY_MESSAGE = 'Enter a valid day'
 const MONTH_MESSAGE = 'Enter a valid month'
@@ -49,6 +50,17 @@ export const simpleDateFromDate = (date: Date) => {
   }
 
   return null
+}
+
+export const simpleDateFromDateOption = (dateOption: DateOption, date: string) => {
+  switch (dateOption) {
+    case DateOption.TODAY:
+      return simpleDateFromDate(new Date())
+    case DateOption.TOMORROW:
+      return simpleDateFromDate(addDays(new Date(), 1))
+    default:
+      return simpleDateFromDate(toDate(date))
+  }
 }
 
 export const simpleDateFromPlain = (date: SimpleDate) => plainToInstance(SimpleDate, date)

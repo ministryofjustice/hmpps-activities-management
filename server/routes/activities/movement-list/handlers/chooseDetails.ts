@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { IsIn, ValidateIf, ValidateNested } from 'class-validator'
-import { format, addDays } from 'date-fns'
+import { addDays } from 'date-fns'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
@@ -32,24 +32,10 @@ export default class ChooseDetailsRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { dateOption, date, timeSlot } = req.body
+    const { dateOption, timeSlot } = req.body
 
-    const dateValue = this.getDateValue(dateOption, date)
+    const dateQuery = dateOption === DateOption.OTHER ? `&date=${req.body.date.toIsoString()}` : ''
 
-    return res.redirect(`locations?dateOption=${dateOption}date=${dateValue}&timeSlot=${timeSlot}`)
+    return res.redirect(`locations?dateOption=${dateOption}${dateQuery}&timeSlot=${timeSlot}`)
   }
-
-  private getDateValue = (dateOption: string, date: SimpleDate): string => {
-    if (dateOption === DateOption.TODAY) {
-      return this.formatDate(new Date())
-    }
-
-    if (dateOption === DateOption.TOMORROW) {
-      return this.formatDate(addDays(new Date(), 1)).toString()
-    }
-
-    return this.formatDate(date.toRichDate())
-  }
-
-  private formatDate = (date: Date) => format(date, 'yyyy-MM-dd')
 }

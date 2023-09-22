@@ -16,7 +16,7 @@ import enGBLocale, {
 import { ValidationError } from 'class-validator'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
-import { Activity, Attendance, ScheduledActivity, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
+import { Activity, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 // eslint-disable-next-line import/no-cycle
 import { CreateAnActivityJourney } from '../routes/activities/create-an-activity/journey'
@@ -348,7 +348,7 @@ export const convertToNumberArray = (maybeArray: string | string[]): number[] =>
     .filter(item => item)
 }
 
-export const eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActivity) => {
+export const eventClashes = (event: ScheduledEvent, thisEvent: { startTime: string; endTime?: string }) => {
   const timeToDate = (time: string) => parse(time, 'HH:mm', new Date())
   const toInterval = (start: Date, end: Date) => ({ start, end })
 
@@ -357,7 +357,10 @@ export const eventClashes = (event: ScheduledEvent, thisActivity: ScheduledActiv
       timeToDate(event.startTime),
       event.endTime ? timeToDate(event.endTime) : endOfDay(timeToDate(event.startTime)),
     ),
-    toInterval(timeToDate(thisActivity.startTime), timeToDate(thisActivity.endTime)),
+    toInterval(
+      timeToDate(thisEvent.startTime),
+      thisEvent.endTime ? timeToDate(thisEvent.endTime) : endOfDay(timeToDate(thisEvent.startTime)),
+    ),
   )
 }
 
@@ -398,3 +401,14 @@ export const setAttribute = (object: { [key: string]: string }, key: string, val
 export const removeUndefined = (arr: object[]) => arr.filter(Boolean)
 
 export const getScheduleIdFromActivity = (activity: Activity) => activity.schedules[0].id
+
+// Events should be sorted by time, then event name (summary)
+export const scheduledEventSort = (data: ScheduledEvent[]): ScheduledEvent[] => {
+  return data.sort((p1, p2) => {
+    if (p1.startTime < p2.startTime) return -1
+    if (p1.startTime > p2.startTime) return 1
+    if (p1.summary.toLowerCase() < p2.summary.toLowerCase()) return -1
+    if (p1.summary.toLowerCase() > p2.summary.toLowerCase()) return 1
+    return 0
+  })
+}

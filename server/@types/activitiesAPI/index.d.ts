@@ -134,6 +134,21 @@ export interface paths {
      */
     post: operations['getScheduledEventsForMultiplePrisoners']
   }
+  '/scheduled-events/prison/{prisonCode}/locations': {
+    /**
+     * Get a list of scheduled events for a prison and list of internal location ids numbers for a date and optional time slot
+     * @description
+     *       Returns scheduled events for the prison, internal location ids, single date and an optional time slot.
+     *       This endpoint only returns activities and appointments and these come from the local database.
+     *       This endpoint supports the creation of movement lists.
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    post: operations['getScheduledEventsForMultipleLocations']
+  }
   '/prisons/{prisonCode}/prisoner-allocations': {
     /**
      * Get all allocations for prisoners
@@ -572,6 +587,23 @@ export interface paths {
      */
     get: operations['getLocationGroups']
   }
+  '/locations/prison/{prisonCode}/events-summaries': {
+    /**
+     * Get a list of internal locations that have events scheduled to take place on the specified date and optional time slot.
+     *
+     * @description
+     *       Returns internal locations that have events scheduled to take place on the specified date and optional time slot.
+     *       Will contain summary information about the events taking place at the location as well as the total number of
+     *       prisoners due to arrive at the location. This endpoint supports the creation of movement lists allowing
+     *       users to select from a sublist of only the internal locations that have events scheduled there.
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    get: operations['getInternalLocationEventsSummary']
+  }
   '/event-review/prison/{prisonCode}': {
     /**
      * Get events for a prison which may indicate that a change of circumstances affecting allocations had occurred
@@ -690,6 +722,7 @@ export interface paths {
      * Requires one of the following roles:
      * * PRISON
      * * ACTIVITY_ADMIN
+     * * NOMIS_ACTIVITIES
      */
     get: operations['getAppointmentInstanceById']
   }
@@ -1561,6 +1594,41 @@ export interface components {
        * @description The event priority - configurable by prison, or via defaults.
        */
       priority: number
+    }
+    /**
+     * @description
+     *   The details of an internal location that has events scheduled to take place there. Supports movement lists.
+     *   Contains additional information about the events taking place at the location.
+     *   The system of record for internal locations is NOMIS and they are managed in that application.
+     */
+    InternalLocationEvents: {
+      /**
+       * Format: int64
+       * @description
+       *     The id of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID in NOMIS.
+       *
+       * @example 27723
+       */
+      id: number
+      /**
+       * @description
+       *     The prison code/agency id of the internal location. Mapped from AGENCY_LOCATIONS.AGY_LOC_ID in NOMIS.
+       *
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description The code of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.DESCRIPTION
+       * @example EDUC-ED1-ED1
+       */
+      code: string
+      /**
+       * @description The description of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.USER_DESC
+       * @example Education 1
+       */
+      description: string
+      /** @description Collection of scheduled events due to take place at the internal location */
+      events: components['schemas']['ScheduledEvent'][]
     }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
@@ -3981,7 +4049,7 @@ export interface components {
        * Format: date-time
        * @description The date and time the waiting list status was last updated
        */
-      statusUpdatedTime: string
+      statusUpdatedTime?: string
       /**
        * Format: date
        * @description The past or present date on which the waiting list was requested
@@ -4714,7 +4782,7 @@ export interface components {
        * @example MDI-1-1-101
        */
       cellLocation?: string
-      /** @description Any activities the candidate is currently allocated to */
+      /** @description Any activities the candidate is currently allocated to (excluding ended) */
       otherAllocations: components['schemas']['Allocation'][]
       /**
        * Format: date
@@ -4724,20 +4792,20 @@ export interface components {
       releaseDate?: string
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      first?: boolean
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
+      first?: boolean
       last?: boolean
       empty?: boolean
     }
@@ -4754,8 +4822,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -5202,6 +5270,40 @@ export interface components {
        * @example null
        */
       children: components['schemas']['LocationGroup'][]
+    }
+    /**
+     * @description
+     *   The summary of an internal location that has events scheduled to take place there. Supports movement lists.
+     *   Will contain additional summary information about the events taking place at the location as well as the total
+     *   number of prisoners due to arrive at the location.
+     *   The system of record for internal locations is NOMIS and they are managed in that application.
+     */
+    InternalLocationEventsSummary: {
+      /**
+       * Format: int64
+       * @description
+       *     The id of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID in NOMIS.
+       *
+       * @example 27723
+       */
+      id: number
+      /**
+       * @description
+       *     The prison code/agency id of the internal location. Mapped from AGENCY_LOCATIONS.AGY_LOC_ID in NOMIS.
+       *
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description The code of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.DESCRIPTION
+       * @example EDUC-ED1-ED1
+       */
+      code: string
+      /**
+       * @description The description of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.USER_DESC
+       * @example Education 1
+       */
+      description: string
     }
     /** @description Describes one event that has occurred to indicate a change of circumstance */
     EventReview: {
@@ -5939,7 +6041,7 @@ export interface operations {
    */
   deallocate: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6179,7 +6281,7 @@ export interface operations {
    */
   cancelAppointment: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6228,13 +6330,13 @@ export interface operations {
    */
   getAllocationsBy: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
         /** @description If provided will filter allocations by the given date. Format YYYY-MM-DD. */
         date?: string
       }
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6450,6 +6552,69 @@ export interface operations {
     }
   }
   /**
+   * Get a list of scheduled events for a prison and list of internal location ids numbers for a date and optional time slot
+   * @description
+   *       Returns scheduled events for the prison, internal location ids, single date and an optional time slot.
+   *       This endpoint only returns activities and appointments and these come from the local database.
+   *       This endpoint supports the creation of movement lists.
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  getScheduledEventsForMultipleLocations: {
+    parameters: {
+      query: {
+        /** @description The exact date to return events for (required) in format YYYY-MM-DD */
+        date: string
+        /** @description Time slot of the events (optional). If supplied, one of AM, PM or ED. */
+        timeSlot?: 'AM' | 'PM' | 'ED'
+      }
+      path: {
+        /** @description The 3-character prison code. */
+        prisonCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': number[]
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more scheduled events found */
+      200: {
+        content: {
+          'application/json': components['schemas']['InternalLocationEvents'][]
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Get all allocations for prisoners
    * @description Returns zero or more allocations for the supplied list of prisoners.
    *
@@ -6459,7 +6624,7 @@ export interface operations {
    */
   prisonerAllocations: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
       }
@@ -6615,7 +6780,7 @@ export interface operations {
    */
   triggerManageAttendanceRecordsJob: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will run the attendance expiry process in addition to other features. Defaults to false. */
         withExpiry?: boolean
       }
@@ -6638,7 +6803,7 @@ export interface operations {
    */
   triggerManageAllocationsJob: {
     parameters: {
-      query: {
+      query?: {
         /** @description If true will run the activate pending allocations process. Defaults to false. */
         withActivate?: boolean
         /** @description If true will run the deallocate allocations process. Defaults to false. */
@@ -6745,7 +6910,7 @@ export interface operations {
    */
   getAuditRecords: {
     parameters: {
-      query: {
+      query?: {
         page?: number
         size?: number
         sortDirection?: string
@@ -6789,7 +6954,7 @@ export interface operations {
    */
   searchAppointments: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6834,7 +6999,7 @@ export interface operations {
    */
   createAppointmentSet: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -6876,7 +7041,7 @@ export interface operations {
    */
   createAppointmentSeries: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -6916,7 +7081,7 @@ export interface operations {
    */
   addToWaitingList: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -6971,7 +7136,7 @@ export interface operations {
    */
   create: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -7017,7 +7182,7 @@ export interface operations {
    */
   getWaitingListById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7060,7 +7225,7 @@ export interface operations {
    */
   updateWaitingList: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7115,7 +7280,7 @@ export interface operations {
    */
   getAppointmentById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7155,7 +7320,7 @@ export interface operations {
    */
   updateAppointment: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7257,7 +7422,7 @@ export interface operations {
    */
   update_1: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7361,7 +7526,7 @@ export interface operations {
    */
   getScheduleId: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7405,7 +7570,7 @@ export interface operations {
    */
   getWaitingListApplicationsBy: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7500,7 +7665,7 @@ export interface operations {
    */
   candidates: {
     parameters: {
-      query: {
+      query?: {
         suitableIncentiveLevel?: string[]
         suitableRiskLevel?: string[]
         suitableForEmployed?: boolean
@@ -7512,7 +7677,7 @@ export interface operations {
         /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
         sort?: string[]
       }
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7563,7 +7728,7 @@ export interface operations {
    */
   getScheduledInstanceById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -7660,7 +7825,7 @@ export interface operations {
          */
         date: string
       }
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
     }
@@ -7739,7 +7904,7 @@ export interface operations {
    */
   getDlqMessages: {
     parameters: {
-      query: {
+      query?: {
         maxMessages?: number
       }
       path: {
@@ -7809,7 +7974,7 @@ export interface operations {
    */
   getSchedulesByPrisonCode: {
     parameters: {
-      query: {
+      query?: {
         /** @description Date of activity, default today */
         date?: string
         /** @description AM, PM or ED */
@@ -7887,7 +8052,7 @@ export interface operations {
    */
   getScheduledPrisonLocations: {
     parameters: {
-      query: {
+      query?: {
         /** @description Date of activity, default today */
         date?: string
         /** @description AM, PM or ED */
@@ -7970,7 +8135,7 @@ export interface operations {
    */
   getActivities: {
     parameters: {
-      query: {
+      query?: {
         excludeArchived?: boolean
       }
       path: {
@@ -8181,6 +8346,66 @@ export interface operations {
     }
   }
   /**
+   * Get a list of internal locations that have events scheduled to take place on the specified date and optional time slot.
+   *
+   * @description
+   *       Returns internal locations that have events scheduled to take place on the specified date and optional time slot.
+   *       Will contain summary information about the events taking place at the location as well as the total number of
+   *       prisoners due to arrive at the location. This endpoint supports the creation of movement lists allowing
+   *       users to select from a sublist of only the internal locations that have events scheduled there.
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  getInternalLocationEventsSummary: {
+    parameters: {
+      query: {
+        /** @description Date of scheduled events (required). Format YYYY-MM-DD. Up to 60 days in the future */
+        date: string
+        /** @description Time slot for the scheduled events (optional). If supplied, one of AM, PM or ED. */
+        timeSlot?: 'AM' | 'PM' | 'ED'
+      }
+      path: {
+        /** @description The 3-digit prison code. */
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more internal locations with scheduled events found */
+      200: {
+        content: {
+          'application/json': components['schemas']['InternalLocationEventsSummary']
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Get events for a prison which may indicate that a change of circumstances affecting allocations had occurred
    * @description Returns events in the prison which match the search criteria provided.
    *
@@ -8347,7 +8572,7 @@ export interface operations {
    */
   getAppointmentDetailsById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8385,7 +8610,7 @@ export interface operations {
    */
   getAppointmentSetById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8423,7 +8648,7 @@ export interface operations {
    */
   getAppointmentSetDetailsById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8461,7 +8686,7 @@ export interface operations {
    */
   getAppointmentSeriesById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8499,7 +8724,7 @@ export interface operations {
    */
   getAppointmentDetailsById_1: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8563,10 +8788,11 @@ export interface operations {
    * Requires one of the following roles:
    * * PRISON
    * * ACTIVITY_ADMIN
+   * * NOMIS_ACTIVITIES
    */
   getAppointmentInstanceById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8629,7 +8855,7 @@ export interface operations {
    */
   getAllocationById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8735,7 +8961,7 @@ export interface operations {
    */
   getActivityById: {
     parameters: {
-      header: {
+      header?: {
         'Caseload-Id'?: string
       }
       path: {
@@ -8820,7 +9046,7 @@ export interface operations {
    */
   getActivityByIdWithFilters: {
     parameters: {
-      query: {
+      query?: {
         /** @description The date of the earliest scheduled instances to include. Defaults to newer than 1 month ago. */
         earliestSessionDate?: string
       }

@@ -33,7 +33,7 @@ export default function Index(services: Services): Router {
   router.use('/attendance', attendanceRoutes(services))
   router.use('/attendance-summary', attendanceSummaryRoutes(services))
   router.use('/unlock-list', unlockListRoutes(services))
-  router.use('/movement-list', movementListRoutes())
+  router.use('/movement-list', movementListRoutes(services))
   router.use('/change-of-circumstances', changeOfCircumstanceRoutes(services))
   router.use('/waitlist', waitlistApplicationRoutes(services))
 

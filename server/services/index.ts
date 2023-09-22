@@ -14,7 +14,7 @@ export default function services() {
     prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient),
     activitiesService: new ActivitiesService(activitiesApiClient),
     ukBankHolidayService: new BankHolidayService(),
-    unlockListService: new UnlockListService(prisonApiClient, prisonerSearchApiClient, activitiesApiClient),
+    unlockListService: new UnlockListService(prisonerSearchApiClient, activitiesApiClient),
   }
 }
 
