@@ -24,7 +24,7 @@ export default class LocationEventsRoutes {
     const internalLocationEvents = await this.activitiesService.getInternalLocationEvents(
       user.activeCaseLoadId,
       simpleDate.toRichDate(),
-      (locationIds as string).split(',').map(id => parseInt(id, 10)),
+      (locationIds as string).split(',').map(id => +id),
       user,
       timeSlot as string,
     )
