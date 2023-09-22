@@ -471,6 +471,36 @@ describe('Route Handlers - Non Attendance', () => {
       expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(true)
     })
 
+    it('should not issue payment if attendance reason is "SICK" and sick pay not selected', async () => {
+      const request = {
+        notAttendedData: [
+          {
+            ...attenance,
+            notAttendedReason: AttendanceReasons.SICK,
+            sickPay: YesNo.NO,
+          },
+        ],
+      } as NotAttendedForm
+
+      const requestObject = plainToInstance(NotAttendedForm, request)
+      expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(false)
+    })
+
+    it('should not issue payment if attendance reason is "REST" and rest pay not selected', async () => {
+      const request = {
+        notAttendedData: [
+          {
+            ...attenance,
+            notAttendedReason: AttendanceReasons.REST,
+            restPay: YesNo.NO,
+          },
+        ],
+      } as NotAttendedForm
+
+      const requestObject = plainToInstance(NotAttendedForm, request)
+      expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(false)
+    })
+
     it('should not issue incentive level warning if attendance reason is not "REFUSED"', async () => {
       const request = {
         notAttendedData: [

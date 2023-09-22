@@ -65,8 +65,8 @@ export class NotAttendedData {
   getCaseNote = () => (this.notAttendedReason === AttendanceReason.REFUSED ? this.caseNote : null)
 
   getIssuePayment() {
-    if (this.sickPay && this.notAttendedReason === AttendanceReason.SICK) return true
-    if (this.restPay && this.notAttendedReason === AttendanceReason.REST) return true
+    if (this.sickPay === YesNo.YES && this.notAttendedReason === AttendanceReason.SICK) return true
+    if (this.restPay === YesNo.YES && this.notAttendedReason === AttendanceReason.REST) return true
     return [AttendanceReason.NOT_REQUIRED, AttendanceReason.CLASH].includes(this.notAttendedReason)
   }
 
