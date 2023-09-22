@@ -107,7 +107,7 @@
             ]), prisonerEventsTableRows) %}
         {% endfor %}
 
-        <div class="movement-list">
+        <div class="movement-list{{ " print-page-break" if not loop.first }}">
             <div class="govuk-grid-row movement-list__location">
                 <div class="govuk-grid-column-two-thirds">
                     <h1 class="govuk-heading-l govuk-!-margin-0">{{ location.description }} - movement list</h1>

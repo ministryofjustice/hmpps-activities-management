@@ -15,6 +15,10 @@
     display: none;
   }
 
+  .print-page-break {
+    page-break-before: always;
+  }
+
   // govuk-frontend overrides
   .govuk-heading-l {
     font-size: 19pt;
