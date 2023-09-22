@@ -203,7 +203,11 @@ export default class AllocationDashboardRoutes {
   }
 
   private getCurrentlyAllocated = async (scheduleId: number, user: ServiceUser) => {
-    const currentlyAllocated = await this.activitiesService.getAllocationsWithPrisonerInfo(scheduleId, user)
+    const currentlyAllocated = await this.activitiesService.getAllocationsWithParams(
+      scheduleId,
+      { activeOnly: true, includePrisonerSummary: true },
+      user,
+    )
     const prisonerNumbers = currentlyAllocated.map(allocation => allocation.prisonerNumber)
     const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user)
 

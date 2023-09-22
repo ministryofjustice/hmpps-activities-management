@@ -161,10 +161,6 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAllocations(id, user)
   }
 
-  async getAllocationsWithPrisonerInfo(id: number, user: ServiceUser): Promise<Allocation[]> {
-    return this.activitiesApiClient.getAllocationsWithPrisonerInfo(id, user)
-  }
-
   async getAllocationsWithParams(
     scheduledInstanceId: number,
     params: GetAllocationsParams,
