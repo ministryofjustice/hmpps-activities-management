@@ -22,3 +22,9 @@ export type LocationLenient = {
   /** User-friendly location description. */
   userDescription?: string
 }
+
+export enum PrisonerStatus {
+  ACTIVE_IN = 'ACTIVE IN',
+  ACTIVE_OUT = 'ACTIVE OUT',
+  INACTIVE_OUT = 'INACTIVE OUT',
+}

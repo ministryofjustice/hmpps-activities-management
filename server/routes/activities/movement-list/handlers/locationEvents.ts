@@ -6,6 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { eventClashes, scheduledEventSort } from '../../../../utils/utils'
 import { ScheduledEvent } from '../../../../@types/activitiesAPI/types'
+import { PrisonerStatus } from '../../../../@types/prisonApiImportCustom'
 
 export default class LocationEventsRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
@@ -34,11 +35,18 @@ export default class LocationEventsRoutes {
       return res.redirect(`locations?dateOption=${dateOption}${dateQuery}&timeSlot=${timeSlot}`)
     }
 
-    const prisonerNumbers = [...new Set(internalLocationEvents.flatMap(l => l.events).map(e => e.prisonerNumber))]
-    const [prisoners, otherEvents] = await Promise.all([
-      this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
-      this.activitiesService.getScheduledEventsForPrisoners(simpleDate.toRichDate(), prisonerNumbers, user),
-    ])
+    // Get only the prisoners resident at the prison that are not inactive out
+    const prisoners = (
+      await this.prisonService.searchInmatesByPrisonerNumbers(
+        [...new Set(internalLocationEvents.flatMap(l => l.events).map(e => e.prisonerNumber))],
+        user,
+      )
+    ).filter(p => p.prisonId === user.activeCaseLoadId && p.status !== PrisonerStatus.INACTIVE_OUT)
+    const otherEvents = await this.activitiesService.getScheduledEventsForPrisoners(
+      simpleDate.toRichDate(),
+      prisoners.map(p => p.prisonerNumber),
+      user,
+    )
 
     const allEvents = [
       ...otherEvents.activities,
@@ -86,7 +94,7 @@ export default class LocationEventsRoutes {
 
               return {
                 ...p,
-                alerts: p.alerts.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
+                alerts: p.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
                 events,
                 clashingEvents,
               } as MovementListPrisonerEvents
