@@ -134,6 +134,21 @@ export interface paths {
      */
     post: operations['getScheduledEventsForMultiplePrisoners']
   }
+  '/scheduled-events/prison/{prisonCode}/locations': {
+    /**
+     * Get a list of scheduled events for a prison and list of internal location ids numbers for a date and optional time slot
+     * @description
+     *       Returns scheduled events for the prison, internal location ids, single date and an optional time slot.
+     *       This endpoint only returns activities and appointments and these come from the local database.
+     *       This endpoint supports the creation of movement lists.
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    post: operations['getScheduledEventsForMultipleLocations']
+  }
   '/prisons/{prisonCode}/prisoner-allocations': {
     /**
      * Get all allocations for prisoners
@@ -571,6 +586,23 @@ export interface paths {
      * * ACTIVITY_ADMIN
      */
     get: operations['getLocationGroups']
+  }
+  '/locations/prison/{prisonCode}/events-summaries': {
+    /**
+     * Get a list of internal locations that have events scheduled to take place on the specified date and optional time slot.
+     *
+     * @description
+     *       Returns internal locations that have events scheduled to take place on the specified date and optional time slot.
+     *       Will contain summary information about the events taking place at the location as well as the total number of
+     *       prisoners due to arrive at the location. This endpoint supports the creation of movement lists allowing
+     *       users to select from a sublist of only the internal locations that have events scheduled there.
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    get: operations['getInternalLocationEventsSummary']
   }
   '/event-review/prison/{prisonCode}': {
     /**
@@ -1562,6 +1594,41 @@ export interface components {
        * @description The event priority - configurable by prison, or via defaults.
        */
       priority: number
+    }
+    /**
+     * @description
+     *   The details of an internal location that has events scheduled to take place there. Supports movement lists.
+     *   Contains additional information about the events taking place at the location.
+     *   The system of record for internal locations is NOMIS and they are managed in that application.
+     */
+    InternalLocationEvents: {
+      /**
+       * Format: int64
+       * @description
+       *     The id of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID in NOMIS.
+       *
+       * @example 27723
+       */
+      id: number
+      /**
+       * @description
+       *     The prison code/agency id of the internal location. Mapped from AGENCY_LOCATIONS.AGY_LOC_ID in NOMIS.
+       *
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description The code of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.DESCRIPTION
+       * @example EDUC-ED1-ED1
+       */
+      code: string
+      /**
+       * @description The description of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.USER_DESC
+       * @example Education 1
+       */
+      description: string
+      /** @description Collection of scheduled events due to take place at the internal location */
+      events: components['schemas']['ScheduledEvent'][]
     }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
@@ -5219,6 +5286,40 @@ export interface components {
        */
       children: components['schemas']['LocationGroup'][]
     }
+    /**
+     * @description
+     *   The summary of an internal location that has events scheduled to take place there. Supports movement lists.
+     *   Will contain additional summary information about the events taking place at the location as well as the total
+     *   number of prisoners due to arrive at the location.
+     *   The system of record for internal locations is NOMIS and they are managed in that application.
+     */
+    InternalLocationEventsSummary: {
+      /**
+       * Format: int64
+       * @description
+       *     The id of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.INTERNAL_LOCATION_ID in NOMIS.
+       *
+       * @example 27723
+       */
+      id: number
+      /**
+       * @description
+       *     The prison code/agency id of the internal location. Mapped from AGENCY_LOCATIONS.AGY_LOC_ID in NOMIS.
+       *
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description The code of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.DESCRIPTION
+       * @example EDUC-ED1-ED1
+       */
+      code: string
+      /**
+       * @description The description of the internal location. Mapped from AGENCY_INTERNAL_LOCATIONS.USER_DESC
+       * @example Education 1
+       */
+      description: string
+    }
     /** @description Describes one event that has occurred to indicate a change of circumstance */
     EventReview: {
       /**
@@ -6439,6 +6540,69 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['PrisonerScheduledEvents']
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Get a list of scheduled events for a prison and list of internal location ids numbers for a date and optional time slot
+   * @description
+   *       Returns scheduled events for the prison, internal location ids, single date and an optional time slot.
+   *       This endpoint only returns activities and appointments and these come from the local database.
+   *       This endpoint supports the creation of movement lists.
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  getScheduledEventsForMultipleLocations: {
+    parameters: {
+      query: {
+        /** @description The exact date to return events for (required) in format YYYY-MM-DD */
+        date: string
+        /** @description Time slot of the events (optional). If supplied, one of AM, PM or ED. */
+        timeSlot?: 'AM' | 'PM' | 'ED'
+      }
+      path: {
+        /** @description The 3-character prison code. */
+        prisonCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': number[]
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more scheduled events found */
+      200: {
+        content: {
+          'application/json': components['schemas']['InternalLocationEvents'][]
         }
       }
       /** @description Invalid request */
@@ -8170,6 +8334,66 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['LocationGroup'][]
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Get a list of internal locations that have events scheduled to take place on the specified date and optional time slot.
+   *
+   * @description
+   *       Returns internal locations that have events scheduled to take place on the specified date and optional time slot.
+   *       Will contain summary information about the events taking place at the location as well as the total number of
+   *       prisoners due to arrive at the location. This endpoint supports the creation of movement lists allowing
+   *       users to select from a sublist of only the internal locations that have events scheduled there.
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  getInternalLocationEventsSummary: {
+    parameters: {
+      query: {
+        /** @description Date of scheduled events (required). Format YYYY-MM-DD. Up to 60 days in the future */
+        date: string
+        /** @description Time slot for the scheduled events (optional). If supplied, one of AM, PM or ED. */
+        timeSlot?: 'AM' | 'PM' | 'ED'
+      }
+      path: {
+        /** @description The 3-digit prison code. */
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more internal locations with scheduled events found */
+      200: {
+        content: {
+          'application/json': components['schemas']['InternalLocationEventsSummary']
         }
       }
       /** @description Invalid request */

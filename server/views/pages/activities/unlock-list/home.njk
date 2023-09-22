@@ -1,13 +1,13 @@
 {% extends "homepageLayout.njk" %}
 {% from "components/card.njk" import card %}
 
-{% set pageTitle = applicationName + " - Manage unlock lists" %}
+{% set pageTitle = applicationName + " - Manage unlock and movement lists" %}
 {% set pageId = 'unlock-list-home' %}
 {% set hardBackLinkHref = "/activities" %}
 {% set hardBackLinkText = "Back to all allocate, unlock and attend tasks" %}
 
 {% block heading %}
-    <h1 class="govuk-heading-l">Manage unlock lists</h1>
+    <h1 class="govuk-heading-l">Manage unlock and movement lists</h1>
 {% endblock %}
 
 {% block content %}
@@ -20,6 +20,17 @@
                 "heading": "Create unlock lists",
                 "description": "Create and print unlock lists.",
                 "data-qa": "create-unlock-lists"
+            }) }}
+        </div>
+
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "id": "CreateMovementLists",
+                "href": "/activities/movement-list/choose-details",
+                "clickable": "true",
+                "heading": "Create movement lists",
+                "description": "Create and print movement lists.",
+                "data-qa": "create-movement-lists"
             }) }}
         </div>
     </div>

@@ -50,6 +50,7 @@ import {
 } from '../utils/editAppointmentUtils'
 import ServiceName from '../enum/serviceName'
 import SimpleDate, { simpleDateFromPlain } from '../commonValidationTypes/simpleDate'
+import DateOption from '../enum/dateOption'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -102,6 +103,7 @@ export function registerNunjucks(app?: express.Express): Environment {
     {
       autoescape: true,
       express: app,
+      watch: process.env.NODE_ENV === 'live-development',
     },
   )
 
@@ -156,6 +158,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('YesNo', YesNo)
   njkEnv.addGlobal('EventType', EventType)
   njkEnv.addGlobal('EventSource', EventSource)
+  njkEnv.addGlobal('DateOption', DateOption)
   njkEnv.addGlobal('TimeSlot', TimeSlot)
   njkEnv.addGlobal('AppointmentFrequency', AppointmentFrequency)
   njkEnv.addGlobal('AppointmentType', AppointmentType)

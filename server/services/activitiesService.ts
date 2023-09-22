@@ -332,4 +332,29 @@ export default class ActivitiesService {
   ) {
     return this.activitiesApiClient.patchWaitlistApplication(applicationId, updateWaitlistRequest, user)
   }
+
+  async getInternalLocationEventsSummaries(prisonCode: string, date: Date, user: ServiceUser, timeSlot?: string) {
+    return this.activitiesApiClient.getInternalLocationEventsSummaries(
+      prisonCode,
+      format(date, 'yyyy-MM-dd'),
+      user,
+      timeSlot,
+    )
+  }
+
+  async getInternalLocationEvents(
+    prisonCode: string,
+    date: Date,
+    internalLocationIds: number[],
+    user: ServiceUser,
+    timeSlot?: string,
+  ) {
+    return this.activitiesApiClient.getInternalLocationEvents(
+      prisonCode,
+      format(date, 'yyyy-MM-dd'),
+      internalLocationIds,
+      user,
+      timeSlot,
+    )
+  }
 }

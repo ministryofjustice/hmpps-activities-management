@@ -1,0 +1,61 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
+
+{% set pageTitle = "Locations with activities or appointments in this session" %}
+{% set pageId = 'movement-list-locations-page' %}
+{% set jsBackLink = true %}
+
+{% macro locationActions(location) %}
+    <a href="location-events?locationIds={{ location.id }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
+        View movement list
+    </a>
+{% endmacro %}
+
+{% set locationsTableRows = [] %}
+{% for location in locations %}
+    {% set locationsTableRows = (locationsTableRows.push([
+        {
+            text: location.description,
+            attributes: { 'data-qa': 'location-' + loop.index + '-description' }
+        }, {
+            html: locationActions(location),
+            classes: 'govuk-!-text-align-right',
+            attributes: { 'data-qa': 'location-' + loop.index + '-view-movement-list' }
+        }
+    ]), locationsTableRows) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l govuk-!-margin-0">Locations with activities or appointments in this session</h1>
+            <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot | upper }} session</span>
+            <span class="govuk-caption-l govuk-!-margin-bottom-6" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">{{ locations | length }} location{{ "s" if locations | length != 1 }}</h2>
+
+            {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-qa': 'locations'
+                },
+                head: [
+                    {
+                        text: "Location",
+                        attributes: { "aria-sort": "ascending" }
+                    },
+                    {
+                        html: '<span class="govuk-visually-hidden">Actions</span>',
+                        classes: 'action-column'
+                    }],
+                rows: locationsTableRows
+            }) }}
+        </div>
+    </div>
+{% endblock %}

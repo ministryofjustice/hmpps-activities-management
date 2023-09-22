@@ -6,6 +6,10 @@
 
 .govuk-table__cell {
   word-break: break-word;
+
+  .govuk-tag {
+    word-break: keep-all;
+  }
 }
 
 .action-column {
