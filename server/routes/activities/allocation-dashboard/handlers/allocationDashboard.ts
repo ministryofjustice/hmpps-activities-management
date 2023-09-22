@@ -203,30 +203,30 @@ export default class AllocationDashboardRoutes {
   }
 
   private getCurrentlyAllocated = async (scheduleId: number, user: ServiceUser) => {
-    const currentlyAllocated = await this.activitiesService.getAllocations(scheduleId, user)
+    const currentlyAllocated = await this.activitiesService.getAllocationsWithParams(
+      scheduleId,
+      { activeOnly: true, includePrisonerSummary: true },
+      user,
+    )
     const prisonerNumbers = currentlyAllocated.map(allocation => allocation.prisonerNumber)
-    const [inmateDetails, prisonerAllocations]: [Prisoner[], PrisonerAllocations[]] = await Promise.all([
-      this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
-      this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
-    ])
+    const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user)
 
-    return inmateDetails.map(inmate => {
-      const thisAllocation = currentlyAllocated.find(a => a.prisonerNumber === inmate.prisonerNumber)
+    return currentlyAllocated.map(allocation => {
       let otherAllocations: Allocation[] = []
       if (prisonerAllocations.length > 0) {
         otherAllocations = prisonerAllocations
-          .find(a => a.prisonerNumber === inmate.prisonerNumber)
+          .find(a => a.prisonerNumber === allocation.prisonerNumber)
           ?.allocations.filter(a => a.scheduleId !== scheduleId)
       }
       return {
-        allocationId: thisAllocation.id,
-        name: `${inmate.firstName} ${inmate.lastName}`,
-        prisonerNumber: inmate.prisonerNumber,
-        cellLocation: inmate.cellLocation,
-        releaseDate: parseDate(inmate.releaseDate),
-        startDate: parseDate(thisAllocation.startDate),
-        endDate: parseDate(thisAllocation.endDate),
-        status: thisAllocation.status,
+        allocationId: allocation.id,
+        name: allocation.prisonerName,
+        prisonerNumber: allocation.prisonerNumber,
+        cellLocation: allocation.cellLocation,
+        earliestReleaseDate: allocation.earliestReleaseDate,
+        startDate: parseDate(allocation.startDate),
+        endDate: parseDate(allocation.endDate),
+        status: allocation.status,
         otherAllocations: otherAllocations?.map(a => ({
           activityId: a.activityId,
           scheduleName: a.scheduleDescription,

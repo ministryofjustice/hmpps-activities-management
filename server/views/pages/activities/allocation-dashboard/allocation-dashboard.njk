@@ -9,6 +9,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "components/searchBar.njk" import searchBar %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
+{% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
 
 {% set pageTitle = applicationName + " - Allocate" %}
 {% set pageId = 'allocation-dashboard-page' %}
@@ -218,7 +219,7 @@
                     html: otherAllocationsHtml
                 },
                 {
-                    text: row.releaseDate | formatDate('d MMMM yyyy') if row.releaseDate else 'TBC'
+                    html: earliestReleaseDate(row.earliestReleaseDate)
                 }
             ]
         }), rows) %}
@@ -659,7 +660,7 @@
                     html: currentAllocationsHtml
                 },
                 {
-                    text: row.releaseDate | formatDate('d MMMM yyyy') if row.releaseDate else 'TBC'
+                    html: earliestReleaseDate(row.earliestReleaseDate)
                 }
             ]
         }), rows) %}

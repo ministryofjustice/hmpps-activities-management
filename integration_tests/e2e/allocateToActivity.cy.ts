@@ -2,7 +2,6 @@ import { addMonths } from 'date-fns'
 import getActivities from '../fixtures/activitiesApi/getActivities.json'
 import getSchedulesInActivity from '../fixtures/activitiesApi/getSchedulesInActivity.json'
 import getAllocations from '../fixtures/activitiesApi/getAllocations.json'
-import inmateDetails from '../fixtures/prisonerSearchApi/prisonerSearchG4793VF.json'
 import prisonerAllocations from '../fixtures/activitiesApi/prisonerAllocations.json'
 import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
 import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
@@ -11,7 +10,6 @@ import getPrisonerIepSummary from '../fixtures/incentivesApi/getPrisonerIepSumma
 import getActivity from '../fixtures/activitiesApi/getActivity.json'
 import getMdiPrisonPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import getCandidates from '../fixtures/activitiesApi/getCandidates.json'
-import getWaitlist from '../fixtures/activitiesApi/getWaitlist.json'
 import getCandidateSuitability from '../fixtures/activitiesApi/getCandidateSuitability.json'
 
 import IndexPage from '../pages/index'
@@ -38,11 +36,10 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A5015DY', getCandidateSuitability)
     cy.stubEndpoint('GET', '/schedules/2', getSchedule)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
-    cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true', getAllocations)
-    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
+    cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
-    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', getWaitlist)
+    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', JSON.parse('[]'))
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('GET', '/api/offenders/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/iep/reviews/prisoner/A5015DY', getPrisonerIepSummary)

@@ -10,6 +10,7 @@ import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashb
 import atLeast from '../../../../../jest.setup'
 import {
   Activity,
+  ActivityCandidate,
   Allocation,
   PrisonerAllocations,
   WaitingListApplication,
@@ -113,7 +114,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           { levelCode: 'STD', levelName: 'Standard' },
           { levelCode: 'ENH', levelName: 'Enhanced' },
         ] as IncentiveLevel[])
-      when(activitiesService.getAllocations)
+      when(activitiesService.getAllocationsWithParams)
         .calledWith(atLeast(1))
         .mockResolvedValue([
           {
@@ -121,32 +122,20 @@ describe('Route Handlers - Allocation dashboard', () => {
             prisonerNumber: 'ABC123',
             allocatedTime: '2023-02-17T15:22:00',
             startDate: '2023-02-17',
+            prisonerName: 'Joe Bloggs',
+            cellLocation: 'MDI-1-1-101',
+            earliestReleaseDate: { releaseDate: '2023-12-25' },
           },
           {
             id: 2,
             prisonerNumber: '321CBA',
             allocatedTime: '2023-02-16T12:43:00',
             startDate: '2023-02-16',
+            prisonerName: 'John Smith',
+            cellLocation: 'MDI-1-1-103',
+            earliestReleaseDate: { releaseDate: '2023-12-26' },
           },
         ] as Allocation[])
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(atLeast(['ABC123', '321CBA']))
-        .mockResolvedValue([
-          {
-            prisonerNumber: 'ABC123',
-            firstName: 'Joe',
-            lastName: 'Bloggs',
-            cellLocation: 'MDI-1-1-101',
-            releaseDate: '2023-12-25',
-          },
-          {
-            prisonerNumber: '321CBA',
-            firstName: 'John',
-            lastName: 'Smith',
-            cellLocation: 'MDI-1-1-103',
-            releaseDate: '2023-12-26',
-          },
-        ] as Prisoner[])
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(atLeast(['A0013DZ']))
         .mockResolvedValue([
@@ -206,8 +195,10 @@ describe('Route Handlers - Allocation dashboard', () => {
               prisonerNumber: 'A0013DZ',
               cellLocation: '4-2-009',
               otherAllocations: [],
-              releaseDate: null,
-            },
+              earliestReleaseDate: {
+                releaseDate: null,
+              },
+            } as ActivityCandidate,
           ],
         })
       when(activitiesService.fetchActivityWaitlist)
@@ -282,7 +273,7 @@ describe('Route Handlers - Allocation dashboard', () => {
                 },
               ],
               prisonerNumber: 'ABC123',
-              releaseDate: new Date(2023, 11, 25),
+              earliestReleaseDate: { releaseDate: '2023-12-25' },
             },
             {
               allocationId: 2,
@@ -297,7 +288,7 @@ describe('Route Handlers - Allocation dashboard', () => {
                 },
               ],
               prisonerNumber: '321CBA',
-              releaseDate: new Date(2023, 11, 26),
+              earliestReleaseDate: { releaseDate: '2023-12-26' },
             },
           ],
           waitlistSize: 1,
@@ -332,7 +323,7 @@ describe('Route Handlers - Allocation dashboard', () => {
                 name: 'RODNEY REINDEER',
                 otherAllocations: [],
                 prisonerNumber: 'A0013DZ',
-                releaseDate: null,
+                earliestReleaseDate: { releaseDate: null },
               },
             ],
           },

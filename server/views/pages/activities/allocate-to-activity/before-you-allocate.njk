@@ -5,6 +5,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Before you allocate" %}
 {% set pageId = 'before-you-allocate-page' %}
@@ -81,7 +82,7 @@
                             text: 'Earliest release date'
                         },
                         {
-                            text: allocationSuitability.releaseDate.earliestReleaseDate | formatDate('dd MMMM yyyy') or "TBC"
+                            html: earliestReleaseDate(allocationSuitability.releaseDate.earliestReleaseDate)
                         },
                         {
                             html: govukTag({

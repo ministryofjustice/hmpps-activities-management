@@ -1713,6 +1713,11 @@ export interface components {
        */
       status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
       plannedDeallocation?: components['schemas']['PlannedDeallocation']
+      /** @description The name of the prisoner. Included only if includePrisonerSummary = true */
+      prisonerName?: string
+      /** @description The cell location of the prisoner. Included only if includePrisonerSummary = true */
+      cellLocation?: string
+      earliestReleaseDate?: components['schemas']['EarliestReleaseDate']
     }
     /**
      * @description The code and descriptive reason why this prisoner was deallocated from the activity
@@ -1729,6 +1734,25 @@ export interface components {
        * @example Released from prison
        */
       description: string
+    }
+    /** @description Summary of a prisoner's sentence and resulting earliest release date */
+    EarliestReleaseDate: {
+      /**
+       * Format: date
+       * @description The prisoner's earliest release date
+       * @example 2027-09-20
+       */
+      releaseDate?: string
+      /** @description The prisoner's earliest release date is the tariff date */
+      isTariffDate: boolean
+      /** @description The prisoner's sentence is indeterminate */
+      isIndeterminateSentence: boolean
+      /** @description The prisoner is an immigration detainee */
+      isImmigrationDetainee: boolean
+      /** @description The prisoner is convicted and unsentenced */
+      isConvictedUnsentenced: boolean
+      /** @description The prisoner is on remand */
+      isRemand: boolean
     }
     /** @description Describes one instance of a planned deallocation */
     PlannedDeallocation: {
@@ -4719,11 +4743,7 @@ export interface components {
        * @example true
        */
       suitable: boolean
-      /**
-       * Format: date
-       * @description The prisoner's earliest release date
-       */
-      earliestReleaseDate?: string
+      earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     /**
      * @description The phone number associated with the address
@@ -4784,18 +4804,15 @@ export interface components {
       cellLocation?: string
       /** @description Any activities the candidate is currently allocated to (excluding ended) */
       otherAllocations: components['schemas']['Allocation'][]
-      /**
-       * Format: date
-       * @description The candidate's earliest release date
-       * @example 2027-01-24
-       */
-      releaseDate?: string
+      earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
       /** Format: int32 */
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
@@ -4805,8 +4822,6 @@ export interface components {
       pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      first?: boolean
-      last?: boolean
       empty?: boolean
     }
     PageableObject: {
@@ -4814,16 +4829,16 @@ export interface components {
       offset?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
-      pageSize?: number
-      /** Format: int32 */
       pageNumber?: number
+      /** Format: int32 */
+      pageSize?: number
       paged?: boolean
       unpaged?: boolean
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -6333,6 +6348,8 @@ export interface operations {
       query?: {
         /** @description If true will only return active allocations. Defaults to true. */
         activeOnly?: boolean
+        /** @description If true will fetch and add prisoner details from prisoner search. Defaults to false. */
+        includePrisonerSummary?: boolean
         /** @description If provided will filter allocations by the given date. Format YYYY-MM-DD. */
         date?: string
       }
