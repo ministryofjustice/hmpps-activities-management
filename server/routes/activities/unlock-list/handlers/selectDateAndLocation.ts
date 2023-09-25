@@ -58,6 +58,9 @@ export default class SelectDateAndLocationRoutes {
 
     req.session.unlockListJourney.timeSlot = activitySlot
     req.session.unlockListJourney.location = location
+    req.session.unlockListJourney.subLocationFilters = null
+    req.session.unlockListJourney.activityFilter = null
+    req.session.unlockListJourney.stayingOrLeavingFilter = null
 
     const selectedDate = this.getDateValue(datePresetOption, date)
     return res.redirect(`planned-events?date=${selectedDate}`)

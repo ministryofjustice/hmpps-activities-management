@@ -20,7 +20,7 @@ describe('Route Handlers - Select period', () => {
       redirect: jest.fn(),
     } as unknown as Response
 
-    req = {} as unknown as Request
+    req = { session: {} } as unknown as Request
   })
 
   describe('GET', () => {
@@ -33,6 +33,17 @@ describe('Route Handlers - Select period', () => {
   })
 
   describe('POST', () => {
+    it('sets categoryFilters to null', async () => {
+      req.session.attendanceSummaryJourney = {}
+      req.body = {
+        datePresetOption: 'today',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.attendanceSummaryJourney).toEqual(null)
+    })
+
     it("redirect with the expected query params for when today's date is selected", async () => {
       req.body = {
         datePresetOption: 'today',
