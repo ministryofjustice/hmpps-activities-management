@@ -30,7 +30,7 @@ import AppointmentSetTimesRoutes, { AppointmentTimes } from './handlers/appointm
 import fetchAppointmentSet from '../../../middleware/appointments/fetchAppointmentSet'
 import ScheduleRoutes from './handlers/schedule'
 
-export default function Create({ prisonService, activitiesService }: Services): Router {
+export default function Create({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
@@ -53,11 +53,11 @@ export default function Create({ prisonService, activitiesService }: Services): 
   const checkAnswersRoutes = new CheckAnswersRoutes(activitiesService)
   const confirmationRoutes = new ConfirmationRoutes()
   const howToAddPrisonerRoutes = new HowToAddPrisonerRoutes()
-  const reviewPrisonerRoutes = new ReviewPrisonerRoutes()
+  const reviewPrisonerRoutes = new ReviewPrisonerRoutes(metricsService)
   const appointmentSetUploadRoutes = new AppointmentSetUploadRoutes(new PrisonerListCsvParser(), prisonService)
   const appointmentSetDateRoutes = new AppointmentSetDateRoutes()
   const appointmentSetTimesRoutes = new AppointmentSetTimesRoutes()
-  const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService)
+  const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
 
   get('/start-individual', startJourneyRoutes.INDIVIDUAL)
   get('/start-group', startJourneyRoutes.GROUP)

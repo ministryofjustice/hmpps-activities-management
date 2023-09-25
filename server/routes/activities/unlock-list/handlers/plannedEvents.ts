@@ -2,12 +2,14 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
 import { toDate } from '../../../../utils/utils'
-import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
 
 export default class PlannedEventsRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly unlockListService: UnlockListService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -44,6 +46,8 @@ export default class PlannedEventsRoutes {
       stayingOnWing: unlockListItems.length - leavingWingCount,
     }
 
+    this.metricsService.trackEvent(new MetricsEvent('SAA-Unlock-List', res.locals.user))
+
     res.render('pages/activities/unlock-list/planned-events', {
       date,
       timeSlot,
@@ -52,8 +56,5 @@ export default class PlannedEventsRoutes {
       unlockListItems,
       movementCounts,
     })
-
-    const properties = { user: res.locals.user.username, prisonCode: res.locals.user.activeCaseLoadId }
-    trackEvent({ eventName: 'SAA-Unlock-List', properties })
   }
 }

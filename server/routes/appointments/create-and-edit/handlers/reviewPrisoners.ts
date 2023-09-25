@@ -1,9 +1,12 @@
 import { Request, Response } from 'express'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import config from '../../../../config'
-import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
 
 export default class ReviewPrisonerRoutes {
+  constructor(private readonly metricsService: MetricsService) {}
+
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId } = req.params
     const { appointmentJourney } = req.session
@@ -18,17 +21,13 @@ export default class ReviewPrisonerRoutes {
     let prisoners
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
       prisoners = req.session.editAppointmentJourney.addPrisoners
-      const properties = {
-        user: res.locals.user.username,
-        prisonCode: res.locals.user.activeCaseLoadId,
+
+      const changeFromScheduleEvent = new MetricsEvent('SAA-Appointment-Change-From-Schedule', res.locals.user)
+      changeFromScheduleEvent.addProperties({
         appointmentJourneyMode: req.session.appointmentJourney.mode,
         property: 'attendees',
-      }
-
-      trackEvent({
-        eventName: 'SAA-Appointment-Change-From-Schedule',
-        properties,
       })
+      this.metricsService.trackEvent(changeFromScheduleEvent)
     } else if (req.session.appointmentJourney.type === AppointmentType.SET) {
       prisoners = req.session.appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
     } else {

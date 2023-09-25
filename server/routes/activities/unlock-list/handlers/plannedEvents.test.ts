@@ -5,15 +5,19 @@ import PlannedEventRoutes from './plannedEvents'
 import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
 import { LocationGroup } from '../../../../@types/activitiesAPI/types'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/unlockListService')
+jest.mock('../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const unlockListService = new UnlockListService(null, null) as jest.Mocked<UnlockListService>
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Unlock list routes - planned events', () => {
-  const handler = new PlannedEventRoutes(activitiesService, unlockListService)
+  const handler = new PlannedEventRoutes(activitiesService, unlockListService, metricsService)
 
   const locationsAtPrison = [
     {
@@ -156,6 +160,8 @@ describe('Unlock list routes - planned events', () => {
         'Leaving',
         res.locals.user,
       )
+
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(new MetricsEvent('SAA-Unlock-List', res.locals.user))
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         date: '2022-01-01',
