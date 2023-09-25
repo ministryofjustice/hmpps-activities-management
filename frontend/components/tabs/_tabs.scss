@@ -21,23 +21,22 @@
       color: $govuk-link-colour;
 
       &:hover {
-        color: #619bcd !important;
+        color: govuk-colour('dark-blue') !important;
+      }
+      &:focus {
+        color: #000 !important;
+        box-shadow: none;
       }
     }
 
     &--selected {
       margin-top: 0;
-      border-bottom: 5px solid $govuk-brand-colour;
+      border-bottom: 5px solid #000;
 
-      .govuk-tabs__tab, .govuk-tabs__tab:visited {
-        color: $govuk-link-active-colour;
-      }
-    }
-
-    .govuk-tabs__tab {
-      &:focus {
-        box-shadow: none;
-        background: none;
+      .govuk-tabs__tab {
+        &, &:visited, &:hover {
+          color: $govuk-link-active-colour;
+        }
       }
     }
   }
