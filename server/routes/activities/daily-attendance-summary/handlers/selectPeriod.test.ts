@@ -33,7 +33,7 @@ describe('Route Handlers - Select period', () => {
   })
 
   describe('POST', () => {
-    it('sets categoryFilters to null', async () => {
+    it('sets attendanceSummaryJourney to null', async () => {
       req.session.attendanceSummaryJourney = {}
       req.body = {
         datePresetOption: 'today',
