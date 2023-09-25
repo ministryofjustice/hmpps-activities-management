@@ -20,7 +20,9 @@ import {
   isApplyToQuestionRequired,
   getLastAppointment,
   getFirstAppointment,
+  applyToAppointmentCount,
 } from '../utils/editAppointmentUtils'
+import config from '../config'
 
 export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -124,6 +126,16 @@ export default class EditAppointmentService {
     }
 
     if (editAppointmentJourney.addPrisoners?.length > 0) {
+      const { maxAppointmentInstances } = config.appointmentsConfig
+      const numberOfAppointments = applyToAppointmentCount(applyTo, editAppointmentJourney)
+      const maxPrisoners = Math.floor(maxAppointmentInstances / numberOfAppointments)
+
+      if (editAppointmentJourney.addPrisoners.length > maxPrisoners) {
+        return res.validationFailed(
+          'applyTo',
+          `You cannot add more than ${maxPrisoners} attendees for this number of appointments.`,
+        )
+      }
       request.addPrisonerNumbers = editAppointmentJourney.addPrisoners.map(prisoner => prisoner.number)
     }
 
