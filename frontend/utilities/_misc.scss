@@ -8,10 +8,6 @@ body {
   color-adjust: exact;
 }
 
-.hide {
-  display: none;
-}
-
 //Hide elements when JS is turned off
 .no-js-hidden {
   display: none;
@@ -65,10 +61,6 @@ body {
   }
 }
 
-.govuk-table__cell--grey {
-  background-color: govuk-tint(govuk-colour("mid-grey"), 30);
-}
-
 .mid-grey-tint-20-hr {
   border: none;
   border-top: 1px solid govuk-colour("mid-grey");
@@ -101,11 +93,6 @@ body {
 
 .hmpps-inline-block {
   display: inline-block;
-}
-
-.dashed-hr {
-  border: none;
-  border-top: 1px dashed govuk-tint(govuk-colour("mid-grey"), 20);
 }
 
 .dashed-mid-grey-tint-20-hr {

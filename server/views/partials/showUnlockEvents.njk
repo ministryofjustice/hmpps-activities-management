@@ -4,7 +4,7 @@
 {% macro showUnlockEvents(events) %}
     {% for event in events %}
         <div class="govuk-body-s govuk-!-margin-0 unlock-list-event">
-            <div class="govuk-!-margin-right-2">
+            <div class="govuk-!-margin-right-2 event-details">
                 <div class="govuk-!-font-weight-bold">
                     {% if event.eventType === 'ACTIVITY' and event.eventSource === 'SAA' %}
                         <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list?preserveHistory=true"
@@ -38,14 +38,12 @@
                     <div>{{ locationText(event) }}</div>
                 {% endif %}
             </div>
-            <div class="print-columns print-only">
-                <div class="checkbox-container">
-                    {% if not event.cancelled %}
-                        <div class="print-checkbox"></div>
-                        <div class="print-checkbox"></div>
-                        <div class="print-checkbox"></div>
-                    {% endif %}
-                </div>
+            <div class="checkbox-container print-only">
+                {% if not event.cancelled %}
+                    <div class="checkbox-width"><div class="print-checkbox"></div></div>
+                    <div class="checkbox-width"><div class="print-checkbox"></div></div>
+                    <div class="checkbox-width"><div class="print-checkbox"></div></div>
+                {% endif %}
             </div>
         </div>
         {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}

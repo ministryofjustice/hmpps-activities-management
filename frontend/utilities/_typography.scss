@@ -21,7 +21,7 @@
                 height: 64px;
 
                 @include govuk-media-query($until: tablet, $media-type: print) {
-                    width: 38px;
+                    width: 40px;
                     height: 52px;
                 }
 

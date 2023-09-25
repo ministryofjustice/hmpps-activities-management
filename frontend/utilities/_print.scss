@@ -26,6 +26,7 @@
   .govuk-width-container {
     @include govuk-responsive-margin(3, 'left', $important: true);
     @include govuk-responsive-margin(3, 'right', $important: true);
+    max-width: 100% !important;
   }
 
   // govuk-frontend overrides
@@ -64,21 +65,6 @@
 
   .govuk-textarea {
     font-size: 11pt;
-  }
-
-  .govuk-warning-text, .govuk-warning-text--small {
-    .govuk-warning-text__text {
-      font-size: 9pt;
-      padding-left: 20px;
-      line-height: 10pt;
-    }
-    .govuk-warning-text__icon {
-      font-size: 9pt;
-      min-width: 19px;
-      min-height: 19px;
-      line-height: 9pt;
-      margin-top: -3px;
-    }
   }
 
   .govuk-table {

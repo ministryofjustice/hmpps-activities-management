@@ -16,7 +16,7 @@
 {% set hardBackLinkHref = "select-date-and-location" %}
 
 {% block content %}
-   <table class="govuk-table govuk-!-margin-0">
+   <table class="govuk-table govuk-!-margin-0 unlock-list">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row"><td>
                 <div class="govuk-grid-row govuk-!-margin-bottom-2">
@@ -177,11 +177,11 @@
                                 {
                                     attributes: { id: 'cell-location-' + loop.index, "data-sort-value": item.cellLocation },
                                     text: item.cellLocation,
-                                    classes: 'govuk-table_cell govuk-table__cell--vertical-align-top govuk-!-display-none-print'
+                                    classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
                                 },
                                 {
                                     html: alertsList({ alerts: item.alerts, category: item.category }),
-                                    classes: 'govuk-table_cell govuk-!-display-none-print'
+                                    classes: 'govuk-table_cell'
                                 }
                             ), row) %}
 
@@ -216,11 +216,11 @@
                                 {
                                     text: "Cell location",
                                     attributes: { "aria-sort": "ascending" },
-                                    classes: 'govuk-table__header govuk-!-display-none-print hmpps-fixed-width-160'
+                                    classes: 'govuk-table__header'
                                 },
                                 {
                                     text: "Relevant alerts",
-                                    classes: 'govuk-table__header govuk-!-display-none-print hmpps-fixed-width-160'
+                                    classes: 'govuk-table__header'
                                 },
                                 {
                                     html: "Event details",
@@ -234,15 +234,15 @@
                                 },
                                 {
                                     html: "<span><span class=\"text-underline\">R</span>efused</span>",
-                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
+                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
                                 },
                                 {
                                     html: "<span>Rest in <span class=\"text-underline\">C</span>ell</span>",
-                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
+                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
                                 },
                                 {
                                     html: "<span><span class=\"text-underline\">U</span>nlocked</span>",
-                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header govuk-!-padding-right-1 print-only'
+                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
                                 }
                             ],
                             rows: rows
@@ -265,10 +265,5 @@
     <a href="{{ dpsUrl }}/prisoner/{{ item.prisonerNumber }}" target="_blank" class="govuk-link govuk-link--no-visited-state">
         {{ (item.firstName + " " + item.lastName) | toTitleCase | prisonerName }}
     </a>
-    <div class="govuk-body-s govuk-!-margin-0 print-only" data-qa="prisoner-cell-location">{{ item.cellLocation }}</div>
     <div class="govuk-body-s govuk-!-margin-0" data-qa="prisoner-number">{{ item.prisonerNumber }}</div>
-
-    {% if item.alerts | length > 0 %}
-        <div class="govuk-!-margin-top-1 print-only">{{ alertsList({ alerts: item.alerts, category: item.category }) }}</div>
-    {% endif %}
 {% endmacro %}
