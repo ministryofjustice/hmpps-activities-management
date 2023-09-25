@@ -64,6 +64,8 @@ export default function nunjucksSetup(app: express.Express, { ukBankHolidayServi
   app.locals.applicationName = 'Activities and Appointments'
   app.locals.hmppsAuthUrl = config.apis.hmppsAuth.url
   app.locals.dpsUrl = config.dpsUrl
+  app.locals.reportAFaultUrl = config.reportAFaultUrl
+  app.locals.feedbackUrl = config.feedbackUrl
 
   router.use(async (req, res, next) => {
     app.locals.ukBankHolidays = await ukBankHolidayService.getUkBankHolidays()

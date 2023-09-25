@@ -61,7 +61,11 @@ describe('Unlock list routes - select date and location', () => {
 
   describe('POST', () => {
     beforeEach(() => {
-      req.session.unlockListJourney = {}
+      req.session.unlockListJourney = {
+        subLocationFilters: ['A-Wing'],
+        activityFilter: 'Without',
+        stayingOrLeavingFilter: 'Staying',
+      }
     })
 
     it("redirect with the expected query params for when today's date is selected", async () => {
@@ -77,6 +81,9 @@ describe('Unlock list routes - select date and location', () => {
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${todaysDate}`)
       expect(req.session.unlockListJourney.timeSlot).toEqual('am')
       expect(req.session.unlockListJourney.location).toEqual('here')
+      expect(req.session.unlockListJourney.subLocationFilters).toBeNull()
+      expect(req.session.unlockListJourney.activityFilter).toBeNull()
+      expect(req.session.unlockListJourney.stayingOrLeavingFilter).toBeNull()
     })
 
     it("redirect with the expected query params for when tomorrow's date is selected", async () => {

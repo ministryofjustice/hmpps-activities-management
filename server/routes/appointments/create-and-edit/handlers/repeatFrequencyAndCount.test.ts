@@ -5,6 +5,7 @@ import RepeatFrequencyAndCountRoutes, { RepeatFrequencyAndCount } from './repeat
 import { YesNo } from '../../../../@types/activities'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { AppointmentFrequency } from '../../../../@types/appointments'
+import config from '../../../../config'
 
 describe('Route Handlers - Create Appointment - Repeat Frequency and Count', () => {
   const handler = new RepeatFrequencyAndCountRoutes()
@@ -58,23 +59,31 @@ describe('Route Handlers - Create Appointment - Repeat Frequency and Count', () 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule')
     })
 
-    it('should throw validation error if appointment instances exceed 20,000', async () => {
+    it('should throw validation error if appointment instances exceed "MAX_APPOINTMENT_INSTANCES"', async () => {
+      const { maxAppointmentInstances } = config.appointmentsConfig
+
+      const prisonersToAddCount = 100
+      const maxAllowedAppointmentInstances = Math.floor(maxAppointmentInstances / prisonersToAddCount)
+
       req.body = {
         frequency: AppointmentFrequency.DAILY,
-        numberOfAppointments: 350,
+        // Add 1 more than allowed
+        numberOfAppointments: maxAllowedAppointmentInstances + 1,
       }
 
-      req.session.appointmentJourney.prisoners = Array(60).map((_, i) => ({
-        number: `A12${i}BC`,
-        name: 'Test Prisoner',
-        cellLocation: '1-1-1',
-      }))
+      req.session.appointmentJourney.prisoners = Array(prisonersToAddCount)
+        .fill(null)
+        .map((_, i) => ({
+          number: `A12${i}BC`,
+          name: 'Test Prisoner',
+          cellLocation: '1-1-1',
+        }))
 
       await handler.POST(req, res)
 
       expect(res.validationFailed).toBeCalledWith(
         'numberOfAppointments',
-        'You cannot schedule more than 333 appointments for this number of attendees.',
+        `You cannot schedule more than ${maxAllowedAppointmentInstances} appointments for this number of attendees.`,
       )
       expect(res.redirectOrReturn).toBeCalledTimes(0)
     })

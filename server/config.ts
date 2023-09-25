@@ -120,6 +120,8 @@ export default {
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
+  reportAFaultUrl: get('REPORT_A_FAULT_URL', '#', requiredInProduction),
+  feedbackUrl: get('FEEDBACK_URL', '#', requiredInProduction),
   routeAuth: [
     {
       route: '/activities/allocation-dashboard',
@@ -150,4 +152,7 @@ export default {
   frontendComponentsApiToggleEnabled: Boolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
   ),
+  appointmentsConfig: {
+    maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
+  },
 }

@@ -178,22 +178,25 @@ export const getAppointmentApplyToOptions = (req: Request) => {
   ] as AppointmentApplyToOption[]
 
   if (isApplyToQuestionRequired(editAppointmentJourney)) {
+    const lastAppointment = getLastAppointment(editAppointmentJourney)
+    const editHint = getEditHintAction(appointmentJourney, editAppointmentJourney)
     if (isFirstRemainingAppointment(editAppointmentJourney) || !isLastRemainingAppointment(editAppointmentJourney)) {
+      const applyToCount = applyToAppointmentCount(
+        AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+        editAppointmentJourney,
+      )
       applyToOptions.push({
         applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
         description: isSecondLastRemainingAppointment(editAppointmentJourney)
           ? 'This one and the appointment that comes after it in the series'
           : 'This one and all the appointments that come after it in the series',
-        additionalDescription: `You're ${getEditHintAction(appointmentJourney, editAppointmentJourney)} the following ${
-          getLastAppointment(editAppointmentJourney).sequenceNumber - editAppointmentJourney.sequenceNumber + 1
-        } appointments:<br>${formatDate(
+        additionalDescription: `You're ${editHint} the following ${applyToCount} appointments:<br>${formatDate(
           getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.startDate,
           'd MMMM yyyy',
-        )} (${editAppointmentJourney.sequenceNumber} of ${
-          getLastAppointment(editAppointmentJourney).sequenceNumber
-        }) to ${formatDate(getLastAppointment(editAppointmentJourney).startDate, 'd MMMM yyyy')} (${
-          getLastAppointment(editAppointmentJourney).sequenceNumber
-        } of ${getLastAppointment(editAppointmentJourney).sequenceNumber})`,
+        )} (${editAppointmentJourney.sequenceNumber} of ${lastAppointment.sequenceNumber}) to ${formatDate(
+          lastAppointment.startDate,
+          'd MMMM yyyy',
+        )} (${lastAppointment.sequenceNumber} of ${lastAppointment.sequenceNumber})`,
       })
     }
 
@@ -201,26 +204,40 @@ export const getAppointmentApplyToOptions = (req: Request) => {
       !isFirstRemainingAppointment(editAppointmentJourney) &&
       !hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)
     ) {
+      const applyToCount = applyToAppointmentCount(AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS, editAppointmentJourney)
       applyToOptions.push({
         applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
         description: "This one and all the appointments in the series that haven't happened yet",
-        additionalDescription: `You're ${getEditHintAction(appointmentJourney, editAppointmentJourney)} the following ${
-          getLastAppointment(editAppointmentJourney).sequenceNumber -
-          getFirstAppointment(editAppointmentJourney).sequenceNumber +
-          1
-        } appointments:<br>${formatDate(getFirstAppointment(editAppointmentJourney).startDate, 'd MMMM yyyy')} (${
-          getFirstAppointment(editAppointmentJourney).sequenceNumber
-        } of ${getLastAppointment(editAppointmentJourney).sequenceNumber}) to ${formatDate(
-          getLastAppointment(editAppointmentJourney).startDate,
+        additionalDescription: `You're ${editHint} the following ${applyToCount} appointments:<br>${formatDate(
+          getFirstAppointment(editAppointmentJourney).startDate,
           'd MMMM yyyy',
-        )} (${getLastAppointment(editAppointmentJourney).sequenceNumber} of ${
-          getLastAppointment(editAppointmentJourney).sequenceNumber
+        )} (${getFirstAppointment(editAppointmentJourney).sequenceNumber} of ${
+          lastAppointment.sequenceNumber
+        }) to ${formatDate(lastAppointment.startDate, 'd MMMM yyyy')} (${lastAppointment.sequenceNumber} of ${
+          lastAppointment.sequenceNumber
         })`,
       })
     }
   }
 
   return applyToOptions
+}
+
+export const applyToAppointmentCount = (
+  applyTo: AppointmentApplyTo,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  if (applyTo === AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS) {
+    return getLastAppointment(editAppointmentJourney).sequenceNumber - editAppointmentJourney.sequenceNumber + 1
+  }
+  if (applyTo === AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS) {
+    return (
+      getLastAppointment(editAppointmentJourney).sequenceNumber -
+      getFirstAppointment(editAppointmentJourney).sequenceNumber +
+      1
+    )
+  }
+  return 1
 }
 
 export const getRepeatFrequencyText = (appointmentJourney: AppointmentJourney) => {
