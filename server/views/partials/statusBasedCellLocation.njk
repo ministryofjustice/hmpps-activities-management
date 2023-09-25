@@ -1,5 +1,5 @@
 {% macro statusBasedCellLocation(cellLocation, status) -%}
-  {% if (cellLocation == 'CSWAP' and status == 'ACTIVE OUT') or status == 'INACTIVE OUT' %}
+  {% if (cellLocation == 'CSWAP' and status == PrisonerStatus.ACTIVE_OUT) or status == PrisonerStatus.INACTIVE_OUT %}
     -
   {% else %}
     {{ cellLocation or '-' }}
