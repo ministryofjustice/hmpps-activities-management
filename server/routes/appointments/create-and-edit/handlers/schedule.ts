@@ -5,12 +5,15 @@ import EditAppointmentService from '../../../../services/editAppointmentService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
-import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
+import { asString } from '../../../../utils/utils'
 
 export default class ScheduleRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly editAppointmentService: EditAppointmentService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -117,18 +120,12 @@ export default class ScheduleRoutes {
 
   CHANGE = async (req: Request, res: Response): Promise<void> => {
     const { property, preserveHistory } = req.query
-    const propertyAsString: string = property as string
-    const properties = {
-      user: res.locals.user.username,
-      prisonCode: res.locals.user.activeCaseLoadId,
-      appointmentJourneyMode: req.session.appointmentJourney.mode,
-      property: propertyAsString,
-    }
 
-    trackEvent({
-      eventName: 'SAA-Appointment-Change-From-Schedule',
-      properties,
+    const changeFromSchedule = new MetricsEvent('SAA-Appointment-Change-From-Schedule', res.locals.user).addProperties({
+      appointmentJourneyMode: req.session.appointmentJourney.mode,
+      property: asString(property),
     })
+    this.metricsService.trackEvent(changeFromSchedule)
 
     res.redirect(`${property}${preserveHistory ? '?preserveHistory=true' : ''}`)
   }

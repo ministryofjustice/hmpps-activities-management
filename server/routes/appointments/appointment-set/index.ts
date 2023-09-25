@@ -6,14 +6,14 @@ import AppointmentSetMovementSlipRoutes from './handlers/appointmentSetMovementS
 import { Services } from '../../../services'
 import fetchAppointmentSet from '../../../middleware/appointments/fetchAppointmentSet'
 
-export default function Index({ activitiesService }: Services): Router {
+export default function Index({ activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) =>
     router.get(path, fetchAppointmentSet(activitiesService), asyncMiddleware(handler))
 
   const appointmentSetDetailsRoutes = new AppointmentSetDetailsRoutes()
-  const appointmentSetMovementSlipRoutes = new AppointmentSetMovementSlipRoutes()
+  const appointmentSetMovementSlipRoutes = new AppointmentSetMovementSlipRoutes(metricsService)
 
   get('/', appointmentSetDetailsRoutes.GET)
   get('/movement-slip', appointmentSetMovementSlipRoutes.GET)

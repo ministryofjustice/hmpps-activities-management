@@ -1,9 +1,15 @@
 import { Request, Response } from 'express'
 import ReviewPrisoners from './reviewPrisoners'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
+
+jest.mock('../../../../services/metricsService')
+
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Create Appointment - Review Prisoners', () => {
-  const handler = new ReviewPrisoners()
+  const handler = new ReviewPrisoners(metricsService)
   let req: Request
   let res: Response
   const appointmentId = '2'
@@ -124,6 +130,12 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       ]
       req.session.editAppointmentJourney.addPrisoners = prisoners
       await handler.GET(req, res)
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        new MetricsEvent('SAA-Appointment-Change-From-Schedule', res.locals.user).addProperties({
+          appointmentJourneyMode: req.session.appointmentJourney.mode,
+          property: 'attendees',
+        }),
+      )
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         appointmentId,
         backLinkHref: 'how-to-add-prisoners',

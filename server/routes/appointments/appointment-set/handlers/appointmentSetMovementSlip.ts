@@ -1,7 +1,10 @@
 import { Request, Response } from 'express'
-import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
 
 export default class AppointmentSetMovementSlipRoutes {
+  constructor(private readonly metricsService: MetricsService) {}
+
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentSet } = req
 
@@ -9,21 +12,11 @@ export default class AppointmentSetMovementSlipRoutes {
       appointment => !appointment.isCancelled && !appointment.isExpired,
     )
 
+    const movementSlipPrintedEvent = new MetricsEvent('SAA-Appointment-Set-Movement-Slips-Printed', res.locals.user)
+      .addProperty('appointmentSetId', appointmentSet.id)
+      .addMeasurement('movementSlipCount', appointmentSet.appointments.length)
+    this.metricsService.trackEvent(movementSlipPrintedEvent)
+
     res.render('pages/appointments/appointment-set/movement-slip', { appointmentSet })
-    const properties = {
-      user: res.locals.user.username,
-      prisonCode: appointmentSet.prisonCode,
-      appointmentSetId: appointmentSet.id.toString(),
-    }
-
-    const eventMetrics = {
-      movementSlipCount: appointmentSet.appointments.length,
-    }
-
-    trackEvent({
-      eventName: 'SAA-Appointment-Set-Movement-Slips-Printed',
-      properties,
-      eventMetrics,
-    })
   }
 }
