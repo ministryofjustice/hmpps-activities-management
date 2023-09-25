@@ -11,8 +11,6 @@ generic-service:
   env:
     INGRESS_URL: "https://activities-preprod.prison.service.justice.gov.uk"
     DPS_URL: "https://digital-preprod.prison.service.justice.gov.uk"
-    REPORT_A_FAULT_URL: "https://report-problem-activities.form.service.justice.gov.uk"
-    FEEDBACK_URL: "https://eu.surveymonkey.com/r/G9RZNKY"
     HMPPS_AUTH_URL: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-preprod.prison.service.justice.gov.uk"
     ACTIVITIES_API_URL: "https://activities-api-preprod.prison.service.justice.gov.uk"
