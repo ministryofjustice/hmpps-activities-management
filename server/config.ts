@@ -80,8 +80,8 @@ export default {
     frontendComponents: {
       url: get('FRONTEND_COMPONENT_API_URL', 'http://localhost:8082', requiredInProduction),
       timeout: {
-        response: Number(get('FRONTEND_COMPONENT_API_TIMEOUT_RESPONSE', 50000)),
-        deadline: Number(get('FRONTEND_COMPONENT_API_TIMEOUT_DEADLINE', 50000)),
+        response: Number(get('FRONTEND_COMPONENT_API_TIMEOUT_RESPONSE', 5000)),
+        deadline: Number(get('FRONTEND_COMPONENT_API_TIMEOUT_DEADLINE', 5000)),
       },
       agent: new AgentConfig(Number(get('FRONTEND_COMPONENT_API_TIMEOUT_RESPONSE', 5000))),
     },
