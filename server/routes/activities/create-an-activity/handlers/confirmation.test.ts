@@ -26,6 +26,7 @@ describe('Route Handlers - Create an activity - Confirmation', () => {
     req = {
       session: {
         createJourney: {},
+        journeyMetrics: {},
       },
       params: {
         id: '1',
