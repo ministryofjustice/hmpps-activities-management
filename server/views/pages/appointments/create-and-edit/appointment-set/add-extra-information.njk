@@ -17,8 +17,6 @@
                 {{ appointmentTypeCaption(session) }}
                 <h1 class="govuk-heading-l"><label for="extraInformation">Add extra information for {{ prisoner.name | toTitleCase }}, {{ prisoner.number }} (optional)</label></h1>
 
-                <p class='govuk-body'>Give the attendee extra information about their appointment. This will be printed on their movement slip.</p>
-
                 {{ govukCharacterCount({
                     hint: {
                         text: 'For example, \'You need to bring all your documents about your case to this meeting with your solicitor.\''
