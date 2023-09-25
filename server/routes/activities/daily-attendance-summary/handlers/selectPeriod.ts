@@ -35,6 +35,8 @@ export default class SelectPeriodRoutes {
     })
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    req.session.attendanceSummaryJourney = null
+
     if (req.body.datePresetOption === PresetDateOptions.TODAY) {
       return res.redirect(`summary?date=${this.formatDate(new Date())}`)
     }
