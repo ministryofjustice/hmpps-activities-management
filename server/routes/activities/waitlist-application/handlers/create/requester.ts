@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsIn, IsNotEmpty, ValidateIf } from 'class-validator'
 
-enum RequesterEnum {
+export enum RequesterEnum {
   PRISONER = 'PRISONER',
   GUIDANCE_STAFF = 'GUIDANCE_STAFF',
   OTHER = 'OTHER',
