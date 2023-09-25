@@ -4,6 +4,7 @@ import { IsEnum, Min } from 'class-validator'
 import { YesNo } from '../../../../@types/activities'
 import MaxWhenDependentPropertyValueIs from '../../../../validators/maxWhenDependentPropertyValueIs'
 import { AppointmentFrequency } from '../../../../@types/appointments'
+import config from '../../../../config'
 
 export class RepeatFrequencyAndCount {
   @Expose()
@@ -38,10 +39,9 @@ export default class RepeatFrequencyAndCountRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const maxAppointmentInstances = 20000
-
     const { frequency, numberOfAppointments } = req.body
     const prisonersCount = req.session.appointmentJourney.prisoners.length
+    const { maxAppointmentInstances } = config.appointmentsConfig
 
     if (prisonersCount * numberOfAppointments > maxAppointmentInstances) {
       return res.validationFailed(

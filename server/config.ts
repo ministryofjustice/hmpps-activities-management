@@ -150,4 +150,7 @@ export default {
   frontendComponentsApiToggleEnabled: Boolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
   ),
+  appointmentsConfig: {
+    maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
+  },
 }
