@@ -56,7 +56,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
   it('should display date in sub heading', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('[data-qa=sub-heading]').text().trim()).toBe(formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
+    expect($('[data-qa=date-caption]').text().trim()).toBe(formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
   })
 
   it('print movement slip link should open in new tab', () => {

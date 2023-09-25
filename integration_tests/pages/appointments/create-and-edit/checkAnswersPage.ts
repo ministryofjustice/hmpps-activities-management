@@ -16,7 +16,12 @@ export default class CheckAnswersPage extends Page {
   }
 
   assertPrisonerInList = (name: string, number: string) => {
-    cy.get('[data-qa=prisoner-name]').contains(name).parent().find('[data-qa=prisoner-number]').contains(number)
+    cy.get('[data-qa=prisoner-name]')
+      .contains(name)
+      .parent()
+      .parent()
+      .find('[data-qa=prisoner-number]')
+      .contains(number)
   }
 
   assertCategory = (category: string) => this.assertAppointmentDetail('Appointment name', category)

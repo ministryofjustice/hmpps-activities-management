@@ -162,7 +162,7 @@ describe('Edit Appointment Utils', () => {
         'cancel',
       )
       expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Cancel appointment',
+        'Confirm',
       )
       expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
         'Confirm',
@@ -729,7 +729,7 @@ describe('Edit Appointment Utils', () => {
   describe('appointment frequency text', () => {
     it.each([
       ['null', null, null],
-      ['week day', AppointmentFrequency.WEEKDAY, 'week day'],
+      ['week day', AppointmentFrequency.WEEKDAY, 'weekday (Monday to Friday)'],
       ['day', AppointmentFrequency.DAILY, 'day'],
       ['week', AppointmentFrequency.WEEKLY, 'week'],
       ['fortnight', AppointmentFrequency.FORTNIGHTLY, 'fortnight'],

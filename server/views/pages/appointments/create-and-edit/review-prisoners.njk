@@ -38,7 +38,7 @@
                 {% else %}
                     <h1 class="govuk-heading-l">There are no attendees for this appointment</h1>
                     <p class="govuk-body">You’ve removed the last attendee for this appointment.</p>
-                    <p class="govuk-body">You need to add someone to continue scheduling it.</p>
+                    <p class="govuk-body">If you want to continue scheduling this appointment, you must add someone.</p>
                 {% endif %}
             {% else %}
                 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}

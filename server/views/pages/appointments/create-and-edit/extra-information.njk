@@ -23,18 +23,18 @@
             <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information (optional)</label>
         </h1>
         <p class="govuk-body" data-qa="first-paragraph">
-            You can change the information about how to prepare for the appointment. Note that changes will not appear on any movement slips that have already been printed.
+            Add or edit any important information for who’s attending about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.
         </p>
       {% else %}
         <h1 class="govuk-heading-l">
             <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
         </h1>
         <p class="govuk-body" data-qa="first-paragraph">
-            Add any important information about how to prepare for the appointment. It will be printed on the movement slip.
+            Add any important information for who’s attending about how to prepare for their appointment. It will be printed on their movement slip.
         </p>
       {% endif %}
       <p class="govuk-body">
-          Wing staff will be notified there is extra information on the printed unlock list, but for confidentiality the full text will only be visible when you view the details of the appointment in this service.
+          Wing staff will see the words ‘Extra information’ on the printed unlock list, but for confidentiality the full message will be viewable only in the appointment details within this service.
       </p>
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

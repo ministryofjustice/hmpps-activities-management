@@ -301,7 +301,9 @@
             value: {
                 html: showProfileLink({
                     name: prisoner.name,
-                    prisonerNumber: prisoner.number
+                    prisonerNumber: prisoner.number,
+                    cellLocation: prisoner.cellLocation,
+                    link: true
                 })
             }
         }), prisonerListRows) %}
@@ -336,11 +338,12 @@
                     text: "Attendee"
                 },
                 value: {
-                    html: appointmentPrisonerSummary(
-                        appointment.prisoner.name,
-                        appointment.prisoner.number,
-                        appointment.prisoner.cellLocation
-                    )
+                    html: showProfileLink({
+                        name: appointment.prisoner.name,
+                        prisonerNumber: appointment.prisoner.number,
+                        cellLocation: appointment.prisoner.cellLocation,
+                        link: true
+                    })
                 }
             }, {
                 key: {
