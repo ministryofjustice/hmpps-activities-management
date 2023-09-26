@@ -3,13 +3,16 @@ import { parse } from 'date-fns'
 import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { formatDate } from '../../../../../utils/utils'
+import MetricsService from '../../../../../services/metricsService'
+import MetricsEvent from '../../../../../data/MetricsEvent'
 
 jest.mock('../../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null)
+const metricsService = new MetricsService(null)
 
 describe('Route Handlers - Waitlist application - Check answers', () => {
-  const handler = new CheckAnswersRoutes(activitiesService)
+  const handler = new CheckAnswersRoutes(activitiesService, metricsService)
   let req: Request
   let res: Response
 
@@ -79,6 +82,11 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
           status: 'PENDING',
         },
         { username: 'joebloggs' },
+      )
+      expect(
+        metricsService.trackEvent(
+          MetricsEvent.WAITLIST_NEW_APPLICATION(req.session.waitListApplicationJourney, res.locals.user),
+        ),
       )
       expect(res.redirect).toHaveBeenCalledWith(`confirmation`)
     })

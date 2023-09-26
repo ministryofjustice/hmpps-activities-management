@@ -1,12 +1,16 @@
 import { Request, Response } from 'express'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import config from '../../../../config'
-import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
 
 export default class ReviewPrisonerRoutes {
+  constructor(private readonly metricsService: MetricsService) {}
+
   GET = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
     const { appointmentId } = req.params
-    const { appointmentJourney } = req.session
+    const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
     const { preserveHistory } = req.query
 
     let backLinkHref =
@@ -16,23 +20,15 @@ export default class ReviewPrisonerRoutes {
     }
 
     let prisoners
-    if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
-      prisoners = req.session.editAppointmentJourney.addPrisoners
-      const properties = {
-        user: res.locals.user.username,
-        prisonCode: res.locals.user.activeCaseLoadId,
-        appointmentJourneyMode: req.session.appointmentJourney.mode,
-        property: 'attendees',
-      }
+    if (appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
+      prisoners = editAppointmentJourney.addPrisoners
 
-      trackEvent({
-        eventName: 'SAA-Appointment-Change-From-Schedule',
-        properties,
-      })
-    } else if (req.session.appointmentJourney.type === AppointmentType.SET) {
-      prisoners = req.session.appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
+      const metricsEvent = MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(appointmentJourney.mode, 'attendees', user)
+      this.metricsService.trackEvent(metricsEvent)
+    } else if (appointmentJourney.type === AppointmentType.SET) {
+      prisoners = appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
     } else {
-      prisoners = req.session.appointmentJourney.prisoners
+      prisoners = appointmentJourney.prisoners
     }
 
     res.render('pages/appointments/create-and-edit/review-prisoners', {

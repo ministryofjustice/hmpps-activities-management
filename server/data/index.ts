@@ -6,7 +6,7 @@
 import { initialiseAppInsights, buildAppInsightsClient } from '../utils/azureAppInsights'
 
 initialiseAppInsights()
-buildAppInsightsClient()
+const appInsightsClient = buildAppInsightsClient()
 
 import HmppsAuthClient from './hmppsAuthClient'
 import PrisonApiClient from './prisonApiClient'
@@ -23,6 +23,7 @@ export default function dataAccess() {
     incentivesApiClient: new IncentivesApiClient(),
     activitiesApiClient: new ActivitiesApiClient(),
     frontendComponentApiClient: new FrontendComponentApiClient(),
+    applicationInsightsClient: appInsightsClient,
   }
 }
 

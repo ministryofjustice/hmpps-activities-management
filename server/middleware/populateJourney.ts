@@ -8,6 +8,7 @@ const journeys = [
   'attendanceSummaryJourney',
   'unlockListJourney',
   'waitListApplicationJourney',
+  'journeyMetrics',
 ]
 const MAX_CONCURRENT_JOURNEYS = 100
 
@@ -25,12 +26,14 @@ export default function populateJourney(): RequestHandler {
       Object.defineProperty(req.session, p, {
         get() {
           // Will return either the found, mapped, non-undefined session data journey or null
-          return req.session.sessionDataMap[req.params.journeyId]?.[p] ?? null
+          const journeyId = req.params.journeyId ?? 'default'
+          return req.session.sessionDataMap[journeyId]?.[p] ?? null
         },
         set(value) {
           // Will create a new session datum if one is not mapped, or it is undefined or null
-          req.session.sessionDataMap[req.params.journeyId] ??= { instanceUnixEpoch: Date.now() } as SessionDatum
-          req.session.sessionDataMap[req.params.journeyId][p] = value
+          const journeyId = req.params.journeyId ?? 'default'
+          req.session.sessionDataMap[journeyId] ??= { instanceUnixEpoch: Date.now() } as SessionDatum
+          req.session.sessionDataMap[journeyId][p] = value
 
           if (Object.keys(req.session.sessionDataMap).length > MAX_CONCURRENT_JOURNEYS) {
             const oldestKey = Object.keys(req.session.sessionDataMap).reduce((key, v) =>

@@ -2,11 +2,14 @@ import { Request, Response } from 'express'
 
 import AppointmentSetMovementSlipRoutes from './appointmentSetMovementSlip'
 import { AppointmentDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
+import MetricsService from '../../../../services/metricsService'
 
-jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/metricsService')
+
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Appointment Set - Movement Slip', () => {
-  const handler = new AppointmentSetMovementSlipRoutes()
+  const handler = new AppointmentSetMovementSlipRoutes(metricsService)
   let req: Request
   let res: Response
 

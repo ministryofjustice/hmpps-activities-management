@@ -4,9 +4,11 @@ import SimpleDate from '../../../../../commonValidationTypes/simpleDate'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { WaitingListApplicationRequest } from '../../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../../utils/utils'
+import MetricsEvent from '../../../../../data/MetricsEvent'
+import MetricsService from '../../../../../services/metricsService'
 
 export default class CheckAnswersRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(private readonly activitiesService: ActivitiesService, private readonly metricsService: MetricsService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { prisoner, requestDate, activity, requester, comment, status } = req.session.waitListApplicationJourney
@@ -38,6 +40,12 @@ export default class CheckAnswersRoutes {
     } as WaitingListApplicationRequest
 
     await this.activitiesService.logWaitlistApplication(waitlistApplication, user)
+
+    const waitlistEvent = MetricsEvent.WAITLIST_NEW_APPLICATION(
+      waitListApplicationJourney,
+      res.locals.user,
+    ).setJourneyMetrics(req.session.journeyMetrics)
+    this.metricsService.trackEvent(waitlistEvent)
 
     return res.redirect(`confirmation`)
   }

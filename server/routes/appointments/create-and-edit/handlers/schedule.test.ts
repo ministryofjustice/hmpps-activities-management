@@ -8,15 +8,19 @@ import EditAppointmentService from '../../../../services/editAppointmentService'
 import { PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/editAppointmentService')
+jest.mock('../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const editAppointmentService = new EditAppointmentService(null) as jest.Mocked<EditAppointmentService>
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Create Appointment - Schedule', () => {
-  const handler = new ScheduleRoutes(activitiesService, editAppointmentService)
+  const handler = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
   let req: Request
   let res: Response
 
@@ -529,6 +533,14 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       }
 
       await handler.CHANGE(req, res)
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
+          req.session.appointmentJourney.mode,
+          'date-and-time',
+          res.locals.user,
+        ),
+      )
 
       expect(res.redirect).toBeCalledWith('date-and-time?preserveHistory=true')
     })

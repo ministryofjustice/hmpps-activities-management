@@ -7,6 +7,7 @@ import { EditAppointmentJourney } from '../../routes/appointments/create-and-edi
 import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
 import { NotAttendedJourney } from '../../routes/activities/record-attendance/journey'
 import { RecordAttendanceRequests } from '../../routes/activities/record-attendance/recordAttendanceRequests'
+import { JourneyMetrics } from '../../routes/journeyMetrics'
 
 // eslint-disable-next-line import/no-cycle
 import { AppointmentSeriesDetails, AppointmentDetails, AppointmentSetDetails } from '../activitiesAPI/types'
@@ -44,11 +45,10 @@ declare module 'express-session' {
     waitListApplicationJourney: WaitListApplicationJourney
     notAttendedJourney: NotAttendedJourney
     recordAttendanceRequests: RecordAttendanceRequests
+    journeyMetrics: JourneyMetrics
     // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
     // middlewares and the appointment routes in index.ts
     sessionDataMap: Map<string, SessionDatum>
-    // Journey Start Time Unix Epoch
-    journeyStartTime: number
   }
 }
 
@@ -57,6 +57,7 @@ export type SessionDatum = {
   appointmentJourney: AppointmentJourney
   appointmentSetJourney: AppointmentSetJourney
   editAppointmentJourney: EditAppointmentJourney
+  journeyMetrics: JourneyMetrics
 }
 
 declare module 'express-serve-static-core' {

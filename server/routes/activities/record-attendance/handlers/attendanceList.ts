@@ -9,6 +9,8 @@ import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { Prisoner } from '../../../../@types/activities'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
 
 export class AttendanceList {
   @Expose()
@@ -24,7 +26,11 @@ export interface ScheduledInstanceAttendance {
 }
 
 export default class AttendanceListRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   private RELEVANT_ALERT_CODES = ['HA', 'XA', 'RCON', 'XEL', 'RNO121', 'PEEP', 'XRF', 'XSA', 'XTACT']
 
@@ -92,6 +98,7 @@ export default class AttendanceListRoutes {
   }
 
   ATTENDED = async (req: Request, res: Response): Promise<void> => {
+    const instanceId = +req.params.id
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
 
@@ -106,12 +113,20 @@ export default class AttendanceListRoutes {
       issuePayment: true,
     }))
 
-    await this.activitiesService.updateAttendances(attendances, user)
+    const [instance] = await Promise.all([
+      this.activitiesService.getScheduledActivity(+instanceId, user),
+      this.activitiesService.updateAttendances(attendances, user),
+    ])
+
+    attendances.forEach(attendance => {
+      const prisonerNumber = instance.attendances.find(a => a.id === attendance.id)?.prisonerNumber
+      const event = MetricsEvent.ATTENDANCE_RECORDED(instance, prisonerNumber, attendance.attendanceReason, user)
+      this.metricsService.trackEvent(event)
+    })
 
     const successMessage = `We've saved attendance details for ${selectedAttendances.length} ${
       selectedAttendances.length === 1 ? 'person' : 'people'
     }`
-
     return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
   }
 

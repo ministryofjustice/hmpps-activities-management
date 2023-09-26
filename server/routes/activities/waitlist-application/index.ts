@@ -17,7 +17,7 @@ import EditRequesterRoutes from './handlers/view-and-edit/editRequester'
 import EditRequestDateRoutes, { EditRequestDate } from './handlers/view-and-edit/editRequestDate'
 import EditCommentRoutes, { Comment } from './handlers/view-and-edit/editComment'
 
-export default function Index({ prisonService, activitiesService }: Services): Router {
+export default function Index({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(path, emptyJourneyHandler('waitListApplicationJourney', stepRequiresSession), asyncMiddleware(handler))
@@ -29,7 +29,7 @@ export default function Index({ prisonService, activitiesService }: Services): R
   const activityHandler = new ActivityRoutes(activitiesService)
   const requesterHandler = new RequesterRoutes()
   const statusHandler = new StatusRoutes()
-  const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
+  const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, metricsService)
   const confirmationHandler = new ConfirmationRoutes(activitiesService)
   const viewApplicationHandler = new ViewApplicationRoutes(activitiesService, prisonService)
   const editStatusHandler = new EditStatusRoutes(activitiesService)

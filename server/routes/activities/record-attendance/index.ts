@@ -15,7 +15,7 @@ import RemovePayRoutes, { RemovePay } from './handlers/removePay'
 import HomeRoutes from './handlers/home'
 import ResetAttendanceRoutes, { ResetAttendance } from './handlers/resetAttendance'
 
-export default function Index({ activitiesService, prisonService }: Services): Router {
+export default function Index({ activitiesService, prisonService, metricsService }: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -25,10 +25,10 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const homeHandler = new HomeRoutes()
   const selectPeriodHandler = new SelectPeriodRoutes()
   const activitiesHandler = new ActivitiesRoutes(activitiesService)
-  const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService)
-  const notAttendedReasonHandler = new NotAttendedReasonRoutes(activitiesService)
+  const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService, metricsService)
+  const notAttendedReasonHandler = new NotAttendedReasonRoutes(activitiesService, metricsService)
   const cancelSessionReasonRoutes = new CancelSessionReasonRoutes()
-  const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService)
+  const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService, metricsService)
   const uncancelSessionConfirmationRoutes = new UncancelSessionConfirmationRoutes(activitiesService)
   const attendanceDetailsHandler = new AttendanceDetailsRoutes(activitiesService, prisonService)
   const editAttendanceHandler = new EditAttendanceRoutes(activitiesService, prisonService)
