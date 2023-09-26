@@ -1,17 +1,15 @@
 import { Request, Response } from 'express'
-import { trackEvent } from '../../../../../utils/eventTrackingAppInsights'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { RequesterEnum } from './requester'
+import MetricsService from '../../../../../services/metricsService'
+import MetricsEvent from '../../../../../data/MetricsEvent'
 
 export default class ConfirmationRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(private readonly activitiesService: ActivitiesService, private readonly metricsService: MetricsService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { waitListApplicationJourney } = req.session
     const { user } = res.locals
-    const { activityId, activityName, scheduleId } = waitListApplicationJourney.activity
-    const { prisonerNumber } = waitListApplicationJourney.prisoner
-    const { status, requester } = waitListApplicationJourney
+    const { activityId, scheduleId } = waitListApplicationJourney.activity
 
     const { capacity, allocated } = await this.activitiesService
       .getActivity(activityId, user)
@@ -21,34 +19,18 @@ export default class ConfirmationRoutes {
       .fetchActivityWaitlist(scheduleId, user)
       .then(waitlist => waitlist.filter(w => w.status === 'PENDING' || w.status === 'APPROVED'))
 
+    const waitlistEvent = new MetricsEvent('SAA-Waitlist-New-Application', res.locals.user)
+    waitlistEvent.setWaitlist(req.session.waitListApplicationJourney)
+    waitlistEvent.addProperty('requestDate', Date.now().toString())
+    waitlistEvent.setJourneyMetrics(req.session.journeyMetrics)
+    this.metricsService.trackEvent(waitlistEvent)
+
     res.render('pages/activities/waitlist-application/confirmation', {
       waitListApplicationJourney,
       waitlistSize: currentWaitlist.length,
       vacancies: capacity - allocated,
       currentlyAllocated: allocated,
       capacity,
-    })
-
-    const properties = {
-      user: res.locals.user.username,
-      prisonCode: res.locals.user.activeCaseLoadId,
-      prisonerNumber,
-      activityId: activityId?.toString(),
-      activityDescription: activityName,
-      prisonerWaitingId: currentWaitlist.filter(w => w.prisonerNumber === prisonerNumber)[0]?.id?.toString(),
-      status,
-      requester: requester === RequesterEnum.PRISONER ? 'Prisoner' : requester,
-      requestDate: Date.now().toString(),
-    }
-
-    const eventMetrics = {
-      journeyTimeSec: (Date.now() - req.session.journeyStartTime) / 1000,
-    }
-
-    trackEvent({
-      eventName: 'SAA-Waitlist-New-Application',
-      properties,
-      eventMetrics,
     })
 
     req.session.waitListApplicationJourney = undefined

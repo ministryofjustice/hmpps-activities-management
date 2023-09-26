@@ -1,4 +1,7 @@
 import { ServiceUser } from '../@types/express'
+import { AllocateToActivityJourney } from '../routes/activities/allocate-to-activity/journey'
+import { WaitListApplicationJourney } from '../routes/activities/waitlist-application/journey'
+import { JourneyMetrics } from '../routes/journeyMetrics'
 
 export default class MetricsEvent {
   properties: Record<string, string | number>
@@ -34,5 +37,29 @@ export default class MetricsEvent {
   addMeasurements(measurements: Record<string, number>) {
     this.measurements = { ...this.measurements, ...measurements }
     return this
+  }
+
+  setAllocation(allocation: AllocateToActivityJourney) {
+    return this.addProperties({
+      prisonerNumber: allocation.inmate?.prisonerNumber,
+      activityId: allocation.activity.activityId?.toString(),
+      startDate: allocation.startDate?.toString(),
+    })
+  }
+
+  setWaitlist(waitlist: WaitListApplicationJourney) {
+    return this.addProperties({
+      prisonerNumber: waitlist.prisoner?.prisonerNumber.toString(),
+      activityId: waitlist.activity?.activityId?.toString(),
+      activityDescription: waitlist.activity?.activityName,
+      status: waitlist.status,
+      requester: waitlist.requester,
+    })
+  }
+
+  setJourneyMetrics(journeyMetrics: JourneyMetrics) {
+    return this.addProperties({
+      journeyTimeSec: (Date.now() - journeyMetrics.journeyStartTime) / 1000,
+    })
   }
 }

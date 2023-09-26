@@ -4,13 +4,16 @@ import ConfirmationRoutes from './confirmation'
 import ActivitiesService from '../../../../../services/activitiesService'
 import atLeast from '../../../../../../jest.setup'
 import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
+import MetricsService from '../../../../../services/metricsService'
 
 jest.mock('../../../../../services/activitiesService')
+jest.mock('../../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null)
+const metricsService = new MetricsService(null)
 
 describe('Route Handlers - Waitlist - Confirmation', () => {
-  const handler = new ConfirmationRoutes(activitiesService)
+  const handler = new ConfirmationRoutes(activitiesService, metricsService)
 
   let req: Request
   let res: Response
@@ -27,9 +30,10 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
     req = {
       session: {
         waitListApplicationJourney: {
-          prisoner: { name: 'Alan Key' },
+          prisoner: { name: 'Alan Key', prisonerNumber: 'ABC1234' },
           activity: { activityId: 1, scheduleId: 1 },
         },
+        journeyMetrics: {},
       },
     } as unknown as Request
   })
@@ -60,7 +64,7 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/waitlist-application/confirmation', {
         waitListApplicationJourney: {
-          prisoner: { name: 'Alan Key' },
+          prisoner: { name: 'Alan Key', prisonerNumber: 'ABC1234' },
           activity: {
             activityId: 1,
             scheduleId: 1,

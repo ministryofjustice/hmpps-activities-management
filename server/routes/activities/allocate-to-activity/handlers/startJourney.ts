@@ -33,7 +33,9 @@ export default class StartJourneyRoutes {
         endDate: schedule.endDate,
       },
     }
-    req.session.journeyStartTime = Date.now()
+    req.session.journeyMetrics = {
+      journeyStartTime: Date.now(),
+    }
     res.redirect(`/activities/allocate/before-you-allocate`)
   }
 }

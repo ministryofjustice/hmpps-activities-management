@@ -27,7 +27,9 @@ describe('Route Handlers - Waitlist application - Start', () => {
 
     req = {
       params: { prisonerNumber: 'ABC123' },
-      session: {},
+      session: {
+        journeyMetrics: {},
+      },
     } as unknown as Request
 
     next = jest.fn()

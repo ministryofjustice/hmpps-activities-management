@@ -6,9 +6,9 @@ export default class ConfirmationRoutes {
   constructor(private readonly metricsService: MetricsService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const journeyTimeEvent = new MetricsEvent('SAA-Activity-Created', res.locals.user)
-    journeyTimeEvent.addMeasurement('journeyTimeSec', (Date.now() - req.session.journeyMetrics.journeyStartTime) / 1000)
-    this.metricsService.trackEvent(journeyTimeEvent)
+    const activityCreatedEvent = new MetricsEvent('SAA-Activity-Created', res.locals.user)
+    activityCreatedEvent.setJourneyMetrics(req.session.journeyMetrics)
+    this.metricsService.trackEvent(activityCreatedEvent)
 
     res.render('pages/activities/create-an-activity/confirmation', { id: req.params.id })
 
