@@ -43,7 +43,7 @@ describe('Route Handlers - Create an activity - Confirmation', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/confirmation', { id: '1' })
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        new MetricsEvent('SAA-Activity-Created', res.locals.user).setJourneyMetrics(req.session.journeyMetrics),
+        MetricsEvent.ACTIVITY_CREATED(res.locals.user).setJourneyMetrics(req.session.journeyMetrics),
       )
       expect(req.session.createJourney).toBeNull()
     })

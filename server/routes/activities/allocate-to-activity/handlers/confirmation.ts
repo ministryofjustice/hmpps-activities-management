@@ -8,10 +8,10 @@ export default class ConfirmationRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { inmate, activity } = req.session.allocateJourney
 
-    const allocationEvent = new MetricsEvent('SAA-Allocation-Created', res.locals.user)
-    allocationEvent.setAllocation(req.session.allocateJourney)
-    allocationEvent.setJourneyMetrics(req.session.journeyMetrics)
-    allocationEvent.addProperty('requestDate', Date.now())
+    const allocationEvent = MetricsEvent.ALLOCATION_CREATED(
+      req.session.allocateJourney,
+      res.locals.user,
+    ).setJourneyMetrics(req.session.journeyMetrics)
     this.metricsService.trackEvent(allocationEvent)
 
     res.render('pages/activities/allocate-to-activity/confirmation', {

@@ -75,14 +75,9 @@ describe('Route Handlers - Movement Slip', () => {
       await handler.GET(req, res)
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        new MetricsEvent('SAA-Appointment-Movement-Slips-Printed', res.locals.user)
-          .addProperty('appointmentId', appointment.id)
-          .addMeasurement('movementSlipCount', appointment.attendees.length),
+        MetricsEvent.APPOINTMENT_MOVEMENT_SLIP_PRINTED(appointment, res.locals.user),
       )
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/movement-slip', {
-        appointment,
-      })
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/movement-slip', { appointment })
     })
   })
 })

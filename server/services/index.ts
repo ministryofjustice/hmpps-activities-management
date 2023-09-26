@@ -1,4 +1,3 @@
-import { defaultClient } from 'applicationinsights'
 import dataAccess from '../data'
 import UserService from './userService'
 import PrisonService from './prisonService'
@@ -8,8 +7,14 @@ import UnlockListService from './unlockListService'
 import MetricsService from './metricsService'
 
 export default function services() {
-  const { hmppsAuthClient, prisonApiClient, prisonerSearchApiClient, incentivesApiClient, activitiesApiClient } =
-    dataAccess()
+  const {
+    hmppsAuthClient,
+    prisonApiClient,
+    prisonerSearchApiClient,
+    incentivesApiClient,
+    activitiesApiClient,
+    applicationInsightsClient,
+  } = dataAccess()
 
   return {
     userService: new UserService(hmppsAuthClient, prisonApiClient, activitiesApiClient),
@@ -17,7 +22,7 @@ export default function services() {
     activitiesService: new ActivitiesService(activitiesApiClient),
     ukBankHolidayService: new BankHolidayService(),
     unlockListService: new UnlockListService(prisonerSearchApiClient, activitiesApiClient),
-    metricsService: new MetricsService(defaultClient),
+    metricsService: new MetricsService(applicationInsightsClient),
   }
 }
 

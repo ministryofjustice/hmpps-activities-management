@@ -59,10 +59,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
     it('should render page with data from session', async () => {
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toBeCalledWith(
-        new MetricsEvent('SAA-Allocation-Created', res.locals.user)
-          .setAllocation(allocateJourney)
-          .setJourneyMetrics(req.session.journeyMetrics)
-          .addProperty('requestDate', expect.any(Number)),
+        MetricsEvent.ALLOCATION_CREATED(allocateJourney, res.locals.user).setJourneyMetrics(req.session.journeyMetrics),
       )
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/confirmation', {
         activityId: 1,

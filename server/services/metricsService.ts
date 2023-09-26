@@ -10,6 +10,8 @@ export default class MetricsService {
   constructor(private readonly appInsightsClient: TelemetryClient) {}
 
   trackEvent(event: Event) {
-    if (this.appInsightsClient) this.appInsightsClient.trackEvent(event)
+    if (this.appInsightsClient) {
+      this.appInsightsClient.trackEvent(event)
+    }
   }
 }

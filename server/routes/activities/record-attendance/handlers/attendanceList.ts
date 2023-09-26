@@ -102,8 +102,6 @@ export default class AttendanceListRoutes {
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
 
-    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
-
     const selectedAttendanceIds: number[] = []
     selectedAttendances.forEach(selectAttendee => selectedAttendanceIds.push(Number(selectAttendee.split('-')[0])))
 
@@ -115,13 +113,16 @@ export default class AttendanceListRoutes {
       issuePayment: true,
     }))
 
-    await this.activitiesService.updateAttendances(attendances, user)
+    const [instance] = await Promise.all([
+      this.activitiesService.getScheduledActivity(+instanceId, user),
+      this.activitiesService.updateAttendances(attendances, user),
+    ])
 
-    attendances.forEach(attendance =>
-      this.metricsService.trackEvent(
-        new MetricsEvent('SAA-Attendance-Recorded', user).setAttendanceUpdate(instance, attendance),
-      ),
-    )
+    attendances.forEach(attendance => {
+      const prisonerNumber = instance.attendances.find(a => a.id === attendance.id)?.prisonerNumber
+      const event = MetricsEvent.ATTENDANCE_RECORDED(instance, prisonerNumber, attendance.attendanceReason, user)
+      this.metricsService.trackEvent(event)
+    })
 
     const successMessage = `We've saved attendance details for ${selectedAttendances.length} ${
       selectedAttendances.length === 1 ? 'person' : 'people'

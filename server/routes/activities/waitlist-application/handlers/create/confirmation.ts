@@ -1,10 +1,8 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
-import MetricsService from '../../../../../services/metricsService'
-import MetricsEvent from '../../../../../data/MetricsEvent'
 
 export default class ConfirmationRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly metricsService: MetricsService) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { waitListApplicationJourney } = req.session
@@ -18,12 +16,6 @@ export default class ConfirmationRoutes {
     const currentWaitlist = await this.activitiesService
       .fetchActivityWaitlist(scheduleId, user)
       .then(waitlist => waitlist.filter(w => w.status === 'PENDING' || w.status === 'APPROVED'))
-
-    const waitlistEvent = new MetricsEvent('SAA-Waitlist-New-Application', res.locals.user)
-    waitlistEvent.setWaitlist(req.session.waitListApplicationJourney)
-    waitlistEvent.addProperty('requestDate', Date.now().toString())
-    waitlistEvent.setJourneyMetrics(req.session.journeyMetrics)
-    this.metricsService.trackEvent(waitlistEvent)
 
     res.render('pages/activities/waitlist-application/confirmation', {
       waitListApplicationJourney,

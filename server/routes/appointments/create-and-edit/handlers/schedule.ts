@@ -119,12 +119,15 @@ export default class ScheduleRoutes {
   }
 
   CHANGE = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
+    const { appointmentJourney } = req.session
     const { property, preserveHistory } = req.query
 
-    const changeFromSchedule = new MetricsEvent('SAA-Appointment-Change-From-Schedule', res.locals.user).addProperties({
-      appointmentJourneyMode: req.session.appointmentJourney.mode,
-      property: asString(property),
-    })
+    const changeFromSchedule = MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
+      appointmentJourney.mode,
+      asString(property),
+      user,
+    )
     this.metricsService.trackEvent(changeFromSchedule)
 
     res.redirect(`${property}${preserveHistory ? '?preserveHistory=true' : ''}`)

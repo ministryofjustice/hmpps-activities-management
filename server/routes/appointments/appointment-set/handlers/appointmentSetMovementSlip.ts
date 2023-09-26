@@ -12,9 +12,7 @@ export default class AppointmentSetMovementSlipRoutes {
       appointment => !appointment.isCancelled && !appointment.isExpired,
     )
 
-    const movementSlipPrintedEvent = new MetricsEvent('SAA-Appointment-Set-Movement-Slips-Printed', res.locals.user)
-      .addProperty('appointmentSetId', appointmentSet.id)
-      .addMeasurement('movementSlipCount', appointmentSet.appointments.length)
+    const movementSlipPrintedEvent = MetricsEvent.APPOINTMENT_SET_MOVEMENT_SLIP_PRINTED(appointmentSet, res.locals.user)
     this.metricsService.trackEvent(movementSlipPrintedEvent)
 
     res.render('pages/appointments/appointment-set/movement-slip', { appointmentSet })

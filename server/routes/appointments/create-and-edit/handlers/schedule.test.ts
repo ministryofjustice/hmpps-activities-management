@@ -535,10 +535,11 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       await handler.CHANGE(req, res)
 
       expect(metricsService.trackEvent).toBeCalledWith(
-        new MetricsEvent('SAA-Appointment-Change-From-Schedule', res.locals.user).addProperties({
-          appointmentJourneyMode: req.session.appointmentJourney.mode,
-          property: 'date-and-time',
-        }),
+        MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
+          req.session.appointmentJourney.mode,
+          'date-and-time',
+          res.locals.user,
+        ),
       )
 
       expect(res.redirect).toBeCalledWith('date-and-time?preserveHistory=true')

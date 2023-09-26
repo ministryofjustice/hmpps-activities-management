@@ -131,10 +131,11 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       req.session.editAppointmentJourney.addPrisoners = prisoners
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        new MetricsEvent('SAA-Appointment-Change-From-Schedule', res.locals.user).addProperties({
-          appointmentJourneyMode: req.session.appointmentJourney.mode,
-          property: 'attendees',
-        }),
+        MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
+          req.session.appointmentJourney.mode,
+          'attendees',
+          res.locals.user,
+        ),
       )
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         appointmentId,

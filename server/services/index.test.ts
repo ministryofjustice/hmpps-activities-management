@@ -6,6 +6,8 @@ import ActivitiesService from './activitiesService'
 import UnlockListService from './unlockListService'
 import MetricsService from './metricsService'
 
+jest.mock('applicationinsights')
+
 describe('Services', () => {
   test('The correct services are instantiated', () => {
     const servicesList = services()

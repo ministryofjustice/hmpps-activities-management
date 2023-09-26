@@ -8,6 +8,8 @@ import AttendanceListRoutes, { ScheduledInstanceAttendance } from './attendanceL
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { getAttendanceSummary } from '../../../../utils/utils'
 import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
+import AttendanceReason from '../../../../enum/attendanceReason'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -113,9 +115,9 @@ describe('Route Handlers - Attendance List', () => {
       internalLocation: { description: 'Houseblock 1' },
     },
     attendances: [
-      { prisonerNumber: 'ABC123', status: 'WAITING' },
-      { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
-      { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+      { id: 1, prisonerNumber: 'ABC123', status: 'WAITING' },
+      { id: 2, prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+      { id: 3, prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
     ],
   } as unknown as ScheduledActivity
 
@@ -161,17 +163,17 @@ describe('Route Handlers - Attendance List', () => {
           ...prisoners[0],
           alerts: [{ alertCode: 'HA' }],
         },
-        attendance: { prisonerNumber: 'ABC123', status: 'WAITING' },
+        attendance: { id: 1, prisonerNumber: 'ABC123', status: 'WAITING' },
         otherEvents: [event4],
       },
       {
         prisoner: prisoners[1],
-        attendance: { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+        attendance: { id: 2, prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
         otherEvents: [event3],
       },
       {
         prisoner: prisoners[2],
-        attendance: { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+        attendance: { id: 3, prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
         otherEvents: [],
       },
     ] as unknown as ScheduledInstanceAttendance[]
@@ -282,6 +284,10 @@ describe('Route Handlers - Attendance List', () => {
 
       await handler.ATTENDED(req, res)
 
+      expect(metricsService.trackEvent).toHaveBeenCalledTimes(2)
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.ATTENDANCE_RECORDED(instance, 'ABC123', AttendanceReason.ATTENDED, res.locals.user),
+      )
       expect(activitiesService.updateAttendances).toBeCalledWith(
         [
           {

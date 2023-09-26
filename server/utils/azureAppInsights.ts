@@ -17,16 +17,18 @@ function version(): string {
 export function initialiseAppInsights(): void {
   // Loads .env file contents into | process.env
   config()
-  if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
+  if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
     // eslint-disable-next-line no-console
     console.log('Enabling azure application insights')
 
-    setup().setDistributedTracingMode(DistributedTracingModes.AI_AND_W3C).start()
+    setup(process.env.APPINSIGHTS_INSTRUMENTATIONKEY)
+      ?.setDistributedTracingMode(DistributedTracingModes.AI_AND_W3C)
+      .start()
   }
 }
 
 export function buildAppInsightsClient(name = defaultName()): TelemetryClient {
-  if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
+  if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY && defaultClient) {
     defaultClient.context.tags['ai.cloud.role'] = name
     defaultClient.context.tags['ai.application.ver'] = version()
     return defaultClient

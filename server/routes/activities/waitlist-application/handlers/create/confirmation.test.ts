@@ -4,16 +4,13 @@ import ConfirmationRoutes from './confirmation'
 import ActivitiesService from '../../../../../services/activitiesService'
 import atLeast from '../../../../../../jest.setup'
 import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
-import MetricsService from '../../../../../services/metricsService'
 
 jest.mock('../../../../../services/activitiesService')
-jest.mock('../../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null)
-const metricsService = new MetricsService(null)
 
 describe('Route Handlers - Waitlist - Confirmation', () => {
-  const handler = new ConfirmationRoutes(activitiesService, metricsService)
+  const handler = new ConfirmationRoutes(activitiesService)
 
   let req: Request
   let res: Response

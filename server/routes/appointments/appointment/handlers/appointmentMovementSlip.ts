@@ -8,10 +8,7 @@ export default class AppointmentMovementSlipRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointment } = req
 
-    const movementSlipPrintedEvent = new MetricsEvent('SAA-Appointment-Movement-Slips-Printed', res.locals.user)
-      .addProperty('appointmentId', appointment.id)
-      .addMeasurement('movementSlipCount', appointment.attendees.length)
-    this.metricsService.trackEvent(movementSlipPrintedEvent)
+    this.metricsService.trackEvent(MetricsEvent.APPOINTMENT_MOVEMENT_SLIP_PRINTED(appointment, res.locals.user))
 
     res.render('pages/appointments/appointment/movement-slip', { appointment })
   }
