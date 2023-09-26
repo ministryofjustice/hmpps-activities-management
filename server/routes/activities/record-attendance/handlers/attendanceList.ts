@@ -9,6 +9,8 @@ import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { Prisoner } from '../../../../@types/activities'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/MetricsEvent'
 
 export class AttendanceList {
   @Expose()
@@ -24,7 +26,11 @@ export interface ScheduledInstanceAttendance {
 }
 
 export default class AttendanceListRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   private RELEVANT_ALERT_CODES = ['HA', 'XA', 'RCON', 'XEL', 'RNO121', 'PEEP', 'XRF', 'XSA', 'XTACT']
 
@@ -92,8 +98,11 @@ export default class AttendanceListRoutes {
   }
 
   ATTENDED = async (req: Request, res: Response): Promise<void> => {
+    const instanceId = +req.params.id
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
+
+    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
 
     const selectedAttendanceIds: number[] = []
     selectedAttendances.forEach(selectAttendee => selectedAttendanceIds.push(Number(selectAttendee.split('-')[0])))
@@ -108,10 +117,15 @@ export default class AttendanceListRoutes {
 
     await this.activitiesService.updateAttendances(attendances, user)
 
+    attendances.forEach(attendance =>
+      this.metricsService.trackEvent(
+        new MetricsEvent('SAA-Attendance-Recorded', user).setAttendanceUpdate(instance, attendance),
+      ),
+    )
+
     const successMessage = `We've saved attendance details for ${selectedAttendances.length} ${
       selectedAttendances.length === 1 ? 'person' : 'people'
     }`
-
     return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
   }
 

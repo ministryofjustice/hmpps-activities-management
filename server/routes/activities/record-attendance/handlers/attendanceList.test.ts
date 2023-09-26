@@ -7,15 +7,18 @@ import PrisonService from '../../../../services/prisonService'
 import AttendanceListRoutes, { ScheduledInstanceAttendance } from './attendanceList'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { getAttendanceSummary } from '../../../../utils/utils'
+import MetricsService from '../../../../services/metricsService'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
+const metricsService = new MetricsService(null)
 
 describe('Route Handlers - Attendance List', () => {
-  const handler = new AttendanceListRoutes(activitiesService, prisonService)
+  const handler = new AttendanceListRoutes(activitiesService, prisonService, metricsService)
 
   let req: Request
   let res: Response
