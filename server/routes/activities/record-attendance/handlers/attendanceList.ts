@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { startOfToday, startOfDay } from 'date-fns'
-import { Expose, Transform } from 'class-transformer'
+import { Expose, plainToInstance, Transform } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import { eventClashes, getAttendanceSummary, toDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
@@ -9,6 +9,8 @@ import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { Prisoner } from '../../../../@types/activities'
+import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
+import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 
 export class AttendanceList {
   @Expose()
@@ -92,8 +94,11 @@ export default class AttendanceListRoutes {
   }
 
   ATTENDED = async (req: Request, res: Response): Promise<void> => {
+    const instanceId = +req.params.id
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
+
+    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
 
     const selectedAttendanceIds: number[] = []
     selectedAttendances.forEach(selectAttendee => selectedAttendanceIds.push(Number(selectAttendee.split('-')[0])))
@@ -105,6 +110,16 @@ export default class AttendanceListRoutes {
       attendanceReason: AttendanceReason.ATTENDED,
       issuePayment: true,
     }))
+
+    attendances.forEach(attendance =>
+      this.publishMetric(
+        user.username,
+        attendance.prisonCode,
+        instance.activitySchedule.activity.id.toString(),
+        attendance.attendanceReason,
+        instance.endTime,
+      ),
+    )
 
     await this.activitiesService.updateAttendances(attendances, user)
 
@@ -168,5 +183,34 @@ export default class AttendanceListRoutes {
   private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {
     const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
     return attendance.id
+  }
+
+  private publishMetric(
+    user: string,
+    prisonCode: string,
+    activityId: string,
+    attendanceReason: string,
+    endTimeString: string,
+  ) {
+    const [hour, minute] = endTimeString.split(':')
+    const endTime = plainToInstance(SimpleTime, {
+      hour,
+      minute,
+      date: Date.now(),
+    })
+
+    const properties = {
+      user,
+      prisonCode,
+      activityId,
+      attendanceReason,
+      attendedBeforeSessionEnded: new Date() < endTime.toDate() ? 'true' : 'false',
+    }
+
+    trackEvent({
+      eventName: 'SAA-Attendance-Recorded',
+      properties,
+      eventMetrics: {},
+    })
   }
 }
