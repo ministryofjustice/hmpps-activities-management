@@ -223,6 +223,12 @@
         }) }}
 
         {{ stat({
+            heading: 'Due to suspension',
+            number: totalUnpaidSuspended[timeSlot],
+            visuallyHiddenText: 'prisoners'
+        }) }}
+
+        {{ stat({
             heading: 'Other',
             number: totalUnpaidOther[timeSlot],
             visuallyHiddenText: 'prisoners'

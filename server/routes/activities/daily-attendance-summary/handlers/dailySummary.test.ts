@@ -251,6 +251,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           ED: 0,
           PM: 0,
         },
+        totalUnpaidSuspended: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
         totalUnpaidRest: {
           AM: 0,
           DAY: 0,
@@ -415,6 +421,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalUnpaidOther: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalUnpaidSuspended: {
           AM: 0,
           DAY: 0,
           ED: 0,

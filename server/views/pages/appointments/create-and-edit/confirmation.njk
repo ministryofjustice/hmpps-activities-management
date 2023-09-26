@@ -18,11 +18,11 @@
                     You have successfully scheduled an appointment for {{ appointment.attendees[0].prisoner | fullName | toTitleCase }}
                 {% elseif appointment.appointmentType == AppointmentType.GROUP %}
                     You have successfully scheduled an appointment for {{ appointment.attendees | length }} {{ "person" if appointment.attendees.length == 1 else "people" }}
-                {% elseif appointmentSet %}
-                    You have successfully scheduled appointments for {{ appointmentSet.appointments | length }} people
                 {% endif %}
 
-                {% if not appointment.appointmentSeries.schedule %}
+                {% if appointmentSet %}
+                    You have successfully scheduled {{ "an appointment for 1 person on" if appointmentSet.appointments | length == 1 else "appointments for " + appointmentSet.appointments | length + " people starting on" }} {{ (appointment.startDate or appointmentSet.startDate) | toDate | formatDate }}
+                {% elseif not appointment.appointmentSeries.schedule %}
                     on {{ (appointment.startDate or appointmentSet.startDate) | toDate | formatDate }}.
                 {% else %}
                     starting on {{ appointment.startDate | toDate | formatDate }}.

@@ -106,6 +106,7 @@ export default class DailySummaryRoutes {
     const totalClash = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalPaidOther = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnpaidSick = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalUnpaidSuspended = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalRefused = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnpaidRest = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnpaidOther = { DAY: 0, AM: 0, PM: 0, ED: 0 }
@@ -171,6 +172,10 @@ export default class DailySummaryRoutes {
             totalUnpaidRest.DAY += 1
             totalUnpaidRest[attendance.timeSlot] += 1
           }
+          if (attendance.attendanceReasonCode === AttendanceReason.SUSPENDED) {
+            totalUnpaidSuspended.DAY += 1
+            totalUnpaidSuspended[attendance.timeSlot] += 1
+          }
           if (attendance.attendanceReasonCode === AttendanceReason.OTHER) {
             totalUnpaidOther.DAY += 1
             totalUnpaidOther[attendance.timeSlot] += 1
@@ -197,6 +202,7 @@ export default class DailySummaryRoutes {
       totalClash,
       totalPaidOther,
       totalUnpaidSick,
+      totalUnpaidSuspended,
       totalRefused,
       totalUnpaidRest,
       totalUnpaidOther,
@@ -204,11 +210,14 @@ export default class DailySummaryRoutes {
   }
 
   private getSuspendedPrisonerCount = (attendances: AllAttendance[]) => {
-    const suspendedPrisoners = attendances.filter(a => a.attendanceReasonCode === AttendanceReason.SUSPENDED)
+    const suspendedPrisoners = _.uniqWith(
+      attendances.filter(a => a.attendanceReasonCode === AttendanceReason.SUSPENDED),
+      (a, b) => a.prisonerNumber === b.prisonerNumber && a.timeSlot === b.timeSlot,
+    )
 
     const suspendedPrisonerCount = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    suspendedPrisonerCount.DAY = _.uniqBy(suspendedPrisoners, 'prisonerNumber').length
     suspendedPrisoners.forEach(attendance => {
-      suspendedPrisonerCount.DAY += 1
       suspendedPrisonerCount[attendance.timeSlot.toUpperCase()] += 1
     })
 
