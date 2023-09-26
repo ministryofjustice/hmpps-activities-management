@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
-import { toDate } from '../../../../utils/utils'
+import { asString, toDate } from '../../../../utils/utils'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/MetricsEvent'
 
@@ -26,7 +26,7 @@ export default class PlannedEventsRoutes {
     req.session.unlockListJourney.activityFilter ??= 'Both'
     req.session.unlockListJourney.subLocationFilters ??= subLocations
 
-    const unlockDate = toDate(date as string)
+    const unlockDate = date ? toDate(asString(date)) : new Date()
 
     const { subLocationFilters, activityFilter, stayingOrLeavingFilter } = req.session.unlockListJourney
 
@@ -46,7 +46,7 @@ export default class PlannedEventsRoutes {
       stayingOnWing: unlockListItems.length - leavingWingCount,
     }
 
-    this.metricsService.trackEvent(MetricsEvent.UNLOCK_LIST_GENERATED(res.locals.user))
+    this.metricsService.trackEvent(MetricsEvent.UNLOCK_LIST_GENERATED(unlockDate, timeSlot, location, res.locals.user))
 
     res.render('pages/activities/unlock-list/planned-events', {
       date,

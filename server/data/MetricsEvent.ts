@@ -6,18 +6,18 @@ import { AllocateToActivityJourney } from '../routes/activities/allocate-to-acti
 import { WaitListApplicationJourney } from '../routes/activities/waitlist-application/journey'
 import { JourneyMetrics } from '../routes/journeyMetrics'
 import { parseDate } from '../utils/utils'
-import SimpleDate from '../commonValidationTypes/simpleDate'
+import SimpleDate, { simpleDateFromDate } from '../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 
 export enum MetricsEventType {
-  ACTIVITY_CREATED = 'SAA-Activity-Created',
-  ALLOCATION_CREATED = 'SAA-Allocation-Created',
-  WAITLIST_NEW_APPLICATION = 'SAA-Waitlist-New-Application',
-  ATTENDANCE_RECORDED = 'SAA-Attendance-Recorded',
-  UNLOCK_LIST_GENERATED = 'SAA-Unlock-List-Generated',
-  APPOINTMENT_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Movement-Slips-Printed',
-  APPOINTMENT_SET_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Set-Movement-Slips-Printed',
-  APPOINTMENT_CHANGE_FROM_SCHEDULE = 'SAA-Appointment-Change-From-Schedule',
+  ACTIVITY_CREATED = 'SAA-Activity-Created-UI',
+  ALLOCATION_CREATED = 'SAA-Allocation-Created-UI',
+  WAITLIST_NEW_APPLICATION = 'SAA-Waitlist-New-Application-UI',
+  ATTENDANCE_RECORDED = 'SAA-Attendance-Recorded-UI',
+  UNLOCK_LIST_GENERATED = 'SAA-Unlock-List-Generated-UI',
+  APPOINTMENT_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Movement-Slips-Printed-UI',
+  APPOINTMENT_SET_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Set-Movement-Slips-Printed-UI',
+  APPOINTMENT_CHANGE_FROM_SCHEDULE = 'SAA-Appointment-Change-From-Schedule-UI',
 }
 
 export default class MetricsEvent {
@@ -58,19 +58,23 @@ export default class MetricsEvent {
 
   setJourneyMetrics(journeyMetrics?: JourneyMetrics) {
     if (!journeyMetrics) return this
-    return this.addProperties({
-      journeyTimeSec: (Date.now() - journeyMetrics.journeyStartTime) / 1000,
-    })
+
+    const { journeyStartTime, source } = journeyMetrics
+    if (journeyStartTime) this.addMeasurement('journeyTimeSec', (Date.now() - journeyStartTime) / 1000)
+    if (source) this.addProperty('journeySource', source)
+    return this
   }
 
   static ACTIVITY_CREATED = (user: ServiceUser) => new MetricsEvent(MetricsEventType.ACTIVITY_CREATED, user)
 
   static ALLOCATION_CREATED(allocation: AllocateToActivityJourney, user: ServiceUser) {
+    const startDate = plainToInstance(SimpleDate, allocation.startDate).toIsoString()
+
     const event = new MetricsEvent(MetricsEventType.ALLOCATION_CREATED, user)
     return event.addProperties({
       prisonerNumber: allocation.inmate?.prisonerNumber,
       activityId: allocation.activity.activityId?.toString(),
-      startDate: allocation.startDate?.toString(),
+      startDate,
     })
   }
 
@@ -107,7 +111,13 @@ export default class MetricsEvent {
     })
   }
 
-  static UNLOCK_LIST_GENERATED = (user: ServiceUser) => new MetricsEvent(MetricsEventType.UNLOCK_LIST_GENERATED, user)
+  static UNLOCK_LIST_GENERATED = (date: Date, timeslot: string, location: string, user: ServiceUser) => {
+    return new MetricsEvent(MetricsEventType.UNLOCK_LIST_GENERATED, user).addProperties({
+      unlockDate: simpleDateFromDate(date).toIsoString(),
+      timePeriod: timeslot,
+      location,
+    })
+  }
 
   static APPOINTMENT_MOVEMENT_SLIP_PRINTED(appointment: AppointmentDetails, user: ServiceUser) {
     return new MetricsEvent(MetricsEventType.APPOINTMENT_MOVEMENT_SLIP_PRINTED, user)

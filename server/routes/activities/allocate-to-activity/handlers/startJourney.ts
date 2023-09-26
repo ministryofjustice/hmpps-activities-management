@@ -7,7 +7,7 @@ export default class StartJourneyRoutes {
   constructor(private readonly prisonService: PrisonService, private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { scheduleId } = req.query
+    const { scheduleId, fromWaitlist } = req.query
     const { prisonerNumber } = req.params
     const { user } = res.locals
 
@@ -35,6 +35,7 @@ export default class StartJourneyRoutes {
     }
     req.session.journeyMetrics = {
       journeyStartTime: Date.now(),
+      source: fromWaitlist ? 'Waitlist' : 'Other people',
     }
     res.redirect(`/activities/allocate/before-you-allocate`)
   }
