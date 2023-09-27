@@ -192,7 +192,7 @@ describe('Views - Appointments Management - Schedule', () => {
       expect(getIndividualPrisonerValueElement('prisoner-number').text().trim()).toEqual('A1234BC')
       expect(getIndividualPrisonerValueElement('prisoner-cell-location').text().trim()).toEqual('1-1-1')
       expect($('[data-qa=change-prisoner]').attr('href')).toEqual(
-        'change?property=select-prisoner&preserveHistory=true',
+        'schedule/change?property=select-prisoner&preserveHistory=true',
       )
     })
 
@@ -207,13 +207,15 @@ describe('Views - Appointments Management - Schedule', () => {
     it('should display date with change link', () => {
       expect(getAppointmentDetailsValueElement('Date').text().trim()).toEqual(formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
       expect($('[data-qa=change-start-date]').attr('href')).toEqual(
-        'change?property=date-and-time&preserveHistory=true',
+        'schedule/change?property=date-and-time&preserveHistory=true',
       )
     })
 
     it('should display time with change link', () => {
       expect(getAppointmentDetailsValueElement('Time').text().trim()).toEqual('09:00 to 10:30')
-      expect($('[data-qa=change-time]').attr('href')).toEqual('change?property=date-and-time&preserveHistory=true')
+      expect($('[data-qa=change-time]').attr('href')).toEqual(
+        'schedule/change?property=date-and-time&preserveHistory=true',
+      )
     })
 
     it('should not display top call to action', () => {
@@ -390,7 +392,7 @@ describe('Views - Appointments Management - Schedule', () => {
     it('should display attendee count with change link', () => {
       expect(getAppointmentDetailsValueElement('Attendees').text().trim()).toEqual('10')
       expect($('[data-qa=change-prisoners]').attr('href')).toEqual(
-        'change?property=review-prisoners&preserveHistory=true',
+        'schedule/change?property=review-prisoners&preserveHistory=true',
       )
     })
 
@@ -401,13 +403,15 @@ describe('Views - Appointments Management - Schedule', () => {
     it('should display date with change link', () => {
       expect(getAppointmentDetailsValueElement('Date').text().trim()).toEqual(formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
       expect($('[data-qa=change-start-date]').attr('href')).toEqual(
-        'change?property=date-and-time&preserveHistory=true',
+        'schedule/change?property=date-and-time&preserveHistory=true',
       )
     })
 
     it('should display time with change link', () => {
       expect(getAppointmentDetailsValueElement('Time').text().trim()).toEqual('14:30 to 16:00')
-      expect($('[data-qa=change-time]').attr('href')).toEqual('change?property=date-and-time&preserveHistory=true')
+      expect($('[data-qa=change-time]').attr('href')).toEqual(
+        'schedule/change?property=date-and-time&preserveHistory=true',
+      )
     })
 
     it('should display "Continue" top call to action for eleven attendees', () => {
@@ -685,7 +689,7 @@ describe('Views - Appointments Management - Schedule', () => {
     it('should display date with change link', () => {
       expect(getAppointmentDetailsValueElement('Date').text().trim()).toEqual(formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
       expect($('[data-qa=change-start-date]').attr('href')).toEqual(
-        'change?property=appointment-set-date&preserveHistory=true',
+        'schedule/change?property=appointment-set-date&preserveHistory=true',
       )
     })
 
@@ -1049,13 +1053,15 @@ describe('Views - Appointments Management - Schedule', () => {
           formatDate(nextWeek, 'EEEE, d MMMM yyyy'),
         )
         expect($('[data-qa=change-start-date]').attr('href')).toEqual(
-          'change?property=date-and-time&preserveHistory=true',
+          'schedule/change?property=date-and-time&preserveHistory=true',
         )
       })
 
       it('should display "Time" with change link', () => {
         expect(getAppointmentDetailsValueElement('Time').text().trim()).toEqual('14:30 to 16:00')
-        expect($('[data-qa=change-time]').attr('href')).toEqual('change?property=date-and-time&preserveHistory=true')
+        expect($('[data-qa=change-time]').attr('href')).toEqual(
+          'schedule/change?property=date-and-time&preserveHistory=true',
+        )
       })
 
       it('should not display remove attendee links', () => {
@@ -1111,13 +1117,15 @@ describe('Views - Appointments Management - Schedule', () => {
           formatDate(tomorrow, 'EEEE, d MMMM yyyy'),
         )
         expect($('[data-qa=change-start-date]').attr('href')).toEqual(
-          'change?property=date-and-time&preserveHistory=true',
+          'schedule/change?property=date-and-time&preserveHistory=true',
         )
       })
 
       it('should display "Time" with new value and change link', () => {
         expect(getAppointmentDetailsValueElement('Time').text().trim()).toEqual('12:30 to 16:00')
-        expect($('[data-qa=change-time]').attr('href')).toEqual('change?property=date-and-time&preserveHistory=true')
+        expect($('[data-qa=change-time]').attr('href')).toEqual(
+          'schedule/change?property=date-and-time&preserveHistory=true',
+        )
       })
 
       it('should not display remove attendee links', () => {

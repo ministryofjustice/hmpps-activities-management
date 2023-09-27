@@ -96,6 +96,8 @@ export default class ScheduleRoutes {
   }
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
+    const { appointmentJourney } = req.session
     const { prisonNumber } = req.params
 
     if (req.session.appointmentJourney.type === AppointmentType.SET) {
@@ -115,6 +117,13 @@ export default class ScheduleRoutes {
       )
     }
 
+    const changeFromSchedule = MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
+      appointmentJourney.mode,
+      'remove-prisoner',
+      user,
+    )
+    this.metricsService.trackEvent(changeFromSchedule)
+
     res.redirect(`../../schedule${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 
@@ -130,6 +139,6 @@ export default class ScheduleRoutes {
     )
     this.metricsService.trackEvent(changeFromSchedule)
 
-    res.redirect(`${property}${preserveHistory ? '?preserveHistory=true' : ''}`)
+    res.redirect(`../${property}${preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 }

@@ -67,6 +67,7 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   post('/date-and-time', dateAndTimeRoutes.EDIT, DateAndTime)
   get('/schedule', scheduleRoutes.GET, true)
   post('/schedule', scheduleRoutes.EDIT)
+  get('/schedule/change', scheduleRoutes.CHANGE)
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
   get('/extra-information', extraInformationRoutes.GET, true)
   post('/extra-information', extraInformationRoutes.EDIT, ExtraInformation)

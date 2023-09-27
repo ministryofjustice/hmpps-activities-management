@@ -94,7 +94,7 @@ export default function Create({ prisonService, activitiesService, metricsServic
   get('/schedule', scheduleRoutes.GET, true)
   post('/schedule', scheduleRoutes.POST)
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
-  get('/change', scheduleRoutes.CHANGE)
+  get('/schedule/change', scheduleRoutes.CHANGE)
   get('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.GET, true)
   post('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.POST)
   get('/appointment-set-extra-information/:prisonerNumber', appointmentSetAddExtraInformationRoutes.GET, true)
