@@ -6,42 +6,57 @@
 
 @media screen {
   .print-only {
+    display: none !important;
+  }
+
+  .printable-textarea {
     display: none;
   }
 }
 
 @include govuk-media-query($media-type: print) {
-  .print-hide {
-    display: none;
-  }
-
   .print-page-break {
     page-break-before: always;
   }
 
+  .govuk-main-wrapper {
+    padding: 0;
+  }
+
+  .govuk-width-container {
+    @include govuk-responsive-margin(3, 'left', $important: true);
+    @include govuk-responsive-margin(3, 'right', $important: true);
+    max-width: 100% !important;
+  }
+
   // govuk-frontend overrides
   .govuk-heading-l {
-    font-size: 19pt;
+    font-size: 18pt;
   }
 
   .govuk-heading-m {
-    font-size: 16pt;
+    font-size: 15pt;
   }
 
   .govuk-heading-s {
-    font-size: 14pt;
+    font-size: 13pt;
+  }
+
+  .govuk-caption-l {
+    font-size: 12pt;
+    color: govuk-colour('black')
   }
 
   .govuk-body-l {
-    font-size: 12pt;
-  }
-
-  .govuk-body {
     font-size: 11pt;
   }
 
-  .govuk-body-s {
+  .govuk-body {
     font-size: 10pt;
+  }
+
+  .govuk-body-s {
+    font-size: 9pt;
   }
 
   .printed-page {
@@ -49,11 +64,11 @@
   }
 
   .govuk-textarea {
-    font-size: 12pt;
+    font-size: 11pt;
   }
 
   .govuk-table {
-    font-size: 11pt;
+    font-size: 10pt;
 
     &__header {
       vertical-align: bottom;
@@ -96,11 +111,25 @@
     }
   }
 
+  .printable-textarea {
+    color: govuk-colour('dark-grey');
+    border: 1px solid govuk-colour('black');
+    padding: govuk-spacing(2);
+    height: 120px;
+  }
+
   .govuk-tag {
     background-color: govuk-colour("dark-grey");
     font-size: 6pt;
     padding: 4px 5px 2px 5px;
     margin-bottom: 2px;
+    color: white;
+    border: none !important;
+
+    &--red,
+    &--red-border {
+      background-color: govuk-colour("black");
+    }
   }
 
   .print-align-right {
@@ -109,7 +138,8 @@
 
   .print-checkbox {
     display: inline-block;
-    $_checkbox-size: 28px;
+    $_checkbox-size: 32px;
+    margin-right: 12px;
     width: $_checkbox-size;
     height: $_checkbox-size;
     border: $govuk-border-width-form-element solid $govuk-input-border-colour;
@@ -159,7 +189,8 @@
   }
 
   .print-checkbox {
-    $_checkbox-size: 22px;
+    $_checkbox-size: 29px;
+    margin-right: 8px;
     width: $_checkbox-size;
     height: $_checkbox-size;
     line-height: $_checkbox-size;

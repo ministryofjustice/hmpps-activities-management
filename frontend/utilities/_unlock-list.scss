@@ -1,0 +1,45 @@
+.unlock-list {
+  .unlock-list-event {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .print-columns {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .event-details {
+    flex-shrink: 1;
+    overflow: hidden;
+  }
+
+  .checkbox-container {
+    display: flex;
+    flex-shrink: 0;
+    width: 144px;
+
+    @include govuk-media-query($until: tablet) {
+      width: 117px;
+    }
+  }
+
+  .checkbox-width {
+    width: 48px;
+    padding-right: 0;
+
+    @include govuk-media-query($until: tablet, $media-type: print) {
+      width: 39px;
+      left: -2px;
+    }
+  }
+
+  .govuk-table__header, .govuk-table__cell {
+    @include govuk-media-query($until: tablet, $media-type: print) {
+      padding-right: 8px;
+    }
+  }
+}

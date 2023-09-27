@@ -1,56 +1,63 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% macro showUnlockEvents(events) %}
-    <div class="govuk-body-s govuk-!-margin-0">
-        {% for e in events %}
-            {% if not loop.first %}<hr class="mid-grey-tint-20-hr" />{% endif %}
-
-            <div class="govuk-!-font-weight-bold">
-                {% if e.eventType === 'ACTIVITY' and e.eventSource === 'SAA' %}
-                    <a href="/activities/attendance/activities/{{ e.scheduledInstanceId }}/attendance-list?preserveHistory=true"
-                    class="govuk-link govuk-link--no-visited-state">
-                        {{ e.summary | trim }}
-                    </a>
-                {% elseif e.eventType === 'APPOINTMENT' and e.eventSource === 'SAA'%}
-                    <a href="/appointments/{{ e.appointmentId }}?preserveHistory=true"
-                    class="govuk-link govuk-link--no-visited-state">
-                        {{ e.summary | trim }}
-                    </a>
-                    <div>
-                        {% if e.cancelled %}
+    {% for event in events %}
+        <div class="govuk-body-s govuk-!-margin-0 unlock-list-event">
+            <div class="govuk-!-margin-right-2 event-details">
+                <div class="govuk-!-font-weight-bold">
+                    {% if event.eventType === 'ACTIVITY' and event.eventSource === 'SAA' %}
+                        <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list?preserveHistory=true"
+                        class="govuk-link govuk-link--no-visited-state">
+                            {{- event.summary | trim -}}
+                        </a>
+                    {% elseif event.eventType === 'APPOINTMENT' and event.eventSource === 'SAA'%}
+                        <a href="/appointments/{{ event.appointmentId }}?preserveHistory=true"
+                        class="govuk-link govuk-link--no-visited-state">
+                            {{- event.summary | trim -}}
+                        </a>
+                        {% if event.cancelled %}
                             <div>{{ govukTag({ text: 'Cancelled Appointment', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
                         {% else %}
                             <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
                         {% endif %}
-                        {% if e.comments %}
-                            {{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow' }) }}
+                        {% if event.comments %}
+                            <div>{{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow' }) }}</div>
                         {% endif %}
-                    </div>
-                {% else %}
-                    {{ e.summary | trim }}
+                    {% else %}
+                        {{ event.summary | trim }}
+                    {% endif %}
+                </div>
+
+                {% if event.suspended %}
+                    <strong class="govuk-tag govuk-tag--red-border govuk-tag--small">Prisoner suspended</strong>
+                {% endif %}
+
+                {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
+                    <div>{{ event.startTime }}{% if e.endTime %} - {{ event.endTime }}{% endif %}</div>
+                    <div>{{ locationText(event) }}</div>
                 {% endif %}
             </div>
-
-            {% if e.suspended %}
-                <strong class="govuk-tag govuk-tag--red-border govuk-tag--small">Prisoner suspended</strong>
-            {% endif %}
-
-            {% if e.eventType != 'EXTERNAL_TRANSFER' and e.eventType != 'COURT_HEARING' %}
-                <div>{{ e.startTime }}{% if e.endTime %} - {{ e.endTime }}{% endif %}</div>
-                <div>{{ locationText(e) }}</div>
-            {% endif %}
-        {% endfor %}
-    </div>
+            <div class="checkbox-container print-only">
+                {% if not event.cancelled %}
+                    <div class="checkbox-width"><div class="print-checkbox"></div></div>
+                    <div class="checkbox-width"><div class="print-checkbox"></div></div>
+                    <div class="checkbox-width"><div class="print-checkbox"></div></div>
+                {% endif %}
+            </div>
+        </div>
+        {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
+    {% endfor %}
 {% endmacro %}
 
-{% macro locationText(e) %}
-    {% if e.inCell %}
+{% macro locationText(event) %}
+    {% if event.inCell %}
         In cell
-    {% elseif e.onWing %}
+    {% elseif event.onWing %}
         On wing
-    {% elseif e.offWing %}
+    {% elseif event.offWing %}
         Off wing
     {% else %}
-        {{ e.internalLocationDescription | trim | capitalize }}
+        {{ event.internalLocationDescription | trim | capitalize }}
     {% endif %}
 {% endmacro %}
