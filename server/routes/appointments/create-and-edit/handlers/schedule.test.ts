@@ -439,6 +439,14 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       await handler.REMOVE(req, res)
 
+      expect(metricsService.trackEvent).toBeCalledWith(
+        MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
+          req.session.appointmentJourney.mode,
+          'remove-prisoner',
+          res.locals.user,
+        ),
+      )
+
       expect(req.session.appointmentJourney.prisoners).toEqual([
         {
           number: 'A1234BC',
@@ -466,6 +474,14 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       req.params.prisonNumber = 'B2345CD'
 
       await handler.REMOVE(req, res)
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
+          req.session.appointmentJourney.mode,
+          'remove-prisoner',
+          res.locals.user,
+        ),
+      )
 
       expect(req.session.editAppointmentJourney.addPrisoners.length).toEqual(1)
       expect(req.session.editAppointmentJourney.addPrisoners).toEqual([
@@ -502,6 +518,14 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       }
 
       await handler.REMOVE(req, res)
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
+          req.session.appointmentJourney.mode,
+          'remove-prisoner',
+          res.locals.user,
+        ),
+      )
 
       expect(req.session.appointmentSetJourney.appointments).toEqual([
         {
