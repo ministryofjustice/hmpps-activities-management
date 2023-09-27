@@ -14,8 +14,6 @@ import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { YesNo } from '../../../../@types/activities'
-import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/MetricsEvent'
 
 const getPrisonerName = (args: ValidationArguments) => (args.object as NotAttendedData)?.prisonerName
 
@@ -87,7 +85,7 @@ export class NotAttendedForm {
 }
 
 export default class NotAttendedReasonRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly metricsService: MetricsService) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -104,7 +102,6 @@ export default class NotAttendedReasonRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const instanceId = +req.params.id
     const { user } = res.locals
     const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
     const { selectedPrisoners } = req.session.notAttendedJourney
@@ -126,16 +123,7 @@ export default class NotAttendedReasonRoutes {
       }
     })
 
-    const [instance] = await Promise.all([
-      this.activitiesService.getScheduledActivity(+instanceId, user),
-      this.activitiesService.updateAttendances(attendanceUpdates, user),
-    ])
-
-    attendanceUpdates.forEach(attendance => {
-      const prisonerNumber = instance.attendances.find(a => a.id === attendance.id)?.prisonerNumber
-      const event = MetricsEvent.ATTENDANCE_RECORDED(instance, prisonerNumber, attendance.attendanceReason, user)
-      this.metricsService.trackEvent(event)
-    })
+    await this.activitiesService.updateAttendances(attendanceUpdates, user)
 
     const successMessage = `We've saved attendance details for ${
       selectedPrisoners.length === 1

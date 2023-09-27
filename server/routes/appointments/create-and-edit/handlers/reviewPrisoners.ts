@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import config from '../../../../config'
 import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/MetricsEvent'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 export default class ReviewPrisonerRoutes {
   constructor(private readonly metricsService: MetricsService) {}

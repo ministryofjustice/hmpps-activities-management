@@ -4,7 +4,7 @@ import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { formatDate } from '../../../../../utils/utils'
 import MetricsService from '../../../../../services/metricsService'
-import MetricsEvent from '../../../../../data/MetricsEvent'
+import MetricsEvent from '../../../../../data/metricsEvent'
 
 jest.mock('../../../../../services/activitiesService')
 
@@ -85,7 +85,7 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
       )
       expect(
         metricsService.trackEvent(
-          MetricsEvent.WAITLIST_NEW_APPLICATION(req.session.waitListApplicationJourney, res.locals.user),
+          MetricsEvent.WAITLIST_APPLICATION_JOURNEY_COMPLETED(req.session.waitListApplicationJourney, res.locals.user),
         ),
       )
       expect(res.redirect).toHaveBeenCalledWith(`confirmation`)

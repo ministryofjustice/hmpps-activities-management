@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import ReviewPrisoners from './reviewPrisoners'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/MetricsEvent'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/metricsService')
 

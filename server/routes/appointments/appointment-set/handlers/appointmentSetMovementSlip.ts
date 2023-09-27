@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/MetricsEvent'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 export default class AppointmentSetMovementSlipRoutes {
   constructor(private readonly metricsService: MetricsService) {}

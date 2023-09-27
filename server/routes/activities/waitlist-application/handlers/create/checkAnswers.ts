@@ -4,7 +4,7 @@ import SimpleDate from '../../../../../commonValidationTypes/simpleDate'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { WaitingListApplicationRequest } from '../../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../../utils/utils'
-import MetricsEvent from '../../../../../data/MetricsEvent'
+import MetricsEvent from '../../../../../data/metricsEvent'
 import MetricsService from '../../../../../services/metricsService'
 
 export default class CheckAnswersRoutes {
@@ -41,7 +41,7 @@ export default class CheckAnswersRoutes {
 
     await this.activitiesService.logWaitlistApplication(waitlistApplication, user)
 
-    const waitlistEvent = MetricsEvent.WAITLIST_NEW_APPLICATION(
+    const waitlistEvent = MetricsEvent.WAITLIST_APPLICATION_JOURNEY_COMPLETED(
       waitListApplicationJourney,
       res.locals.user,
     ).setJourneyMetrics(req.session.journeyMetrics)

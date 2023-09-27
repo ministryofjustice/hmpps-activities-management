@@ -4,41 +4,21 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import NotAttendedReasonRoutes, { NotAttendedData, NotAttendedForm } from './notAttendedReason'
-import { AttendanceReason, AttendanceUpdateRequest, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
+import { AttendanceReason, AttendanceUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import AttendanceReasons from '../../../../enum/attendanceReason'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
-import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/MetricsEvent'
 
 jest.mock('../../../../services/activitiesService')
-jest.mock('../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null)
-const metricsService = new MetricsService(null)
 
 describe('Route Handlers - Non Attendance', () => {
-  const handler = new NotAttendedReasonRoutes(activitiesService, metricsService)
+  const handler = new NotAttendedReasonRoutes(activitiesService)
 
   let req: Request
   let res: Response
-
-  const instance = {
-    id: 1,
-    endTime: '11:00',
-    activitySchedule: {
-      id: 2,
-      activity: {
-        id: 2,
-        summary: 'Maths level 1',
-      },
-    },
-    attendances: [
-      { id: 1, prisonerNumber: 'ABC123', status: 'WAITING' },
-      { id: 2, prisonerNumber: 'ABC321', status: 'WAITING' },
-    ],
-  } as unknown as ScheduledActivity
 
   beforeEach(() => {
     res = {
@@ -149,14 +129,9 @@ describe('Route Handlers - Non Attendance', () => {
     } as AttendanceUpdateRequest
 
     it('non attendance should be redirected to the non attendance page', async () => {
-      when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(instance)
-
       await handler.POST(req, res)
 
       expect(activitiesService.updateAttendances).toBeCalledWith([expectedAttendance], res.locals.user)
-      expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.ATTENDANCE_RECORDED(instance, 'ABC123', expectedAttendance.attendanceReason, res.locals.user),
-      )
       expect(res.redirectWithSuccess).toBeCalledWith(
         'attendance-list',
         'Attendance recorded',

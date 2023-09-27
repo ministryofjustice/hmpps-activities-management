@@ -6,7 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
 import { LocationGroup } from '../../../../@types/activitiesAPI/types'
 import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/MetricsEvent'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/unlockListService')
@@ -162,7 +162,7 @@ describe('Unlock list routes - planned events', () => {
       )
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.UNLOCK_LIST_GENERATED(new Date('2022-01-01'), 'am', 'Houseblock 1', res.locals.user),
+        MetricsEvent.CREATE_UNLOCK_LIST(new Date('2022-01-01'), 'am', 'Houseblock 1', res.locals.user),
       )
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import ConfirmationRoutes from './confirmation'
 import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/MetricsEvent'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/metricsService')
 
@@ -43,7 +43,7 @@ describe('Route Handlers - Create an activity - Confirmation', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/confirmation', { id: '1' })
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.ACTIVITY_CREATED(res.locals.user).setJourneyMetrics(req.session.journeyMetrics),
+        MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).setJourneyMetrics(req.session.journeyMetrics),
       )
       expect(req.session.createJourney).toBeNull()
     })

@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import AppointmentMovementSlipRoutes from './appointmentMovementSlip'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/MetricsEvent'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/metricsService')
 

@@ -1,23 +1,20 @@
 import { plainToInstance } from 'class-transformer'
-import { AppointmentDetails, AppointmentSetDetails, ScheduledActivity } from '../@types/activitiesAPI/types'
+import { AppointmentDetails, AppointmentSetDetails } from '../@types/activitiesAPI/types'
 import { ServiceUser } from '../@types/express'
-import SimpleTime from '../commonValidationTypes/simpleTime'
 import { AllocateToActivityJourney } from '../routes/activities/allocate-to-activity/journey'
 import { WaitListApplicationJourney } from '../routes/activities/waitlist-application/journey'
 import { JourneyMetrics } from '../routes/journeyMetrics'
-import { parseDate } from '../utils/utils'
 import SimpleDate, { simpleDateFromDate } from '../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 
 export enum MetricsEventType {
-  ACTIVITY_CREATED = 'SAA-Activity-Created-UI',
-  ALLOCATION_CREATED = 'SAA-Allocation-Created-UI',
-  WAITLIST_NEW_APPLICATION = 'SAA-Waitlist-New-Application-UI',
-  ATTENDANCE_RECORDED = 'SAA-Attendance-Recorded-UI',
-  UNLOCK_LIST_GENERATED = 'SAA-Unlock-List-Generated-UI',
-  APPOINTMENT_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Movement-Slips-Printed-UI',
-  APPOINTMENT_SET_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Set-Movement-Slips-Printed-UI',
-  APPOINTMENT_CHANGE_FROM_SCHEDULE = 'SAA-Appointment-Change-From-Schedule-UI',
+  CREATE_ACTIVITY_JOURNEY_COMPLETED = 'SAA-Create-Activity-Journey-Completed',
+  CREATE_ALLOCATION_JOURNEY_COMPLETED = 'SAA-Create_Allocation-Journey-Completed',
+  WAITLIST_APPLICATION_JOURNEY_COMPLETED = 'SAA-Waitlist-Application-Journey-Completed',
+  CREATE_UNLOCK_LIST = 'SAA-Create-Unlock-List',
+  APPOINTMENT_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Movement-Slips-Printed',
+  APPOINTMENT_SET_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Set-Movement-Slips-Printed',
+  APPOINTMENT_CHANGE_FROM_SCHEDULE = 'SAA-Appointment-Change-From-Schedule',
 }
 
 export default class MetricsEvent {
@@ -65,12 +62,13 @@ export default class MetricsEvent {
     return this
   }
 
-  static ACTIVITY_CREATED = (user: ServiceUser) => new MetricsEvent(MetricsEventType.ACTIVITY_CREATED, user)
+  static CREATE_ACTIVITY_JOURNEY_COMPLETED = (user: ServiceUser) =>
+    new MetricsEvent(MetricsEventType.CREATE_ACTIVITY_JOURNEY_COMPLETED, user)
 
-  static ALLOCATION_CREATED(allocation: AllocateToActivityJourney, user: ServiceUser) {
+  static CREATE_ALLOCATION_JOURNEY_COMPLETED(allocation: AllocateToActivityJourney, user: ServiceUser) {
     const startDate = plainToInstance(SimpleDate, allocation.startDate).toIsoString()
 
-    const event = new MetricsEvent(MetricsEventType.ALLOCATION_CREATED, user)
+    const event = new MetricsEvent(MetricsEventType.CREATE_ALLOCATION_JOURNEY_COMPLETED, user)
     return event.addProperties({
       prisonerNumber: allocation.inmate?.prisonerNumber,
       activityId: allocation.activity.activityId?.toString(),
@@ -78,29 +76,8 @@ export default class MetricsEvent {
     })
   }
 
-  static ATTENDANCE_RECORDED(
-    instance: ScheduledActivity,
-    prisonerNumber: string,
-    attendanceReason: string,
-    user: ServiceUser,
-  ) {
-    const [hour, minute] = instance.endTime.split(':')
-    const endTime = plainToInstance(SimpleTime, { hour, minute })
-    const endDate = parseDate(instance.date)
-
-    const event = new MetricsEvent(MetricsEventType.ATTENDANCE_RECORDED, user)
-    return event.addProperties({
-      activityId: instance.activitySchedule.activity.id,
-      scheduledInstanceId: instance.id,
-      prisonerNumber,
-      activitySummary: instance.activitySchedule.activity.summary,
-      attendanceReason,
-      attendedBeforeSessionEnded: new Date() < endTime.toDate(endDate) ? 'true' : 'false',
-    })
-  }
-
-  static WAITLIST_NEW_APPLICATION(waitlist: WaitListApplicationJourney, user: ServiceUser) {
-    const event = new MetricsEvent(MetricsEventType.WAITLIST_NEW_APPLICATION, user)
+  static WAITLIST_APPLICATION_JOURNEY_COMPLETED(waitlist: WaitListApplicationJourney, user: ServiceUser) {
+    const event = new MetricsEvent(MetricsEventType.WAITLIST_APPLICATION_JOURNEY_COMPLETED, user)
     return event.addProperties({
       prisonerNumber: waitlist.prisoner?.prisonerNumber.toString(),
       activityId: waitlist.activity?.activityId?.toString(),
@@ -111,8 +88,8 @@ export default class MetricsEvent {
     })
   }
 
-  static UNLOCK_LIST_GENERATED(date: Date, timeslot: string, location: string, user: ServiceUser) {
-    return new MetricsEvent(MetricsEventType.UNLOCK_LIST_GENERATED, user).addProperties({
+  static CREATE_UNLOCK_LIST(date: Date, timeslot: string, location: string, user: ServiceUser) {
+    return new MetricsEvent(MetricsEventType.CREATE_UNLOCK_LIST, user).addProperties({
       unlockDate: simpleDateFromDate(date).toIsoString(),
       timePeriod: timeslot,
       location,

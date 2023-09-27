@@ -3,7 +3,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
 import { asString, toDate } from '../../../../utils/utils'
 import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/MetricsEvent'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 export default class PlannedEventsRoutes {
   constructor(
@@ -46,7 +46,7 @@ export default class PlannedEventsRoutes {
       stayingOnWing: unlockListItems.length - leavingWingCount,
     }
 
-    this.metricsService.trackEvent(MetricsEvent.UNLOCK_LIST_GENERATED(unlockDate, timeSlot, location, res.locals.user))
+    this.metricsService.trackEvent(MetricsEvent.CREATE_UNLOCK_LIST(unlockDate, timeSlot, location, res.locals.user))
 
     res.render('pages/activities/unlock-list/planned-events', {
       date,

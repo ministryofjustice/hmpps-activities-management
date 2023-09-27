@@ -1,7 +1,7 @@
 import { TelemetryClient } from 'applicationinsights'
 import { ServiceUser } from '../@types/express'
 import MetricsService from './metricsService'
-import MetricsEvent from '../data/MetricsEvent'
+import MetricsEvent from '../data/metricsEvent'
 
 jest.mock('applicationinsights')
 

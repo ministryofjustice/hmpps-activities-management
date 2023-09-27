@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import ConfirmationRoutes from './confirmation'
 import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/MetricsEvent'
+import MetricsEvent from '../../../../data/metricsEvent'
 import { AllocateToActivityJourney } from '../journey'
 
 jest.mock('../../../../services/metricsService')
@@ -64,7 +64,9 @@ describe('Route Handlers - Allocate - Confirmation', () => {
     it('should render page with data from session', async () => {
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toBeCalledWith(
-        MetricsEvent.ALLOCATION_CREATED(allocateJourney, res.locals.user).setJourneyMetrics(req.session.journeyMetrics),
+        MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).setJourneyMetrics(
+          req.session.journeyMetrics,
+        ),
       )
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/confirmation', {
         activityId: 1,
