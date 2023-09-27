@@ -396,7 +396,9 @@
             </div>
 
             {{ govukButton({
-                text: "Apply filters"
+                text: "Apply filters",
+                name: 'filtersApplied',
+                value: 'true'
             }) }}
         </form>
     </div>
@@ -479,7 +481,7 @@
                 },
                 {
                     text: 'Allocate',
-                    formAction: activity.id + '/allocate?fromWaitlist=true'
+                    formAction: activity.id + '/allocate?source=Waitlist' + (' - filters' if session.req.query.filtersApplied)
                 }
             ],
             itemsDescription: 'person',
@@ -616,7 +618,9 @@
 
             {{ govukButton({
                 id: 'apply-filters',
-                text: "Apply filters"
+                text: "Apply filters",
+                name: 'filtersApplied',
+                value: 'true'
             }) }}
         </form>
     </div>
@@ -689,7 +693,9 @@
             actions: [
                 {
                     text: 'Allocate',
-                    formAction: activity.id + '/allocate'
+                    formAction: activity.id + '/allocate?source=Other people' +
+                        (' - search' if filters.candidateQuery and not session.req.query.filtersApplied) +
+                        (' - filters' if session.req.query.filtersApplied)
                 }
             ],
             itemsDescription: 'person',

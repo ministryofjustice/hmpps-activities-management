@@ -116,7 +116,7 @@ export default class AllocationDashboardRoutes {
 
   ALLOCATE = async (req: Request, res: Response): Promise<void> => {
     const { selectedAllocation, selectedWaitlistApplication } = req.body
-    const { fromWaitlist } = req.query
+    const { source } = req.query
     const { user } = res.locals
 
     let application
@@ -138,7 +138,7 @@ export default class AllocationDashboardRoutes {
     let redirectUrl = `/activities/allocate/prisoner/${prisonerNumber}?scheduleId=${getScheduleIdFromActivity(
       activity,
     )}`
-    redirectUrl += fromWaitlist ? '&fromWaitlist=true' : ''
+    redirectUrl += source ? `&source=${source}` : ''
     return res.redirect(redirectUrl)
   }
 
