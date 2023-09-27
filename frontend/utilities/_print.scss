@@ -124,9 +124,10 @@
     padding: 4px 5px 2px 5px;
     margin-bottom: 2px;
     color: white;
+    border: none !important;
 
-    &--red {
-      color: govuk-colour("white");
+    &--red,
+    &--red-border {
       background-color: govuk-colour("black");
     }
   }
