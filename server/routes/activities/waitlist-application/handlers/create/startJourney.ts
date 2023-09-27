@@ -22,6 +22,9 @@ export default class StartJourneyRoutes {
         name: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
       },
     }
+    req.session.journeyMetrics = {
+      journeyStartTime: Date.now(),
+    }
 
     return res.redirect(`../request-date`)
   }

@@ -21,7 +21,7 @@ import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFor
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import CancellationReasonRoutes, { CancellationReason } from './handlers/cancellationReason'
 
-export default function Edit({ prisonService, activitiesService }: Services): Router {
+export default function Edit({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
@@ -33,7 +33,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   const startJourneyRoutes = new StartJourneyRoutes(prisonService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeRoutes = new DateAndTimeRoutes()
-  const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService)
+  const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
   const extraInformationRoutes = new ExtraInformationRoutes(editAppointmentService)
   const confirmEditRoutes = new ConfirmEditRoutes(editAppointmentService)
   const applyToRoutes = new ApplyToRoutes(editAppointmentService)
@@ -89,7 +89,7 @@ export default function Edit({ prisonService, activitiesService }: Services): Ro
   const howToAddPrisoners = new HowToAddPrisoners()
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const reviewPrisoners = new ReviewPrisoners()
+  const reviewPrisoners = new ReviewPrisoners(metricsService)
 
   router.get(
     '/start/prisoners/add',

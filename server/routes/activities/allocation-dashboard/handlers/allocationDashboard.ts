@@ -116,6 +116,7 @@ export default class AllocationDashboardRoutes {
 
   ALLOCATE = async (req: Request, res: Response): Promise<void> => {
     const { selectedAllocation, selectedWaitlistApplication } = req.body
+    const { source } = req.query
     const { user } = res.locals
 
     let application
@@ -133,9 +134,12 @@ export default class AllocationDashboardRoutes {
     if (!activity.pay.map(p => p.incentiveLevel).includes(iepSummary.iepLevel)) {
       return res.validationFailed('selectedAllocation', 'No suitable pay rate exists for this candidate')
     }
-    return res.redirect(
-      `/activities/allocate/prisoner/${prisonerNumber}?scheduleId=${getScheduleIdFromActivity(activity)}`,
-    )
+
+    let redirectUrl = `/activities/allocate/prisoner/${prisonerNumber}?scheduleId=${getScheduleIdFromActivity(
+      activity,
+    )}`
+    redirectUrl += source ? `&source=${source}` : ''
+    return res.redirect(redirectUrl)
   }
 
   DEALLOCATE = async (req: Request, res: Response): Promise<void> => {

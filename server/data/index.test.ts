@@ -9,7 +9,7 @@ import FrontendComponentApiClient from './frontendComponentApiClient'
 describe('DataAccess', () => {
   test('The correct rest clients are instantiated', () => {
     const clients = dataAccess()
-    expect(Object.values(clients).length).toBe(6)
+    expect(Object.values(clients).length).toBe(7)
     expect(clients.hmppsAuthClient).toBeInstanceOf(HmppsAuthClient)
     expect(clients.prisonApiClient).toBeInstanceOf(PrisonApiClient)
     expect(clients.prisonerSearchApiClient).toBeInstanceOf(PrisonerSearchApiClient)

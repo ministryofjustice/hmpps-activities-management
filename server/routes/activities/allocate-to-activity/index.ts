@@ -15,7 +15,7 @@ import EndDateRoutes, { EndDate } from './handlers/endDate'
 import RemoveDateOptionRoutes, { RemoveDateOption } from './handlers/removeDateOption'
 import AllocateHomeRoutes from './handlers/home'
 
-export default function Index({ activitiesService, prisonService }: Services): Router {
+export default function Index({ activitiesService, prisonService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(path, emptyJourneyHandler('allocateJourney', stepRequiresSession), asyncMiddleware(handler))
@@ -28,7 +28,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const payBandHandler = new PayBandRoutes(activitiesService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const cancelHandler = new CancelRoutes()
-  const confirmationHandler = new ConfirmationRoutes()
+  const confirmationHandler = new ConfirmationRoutes(metricsService)
   const startDateHandler = new StartDateRoutes()
   const endDateOptionHandler = new EndDateOptionRoutes()
   const endDateHandler = new EndDateRoutes()

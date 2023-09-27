@@ -7,7 +7,7 @@
   "scripts": {
     "prepare": "husky install",
     "compile-assets": "grunt",
-    "watch-node": "ts-node-dev --watch .env --respawn server.ts",
+    "watch-node": "ts-node-dev -r dotenv/config --watch .env --respawn server.ts",
     "watch-assets": "npm run build:dev && grunt watch",
     "build": "npm run compile-assets && tsc",
     "build:dev": "npx grunt clean-dev-build",

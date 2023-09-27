@@ -10,9 +10,10 @@ export default class AttendanceDetailsRoutes {
     const { id } = req.params
     const { attendanceId } = req.params
 
-    const instance = await this.activitiesService.getScheduledActivity(+id, user)
-
-    const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId)
+    const [instance, attendance] = await Promise.all([
+      this.activitiesService.getScheduledActivity(+id, user),
+      this.activitiesService.getAttendanceDetails(+attendanceId),
+    ])
 
     const attendee = await this.prisonService
       .getInmateByPrisonerNumber(attendance.prisonerNumber, user)

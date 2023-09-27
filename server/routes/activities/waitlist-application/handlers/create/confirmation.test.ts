@@ -27,9 +27,10 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
     req = {
       session: {
         waitListApplicationJourney: {
-          prisoner: { name: 'Alan Key' },
+          prisoner: { name: 'Alan Key', prisonerNumber: 'ABC1234' },
           activity: { activityId: 1, scheduleId: 1 },
         },
+        journeyMetrics: {},
       },
     } as unknown as Request
   })
@@ -60,7 +61,7 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/waitlist-application/confirmation', {
         waitListApplicationJourney: {
-          prisoner: { name: 'Alan Key' },
+          prisoner: { name: 'Alan Key', prisonerNumber: 'ABC1234' },
           activity: {
             activityId: 1,
             scheduleId: 1,

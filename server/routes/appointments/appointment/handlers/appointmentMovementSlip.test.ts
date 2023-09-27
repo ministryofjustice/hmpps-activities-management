@@ -2,11 +2,15 @@ import { Request, Response } from 'express'
 
 import AppointmentMovementSlipRoutes from './appointmentMovementSlip'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
 
-jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/metricsService')
+
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Movement Slip', () => {
-  const handler = new AppointmentMovementSlipRoutes()
+  const handler = new AppointmentMovementSlipRoutes(metricsService)
   let req: Request
   let res: Response
 
@@ -70,9 +74,10 @@ describe('Route Handlers - Movement Slip', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/movement-slip', {
-        appointment,
-      })
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.APPOINTMENT_MOVEMENT_SLIP_PRINTED(appointment, res.locals.user),
+      )
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/movement-slip', { appointment })
     })
   })
 })

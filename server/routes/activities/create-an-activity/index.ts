@@ -28,7 +28,7 @@ import PayRateTypeRoutes, { PayRateType } from './handlers/payRateType'
 import ScheduleFrequencyRoutes, { ScheduleFrequencyForm } from './handlers/scheduleFrequency'
 import ConfirmCapacityRoutes from './handlers/confirmCapacity'
 
-export default function Index({ activitiesService, prisonService }: Services): Router {
+export default function Index({ activitiesService, prisonService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), asyncMiddleware(handler))
@@ -58,7 +58,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const capacityHandler = new CapacityRoutes(activitiesService)
   const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(activitiesService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, prisonService)
-  const confirmationHandler = new ConfirmationRoutes()
+  const confirmationHandler = new ConfirmationRoutes(metricsService)
 
   get('/start', startHandler.GET)
   get('/category', categoryHandler.GET, true)

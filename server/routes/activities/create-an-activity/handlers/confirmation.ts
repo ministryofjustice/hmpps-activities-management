@@ -1,23 +1,17 @@
 import { Request, Response } from 'express'
-import { trackEvent } from '../../../../utils/eventTrackingAppInsights'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 export default class ConfirmationRoutes {
+  constructor(private readonly metricsService: MetricsService) {}
+
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/activities/create-an-activity/confirmation', { id: req.params.id as unknown as number })
+    const metricEvent = MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).setJourneyMetrics(
+      req.session.journeyMetrics,
+    )
+    this.metricsService.trackEvent(metricEvent)
 
-    const properties = {
-      user: res.locals.user.username,
-      prisonCode: res.locals.user.activeCaseLoadId,
-    }
-    const eventMetrics = {
-      journeyTimeSec: (Date.now() - req.session.journeyStartTime) / 1000,
-    }
-
-    trackEvent({
-      eventName: 'SAA-Activity-Created',
-      properties,
-      eventMetrics,
-    })
+    res.render('pages/activities/create-an-activity/confirmation', { id: req.params.id })
 
     req.session.createJourney = null
   }
