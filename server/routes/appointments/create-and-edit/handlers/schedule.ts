@@ -130,6 +130,6 @@ export default class ScheduleRoutes {
     )
     this.metricsService.trackEvent(changeFromSchedule)
 
-    res.redirect(`${property}${preserveHistory ? '?preserveHistory=true' : ''}`)
+    res.redirect(`../${property}${preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 }

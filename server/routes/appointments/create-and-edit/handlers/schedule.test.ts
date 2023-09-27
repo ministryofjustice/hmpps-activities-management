@@ -542,7 +542,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         ),
       )
 
-      expect(res.redirect).toBeCalledWith('date-and-time?preserveHistory=true')
+      expect(res.redirect).toBeCalledWith('../date-and-time?preserveHistory=true')
     })
   })
 })
