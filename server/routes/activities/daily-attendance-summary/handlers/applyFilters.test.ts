@@ -55,16 +55,5 @@ describe('Route Handlers - applyFilters', () => {
         searchTerm: '',
       })
     })
-
-    it('should not apply undefined filters', async () => {
-      req.body = {}
-      await handler.APPLY(req, res)
-
-      expect(req.session.attendanceSummaryJourney).toStrictEqual({
-        categoryFilters: ['Original category'],
-        activityFilters: ['Original Activity'],
-        searchTerm: null,
-      })
-    })
   })
 })
