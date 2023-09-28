@@ -34,7 +34,7 @@
                 {% endif %}
 
                 {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
-                    <div>{{ event.startTime }}{% if e.endTime %} - {{ event.endTime }}{% endif %}</div>
+                    <div>{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
                     <div>{{ locationText(event) }}</div>
                 {% endif %}
             </div>
