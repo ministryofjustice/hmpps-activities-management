@@ -367,7 +367,8 @@ describe('Route Handlers - Allocation dashboard', () => {
         user,
         ['Standard', 'Enhanced'],
         undefined,
-        expect.anything(),
+        undefined,
+
         undefined,
         0,
       )
