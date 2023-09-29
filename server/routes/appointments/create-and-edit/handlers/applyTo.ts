@@ -5,6 +5,7 @@ import { AppointmentApplyTo } from '../../../../@types/appointments'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { getAppointmentApplyToOptions, getRepeatFrequencyText } from '../../../../utils/editAppointmentUtils'
 import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 export class ApplyTo {
   @Expose()
@@ -33,9 +34,21 @@ export default class ApplyToRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { editAppointmentJourney } = req.session
+    const { appointmentId } = req.params
     const { applyTo } = req.body
 
-    req.session.editAppointmentJourney.applyTo = applyTo
+    editAppointmentJourney.applyTo = applyTo
+
+    if (editAppointmentJourney.cancellationReason) {
+      this.metricsService.trackEvent(
+        MetricsEvent.CANCEL_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, req, res.locals.user),
+      )
+    } else {
+      this.metricsService.trackEvent(
+        MetricsEvent.EDIT_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, req, res.locals.user),
+      )
+    }
 
     await this.editAppointmentService.edit(req, res, applyTo)
   }

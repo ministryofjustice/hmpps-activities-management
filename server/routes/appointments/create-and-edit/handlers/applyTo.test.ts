@@ -2,14 +2,20 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays, format } from 'date-fns'
+import { v4 as uuidv4 } from 'uuid'
 import ApplyToRoutes, { ApplyTo } from './applyTo'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { AppointmentApplyTo, AppointmentFrequency } from '../../../../@types/appointments'
+import {
+  AppointmentApplyTo,
+  AppointmentCancellationReason,
+  AppointmentFrequency,
+} from '../../../../@types/appointments'
 import { getAppointmentApplyToOptions, getRepeatFrequencyText } from '../../../../utils/editAppointmentUtils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import MetricsService from '../../../../services/metricsService'
+import MetricsEvent, { MetricsEventType } from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/editAppointmentService')
 jest.mock('../../../../services/metricsService')
@@ -22,12 +28,16 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
   const weekTomorrow = addDays(new Date(), 8)
   let req: Request
   let res: Response
+  const journeyId = uuidv4()
   const appointmentId = 2
   const property = 'location'
 
   beforeEach(() => {
     req = {
       session: {
+        journeyMetrics: {
+          journeyStartTime: Date.now() - 60000,
+        },
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
@@ -63,6 +73,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         } as EditAppointmentJourney,
       },
       params: {
+        journeyId,
         appointmentId,
         property,
       },
@@ -70,7 +81,10 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
 
     res = {
       locals: {
-        user: {},
+        user: {
+          username: 'test.user',
+          activeCaseLoadId: 'TPR',
+        },
       },
       render: jest.fn(),
     } as unknown as Response
@@ -91,11 +105,23 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
 
   describe('POST', () => {
     it('should save apply to in session and edit', async () => {
+      req.session.editAppointmentJourney.property = 'extra-information'
       req.body = {
         applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
       }
 
       await handler.POST(req, res)
+
+      expect(req.session.journeyMetrics).toBeNull()
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointmentId)
+          .addProperty('property', 'extra-information')
+          .addProperty('isApplyToQuestionRequired', 'true')
+          .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
+          .addMeasurement('journeyTimeSec', 60),
+      )
 
       expect(req.session.editAppointmentJourney.applyTo).toEqual(AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
       expect(editAppointmentService.edit).toHaveBeenCalledWith(
@@ -103,6 +129,52 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
         res,
         AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
       )
+    })
+
+    it('should save apply to in session and cancel', async () => {
+      req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
+      req.body = {
+        applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.journeyMetrics).toBeNull()
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointmentId)
+          .addProperty('isDelete', 'false')
+          .addProperty('isApplyToQuestionRequired', 'true')
+          .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+          .addMeasurement('journeyTimeSec', 60),
+      )
+
+      expect(req.session.editAppointmentJourney.applyTo).toEqual(AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+      expect(editAppointmentService.edit).toHaveBeenCalledWith(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+    })
+
+    it('should save apply to in session and delete', async () => {
+      req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
+      req.body = {
+        applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.journeyMetrics).toBeNull()
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointmentId)
+          .addProperty('isDelete', 'true')
+          .addProperty('isApplyToQuestionRequired', 'true')
+          .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+          .addMeasurement('journeyTimeSec', 60),
+      )
+
+      expect(req.session.editAppointmentJourney.applyTo).toEqual(AppointmentApplyTo.THIS_APPOINTMENT)
+      expect(editAppointmentService.edit).toHaveBeenCalledWith(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
     })
   })
 
