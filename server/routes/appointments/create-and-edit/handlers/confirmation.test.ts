@@ -1,20 +1,38 @@
 import { Request, Response } from 'express'
+import { v4 as uuidv4 } from 'uuid'
 import ConfirmationRoutes from './confirmation'
-import { AppointmentSeriesDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent, { MetricsEventType } from '../../../../data/metricsEvent'
+
+jest.mock('../../../../services/metricsService')
+
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Create Appointment - Confirmation', () => {
-  const handler = new ConfirmationRoutes()
+  const handler = new ConfirmationRoutes(metricsService)
   let req: Request
   let res: Response
+  const journeyId = uuidv4()
 
   beforeEach(() => {
     res = {
+      locals: {
+        user: {
+          username: 'test.user',
+          activeCaseLoadId: 'TPR',
+        },
+      },
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
 
     req = {
       session: {
+        journeyMetrics: {
+          journeyStartTime: Date.now() - 60000,
+          source: 'startLink',
+        },
         appointmentJourney: {
           prisoner: {
             number: 'A1234BC',
@@ -48,9 +66,12 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
         },
         appointmentSetJourney: {},
       },
-      appointment: {} as AppointmentSeriesDetails,
-      appointmentSet: {} as AppointmentSetDetails,
+      appointment: {
+        appointmentSeries: { id: 2 },
+      } as AppointmentDetails,
+      appointmentSet: { id: 3 } as AppointmentSetDetails,
       params: {
+        journeyId,
         id: '1',
       },
     } as unknown as Request
@@ -63,6 +84,16 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
   describe('GET', () => {
     it('should render the confirmation page with appointment details', async () => {
       await handler.GET(req, res)
+
+      expect(req.session.journeyMetrics).toBeNull()
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('journeySource', 'startLink')
+          .addProperty('appointmentSeriesId', 2)
+          .addMeasurement('journeyTimeSec', 60),
+      )
+
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         appointment: req.appointment,
       })
@@ -76,7 +107,18 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
   describe('GET_SET', () => {
     it('should render the confirmation page with appointment set details', async () => {
+      req.session.journeyMetrics.source = null
+
       await handler.GET_SET(req, res)
+
+      expect(req.session.journeyMetrics).toBeNull()
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentSetId', 3)
+          .addMeasurement('journeyTimeSec', 60),
+      )
+
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         appointmentSet: req.appointmentSet,
       })

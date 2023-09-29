@@ -51,7 +51,7 @@ export default function Create({ prisonService, activitiesService, metricsServic
   const appointmentSetExtraInformationRoutes = new AppointmentSetExtraInformationRoutes()
   const appointmentSetAddExtraInformationRoutes = new AppointmentSetAddExtraInformationRoutes()
   const checkAnswersRoutes = new CheckAnswersRoutes(activitiesService)
-  const confirmationRoutes = new ConfirmationRoutes()
+  const confirmationRoutes = new ConfirmationRoutes(metricsService)
   const howToAddPrisonerRoutes = new HowToAddPrisonerRoutes()
   const reviewPrisonerRoutes = new ReviewPrisonerRoutes(metricsService)
   const appointmentSetUploadRoutes = new AppointmentSetUploadRoutes(new PrisonerListCsvParser(), prisonService)

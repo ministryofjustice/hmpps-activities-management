@@ -66,7 +66,7 @@ export default class MetricsEvent {
     if (!journeyMetrics) return this
 
     const { journeyStartTime, source } = journeyMetrics
-    if (journeyStartTime) this.addMeasurement('journeyTimeSec', (Date.now() - journeyStartTime) / 1000)
+    if (journeyStartTime) this.addMeasurement('journeyTimeSec', Math.round((Date.now() - journeyStartTime) / 1000))
     if (source) this.addProperty('journeySource', source)
     return this
   }
@@ -121,6 +121,32 @@ export default class MetricsEvent {
 
   static CREATE_APPOINTMENT_JOURNEY_STARTED(source: string, req: Request, user: ServiceUser) {
     return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, user).startJourneyMetrics(req, source)
+  }
+
+  static CREATE_APPOINTMENT_JOURNEY_COMPLETED(appointment: AppointmentDetails, req: Request, user: ServiceUser) {
+    const event = new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, user)
+      .addProperty('journeyId', req.params.journeyId)
+      .setJourneyMetrics(req.session.journeyMetrics)
+      .addProperty('appointmentSeriesId', appointment.appointmentSeries.id)
+
+    req.session.journeyMetrics = null
+
+    return event
+  }
+
+  static CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED(
+    appointmentSet: AppointmentSetDetails,
+    req: Request,
+    user: ServiceUser,
+  ) {
+    const event = new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED, user)
+      .addProperty('journeyId', req.params.journeyId)
+      .setJourneyMetrics(req.session.journeyMetrics)
+      .addProperty('appointmentSetId', appointmentSet.id)
+
+    req.session.journeyMetrics = null
+
+    return event
   }
 
   static CREATE_APPOINTMENT_SET_JOURNEY_STARTED(req: Request, user: ServiceUser) {
