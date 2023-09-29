@@ -35,8 +35,8 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   const dateAndTimeRoutes = new DateAndTimeRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
   const extraInformationRoutes = new ExtraInformationRoutes(editAppointmentService)
-  const confirmEditRoutes = new ConfirmEditRoutes(editAppointmentService)
-  const applyToRoutes = new ApplyToRoutes(editAppointmentService)
+  const confirmEditRoutes = new ConfirmEditRoutes(editAppointmentService, metricsService)
+  const applyToRoutes = new ApplyToRoutes(editAppointmentService, metricsService)
 
   // Cancel routes
   const cancellationReasonRoutes = new CancellationReasonRoutes()

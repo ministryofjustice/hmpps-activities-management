@@ -4,6 +4,7 @@ import { IsEnum } from 'class-validator'
 import { AppointmentApplyTo } from '../../../../@types/appointments'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { getAppointmentApplyToOptions, getRepeatFrequencyText } from '../../../../utils/editAppointmentUtils'
+import MetricsService from '../../../../services/metricsService'
 
 export class ApplyTo {
   @Expose()
@@ -14,7 +15,10 @@ export class ApplyTo {
 }
 
 export default class ApplyToRoutes {
-  constructor(private readonly editAppointmentService: EditAppointmentService) {}
+  constructor(
+    private readonly editAppointmentService: EditAppointmentService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId, property } = req.params

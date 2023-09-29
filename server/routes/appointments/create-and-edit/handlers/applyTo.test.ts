@@ -9,13 +9,16 @@ import { AppointmentApplyTo, AppointmentFrequency } from '../../../../@types/app
 import { getAppointmentApplyToOptions, getRepeatFrequencyText } from '../../../../utils/editAppointmentUtils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
+import MetricsService from '../../../../services/metricsService'
 
 jest.mock('../../../../services/editAppointmentService')
+jest.mock('../../../../services/metricsService')
 
 const editAppointmentService = new EditAppointmentService(null) as jest.Mocked<EditAppointmentService>
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Edit Appointment - Apply To', () => {
-  const handler = new ApplyToRoutes(editAppointmentService)
+  const handler = new ApplyToRoutes(editAppointmentService, metricsService)
   const weekTomorrow = addDays(new Date(), 8)
   let req: Request
   let res: Response

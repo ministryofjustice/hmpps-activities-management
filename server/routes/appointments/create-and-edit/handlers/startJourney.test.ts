@@ -353,6 +353,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         ],
         sequenceNumber: 2,
         appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
+        property: 'location',
       } as EditAppointmentJourney
 
       await handler.EDIT(req, res)
@@ -432,6 +433,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         ],
         sequenceNumber: 2,
         appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
+        property: 'remove-prisoner',
         removePrisoner: {
           prisonerNumber: 'B2345CD',
           firstName: 'TEST02',
@@ -486,6 +488,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         ],
         sequenceNumber: 2,
         appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
+        property: 'remove-prisoner',
         removePrisoner: {
           prisonerNumber: 'A1234BC',
           firstName: 'TEST01',
@@ -541,6 +544,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         ],
         sequenceNumber: 2,
         appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
+        property: 'add-prisoners',
         addPrisoners: [],
       } as EditAppointmentJourney
 

@@ -10,6 +10,7 @@ export type EditAppointmentJourney = {
   sequenceNumber: number
   appointmentSeries?: AppointmentSeriesSummary
   appointmentSet?: AppointmentSetSummary
+  property?: string
   location?: {
     id: number
     description: string

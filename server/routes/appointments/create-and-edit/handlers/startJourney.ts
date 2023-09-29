@@ -86,17 +86,9 @@ export default class StartJourneyRoutes {
 
     if (!property) return res.redirect('back')
 
-    this.populateEditSession(req)
+    this.populateEditSession(req, property)
 
-    this.metricsService.trackEvent(
-      MetricsEvent.EDIT_APPOINTMENT_JOURNEY_STARTED(
-        appointment,
-        property,
-        isApplyToQuestionRequired(req.session.editAppointmentJourney),
-        req,
-        res.locals.user,
-      ),
-    )
+    this.metricsService.trackEvent(MetricsEvent.EDIT_APPOINTMENT_JOURNEY_STARTED(appointment, req, res.locals.user))
 
     return res.redirect(`../${property}`)
   }
@@ -109,19 +101,11 @@ export default class StartJourneyRoutes {
 
     if (!attendee?.prisoner) return res.redirect('back')
 
-    this.populateEditSession(req)
+    this.populateEditSession(req, 'remove-prisoner')
 
     req.session.editAppointmentJourney.removePrisoner = attendee.prisoner
 
-    this.metricsService.trackEvent(
-      MetricsEvent.EDIT_APPOINTMENT_JOURNEY_STARTED(
-        appointment,
-        'remove-prisoner',
-        isApplyToQuestionRequired(req.session.editAppointmentJourney),
-        req,
-        res.locals.user,
-      ),
-    )
+    this.metricsService.trackEvent(MetricsEvent.EDIT_APPOINTMENT_JOURNEY_STARTED(appointment, req, res.locals.user))
 
     if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
       return res.redirect('../remove/apply-to')
@@ -135,18 +119,10 @@ export default class StartJourneyRoutes {
   ADD_PRISONERS = async (req: Request, res: Response): Promise<void> => {
     const { appointment } = req
 
-    this.populateEditSession(req)
+    this.populateEditSession(req, 'add-prisoners')
     req.session.editAppointmentJourney.addPrisoners = []
 
-    this.metricsService.trackEvent(
-      MetricsEvent.EDIT_APPOINTMENT_JOURNEY_STARTED(
-        appointment,
-        'add-prisoners',
-        isApplyToQuestionRequired(req.session.editAppointmentJourney),
-        req,
-        res.locals.user,
-      ),
-    )
+    this.metricsService.trackEvent(MetricsEvent.EDIT_APPOINTMENT_JOURNEY_STARTED(appointment, req, res.locals.user))
 
     return res.redirect('../../prisoners/add/how-to-add-prisoners')
   }
@@ -156,19 +132,12 @@ export default class StartJourneyRoutes {
 
     this.populateEditSession(req)
 
-    this.metricsService.trackEvent(
-      MetricsEvent.CANCEL_APPOINTMENT_JOURNEY_STARTED(
-        appointment,
-        isApplyToQuestionRequired(req.session.editAppointmentJourney),
-        req,
-        res.locals.user,
-      ),
-    )
+    this.metricsService.trackEvent(MetricsEvent.CANCEL_APPOINTMENT_JOURNEY_STARTED(appointment, req, res.locals.user))
 
     return res.redirect('../cancel/reason')
   }
 
-  private populateEditSession(req: Request) {
+  private populateEditSession(req: Request, property?: string) {
     const { appointmentSeries, appointment } = req
 
     const startDate = parseDate(appointment.startDate)
@@ -229,6 +198,7 @@ export default class StartJourneyRoutes {
       sequenceNumber: appointment.sequenceNumber,
       appointmentSeries: appointment.appointmentSeries,
       appointmentSet: appointment.appointmentSet,
+      property,
     }
   }
 }
