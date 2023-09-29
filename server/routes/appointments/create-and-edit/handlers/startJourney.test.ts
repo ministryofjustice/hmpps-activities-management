@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { v4 as uuidv4 } from 'uuid'
 import { when } from 'jest-when'
 import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import StartJourneyRoutes from './startJourney'
@@ -9,15 +10,20 @@ import { YesNo } from '../../../../@types/activities'
 import { AppointmentApplyTo } from '../../../../@types/appointments'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent, { MetricsEventType } from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/metricsService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Create Appointment - Start', () => {
-  const handler = new StartJourneyRoutes(prisonService)
+  const handler = new StartJourneyRoutes(prisonService, metricsService)
   let req: Request
   let res: Response
+  const journeyId = uuidv4()
   const appointmentSeries = {
     appointmentName: 'Appointment name (Chaplaincy)',
     appointments: [
@@ -84,8 +90,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     req = {
       session: {},
-      params: {},
+      params: { journeyId },
     } as unknown as Request
+  })
+
+  afterEach(() => {
+    jest.resetAllMocks()
   })
 
   describe('INDIVIDUAL', () => {
@@ -99,6 +109,16 @@ describe('Route Handlers - Create Appointment - Start', () => {
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toEqual('startLink')
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('journeySource', 'startLink'),
+      )
+
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
   })
@@ -115,6 +135,16 @@ describe('Route Handlers - Create Appointment - Start', () => {
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toEqual('startLink')
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('journeySource', 'startLink'),
+      )
+
       expect(res.redirect).toHaveBeenCalledWith('how-to-add-prisoners')
     })
   })
@@ -132,6 +162,17 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentSetJourney).toEqual({
         appointments: [],
       })
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_STARTED, res.locals.user).addProperty(
+          'journeyId',
+          journeyId,
+        ),
+      )
+
       expect(res.redirect).toHaveBeenCalledWith('upload-appointment-set')
     })
   })
@@ -153,6 +194,16 @@ describe('Route Handlers - Create Appointment - Start', () => {
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toEqual('prisonerProfile')
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('journeySource', 'prisonerProfile'),
+      )
+
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
     })
 
@@ -184,18 +235,25 @@ describe('Route Handlers - Create Appointment - Start', () => {
       })
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toEqual('prisonerProfile')
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('journeySource', 'prisonerProfile'),
+      )
+
       expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
     })
   })
 
   describe('EDIT', () => {
     beforeEach(() => {
-      res = {
-        redirect: jest.fn(),
-      } as unknown as Response
-
       req = {
         session: {},
+        params: { journeyId },
         appointmentSeries,
         appointment,
       } as unknown as Request
@@ -209,11 +267,29 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toBeUndefined()
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
+      expect(req.session.journeyMetrics).toBeUndefined()
+      expect(metricsService.trackEvent).not.toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith('back')
+    })
+
+    it('should redirect back if property is empty', async () => {
+      req.params = {
+        property: '',
+      }
+
+      await handler.EDIT(req, res)
+
+      expect(req.session.appointmentJourney).toBeUndefined()
+      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.session.appointmentSetJourney).toBeUndefined()
+      expect(req.session.journeyMetrics).toBeUndefined()
+      expect(metricsService.trackEvent).not.toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith('back')
     })
 
     it('should populate the session with appointment details and redirect to the correct edit route', async () => {
       req.params = {
+        journeyId,
         property: 'location',
       }
 
@@ -284,6 +360,18 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toEqual(appointmentJourneySession)
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointment.id)
+          .addProperty('property', 'location')
+          .addProperty('isApplyToQuestionRequired', 'true'),
+      )
+
       expect(res.redirect).toHaveBeenCalledWith('../location')
     })
 
@@ -297,26 +385,13 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       expect(req.session.appointmentJourney.endTime).toBeNull()
     })
-
-    it('should redirect back if property not specified', async () => {
-      req.params = {
-        property: '',
-      }
-
-      await handler.EDIT(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('back')
-    })
   })
 
   describe('REMOVE_PRISONER', () => {
     beforeEach(() => {
-      res = {
-        redirect: jest.fn(),
-      } as unknown as Response
-
       req = {
         session: {},
+        params: { journeyId },
         appointmentSeries,
         appointment,
       } as unknown as Request
@@ -332,11 +407,14 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).toBeUndefined()
       expect(req.session.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
+      expect(req.session.journeyMetrics).toBeUndefined()
+      expect(metricsService.trackEvent).not.toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith('back')
     })
 
     it('should populate the session with prisoner details and redirect to apply to', async () => {
       req.params = {
+        journeyId,
         prisonNumber: 'B2345CD',
       }
 
@@ -367,6 +445,18 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointment.id)
+          .addProperty('property', 'remove-prisoner')
+          .addProperty('isApplyToQuestionRequired', 'true'),
+      )
+
       expect(res.redirect).toHaveBeenCalledWith('../remove/apply-to')
     })
 
@@ -382,6 +472,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         ],
       } as unknown as AppointmentSeriesDetails
       req.params = {
+        journeyId,
         prisonNumber: 'A1234BC',
       }
 
@@ -409,18 +500,27 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointment.id)
+          .addProperty('property', 'remove-prisoner')
+          .addProperty('isApplyToQuestionRequired', 'false'),
+      )
+
       expect(res.redirect).toHaveBeenCalledWith('../remove/confirm')
     })
   })
 
   describe('ADD_PRISONERS', () => {
     beforeEach(() => {
-      res = {
-        redirect: jest.fn(),
-      } as unknown as Response
-
       req = {
         session: {},
+        params: { journeyId },
         appointmentSeries,
         appointment,
       } as unknown as Request
@@ -449,18 +549,27 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointment.id)
+          .addProperty('property', 'add-prisoners')
+          .addProperty('isApplyToQuestionRequired', 'true'),
+      )
+
       expect(res.redirect).toHaveBeenCalledWith('../../prisoners/add/how-to-add-prisoners')
     })
   })
 
   describe('CANCEL', () => {
     beforeEach(() => {
-      res = {
-        redirect: jest.fn(),
-      } as unknown as Response
-
       req = {
         session: {},
+        params: { journeyId },
         appointmentSeries,
         appointment,
       } as unknown as Request
@@ -488,6 +597,17 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentJourney).not.toBeUndefined()
       expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointment.id)
+          .addProperty('isApplyToQuestionRequired', 'true'),
+      )
+
       expect(res.redirect).toHaveBeenCalledWith('../cancel/reason')
     })
   })

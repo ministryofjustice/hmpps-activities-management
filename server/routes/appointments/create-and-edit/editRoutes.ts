@@ -30,7 +30,7 @@ export default function Edit({ prisonService, activitiesService, metricsService 
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const editAppointmentService = new EditAppointmentService(activitiesService)
-  const startJourneyRoutes = new StartJourneyRoutes(prisonService)
+  const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeRoutes = new DateAndTimeRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
