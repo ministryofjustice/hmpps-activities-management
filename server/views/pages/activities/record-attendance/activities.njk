@@ -56,7 +56,7 @@
         {% set filterOptionsHtml %}
         {{ govukCheckboxes({
                 idPrefix: 'sessionFilters',
-                name: 'sessionFilters[]',
+                name: 'sessionFilters',
                 classes: "govuk-checkboxes--small",
                 fieldset: {
                     legend: {
@@ -68,7 +68,7 @@
             }) }}
         {{ govukCheckboxes({
                 idPrefix: 'categoryFilters',
-                name: 'categoryFilters[]',
+                name: 'categoryFilters',
                 classes: "govuk-checkboxes--small",
                 fieldset: {
                     legend: {
@@ -86,7 +86,7 @@
         </div>
         {{ govukCheckboxes({
                 idPrefix: 'locationFilters',
-                name: 'locationFilters[]',
+                name: 'locationFilters',
                 classes: "govuk-checkboxes--small",
                 formGroup: {
                     classes: "govuk-!-margin-bottom-4"
