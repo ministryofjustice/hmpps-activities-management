@@ -1,7 +1,9 @@
 import { Request, Response } from 'express'
 import { addDays } from 'date-fns'
+import { v4 as uuidv4 } from 'uuid'
 import ActivitiesService from './activitiesService'
 import EditAppointmentService from './editAppointmentService'
+import MetricsService from './metricsService'
 import {
   AppointmentJourney,
   AppointmentJourneyMode,
@@ -18,22 +20,29 @@ import {
 } from '../@types/activitiesAPI/types'
 import { YesNo } from '../@types/activities'
 import config from '../config'
+import MetricsEvent, { MetricsEventType } from '../data/metricsEvent'
 
 jest.mock('./activitiesService')
+jest.mock('./metricsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Edit Appointment Service', () => {
-  const service = new EditAppointmentService(activitiesService)
+  const service = new EditAppointmentService(activitiesService, metricsService)
   const weekTomorrow = addDays(new Date(), 8)
   const weekTomorrowFormatted = formatDate(weekTomorrow, 'EEEE, d MMMM yyyy')
   let req: Request
   let res: Response
+  const journeyId = uuidv4()
   const appointmentId = 2
 
   beforeEach(() => {
     req = {
       session: {
+        journeyMetrics: {
+          journeyStartTime: Date.now() - 60000,
+        },
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
@@ -88,6 +97,7 @@ describe('Edit Appointment Service', () => {
         } as EditAppointmentJourney,
       },
       params: {
+        journeyId,
         appointmentId,
       },
       flash: jest.fn(),
@@ -95,7 +105,10 @@ describe('Edit Appointment Service', () => {
 
     res = {
       locals: {
-        user: {},
+        user: {
+          username: 'test.user',
+          activeCaseLoadId: 'TPR',
+        },
       },
       redirect: jest.fn(),
       redirectWithSuccess: jest.fn(),
@@ -109,11 +122,24 @@ describe('Edit Appointment Service', () => {
 
   describe('redirectOrEdit', () => {
     it('when no property has changed', async () => {
+      req.session.editAppointmentJourney.property = 'date-and-time'
+
       await service.redirectOrEdit(req, res, '')
 
       expect(activitiesService.editAppointment).not.toHaveBeenCalled()
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointmentId)
+          .addProperty('property', 'date-and-time')
+          .addProperty('propertyChanged', 'false')
+          .addProperty('isApplyToQuestionRequired', 'true')
+          .addProperty('applyTo', 'NA')
+          .addMeasurement('journeyTimeSec', 60),
+      )
       expect(req.session.appointmentJourney).toBeNull()
       expect(req.session.editAppointmentJourney).toBeNull()
+      expect(req.session.journeyMetrics).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
     })
 
@@ -124,6 +150,7 @@ describe('Edit Appointment Service', () => {
           startDate: formatDate(weekTomorrow, 'yyyy-MM-dd'),
         },
       ]
+      req.session.editAppointmentJourney.property = 'location'
       req.session.editAppointmentJourney.location = {
         id: 2,
         description: 'Updated location',
@@ -136,8 +163,19 @@ describe('Edit Appointment Service', () => {
         { internalLocationId: 2, applyTo: AppointmentApplyTo.THIS_APPOINTMENT } as AppointmentUpdateRequest,
         res.locals.user,
       )
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointmentId)
+          .addProperty('property', 'location')
+          .addProperty('propertyChanged', 'true')
+          .addProperty('isApplyToQuestionRequired', 'false')
+          .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+          .addMeasurement('journeyTimeSec', 60),
+      )
       expect(req.session.appointmentJourney).toBeNull()
       expect(req.session.editAppointmentJourney).toBeNull()
+      expect(req.session.journeyMetrics).toBeNull()
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         `/appointments/${appointmentId}`,
         "You've changed the location for this appointment",
@@ -145,6 +183,7 @@ describe('Edit Appointment Service', () => {
     })
 
     it('when changing the location for a repeating appointment', async () => {
+      req.session.editAppointmentJourney.property = 'location'
       req.session.editAppointmentJourney.location = {
         id: 2,
         description: 'Updated location',
@@ -153,9 +192,11 @@ describe('Edit Appointment Service', () => {
       await service.redirectOrEdit(req, res, 'location')
 
       expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-      expect(res.redirect).toHaveBeenCalledWith('location/apply-to')
+      expect(metricsService.trackEvent).not.toHaveBeenCalled()
       expect(req.session.appointmentJourney).not.toBeNull()
       expect(req.session.editAppointmentJourney).not.toBeNull()
+      expect(req.session.journeyMetrics).not.toBeNull()
+      expect(res.redirect).toHaveBeenCalledWith('location/apply-to')
     })
   })
 
@@ -175,9 +216,19 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'false')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
       it('when deleting', async () => {
@@ -194,12 +245,22 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments`,
           `You've deleted the Category appointment - ${weekTomorrowFormatted}`,
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when deleting appointment from set', async () => {
@@ -208,6 +269,12 @@ describe('Edit Appointment Service', () => {
             number: 'A1111A',
           },
         ] as AppointmentJourney['prisoners']
+        req.session.editAppointmentJourney.appointments = [
+          {
+            sequenceNumber: 1,
+            startDate: formatDate(weekTomorrow, 'yyyy-MM-dd'),
+          },
+        ]
         req.session.editAppointmentJourney.appointmentSet = {
           id: 1,
         } as AppointmentSetSummary
@@ -224,12 +291,22 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'true')
+            .addProperty('isApplyToQuestionRequired', 'false')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/set/1`,
           `You've deleted appointment for A1111A from this set`,
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when deleting appointment from series', async () => {
@@ -250,15 +327,26 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/series/1`,
           `You've deleted appointment 2 of 4 in this series`,
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when changing the location', async () => {
+        req.session.editAppointmentJourney.property = 'location'
         req.session.editAppointmentJourney.location = {
           id: 2,
           description: 'Updated location',
@@ -272,15 +360,27 @@ describe('Edit Appointment Service', () => {
           { internalLocationId: 2, applyTo: AppointmentApplyTo.THIS_APPOINTMENT } as AppointmentUpdateRequest,
           res.locals.user,
         )
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'location')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for this appointment",
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when changing the start date', async () => {
+        req.session.editAppointmentJourney.property = 'date-and-time'
         req.session.editAppointmentJourney.startDate = {
           day: 16,
           month: 5,
@@ -299,15 +399,27 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'date-and-time')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the date for this appointment",
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when changing the start time', async () => {
+        req.session.editAppointmentJourney.property = 'date-and-time'
         req.session.editAppointmentJourney.startTime = {
           hour: 10,
           minute: 0,
@@ -325,15 +437,27 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'date-and-time')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the time for this appointment",
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when changing the end time', async () => {
+        req.session.editAppointmentJourney.property = 'date-and-time'
         req.session.editAppointmentJourney.endTime = {
           hour: 14,
           minute: 30,
@@ -351,15 +475,27 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'date-and-time')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the time for this appointment",
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when changing the end time from null', async () => {
+        req.session.editAppointmentJourney.property = 'date-and-time'
         req.session.appointmentJourney.endTime = null
         req.session.editAppointmentJourney.endTime = {
           hour: 14,
@@ -378,15 +514,27 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'date-and-time')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the time for this appointment",
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when changing the start time and end time', async () => {
+        req.session.editAppointmentJourney.property = 'date-and-time'
         req.session.editAppointmentJourney.startTime = {
           hour: 10,
           minute: 0,
@@ -410,15 +558,27 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'date-and-time')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the time for this appointment",
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when changing the start date and start time', async () => {
+        req.session.editAppointmentJourney.property = 'date-and-time'
         req.session.editAppointmentJourney.startDate = {
           day: 16,
           month: 5,
@@ -443,15 +603,27 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'date-and-time')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the date and time for this appointment",
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when changing the start date and end time', async () => {
+        req.session.editAppointmentJourney.property = 'date-and-time'
         req.session.editAppointmentJourney.startDate = {
           day: 16,
           month: 5,
@@ -476,15 +648,27 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'date-and-time')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the date and time for this appointment",
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
       it('when changing the start date, start time and end time', async () => {
+        req.session.editAppointmentJourney.property = 'date-and-time'
         req.session.editAppointmentJourney.startDate = {
           day: 16,
           month: 5,
@@ -515,16 +699,28 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'date-and-time')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the date and time for this appointment",
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
 
-      it('when changing the comment', async () => {
-        req.session.editAppointmentJourney.extraInformation = 'Updated comment'
+      it('when changing the extra information', async () => {
+        req.session.editAppointmentJourney.property = 'extra-information'
+        req.session.editAppointmentJourney.extraInformation = 'Updated extra information'
 
         await service.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
 
@@ -532,17 +728,28 @@ describe('Edit Appointment Service', () => {
         expect(activitiesService.editAppointment).toHaveBeenCalledWith(
           2,
           {
-            extraInformation: 'Updated comment',
+            extraInformation: 'Updated extra information',
             applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'extra-information')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the extra information for this appointment",
         )
-        expect(req.session.appointmentJourney).toBeNull()
-        expect(req.session.editAppointmentJourney).toBeNull()
       })
     })
 
@@ -556,6 +763,18 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'false')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
@@ -567,6 +786,18 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/series/1`,
           "You've deleted appointments 2 to 4 in this series",
@@ -574,6 +805,7 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when changing the location', async () => {
+        req.session.editAppointmentJourney.property = 'location'
         req.session.editAppointmentJourney.location = {
           id: 2,
           description: 'Updated location',
@@ -581,6 +813,19 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'location')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 2 to 4 in the series",
@@ -588,6 +833,7 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when changing the location deleted last appointment', async () => {
+        req.session.editAppointmentJourney.property = 'location'
         req.session.editAppointmentJourney.appointments = [
           {
             sequenceNumber: 1,
@@ -609,6 +855,19 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'location')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 2 to 3 in the series",
@@ -626,6 +885,18 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'false')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
@@ -637,6 +908,18 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/series/1`,
           "You've deleted appointments 1 to 4 in this series",
@@ -644,6 +927,7 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when changing the location', async () => {
+        req.session.editAppointmentJourney.property = 'location'
         req.session.editAppointmentJourney.location = {
           id: 2,
           description: 'Updated location',
@@ -651,6 +935,19 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'location')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 1 to 4 in the series",
@@ -658,6 +955,7 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when changing the location two remaining appointments', async () => {
+        req.session.editAppointmentJourney.property = 'location'
         req.session.editAppointmentJourney.appointments = [
           {
             sequenceNumber: 3,
@@ -676,6 +974,19 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'location')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 3 to 4 in the series",
@@ -683,6 +994,7 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when changing the location deleted last appointment', async () => {
+        req.session.editAppointmentJourney.property = 'location'
         req.session.editAppointmentJourney.appointments = [
           {
             sequenceNumber: 1,
@@ -704,6 +1016,19 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'location')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've changed the location for appointments 1 to 3 in the series",
@@ -711,6 +1036,7 @@ describe('Edit Appointment Service', () => {
       })
 
       it('when adding prisoners to the appointment', async () => {
+        req.session.editAppointmentJourney.property = 'add-prisoners'
         req.session.editAppointmentJourney.addPrisoners = [
           {
             number: 'A1234BC',
@@ -726,6 +1052,19 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('property', 'add-prisoners')
+            .addProperty('propertyChanged', 'true')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
           "You've added these people to appointments 1 to 4 in the series",
@@ -743,6 +1082,7 @@ describe('Edit Appointment Service', () => {
             sequenceNumber: i + 1,
             startDate: formatDate(addDays(weekTomorrow, i), 'yyyy-MM-dd'),
           }))
+        req.session.editAppointmentJourney.property = 'add-prisoners'
 
         const maxAllowedPrisoners = Math.floor(maxAppointmentInstances / 100)
 
@@ -761,6 +1101,10 @@ describe('Edit Appointment Service', () => {
           'applyTo',
           `You cannot add more than ${maxAllowedPrisoners} attendees for this number of appointments.`,
         )
+        expect(metricsService.trackEvent).not.toHaveBeenCalled()
+        expect(req.session.appointmentJourney).not.toBeNull()
+        expect(req.session.editAppointmentJourney).not.toBeNull()
+        expect(req.session.journeyMetrics).not.toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledTimes(0)
       })
     })

@@ -13,6 +13,7 @@ export default class ConfirmationRoutes {
     res.render('pages/appointments/create-and-edit/confirmation', { appointment })
 
     req.session.appointmentJourney = null
+    req.session.journeyMetrics = null
   }
 
   GET_SET = async (req: Request, res: Response) => {
@@ -26,5 +27,6 @@ export default class ConfirmationRoutes {
 
     req.session.appointmentJourney = null
     req.session.appointmentSetJourney = null
+    req.session.journeyMetrics = null
   }
 }

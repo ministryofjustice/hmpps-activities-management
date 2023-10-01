@@ -7,7 +7,6 @@ import { AppointmentSeriesDetails, AppointmentDetails } from '../../../../@types
 import { parseDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentApplyTo } from '../../../../@types/appointments'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import MetricsService from '../../../../services/metricsService'
@@ -495,7 +494,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
           lastName: 'PRISONER01',
           cellLocation: '1-1-1',
         },
-        applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
       } as EditAppointmentJourney
 
       await handler.REMOVE_PRISONER(req, res)

@@ -85,7 +85,6 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should render the confirmation page with appointment details', async () => {
       await handler.GET(req, res)
 
-      expect(req.session.journeyMetrics).toBeNull()
       expect(metricsService.trackEvent).toBeCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
           .addProperty('journeyId', journeyId)
@@ -93,7 +92,6 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
           .addProperty('appointmentSeriesId', 2)
           .addMeasurement('journeyTimeSec', 60),
       )
-
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         appointment: req.appointment,
       })
@@ -102,6 +100,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should clear session', async () => {
       await handler.GET(req, res)
       expect(req.session.appointmentJourney).toBeNull()
+      expect(req.session.journeyMetrics).toBeNull()
     })
   })
 
@@ -111,14 +110,12 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
       await handler.GET_SET(req, res)
 
-      expect(req.session.journeyMetrics).toBeNull()
       expect(metricsService.trackEvent).toBeCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED, res.locals.user)
           .addProperty('journeyId', journeyId)
           .addProperty('appointmentSetId', 3)
           .addMeasurement('journeyTimeSec', 60),
       )
-
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
         appointmentSet: req.appointmentSet,
       })
@@ -128,6 +125,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
       await handler.GET_SET(req, res)
       expect(req.session.appointmentJourney).toBeNull()
       expect(req.session.appointmentSetJourney).toBeNull()
+      expect(req.session.journeyMetrics).toBeNull()
     })
   })
 })

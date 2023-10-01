@@ -8,7 +8,7 @@ import { JourneyMetrics } from '../routes/journeyMetrics'
 import SimpleDate, { simpleDateFromDate } from '../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { isApplyToQuestionRequired } from '../utils/editAppointmentUtils'
-import { AppointmentCancellationReason } from '../@types/appointments'
+import { AppointmentApplyTo, AppointmentCancellationReason } from '../@types/appointments'
 
 export enum MetricsEventType {
   CREATE_ACTIVITY_JOURNEY_COMPLETED = 'SAA-Create-Activity-Journey-Completed',
@@ -64,26 +64,21 @@ export default class MetricsEvent {
     return this
   }
 
-  setJourneyMetrics(journeyMetrics?: JourneyMetrics) {
+  addJourneyStartedMetrics(req: Request) {
+    const { journeyMetrics } = req.session
+    const { journeyId } = req.params
+
+    if (journeyId) this.addProperty('journeyId', journeyId)
+    if (journeyMetrics?.source) this.addProperty('journeySource', journeyMetrics?.source)
+    return this
+  }
+
+  addJourneyCompletedMetrics(journeyMetrics?: JourneyMetrics) {
     if (!journeyMetrics) return this
 
     const { journeyStartTime, source } = journeyMetrics
     if (journeyStartTime) this.addMeasurement('journeyTimeSec', Math.round((Date.now() - journeyStartTime) / 1000))
     if (source) this.addProperty('journeySource', source)
-    return this
-  }
-
-  startJourneyMetrics(req: Request, source?: string) {
-    const { journeyId } = req.params
-
-    if (journeyId) this.addProperty('journeyId', journeyId)
-    if (source) this.addProperty('journeySource', source)
-
-    req.session.journeyMetrics = {
-      journeyStartTime: Date.now(),
-      source,
-    }
-
     return this
   }
 
@@ -121,23 +116,19 @@ export default class MetricsEvent {
     })
   }
 
-  static CREATE_APPOINTMENT_JOURNEY_STARTED(source: string, req: Request, user: ServiceUser) {
-    return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, user).startJourneyMetrics(req, source)
+  static CREATE_APPOINTMENT_JOURNEY_STARTED(req: Request, user: ServiceUser) {
+    return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, user).addJourneyStartedMetrics(req)
   }
 
   static CREATE_APPOINTMENT_JOURNEY_COMPLETED(appointment: AppointmentDetails, req: Request, user: ServiceUser) {
-    const event = new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, user)
+    return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, user)
       .addProperty('journeyId', req.params.journeyId)
-      .setJourneyMetrics(req.session.journeyMetrics)
+      .addJourneyCompletedMetrics(req.session.journeyMetrics)
       .addProperty('appointmentSeriesId', appointment.appointmentSeries.id)
-
-    req.session.journeyMetrics = null
-
-    return event
   }
 
   static CREATE_APPOINTMENT_SET_JOURNEY_STARTED(req: Request, user: ServiceUser) {
-    return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_STARTED, user).startJourneyMetrics(req)
+    return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_STARTED, user).addJourneyStartedMetrics(req)
   }
 
   static CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED(
@@ -145,19 +136,15 @@ export default class MetricsEvent {
     req: Request,
     user: ServiceUser,
   ) {
-    const event = new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED, user)
+    return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED, user)
       .addProperty('journeyId', req.params.journeyId)
-      .setJourneyMetrics(req.session.journeyMetrics)
+      .addJourneyCompletedMetrics(req.session.journeyMetrics)
       .addProperty('appointmentSetId', appointmentSet.id)
-
-    req.session.journeyMetrics = null
-
-    return event
   }
 
   static EDIT_APPOINTMENT_JOURNEY_STARTED(appointment: AppointmentDetails, req: Request, user: ServiceUser) {
     return new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, user)
-      .startJourneyMetrics(req)
+      .addJourneyStartedMetrics(req)
       .addProperties({
         appointmentId: appointment.id,
         property: req.session.editAppointmentJourney.property,
@@ -165,47 +152,51 @@ export default class MetricsEvent {
       })
   }
 
-  static EDIT_APPOINTMENT_JOURNEY_COMPLETED(appointmentId: number, req: Request, user: ServiceUser) {
-    const event = new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, user)
+  static EDIT_APPOINTMENT_JOURNEY_COMPLETED(
+    appointmentId: number,
+    propertyChanged: boolean,
+    applyTo: AppointmentApplyTo,
+    req: Request,
+    user: ServiceUser,
+  ) {
+    return new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, user)
       .addProperty('journeyId', req.params.journeyId)
-      .setJourneyMetrics(req.session.journeyMetrics)
+      .addJourneyCompletedMetrics(req.session.journeyMetrics)
       .addProperties({
         appointmentId,
         property: req.session.editAppointmentJourney.property,
+        propertyChanged: propertyChanged.toString(),
         isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
-        applyTo: req.session.editAppointmentJourney.applyTo,
+        applyTo: propertyChanged ? applyTo : 'NA',
       })
-
-    req.session.journeyMetrics = null
-
-    return event
   }
 
   static CANCEL_APPOINTMENT_JOURNEY_STARTED(appointment: AppointmentDetails, req: Request, user: ServiceUser) {
     return new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_STARTED, user)
-      .startJourneyMetrics(req)
+      .addJourneyStartedMetrics(req)
       .addProperties({
         appointmentId: appointment.id,
         isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
       })
   }
 
-  static CANCEL_APPOINTMENT_JOURNEY_COMPLETED(appointmentId: number, req: Request, user: ServiceUser) {
-    const event = new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, user)
+  static CANCEL_APPOINTMENT_JOURNEY_COMPLETED(
+    appointmentId: number,
+    applyTo: AppointmentApplyTo,
+    req: Request,
+    user: ServiceUser,
+  ) {
+    return new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, user)
       .addProperty('journeyId', req.params.journeyId)
-      .setJourneyMetrics(req.session.journeyMetrics)
+      .addJourneyCompletedMetrics(req.session.journeyMetrics)
       .addProperties({
         appointmentId,
         isDelete: (
           req.session.editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR
         ).toString(),
         isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
-        applyTo: req.session.editAppointmentJourney.applyTo,
+        applyTo,
       })
-
-    req.session.journeyMetrics = null
-
-    return event
   }
 
   static APPOINTMENT_MOVEMENT_SLIP_PRINTED(appointment: AppointmentDetails, user: ServiceUser) {

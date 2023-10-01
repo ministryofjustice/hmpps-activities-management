@@ -3,9 +3,10 @@ import { isValid } from 'date-fns'
 import { formatDate, parseDate } from '../../../../utils/utils'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentFrequency, AppointmentApplyTo } from '../../../../@types/appointments'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 import PrisonService from '../../../../services/prisonService'
+import { initJourneyMetrics } from '../../../../utils/metricsUtils'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 
@@ -19,7 +20,8 @@ export default class StartJourneyRoutes {
       createJourneyComplete: false,
     }
 
-    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED('startLink', req, res.locals.user))
+    initJourneyMetrics(req, 'startLink')
+    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, res.locals.user))
 
     return res.redirect(`select-prisoner`)
   }
@@ -32,7 +34,8 @@ export default class StartJourneyRoutes {
       prisoners: [],
     }
 
-    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED('startLink', req, res.locals.user))
+    initJourneyMetrics(req, 'startLink')
+    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, res.locals.user))
 
     res.redirect('how-to-add-prisoners')
   }
@@ -47,6 +50,7 @@ export default class StartJourneyRoutes {
       appointments: [],
     }
 
+    initJourneyMetrics(req)
     this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_SET_JOURNEY_STARTED(req, res.locals.user))
 
     res.redirect('upload-appointment-set')
@@ -63,7 +67,8 @@ export default class StartJourneyRoutes {
       prisoners: [],
     }
 
-    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED('prisonerProfile', req, user))
+    initJourneyMetrics(req, 'prisonerProfile')
+    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, user))
 
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumber, user).catch(_ => null)
     if (!prisoner) return res.redirect(`select-prisoner?query=${prisonNumber}`)
@@ -110,8 +115,6 @@ export default class StartJourneyRoutes {
     if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
       return res.redirect('../remove/apply-to')
     }
-
-    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_APPOINTMENT
 
     return res.redirect('../remove/confirm')
   }
@@ -200,5 +203,7 @@ export default class StartJourneyRoutes {
       appointmentSet: appointment.appointmentSet,
       property,
     }
+
+    initJourneyMetrics(req)
   }
 }

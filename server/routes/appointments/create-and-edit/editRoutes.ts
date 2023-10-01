@@ -29,14 +29,14 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const editAppointmentService = new EditAppointmentService(activitiesService)
+  const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeRoutes = new DateAndTimeRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
   const extraInformationRoutes = new ExtraInformationRoutes(editAppointmentService)
-  const confirmEditRoutes = new ConfirmEditRoutes(editAppointmentService, metricsService)
-  const applyToRoutes = new ApplyToRoutes(editAppointmentService, metricsService)
+  const confirmEditRoutes = new ConfirmEditRoutes(editAppointmentService)
+  const applyToRoutes = new ApplyToRoutes(editAppointmentService)
 
   // Cancel routes
   const cancellationReasonRoutes = new CancellationReasonRoutes()

@@ -23,9 +23,11 @@ import {
   applyToAppointmentCount,
 } from '../utils/editAppointmentUtils'
 import config from '../config'
+import MetricsService from './metricsService'
+import MetricsEvent from '../data/metricsEvent'
 
 export default class EditAppointmentService {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(private readonly activitiesService: ActivitiesService, private readonly metricsService: MetricsService) {}
 
   async redirectOrEdit(req: Request, res: Response, property: string) {
     const { appointmentId } = req.params
@@ -36,6 +38,16 @@ export default class EditAppointmentService {
 
       return this.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
     }
+
+    this.metricsService.trackEvent(
+      MetricsEvent.EDIT_APPOINTMENT_JOURNEY_COMPLETED(
+        +appointmentId,
+        false,
+        AppointmentApplyTo.THIS_APPOINTMENT,
+        req,
+        res.locals.user,
+      ),
+    )
 
     this.clearSession(req)
 
@@ -57,6 +69,10 @@ export default class EditAppointmentService {
       }
 
       await this.activitiesService.cancelAppointment(+appointmentId, cancelRequest, user)
+
+      this.metricsService.trackEvent(
+        MetricsEvent.CANCEL_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, applyTo, req, res.locals.user),
+      )
 
       // For delete requests we can't redirect back to the appointment page. Instead, we should provide a more specific
       // error message and redirect back to a relevant page
@@ -145,6 +161,10 @@ export default class EditAppointmentService {
 
     await this.activitiesService.editAppointment(+appointmentId, request, user)
 
+    this.metricsService.trackEvent(
+      MetricsEvent.EDIT_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, true, applyTo, req, res.locals.user),
+    )
+
     const successHeading = `You've ${this.getEditedMessage(
       appointmentJourney,
       editAppointmentJourney,
@@ -192,7 +212,8 @@ export default class EditAppointmentService {
   }
 
   private clearSession(req: Request) {
-    req.session.appointmentJourney = null
     req.session.editAppointmentJourney = null
+    req.session.appointmentJourney = null
+    req.session.journeyMetrics = null
   }
 }
