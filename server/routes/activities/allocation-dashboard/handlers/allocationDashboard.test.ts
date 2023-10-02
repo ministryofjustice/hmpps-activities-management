@@ -368,7 +368,6 @@ describe('Route Handlers - Allocation dashboard', () => {
         ['Standard', 'Enhanced'],
         undefined,
         undefined,
-
         undefined,
         0,
       )
