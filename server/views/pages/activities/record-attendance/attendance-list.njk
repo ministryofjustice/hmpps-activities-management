@@ -13,8 +13,7 @@
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
-{% set hardBackLinkHref = "/activities/attendance/activities?date=" + instance.date | toDate | formatDate('yyyy-MM-dd') %}
-{% set hardBackLinkText = "Back to all activities on " + instance.date | toDate | formatDate('dd MMMM yyyy') %}
+{% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
