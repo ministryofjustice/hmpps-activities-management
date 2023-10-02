@@ -10,7 +10,8 @@ import { YesNo } from '../../../../@types/activities'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import MetricsService from '../../../../services/metricsService'
-import MetricsEvent, { MetricsEventType } from '../../../../data/metricsEvent'
+import MetricsEvent from '../../../../data/metricsEvent'
+import { MetricsEventType } from '../../../../@types/metricsEvents'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/metricsService')

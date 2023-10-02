@@ -1,0 +1,21 @@
+// eslint-disable-next-line import/prefer-default-export
+export enum MetricsEventType {
+  CREATE_ACTIVITY_JOURNEY_STARTED = 'SAA-Create-Activity-Journey-Started',
+  CREATE_ACTIVITY_JOURNEY_COMPLETED = 'SAA-Create-Activity-Journey-Completed',
+  CREATE_ALLOCATION_JOURNEY_STARTED = 'SAA-Create-Allocation-Journey-Started',
+  CREATE_ALLOCATION_JOURNEY_COMPLETED = 'SAA-Create-Allocation-Journey-Completed',
+  WAITLIST_APPLICATION_JOURNEY_STARTED = 'SAA-Waitlist-Application-Journey-Started',
+  WAITLIST_APPLICATION_JOURNEY_COMPLETED = 'SAA-Waitlist-Application-Journey-Completed',
+  CREATE_UNLOCK_LIST = 'SAA-Create-Unlock-List',
+  CREATE_APPOINTMENT_JOURNEY_STARTED = 'SAA-Create-Appointment-Journey-Started',
+  CREATE_APPOINTMENT_JOURNEY_COMPLETED = 'SAA-Create-Appointment-Journey-Completed',
+  CREATE_APPOINTMENT_SET_JOURNEY_STARTED = 'SAA-Create-Appointment-Set-Journey-Started',
+  CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED = 'SAA-Create-Appointment-Set-Journey-Completed',
+  EDIT_APPOINTMENT_JOURNEY_STARTED = 'SAA-Edit-Appointment-Journey-Started',
+  EDIT_APPOINTMENT_JOURNEY_COMPLETED = 'SAA-Edit-Appointment-Journey-Completed',
+  CANCEL_APPOINTMENT_JOURNEY_STARTED = 'SAA-Cancel-Appointment-Journey-Started',
+  CANCEL_APPOINTMENT_JOURNEY_COMPLETED = 'SAA-Cancel-Appointment-Journey-Completed',
+  APPOINTMENT_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Movement-Slips-Printed',
+  APPOINTMENT_SET_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Set-Movement-Slips-Printed',
+  APPOINTMENT_CHANGE_FROM_SCHEDULE = 'SAA-Appointment-Change-From-Schedule',
+}

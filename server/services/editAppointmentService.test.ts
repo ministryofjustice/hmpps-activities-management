@@ -20,7 +20,8 @@ import {
 } from '../@types/activitiesAPI/types'
 import { YesNo } from '../@types/activities'
 import config from '../config'
-import MetricsEvent, { MetricsEventType } from '../data/metricsEvent'
+import MetricsEvent from '../data/metricsEvent'
+import { MetricsEventType } from '../@types/metricsEvents'
 
 jest.mock('./activitiesService')
 jest.mock('./metricsService')

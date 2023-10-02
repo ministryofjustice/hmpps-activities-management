@@ -2,9 +2,12 @@ import { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import PrisonService from '../../../../../services/prisonService'
 import { convertToTitleCase } from '../../../../../utils/utils'
+import { initJourneyMetrics } from '../../../../../utils/metricsUtils'
+import MetricsService from '../../../../../services/metricsService'
+import MetricsEvent from '../../../../../data/metricsEvent'
 
 export default class StartJourneyRoutes {
-  constructor(private readonly prisonService: PrisonService) {}
+  constructor(private readonly prisonService: PrisonService, private readonly metricsService: MetricsService) {}
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { prisonerNumber } = req.params
@@ -22,9 +25,10 @@ export default class StartJourneyRoutes {
         name: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
       },
     }
-    req.session.journeyMetrics = {
-      journeyStartTime: Date.now(),
-    }
+    initJourneyMetrics(req)
+    this.metricsService.trackEvent(
+      MetricsEvent.WAITLIST_APPLICATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+    )
 
     return res.redirect(`../request-date`)
   }
