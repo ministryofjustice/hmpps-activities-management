@@ -2,9 +2,16 @@ import { Request, Response } from 'express'
 import PrisonService from '../../../../services/prisonService'
 import { asString, convertToTitleCase } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
+import MetricsEvent from '../../../../data/metricsEvent'
+import { initJourneyMetrics } from '../../../../utils/metricsUtils'
+import MetricsService from '../../../../services/metricsService'
 
 export default class StartJourneyRoutes {
-  constructor(private readonly prisonService: PrisonService, private readonly activitiesService: ActivitiesService) {}
+  constructor(
+    private readonly prisonService: PrisonService,
+    private readonly activitiesService: ActivitiesService,
+    private readonly metricsServices: MetricsService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { scheduleId, source } = req.query
@@ -33,10 +40,10 @@ export default class StartJourneyRoutes {
         endDate: schedule.endDate,
       },
     }
-    req.session.journeyMetrics = {
-      journeyStartTime: Date.now(),
-      source: asString(source),
-    }
+    initJourneyMetrics(req, asString(source))
+    this.metricsServices.trackEvent(
+      MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+    )
     res.redirect(`/activities/allocate/before-you-allocate`)
   }
 }

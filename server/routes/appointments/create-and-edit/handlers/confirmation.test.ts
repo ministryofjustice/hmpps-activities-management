@@ -3,7 +3,8 @@ import { v4 as uuidv4 } from 'uuid'
 import ConfirmationRoutes from './confirmation'
 import { AppointmentDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
 import MetricsService from '../../../../services/metricsService'
-import MetricsEvent, { MetricsEventType } from '../../../../data/metricsEvent'
+import MetricsEvent from '../../../../data/metricsEvent'
+import { MetricsEventType } from '../../../../@types/metricsEvents'
 
 jest.mock('../../../../services/metricsService')
 

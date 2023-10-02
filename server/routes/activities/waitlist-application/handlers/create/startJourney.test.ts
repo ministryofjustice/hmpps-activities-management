@@ -4,13 +4,17 @@ import atLeast from '../../../../../../jest.setup'
 import StartJourneyRoutes from './startJourney'
 import PrisonService from '../../../../../services/prisonService'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import MetricsService from '../../../../../services/metricsService'
+import MetricsEvent from '../../../../../data/metricsEvent'
 
 jest.mock('../../../../../services/prisonService')
+jest.mock('../../../../../services/metricsService')
 
 const prisonService = new PrisonService(null, null, null)
+const metricsService = new MetricsService(null)
 
 describe('Route Handlers - Waitlist application - Start', () => {
-  const handler = new StartJourneyRoutes(prisonService)
+  const handler = new StartJourneyRoutes(prisonService, metricsService)
   let req: Request
   let res: Response
   let next: NextFunction
@@ -45,7 +49,11 @@ describe('Route Handlers - Waitlist application - Start', () => {
         } as Prisoner)
 
       await handler.GET(req, res, next)
-
+      expect(
+        metricsService.trackEvent(
+          MetricsEvent.WAITLIST_APPLICATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+        ),
+      )
       expect(req.session.waitListApplicationJourney).toEqual({
         prisoner: {
           prisonerNumber: 'ABC123',

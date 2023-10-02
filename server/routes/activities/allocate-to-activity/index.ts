@@ -23,7 +23,7 @@ export default function Index({ activitiesService, prisonService, metricsService
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const allocateHomeHandler = new AllocateHomeRoutes()
-  const startJourneyHandler = new StartJourneyRoutes(prisonService, activitiesService)
+  const startJourneyHandler = new StartJourneyRoutes(prisonService, activitiesService, metricsService)
   const beforeYouAllocateHandler = new BeforeYouAllocateRoutes(activitiesService)
   const payBandHandler = new PayBandRoutes(activitiesService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)

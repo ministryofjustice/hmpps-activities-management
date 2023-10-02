@@ -11,7 +11,7 @@ export default class ConfirmationRoutes {
     const allocationEvent = MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(
       req.session.allocateJourney,
       res.locals.user,
-    ).addJourneyCompletedMetrics(req.session.journeyMetrics)
+    ).addJourneyCompletedMetrics(req)
     this.metricsService.trackEvent(allocationEvent)
 
     res.render('pages/activities/allocate-to-activity/confirmation', {

@@ -44,7 +44,7 @@ export default class CheckAnswersRoutes {
     const waitlistEvent = MetricsEvent.WAITLIST_APPLICATION_JOURNEY_COMPLETED(
       waitListApplicationJourney,
       res.locals.user,
-    ).addJourneyCompletedMetrics(req.session.journeyMetrics)
+    ).addJourneyCompletedMetrics(req)
     this.metricsService.trackEvent(waitlistEvent)
 
     return res.redirect(`confirmation`)
