@@ -8,7 +8,7 @@ import { YesNo } from '../../../../@types/activities'
 
 jest.mock('../../../../services/editAppointmentService')
 
-const editAppointmentService = new EditAppointmentService(null) as jest.Mocked<EditAppointmentService>
+const editAppointmentService = new EditAppointmentService(null, null) as jest.Mocked<EditAppointmentService>
 
 describe('Route Handlers - Create Appointment - Extra Information', () => {
   const handler = new ExtraInformationRoutes(editAppointmentService)

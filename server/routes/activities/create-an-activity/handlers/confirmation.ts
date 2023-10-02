@@ -6,7 +6,7 @@ export default class ConfirmationRoutes {
   constructor(private readonly metricsService: MetricsService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const metricEvent = MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).setJourneyMetrics(
+    const metricEvent = MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).addJourneyCompletedMetrics(
       req.session.journeyMetrics,
     )
     this.metricsService.trackEvent(metricEvent)
