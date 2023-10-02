@@ -1,5 +1,5 @@
 import { AppointmentSeriesSummary, AppointmentSetSummary, PrisonerSummary } from '../../../@types/activitiesAPI/types'
-import { AppointmentCancellationReason, AppointmentApplyTo } from '../../../@types/appointments'
+import { AppointmentCancellationReason } from '../../../@types/appointments'
 
 export type EditAppointmentJourney = {
   numberOfAppointments: number
@@ -10,6 +10,7 @@ export type EditAppointmentJourney = {
   sequenceNumber: number
   appointmentSeries?: AppointmentSeriesSummary
   appointmentSet?: AppointmentSetSummary
+  property?: string
   location?: {
     id: number
     description: string
@@ -38,5 +39,4 @@ export type EditAppointmentJourney = {
   }[]
   removePrisoner?: PrisonerSummary
   cancellationReason?: AppointmentCancellationReason
-  applyTo?: AppointmentApplyTo
 }

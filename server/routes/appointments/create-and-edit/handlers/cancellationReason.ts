@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
-import { AppointmentCancellationReason, AppointmentApplyTo } from '../../../../@types/appointments'
+import { AppointmentCancellationReason } from '../../../../@types/appointments'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 
 export class CancellationReason {
@@ -27,8 +27,6 @@ export default class CancellationReasonRoutes {
     if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
       return res.redirect('apply-to')
     }
-
-    req.session.editAppointmentJourney.applyTo = AppointmentApplyTo.THIS_APPOINTMENT
 
     return res.redirect('confirm')
   }
