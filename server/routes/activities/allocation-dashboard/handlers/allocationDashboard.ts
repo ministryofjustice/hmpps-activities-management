@@ -63,7 +63,7 @@ export default class AllocationDashboardRoutes {
     ) {
       filters.incentiveLevelFilter = suitableForIep
       filters.riskLevelFilter = 'Any Workplace Risk Assessment'
-      filters.employmentFilter = 'Not in work'
+      filters.employmentFilter = 'Everyone'
     }
 
     const [currentlyAllocated, { waitlistedPrisoners, waitlistSize }, pagedCandidates] = await Promise.all([
