@@ -1,34 +1,52 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+
+{% macro attendeeActions(appointment, attendee) %}
+    {% if appointment.attendees.length > 1 and appointment.isCancelled == false and appointment.isExpired == false %}
+        <a href="/appointments/{{ appointment.appointmentId }}/edit/start/{{ attendee.prisoner.prisonerNumber }}/remove" class="govuk-link govuk-link--no-visited-state">
+            Remove <span class="govuk-visually-hidden"> prisoner {{ attendee.prisoner.prisonerNumber }}</span>
+        </a>
+    {% endif %}
+{% endmacro %}
 
 {% macro attendeeList(appointment) %}
     {% set appointmentLink = '/appointments/' + appointment.id  %}
     {% set attendeeListRows = [] %}
     {% for attendee in appointment.attendees %}
         {% set prisoner = attendee.prisoner %}
-        {% set attendeeListRows = (attendeeListRows.push({
-            key: {
-                text: "Name of attendee"
-            },
-            value: {
+        {% set attendeeListRows = (attendeeListRows.push([
+            {
+                html: '<span class="print-checkbox"></span>',
+                classes: "print-only"
+            }, {
+                text: "Name of attendee",
+                classes: "govuk-table__cell--vertical-align-top govuk-!-font-weight-bold govuk-!-display-none-print"
+            }, {
                 html: showProfileLink({
                     name: prisoner | fullName,
                     prisonerNumber: prisoner.prisonerNumber,
                     cellLocation: prisoner.cellLocation,
                     link: true
-                })
-            },
-            actions: {
-                items: [
-                    {
-                        href: appointmentLink + "/edit/start/" + prisoner.prisonerNumber + "/remove",
-                        text: "Remove",
-                        classes: "govuk-link--no-visited-state",
-                        attributes: { 'data-qa': 'remove-prisoner' }
-                    }
-                ] if appointment.attendees.length > 1 and appointment.isCancelled == false and appointment.isExpired == false
+                }),
+                classes: 'govuk-!-display-none-print',
+                attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | fullName | toTitleCase | prisonerName(false) }
+            }, {
+                text: prisoner | fullName | toTitleCase | prisonerName(false),
+                classes: 'print-only'
+            }, {
+                text: prisoner.prisonerNumber,
+                classes: 'print-only'
+            }, {
+                text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status),
+                classes: 'print-only'
+            }, {
+                html: attendeeActions(appointment, attendee),
+                classes: 'govuk-!-text-align-right govuk-!-display-none-print',
+                attributes: { 'data-qa': 'remove-prisoner-' + loop.index }
             }
-        }), attendeeListRows) %}
+        ]), attendeeListRows) %}
     {% endfor %}
 
     {% set attendeeActionItems = [{
@@ -51,17 +69,57 @@
         ), attendeeActionItems) %}
     {% endif %}
 
-    {{ govukSummaryList({
-        card: {
-            title: {
-                text: appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees")
-            },
-            actions: {
-                items: attendeeActionItems
-            } if appointment.isCancelled == false and appointment.isExpired == false,
-            attributes: { 'data-qa': 'prisoner-list-title' }
-        },
-        rows: attendeeListRows,
-        attributes: { 'data-qa': 'prisoner-list' }
-    }) }}
+    <div class="govuk-summary-card">
+        <div class="govuk-summary-card__title-wrapper" data-qa="prisoner-list-title">
+            <h2 class="govuk-summary-card__title">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
+            <ul class="govuk-summary-card__actions">
+                {% if appointment.isExpired == false %}
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/movement-slip" }}" target="_blank" data-qa="print-movement-slips">
+                            {{ "Print movement slip" + ("s" if appointment.attendees.length > 1 ) }}
+                        </a>
+                    </li>
+                {% endif %}
+                {% if appointment.appointmentType == AppointmentType.GROUP and appointment.isExpired == false %}
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/edit/start/prisoners/add" }}" data-qa="add-prisoners">Add attendees</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="govuk-summary-card__content">
+            {{ govukTable({
+                head: [
+                    {
+                        text: "Attended",
+                        classes: "print-only"
+                    }, {
+                        html: '<span class="govuk-visually-hidden">Name of attendee</span>',
+                        classes: "govuk-!-display-none-print"
+                    }, {
+                        text: "Attendee",
+                        classes: "govuk-!-display-none-print",
+                        attributes: { "aria-sort": "ascending" }
+                    }, {
+                        text: "Name",
+                        classes: "print-only"
+                    }, {
+                        text: "Prison number",
+                        classes: "print-only"
+                    }, {
+                        text: "Cell location",
+                        classes: "print-only"
+                    }, {
+                        html: '<span class="govuk-visually-hidden">Actions</span>',
+                        classes: "govuk-!-display-none-print"
+                    }
+                ],
+                rows: attendeeListRows,
+                attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-qa': 'prisoner-list'
+                }
+            }) }}
+        </div>
+    </div>
 {% endmacro %}
