@@ -18,7 +18,7 @@
             &, &[aria-sort] {
                 position: relative;
                 width: 46px;
-                height: 64px;
+                height: 54px;
 
                 @include govuk-media-query($until: tablet, $media-type: print) {
                     width: 40px;
@@ -28,7 +28,7 @@
                 > *, button {
                     position: absolute;
                     left: -1px;
-                    bottom: govuk-spacing(2);
+                    bottom: 3px;
                     transform: rotate(-45deg);
                     transform-origin: 3px center;
                     white-space: nowrap;

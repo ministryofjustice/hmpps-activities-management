@@ -1,4 +1,8 @@
 .unlock-list {
+  #unlock-list-table {
+    margin-bottom: 10px;
+  }
+
   .unlock-list-event {
     display: flex;
     justify-content: space-between;
@@ -20,26 +24,40 @@
   .checkbox-container {
     display: flex;
     flex-shrink: 0;
-    width: 144px;
+    width: 135px;
+    align-items: center;
 
     @include govuk-media-query($until: tablet) {
-      width: 117px;
+      width: 120px;
     }
   }
 
   .checkbox-width {
-    width: 48px;
-    padding-right: 0;
+    width: 45px;
+    padding-right: 0 !important;
 
     @include govuk-media-query($until: tablet, $media-type: print) {
-      width: 39px;
+      width: 40px;
       left: -2px;
     }
   }
 
   .govuk-table__header, .govuk-table__cell {
-    @include govuk-media-query($until: tablet, $media-type: print) {
+    @include govuk-media-query($media-type: print) {
+      padding-top: 2px;
+      padding-bottom: 2px;
       padding-right: 8px;
+    }
+
+
+    @include govuk-media-query($until: tablet, $media-type: print) {
+      padding-right: 6px;
+    }
+  }
+
+  @include govuk-media-query($media-type: print) {
+    hr {
+      margin: 2px 0;
     }
   }
 }
