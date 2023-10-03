@@ -34,15 +34,15 @@
                 {% endif %}
 
                 {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
-                    <div>{{ event.startTime }}{% if e.endTime %} - {{ event.endTime }}{% endif %}</div>
+                    <div>{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
                     <div>{{ locationText(event) }}</div>
                 {% endif %}
             </div>
             <div class="checkbox-container print-only">
                 {% if not event.cancelled %}
-                    <div class="checkbox-width"><div class="print-checkbox"></div></div>
-                    <div class="checkbox-width"><div class="print-checkbox"></div></div>
-                    <div class="checkbox-width"><div class="print-checkbox"></div></div>
+                    <div class="print-checkbox"></div>
+                    <div class="print-checkbox"></div>
+                    <div class="print-checkbox"></div>
                 {% endif %}
             </div>
         </div>

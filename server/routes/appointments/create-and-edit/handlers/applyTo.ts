@@ -31,8 +31,6 @@ export default class ApplyToRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { applyTo } = req.body
 
-    req.session.editAppointmentJourney.applyTo = applyTo
-
     await this.editAppointmentService.edit(req, res, applyTo)
   }
 }

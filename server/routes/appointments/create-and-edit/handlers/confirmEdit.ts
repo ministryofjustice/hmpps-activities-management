@@ -3,6 +3,7 @@ import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
 import { YesNo } from '../../../../@types/activities'
 import EditAppointmentService from '../../../../services/editAppointmentService'
+import { AppointmentApplyTo } from '../../../../@types/appointments'
 
 export class ConfirmEdit {
   @Expose()
@@ -27,7 +28,7 @@ export default class ConfirmEditRoutes {
     const { confirm } = req.body
 
     if (confirm === YesNo.YES) {
-      return this.editAppointmentService.edit(req, res, req.session.editAppointmentJourney.applyTo)
+      return this.editAppointmentService.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
     }
 
     return res.redirect(`/appointments/${appointmentId}`)

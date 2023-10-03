@@ -49,6 +49,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
     } as unknown as Response
 
     req = {
+      params: {},
       session: {
         allocateJourney,
         journeyMetrics: {},
@@ -64,8 +65,8 @@ describe('Route Handlers - Allocate - Confirmation', () => {
     it('should render page with data from session', async () => {
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toBeCalledWith(
-        MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).setJourneyMetrics(
-          req.session.journeyMetrics,
+        MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).addJourneyCompletedMetrics(
+          req,
         ),
       )
       expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/confirmation', {

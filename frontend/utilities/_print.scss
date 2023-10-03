@@ -24,14 +24,14 @@
   }
 
   .govuk-width-container {
-    @include govuk-responsive-margin(3, 'left', $important: true);
-    @include govuk-responsive-margin(3, 'right', $important: true);
+    @include govuk-responsive-margin(2, 'left', $important: true);
+    @include govuk-responsive-margin(2, 'right', $important: true);
     max-width: 100% !important;
   }
 
   // govuk-frontend overrides
   .govuk-heading-l {
-    font-size: 18pt;
+    font-size: 16pt;
   }
 
   .govuk-heading-m {
@@ -43,7 +43,8 @@
   }
 
   .govuk-caption-l {
-    font-size: 12pt;
+    font-size: 11pt;
+    line-height: 1.1;
     color: govuk-colour('black')
   }
 
@@ -52,11 +53,12 @@
   }
 
   .govuk-body {
-    font-size: 10pt;
+    font-size: 9pt;
   }
 
   .govuk-body-s {
-    font-size: 9pt;
+    font-size: 8pt;
+    line-height: 1.05;
   }
 
   .printed-page {
@@ -64,11 +66,12 @@
   }
 
   .govuk-textarea {
-    font-size: 11pt;
+    font-size: 10pt;
   }
 
   .govuk-table {
-    font-size: 10pt;
+    font-size: 9pt;
+    line-height: 1.1;
 
     &__header {
       vertical-align: bottom;
@@ -115,14 +118,14 @@
     color: govuk-colour('dark-grey');
     border: 1px solid govuk-colour('black');
     padding: govuk-spacing(2);
-    height: 120px;
+    height: 90px;
   }
 
   .govuk-tag {
     background-color: govuk-colour("dark-grey");
     font-size: 6pt;
     padding: 4px 5px 2px 5px;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
     color: white;
     border: none !important;
 
@@ -138,8 +141,8 @@
 
   .print-checkbox {
     display: inline-block;
-    $_checkbox-size: 32px;
-    margin-right: 12px;
+    $_checkbox-size: 26px;
+    margin-right: 17px;
     width: $_checkbox-size;
     height: $_checkbox-size;
     border: $govuk-border-width-form-element solid $govuk-input-border-colour;
@@ -147,6 +150,11 @@
     color: govuk-colour("mid-grey");
     line-height: $_checkbox-size;
     text-align: center;
+  }
+
+  .govuk-\!-print-grid-column-one-half {
+    float: left;
+    width: 50%;
   }
 
   .govuk-\!-print-grid-column-one-third {
@@ -161,7 +169,7 @@
 
 @include govuk-media-query($until: tablet, $media-type: print) {
   .govuk-heading-l {
-    font-size: 17pt;
+    font-size: 16pt;
   }
 
   .govuk-heading-m {
@@ -189,7 +197,7 @@
   }
 
   .print-checkbox {
-    $_checkbox-size: 29px;
+    $_checkbox-size: 28px;
     margin-right: 8px;
     width: $_checkbox-size;
     height: $_checkbox-size;

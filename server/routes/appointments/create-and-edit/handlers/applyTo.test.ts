@@ -12,7 +12,7 @@ import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 
 jest.mock('../../../../services/editAppointmentService')
 
-const editAppointmentService = new EditAppointmentService(null) as jest.Mocked<EditAppointmentService>
+const editAppointmentService = new EditAppointmentService(null, null) as jest.Mocked<EditAppointmentService>
 
 describe('Route Handlers - Edit Appointment - Apply To', () => {
   const handler = new ApplyToRoutes(editAppointmentService)
@@ -94,7 +94,6 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.editAppointmentJourney.applyTo).toEqual(AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
       expect(editAppointmentService.edit).toHaveBeenCalledWith(
         req,
         res,

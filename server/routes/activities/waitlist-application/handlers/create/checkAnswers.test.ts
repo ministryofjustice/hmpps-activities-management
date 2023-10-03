@@ -85,7 +85,10 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
       )
       expect(
         metricsService.trackEvent(
-          MetricsEvent.WAITLIST_APPLICATION_JOURNEY_COMPLETED(req.session.waitListApplicationJourney, res.locals.user),
+          MetricsEvent.WAITLIST_APPLICATION_JOURNEY_COMPLETED(
+            req.session.waitListApplicationJourney,
+            res.locals.user,
+          ).addJourneyCompletedMetrics(req),
         ),
       )
       expect(res.redirect).toHaveBeenCalledWith(`confirmation`)

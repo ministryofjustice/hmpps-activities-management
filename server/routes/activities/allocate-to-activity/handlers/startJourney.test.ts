@@ -7,15 +7,19 @@ import PrisonService from '../../../../services/prisonService'
 import { InmateDetail } from '../../../../@types/prisonApiImport/types'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 import { IepSummary } from '../../../../@types/incentivesApi/types'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/metricsService')
 
 const prisonService = new PrisonService(null, null, null)
 const activitiesService = new ActivitiesService(null)
+const metricsService = new MetricsService(null)
 
 describe('Route Handlers - Allocate - Start', () => {
-  const handler = new StartJourneyRoutes(prisonService, activitiesService)
+  const handler = new StartJourneyRoutes(prisonService, activitiesService, metricsService)
   let req: Request
   let res: Response
 
@@ -81,6 +85,9 @@ describe('Route Handlers - Allocate - Start', () => {
           startDate: '2023-07-26',
         },
       })
+      expect(metricsService.trackEvent).toBeCalledWith(
+        MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+      )
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocate/before-you-allocate')
     })
   })
