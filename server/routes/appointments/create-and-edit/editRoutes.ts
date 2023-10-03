@@ -29,8 +29,8 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const editAppointmentService = new EditAppointmentService(activitiesService)
-  const startJourneyRoutes = new StartJourneyRoutes(prisonService)
+  const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
+  const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeRoutes = new DateAndTimeRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
@@ -67,8 +67,8 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   post('/date-and-time', dateAndTimeRoutes.EDIT, DateAndTime)
   get('/schedule', scheduleRoutes.GET, true)
   post('/schedule', scheduleRoutes.EDIT)
-  get('/schedule/change', scheduleRoutes.CHANGE)
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
+  get('/schedule/change', scheduleRoutes.CHANGE)
   get('/extra-information', extraInformationRoutes.GET, true)
   post('/extra-information', extraInformationRoutes.EDIT, ExtraInformation)
   get('/:property/apply-to', applyToRoutes.GET, true)

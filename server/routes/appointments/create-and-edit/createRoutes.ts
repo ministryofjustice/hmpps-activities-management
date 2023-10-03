@@ -38,8 +38,8 @@ export default function Create({ prisonService, activitiesService, metricsServic
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const editAppointmentService = new EditAppointmentService(activitiesService)
-  const startJourneyRoutes = new StartJourneyRoutes(prisonService)
+  const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
+  const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService)
   const selectPrisonerRoutes = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const nameRoutes = new NameRoutes(activitiesService)
@@ -51,7 +51,7 @@ export default function Create({ prisonService, activitiesService, metricsServic
   const appointmentSetExtraInformationRoutes = new AppointmentSetExtraInformationRoutes()
   const appointmentSetAddExtraInformationRoutes = new AppointmentSetAddExtraInformationRoutes()
   const checkAnswersRoutes = new CheckAnswersRoutes(activitiesService)
-  const confirmationRoutes = new ConfirmationRoutes()
+  const confirmationRoutes = new ConfirmationRoutes(metricsService)
   const howToAddPrisonerRoutes = new HowToAddPrisonerRoutes()
   const reviewPrisonerRoutes = new ReviewPrisonerRoutes(metricsService)
   const appointmentSetUploadRoutes = new AppointmentSetUploadRoutes(new PrisonerListCsvParser(), prisonService)
