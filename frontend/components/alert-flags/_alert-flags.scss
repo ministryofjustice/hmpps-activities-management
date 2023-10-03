@@ -14,13 +14,15 @@
   user-select: none;
 
   @media print {
+    margin-top: 2px;
     margin-bottom: 0 !important;
     font-size: 6pt;
-    padding: 6px;
+    padding: 4px;
     color: black !important;
     border: 1px solid black !important;
     background: none !important;
     min-width: auto;
+    vertical-align: top;
   }
 }
 
