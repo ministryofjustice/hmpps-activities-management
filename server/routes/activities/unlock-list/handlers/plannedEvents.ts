@@ -23,7 +23,7 @@ export default class PlannedEventsRoutes {
 
     // Set the default filter values if they are not set
     req.session.unlockListJourney.stayingOrLeavingFilter ??= 'Both'
-    req.session.unlockListJourney.activityFilter ??= 'Both'
+    req.session.unlockListJourney.activityFilter ??= 'With'
     req.session.unlockListJourney.subLocationFilters ??= subLocations
 
     const unlockDate = date ? toDate(asString(date)) : new Date()
