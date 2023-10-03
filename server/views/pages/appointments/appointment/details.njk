@@ -10,7 +10,7 @@
 {% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
 {% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
 
-{% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) + " details" %}
+{% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-details-page' %}
 {% set jsBackLink = true %}
 
@@ -195,6 +195,16 @@
                 ],
                 attributes: { 'data-qa': 'appointment-details' }
             }) }}
+        </div>
+    </div>
+
+    <div class="govuk-grid-row print-only">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointment.appointmentName }}</h1>
+            <span class="govuk-caption-l">{{ appointment.startDate | toDate | formatDate }}</span>
+            <span class="govuk-caption-l">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }}</span>
+            <span class="govuk-caption-l">{{ appointment.internalLocation.description }}</span>
+            <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
         </div>
     </div>
 
