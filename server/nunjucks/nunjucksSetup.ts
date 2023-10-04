@@ -52,6 +52,7 @@ import ServiceName from '../enum/serviceName'
 import SimpleDate, { simpleDateFromPlain } from '../commonValidationTypes/simpleDate'
 import DateOption from '../enum/dateOption'
 import { PrisonerStatus } from '../@types/prisonApiImportCustom'
+import { datePickerDateToIso, parseDatePickerDate } from '../utils/datePickerUtils'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -174,6 +175,11 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
+
+  // Date picker
+  njkEnv.addFilter('parseDatePickerDate', parseDatePickerDate)
+  njkEnv.addFilter('datePickerDateToIso', datePickerDateToIso)
+  njkEnv.addGlobal('exampleDatePickerDate', () => `29/9/${formatDate(addYears(new Date(), 1), 'yyyy')}`)
 
   return njkEnv
 }

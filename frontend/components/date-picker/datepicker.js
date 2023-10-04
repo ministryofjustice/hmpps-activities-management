@@ -86,7 +86,7 @@ Datepicker.prototype.initControls = function () {
   const titleId = `datepicker-title-${this.$input.id}`
   const dialog = document.createElement('div')
   dialog.id = `datepicker-${this.$input.id}`
-  dialog.setAttribute('class', 'hmpps-datepicker__dialog  datepickerDialog')
+  dialog.setAttribute('class', 'govuk-body hmpps-datepicker__dialog  datepickerDialog')
   dialog.setAttribute('role', 'dialog')
   dialog.setAttribute('aria-modal', 'true')
   dialog.setAttribute('aria-labelledby', titleId)
@@ -367,7 +367,7 @@ Datepicker.prototype.setCurrentDate = function (focus = true) {
 
 Datepicker.prototype.selectDate = function (date) {
   this.$calendarButton.querySelector('span').innerText = `Choose date. Selected date is ${this.formattedDateHuman(
-    date
+    date,
   )}`
   this.$input.value = this.formattedDateFromDate(date)
 
