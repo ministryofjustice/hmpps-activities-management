@@ -5,12 +5,7 @@ import { uniq } from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentSearchRequest } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
-import {
-  datePickerDateToIso,
-  formatIsoDate,
-  isoDateToDatePickerDate,
-  isValidIsoDate,
-} from '../../../../utils/datePickerUtils'
+import { datePickerDateToIso, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
 import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
 
 export class Search {
@@ -68,7 +63,7 @@ export default class SearchRoutes {
     }
 
     return res.render('pages/appointments/search/results', {
-      startDate: isoDateToDatePickerDate(startDate as string),
+      startDate,
       timeSlot: timeSlot ?? '',
       appointmentNameFilters,
       appointmentName: appointmentName ?? '',
