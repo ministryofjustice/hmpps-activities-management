@@ -44,6 +44,7 @@
   {# Run JavaScript at end of the
   <body>, to avoid blocking the initial render. #}
   <script src="/assets/javascript/activities.min.js"></script>
+  <script src="/assets/javascript/datepicker.js"></script>
   {% for js in feComponents.jsIncludes %}
     <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
   {% endfor %}
