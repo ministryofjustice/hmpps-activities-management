@@ -5,7 +5,7 @@
 
 {% macro attendeeActions(appointment, attendee) %}
     {% if appointment.attendees.length > 1 and appointment.isCancelled == false and appointment.isExpired == false %}
-        <a href="/appointments/{{ appointment.appointmentId }}/edit/start/{{ attendee.prisoner.prisonerNumber }}/remove" class="govuk-link govuk-link--no-visited-state">
+        <a href="/appointments/{{ appointment.id }}/edit/start/{{ attendee.prisoner.prisonerNumber }}/remove" class="govuk-link govuk-link--no-visited-state">
             Remove <span class="govuk-visually-hidden"> prisoner {{ attendee.prisoner.prisonerNumber }}</span>
         </a>
     {% endif %}
