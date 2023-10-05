@@ -1,13 +1,12 @@
 import { Request, Response } from 'express'
-import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import { asString } from '../../../../utils/utils'
+import { parseIsoDate } from '../../../../utils/datePickerUtils'
 
 export default class ScheduleRoutes {
   constructor(
@@ -34,11 +33,7 @@ export default class ScheduleRoutes {
     const appointmentStartDate = editAppointmentJourney?.startDate ?? appointmentJourney.startDate
 
     const scheduledEvents = await this.activitiesService
-      .getScheduledEventsForPrisoners(
-        plainToInstance(SimpleDate, appointmentStartDate).toRichDate(),
-        prisonNumbers,
-        user,
-      )
+      .getScheduledEventsForPrisoners(parseIsoDate(appointmentStartDate), prisonNumbers, user)
       .then(response => [
         ...response.activities,
         ...response.appointments.filter(e => e.appointmentId !== +appointmentId),

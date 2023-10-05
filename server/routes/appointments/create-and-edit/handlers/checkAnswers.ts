@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import { AppointmentSeriesCreateRequest, AppointmentSetCreateRequest } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
@@ -43,7 +42,7 @@ export default class CheckAnswersRoutes {
       customName: appointmentJourney.customName,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
-      startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
+      startDate: appointmentJourney.startDate,
       startTime: plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString(),
       endTime: plainToInstance(SimpleTime, appointmentJourney.endTime).toIsoString(),
       extraInformation: appointmentJourney.extraInformation,
@@ -69,7 +68,7 @@ export default class CheckAnswersRoutes {
       customName: appointmentJourney.customName,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
-      startDate: plainToInstance(SimpleDate, appointmentJourney.startDate).toIsoString(),
+      startDate: appointmentJourney.startDate,
       appointments: appointmentSetJourney.appointments.map(appointment => ({
         prisonerNumber: appointment.prisoner.number,
         startTime: plainToInstance(SimpleTime, appointment.startTime).toIsoString(),

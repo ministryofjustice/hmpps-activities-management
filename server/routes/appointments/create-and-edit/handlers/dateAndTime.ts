@@ -1,23 +1,24 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
-import { IsNotEmpty, ValidateNested } from 'class-validator'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
+import { IsNotEmpty, ValidateNested, ValidationArguments } from 'class-validator'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
-import IsValidDate from '../../../../validators/isValidDate'
 import IsValidTime from '../../../../validators/isValidTime'
-import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import { hasAnyAppointmentPropertyChanged } from '../../../../utils/editAppointmentUtils'
+import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
+import DatePickerDateIsSameOrAfter from '../../../../validators/datePickerDateIsSameOrAfter'
+import { datePickerDateToIsoDate } from '../../../../utils/datePickerUtils'
 
 export class DateAndTime {
   @Expose()
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @IsNotEmpty({ message: 'Enter a date for the appointment' })
-  @IsValidDate({ message: 'Enter a valid date for the appointment' })
-  @DateIsSameOrAfter(() => new Date(), { message: "Enter a date on or after today's date" })
-  startDate: SimpleDate
+  @IsValidDatePickerDate({
+    message: (args: ValidationArguments) => {
+      return args.value ? 'Enter a valid date for the appointment' : 'Enter a date for the appointment'
+    },
+  })
+  @DatePickerDateIsSameOrAfter(() => new Date(), { message: "Enter a date on or after today's date" })
+  startDate: string
 
   @Expose()
   @Type(() => SimpleTime)
@@ -70,12 +71,7 @@ export default class DateAndTimeRoutes {
     const appointmentJourney = req.session[journeyName]
     const { startDate, startTime, endTime } = req.body
 
-    appointmentJourney.startDate = {
-      day: startDate.day,
-      month: startDate.month,
-      year: startDate.year,
-      date: startDate.toRichDate(),
-    }
+    appointmentJourney.startDate = datePickerDateToIsoDate(startDate)
 
     appointmentJourney.startTime = {
       hour: startTime.hour,

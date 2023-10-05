@@ -2,6 +2,7 @@ import { Transform, plainToInstance } from 'class-transformer'
 import { Request, Response } from 'express'
 import { ValidateNested } from 'class-validator'
 import SimpleTime from '../../../../../commonValidationTypes/simpleTime'
+import { parseIsoDate } from '../../../../../utils/datePickerUtils'
 
 // class-validator will not validate against object unknown properties, but it will validate a map.
 // This hack transforms the object to a map for validation
@@ -67,7 +68,7 @@ export default class AppointmentSetTimesRoutes {
     }
 
     const appointmentsWithInvalidStartTime = appointments.filter(
-      a => plainToInstance(SimpleTime, a.startTime).toDate(startDate.date) < new Date(),
+      a => plainToInstance(SimpleTime, a.startTime).toDate(parseIsoDate(startDate)) < new Date(),
     )
     if (appointmentsWithInvalidStartTime.length > 0) {
       appointmentsWithInvalidStartTime.forEach(appointment => {
@@ -78,8 +79,8 @@ export default class AppointmentSetTimesRoutes {
 
     const appointmentsWithInvalidEndTime = appointments.filter(
       a =>
-        plainToInstance(SimpleTime, a.endTime).toDate(startDate.date) <=
-        plainToInstance(SimpleTime, a.startTime).toDate(startDate.date),
+        plainToInstance(SimpleTime, a.endTime).toDate(parseIsoDate(startDate)) <=
+        plainToInstance(SimpleTime, a.startTime).toDate(parseIsoDate(startDate)),
     )
     if (appointmentsWithInvalidEndTime.length > 0) {
       appointmentsWithInvalidEndTime.forEach(appointment => {

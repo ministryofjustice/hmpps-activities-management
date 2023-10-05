@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% from "components/datePicker.njk" import datePicker %}
+{% from 'components/datepicker/macro.njk' import hmppsDatepicker %}
 {% from "components/timePicker.njk" import timePicker %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
@@ -17,20 +17,20 @@
             {{ appointmentTypeCaption(session) }}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ datePicker({
-                    id: 'startDate',
-                    name: 'startDate',
+                {{ hmppsDatepicker({
+                    id: "startDate",
+                    name: "startDate",
                     label: {
                         text: "When are the appointments?",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
                     hint: {
-                        text: "For example, " + exampleDate()
+                        text: "For example, " + exampleDatePickerDate()
                     },
-                    renderedErrorMessage: validationErrors | findError('startDate'),
-                    validationErrors: validationErrors,
-                    formResponses: formResponses.startDate or session.appointmentJourney.startDate
+                    errorMessage: validationErrors | findError('startDate'),
+                    classes: 'hmpps-datepicker--fixed-width',
+                    value: formResponses.startDate or ((session.editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
                 }) }}
                 {{ govukButton({
                     text: "Confirm and save" if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "Continue"

@@ -143,7 +143,6 @@ export default class StartJourneyRoutes {
   private populateEditSession(req: Request, property?: string) {
     const { appointmentSeries, appointment } = req
 
-    const startDate = parseDate(appointment.startDate)
     const startTime = parseDate(`${appointment.startDate}T${appointment.startTime}`, "yyyy-MM-dd'T'HH:mm")
     const endTime = parseDate(`${appointment.startDate}T${appointment.endTime}`, "yyyy-MM-dd'T'HH:mm")
 
@@ -161,12 +160,7 @@ export default class StartJourneyRoutes {
       })),
       category: appointment.category,
       location: appointment.internalLocation,
-      startDate: {
-        date: startDate,
-        day: +formatDate(startDate, 'dd'),
-        month: +formatDate(startDate, 'MM'),
-        year: +formatDate(startDate, 'yyyy'),
-      },
+      startDate: appointment.startDate,
       startTime: {
         date: startTime,
         hour: +formatDate(startTime, 'HH'),
