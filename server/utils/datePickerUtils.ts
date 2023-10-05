@@ -1,15 +1,6 @@
 import { isValid, parse } from 'date-fns'
 import { formatDate } from './utils'
 
-/**
- * Parse date picker date string to a Date object
- *
- * Valid date picker date strings are in day/month/year format, with either 1 or 2 digits for day and month, and 2 or 4 digits for year
- *
- * Separator can be any of `-/,. `
- *
- * @param datePickerDate
- */
 export const parseDatePickerDate = (datePickerDate: string): Date => {
   const dateFormatPattern = /(\d{1,2})([-/,. ])(\d{1,2})[-/,. ](\d{2,4})/
 
