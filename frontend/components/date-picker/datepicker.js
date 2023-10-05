@@ -19,7 +19,7 @@
  * @param {DatepickerConfig} config - Datepicker config
  * @constructor
  */
-function Datepicker($module, config) {
+export default function Datepicker($module, config) {
   if (!$module) {
     return this
   }
@@ -367,7 +367,7 @@ Datepicker.prototype.setCurrentDate = function (focus = true) {
 
 Datepicker.prototype.selectDate = function (date) {
   this.$calendarButton.querySelector('span').innerText = `Choose date. Selected date is ${this.formattedDateHuman(
-    date,
+    date
   )}`
   this.$input.value = this.formattedDateFromDate(date)
 
@@ -601,8 +601,3 @@ function nodeListForEach(nodes, callback) {
     callback.call(window, nodes[i], i, nodes)
   }
 }
-
-const $datepickers = document.querySelectorAll('[data-module="hmpps-datepicker"]')
-nodeListForEach($datepickers, function ($datepicker) {
-  new Datepicker($datepicker, {}).init()
-})
