@@ -1,5 +1,5 @@
-import { getDate, getMonth, getYear } from 'date-fns'
 import Page from '../../page'
+import { formatDatePickerDate } from '../../../../server/utils/datePickerUtils'
 
 export default class DateAndTimePage extends Page {
   constructor() {
@@ -7,11 +7,7 @@ export default class DateAndTimePage extends Page {
   }
 
   enterStartDate = (startDate: Date) => {
-    this.getInputById('startDate-day').clear().type(getDate(startDate).toString())
-    this.getInputById('startDate-month')
-      .clear()
-      .type((getMonth(startDate) + 1).toString())
-    this.getInputById('startDate-year').clear().type(getYear(startDate).toString())
+    this.getInputById('startDate').clear().type(formatDatePickerDate(startDate))
   }
 
   selectStartTime = (hour: number, minute: number) => {
@@ -25,9 +21,7 @@ export default class DateAndTimePage extends Page {
   }
 
   assertStartDate = (startDate: Date) => {
-    this.getInputById('startDate-day').should('have.value', getDate(startDate).toString())
-    this.getInputById('startDate-month').should('have.value', (getMonth(startDate) + 1).toString())
-    this.getInputById('startDate-year').should('have.value', getYear(startDate).toString())
+    this.getInputById('startDate').should('have.value', formatDatePickerDate(startDate))
   }
 
   assertStartTime = (hour: number, minute: number) => {
