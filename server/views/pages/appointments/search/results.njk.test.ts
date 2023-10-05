@@ -4,8 +4,8 @@ import fs from 'fs'
 import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import TimeSlot from '../../../../enum/timeSlot'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
-import { toDateString, formatDate } from '../../../../utils/utils'
+import { formatDate } from '../../../../utils/utils'
+import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
 
 const view = fs.readFileSync('server/views/pages/appointments/search/results.njk')
 
@@ -15,7 +15,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     user: {
       username: '',
     },
-    startDate: simpleDateFromDate(new Date()),
+    startDate: formatIsoDate(new Date()),
     timeSlot: TimeSlot.AM,
     appointmentNameFilters: [{}],
     appointmentName: '',
@@ -35,7 +35,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
       user: {
         username: 'test.user',
       },
-      startDate: simpleDateFromDate(new Date()),
+      startDate: formatIsoDate(new Date()),
       timeSlot: TimeSlot.AM,
       appointmentNameFilters: ['Chaplaincy', 'Medical - Doctor', 'Gym - Weights'],
       appointmentName: 'Medical - Doctor',
@@ -207,26 +207,24 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
   it('clear filters does not appear if only start date filter is applied', () => {
     const tomorrow = addDays(new Date(), 1)
 
-    const $ = cheerio.load(compiledTemplate.render({ startDate: simpleDateFromDate(tomorrow) }))
+    const $ = cheerio.load(compiledTemplate.render({ startDate: formatIsoDate(tomorrow) }))
 
     expect($("a:contains('Clear filters')").length).toEqual(0)
   })
 
   it('should use correct start date filter', () => {
     const tomorrow = addDays(new Date(), 1)
-    viewContext.startDate = simpleDateFromDate(tomorrow)
+    viewContext.startDate = formatIsoDate(tomorrow)
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     const clearFiltersLink = $("a:contains('Clear filters')")
     expect(clearFiltersLink.length).toEqual(1)
-    expect(clearFiltersLink.attr('href')).toEqual(`?startDate=${toDateString(tomorrow)}`)
+    expect(clearFiltersLink.attr('href')).toEqual(`?startDate=${formatIsoDate(tomorrow)}`)
 
     expect($(".moj-filter__selected > h3:contains('Date')").length).toEqual(0)
 
-    expect($("[name='startDate[day]']").val()).toEqual(`${tomorrow.getDate()}`)
-    expect($("[name='startDate[month]']").val()).toEqual(`${tomorrow.getMonth() + 1}`)
-    expect($("[name='startDate[year]']").val()).toEqual(`${tomorrow.getFullYear()}`)
+    expect($("[name='startDate']").val()).toEqual(formatDatePickerDate(tomorrow))
 
     expect($("[data-qa='start-date-caption']").text()).toEqual(formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
   })
@@ -244,7 +242,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     const removeFilterLink = $(`a.moj-filter__tag:contains('${expectedText}')`)
     expect(removeFilterLink.text().trim()).toEqual(`Remove this filter ${expectedText}`)
     expect(removeFilterLink.attr('href')).toEqual(
-      `?startDate=${toDateString(
+      `?startDate=${formatIsoDate(
         new Date(),
       )}&timeSlot=&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
     )
@@ -266,7 +264,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     const removeFilterLink = $(`a.moj-filter__tag:contains('Medical - Doctor')`)
     expect(removeFilterLink.text().trim()).toEqual(`Remove this filter Medical - Doctor`)
     expect(removeFilterLink.attr('href')).toEqual(
-      `?startDate=${toDateString(
+      `?startDate=${formatIsoDate(
         new Date(),
       )}&timeSlot=am&appointmentName=&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
     )
@@ -283,7 +281,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     const removeFilterLink = $(`a.moj-filter__tag:contains('Library')`)
     expect(removeFilterLink.text().trim()).toEqual(`Remove this filter Library`)
     expect(removeFilterLink.attr('href')).toEqual(
-      `?startDate=${toDateString(
+      `?startDate=${formatIsoDate(
         new Date(),
       )}&timeSlot=am&appointmentName=Medical - Doctor&locationId=&prisonerNumber=A1234BC&createdBy=all`,
     )
@@ -300,7 +298,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     const removeFilterLink = $(`a.moj-filter__tag:contains('A1234BC')`)
     expect(removeFilterLink.text().trim()).toEqual(`Remove this filter A1234BC`)
     expect(removeFilterLink.attr('href')).toEqual(
-      `?startDate=${toDateString(
+      `?startDate=${formatIsoDate(
         new Date(),
       )}&timeSlot=am&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=&createdBy=all`,
     )
@@ -320,7 +318,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     const removeFilterLink = $(`a.moj-filter__tag:contains('${expectedText}')`)
     expect(removeFilterLink.text().trim()).toEqual(`Remove this filter ${expectedText}`)
     expect(removeFilterLink.attr('href')).toEqual(
-      `?startDate=${toDateString(
+      `?startDate=${formatIsoDate(
         new Date(),
       )}&timeSlot=am&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=`,
     )

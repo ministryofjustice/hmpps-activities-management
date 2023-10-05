@@ -1,13 +1,16 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
-import { IsNotEmpty } from 'class-validator'
+import { ValidationArguments } from 'class-validator'
 import { datePickerDateToIso } from '../../../../utils/datePickerUtils'
 import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
 
 export class SelectDate {
   @Expose()
-  @IsNotEmpty({ message: 'Enter a date' })
-  @IsValidDatePickerDate({ message: 'Enter a valid date' })
+  @IsValidDatePickerDate({
+    message: (args: ValidationArguments) => {
+      return args.value ? 'Enter a valid date' : 'Enter a date'
+    },
+  })
   startDate: string
 }
 
