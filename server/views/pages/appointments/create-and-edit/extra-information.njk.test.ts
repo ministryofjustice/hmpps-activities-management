@@ -9,6 +9,7 @@ import {
   AppointmentType,
 } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/extra-information.njk')
 
@@ -33,12 +34,7 @@ describe('Views - Appointments Management - Extra Information', () => {
         appointmentJourney: {
           mode: AppointmentJourneyMode.CREATE,
           type: AppointmentType.GROUP,
-          startDate: {
-            day: weekTomorrow.getDate(),
-            month: weekTomorrow.getMonth() + 1,
-            year: weekTomorrow.getFullYear(),
-            date: weekTomorrow,
-          },
+          startDate: formatIsoDate(weekTomorrow),
         },
         editAppointmentJourney: {
           numberOfAppointments: 3,

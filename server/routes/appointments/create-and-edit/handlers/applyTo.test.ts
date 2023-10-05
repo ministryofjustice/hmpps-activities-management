@@ -9,6 +9,7 @@ import { AppointmentApplyTo, AppointmentFrequency } from '../../../../@types/app
 import { getAppointmentApplyToOptions, getRepeatFrequencyText } from '../../../../utils/editAppointmentUtils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/editAppointmentService')
 
@@ -29,12 +30,7 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.GROUP,
           repeatFrequency: AppointmentFrequency.DAILY,
-          startDate: {
-            day: weekTomorrow.getDate(),
-            month: weekTomorrow.getMonth() + 1,
-            year: weekTomorrow.getFullYear(),
-            date: weekTomorrow,
-          },
+          startDate: formatIsoDate(weekTomorrow),
         },
         editAppointmentJourney: {
           numberOfAppointments: 4,

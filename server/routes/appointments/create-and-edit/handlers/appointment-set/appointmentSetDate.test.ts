@@ -3,8 +3,8 @@ import { addDays, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import AppointmentSetDateRoutes, { AppointmentSetDate } from './appointmentSetDate'
-import { simpleDateFromDate } from '../../../../../commonValidationTypes/simpleDate'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
+import { formatDatePickerDate, formatIsoDate } from '../../../../../utils/datePickerUtils'
 
 const tomorrow = addDays(new Date(), 1)
 
@@ -48,28 +48,20 @@ describe('Route Handlers - Create Appointment Set - Date', () => {
 
   describe('POST', () => {
     it('should save start date, start time and end time in session and redirect to repeat page', async () => {
-      const startDate = simpleDateFromDate(tomorrow)
-
       req.body = {
-        startDate,
+        startDate: formatDatePickerDate(tomorrow),
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.appointmentJourney.startDate).toEqual({
-        day: startDate.day,
-        month: startDate.month,
-        year: startDate.year,
-        date: req.body.startDate.toRichDate(),
-      })
+      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`appointment-set-times`)
     })
 
     it('should populate return to with schedule', async () => {
       req.query = { preserveHistory: 'true' }
-      const startDate = simpleDateFromDate(tomorrow)
       req.body = {
-        startDate,
+        startDate: formatDatePickerDate(tomorrow),
       }
       await handler.POST(req, res)
       expect(req.session.returnTo).toEqual('schedule?preserveHistory=true')
@@ -84,17 +76,14 @@ describe('Route Handlers - Create Appointment Set - Date', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
-        expect.arrayContaining([
-          { error: 'Enter a valid date for the appointment', property: 'startDate' },
-          { error: 'Enter a date for the appointment', property: 'startDate' },
-        ]),
+        expect.arrayContaining([{ error: 'Enter a date for the appointment', property: 'startDate' }]),
       )
     })
 
     it('validation fails when start date is in the past', async () => {
       const yesterday = subDays(new Date(), 1)
       const body = {
-        startDate: simpleDateFromDate(yesterday),
+        startDate: formatDatePickerDate(yesterday),
       }
 
       const requestObject = plainToInstance(AppointmentSetDate, body)
