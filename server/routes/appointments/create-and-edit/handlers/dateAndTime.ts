@@ -8,7 +8,7 @@ import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import { hasAnyAppointmentPropertyChanged } from '../../../../utils/editAppointmentUtils'
 import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
 import DatePickerDateIsSameOrAfter from '../../../../validators/datePickerDateIsSameOrAfter'
-import { datePickerDateToIsoDate } from '../../../../utils/datePickerUtils'
+import { datePickerDateToIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 
 export class DateAndTime {
   @Expose()
@@ -76,13 +76,13 @@ export default class DateAndTimeRoutes {
     appointmentJourney.startTime = {
       hour: startTime.hour,
       minute: startTime.minute,
-      date: startTime.toDate(appointmentJourney.startDate.date),
+      date: startTime.toDate(parseDatePickerDate(startDate)),
     }
 
     appointmentJourney.endTime = {
       hour: endTime.hour,
       minute: endTime.minute,
-      date: endTime.toDate(appointmentJourney.startDate.date),
+      date: endTime.toDate(parseDatePickerDate(startDate)),
     }
   }
 }

@@ -5,7 +5,7 @@ import { validate } from 'class-validator'
 import AppointmentSetTimesRoutes, { AppointmentTimes } from './appointmentSetTimes'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import SimpleTime from '../../../../../commonValidationTypes/simpleTime'
-import { simpleDateFromDate } from '../../../../../commonValidationTypes/simpleDate'
+import { formatIsoDate } from '../../../../../utils/datePickerUtils'
 
 const yesterday = addDays(new Date(), -1)
 const tomorrow = addDays(new Date(), 1)
@@ -32,9 +32,7 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
     req = {
       session: {
         appointmentJourney: {
-          startDate: {
-            date: tomorrow,
-          },
+          startDate: formatIsoDate(tomorrow),
         },
         appointmentSetJourney: {
           appointments: [
@@ -121,17 +119,11 @@ describe('Route Handlers - Create Appointment Set - Times', () => {
 
       req.body = { startTime, endTime }
 
-      req.session.appointmentJourney.startDate.date = tomorrow
+      req.session.appointmentJourney.startDate = formatIsoDate(tomorrow)
     })
 
     it('should fail validation if start time is in the past', async () => {
-      const startDate = simpleDateFromDate(yesterday)
-      req.session.appointmentJourney.startDate = {
-        date: startDate.toRichDate(),
-        year: startDate.year,
-        month: startDate.month,
-        day: startDate.day,
-      }
+      req.session.appointmentJourney.startDate = formatIsoDate(yesterday)
 
       await handler.POST(req, res)
 
