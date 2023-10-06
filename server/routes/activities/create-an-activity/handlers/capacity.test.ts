@@ -31,6 +31,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
     } as unknown as Response
 
     req = {
+      params: {},
       session: {
         createJourney: {},
       },
@@ -67,10 +68,12 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
 
       req = {
         session: {
-          createJourney: {},
+          createJourney: {
+            activityId: '1',
+          },
         },
-        query: {
-          fromEditActivity: true,
+        params: {
+          mode: 'edit',
         },
         body: {
           capacity: 10,
@@ -80,7 +83,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/activities/schedule/activities/undefined',
+        '/activities/view/1',
         'Activity updated',
         "We've updated the capacity for undefined",
       )

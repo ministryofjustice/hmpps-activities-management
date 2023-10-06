@@ -1,13 +1,13 @@
 import { Request } from 'express'
 
 import { when } from 'jest-when'
-import PrisonService from '../../../../../services/prisonService'
+import PrisonService from '../../../services/prisonService'
 import IncentiveLevelPayMappingUtil from './incentiveLevelPayMappingUtil'
-import { ServiceUser } from '../../../../../@types/express'
-import atLeast from '../../../../../../jest.setup'
-import { IncentiveLevel } from '../../../../../@types/incentivesApi/types'
+import { ServiceUser } from '../../../@types/express'
+import atLeast from '../../../../jest.setup'
+import { IncentiveLevel } from '../../../@types/incentivesApi/types'
 
-jest.mock('../../../../../services/prisonService')
+jest.mock('../../../services/prisonService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
@@ -50,7 +50,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
           { levelName: 'Enhanced' },
         ] as IncentiveLevel[])
 
-      const result = await helper.getPayGroupedByIncentiveLevel(req, user)
+      const result = await helper.getPayGroupedByIncentiveLevel(req.session.createJourney.pay, user)
       expect(result).toEqual([
         { incentiveLevel: 'Basic', pays: [{ incentiveLevel: 'Basic', bandId: 3, rate: 300, displaySequence: 3 }] },
         {

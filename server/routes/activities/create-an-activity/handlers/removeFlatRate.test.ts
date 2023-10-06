@@ -21,6 +21,7 @@ describe('Route Handlers - Create an activity - Remove flat rate', () => {
     } as unknown as Response
 
     req = {
+      params: {},
       query: {},
       session: {
         createJourney: {

@@ -14,12 +14,15 @@ import enGBLocale, {
   parseISO,
 } from 'date-fns'
 import { ValidationError } from 'class-validator'
+import _ from 'lodash'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
-import { Activity, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
+import { Activity, ActivitySchedule, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 // eslint-disable-next-line import/no-cycle
 import { CreateAnActivityJourney } from '../routes/activities/create-an-activity/journey'
+
+const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -364,10 +367,10 @@ export const eventClashes = (event: ScheduledEvent, thisEvent: { startTime: stri
   )
 }
 
-export const mapSlots = (createJourney: CreateAnActivityJourney) => {
+export const mapJourneySlotsToActivityRequest = (fromSlots: CreateAnActivityJourney['slots']): Slot[] => {
   const slots: Slot[] = []
 
-  Object.keys(createJourney.slots).forEach(weekNumber => {
+  Object.keys(fromSlots).forEach(weekNumber => {
     const slotMap: Map<string, Slot> = new Map()
     const setSlot = (timeSlot: string, day: string) => {
       if (!slotMap.has(timeSlot)) {
@@ -376,11 +379,8 @@ export const mapSlots = (createJourney: CreateAnActivityJourney) => {
       slotMap.get(timeSlot)[day] = true
     }
 
-    const weeklySlots = createJourney.slots[weekNumber]
-
-    const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     daysOfWeek.forEach(day => {
-      weeklySlots[`timeSlots${day}`]?.forEach((slot: string) => setSlot(slot, day.toLowerCase()))
+      fromSlots[weekNumber][`timeSlots${day}`]?.forEach((slot: string) => setSlot(slot, day.toLowerCase()))
     })
 
     slotMap.forEach(slot => slots.push(slot))
@@ -388,6 +388,38 @@ export const mapSlots = (createJourney: CreateAnActivityJourney) => {
 
   return slots
 }
+
+export const mapActivityModelSlotsToJourney = (
+  fromSlots: ActivitySchedule['slots'],
+): CreateAnActivityJourney['slots'] => {
+  const slots: CreateAnActivityJourney['slots'] = {}
+
+  const weekNumbers = _.uniq(fromSlots.map(s => s.weekNumber))
+  weekNumbers.forEach(week => {
+    const weekSlots = fromSlots.filter(s => s.weekNumber === week)
+    slots[week] = {
+      days: daysOfWeek.filter(d => weekSlots.find(s => s[`${d.toLowerCase()}Flag`])).map(d => d.toLowerCase()),
+    }
+
+    daysOfWeek.forEach(d => {
+      const timeslots = weekSlots.filter(s => s[`${d.toLowerCase()}Flag`]).map(s => getTimeSlotFromTime(s.startTime))
+      slots[week][`timeSlots${d}`] = timeslots.map(t => t.toUpperCase())
+    })
+  })
+
+  return slots
+}
+
+// Maybe we could update our session object to match the activity model so this conversion isn't needed?
+export const mapActivityModelPayToJourney = (pay: Activity['pay']): CreateAnActivityJourney['pay'] =>
+  pay.map(p => ({
+    incentiveNomisCode: p.incentiveNomisCode,
+    incentiveLevel: p.incentiveLevel,
+    rate: p.rate,
+    bandId: p.prisonPayBand.id,
+    bandAlias: p.prisonPayBand.alias,
+    displaySequence: p.prisonPayBand.displaySequence,
+  }))
 
 export const padNumber = (num: number, length = 2) => {
   return (new Array(length).fill('0').join('') + num).slice(-length)

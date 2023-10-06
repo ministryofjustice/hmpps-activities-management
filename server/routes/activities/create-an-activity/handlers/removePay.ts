@@ -22,8 +22,8 @@ export default class RemovePayRoutes {
 
     const pay = req.session.createJourney.pay.findIndex(p => p.bandId === bandId && p.incentiveLevel === iep)
     if (pay < 0) {
-      if (req.query && req.query.fromEditActivity) {
-        return res.redirect('/activities/schedule/check-pay?preserveHistory=true')
+      if (req.params.mode === 'edit') {
+        return res.redirect('schedule/check-pay?preserveHistory=true')
       }
       return res.redirect(`check-pay${preserveHistoryString}`)
     }
@@ -38,8 +38,8 @@ export default class RemovePayRoutes {
     const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
     if (choice !== 'yes') {
-      if (req.query && req.query.fromEditActivity) {
-        return res.redirect('/activities/schedule/check-pay?preserveHistory=true')
+      if (req.params.mode === 'edit') {
+        return res.redirect('schedule/check-pay?preserveHistory=true')
       }
       return res.redirect(`check-pay${preserveHistoryString}`)
     }
@@ -52,7 +52,7 @@ export default class RemovePayRoutes {
     const payInfo = req.session.createJourney.pay[payIndex]
     req.session.createJourney.pay.splice(payIndex, 1)
 
-    if (req.query && req.query.fromEditActivity) {
+    if (req.params.mode === 'edit') {
       return this.updateActivity(req, res)
     }
     return res.redirectWithSuccess(
@@ -89,10 +89,6 @@ export default class RemovePayRoutes {
     await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, updatedActivity)
     const successMessage = `We've updated the pay for ${req.session.createJourney.name}`
 
-    return res.redirectWithSuccess(
-      '/activities/schedule/check-pay?preserveHistory=true',
-      'Activity updated',
-      successMessage,
-    )
+    return res.redirectWithSuccess('schedule/check-pay?preserveHistory=true', 'Activity updated', successMessage)
   }
 }

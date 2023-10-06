@@ -4,11 +4,12 @@ import { SessionDatum } from '../@types/express'
 const journeys = [
   'appointmentJourney',
   'appointmentSetJourney',
-  'editAppointmentJourney',
   'attendanceSummaryJourney',
+  'createJourney',
+  'editAppointmentJourney',
+  'journeyMetrics',
   'unlockListJourney',
   'waitListApplicationJourney',
-  'journeyMetrics',
 ]
 const MAX_CONCURRENT_JOURNEYS = 100
 

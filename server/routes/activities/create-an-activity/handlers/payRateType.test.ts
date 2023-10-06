@@ -46,19 +46,6 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
       expect(res.redirect).toHaveBeenCalledWith('pay/single')
     })
 
-    it('should redirect with fromEditActivity flag', async () => {
-      req.body = {
-        payRateTypeOption: 'single',
-      }
-      req.query = {
-        fromEditActivity: 'true',
-      }
-
-      await handler.POST(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('pay/single?fromEditActivity=true')
-    })
-
     it('should redirect with preserveHistory flag', async () => {
       req.body = {
         payRateTypeOption: 'single',

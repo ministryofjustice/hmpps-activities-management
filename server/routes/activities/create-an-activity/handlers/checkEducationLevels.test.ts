@@ -34,6 +34,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
 
     req = {
       query: {},
+      params: {},
       session: {
         createJourney: {
           name: 'Maths level 1',
@@ -113,6 +114,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
     req = {
       session: {
         createJourney: {
+          activityId: '1',
           educationLevels: [
             {
               educationLevelCode: '1',
@@ -123,8 +125,8 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
           ],
         },
       },
-      query: {
-        fromEditActivity: true,
+      params: {
+        mode: 'edit',
       },
       body: {},
     } as unknown as Request
@@ -132,7 +134,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
     await handler.POST(req, res)
 
     expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-      '/activities/schedule/activities/undefined',
+      '/activities/view/1',
       'Activity updated',
       "We've updated the education levels for undefined",
     )

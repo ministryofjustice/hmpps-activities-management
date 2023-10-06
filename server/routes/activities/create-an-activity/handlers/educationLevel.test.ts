@@ -36,6 +36,7 @@ describe('Route Handlers - Create an activity - Education Level', () => {
     } as unknown as Response
 
     req = {
+      query: {},
       session: {
         createJourney: {
           name: 'Maths level 1',
