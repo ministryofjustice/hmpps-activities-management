@@ -33,6 +33,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       session: {
         createJourney: {},
       },
+      params: {},
     } as unknown as Request
   })
 
@@ -78,10 +79,12 @@ describe('Route Handlers - Create an activity - Risk level', () => {
 
       req = {
         session: {
-          createJourney: {},
+          createJourney: {
+            activityId: '1',
+          },
         },
-        query: {
-          fromEditActivity: true,
+        params: {
+          mode: 'edit',
         },
         body: {
           riskLevel: 'high',
@@ -91,7 +94,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/activities/schedule/activities/undefined',
+        '/activities/view/1',
         'Activity updated',
         "We've updated the risk assessment level for undefined",
       )

@@ -211,10 +211,10 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           },
           params: {
             weekNumber: '1',
+            mode: 'edit',
           },
           query: {
             preserveHistory: true,
-            fromEditActivity: true,
           },
           body: {
             days: ['tuesday', 'friday'],
@@ -241,7 +241,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         )
 
         expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-          '/activities/schedule/activities/1',
+          '/activities/view/1',
           'Activity updated',
           "We've updated the daily schedule for Maths level 1",
         )
@@ -262,7 +262,6 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           },
           query: {
             preserveHistory: 'true',
-            fromEditActivity: 'true',
             fromScheduleFrequency: 'true',
           },
           body: {
@@ -287,7 +286,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           },
         })
 
-        expect(res.redirect).toBeCalledWith('2?preserveHistory=true&fromScheduleFrequency=true&fromEditActivity=true')
+        expect(res.redirect).toBeCalledWith('2?preserveHistory=true&fromScheduleFrequency=true')
       })
     })
 

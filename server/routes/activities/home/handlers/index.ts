@@ -1,6 +1,6 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
-import HomeRoutes from './handlers/home'
+import asyncMiddleware from '../../../../middleware/asyncMiddleware'
+import HomeRoutes from './home'
 
 export default function Index(): Router {
   const router = Router({ mergeParams: true })

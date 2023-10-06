@@ -19,7 +19,7 @@ export default class ActivitiesRoutes {
         act.filter(a => filters.stateFilter === 'all' || a.activityState.toLowerCase() === filters.stateFilter),
       )
 
-    res.render('pages/activities/manage-schedules/activities-dashboard', {
+    res.render('pages/activities/manage-activities/activities-dashboard', {
       activities,
       filters,
     })

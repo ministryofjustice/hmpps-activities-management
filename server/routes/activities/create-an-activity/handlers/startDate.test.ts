@@ -33,6 +33,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
     } as unknown as Response
 
     req = {
+      params: {},
       session: {
         createJourney: {},
       },
@@ -60,11 +61,11 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
         } as unknown as ActivitySchedule)
 
       req = {
+        params: {
+          mode: 'edit',
+        },
         session: {
           createJourney: { endDate: simpleDateFromDate(new Date()), activityId: 1, scheduleId: 2 },
-        },
-        query: {
-          fromEditActivity: true,
         },
       } as unknown as Request
 
@@ -107,8 +108,8 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
         session: {
           createJourney: { activityId: 1, name: 'Maths level 1' },
         },
-        query: {
-          fromEditActivity: true,
+        params: {
+          mode: 'edit',
         },
         body: {
           startDate,
@@ -118,7 +119,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/activities/schedule/activities/1',
+        '/activities/view/1',
         'Activity updated',
         "We've updated the start date for Maths level 1",
       )

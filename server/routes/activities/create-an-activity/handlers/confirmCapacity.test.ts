@@ -55,12 +55,11 @@ describe('Route Handlers - Edit an activity - Confirm capacity', () => {
         .calledWith(atLeast(updatedActivity))
         .mockResolvedValueOnce(activity as unknown as Activity)
 
-      req.query.fromEditActivity = 'true'
       req.body.capacity = 10
       await handler.POST(req, res)
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/activities/schedule/activities/1',
+        '/activities/view/1',
         'Activity updated',
         "We've updated the capacity for Test activity",
       )

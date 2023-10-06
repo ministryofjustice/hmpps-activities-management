@@ -266,11 +266,9 @@ describe('Route Handlers - Create an activity - Pay', () => {
       req.session.createJourney.pay = payRates
       req.session.createJourney.flat = []
 
-      req.query = {
-        fromEditActivity: 'true',
-      }
       req.params = {
         payRateType: 'flat',
+        mode: 'edit',
       }
       req.body = {
         rate: 150,
@@ -299,7 +297,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       expect(activitiesService.updateActivity).toBeCalledWith('MDI', 1, updatedActivity)
       expect(res.redirectWithSuccess).toBeCalledWith(
-        '/activities/schedule/check-pay?preserveHistory=true',
+        '../schedule/check-pay?preserveHistory=true',
         'Activity updated',
         `We've updated the pay for ${req.session.createJourney.name}`,
       )

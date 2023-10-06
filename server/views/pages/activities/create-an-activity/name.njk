@@ -14,11 +14,10 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
                 {{ activityJourneyCaption(session.createJourney) }}
                 {{ characterCountInput({
                     label: {
-                        text: "Enter the new name of the activity" if session.req.query.fromEditActivity else "What's the new activity called?",
+                        text: "Enter the new name of the activity" if session.req.params.mode == 'edit' else "What's the new activity called?",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
@@ -35,7 +34,7 @@
                     maxlength: "40"
                 }) }}
 
-                {% if session.req.query.fromEditActivity %}
+                {% if session.req.params.mode == 'edit' %}
                     {{ govukInsetText({
                       text: "If you change the name of this activity, it will update all records. This includes any previous sessions of the activity on the unlock, movement and attendance lists."
                     }) }}

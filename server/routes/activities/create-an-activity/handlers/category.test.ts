@@ -31,6 +31,7 @@ describe('Route Handlers - Create an activity - Category', () => {
     } as unknown as Response
 
     req = {
+      params: {},
       session: {
         createJourney: {},
       },
@@ -95,10 +96,12 @@ describe('Route Handlers - Create an activity - Category', () => {
 
       req = {
         session: {
-          createJourney: {},
+          createJourney: {
+            activityId: '1',
+          },
         },
-        query: {
-          fromEditActivity: true,
+        params: {
+          mode: 'edit',
         },
         body: {
           category: 2,
@@ -108,7 +111,7 @@ describe('Route Handlers - Create an activity - Category', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/activities/schedule/activities/undefined',
+        '/activities/view/1',
         'Activity updated',
         "We've updated the category for undefined",
       )

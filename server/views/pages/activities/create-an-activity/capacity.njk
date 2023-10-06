@@ -17,7 +17,7 @@
                 {{ activityJourneyCaption(session.createJourney) }}
                 {{ govukInput({
                     label: {
-                        text: "Change the capacity" if session.req.query.fromEditActivity else "How many people can be allocated to this activity?",
+                        text: "Change the capacity" if session.req.params.mode == 'edit' else "How many people can be allocated to this activity?",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
@@ -35,7 +35,7 @@
                     errorMessage: validationErrors | findError('capacity'),
                     value: formResponses.capacity or session.createJourney.capacity
                 }) }}
-                {% if session.req.query.fromEditActivity %}
+                {% if session.req.params.mode == 'edit' %}
                     {{ govukInsetText({
                       text: session.createJourney.allocationCount + " people are currently allocated to this activity."
                     }) }}

@@ -19,7 +19,7 @@ export default class BankHolidayOptionRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.createJourney.runsOnBankHoliday = req.body.runsOnBankHoliday === 'yes'
-    if (req.query && req.query.fromEditActivity) {
+    if (req.params.mode === 'edit') {
       const { user } = res.locals
       const { activityId } = req.session.createJourney
       const prisonCode = user.activeCaseLoadId
@@ -29,7 +29,7 @@ export default class BankHolidayOptionRoutes {
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
       const successMessage = `We've updated the bank holiday option for ${req.session.createJourney.name}`
 
-      const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }

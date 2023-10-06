@@ -89,7 +89,7 @@
 
                 {% set suitableForIepHtml %}
                     <p>{{ suitableForIep }}</p>
-                    <p class='govuk-hint'>You can control which incentive levels are suitable by <a class='govuk-link govuk-link--no-visited-state' href='/activities/schedule/activities/{{ activity.id }}' target='_blank'>adding or removing corresponding pay rates.</a></p>
+                    <p class='govuk-hint'>You can control which incentive levels are suitable by <a class='govuk-link govuk-link--no-visited-state' href='/activities/view/{{ activity.id }}' target='_blank'>adding or removing corresponding pay rates.</a></p>
                 {% endset %}
 
                 {{ govukTable({

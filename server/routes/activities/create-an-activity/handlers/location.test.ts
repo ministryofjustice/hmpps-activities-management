@@ -36,6 +36,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
       session: {
         createJourney: {},
       },
+      params: {},
     } as unknown as Request
   })
 
@@ -136,10 +137,12 @@ describe('Route Handlers - Create an activity schedule - location', () => {
 
       req = {
         session: {
-          createJourney: {},
+          createJourney: {
+            activityId: '1',
+          },
         },
-        query: {
-          fromEditActivity: true,
+        params: {
+          mode: 'edit',
         },
         body: {
           location: 1234,
@@ -149,7 +152,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/activities/schedule/activities/undefined',
+        '/activities/view/1',
         'Activity updated',
         "We've updated the location for undefined",
       )

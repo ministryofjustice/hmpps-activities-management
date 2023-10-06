@@ -83,7 +83,7 @@ describe('Route Handlers - View Activity', () => {
   describe('GET', () => {
     it('should render page with view activity', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/view-activity', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/view-activity', {
         activity: {
           attendanceRequired: false,
           category: { code: 'EDUCATION', id: 1, name: 'Education' },
@@ -144,9 +144,7 @@ describe('Route Handlers - View Activity', () => {
           ],
         },
         currentWeek: 1,
-        attendanceCount: 0,
       })
-      expect(req.session.createJourney.scheduleId).toEqual([activitySchedule][0].id)
     })
   })
 })

@@ -33,6 +33,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
     req = {
       query: {},
+      params: {},
       session: {
         createJourney: {
           activityId: 1,
@@ -120,9 +121,8 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       ] as CreateAnActivityJourney['pay']
 
       req.session.createJourney.pay = payRates
-
+      req.params = { mode: 'edit' }
       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
-      req.query = { fromEditActivity: 'true' }
 
       when(prisonService.getIncentiveLevels).mockResolvedValue([
         { levelCode: 'BAS', levelName: 'Basic' },
@@ -139,7 +139,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
       expect(activitiesService.updateActivity).toBeCalledWith('MDI', 1, updatedActivity)
       expect(res.redirectWithSuccess).toBeCalledWith(
-        '/activities/schedule/check-pay?preserveHistory=true',
+        'schedule/check-pay?preserveHistory=true',
         'Activity updated',
         `We've updated the pay for ${req.session.createJourney.name}`,
       )

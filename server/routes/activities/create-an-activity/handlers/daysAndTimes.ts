@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
 import createHttpError from 'http-errors'
 import { NextFunction } from 'express-serve-static-core'
-import { convertToArray, mapSlots } from '../../../../utils/utils'
+import { convertToArray, mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import { simpleDateFromPlain } from '../../../../commonValidationTypes/simpleDate'
@@ -67,7 +67,7 @@ export default class DaysAndTimesRoutes {
     const { scheduleWeeks } = req.session.createJourney
     const { weekNumber } = req.params
     const selectedDays = req.body.days
-    const { preserveHistory, fromScheduleFrequency, fromEditActivity } = req.query
+    const { preserveHistory, fromScheduleFrequency } = req.query
 
     if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
 
@@ -110,12 +110,12 @@ export default class DaysAndTimesRoutes {
       // If create journey, redirect to next journey page
       if (!preserveHistory) return res.redirect('../bank-holiday-option')
       // If from edit page, edit slots
-      if (fromEditActivity) return this.editSlots(req, res)
+      if (req.params.mode === 'edit') return this.editSlots(req, res)
       return res.redirect('../check-answers')
     }
     if (preserveHistory && !fromScheduleFrequency) {
       // If this is a week-specfic slot edit (not from schedule frequency page)
-      if (fromEditActivity) return this.editSlots(req, res)
+      if (req.params.mode === 'edit') return this.editSlots(req, res)
       return res.redirect('../check-answers')
     }
 
@@ -123,7 +123,6 @@ export default class DaysAndTimesRoutes {
     if (preserveHistory) {
       redirectParams += `?preserveHistory=true`
       redirectParams += fromScheduleFrequency ? `&fromScheduleFrequency=true` : ''
-      redirectParams += fromEditActivity ? `&fromEditActivity=true` : ''
     }
 
     return res.redirect(`${weekNumberInt + 1}${redirectParams}`)
@@ -132,7 +131,7 @@ export default class DaysAndTimesRoutes {
   private async editSlots(req: Request, res: Response) {
     const { user } = res.locals
     const { activityId, scheduleWeeks } = req.session.createJourney
-    const slots = mapSlots(req.session.createJourney)
+    const slots = mapJourneySlotsToActivityRequest(req.session.createJourney.slots)
     const activity = {
       slots,
       scheduleWeeks,
@@ -140,7 +139,7 @@ export default class DaysAndTimesRoutes {
     await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
     const successMessage = `We've updated the daily schedule for ${req.session.createJourney.name}`
 
-    const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
+    const returnTo = `/activities/view/${req.session.createJourney.activityId}`
     req.session.returnTo = returnTo
     res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
   }
