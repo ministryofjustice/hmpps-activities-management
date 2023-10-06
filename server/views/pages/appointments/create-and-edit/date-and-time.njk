@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% from 'components/datepicker/macro.njk' import hmppsDatepicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "components/timePicker.njk" import timePicker %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
@@ -25,7 +25,7 @@
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ hmppsDatepicker({
+                {{ hmppsDatePicker({
                     id: "startDate",
                     name: "startDate",
                     label: {
