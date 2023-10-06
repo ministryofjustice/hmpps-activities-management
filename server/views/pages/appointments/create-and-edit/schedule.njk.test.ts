@@ -801,7 +801,7 @@ describe('Views - Appointments Management - Schedule', () => {
       )
       const cta = $('.govuk-button')
       expect(cta.text().trim()).toBe('Add a new list')
-      expect(cta.attr('href')).toBe('upload-appointment-set?preserveHistory=true')
+      expect(cta.attr('href')).toBe('/appointments/create/start-set')
     })
 
     it('should display scheduled events', () => {

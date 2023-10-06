@@ -32,7 +32,7 @@
                 {% endif %}
 
                 {% set addPrisonersHref = ('prisoners/add/how-to-add-prisoners?preserveHistory=true' if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT) or
-                    ("upload-appointment-set?preserveHistory=true" if session.appointmentJourney.type == AppointmentType.SET) or
+                    ('/appointments/create/start-set' if session.appointmentJourney.type == AppointmentType.SET) or
                     "how-to-add-prisoners?preserveHistory=true" %}
 
                 {{ govukButton({
