@@ -1,21 +1,18 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import { IsNotEmpty, ValidateNested } from 'class-validator'
+import { Expose } from 'class-transformer'
+import { IsNotEmpty } from 'class-validator'
 import { uniq } from 'lodash'
-import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
-import IsValidDate from '../../../../validators/isValidDate'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentSearchRequest } from '../../../../@types/activitiesAPI/types'
-import { toDate, toDateString } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
+import { datePickerDateToIso, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
+import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
 
 export class Search {
   @Expose()
-  @Type(() => SimpleDate)
-  @ValidateNested()
   @IsNotEmpty({ message: 'Enter a date' })
-  @IsValidDate({ message: 'Enter a valid date' })
-  startDate: SimpleDate
+  @IsValidDatePickerDate({ message: 'Enter a valid date' })
+  startDate: string
 }
 
 export default class SearchRoutes {
@@ -25,14 +22,12 @@ export default class SearchRoutes {
     const { user } = res.locals
     const { startDate, timeSlot, appointmentName, locationId, prisonerNumber, createdBy } = req.query
 
-    const simpleStartDate = simpleDateFromDate(toDate(startDate as string))
-
-    if (!simpleStartDate) {
-      return res.redirect(`?startDate=${toDateString(new Date())}`)
+    if (!isValidIsoDate(startDate as string)) {
+      return res.redirect(`?startDate=${formatIsoDate(new Date())}`)
     }
 
     const request = {
-      startDate: simpleStartDate.toIsoString(),
+      startDate,
       timeSlot: timeSlot || null,
       internalLocationId: locationId ? +locationId : null,
       prisonerNumbers: prisonerNumber ? [prisonerNumber] : null,
@@ -68,7 +63,7 @@ export default class SearchRoutes {
     }
 
     return res.render('pages/appointments/search/results', {
-      startDate: simpleStartDate,
+      startDate,
       timeSlot: timeSlot ?? '',
       appointmentNameFilters,
       appointmentName: appointmentName ?? '',
@@ -85,7 +80,7 @@ export default class SearchRoutes {
     const { startDate, timeSlot, appointmentName, locationId, prisonerNumber, createdBy } = req.body
 
     return res.redirect(
-      `?startDate=${startDate.toIsoString()}&timeSlot=${timeSlot ?? ''}&appointmentName=${
+      `?startDate=${datePickerDateToIso(startDate)}&timeSlot=${timeSlot ?? ''}&appointmentName=${
         appointmentName ?? ''
       }&locationId=${locationId ?? ''}&prisonerNumber=${prisonerNumber ?? ''}&createdBy=${createdBy ?? ''}`,
     )

@@ -9,6 +9,7 @@ import ListFilter from './components/list-filter/list-filter'
 import AppointmentEndDate from './components/appointment-end-date/end-date'
 import SelectAllLink from './components/select-all-link/select-all-link'
 import FormSpinner from './components/form-spinner/form-spinner'
+import Datepicker from './components/date-picker/datepicker'
 
 function initAll() {
   var $backLinks = document.querySelectorAll('[class*=js-backlink]')
@@ -59,6 +60,11 @@ function initAll() {
   var $spinnerForms = document.querySelectorAll('[data-module="form-spinner"]')
   nodeListForEach($spinnerForms, function ($spinnerForm) {
     new FormSpinner($spinnerForm)
+  })
+
+  const $datepickers = document.querySelectorAll('[data-module="hmpps-datepicker"]')
+  nodeListForEach($datepickers, function ($datepicker) {
+    new Datepicker($datepicker, {}).init()
   })
 }
 

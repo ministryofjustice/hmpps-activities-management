@@ -7,7 +7,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
-{% from "components/datePicker.njk" import datePicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% set pageTitle = "Appointments Management - Appointment Search Results" %}
@@ -78,7 +78,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l govuk-!-margin-0">Appointments dashboard</h1>
-            <span class="govuk-caption-l govuk-!-margin-bottom-3" data-qa="start-date-caption">{{ startDate | toDate | formatDate }}</span>
+            <span class="govuk-caption-l govuk-!-margin-bottom-3" data-qa="start-date-caption">{{ startDate | parseIsoDate | formatDate }}</span>
             <p class="govuk-body">Select an appointment to manage details, including printing movement slips, changing location and date, and removing people or cancelling.</p>
             <p class="govuk-body govuk-!-margin-bottom-6">You can't change details of appointments that have already taken place.</p>
         </div>
@@ -89,7 +89,7 @@
     {% set selectedDateAndTime = [] %}
     {% if (timeSlot) %}
         {% set selectedDateAndTime = (selectedDateAndTime.push({
-            href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+            href: '?startDate=' + startDate + '&timeSlot=' + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
             text: ("Morning (AM)" if timeSlot == TimeSlot.AM) +
                   ("Afternoon (PM)" if timeSlot == TimeSlot.PM) +
                   ("Evening (ED)" if timeSlot == TimeSlot.ED)
@@ -117,7 +117,7 @@
                     text: 'Appointment name'
                 },
                 items: [{
-                    href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&appointmentName=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+                    href: '?startDate=' + startDate + '&timeSlot=' + timeSlot + '&appointmentName=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
                     text: appointmentNameFilter
                 }]
             }), selectedFilterCategories) %}
@@ -133,7 +133,7 @@
                     text: 'Location'
                 },
                 items: [{
-                    href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+                    href: '?startDate=' + startDate + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
                     text: location.description
                 }]
             }), selectedFilterCategories) %}
@@ -146,7 +146,7 @@
                 text: 'Prison number'
             },
             items: [{
-                href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy,
+                href: '?startDate=' + startDate + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy,
                 text: prisonerNumber
             }]
         }), selectedFilterCategories) %}
@@ -158,7 +158,7 @@
                 text: 'Created by'
             },
             items: [{
-                href: '?startDate=' + startDate | toDate | toDateString + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=',
+                href: '?startDate=' + startDate + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=',
                 text: ("Myself" if createdBy == user.username) +
                 ("All appointment creators" if createdBy == "all")
             }]
@@ -172,23 +172,22 @@
             },
             clearLink: {
                 text: 'Clear filters',
-                href: '?startDate=' + startDate | toDate | toDateString
+                href: '?startDate=' + startDate
             },
             categories: selectedFilterCategories
         } %}
     {% endif %}
 
     {% set filterOptionsHtml %}
-        {{ datePicker({
+        {{ hmppsDatePicker({
             id: 'startDate',
             name: 'startDate',
             label: {
                 text: "Date",
                 classes: "govuk-label--s"
             },
-            renderedErrorMessage: validationErrors | findError('startDate'),
-            validationErrors: validationErrors,
-            formResponses: formResponses.startDate or startDate
+            errorMessage: validationErrors | findError('startDate'),
+            value: (formResponses.startDate or startDate) | isoDateToDatePickerDate
         }) }}
 
         {{ govukRadios({
