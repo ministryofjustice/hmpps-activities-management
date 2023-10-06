@@ -10,6 +10,8 @@ export default class DateAndTimePage extends Page {
     this.getInputById('startDate').clear().type(formatDatePickerDate(startDate))
   }
 
+  selectStartDate = (startDate: Date) => this.selectDatePickerDate(startDate)
+
   selectStartTime = (hour: number, minute: number) => {
     this.getInputById('startTime-hour').select(hour.toString())
     this.getInputById('startTime-minute').select(minute.toString())
@@ -20,9 +22,7 @@ export default class DateAndTimePage extends Page {
     this.getInputById('endTime-minute').select(minute.toString())
   }
 
-  assertStartDate = (startDate: Date) => {
-    this.getInputById('startDate').should('have.value', formatDatePickerDate(startDate))
-  }
+  assertStartDate = (startDate: Date) => this.assertDatePickerDate(startDate)
 
   assertStartTime = (hour: number, minute: number) => {
     this.getInputById('startTime-hour').should('have.value', hour.toString())

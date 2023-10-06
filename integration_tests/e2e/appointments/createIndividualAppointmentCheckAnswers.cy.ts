@@ -144,7 +144,7 @@ context('Create individual appointment - check answers change links', () => {
     checkAnswersPage.changeStartDate()
     Page.verifyOnPage(DateAndTimePage)
     dateAndTimePage.assertStartDate(tomorrow)
-    dateAndTimePage.enterStartDate(dayAfterTomorrow)
+    dateAndTimePage.selectStartDate(dayAfterTomorrow)
     dateAndTimePage.continue()
     Page.verifyOnPage(SchedulePage)
     schedulePage.continue()
