@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { ValidationArguments } from 'class-validator'
-import { datePickerDateToIso } from '../../../../utils/datePickerUtils'
+import { datePickerDateToIsoDate } from '../../../../utils/datePickerUtils'
 import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
 
 export class SelectDate {
@@ -19,6 +19,6 @@ export default class SelectDateRoutes {
 
   POST = async (req: Request, res: Response) => {
     const { startDate } = req.body
-    res.redirect(`/appointments/search?startDate=${datePickerDateToIso(startDate)}`)
+    res.redirect(`/appointments/search?startDate=${datePickerDateToIsoDate(startDate)}`)
   }
 }

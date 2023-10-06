@@ -1,6 +1,8 @@
 import path from 'path'
+import { format, getDate, getMonth, getYear, parse } from 'date-fns'
 import DatePicker from '../components/datePicker'
 import SummaryList from '../components/summaryList'
+import { formatDatePickerDate } from '../../server/utils/datePickerUtils'
 
 export default abstract class Page {
   static verifyOnPage<T>(constructor: new () => T): T {
@@ -92,5 +94,66 @@ export default abstract class Page {
     const downloadPath = path.join(downloadsFolder, filename)
 
     cy.readFile(downloadPath).should('exist')
+  }
+
+  datePickerDialog = (): Cypress.Chainable => cy.get('.hmpps-datepicker__dialog')
+
+  openDatePicker = () => {
+    this.datePickerDialog().should('not.be.visible')
+    cy.get('.hmpps-datepicker-button').click()
+    this.datePickerDialog().should('be.visible')
+    cy.checkA11y()
+  }
+
+  closeDatePicker = () => {
+    this.datePickerDialog().find(`button:contains('Cancel')`).click()
+    this.datePickerDialog().should('not.be.visible')
+    cy.checkA11y()
+  }
+
+  selectDatePickerDate = (date: Date) => {
+    this.openDatePicker()
+
+    // Select month and year
+    const month = getMonth(date)
+    const year = getYear(date)
+    cy.get('.hmpps-datepicker__dialog__title').then($datePickerTitle => {
+      const datePickerTitle = $datePickerTitle.text().trim()
+
+      const selectedYear = +datePickerTitle.split(' ')[1]
+      const yearDelta = Math.abs(selectedYear - year)
+      for (let i = 0; i < yearDelta; i += 1) {
+        cy.get(`.js-datepicker-${year > selectedYear ? 'next' : 'prev'}-year`).click()
+      }
+
+      const selectedMonth = getMonth(parse(datePickerTitle.split(' ')[0], 'MMMM', new Date()))
+      const monthDelta = Math.abs(selectedMonth - month)
+      for (let i = 0; i < monthDelta; i += 1) {
+        cy.get(`.js-datepicker-${month > selectedMonth ? 'next' : 'prev'}-month`).click()
+      }
+    })
+
+    cy.checkA11y()
+
+    // Select day
+    cy.get('.hmpps-datepicker__dialog__table')
+      .find('button')
+      .contains(new RegExp(`^${getDate(date).toString()}$`))
+      .click()
+
+    this.datePickerDialog().should('not.be.visible')
+  }
+
+  assertDatePickerDate = (date: Date) => {
+    cy.get('.hmpps-js-datepicker-input').should('have.value', formatDatePickerDate(date))
+    this.openDatePicker()
+    // Verify month and year are displayed
+    cy.get('.hmpps-datepicker__dialog__title').should('contain.text', format(date, 'MMMM yyyy'))
+    // Verify day is selected
+    cy.get('.hmpps-datepicker__dialog__table')
+      .find('button')
+      .contains(new RegExp(`^${getDate(date).toString()}$`))
+      .should('have.class', 'hmpps-datepicker-selected')
+    this.closeDatePicker()
   }
 }

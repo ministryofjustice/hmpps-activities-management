@@ -5,7 +5,7 @@ import { uniq } from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentSearchRequest } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
-import { datePickerDateToIso, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
+import { datePickerDateToIsoDate, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
 import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
 
 export class Search {
@@ -80,7 +80,7 @@ export default class SearchRoutes {
     const { startDate, timeSlot, appointmentName, locationId, prisonerNumber, createdBy } = req.body
 
     return res.redirect(
-      `?startDate=${datePickerDateToIso(startDate)}&timeSlot=${timeSlot ?? ''}&appointmentName=${
+      `?startDate=${datePickerDateToIsoDate(startDate)}&timeSlot=${timeSlot ?? ''}&appointmentName=${
         appointmentName ?? ''
       }&locationId=${locationId ?? ''}&prisonerNumber=${prisonerNumber ?? ''}&createdBy=${createdBy ?? ''}`,
     )

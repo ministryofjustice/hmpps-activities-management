@@ -5,7 +5,6 @@ import { AppointmentJourney } from '../routes/appointments/create-and-edit/appoi
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { AppointmentCancellationReason, AppointmentApplyTo } from '../@types/appointments'
 import { AppointmentCancelRequest, AppointmentUpdateRequest } from '../@types/activitiesAPI/types'
-import SimpleDate from '../commonValidationTypes/simpleDate'
 import SimpleTime from '../commonValidationTypes/simpleTime'
 import { formatDate } from '../utils/utils'
 import { YesNo } from '../@types/activities'
@@ -25,6 +24,7 @@ import {
 import config from '../config'
 import MetricsService from './metricsService'
 import MetricsEvent from '../data/metricsEvent'
+import { parseIsoDate } from '../utils/datePickerUtils'
 
 export default class EditAppointmentService {
   constructor(private readonly activitiesService: ActivitiesService, private readonly metricsService: MetricsService) {}
@@ -103,7 +103,7 @@ export default class EditAppointmentService {
         }
         const successHeading = `You've ${this.getEditedMessage(appointmentJourney, editAppointmentJourney)} the ${
           appointmentJourney.appointmentName
-        } appointment - ${formatDate(new Date(appointmentJourney.startDate.date), 'EEEE, d MMMM yyyy')}`
+        } appointment - ${formatDate(parseIsoDate(appointmentJourney.startDate), 'EEEE, d MMMM yyyy')}`
 
         this.clearSession(req)
 
@@ -122,7 +122,7 @@ export default class EditAppointmentService {
     }
 
     if (hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)) {
-      request.startDate = plainToInstance(SimpleDate, editAppointmentJourney.startDate).toIsoString()
+      request.startDate = editAppointmentJourney.startDate
       // TODO: This is a hack as the API doesn't currently support apply to all future appointments for date
       if (applyTo === AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS) {
         request.applyTo = AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS

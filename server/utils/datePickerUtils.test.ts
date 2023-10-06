@@ -1,6 +1,6 @@
 import { isValid, parse } from 'date-fns'
 import {
-  datePickerDateToIso,
+  datePickerDateToIsoDate,
   formatDatePickerDate,
   formatIsoDate,
   isoDateToDatePickerDate,
@@ -109,13 +109,13 @@ describe('Date Picker Utils', () => {
     })
   })
 
-  describe('datePickerDateToIso', () => {
+  describe('datePickerDateToIsoDate', () => {
     it('returns undefined for non date string', () => {
-      expect(datePickerDateToIso('Not a date')).toBeUndefined()
+      expect(datePickerDateToIsoDate('Not a date')).toBeUndefined()
     })
 
     it('converts date picker date to iso date string', () => {
-      expect(datePickerDateToIso('2/3/23')).toEqual('2023-03-02')
+      expect(datePickerDateToIsoDate('2/3/23')).toEqual('2023-03-02')
     })
   })
 

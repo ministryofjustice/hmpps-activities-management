@@ -13,6 +13,7 @@ import { AppointmentSetJourney } from '../../../../routes/appointments/create-an
 import { EventSource, EventType } from '../../../../@types/activities'
 import { convertToTitleCase, formatDate, padNumber } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 let $: CheerioAPI
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/schedule.njk')
@@ -144,12 +145,7 @@ describe('Views - Appointments Management - Schedule', () => {
     viewContext = {
       session: {
         appointmentJourney: {
-          startDate: {
-            day: tomorrow.getDate(),
-            month: tomorrow.getMonth() + 1,
-            year: tomorrow.getFullYear(),
-            date: formatDate(tomorrow, 'yyyy-MM-dd'),
-          },
+          startDate: formatIsoDate(tomorrow),
         } as unknown as AppointmentJourney,
         appointmentSetJourney: {} as AppointmentSetJourney,
         editAppointmentJourney: {} as EditAppointmentJourney,
@@ -914,12 +910,7 @@ describe('Views - Appointments Management - Schedule', () => {
     beforeEach(() => {
       viewContext.session.appointmentJourney = {
         mode: AppointmentJourneyMode.EDIT,
-        startDate: {
-          day: tomorrow.getDate(),
-          month: tomorrow.getMonth() + 1,
-          year: tomorrow.getFullYear(),
-          date: formatDate(tomorrow, 'yyyy-MM-dd') as unknown as Date,
-        },
+        startDate: formatIsoDate(tomorrow),
         startTime: {
           hour: 14,
           minute: 30,
@@ -1021,12 +1012,7 @@ describe('Views - Appointments Management - Schedule', () => {
       beforeEach(() => {
         viewContext.isCtaAcceptAndSave = true
         viewContext.session.editAppointmentJourney = {
-          startDate: {
-            day: nextWeek.getDate(),
-            month: nextWeek.getMonth() + 1,
-            year: nextWeek.getFullYear(),
-            date: formatDate(nextWeek, 'yyyy-MM-dd'),
-          },
+          startDate: formatIsoDate(nextWeek),
         } as unknown as EditAppointmentJourney
         viewContext.session.appointmentJourney.prisoners.push({
           number: 'K2345LM',
@@ -1145,12 +1131,7 @@ describe('Views - Appointments Management - Schedule', () => {
       beforeEach(() => {
         viewContext.isCtaAcceptAndSave = true
         viewContext.session.editAppointmentJourney = {
-          startDate: {
-            day: nextWeek.getDate(),
-            month: nextWeek.getMonth() + 1,
-            year: nextWeek.getFullYear(),
-            date: formatDate(nextWeek, 'yyyy-MM-dd'),
-          },
+          startDate: formatIsoDate(nextWeek),
           startTime: {
             hour: 12,
             minute: 30,

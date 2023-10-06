@@ -11,6 +11,7 @@ import {
 import { AppointmentApplyTo, AppointmentApplyToOption, AppointmentFrequency } from '../../../../@types/appointments'
 import { formatDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/apply-to.njk')
 
@@ -58,12 +59,7 @@ describe('Views - Appointments Management - Apply to', () => {
             id: 123,
             description: 'Original location',
           },
-          startDate: {
-            day: weekTomorrow.getDate(),
-            month: weekTomorrow.getMonth() + 1,
-            year: weekTomorrow.getFullYear(),
-            date: weekTomorrow,
-          },
+          startDate: formatIsoDate(weekTomorrow),
           frequency: AppointmentFrequency.DAILY,
         },
         editAppointmentJourney: {

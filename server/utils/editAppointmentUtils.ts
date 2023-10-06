@@ -8,6 +8,7 @@ import {
 import { convertToTitleCase, formatDate, fullName } from './utils'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
+import { parseIsoDate } from './datePickerUtils'
 
 export const isApplyToQuestionRequired = (editAppointmentJourney: EditAppointmentJourney) =>
   editAppointmentJourney.appointments?.length > 1
@@ -171,7 +172,7 @@ export const getAppointmentApplyToOptions = (req: Request) => {
   const applyToOptions = [
     {
       applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
-      description: `Just this one - ${formatDate(new Date(appointmentJourney.startDate.date), 'EEEE, d MMMM yyyy')} (${
+      description: `Just this one - ${formatDate(parseIsoDate(appointmentJourney.startDate), 'EEEE, d MMMM yyyy')} (${
         getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.sequenceNumber
       } of ${getLastAppointment(editAppointmentJourney)?.sequenceNumber})`,
     },
@@ -333,12 +334,7 @@ export const hasAppointmentStartDateChanged = (
 ) => {
   const { startDate } = appointmentJourney
   const editStartDate = editAppointmentJourney.startDate
-  return (
-    editStartDate &&
-    (startDate.day !== editStartDate.day ||
-      startDate.month !== editStartDate.month ||
-      startDate.year !== editStartDate.year)
-  )
+  return editStartDate && startDate !== editStartDate
 }
 
 export const hasAppointmentStartTimeChanged = (

@@ -38,7 +38,7 @@ export const formatIsoDate = (date: Date): string => {
   return formatDate(date, 'yyyy-MM-dd')
 }
 
-export const datePickerDateToIso = (datePickerDate: string): string => {
+export const datePickerDateToIsoDate = (datePickerDate: string): string => {
   const date = parseDatePickerDate(datePickerDate)
 
   return formatIsoDate(date)

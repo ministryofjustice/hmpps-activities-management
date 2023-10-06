@@ -56,12 +56,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             id: 32,
             description: 'Interview Room',
           },
-          startDate: {
-            day: 23,
-            month: 4,
-            year: 2023,
-            date: '2023-04-23T00:00:00.000+0100',
-          },
+          startDate: '2023-04-23',
           startTime: {
             hour: 9,
             minute: 30,

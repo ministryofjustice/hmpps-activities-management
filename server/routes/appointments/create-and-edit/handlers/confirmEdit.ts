@@ -4,6 +4,7 @@ import { IsEnum } from 'class-validator'
 import { YesNo } from '../../../../@types/activities'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentApplyTo } from '../../../../@types/appointments'
+import { parseIsoDate } from '../../../../utils/datePickerUtils'
 
 export class ConfirmEdit {
   @Expose()
@@ -19,7 +20,7 @@ export default class ConfirmEditRoutes {
 
     res.render('pages/appointments/create-and-edit/confirm-edit', {
       appointmentId,
-      startDate: new Date(req.session.appointmentJourney.startDate.date),
+      startDate: parseIsoDate(req.session.appointmentJourney.startDate),
     })
   }
 

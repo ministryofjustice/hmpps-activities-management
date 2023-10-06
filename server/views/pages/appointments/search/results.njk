@@ -187,7 +187,7 @@
                 classes: "govuk-label--s"
             },
             errorMessage: validationErrors | findError('startDate'),
-            value: (formResponses.startDate or startDate) | isoDateToDatePickerDate
+            value: formResponses.startDate or (startDate | isoDateToDatePickerDate)
         }) }}
 
         {{ govukRadios({

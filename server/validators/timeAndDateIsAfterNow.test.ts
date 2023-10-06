@@ -1,15 +1,15 @@
 import { Expose, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays, addMinutes, getHours, getMinutes, subMinutes } from 'date-fns'
-import SimpleDate, { simpleDateFromDate } from '../commonValidationTypes/simpleDate'
 import { associateErrorsWithProperty } from '../utils/utils'
 import TimeAndDateIsAfterNow from './timeAndDateIsAfterNow'
 import SimpleTime, { simpleTimeFromDate } from '../commonValidationTypes/simpleTime'
+import { formatDatePickerDate } from '../utils/datePickerUtils'
 
 describe('timeAndDateIsAfter', () => {
   class DummyForm {
     @Expose()
-    date: SimpleDate
+    date: string
 
     @Expose()
     @TimeAndDateIsAfterNow('date', { message: 'Select a time that is in the future' })
@@ -25,7 +25,7 @@ describe('timeAndDateIsAfter', () => {
 
     const todayOneMinuteInThePast = subMinutes(now, 1)
     const body = {
-      date: simpleDateFromDate(todayOneMinuteInThePast),
+      date: formatDatePickerDate(todayOneMinuteInThePast),
       time: simpleTimeFromDate(todayOneMinuteInThePast),
     }
 
@@ -38,7 +38,7 @@ describe('timeAndDateIsAfter', () => {
   it('should fail validation for a time equal to now', async () => {
     const now = new Date()
     const body = {
-      date: simpleDateFromDate(now),
+      date: formatDatePickerDate(now),
       time: simpleTimeFromDate(now),
     }
 
@@ -51,7 +51,7 @@ describe('timeAndDateIsAfter', () => {
   it('should pass validation for a time after now', async () => {
     const todayOneMinuteInTheFuture = addMinutes(new Date(), 1)
     const body = {
-      date: simpleDateFromDate(todayOneMinuteInTheFuture),
+      date: formatDatePickerDate(todayOneMinuteInTheFuture),
       time: simpleTimeFromDate(todayOneMinuteInTheFuture),
     }
 
@@ -64,7 +64,7 @@ describe('timeAndDateIsAfter', () => {
   it('should pass validation for a earlier than now but a day later', async () => {
     const tomorrowOneMinuteInThePast = subMinutes(addDays(new Date(), 1), 1)
     const body = {
-      date: simpleDateFromDate(tomorrowOneMinuteInThePast),
+      date: formatDatePickerDate(tomorrowOneMinuteInThePast),
       time: simpleTimeFromDate(tomorrowOneMinuteInThePast),
     }
 
