@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from 'components/datepicker/macro.njk' import hmppsDatepicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 
 {% set pageTitle = "Choose date of appointments" %}
 {% set pageId = 'create-schedule-start-date-page' %}
@@ -16,7 +16,7 @@
 
                 <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
 
-                {{ hmppsDatepicker({
+                {{ hmppsDatePicker({
                     id: "startDate",
                     name: "startDate",
                     label: {
