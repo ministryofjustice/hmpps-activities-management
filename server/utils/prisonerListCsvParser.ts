@@ -62,7 +62,11 @@ export default class PrisonerListCsvParser {
       // eslint-disable-next-line no-cond-assign
       while ((row = parser.read())) {
         const [prisonerNumber] = row
-        if (prisonerNumber !== 'Prison number' && !rowValues.map(i => i[0]).includes(prisonerNumber)) {
+        if (
+          prisonerNumber &&
+          prisonerNumber !== 'Prison number' &&
+          !rowValues.map(i => i[0]).includes(prisonerNumber)
+        ) {
           rowValues.push(row)
         }
       }
