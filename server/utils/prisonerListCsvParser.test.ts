@@ -184,4 +184,36 @@ describe('getAppointments', () => {
     ])
     expect(fsPromises.unlink).toHaveBeenCalled()
   })
+
+  it('should ignore empty rows', async () => {
+    const appointments = await parser.getAppointments({
+      path: 'server/utils/fixtures/appointment-set/appointment-set-empty-rows.csv',
+    } as unknown as Express.Multer.File)
+
+    expect(appointments).toEqual([
+      {
+        prisonerNumber: 'A1234BC',
+        startTime: {
+          hour: 10,
+          minute: 0,
+        },
+        endTime: {
+          hour: 11,
+          minute: 0,
+        },
+      },
+      {
+        prisonerNumber: 'B2345CD',
+        startTime: {
+          hour: 13,
+          minute: 30,
+        },
+        endTime: {
+          hour: 14,
+          minute: 0,
+        },
+      },
+    ])
+    expect(fsPromises.unlink).toHaveBeenCalled()
+  })
 })
