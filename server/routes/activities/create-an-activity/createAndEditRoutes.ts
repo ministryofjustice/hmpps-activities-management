@@ -23,6 +23,7 @@ import CapacityRoutes, { Capacity } from './handlers/capacity'
 import PayRateTypeRoutes, { PayRateType } from './handlers/payRateType'
 import ScheduleFrequencyRoutes, { ScheduleFrequencyForm } from './handlers/scheduleFrequency'
 import ConfirmCapacityRoutes from './handlers/confirmCapacity'
+import CheckPayRoutes from './handlers/checkPay'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -36,6 +37,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const riskLevelHandler = new RiskLevelRoutes(activitiesService)
   const payRateTypeHandler = new PayRateTypeRoutes()
   const payHandler = new PayRoutes(prisonService, activitiesService)
+  const checkPayHandler = new CheckPayRoutes(activitiesService, prisonService)
   const removePayHandler = new RemovePayRoutes(activitiesService, prisonService)
   const removeFlatRateHandler = new RemoveFlatRateRoutes()
   const qualificationHandler = new QualificationRoutes()
@@ -62,6 +64,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/pay-rate-type', payRateTypeHandler.POST, PayRateType)
   get('/pay/:payRateType', payHandler.GET, true)
   post('/pay/:payRateType', payHandler.POST, Pay)
+  get('/check-pay', checkPayHandler.GET, true)
+  post('/check-pay', checkPayHandler.POST)
   get('/remove-pay', removePayHandler.GET, true)
   post('/remove-pay', removePayHandler.POST, ConfirmRemoveOptions)
   get('/remove-flat-rate', removeFlatRateHandler.GET, true)

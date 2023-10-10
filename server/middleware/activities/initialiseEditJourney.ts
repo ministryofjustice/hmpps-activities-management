@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import { parseISO } from 'date-fns'
 import { simpleDateFromDate } from '../../commonValidationTypes/simpleDate'
-import { mapActivityModelPayToJourney, mapActivityModelSlotsToJourney } from '../../utils/utils'
+import { mapActivityModelSlotsToJourney } from '../../utils/utils'
 import ActivitiesService from '../../services/activitiesService'
 
 export default (activitiesService: ActivitiesService): RequestHandler => {
@@ -13,7 +13,7 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
     const activity = await activitiesService.getActivity(+activityId, res.locals.user)
     const schedule = activity.schedules[0]
 
-    const allocationCount = activity.schedules.flatMap(s => s.allocations).length
+    const allocations = activity.schedules.flatMap(s => s.allocations.filter(a => a.status !== 'ENDED'))
 
     req.session.createJourney = {
       activityId: activity.id,
@@ -32,8 +32,8 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
       runsOnBankHoliday: schedule.runsOnBankHoliday,
       currentCapacity: schedule.capacity,
       capacity: schedule.capacity,
-      allocationCount,
-      pay: mapActivityModelPayToJourney(activity.pay),
+      allocations,
+      pay: activity.pay,
       educationLevels: activity.minimumEducationLevel,
     }
 

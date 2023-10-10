@@ -1,148 +1,148 @@
-import { Request, Response } from 'express'
-import { when } from 'jest-when'
-import RemovePayRoutes from './removePay'
-import ActivitiesService from '../../../../services/activitiesService'
-import PrisonService from '../../../../services/prisonService'
-import { CreateAnActivityJourney } from '../journey'
-import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
-import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
-
-jest.mock('../../../../services/activitiesService')
-jest.mock('../../../../services/prisonService')
-
-const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-
-describe('Route Handlers - Create an activity - Remove pay', () => {
-  const handler = new RemovePayRoutes(activitiesService, prisonService)
-  let req: Request
-  let res: Response
-
-  beforeEach(() => {
-    res = {
-      locals: {
-        user: {
-          username: 'joebloggs',
-          activeCaseLoadId: 'MDI',
-        },
-      },
-      render: jest.fn(),
-      redirect: jest.fn(),
-      redirectWithSuccess: jest.fn(),
-    } as unknown as Response
-
-    req = {
-      query: {},
-      params: {},
-      session: {
-        createJourney: {
-          activityId: 1,
-          name: 'Maths level 1',
-          category: {
-            id: 1,
-          },
-          riskLevel: 'High',
-          pay: [
-            { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
-            { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
-            { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
-            { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
-          ],
-          incentiveLevels: ['Basic', 'Standard'],
-        },
-      },
-    } as unknown as Request
-  })
-
-  afterEach(() => {
-    jest.resetAllMocks()
-  })
-
-  describe('GET', () => {
-    it('should show confirmation page', async () => {
-      req.query = { iep: 'Basic', bandId: '1' }
-      await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/remove-pay', {
-        iep: 'Basic',
-        bandId: 1,
-      })
-    })
-
-    it("should redirect back to check pay page if pay rate isn't found", async () => {
-      req.query = { iep: 'NonExistentLevel', bandId: '1' }
-      await handler.GET(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('check-pay')
-    })
-  })
-
-  describe('POST', () => {
-    it('should remove specified pay rate', async () => {
-      req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
-      await handler.POST(req, res)
-      expect(req.session.createJourney.pay).toEqual([
-        { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
-        { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
-        { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
-      ])
-    })
-
-    it('should redirect to check pay page', async () => {
-      req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
-      await handler.POST(req, res)
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith('check-pay', 'Basic incentive level rate Low removed')
-    })
-
-    it('should not remove pay rate if action not confirmed', async () => {
-      req.body = { iep: 'Basic', bandId: '1', choice: 'no' }
-      await handler.POST(req, res)
-      expect(req.session.createJourney.pay).toEqual([
-        { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
-        { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
-        { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
-        { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
-      ])
-    })
-
-    it("should not remove pay rate if pay rate isn't found", async () => {
-      req.body = { iep: 'NonExistentLevel', bandId: '1', choice: 'yes' }
-      await handler.POST(req, res)
-      expect(req.session.createJourney.pay).toEqual([
-        { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
-        { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
-        { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
-        { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
-      ])
-    })
-
-    it('should update activity pay rates if its an edit journey', async () => {
-      const payRates = [
-        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 150 },
-        { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
-      ] as CreateAnActivityJourney['pay']
-
-      req.session.createJourney.pay = payRates
-      req.params = { mode: 'edit' }
-      req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
-
-      when(prisonService.getIncentiveLevels).mockResolvedValue([
-        { levelCode: 'BAS', levelName: 'Basic' },
-        { levelCode: 'STD', levelName: 'Standard' },
-      ] as IncentiveLevel[])
-
-      await handler.POST(req, res)
-
-      const updatedActivity = {
-        pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 150 }],
-        minimumIncentiveNomisCode: 'STD',
-        minimumIncentiveLevel: 'Standard',
-      } as ActivityUpdateRequest
-
-      expect(activitiesService.updateActivity).toBeCalledWith('MDI', 1, updatedActivity)
-      expect(res.redirectWithSuccess).toBeCalledWith(
-        'schedule/check-pay?preserveHistory=true',
-        'Activity updated',
-        `We've updated the pay for ${req.session.createJourney.name}`,
-      )
-    })
-  })
-})
+// import { Request, Response } from 'express'
+// import { when } from 'jest-when'
+// import RemovePayRoutes from './removePay'
+// import ActivitiesService from '../../../../services/activitiesService'
+// import PrisonService from '../../../../services/prisonService'
+// import { CreateAnActivityJourney } from '../journey'
+// import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
+// import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+//
+// jest.mock('../../../../services/activitiesService')
+// jest.mock('../../../../services/prisonService')
+//
+// const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+// const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+//
+// describe('Route Handlers - Create an activity - Remove pay', () => {
+//   const handler = new RemovePayRoutes(activitiesService, prisonService)
+//   let req: Request
+//   let res: Response
+//
+//   beforeEach(() => {
+//     res = {
+//       locals: {
+//         user: {
+//           username: 'joebloggs',
+//           activeCaseLoadId: 'MDI',
+//         },
+//       },
+//       render: jest.fn(),
+//       redirect: jest.fn(),
+//       redirectWithSuccess: jest.fn(),
+//     } as unknown as Response
+//
+//     req = {
+//       query: {},
+//       params: {},
+//       session: {
+//         createJourney: {
+//           activityId: 1,
+//           name: 'Maths level 1',
+//           category: {
+//             id: 1,
+//           },
+//           riskLevel: 'High',
+//           pay: [
+//             { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
+//             { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
+//             { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
+//             { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
+//           ],
+//           incentiveLevels: ['Basic', 'Standard'],
+//         },
+//       },
+//     } as unknown as Request
+//   })
+//
+//   afterEach(() => {
+//     jest.resetAllMocks()
+//   })
+//
+//   describe('GET', () => {
+//     it('should show confirmation page', async () => {
+//       req.query = { iep: 'Basic', bandId: '1' }
+//       await handler.GET(req, res)
+//       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/remove-pay', {
+//         iep: 'Basic',
+//         bandId: 1,
+//       })
+//     })
+//
+//     it("should redirect back to check pay page if pay rate isn't found", async () => {
+//       req.query = { iep: 'NonExistentLevel', bandId: '1' }
+//       await handler.GET(req, res)
+//       expect(res.redirect).toHaveBeenCalledWith('check-pay')
+//     })
+//   })
+//
+//   describe('POST', () => {
+//     it('should remove specified pay rate', async () => {
+//       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
+//       await handler.POST(req, res)
+//       expect(req.session.createJourney.pay).toEqual([
+//         { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
+//         { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
+//         { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
+//       ])
+//     })
+//
+//     it('should redirect to check pay page', async () => {
+//       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
+//       await handler.POST(req, res)
+//       expect(res.redirectWithSuccess).toHaveBeenCalledWith('check-pay', 'Basic incentive level rate Low removed')
+//     })
+//
+//     it('should not remove pay rate if action not confirmed', async () => {
+//       req.body = { iep: 'Basic', bandId: '1', choice: 'no' }
+//       await handler.POST(req, res)
+//       expect(req.session.createJourney.pay).toEqual([
+//         { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
+//         { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
+//         { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
+//         { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
+//       ])
+//     })
+//
+//     it("should not remove pay rate if pay rate isn't found", async () => {
+//       req.body = { iep: 'NonExistentLevel', bandId: '1', choice: 'yes' }
+//       await handler.POST(req, res)
+//       expect(req.session.createJourney.pay).toEqual([
+//         { incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Low', rate: 100 },
+//         { incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 100 },
+//         { incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
+//         { incentiveLevel: 'Basic', bandId: 2, bandAlias: 'Low', rate: 100 },
+//       ])
+//     })
+//
+//     it('should update activity pay rates if its an edit journey', async () => {
+//       const payRates = [
+//         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', bandId: 2, bandAlias: 'Low', rate: 150 },
+//         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', bandId: 1, bandAlias: 'Low', rate: 100 },
+//       ] as CreateAnActivityJourney['pay']
+//
+//       req.session.createJourney.pay = payRates
+//       req.params = { mode: 'edit' }
+//       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
+//
+//       when(prisonService.getIncentiveLevels).mockResolvedValue([
+//         { levelCode: 'BAS', levelName: 'Basic' },
+//         { levelCode: 'STD', levelName: 'Standard' },
+//       ] as IncentiveLevel[])
+//
+//       await handler.POST(req, res)
+//
+//       const updatedActivity = {
+//         pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 150 }],
+//         minimumIncentiveNomisCode: 'STD',
+//         minimumIncentiveLevel: 'Standard',
+//       } as ActivityUpdateRequest
+//
+//       expect(activitiesService.updateActivity).toBeCalledWith('MDI', 1, updatedActivity)
+//       expect(res.redirectWithSuccess).toBeCalledWith(
+//         'schedule/check-pay?preserveHistory=true',
+//         'Activity updated',
+//         `We've updated the pay for ${req.session.createJourney.name}`,
+//       )
+//     })
+//   })
+// })

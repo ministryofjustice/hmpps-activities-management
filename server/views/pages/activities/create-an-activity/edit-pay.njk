@@ -47,16 +47,16 @@
                                 text: "People on this rate"
                             },
                             value: {
-                                text: pay.peopleCount or "None"
+                                text: pay.allocationCount or "None"
                             }
                         }
                     ), rows) %}
 
                     {% set cardItems = [] %}
-                    {% if not pay.peopleCount %}
+                    {% if not pay.allocationCount %}
                         {% set cardItems = (cardItems.push(
                             {
-                                href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&preserveHistory=true",
+                                href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
                                 text: "Change",
                                 classes: "govuk-link--no-visited-state",
                                 attributes: { 'data-qa': 'change-pay' }
@@ -64,7 +64,7 @@
                         ), cardItems) %}
                         {% set cardItems = (cardItems.push(
                             {
-                                href: "../remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + "&preserveHistory=true",
+                                href: "../remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
                                 text: "Delete pay rate",
                                 classes: "govuk-link--no-visited-state",
                                 attributes: { 'data-qa': 'remove-pay' }
@@ -74,7 +74,7 @@
                     {{ govukSummaryList({
                         card: {
                             title: {
-                                text: pay.bandAlias
+                                text: pay.prisonPayBand.alias
                             },
                             actions: {
                                 items: cardItems
@@ -93,7 +93,7 @@
                 {% set rows = (rows.push(
                     {
                         key: {
-                            text: flatRate.bandAlias
+                            text: flatRate.prisonPayBand.alias
                         },
                         value: {
                             text: flatRate.rate | toMoney
@@ -101,12 +101,12 @@
                         actions: {
                             items: [
                                 {
-                                    href: "../pay/flat?bandId=" + flatRate.bandId + '&preserveHistory=true',
+                                    href: "../pay/flat?bandId=" + flatRate.prisonPayBand.id + '&preserveHistory=true',
                                     text: "Change",
                                     visuallyHiddenText: "change pay rate"
                                 },
                                 {
-                                    href: "../remove-flat-rate?bandId=" + flatRate.bandId + '&preserveHistory=true',
+                                    href: "../remove-flat-rate?bandId=" + flatRate.prisonPayBand.id + '&preserveHistory=true',
                                     text: "Remove",
                                     visuallyHiddenText: "remove flat rate"
                                 }

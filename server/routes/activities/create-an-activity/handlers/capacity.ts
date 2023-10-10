@@ -27,7 +27,7 @@ export default class CapacityRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.createJourney.capacity = req.body.capacity
     if (req.params.mode === 'edit') {
-      if (req.body.capacity < req.session.createJourney.allocationCount) {
+      if (req.body.capacity < req.session.createJourney.allocations.length) {
         return res.redirect('confirm-capacity?preserveHistory=true')
       }
       const { user } = res.locals

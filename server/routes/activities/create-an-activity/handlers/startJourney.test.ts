@@ -2,16 +2,13 @@ import { Request, Response } from 'express'
 import StartJourneyRoutes from './startJourney'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
-import PrisonService from '../../../../services/prisonService'
 
 jest.mock('../../../../services/metricsService')
-jest.mock('../../../../services/prisonService')
 
 const metricsService = new MetricsService(null)
-const prisonService = new PrisonService(null, null, null)
 
 describe('Route Handlers - Create an activity - Start', () => {
-  const handler = new StartJourneyRoutes(prisonService, metricsService)
+  const handler = new StartJourneyRoutes(metricsService)
   let req: Request
   let res: Response
 

@@ -20,7 +20,7 @@ export default class RemovePayRoutes {
     const { preserveHistory } = req.query
     const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
-    const pay = req.session.createJourney.pay.findIndex(p => p.bandId === bandId && p.incentiveLevel === iep)
+    const pay = req.session.createJourney.pay.findIndex(p => p.prisonPayBand.id === bandId && p.incentiveLevel === iep)
     if (pay < 0) {
       if (req.params.mode === 'edit') {
         return res.redirect('schedule/check-pay?preserveHistory=true')
@@ -37,18 +37,13 @@ export default class RemovePayRoutes {
     const { preserveHistory } = req.query
     const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
-    if (choice !== 'yes') {
-      if (req.params.mode === 'edit') {
-        return res.redirect('schedule/check-pay?preserveHistory=true')
-      }
+    const payIndex = req.session.createJourney.pay.findIndex(
+      p => p.prisonPayBand.id === bandId && p.incentiveLevel === iep,
+    )
+
+    if (choice !== 'yes' || payIndex < 0) {
       return res.redirect(`check-pay${preserveHistoryString}`)
     }
-
-    const payIndex = req.session.createJourney.pay.findIndex(p => p.bandId === bandId && p.incentiveLevel === iep)
-
-    // Not found, do nothing and redirect back
-    if (payIndex < 0) return res.redirect(`check-pay${preserveHistoryString}`)
-
     const payInfo = req.session.createJourney.pay[payIndex]
     req.session.createJourney.pay.splice(payIndex, 1)
 
@@ -57,7 +52,7 @@ export default class RemovePayRoutes {
     }
     return res.redirectWithSuccess(
       `check-pay${preserveHistoryString}`,
-      `${payInfo.incentiveLevel} incentive level rate ${payInfo.bandAlias} removed`,
+      `${payInfo.incentiveLevel} incentive level rate ${payInfo.prisonPayBand.alias} removed`,
     )
   }
 
@@ -68,7 +63,7 @@ export default class RemovePayRoutes {
     const updatedPayRates = req.session.createJourney.pay.map(p => ({
       incentiveNomisCode: p.incentiveNomisCode,
       incentiveLevel: p.incentiveLevel,
-      payBandId: p.bandId,
+      payBandId: p.prisonPayBand.id,
       rate: p.rate,
     }))
 

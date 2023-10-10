@@ -6,7 +6,7 @@ import PrisonService from '../../../../services/prisonService'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { formatDate, mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
-import IncentiveLevelPayMappingUtil from '../../helpers/incentiveLevelPayMappingUtil'
+import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 
 export default class CheckAnswersRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -18,7 +18,7 @@ export default class CheckAnswersRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { createJourney } = req.session
-    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(createJourney.pay, user)
+    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(createJourney.pay, [], user)
     const startDate = formatDate(plainToInstance(SimpleDate, createJourney.startDate).toRichDate(), 'do MMMM yyyy')
     const endDate = createJourney.endDate
       ? formatDate(plainToInstance(SimpleDate, createJourney.endDate).toRichDate(), 'do MMMM yyyy')
@@ -49,7 +49,7 @@ export default class CheckAnswersRoutes {
       pay: createJourney.pay.map(pay => ({
         incentiveNomisCode: pay.incentiveNomisCode,
         incentiveLevel: pay.incentiveLevel,
-        payBandId: pay.bandId,
+        payBandId: pay.prisonPayBand.id,
         rate: pay.rate,
       })),
       minimumEducationLevel: createJourney.educationLevels,
@@ -76,7 +76,7 @@ export default class CheckAnswersRoutes {
           activity.pay.push({
             incentiveNomisCode: iep.levelCode,
             incentiveLevel: iep.levelName,
-            payBandId: flatRate.bandId,
+            payBandId: flatRate.prisonPayBand.id,
             rate: flatRate.rate,
           }),
         )
