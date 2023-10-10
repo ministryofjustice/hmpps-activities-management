@@ -99,7 +99,7 @@ describe('Unlock list routes - planned events', () => {
         'am',
         'Houseblock 1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
-        'Both',
+        'With',
         'Both',
         res.locals.user,
       )
