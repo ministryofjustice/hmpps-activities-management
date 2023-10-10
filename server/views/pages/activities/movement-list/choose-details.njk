@@ -2,7 +2,7 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "components/datePicker.njk" import datePicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 
 {% set pageTitle = "Choose movement list details" %}
 {% set pageId = 'movement-list-choose-details-page' %}
@@ -16,7 +16,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
                 {% set otherDateHintHtml %}
-                  <div>For example, {{ exampleDate() }}</div>
+                  <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
                   <div>You can get movement lists for dates up to 60 days from today.</div>
                 {% endset %}
 
@@ -48,13 +48,14 @@
                             text: "A different date",
                             label: { text: "Movement date "},
                             checked: formResponses.dateOption == DateOption.OTHER,
-                            conditional: { html:
-                              datePicker({
+                            conditional: { 
+                                html: hmppsDatePicker({
                                 id: 'date',
+                                name: 'date',
+                                classes: 'hmpps-datepicker--fixed-width',
                                 hint: { html: otherDateHintHtml },
-                                renderedErrorMessage: validationErrors | findError('date'),
-                                validationErrors: validationErrors,
-                                formResponses: formResponses.date
+                                errorMessage: validationErrors | findError('date'),
+                                value: formResponses.date
                               })
                            }
                         }

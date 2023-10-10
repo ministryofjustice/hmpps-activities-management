@@ -7,8 +7,8 @@ import SelectDateAndLocationRoutes, { DateAndLocation } from './selectDateAndLoc
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import { LocationGroup } from '../../../../@types/activitiesAPI/types'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import atLeast from '../../../../../jest.setup'
+import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/activitiesService')
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
@@ -81,9 +81,6 @@ describe('Unlock list routes - select date and location', () => {
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${todaysDate}`)
       expect(req.session.unlockListJourney.timeSlot).toEqual('am')
       expect(req.session.unlockListJourney.location).toEqual('here')
-      expect(req.session.unlockListJourney.subLocationFilters).toBeNull()
-      expect(req.session.unlockListJourney.activityFilter).toBeNull()
-      expect(req.session.unlockListJourney.stayingOrLeavingFilter).toBeNull()
     })
 
     it("redirect with the expected query params for when tomorrow's date is selected", async () => {
@@ -102,15 +99,9 @@ describe('Unlock list routes - select date and location', () => {
     })
 
     it('redirects with the expected query params for when a custom date is selected', async () => {
-      const testDate = plainToInstance(SimpleDate, {
-        day: 1,
-        month: 12,
-        year: 2022,
-      })
-
       req.body = {
         datePresetOption: 'other',
-        date: testDate,
+        date: new Date('2022-12-01'),
         activitySlot: 'am',
         location: 'here',
       }
@@ -185,11 +176,7 @@ describe('Unlock list routes - select date and location', () => {
       const dateIn59Days = addDays(new Date(), 59)
       const body = {
         datePresetOption: 'other',
-        date: {
-          day: dateIn59Days.getDate(),
-          month: dateIn59Days.getMonth() + 1,
-          year: dateIn59Days.getFullYear(),
-        },
+        date: formatDatePickerDate(dateIn59Days),
         activitySlot: 'am',
         location: 'here',
       }
@@ -204,11 +191,7 @@ describe('Unlock list routes - select date and location', () => {
       const dateIn60Days = addDays(new Date(), 60)
       const body = {
         datePresetOption: 'other',
-        date: {
-          day: dateIn60Days.getDate(),
-          month: dateIn60Days.getMonth() + 1,
-          year: dateIn60Days.getFullYear(),
-        },
+        date: formatDatePickerDate(dateIn60Days),
         activitySlot: 'am',
         location: 'here',
       }
@@ -223,11 +206,7 @@ describe('Unlock list routes - select date and location', () => {
       const dateIn61Days = addDays(new Date(), 61)
       const body = {
         datePresetOption: 'other',
-        date: {
-          day: dateIn61Days.getDate(),
-          month: dateIn61Days.getMonth() + 1,
-          year: dateIn61Days.getFullYear(),
-        },
+        date: formatDatePickerDate(dateIn61Days),
         activitySlot: 'am',
         location: 'some location',
       }

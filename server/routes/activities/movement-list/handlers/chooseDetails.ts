@@ -1,12 +1,11 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import { IsIn, ValidateIf, ValidateNested } from 'class-validator'
-import { addDays } from 'date-fns'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import IsValidDate from '../../../../validators/isValidDate'
-import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
+import { Expose, Transform } from 'class-transformer'
+import { IsDate, IsIn, ValidateIf } from 'class-validator'
+import { addDays, startOfToday } from 'date-fns'
 import DateOption from '../../../../enum/dateOption'
 import TimeSlot from '../../../../enum/timeSlot'
+import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import DateValidator from '../../../../validators/DateValidator'
 
 export class DateAndTimeSlot {
   @Expose()
@@ -15,11 +14,12 @@ export class DateAndTimeSlot {
 
   @Expose()
   @ValidateIf(o => o.dateOption === DateOption.OTHER)
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @DateIsSameOrBefore(() => addDays(new Date(), 60), { message: 'Enter a date up to 60 days in the future' })
-  @IsValidDate({ message: 'Enter a valid date' })
-  date: SimpleDate
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsDate({ message: 'Enter a valid date' })
+  @DateValidator(thisDate => thisDate <= addDays(startOfToday(), 60), {
+    message: 'Enter a date up to 60 days in the future',
+  })
+  date: Date
 
   @Expose()
   @IsIn(Object.values(TimeSlot), { message: 'Select a time slot' })
@@ -32,9 +32,9 @@ export default class ChooseDetailsRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { dateOption, timeSlot } = req.body
+    const { dateOption, timeSlot, date }: DateAndTimeSlot = req.body
 
-    const dateQuery = dateOption === DateOption.OTHER ? `&date=${req.body.date.toIsoString()}` : ''
+    const dateQuery = dateOption === DateOption.OTHER ? `&date=${formatIsoDate(date)}` : ''
 
     return res.redirect(`locations?dateOption=${dateOption}${dateQuery}&timeSlot=${timeSlot}`)
   }

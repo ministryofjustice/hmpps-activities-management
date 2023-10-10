@@ -2,7 +2,7 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "components/datePicker.njk" import datePicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 
 {% set pageTitle = applicationName + " - Unlock list" %}
 {% set pageId = 'select-date-and-location-page' %}
@@ -17,7 +17,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
                 {% set otherDateHintHtml %}
-                  <div>For example, {{ exampleDate() }}</div>
+                  <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
                   <div>You can get unlock lists for up to 60 days from today.</div>
                 {% endset %}
 
@@ -50,12 +50,13 @@
                             label: { text: "Unlock date "},
                             checked: formResponses.datePresetOption == 'other',
                             conditional: { html:
-                              datePicker({
+                              hmppsDatePicker({
                                 id: 'date',
+                                name: 'date',
+                                classes: 'hmpps-datepicker--fixed-width',
                                 hint: { html: otherDateHintHtml },
-                                renderedErrorMessage: validationErrors | findError('date'),
-                                validationErrors: validationErrors,
-                                formResponses: formResponses.date
+                                errorMessage: validationErrors | findError('date'),
+                                value: formResponses.date or date
                               })
                            }
                         }

@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
-import { addDays, addWeeks, format, getDate, getMonth, getYear } from 'date-fns'
+import { addDays, addWeeks, format } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import ChooseDetailsRoutes, { DateAndTimeSlot } from './chooseDetails'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import DateOption from '../../../../enum/dateOption'
 import TimeSlot from '../../../../enum/timeSlot'
+import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
 
 describe('Movement list routes - choose details', () => {
   const handler = new ChooseDetailsRoutes()
@@ -69,11 +69,7 @@ describe('Movement list routes - choose details', () => {
 
       req.body = {
         dateOption: DateOption.OTHER,
-        date: plainToInstance(SimpleDate, {
-          day: getDate(nextWeek),
-          month: getMonth(nextWeek) + 1,
-          year: getYear(nextWeek),
-        }),
+        date: nextWeek,
         timeSlot: TimeSlot.ED,
       }
 
@@ -145,11 +141,7 @@ describe('Movement list routes - choose details', () => {
       const dateIn61Days = addDays(new Date(), 61)
       const body = {
         dateOption: DateOption.OTHER,
-        date: plainToInstance(SimpleDate, {
-          day: getDate(dateIn61Days),
-          month: getMonth(dateIn61Days) + 1,
-          year: getYear(dateIn61Days),
-        }),
+        date: formatDatePickerDate(dateIn61Days),
         timeSlot: TimeSlot.ED,
       }
 
@@ -163,11 +155,7 @@ describe('Movement list routes - choose details', () => {
       const dateIn60Days = addDays(new Date(), 60)
       const body = {
         dateOption: DateOption.OTHER,
-        date: plainToInstance(SimpleDate, {
-          day: getDate(dateIn60Days),
-          month: getMonth(dateIn60Days) + 1,
-          year: getYear(dateIn60Days),
-        }),
+        date: formatDatePickerDate(dateIn60Days),
         timeSlot: TimeSlot.AM,
       }
 
