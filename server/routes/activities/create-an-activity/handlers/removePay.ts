@@ -22,9 +22,6 @@ export default class RemovePayRoutes {
 
     const pay = req.session.createJourney.pay.findIndex(p => p.prisonPayBand.id === bandId && p.incentiveLevel === iep)
     if (pay < 0) {
-      if (req.params.mode === 'edit') {
-        return res.redirect('schedule/check-pay?preserveHistory=true')
-      }
       return res.redirect(`check-pay${preserveHistoryString}`)
     }
 
