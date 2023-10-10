@@ -11,7 +11,7 @@ import { CreateAnActivityJourney } from '../journey'
 export class Pay {
   @Expose()
   @Type(() => Number)
-  @Transform(({ value }) => value * 100) // Transform to pence
+  @Transform(({ value }) => Math.round(value * 100)) // Transform to pence
   @IsNumber({ allowNaN: false }, { message: 'Pay rate must be a number' })
   @Min(1, { message: 'Enter a pay rate' })
   @PayRateBetweenMinAndMax({
