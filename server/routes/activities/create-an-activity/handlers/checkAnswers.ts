@@ -3,10 +3,10 @@ import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityCreateRequest } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
-import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import { formatDate, mapSlots } from '../../../../utils/utils'
+import { formatDate, mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
+import IncentiveLevelPayMappingUtil from '../../helpers/incentiveLevelPayMappingUtil'
 
 export default class CheckAnswersRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -18,7 +18,7 @@ export default class CheckAnswersRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { createJourney } = req.session
-    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(req, user)
+    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(createJourney.pay, user)
     const startDate = formatDate(plainToInstance(SimpleDate, createJourney.startDate).toRichDate(), 'do MMMM yyyy')
     const endDate = createJourney.endDate
       ? formatDate(plainToInstance(SimpleDate, createJourney.endDate).toRichDate(), 'do MMMM yyyy')
@@ -37,7 +37,7 @@ export default class CheckAnswersRoutes {
     const { user } = res.locals
     const { createJourney } = req.session
 
-    const slots = mapSlots(createJourney)
+    const slots = mapJourneySlotsToActivityRequest(createJourney.slots)
 
     const activity = {
       prisonCode: user.activeCaseLoadId,

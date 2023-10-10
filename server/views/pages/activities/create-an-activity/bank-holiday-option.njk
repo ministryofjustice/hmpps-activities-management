@@ -16,7 +16,7 @@
             <h1 class="govuk-heading-l">Does this activity run on bank holidays?</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                      {% if session.req.query.fromEditActivity %}
+                      {% if session.req.params.mode == 'edit' %}
                         {{ govukInsetText({
                           text: "Any changes to the schedule will take effect from tomorrow."
                         }) }}
@@ -38,7 +38,7 @@
                     ],
                     errorMessage: validationErrors | findError('runsOnBankHoliday')
                 }) }}
-                {% if session.req.query.fromEditActivity %}
+                {% if session.req.params.mode == 'edit' %}
                     <div class="govuk-button-group">
                       {{ govukButton({
                         text: "Update bank holiday scheduling"

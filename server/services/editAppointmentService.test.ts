@@ -22,6 +22,7 @@ import { YesNo } from '../@types/activities'
 import config from '../config'
 import MetricsEvent from '../data/metricsEvent'
 import { MetricsEventType } from '../@types/metricsEvents'
+import { formatIsoDate } from '../utils/datePickerUtils'
 
 jest.mock('./activitiesService')
 jest.mock('./metricsService')
@@ -56,12 +57,7 @@ describe('Edit Appointment Service', () => {
             id: 1,
             description: 'Location',
           },
-          startDate: {
-            day: weekTomorrow.getDate(),
-            month: weekTomorrow.getMonth() + 1,
-            year: weekTomorrow.getFullYear(),
-            date: weekTomorrow,
-          },
+          startDate: formatIsoDate(weekTomorrow),
           startTime: {
             hour: 9,
             minute: 30,
@@ -382,12 +378,7 @@ describe('Edit Appointment Service', () => {
 
       it('when changing the start date', async () => {
         req.session.editAppointmentJourney.property = 'date-and-time'
-        req.session.editAppointmentJourney.startDate = {
-          day: 16,
-          month: 5,
-          year: 2023,
-          date: parseDate('2023-05-16'),
-        }
+        req.session.editAppointmentJourney.startDate = '2023-05-16'
 
         await service.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
 
@@ -580,12 +571,7 @@ describe('Edit Appointment Service', () => {
 
       it('when changing the start date and start time', async () => {
         req.session.editAppointmentJourney.property = 'date-and-time'
-        req.session.editAppointmentJourney.startDate = {
-          day: 16,
-          month: 5,
-          year: 2023,
-          date: parseDate('2023-05-16'),
-        }
+        req.session.editAppointmentJourney.startDate = '2023-05-16'
         req.session.editAppointmentJourney.startTime = {
           hour: 10,
           minute: 0,
@@ -625,12 +611,7 @@ describe('Edit Appointment Service', () => {
 
       it('when changing the start date and end time', async () => {
         req.session.editAppointmentJourney.property = 'date-and-time'
-        req.session.editAppointmentJourney.startDate = {
-          day: 16,
-          month: 5,
-          year: 2023,
-          date: parseDate('2023-05-16'),
-        }
+        req.session.editAppointmentJourney.startDate = '2023-05-16'
         req.session.editAppointmentJourney.endTime = {
           hour: 14,
           minute: 30,
@@ -670,12 +651,7 @@ describe('Edit Appointment Service', () => {
 
       it('when changing the start date, start time and end time', async () => {
         req.session.editAppointmentJourney.property = 'date-and-time'
-        req.session.editAppointmentJourney.startDate = {
-          day: 16,
-          month: 5,
-          year: 2023,
-          date: parseDate('2023-05-16'),
-        }
+        req.session.editAppointmentJourney.startDate = '2023-05-16'
         req.session.editAppointmentJourney.startTime = {
           hour: 10,
           minute: 0,

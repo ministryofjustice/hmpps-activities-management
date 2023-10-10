@@ -12,10 +12,9 @@ export default class RemoveFlatRateRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const bandId = +req.query.bandId
     const { preserveHistory } = req.query
-    const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
     const flatRate = req.session.createJourney.flat.findIndex(f => f.bandId === bandId)
-    if (flatRate < 0) return res.redirect(`check-pay${preserveHistoryString}`)
+    if (flatRate < 0) return res.redirect(`check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
 
     return res.render(`pages/activities/create-an-activity/remove-pay`, { bandId })
   }
@@ -27,7 +26,7 @@ export default class RemoveFlatRateRoutes {
     const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
     if (choice !== 'yes') {
-      if (req.query && req.query.fromEditActivity) {
+      if (req.params.mode === 'edit') {
         return res.redirect(`/activities/schedule/check-pay${preserveHistoryString}`)
       }
       return res.redirect(`check-pay${preserveHistoryString}`)
@@ -41,11 +40,12 @@ export default class RemoveFlatRateRoutes {
     const flatRateInfo = req.session.createJourney.flat[flatRateIndex]
     req.session.createJourney.flat.splice(flatRateIndex, 1)
 
-    if (req.query && req.query.fromEditActivity)
+    if (req.params.mode === 'edit') {
       return res.redirectWithSuccess(
         `/activities/schedule/check-pay${preserveHistoryString}`,
         `Flat rate ${flatRateInfo.bandAlias} removed`,
       )
+    }
     return res.redirectWithSuccess(`check-pay${preserveHistoryString}`, `Flat rate ${flatRateInfo.bandAlias} removed`)
   }
 }

@@ -16,7 +16,7 @@ export default class ConfirmCapacityRoutes {
     await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
 
     res.redirectWithSuccess(
-      `/activities/schedule/activities/${req.session.createJourney.activityId}`,
+      `/activities/view/${req.session.createJourney.activityId}`,
       'Activity updated',
       `We've updated the capacity for ${req.session.createJourney.name}`,
     )

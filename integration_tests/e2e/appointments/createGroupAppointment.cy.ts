@@ -120,7 +120,7 @@ context('Create group appointment', () => {
     locationPage.continue()
 
     const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
-    dateAndTimePage.enterStartDate(tomorrow)
+    dateAndTimePage.selectStartDate(tomorrow)
     dateAndTimePage.selectStartTime(14, 0)
     dateAndTimePage.selectEndTime(15, 30)
     dateAndTimePage.continue()

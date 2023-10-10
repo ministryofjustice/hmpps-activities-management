@@ -15,9 +15,7 @@ export default class PayRateTypeRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { payRateTypeOption } = req.body
-    const { fromEditActivity, preserveHistory } = req.query
-    if (fromEditActivity) {
-      res.redirect(`pay/${payRateTypeOption}?fromEditActivity=true`)
-    } else res.redirect(`pay/${payRateTypeOption}${preserveHistory ? '?preserveHistory=true' : ''}`)
+    const { preserveHistory } = req.query
+    res.redirect(`pay/${payRateTypeOption}${preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 }

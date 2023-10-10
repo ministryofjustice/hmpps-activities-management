@@ -8,10 +8,11 @@ import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
+import { CreateAnActivityJourney } from '../journey'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
-jest.mock('./helpers/incentiveLevelPayMappingUtil', () => {
+jest.mock('../../helpers/incentiveLevelPayMappingUtil', () => {
   return function factory() {
     return {
       getPayGroupedByIncentiveLevel: () => [
@@ -50,6 +51,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
     req = {
       flash: jest.fn(),
       query: {},
+      params: {},
       session: {
         createJourney: {
           name: 'Maths level 1',
@@ -132,31 +134,24 @@ describe('Route Handlers - Create an activity - Check pay', () => {
         .calledWith(atLeast(updatedActivity))
         .mockResolvedValueOnce(activity as unknown as Activity)
 
-      req = {
-        session: {
-          createJourney: {
-            activityId: 1,
-            name: 'Maths Level 1',
-            pay: [
-              {
-                incentiveNomisCode: 'BAS',
-                incentiveLevel: 'Basic',
-                payBandId: 1,
-                rate: 1,
-              },
-            ],
+      req.session.createJourney = {
+        activityId: 1,
+        name: 'Maths Level 1',
+        pay: [
+          {
+            incentiveNomisCode: 'BAS',
+            incentiveLevel: 'Basic',
+            bandId: 1,
+            rate: 1,
           },
-        },
-        query: {
-          fromEditActivity: true,
-        },
-        body: {},
-      } as unknown as Request
+        ],
+      } as CreateAnActivityJourney
+      req.params.mode = 'edit'
 
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/activities/schedule/activities/1',
+        '/activities/view/1',
         'Activity updated',
         "We've updated the pay for Maths Level 1",
       )

@@ -23,7 +23,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-xl">{{ 'Enter the new activity location' if session.req.query.fromEditActivity else 'Where does this activity take place?' }}</h1>
+            <h1 class="govuk-heading-xl">{{ 'Enter the new activity location' if session.req.params.mode == 'edit' else 'Where does this activity take place?' }}</h1>
 
             <p class='govuk-body'>
                 If the location is not listed choose the relevant option so unlock lists can be filtered to show who is staying on the wing or leaving.
@@ -70,7 +70,7 @@
                     ]
                 }) }}
 
-                {% if session.req.query.fromEditActivity %}
+                {% if session.req.params.mode == 'edit' %}
                     {{ govukWarningText({
                         text: "Changing the location may affect the security risk and the capacity of this activity.",
                         iconFallbackText: "Warning"

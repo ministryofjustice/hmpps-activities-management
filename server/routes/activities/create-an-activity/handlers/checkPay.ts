@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import PrisonService from '../../../../services/prisonService'
-import IncentiveLevelPayMappingUtil from './helpers/incentiveLevelPayMappingUtil'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
+import IncentiveLevelPayMappingUtil from '../../helpers/incentiveLevelPayMappingUtil'
 
 export default class CheckPayRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -13,8 +13,9 @@ export default class CheckPayRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { createJourney } = req.session
     let incentiveLevelPays = []
-    incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(req, user)
+    incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(createJourney.pay, user)
     const flatPay = req.session.createJourney.flat
 
     res.render(`pages/activities/create-an-activity/check-pay`, { incentiveLevelPays, flatPay })
@@ -35,7 +36,7 @@ export default class CheckPayRoutes {
     req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.levelCode
     req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.levelName
 
-    if (req.query && req.query.fromEditActivity) {
+    if (req.params.mode === 'edit') {
       const { activityId } = req.session.createJourney
       const prisonCode = user.activeCaseLoadId
       const activity = {
@@ -65,7 +66,7 @@ export default class CheckPayRoutes {
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
       const successMessage = `We've updated the pay for ${req.session.createJourney.name}`
 
-      const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo
       return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }

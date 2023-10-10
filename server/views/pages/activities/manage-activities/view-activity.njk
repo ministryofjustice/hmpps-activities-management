@@ -9,7 +9,8 @@
 
 {% set pageTitle = applicationName + " - Activities Dashboard - View activity" %}
 {% set pageId = 'view-activity-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkText = 'Back to activities dashboard' %}
+{% set hardBackLinkHref = '/activities/schedule/activities' %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -29,7 +30,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/create/category?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/category?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change category",
                                     classes: "govuk-link--no-visited-state"
@@ -47,7 +48,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/create/name?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/name?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change activity name",
                                     classes: "govuk-link--no-visited-state"
@@ -65,7 +66,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/create/location?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/location?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change location",
                                     classes: "govuk-link--no-visited-state"
@@ -83,7 +84,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/create/capacity?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/capacity?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change capacity",
                                     classes: "govuk-link--no-visited-state"
@@ -107,7 +108,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/create/risk-level?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/risk-level?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change risk level",
                                     classes: "govuk-link--no-visited-state"
@@ -125,7 +126,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/create/check-education-level?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/check-education-level?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change education levels",
                                     classes: "govuk-link--no-visited-state"
@@ -148,7 +149,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/schedule/check-pay?preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/schedule/check-pay?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change pay",
                                     classes: "govuk-link--no-visited-state"
@@ -177,7 +178,7 @@
                             html: govukTag({ text: 'Started', classes: 'govuk-tag--small govuk-tag--green' })
                         } if schedule.startDate <= now | toDateString else
                         {
-                            href: "/activities/create/start-date?fromEditActivity=true&preserveHistory=true",
+                            href: "/activities/edit/" + activity.id + "/start-date?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "change start date",
                             classes: "govuk-link--no-visited-state"
@@ -196,7 +197,7 @@
                 actions: {
                     items: [
                         {
-                            href: "/activities/create/end-date?fromEditActivity=true&preserveHistory=true",
+                            href: "/activities/edit/" + activity.id + "/end-date?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "change end date",
                             classes: "govuk-link--no-visited-state"
@@ -224,7 +225,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/create/days-and-times/" + week + "?fromEditActivity=true&preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/days-and-times/" + week + "?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change days and times",
                                     classes: "govuk-link--no-visited-state"
@@ -246,7 +247,7 @@
                     actions: {
                         items: [
                             {
-                                href: "/activities/create/bank-holiday-option?fromEditActivity=true&preserveHistory=true",
+                                href: "/activities/edit/" + activity.id + "/bank-holiday-option?preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "change bank holiday",
                                 classes: "govuk-link--no-visited-state"
@@ -261,7 +262,7 @@
             }) }}
 
             <div class="govuk-button-group">
-                <a href="/activities/schedule/activities" class="govuk-link">Return to dashboard</a>
+                <a href="/activities/dashboard" class="govuk-link">Return to dashboard</a>
             </div>
 
         </div>
@@ -308,15 +309,6 @@
         text: "Started",
         classes: "govuk-tag--green"
     }) }}
-{% endmacro %}
-
-{% macro activitySummary() %}
-    {% if schedule.endDate >= now | toDateString %}
-        href: "/activities/create/name?fromEditActivity=true&preserveHistory=true",
-        text: "Change",
-        visuallyHiddenText: "change activity name",
-        classes: "govuk-link--no-visited-state"
-    {% endif %}
 {% endmacro %}
 
 {% macro riskLevel(activity) %}

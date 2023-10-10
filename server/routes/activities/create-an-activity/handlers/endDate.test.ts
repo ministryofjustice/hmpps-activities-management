@@ -33,6 +33,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
     } as unknown as Response
 
     req = {
+      params: {},
       session: {
         createJourney: {
           latestAllocationStartDate: formatDate(new Date(), 'yyyy-MM-dd'),
@@ -64,11 +65,11 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         } as unknown as ActivitySchedule)
 
       req = {
+        params: {
+          mode: 'edit',
+        },
         session: {
           createJourney: { startDate: simpleDateFromDate(new Date()), activityId: 1, scheduleId: 2 },
-        },
-        query: {
-          fromEditActivity: true,
         },
       } as unknown as Request
 
@@ -108,22 +109,21 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       const today = new Date()
       const endDate = simpleDateFromDate(today)
 
-      req = {
-        session: {
-          createJourney: { activityId: 1, name: 'Maths level 1' },
-        },
-        query: {
-          fromEditActivity: true,
-        },
-        body: {
-          endDate,
-        },
-      } as unknown as Request
+      req.session.createJourney = {
+        activityId: 1,
+        name: 'Maths level 1',
+      }
+      req.params = {
+        mode: 'edit',
+      }
+      req.body = {
+        endDate,
+      }
 
       await handler.POST(req, res)
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/activities/schedule/activities/1',
+        '/activities/view/1',
         'Activity updated',
         "We've updated the end date for Maths level 1",
       )

@@ -18,7 +18,7 @@
                 {{ datePicker({
                     id: 'startDate',
                     label: {
-                        text: "Change the start date for this activity" if session.req.query.fromEditActivity else "Enter the start date for this activity",
+                        text: "Change the start date for this activity" if session.req.params.mode == 'edit' else "Enter the start date for this activity",
                         classes: "govuk-fieldset__legend--l",
                         isPageHeading: true
                     },
@@ -30,7 +30,7 @@
                     formResponses: formResponses.startDate or session.createJourney.startDate
                 }) }}
                 <input type="hidden" id="endDate" name="endDate" value="{{ endDate }}">
-                {% if session.req.query.fromEditActivity %}
+                {% if session.req.params.mode == 'edit' %}
                     <div class="govuk-button-group">
                       {{ govukButton({
                         text: "Update start date"

@@ -79,7 +79,7 @@ describe('Route Handlers - Activities dashboard', () => {
       req.query = { categoryFilter: 'all', stateFilter: 'all' }
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/activities-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/activities-dashboard', {
         activities: [maths, english, gym],
         filters: { categoryFilter: 'all', stateFilter: 'all' },
       })
@@ -89,7 +89,7 @@ describe('Route Handlers - Activities dashboard', () => {
       req.query = { stateFilter: 'live' }
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/activities-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/activities-dashboard', {
         activities: [maths, english],
         filters: {
           stateFilter: 'live',
@@ -101,7 +101,7 @@ describe('Route Handlers - Activities dashboard', () => {
       req.query = { stateFilter: 'archived' }
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-schedules/activities-dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/activities-dashboard', {
         activities: [gym],
         filters: {
           stateFilter: 'archived',

@@ -28,6 +28,7 @@ export default class EducationLevelRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { preserveHistory } = req.query
 
     const [studyAreas, eduLevels] = await this.getEducation(user)
 
@@ -46,8 +47,7 @@ export default class EducationLevelRoutes {
       educationLevelDescription: eduLevel.description,
     })
 
-    if (req.query && req.query.fromEditActivity) return res.redirect(`check-education-level?fromEditActivity=true`)
-    return res.redirect(`check-education-level`)
+    return res.redirect(`check-education-level${preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 
   private getEducation = (user: ServiceUser) =>

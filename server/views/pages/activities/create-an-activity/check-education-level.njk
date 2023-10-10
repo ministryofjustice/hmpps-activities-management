@@ -20,11 +20,6 @@
                 <p class="govuk-body">No levels or qualifications added</p>
             {% endif %}
 
-            {% if session.req.query.fromEditActivity %}
-                {% set fromEditText = "&fromEditActivity=true" %}
-            {% else %}
-                {% set fromEditText = "" %}
-            {% endif %}
             {% for educationLevel in educationLevels %}
                 {% set rows = [] %}
                     {% set rows = (rows.push(
@@ -38,7 +33,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "remove-education-level?eduLevel=" + educationLevel.educationLevelCode + "&studyArea=" + educationLevel.studyAreaCode + fromEditText,
+                                    href: "remove-education-level?eduLevel=" + educationLevel.educationLevelCode + "&studyArea=" + educationLevel.studyAreaCode  + ('&preserveHistory=true' if session.req.query.preserveHistory else ''),
                                     text: "Remove",
                                     visuallyHiddenText: "remove education level"
                                 }
@@ -56,12 +51,12 @@
                 <div>
                     {{ govukButton({
                         text: "Add another qualification",
-                        href: 'education-level' + ('?fromEditActivity=true' if session.req.query.fromEditActivity),
+                        href: 'education-level' + ('?preserveHistory=true' if session.req.query.preserveHistory else ''),
                         classes: "govuk-button--secondary govuk-!-margin-bottom-8"
                     }) }}
                 </div>
                 {{ govukButton({
-                    text: "Update education levels" if session.req.query.fromEditActivity else "Confirm" 
+                    text: "Update education levels" if session.req.params.mode == 'edit' else "Confirm" 
                 }) }}
             </form>
         </div>

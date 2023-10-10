@@ -39,7 +39,7 @@ export default class StartDateRoutes {
     const { session } = req
     const { user } = res.locals
     let allocations: Allocation[]
-    if (req.query && req.query.fromEditActivity) {
+    if (req.params.mode === 'edit') {
       const { scheduleId } = req.session.createJourney
       const schedule = await this.activitiesService.getActivitySchedule(scheduleId, user)
       if (schedule.allocations.length > 0) {
@@ -56,7 +56,7 @@ export default class StartDateRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.createJourney.startDate = req.body.startDate
-    if (req.query && req.query.fromEditActivity) {
+    if (req.params.mode === 'edit') {
       const { user } = res.locals
       const { activityId } = req.session.createJourney
       const prisonCode = user.activeCaseLoadId
@@ -69,7 +69,7 @@ export default class StartDateRoutes {
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
       const successMessage = `We've updated the start date for ${req.session.createJourney.name}`
 
-      const returnTo = `/activities/schedule/activities/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     } else res.redirectOrReturn(`end-date-option`)

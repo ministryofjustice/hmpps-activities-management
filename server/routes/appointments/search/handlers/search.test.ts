@@ -3,8 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import SearchRoutes, { Search } from './search'
-import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
-import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { ServiceUser } from '../../../../@types/express'
 import ActivitiesService from '../../../../services/activitiesService'
 import {
@@ -15,6 +14,7 @@ import {
 import TimeSlot from '../../../../enum/timeSlot'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -176,7 +176,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       expect(activitiesService.getAppointmentCategories).not.toHaveBeenCalled()
       expect(activitiesService.getAppointmentLocations).not.toHaveBeenCalled()
       expect(activitiesService.searchAppointments).not.toHaveBeenCalled()
-      expect(res.redirect).toHaveBeenCalledWith(`?startDate=${toDateString(new Date())}`)
+      expect(res.redirect).toHaveBeenCalledWith(`?startDate=${formatIsoDate(new Date())}`)
     })
 
     it('should populate start date and redirect if start date is invalid', async () => {
@@ -189,19 +189,19 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       expect(activitiesService.getAppointmentCategories).not.toHaveBeenCalled()
       expect(activitiesService.getAppointmentLocations).not.toHaveBeenCalled()
       expect(activitiesService.searchAppointments).not.toHaveBeenCalled()
-      expect(res.redirect).toHaveBeenCalledWith(`?startDate=${toDateString(new Date())}`)
+      expect(res.redirect).toHaveBeenCalledWith(`?startDate=${formatIsoDate(new Date())}`)
     })
 
     it('should render the default search view with categories, locations and search results', async () => {
       req.query = {
-        startDate: toDateString(today),
+        startDate: formatIsoDate(today),
       }
 
       when(activitiesService.searchAppointments)
         .calledWith(
           'MDI',
           {
-            startDate: toDateString(today),
+            startDate: formatIsoDate(today),
             timeSlot: null,
             internalLocationId: null,
             prisonerNumbers: null,
@@ -214,7 +214,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/search/results', {
-        startDate: expect.any(SimpleDate),
+        startDate: formatIsoDate(today),
         timeSlot: '',
         appointmentNameFilters,
         appointmentName: '',
@@ -236,7 +236,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
 
     it('should render fully filtered search view with categories, locations and search results', async () => {
       req.query = {
-        startDate: toDateString(today),
+        startDate: formatIsoDate(today),
         timeSlot: TimeSlot.PM,
         appointmentName: 'Medical - Doctor',
         locationId: '26151',
@@ -248,7 +248,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         .calledWith(
           'MDI',
           {
-            startDate: toDateString(today),
+            startDate: formatIsoDate(today),
             timeSlot: TimeSlot.PM as unknown as 'AM' | 'PM' | 'ED',
             internalLocationId: 26151,
             prisonerNumbers: ['A1234BC'],
@@ -261,7 +261,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/search/results', {
-        startDate: expect.any(SimpleDate),
+        startDate: formatIsoDate(today),
         timeSlot: TimeSlot.PM,
         appointmentNameFilters,
         appointmentName: 'Medical - Doctor',
@@ -283,7 +283,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
 
     it('should filter results by matching appointment name', async () => {
       req.query = {
-        startDate: toDateString(today),
+        startDate: formatIsoDate(today),
         appointmentName: 'Doctors appointment (Medical - Doctor)',
       }
 
@@ -291,7 +291,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         .calledWith(
           'MDI',
           {
-            startDate: toDateString(today),
+            startDate: formatIsoDate(today),
             timeSlot: null,
             internalLocationId: null,
             prisonerNumbers: null,
@@ -315,19 +315,19 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
   describe('POST', () => {
     it('should redirect to default get', async () => {
       req.body = {
-        startDate: simpleDateFromDate(today),
+        startDate: formatDatePickerDate(today),
       }
 
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `?startDate=${toDateString(new Date())}&timeSlot=&appointmentName=&locationId=&prisonerNumber=&createdBy=`,
+        `?startDate=${formatIsoDate(new Date())}&timeSlot=&appointmentName=&locationId=&prisonerNumber=&createdBy=`,
       )
     })
 
     it('should redirect to fully filtered get', async () => {
       req.body = {
-        startDate: simpleDateFromDate(today),
+        startDate: formatDatePickerDate(today),
         timeSlot: TimeSlot.PM,
         appointmentName: 'Medical - Doctor',
         locationId: '26151',
@@ -338,7 +338,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `?startDate=${toDateString(new Date())}&timeSlot=${
+        `?startDate=${formatIsoDate(new Date())}&timeSlot=${
           TimeSlot.PM
         }&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=${user.username}`,
       )

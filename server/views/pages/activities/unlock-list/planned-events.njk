@@ -19,13 +19,13 @@
    <table class="govuk-table govuk-!-margin-0 unlock-list">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row"><td>
-                <div class="govuk-grid-row govuk-!-margin-bottom-2">
-                    <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-two-thirds govuk-!-margin-bottom-2">
+                <div class="govuk-grid-row govuk-!-margin-bottom-1">
+                    <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-one-half govuk-!-margin-bottom-1">
                         <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ location }} - Unlock list</h1>
                         <div class="govuk-caption-l govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ timeSlot | upper }} session</div>
                         <div class="govuk-caption-l">{{ date |formatDate('cccc d LLLL y') }}</div>
-                        <div class="govuk-!-margin-top-4">
-                            <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">
+                        <div class="govuk-!-margin-top-2">
+                            <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
                                 {{ unlockListItems.length }} people to unlock
                             </div>
                             <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.leavingWing }}
@@ -36,7 +36,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="govuk-grid-column-one-third govuk-!-print-grid-column-one-third">
+                    <div class="govuk-grid-column-one-third govuk-!-print-grid-column-one-half">
                         <div class="print-only">
                             <div class="printable-textarea">Notes</div>
                         </div>
@@ -181,7 +181,7 @@
                                 },
                                 {
                                     html: alertsList({ alerts: item.alerts, category: item.category }),
-                                    classes: 'govuk-table_cell'
+                                    classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
                                 }
                             ), row) %}
 
@@ -211,7 +211,7 @@
                                 {
                                     text: "Name",
                                     attributes: { "aria-sort": "none" },
-                                    classes: 'govuk-table__header hmpps-width-20-percent'
+                                    classes: 'govuk-table__header'
                                 },
                                 {
                                     text: "Cell location",
@@ -225,12 +225,12 @@
                                 {
                                     html: "Event details",
                                     attributes: { "aria-sort": "none", colspan: 4 },
-                                    classes: 'govuk-table__header govuk-!-display-none-print'
+                                    classes: 'govuk-table__header govuk-!-display-none-print hmpps-width-40-percent'
                                 },
                                 {
                                     html: "Event details",
                                     attributes: { "aria-sort": "none" },
-                                    classes: 'govuk-table__header print-only'
+                                    classes: 'govuk-table__header print-only hmpps-width-30-percent'
                                 },
                                 {
                                     html: "<span><span class=\"text-underline\">R</span>efused</span>",
@@ -253,7 +253,7 @@
         </td></tr></tbody>
         <tfoot class="print-only">
             <tr>
-                <td class="govuk-!-padding-top-2 govuk-body">
+                <td class="govuk-!-padding-top-1 govuk-body-s">
                     Printed at {{ now | formatDate('h:mmaaa \'on\' EEEE, d MMMM yyyy') }}
                 </td>
             </tr>

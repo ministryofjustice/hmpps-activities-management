@@ -9,6 +9,7 @@ import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentApplyTo } from '../../../../@types/appointments'
+import { formatIsoDate, parseIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/editAppointmentService')
 
@@ -27,12 +28,7 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
           type: AppointmentType.INDIVIDUAL,
-          startDate: {
-            day: weekTomorrow.getDate(),
-            month: weekTomorrow.getMonth() + 1,
-            year: weekTomorrow.getFullYear(),
-            date: weekTomorrow,
-          },
+          startDate: formatIsoDate(weekTomorrow),
         },
         editAppointmentJourney: {
           numberOfAppointments: 4,
@@ -75,7 +71,7 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirm-edit', {
         appointmentId,
-        startDate: new Date(req.session.appointmentJourney.startDate.date),
+        startDate: parseIsoDate(req.session.appointmentJourney.startDate),
       })
     })
   })

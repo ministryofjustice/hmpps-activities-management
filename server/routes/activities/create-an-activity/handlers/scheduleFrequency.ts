@@ -13,7 +13,7 @@ export default class ScheduleRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { preserveHistory, fromEditActivity } = req.query
+    const { preserveHistory } = req.query
     const scheduleFrequency = req.body.scheduleFrequency as string
 
     req.session.createJourney.scheduleWeeks = ScheduleFrequency[scheduleFrequency]
@@ -29,7 +29,6 @@ export default class ScheduleRoutes {
 
     let redirect = 'days-and-times/1'
     redirect += preserveHistory ? '?preserveHistory=true&fromScheduleFrequency=true' : ''
-    redirect += fromEditActivity ? '&fromEditActivity=true' : ''
     res.redirect(redirect)
   }
 }

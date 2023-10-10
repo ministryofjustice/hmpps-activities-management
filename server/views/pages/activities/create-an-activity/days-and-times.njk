@@ -17,18 +17,14 @@
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
             {% if session.createJourney.scheduleWeeks > 1 %}
-                {% if session.req.query.fromEditActivity %}
-                    <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ session.createJourney.scheduleWeeks }}: change the days and times when this activity runs</h1>
-                {% else %}
-                    <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ session.createJourney.scheduleWeeks }}: enter the days and times when this activity runs</h1>
-                {% endif %}
+                <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ session.createJourney.scheduleWeeks }}: {{ 'change' if session.req.params.mode == 'edit' else 'enter' }} the days and times when this activity runs</h1>
             {% else %}
-                <h1 class="govuk-heading-l">Enter the days and times when this activity runs</h1>
+                <h1 class="govuk-heading-l">{{ 'Change' if session.req.params.mode == 'edit' else 'Enter' }} the days and times when this activity runs</h1>
             {% endif %}
 
             <p class="govuk-body">Select each day that the activity will run, then select the slots when the activity will run on that day.</p>
 
-            {% if session.req.query.fromEditActivity %}
+            {% if session.req.params.mode == 'edit' %}
                 <p class="govuk-body">Any changes you make will take effect tomorrow</p>
                 <p class="govuk-body">You should update any unlock lists that have been printed</p>
             {% elseif session.createJourney.scheduleWeeks > 1 and session.req.params.weekNumber == 1 %}
@@ -101,7 +97,7 @@
                         }
                     ]
                 }) }}
-                {% if session.req.query.fromEditActivity %}
+                {% if session.req.params.mode == 'edit' %}
                     <div class="govuk-button-group">
                       {{ govukButton({
                         text: "Update days and times"
@@ -124,7 +120,7 @@
 
 {% macro startDayTag(slotDay, session) %}
     {% set startDay = session.createJourney.startDate | toDateFromSimpleDate | formatDate("EEEE", false) | lower %}
-    {% if not session.req.query.fromEditActivity and slotDay == startDay and session.req.params.weekNumber == 1 %}
+    {% if not session.req.params.mode == 'edit' and slotDay == startDay and session.req.params.weekNumber == 1 %}
         {{ govukTag({ text: 'Start day', classes: "govuk-tag--grey" }) }}
     {% endif %}
 {% endmacro %}

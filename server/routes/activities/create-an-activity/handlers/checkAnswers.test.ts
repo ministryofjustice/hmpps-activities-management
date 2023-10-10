@@ -11,7 +11,7 @@ import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityT
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
-jest.mock('./helpers/incentiveLevelPayMappingUtil', () => {
+jest.mock('../../helpers/incentiveLevelPayMappingUtil', () => {
   return function factory() {
     return {
       getPayGroupedByIncentiveLevel: () => [

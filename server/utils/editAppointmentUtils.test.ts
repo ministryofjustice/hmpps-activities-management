@@ -21,6 +21,7 @@ import {
   getConfirmAppointmentEditCta,
   getAppointmentEditApplyToCta,
 } from './editAppointmentUtils'
+import { formatIsoDate } from './datePickerUtils'
 
 describe('Edit Appointment Utils', () => {
   const weekTomorrow = addDays(new Date(), 8)
@@ -42,12 +43,7 @@ describe('Edit Appointment Utils', () => {
             id: 1,
             description: 'Location',
           },
-          startDate: {
-            day: weekTomorrow.getDate(),
-            month: weekTomorrow.getMonth() + 1,
-            year: weekTomorrow.getFullYear(),
-            date: weekTomorrow,
-          },
+          startDate: formatIsoDate(weekTomorrow),
           startTime: {
             hour: 9,
             minute: 30,
@@ -201,12 +197,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('when changing the start date', () => {
-      req.session.editAppointmentJourney.startDate = {
-        day: 16,
-        month: 5,
-        year: 2023,
-        date: parseDate('2023-05-16'),
-      }
+      req.session.editAppointmentJourney.startDate = '2023-05-16'
 
       expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
         'change the date for',
@@ -298,12 +289,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('when changing the start date and start time', () => {
-      req.session.editAppointmentJourney.startDate = {
-        day: 16,
-        month: 5,
-        year: 2023,
-        date: parseDate('2023-05-16'),
-      }
+      req.session.editAppointmentJourney.startDate = '2023-05-16'
       req.session.editAppointmentJourney.startTime = {
         hour: 10,
         minute: 0,
@@ -322,12 +308,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('when changing the start date and end time', () => {
-      req.session.editAppointmentJourney.startDate = {
-        day: 16,
-        month: 5,
-        year: 2023,
-        date: parseDate('2023-05-16'),
-      }
+      req.session.editAppointmentJourney.startDate = '2023-05-16'
       req.session.editAppointmentJourney.endTime = {
         hour: 14,
         minute: 30,
@@ -346,12 +327,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('when changing the start date, start time and end time', () => {
-      req.session.editAppointmentJourney.startDate = {
-        day: 16,
-        month: 5,
-        year: 2023,
-        date: parseDate('2023-05-16'),
-      }
+      req.session.editAppointmentJourney.startDate = '2023-05-16'
       req.session.editAppointmentJourney.startTime = {
         hour: 10,
         minute: 0,

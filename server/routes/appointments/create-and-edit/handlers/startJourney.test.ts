@@ -4,7 +4,6 @@ import { when } from 'jest-when'
 import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import StartJourneyRoutes from './startJourney'
 import { AppointmentSeriesDetails, AppointmentDetails } from '../../../../@types/activitiesAPI/types'
-import { parseDate } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { YesNo } from '../../../../@types/activities'
 import PrisonService from '../../../../services/prisonService'
@@ -318,12 +317,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
           prisonCode: 'CHAP',
           description: 'Chapel',
         },
-        startDate: {
-          date: parseDate('2023-04-13'),
-          day: 13,
-          month: 4,
-          year: 2023,
-        },
+        startDate: '2023-04-13',
         startTime: {
           date: new Date('2023-04-13 09:00:00'),
           hour: 9,

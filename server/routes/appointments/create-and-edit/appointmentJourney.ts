@@ -31,12 +31,7 @@ export type AppointmentJourney = {
     id: number
     description: string
   }
-  startDate?: {
-    day: number
-    month: number
-    year: number
-    date: Date
-  }
+  startDate?: string
   startTime?: {
     hour: number
     minute: number

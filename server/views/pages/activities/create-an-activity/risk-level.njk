@@ -16,7 +16,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {% set pageHeading = "Workplace risk assessment levels: who is suitable for this activity?" %}
-                {% if session.req.query.fromEditActivity %}
+                {% if session.req.params.mode == 'edit' %}
                     {% set pageHeading = "Change workplace risk assessment levels" %}
                 {% endif %}
                 {{ activityJourneyCaption(session.createJourney) }}
@@ -61,7 +61,7 @@
                     <p class="govuk-body">When you set the requirement for workplace risk assessment for an activity, you\'re indicating to staff which people will be most suitable for allocation. For example, only people with a low workplace risk assessment are likely to be suitable for an activity with multiple risk factors.</p>'
                 }) }}
 
-                {% if session.req.query.fromEditActivity %}
+                {% if session.req.params.mode == 'edit' %}
                     {{ govukWarningText({
                         text: "If you change the risk assessment level, people who are currently allocated to this activity may no longer meet the requirements.",
                         iconFallbackText: "Warning"

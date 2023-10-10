@@ -5,8 +5,13 @@ import fs from 'fs'
 import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentType, AppointmentJourney } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
+import {
+  AppointmentJourney,
+  AppointmentJourneyMode,
+  AppointmentType,
+} from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentFrequency } from '../../../../@types/appointments'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 let $: CheerioAPI
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/check-answers.njk')
@@ -41,6 +46,7 @@ describe('Views - Create Appointment - Check Answers', () => {
     viewContext = {
       session: {
         appointmentJourney: {
+          mode: AppointmentJourneyMode.CREATE,
           type: AppointmentType.INDIVIDUAL,
           prisoners: [
             {
@@ -49,11 +55,17 @@ describe('Views - Create Appointment - Check Answers', () => {
               cellLocation: '1-3-004',
             },
           ],
+          startDate: formatIsoDate(tomorrow),
+          startTime: {
+            hour: 9,
+            minute: 30,
+          },
+          endTime: {
+            hour: 10,
+            minute: 0,
+          },
         } as AppointmentJourney,
       },
-      startDate: tomorrow,
-      startTime: tomorrow.setHours(9, 30),
-      endTime: tomorrow.setHours(10, 0),
     }
 
     $ = cheerio.load(compiledTemplate.render(viewContext))

@@ -4,7 +4,6 @@ import { validate } from 'class-validator'
 import SelectDateRoutes, { SelectDate } from './select-date'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { ServiceUser } from '../../../../@types/express'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -38,7 +37,7 @@ describe('Route Handlers - Appointments Management - Search Select date', () => 
   describe('POST', () => {
     it('should redirect with correct date', async () => {
       req.body = {
-        startDate: simpleDateFromDate(new Date('2021-10-05')),
+        startDate: '05/10/2021',
       }
 
       await handler.POST(req, res)
@@ -53,24 +52,18 @@ describe('Route Handlers - Appointments Management - Search Select date', () => 
       const requestObject = plainToInstance(SelectDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ error: 'Enter a valid date', property: 'startDate' }]))
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'Enter a date', property: 'startDate' }]))
     })
 
     it('validation fails when invalid date is entered', async () => {
       const body = {
-        startDate: {
-          day: '40',
-          month: '10',
-          year: '2021',
-        },
+        startDate: '40/10/2021',
       }
 
       const requestObject = plainToInstance(SelectDate, body)
-      const errors = await validate(requestObject).then(errs =>
-        errs.flatMap(e => e.children.flatMap(associateErrorsWithProperty)),
-      )
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ error: 'Enter a valid day', property: 'day' }]))
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'Enter a valid date', property: 'startDate' }]))
     })
   })
 })
