@@ -77,7 +77,7 @@ export default class IncentiveLevelPayMappingUtil {
               peopleCount += inmates.filter(
                 inmate =>
                   inmate.prisonerNumber === allocation.prisonerNumber &&
-                  inmate.currentIncentive.level.description === incentiveLevelPay.incentiveLevel,
+                  inmate.currentIncentive?.level.description === incentiveLevelPay.incentiveLevel,
               ).length
             })
             paysWithCount.push({
