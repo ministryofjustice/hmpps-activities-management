@@ -9,7 +9,7 @@ import EndDateRoutes, { EndDate } from './endDate'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
-import { Activity, ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import { Activity } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -36,6 +36,8 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       params: {},
       session: {
         createJourney: {
+          activityId: 1,
+          scheduleId: 2,
           latestAllocationStartDate: formatDate(new Date(), 'yyyy-MM-dd'),
           startDate: simpleDateFromDate(new Date()),
         },
@@ -53,32 +55,15 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
     })
 
     it('should render the expected view in edit mode', async () => {
-      when(activitiesService.getActivitySchedule)
-        .calledWith(atLeast(2))
-        .mockResolvedValueOnce({
-          id: 1,
-          activity: { id: 1 },
-          description: 'Maths',
-          internalLocation: { description: 'Education room 1' },
-          startDate: '2023-07-26',
-          allocations: [{ startDate: '2023-07-26' }],
-        } as unknown as ActivitySchedule)
-
-      req = {
-        params: {
-          mode: 'edit',
-        },
-        session: {
-          createJourney: { startDate: simpleDateFromDate(new Date()), activityId: 1, scheduleId: 2 },
-        },
-      } as unknown as Request
+      req.params = {
+        mode: 'edit',
+      }
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/end-date', {
         endDate: undefined,
         startDate: formatDate(new Date(), 'yyyy-MM-dd'),
       })
-      expect(req.session.createJourney.latestAllocationStartDate).toEqual(new Date('2023-07-26'))
     })
   })
 
@@ -87,9 +72,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       const today = new Date()
       const endDate = simpleDateFromDate(today)
 
-      req.body = {
-        endDate,
-      }
+      req.body = { endDate }
 
       await handler.POST(req, res)
 
@@ -220,7 +203,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       expect(errors).toEqual([
         {
           property: 'endDate',
-          error: 'Enter a date on or after the activity start date and latest allocation start date',
+          error: 'Enter a date on or after the activity start date',
         },
       ])
     })
@@ -245,9 +228,24 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       expect(errors).toEqual([
         {
           property: 'endDate',
-          error: 'Enter a date on or after the activity start date and latest allocation start date',
+          error: 'Enter a date on or after the latest allocation start date',
         },
       ])
+    })
+
+    it('validation passes if there is no latest allocation start date', async () => {
+      const today = new Date()
+      const endDate = simpleDateFromDate(addDays(today, 1))
+
+      const body = { endDate }
+
+      const requestObject = plainToInstance(EndDate, {
+        ...body,
+        createJourney: {},
+      })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
     })
 
     it('validation passes if end date is after start date', async () => {

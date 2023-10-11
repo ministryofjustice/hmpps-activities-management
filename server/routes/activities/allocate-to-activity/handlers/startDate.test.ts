@@ -92,9 +92,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([
-        { property: 'startDate', error: "Enter a date on or after the activity's scheduled start date, 4 April 2022" },
-      ])
+      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a valid start date' }])
     })
 
     it('validation fails if a bad value is entered', async () => {
@@ -119,9 +117,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([
-        { property: 'startDate', error: "Enter a date on or after the activity's scheduled start date, 4 April 2022" },
-      ])
+      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a valid start date' }])
     })
 
     it('validation fails if start date is in past', async () => {

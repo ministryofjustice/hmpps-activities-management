@@ -5,7 +5,7 @@ import SimpleDate from '../commonValidationTypes/simpleDate'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function DateIsSameOrAfter(dateToCompare: (o: any) => Date, validationOptions?: ValidationOptions) {
   const dateIsSameOrAfter = (date: SimpleDate, args: ValidationArguments) =>
-    date !== undefined && isValid(date.toRichDate())
+    date !== undefined && dateToCompare(args.object) && isValid(date.toRichDate())
       ? startOfDay(date.toRichDate()) >= startOfDay(new Date(dateToCompare(args.object)))
       : true
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, plainToInstance, Type } from 'class-transformer'
-import { ValidateNested, ValidationArguments } from 'class-validator'
+import { IsNotEmpty, ValidateNested, ValidationArguments } from 'class-validator'
 import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import IsValidDate from '../../../../validators/isValidDate'
 import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
@@ -13,7 +13,9 @@ export class StartDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @DateIsSameOrAfter(o => o.allocateJourney.activity.startDate, {
+  @IsNotEmpty({ message: 'Enter a valid start date' })
+  @IsValidDate({ message: 'Enter a valid start date' })
+  @DateIsSameOrAfter(o => o.allocateJourney?.activity?.startDate, {
     message: (args: ValidationArguments) => {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
       const activityStartDate = formatDate(new Date(allocateJourney.activity.startDate), 'd MMMM yyyy')
@@ -38,13 +40,6 @@ export class StartDate {
     },
   })
   @DateIsAfter(new Date(), { message: "Enter a date after today's date" })
-  @IsValidDate({
-    message: (args: ValidationArguments) => {
-      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
-      const activityStartDate = formatDate(new Date(allocateJourney.activity.startDate), 'd MMMM yyyy')
-      return `Enter a date on or after the activity's scheduled start date, ${activityStartDate}`
-    },
-  })
   startDate: SimpleDate
 }
 

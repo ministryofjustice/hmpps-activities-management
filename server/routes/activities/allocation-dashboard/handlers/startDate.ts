@@ -15,7 +15,9 @@ export class StartDate {
   @Expose()
   @Type(() => SimpleDate)
   @ValidateNested()
-  @DateIsSameOrAfter(o => o.allocateJourney.activity.startDate, {
+  @IsNotEmpty({ message: 'Enter a valid start date' })
+  @IsValidDate({ message: 'Enter a valid start date' })
+  @DateIsSameOrAfter(o => o.allocateJourney?.activity?.startDate, {
     message: (args: ValidationArguments) => {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
       const activityStartDate = formatDate(new Date(allocateJourney.activity.startDate), 'd MMMM yyyy')
@@ -46,8 +48,6 @@ export class StartDate {
       return `Enter a date on or before the allocation end date, ${allocationEndDate}`
     },
   })
-  @IsNotEmpty({ message: 'Enter a valid start date' })
-  @IsValidDate({ message: 'Enter a valid start date' })
   startDate: SimpleDate
 
   @Expose()

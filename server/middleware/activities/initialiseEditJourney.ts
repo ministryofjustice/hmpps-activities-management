@@ -44,6 +44,11 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
       }
     }
 
+    if (allocationCount > 0) {
+      const allocations = schedule.allocations.sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
+      req.session.createJourney.latestAllocationStartDate = new Date(allocations[allocations.length - 1].startDate)
+    }
+
     return next()
   }
 }
