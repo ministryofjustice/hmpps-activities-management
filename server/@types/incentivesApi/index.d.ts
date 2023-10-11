@@ -177,14 +177,6 @@ export interface paths {
     /** Returns a specified IEP Review */
     get: operations['getReviewById']
   }
-  '/iep/levels/{prisonId}': {
-    /**
-     * Lists active incentive levels in this prison
-     * @deprecated
-     * @description Not all globally active incentive levels will necessarily be included
-     */
-    get: operations['getPrisonIncentiveLevels_1']
-  }
 }
 
 export type webhooks = Record<string, never>
@@ -661,36 +653,6 @@ export interface components {
        * @example 23
        */
       daysSinceReview: number
-    }
-    LegacyPrisonIncentiveLevel: {
-      /**
-       * @description Code for this incentive level level
-       * @example STD
-       */
-      iepLevel: string
-      /**
-       * @description The name of this incentive level
-       * @example Standard
-       */
-      iepDescription: string
-      /**
-       * Format: int32
-       * @description Order in which to sort and display incentive levels
-       * @example 1
-       */
-      sequence: number
-      /**
-       * @description Indicates that this incentive level is the default for new admissions
-       * @default false
-       * @example false
-       */
-      default: boolean
-      /**
-       * @description Indicates that this incentive level is enabled in this prison
-       * @default true
-       * @example true
-       */
-      active: boolean
     }
   }
   responses: never
@@ -1778,48 +1740,6 @@ export interface operations {
       }
       /** @description Incorrect permissions to use this endpoint */
       403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * Lists active incentive levels in this prison
-   * @deprecated
-   * @description Not all globally active incentive levels will necessarily be included
-   */
-  getPrisonIncentiveLevels_1: {
-    parameters: {
-      path: {
-        /**
-         * @description Prison id
-         * @example MDI
-         */
-        prisonId: string
-      }
-    }
-    responses: {
-      /** @description Active prison incentive levels returned */
-      200: {
-        content: {
-          'application/json': components['schemas']['LegacyPrisonIncentiveLevel'][]
-        }
-      }
-      /** @description Unauthorized to access this endpoint */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Incorrect permissions to use this endpoint */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Prison incentive level not found */
-      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
