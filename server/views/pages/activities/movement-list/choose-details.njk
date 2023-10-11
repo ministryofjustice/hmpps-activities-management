@@ -16,7 +16,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
                 {% set otherDateHintHtml %}
-                  <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
+                  <div class="govuk-!-margin-bottom-2">Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
                   <div>You can get movement lists for dates up to 60 days from today.</div>
                 {% endset %}
 
@@ -53,6 +53,10 @@
                                 id: 'date',
                                 name: 'date',
                                 classes: 'hmpps-datepicker--fixed-width',
+                                label: {
+                                    text: 'Other date',
+                                    classes: 'govuk-visually-hidden'
+                                },
                                 hint: { html: otherDateHintHtml },
                                 errorMessage: validationErrors | findError('date'),
                                 value: formResponses.date

@@ -55,7 +55,7 @@ context('Record attendance', () => {
     recordAttendancePage.recordAttendanceCard().click()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
-    selectPeriodPage.enterDate(today)
+    selectPeriodPage.enterDate(new Date(today))
     selectPeriodPage.submit()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
