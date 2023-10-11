@@ -15,7 +15,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-l">Edit pay rates</h1>
+            <h1 class="govuk-heading-l">Review pay rates</h1>
 
             {{ govukButton({
                 text: "Add new pay rate",
@@ -24,7 +24,7 @@
             }) }}
 
             {{ govukInsetText({
-                text: 'You can add new pay rates. You can only edit or delete pay rates if no one is allocated to them.'
+                text: 'You can add pay rates or edit them. You can only delete pay rates if no one is allocated to them.'
             }) }}
 
             {% for incentiveLevelPay in incentiveLevelPays %}

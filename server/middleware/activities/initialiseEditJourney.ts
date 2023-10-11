@@ -12,7 +12,6 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
 
     const activity = await activitiesService.getActivity(+activityId, res.locals.user)
     const schedule = activity.schedules[0]
-
     const allocations = activity.schedules.flatMap(s => s.allocations.filter(a => a.status !== 'ENDED'))
 
     req.session.createJourney = {

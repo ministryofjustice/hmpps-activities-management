@@ -80,10 +80,12 @@ export default class PayRoutes {
       .then(pays => pays.find(p => p.incentiveLevel === iep)?.pays)
       .then(pays => pays?.find(p => p.prisonPayBand.id === +bandId).allocationCount > 0)
 
+    const band = payBands.find(p => p.id === +bandId)
+
     res.render(`pages/activities/create-an-activity/pay`, {
       rate,
       iep,
-      bandId,
+      band,
       payRateType,
       incentiveLevels,
       payBands,
@@ -140,9 +142,13 @@ export default class PayRoutes {
   updatePay = async (req: Request, res: Response) => {
     const { user } = res.locals
     const { activityId } = req.session.createJourney
+    const { payRateType } = req.params
 
     const activityPay = req.session.createJourney.pay ?? []
     const activityFlatPay = req.session.createJourney.flat ?? []
+
+    const flatRateBandAlias = activityFlatPay.find(p => p.prisonPayBand.id === req.body.bandId)?.prisonPayBand?.alias
+    const singlePayBandAlias = activityPay.find(p => p.prisonPayBand.id === req.body.bandId)?.prisonPayBand?.alias
 
     const incentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
 
@@ -178,7 +184,28 @@ export default class PayRoutes {
       minimumIncentiveLevel: req.session.createJourney.minimumIncentiveLevel,
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, updatedActivity)
-    const successMessage = `We've updated the pay for ${req.session.createJourney.name}`
+
+    const activity = await this.activitiesService.getActivity(+activityId, res.locals.user)
+    req.session.createJourney.allocations = activity.schedules.flatMap(s =>
+      s.allocations.filter(a => a.status !== 'ENDED'),
+    )
+
+    const affectedAllocations = await this.helper
+      .getPayGroupedByIncentiveLevel(req.session.createJourney.pay, req.session.createJourney.allocations, user)
+      .then(pays => pays.find(p => p.incentiveLevel === req.body.incentiveLevel)?.pays)
+      .then(pays => pays?.find(p => p.prisonPayBand.id === +req.body.bandId).allocationCount)
+
+    let successMessage
+    if (payRateType === 'flat') {
+      successMessage = `You've added a flat rate for ${flatRateBandAlias}`
+    } else if (!req.query.bandId && !req.query.iep) {
+      successMessage = `You've added a pay rate for ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}`
+    } else if (affectedAllocations > 0) {
+      successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. There are ${affectedAllocations} allocations 
+          assigned to this pay rate. Your changes will take effect from tomorrow.`
+    } else {
+      successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}.`
+    }
 
     return res.redirectWithSuccess('../check-pay?preserveHistory=true', 'Activity updated', successMessage)
   }
