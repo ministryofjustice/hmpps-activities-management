@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import {
@@ -6,7 +7,7 @@ import {
   ReferenceCode,
   AgencyPrisonerPayProfile,
 } from '../@types/prisonApiImport/types'
-import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
+import { PagePrisoner, Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 
 import { LocationLenient } from '../@types/prisonApiImportCustom'
@@ -36,19 +37,21 @@ export default class PrisonService {
     return this.incentivesApiClient.getPrisonerIepSummary(prisonerNumber, user)
   }
 
-  async searchInmates(prisonerSearchCriteria: PrisonerSearchCriteria, user: ServiceUser): Promise<Prisoner[]> {
-    return this.prisonerSearchApiClient.searchInmates(prisonerSearchCriteria, user)
-  }
-
   async searchPrisonInmates(term: string, user: ServiceUser): Promise<PagePrisoner> {
     return this.prisonerSearchApiClient.searchPrisonInmates(term, user.activeCaseLoadId, user)
   }
 
   async searchInmatesByPrisonerNumbers(prisonerNumbers: string[], user: ServiceUser): Promise<Prisoner[]> {
-    if (prisonerNumbers.length < 1) {
-      return []
-    }
-    return this.prisonerSearchApiClient.searchByPrisonerNumbers({ prisonerNumbers }, user)
+    // Prisoner search has a maximum number of prisoner numbers allowed of 1000. Therefore, we make multiple
+    // batched calls with a max batch size of 1000
+    if (prisonerNumbers.length < 1) return []
+    return Promise.all(
+      _.chain(prisonerNumbers)
+        .uniq()
+        .chunk(1000)
+        .map(batch => this.prisonerSearchApiClient.searchByPrisonerNumbers({ prisonerNumbers: batch }, user))
+        .value(),
+    ).then(result => result.flat())
   }
 
   async getInmateByPrisonerNumber(prisonerNumber: string, user: ServiceUser): Promise<Prisoner> {
