@@ -2,7 +2,7 @@ import nock from 'nock'
 import config from '../config'
 import TokenStore from './tokenStore'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
-import { PrisonerNumbers, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
+import { PrisonerNumbers } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 
 const user = {} as ServiceUser
@@ -70,23 +70,6 @@ describe('prisonerSearchApiClient', () => {
         .reply(200, response)
 
       const output = await prisonerSearchApiClient.searchPrisonInmates(query, 'MDI', user)
-
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
-  describe('searchPrisoners', () => {
-    it('should return data from api', async () => {
-      const searchCriteria = { lastName: 'Smith' } as PrisonerSearchCriteria
-      const response = { data: 'data' }
-
-      fakePrisonerSearchApi
-        .post('/prisoner-search/match-prisoners')
-        .matchHeader('authorization', `Bearer accessToken`)
-        .reply(200, response)
-
-      const output = await prisonerSearchApiClient.searchInmates(searchCriteria, user)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

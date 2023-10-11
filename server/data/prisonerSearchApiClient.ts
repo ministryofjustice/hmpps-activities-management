@@ -5,7 +5,6 @@ import {
   PagePrisoner,
   Prisoner,
   PrisonerNumbers,
-  PrisonerSearchCriteria,
   PrisonerSearchQuery,
 } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
@@ -20,16 +19,6 @@ export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
       {
         path: `/prison/${prisonCode}/prisoners`,
         query: { page: page.toString(), size: size.toString() },
-      },
-      user,
-    )
-  }
-
-  async searchInmates(prisonerSearchCriteria: PrisonerSearchCriteria, user: ServiceUser): Promise<Prisoner[]> {
-    return this.post(
-      {
-        path: '/prisoner-search/match-prisoners',
-        data: prisonerSearchCriteria,
       },
       user,
     )
