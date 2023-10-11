@@ -68,30 +68,34 @@
                 }) }}
 
                 {% if payRateType === "single" %}
-                    {% set incentiveLevelOptions = [] %}
-                    {% for incentiveLevel in incentiveLevels %}
-                        {% set incentiveLevelOptions = (incentiveLevelOptions.push(
-                            {
-                                value: incentiveLevel.levelName,
-                                text: incentiveLevel.levelName,
-                                checked: incentiveLevel.levelName == formResponses.incentiveLevel or (incentiveLevel.levelName == iep and not formResponses)
-                            }
-                        ), incentiveLevelOptions) %}
-                    {% endfor %}
-                    {{ govukRadios({
-                        name: "incentiveLevel",
-                        fieldset: {
-                            legend: {
-                                text: "3. Select the incentive level",
-                                classes: "govuk-fieldset__legend--s"
-                            }
-                        },
-                        hint: {
-                          text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
-                        },
-                        items: incentiveLevelOptions,
-                        errorMessage: validationErrors | findError('incentiveLevel')
-                    }) }}
+                    {% if session.req.params.mode == 'edit' and hasAllocations %}
+                        <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
+                    {% else %}
+                        {% set incentiveLevelOptions = [] %}
+                        {% for incentiveLevel in incentiveLevels %}
+                            {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                                {
+                                    value: incentiveLevel.levelName,
+                                    text: incentiveLevel.levelName,
+                                    checked: incentiveLevel.levelName == formResponses.incentiveLevel or (incentiveLevel.levelName == iep and not formResponses)
+                                }
+                            ), incentiveLevelOptions) %}
+                        {% endfor %}
+                        {{ govukRadios({
+                            name: "incentiveLevel",
+                            fieldset: {
+                                legend: {
+                                    text: "3. Select the incentive level",
+                                    classes: "govuk-fieldset__legend--s"
+                                }
+                            },
+                            hint: {
+                                text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
+                            },
+                            items: incentiveLevelOptions,
+                            errorMessage: validationErrors | findError('incentiveLevel')
+                        }) }}
+                    {% endif %}
                 {% endif %}
 
                 {{ govukButton({

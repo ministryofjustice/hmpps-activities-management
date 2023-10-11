@@ -52,16 +52,15 @@
                         }
                     ), rows) %}
 
-                    {% set cardItems = [] %}
+                    {% set cardItems = [
+                        {
+                            href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
+                            text: "Change",
+                            classes: "govuk-link--no-visited-state",
+                            attributes: { 'data-qa': 'change-pay' }
+                        }
+                    ] %}
                     {% if not pay.allocationCount %}
-                        {% set cardItems = (cardItems.push(
-                            {
-                                href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
-                                text: "Change",
-                                classes: "govuk-link--no-visited-state",
-                                attributes: { 'data-qa': 'change-pay' }
-                            }
-                        ), cardItems) %}
                         {% set cardItems = (cardItems.push(
                             {
                                 href: "../remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
@@ -84,40 +83,6 @@
                     }) }}
                 {% endfor %}
             {% endfor %}
-
-            {% if flatPay | length %}
-                <h2 class="govuk-heading-m">Flat rate (applies to all incentive levels)</h2>
-            {% endif %}
-            {% set rows = [] %}
-            {% for flatRate in flatPay %}
-                {% set rows = (rows.push(
-                    {
-                        key: {
-                            text: flatRate.prisonPayBand.alias
-                        },
-                        value: {
-                            text: flatRate.rate | toMoney
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "../pay/flat?bandId=" + flatRate.prisonPayBand.id + '&preserveHistory=true',
-                                    text: "Change",
-                                    visuallyHiddenText: "change pay rate"
-                                },
-                                {
-                                    href: "../remove-flat-rate?bandId=" + flatRate.prisonPayBand.id + '&preserveHistory=true',
-                                    text: "Remove",
-                                    visuallyHiddenText: "remove flat rate"
-                                }
-                            ]
-                        }
-                    }
-                ), rows) %}
-            {% endfor %}
-            {{ govukSummaryList({
-                rows: rows
-            }) if rows | length }}
 
             <div class="govuk-!-margin-bottom-6 govuk-body">
                 <a href="/activities/view/{{ session.createJourney.activityId }}" class="govuk-link govuk-link--no-visited-state gov-!-margin-bottom-6">Return to edit activity page</a>

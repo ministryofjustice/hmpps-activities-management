@@ -14,10 +14,9 @@ export default class CheckPayRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { createJourney } = req.session
-    let incentiveLevelPays = []
-    incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(
+    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(
       createJourney.pay,
-      createJourney.allocations,
+      createJourney.allocations || [],
       user,
     )
     const flatPay = req.session.createJourney.flat

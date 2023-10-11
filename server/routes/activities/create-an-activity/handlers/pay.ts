@@ -9,6 +9,7 @@ import { ActivityPay, ActivityUpdateRequest, PrisonPayBand } from '../../../../@
 import { CreateAnActivityJourney } from '../journey'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
+import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 
 export class Pay {
   @Expose()
@@ -43,12 +44,17 @@ export class Pay {
 }
 
 export default class PayRoutes {
-  constructor(private readonly prisonService: PrisonService, private readonly activitiesService: ActivitiesService) {}
+  private readonly helper: IncentiveLevelPayMappingUtil
+
+  constructor(private readonly prisonService: PrisonService, private readonly activitiesService: ActivitiesService) {
+    this.helper = new IncentiveLevelPayMappingUtil(prisonService)
+  }
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { payRateType } = req.params
     const { iep, bandId } = req.query
+    const { createJourney } = req.session
 
     const [incentiveLevels, payBands, payProfile]: [IncentiveLevel[], PrisonPayBand[], AgencyPrisonerPayProfile] =
       await Promise.all([
@@ -69,6 +75,11 @@ export default class PayRoutes {
       req.session.createJourney?.pay?.find(p => p.prisonPayBand.id === +bandId && p.incentiveLevel === iep)?.rate ||
       req.session.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
 
+    const hasAllocations = await this.helper
+      .getPayGroupedByIncentiveLevel(createJourney.pay, createJourney.allocations, user)
+      .then(pays => pays.find(p => p.incentiveLevel === iep)?.pays)
+      .then(pays => pays?.find(p => p.prisonPayBand.id === +bandId).allocationCount > 0)
+
     res.render(`pages/activities/create-an-activity/pay`, {
       rate,
       iep,
@@ -78,6 +89,7 @@ export default class PayRoutes {
       payBands,
       minimumPayRate,
       maximumPayRate,
+      hasAllocations,
     })
   }
 
@@ -111,7 +123,7 @@ export default class PayRoutes {
       id: 0,
       rate: +rate,
       prisonPayBand: { id: bandId, alias: String(bandAlias), displaySequence: +displaySequence },
-      incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel).levelCode,
+      incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel)?.levelCode,
       incentiveLevel,
     } as ActivityPay
 
