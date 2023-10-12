@@ -23,7 +23,7 @@ export default class IncentiveLevelPayMappingUtil {
     const allocatedPrisonerNumbers = allocations.map(a => a.prisonerNumber)
     const [allocatedPrisoners, incentiveLevels]: [Prisoner[], IncentiveLevel[]] = await Promise.all([
       this.prisonService.searchInmatesByPrisonerNumbers(allocatedPrisonerNumbers, user),
-      await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user),
+      this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user),
     ])
 
     return _.chain(pay)

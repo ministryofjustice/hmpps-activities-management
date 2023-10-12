@@ -122,7 +122,6 @@ export default class PayRoutes {
     const [bandAlias, displaySequence] = band
 
     const newRate = {
-      id: 0,
       rate: +rate,
       prisonPayBand: { id: bandId, alias: String(bandAlias), displaySequence: +displaySequence },
       incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel)?.levelCode,

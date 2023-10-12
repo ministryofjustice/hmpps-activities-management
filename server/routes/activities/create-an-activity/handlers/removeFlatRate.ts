@@ -39,7 +39,7 @@ export default class RemoveFlatRateRoutes {
 
     return res.redirectWithSuccess(
       `check-pay${preserveHistoryString}`,
-      `Flat rate ${flatRateInfo.prisonPayBand.id} removed`,
+      `Flat rate ${flatRateInfo.prisonPayBand.alias} removed`,
     )
   }
 }
