@@ -1,0 +1,55 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
+
+{% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
+{% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
+
+{% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
+{% set pageId = 'appointment-attendance-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row govuk-!-display-none-print">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa="caption">Record attendance</span>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ appointment.appointmentName }}</h1>
+            <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }} ({{ appointment.startTime | getTimeSlotFromTime | upper }})</span>
+            <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ appointment.startDate | toDate | formatDate }}</span>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row print-only">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointment.appointmentName }}</h1>
+            <span class="govuk-caption-l">{{ appointment.startDate | toDate | formatDate }}</span>
+            <span class="govuk-caption-l">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }}</span>
+            <span class="govuk-caption-l">{{ appointment.internalLocation.description }}</span>
+            <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
+            <div class="moj-action-bar govuk-!-display-none-print">
+                {{ mojButtonMenu({
+                    items: [{
+                        attributes: { id: 'print-movement-list' },
+                        text: "Print attendance list",
+                        classes: "govuk-button--blue js-print no-js-hidden",
+                        preventDoubleClick: true
+                    }]
+                }) }}
+            </div>
+
+            <h2 class="govuk-heading-m">{{ appointment.attendees | length }} total attendee{{ "s" if appointment.attendees | length != 1 }}d</h2>
+
+            {{ attendeeList(appointment) }}
+        </div>
+    </div>
+{% endblock %}
