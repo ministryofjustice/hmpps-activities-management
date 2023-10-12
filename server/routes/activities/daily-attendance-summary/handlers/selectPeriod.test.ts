@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
-import { format, subDays } from 'date-fns'
+import { addDays, addMonths, format, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import SelectPeriodRoutes, { TimePeriod } from './selectPeriod'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
 
 describe('Route Handlers - Select period', () => {
   const handler = new SelectPeriodRoutes()
@@ -69,15 +69,11 @@ describe('Route Handlers - Select period', () => {
     it('redirect with the expected query params for when a custom date is selected', async () => {
       req.body = {
         datePresetOption: 'other',
-        date: plainToInstance(SimpleDate, {
-          day: 1,
-          month: 12,
-          year: 2022,
-        }),
+        date: new Date('2022-12-01'),
       }
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`summary?date=2022-12-1`)
+      expect(res.redirect).toHaveBeenCalledWith(`summary?date=2022-12-01`)
     })
   })
 
@@ -131,13 +127,10 @@ describe('Route Handlers - Select period', () => {
     })
 
     it('validation fails if preset option is other and a date more than 14 days in the past is entered', async () => {
+      const date15DaysAgo = addDays(new Date(), -15)
       const body = {
         datePresetOption: 'other',
-        date: {
-          day: 22,
-          month: 2,
-          year: new Date().getFullYear() - 1,
-        },
+        date: formatDatePickerDate(date15DaysAgo),
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -147,29 +140,22 @@ describe('Route Handlers - Select period', () => {
     })
 
     it('validation fails if preset option is other and a date more than 60 days in the future is entered', async () => {
+      const dateIn61Days = addDays(new Date(), 61)
       const body = {
         datePresetOption: 'other',
-        date: {
-          day: 22,
-          month: 2,
-          year: new Date().getFullYear() + 1,
-        },
+        date: formatDatePickerDate(dateIn61Days),
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'date', error: 'Enter a date within the next 60 days' }])
+      expect(errors).toEqual([{ property: 'date', error: 'Enter a date up to 60 days in the future' }])
     })
 
     it('passes validation', async () => {
       const body = {
         datePresetOption: 'other',
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
+        date: formatDatePickerDate(addMonths(new Date(), 1)),
       }
 
       const requestObject = plainToInstance(TimePeriod, body)

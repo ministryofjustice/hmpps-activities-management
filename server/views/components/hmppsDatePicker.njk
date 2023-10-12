@@ -15,7 +15,7 @@
         }) | indent(2) | trim }}
         {% if params.hint %}
             {% set hintId = params.id + "-hint" %}
-            {% set describedBy = describedBy + " " + hintId if describedBy else hintId %}
+            {% set describedBy = describedBy + ' ' + hintId if describedBy else hintId %}
             {{ govukHint({
                 id: hintId,
                 classes: params.hint.classes,
@@ -26,7 +26,7 @@
         {% endif %}
         {% if params.errorMessage %}
             {% set errorId = params.id + "-error" %}
-            {% set describedBy = describedBy + " " + errorId if describedBy else errorId %}
+            {% set describedBy = describedBy + ' ' + errorId if describedBy else errorId %}
             {{ govukErrorMessage({
                 id: errorId,
                 classes: params.errorMessage.classes,
@@ -38,7 +38,7 @@
         {% endif %}
         <div class="hmpps-datepicker-input__wrapper">
             {{ govukInput({
-                classes: "govuk-input hmpps-js-datepicker-input",
+                classes: "hmpps-js-datepicker-input" + (' govuk-input--error' if params.errorMessage),
                 id: params.id,
                 name: params.name,
                 value: params.value,
@@ -47,7 +47,8 @@
                     "maxlength": "10",
                     "data-mindate": params.minDate,
                     "data-maxdate": params.maxDate
-                }
+                },
+                describedBy: describedBy
             }) }}
             <button class="hmpps-datepicker-button hmpps-js-datepicker-button" data-button="datepicker-{{ params.name }}-toggle">
                 <span class="govuk-visually-hidden">Choose date.</span>

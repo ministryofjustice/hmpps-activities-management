@@ -1,11 +1,10 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import { IsIn, IsNotEmpty, ValidateIf, ValidateNested } from 'class-validator'
-import { format, addDays } from 'date-fns'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import IsValidDate from '../../../../validators/isValidDate'
+import { Expose, Transform } from 'class-transformer'
+import { IsDate, IsIn, IsNotEmpty, ValidateIf } from 'class-validator'
+import { addDays, startOfToday } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
-import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
+import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import DateValidator from '../../../../validators/DateValidator'
 
 enum PresetDateOptions {
   TODAY = 'today',
@@ -26,11 +25,12 @@ export class DateAndLocation {
 
   @Expose()
   @ValidateIf(o => o.datePresetOption === PresetDateOptions.OTHER)
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @DateIsSameOrBefore(() => addDays(new Date(), 60), { message: 'Enter a date up to 60 days in the future' })
-  @IsValidDate({ message: 'Enter a valid date' })
-  date: SimpleDate
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsDate({ message: 'Enter a valid date' })
+  @DateValidator(thisDate => thisDate <= addDays(startOfToday(), 60), {
+    message: 'Enter a date up to 60 days in the future',
+  })
+  date: Date
 
   @Expose()
   @IsIn(Object.values(ActivitySlotOptions), { message: 'Select a time' })
@@ -48,7 +48,6 @@ export default class SelectDateAndLocationRoutes {
     const { user } = res.locals
 
     const locationGroups = await this.activitiesService.getLocationGroups(user)
-    req.session.unlockListJourney ??= {}
 
     res.render('pages/activities/unlock-list/select-date-and-location', { locationGroups })
   }
@@ -56,26 +55,18 @@ export default class SelectDateAndLocationRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { activitySlot, location, datePresetOption, date } = req.body
 
-    req.session.unlockListJourney.timeSlot = activitySlot
-    req.session.unlockListJourney.location = location
-    req.session.unlockListJourney.subLocationFilters = null
-    req.session.unlockListJourney.activityFilter = null
-    req.session.unlockListJourney.stayingOrLeavingFilter = null
+    req.session.unlockListJourney = {
+      timeSlot: activitySlot,
+      location,
+    }
 
     const selectedDate = this.getDateValue(datePresetOption, date)
-    return res.redirect(`planned-events?date=${selectedDate}`)
+    return res.redirect(`planned-events?date=${formatIsoDate(selectedDate)}`)
   }
 
-  private getDateValue = (datePresetOption: string, date: SimpleDate): string => {
-    if (datePresetOption === PresetDateOptions.TODAY) {
-      return this.formatDate(new Date())
-    }
-    if (datePresetOption === PresetDateOptions.TOMORROW) {
-      return this.formatDate(addDays(new Date(), 1)).toString()
-    }
-    // Use the POSTed date, which is a SimpleDate.
-    return this.formatDate(date.toRichDate())
+  private getDateValue = (datePresetOption: string, date: Date): Date => {
+    if (datePresetOption === PresetDateOptions.TODAY) return new Date()
+    if (datePresetOption === PresetDateOptions.TOMORROW) return addDays(new Date(), 1)
+    return date
   }
-
-  private formatDate = (date: Date) => format(date, 'yyyy-MM-dd')
 }

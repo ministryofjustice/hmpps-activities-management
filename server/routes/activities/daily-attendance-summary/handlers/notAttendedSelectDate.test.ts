@@ -5,6 +5,7 @@ import { validate } from 'class-validator'
 import SelectDateRoutes, { DateOptions, NotAttendedDate } from './notAttendedSelectDate'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
 
 describe('Not attended routes - select date', () => {
   const handler = new SelectDateRoutes()
@@ -66,7 +67,7 @@ describe('Not attended routes - select date', () => {
     })
 
     it('redirects to not attended list with correct date', async () => {
-      const selectedDate = simpleDateFromDate(addDays(new Date(), -14))
+      const selectedDate = addDays(new Date(), 2)
 
       req.body = {
         datePresetOption: DateOptions.OTHER,
@@ -76,7 +77,7 @@ describe('Not attended routes - select date', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `attendance?date=${selectedDate.toIsoString()}&status=NotAttended&preserveHistory=true`,
+        `attendance?date=${formatIsoDate(selectedDate)}&status=NotAttended&preserveHistory=true`,
       )
     })
   })
@@ -105,17 +106,13 @@ describe('Not attended routes - select date', () => {
     it('validation fails if date option is other and a date is not provided', async () => {
       const body = {
         datePresetOption: DateOptions.OTHER,
-        date: {},
+        date: '',
       }
 
       const requestObject = plainToInstance(NotAttendedDate, body)
-      const errors = await validate(requestObject).then(errs =>
-        errs.find(r => r.property === 'date').children.flatMap(associateErrorsWithProperty),
-      )
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toContainEqual({ property: 'day', error: 'Enter a valid day' })
-      expect(errors).toContainEqual({ property: 'month', error: 'Enter a valid month' })
-      expect(errors).toContainEqual({ property: 'year', error: 'Enter a valid year' })
+      expect(errors).toContainEqual({ property: 'date', error: 'Enter a valid date' })
     })
 
     it('validation fails if preset option is other and a bad date is provided', async () => {
@@ -133,7 +130,7 @@ describe('Not attended routes - select date', () => {
     it('validation fails if date is more than 60 days into the future', async () => {
       const body = {
         datePresetOption: DateOptions.OTHER,
-        date: simpleDateFromDate(addDays(new Date(), 61)),
+        date: formatDatePickerDate(addDays(new Date(), 61)),
       }
 
       const requestObject = plainToInstance(NotAttendedDate, body)
@@ -145,7 +142,7 @@ describe('Not attended routes - select date', () => {
     it('validation fails if date is more than 14 days into the past', async () => {
       const body = {
         datePresetOption: DateOptions.OTHER,
-        date: simpleDateFromDate(addDays(new Date(), -15)),
+        date: formatDatePickerDate(addDays(new Date(), -15)),
       }
 
       const requestObject = plainToInstance(NotAttendedDate, body)
@@ -168,7 +165,7 @@ describe('Not attended routes - select date', () => {
     it('validation passes if validate date option is other and valid date entered', async () => {
       const body = {
         datePresetOption: DateOptions.OTHER,
-        date: simpleDateFromDate(addDays(new Date(), -14)),
+        date: formatDatePickerDate(addDays(new Date(), -14)),
       }
 
       const requestObject = plainToInstance(NotAttendedDate, body)
