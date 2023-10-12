@@ -598,4 +598,17 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
+
+  async getAppointmentAttendanceSummaries(
+    prisonCode: string,
+    date: string,
+    user: ServiceUser,
+  ): Promise<InternalLocationEventsSummary[]> {
+    return this.get({
+      path: `/appointments/${prisonCode}/attendance-summaries`,
+      query: { date },
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
 }

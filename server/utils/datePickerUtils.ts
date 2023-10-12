@@ -1,5 +1,6 @@
-import { isValid, parse } from 'date-fns'
+import { addDays, isValid, parse } from 'date-fns'
 import { formatDate } from './utils'
+import DateOption from '../enum/dateOption'
 
 export const parseDatePickerDate = (datePickerDate: string): Date => {
   const dateFormatPattern = /(\d{1,2})([-/,. ])(\d{1,2})[-/,. ](\d{2,4})/
@@ -51,4 +52,15 @@ export const isoDateToDatePickerDate = (isoDate: string): string => {
   const date = parseIsoDate(isoDate)
 
   return formatDatePickerDate(date)
+}
+
+export const dateFromDateOption = (dateOption: DateOption, isoDate?: string) => {
+  switch (dateOption) {
+    case DateOption.TODAY:
+      return new Date()
+    case DateOption.TOMORROW:
+      return addDays(new Date(), 1)
+    default:
+      return parseIsoDate(isoDate)
+  }
 }

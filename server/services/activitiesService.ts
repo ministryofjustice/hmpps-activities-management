@@ -353,4 +353,8 @@ export default class ActivitiesService {
       timeSlot,
     )
   }
+
+  async getAppointmentAttendanceSummaries(prisonCode: string, date: Date, user: ServiceUser) {
+    return this.activitiesApiClient.getAppointmentAttendanceSummaries(prisonCode, format(date, 'yyyy-MM-dd'), user)
+  }
 }

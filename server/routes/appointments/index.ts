@@ -25,7 +25,7 @@ export default function routes(services: Services): Router {
   router.use('/', appointmentsHomeRoutes())
 
   // Search and view appointment routes
-  router.use('/attendance', appointmentAttendanceRoutes())
+  router.use('/attendance', appointmentAttendanceRoutes(services))
   router.use('/search', appointmentSearchRoutes(services))
   router.use('/series/:appointmentSeriesId(\\d+)', appointmentSeriesDetailsRoutes(services))
   router.use('/set/:appointmentSetId(\\d+)', appointmentSetDetailsRoutes(services))
