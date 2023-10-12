@@ -4,7 +4,7 @@ import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import PrisonService from './prisonService'
 import { AgencyPrisonerPayProfile, InmateDetail, ReferenceCode } from '../@types/prisonApiImport/types'
-import { PagePrisoner, Prisoner, PrisonerSearchCriteria } from '../@types/prisonerOffenderSearchImport/types'
+import { PagePrisoner, Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 import activityLocations from './fixtures/activity_locations_1.json'
 import IncentivesApiClient from '../data/incentivesApiClient'
@@ -51,20 +51,6 @@ describe('Prison Service', () => {
     })
   })
 
-  describe('searchInmates', () => {
-    it('should search inmates using prisoner search API', async () => {
-      const searchCriteria = { lastName: 'Smith' } as PrisonerSearchCriteria
-      const expectedResult = [{ data: 'response' }] as unknown as Prisoner[]
-
-      when(prisonerSearchApiClient.searchInmates).calledWith(atLeast(searchCriteria)).mockResolvedValue(expectedResult)
-
-      const actualResult = await prisonService.searchInmates(searchCriteria, user)
-
-      expect(actualResult).toEqual(expectedResult)
-      expect(prisonerSearchApiClient.searchInmates).toHaveBeenCalledWith(searchCriteria, user)
-    })
-  })
-
   describe('searchPrisonInmates', () => {
     it('should search inmates using prisoner search API', async () => {
       const searchQuery = 'G10'
@@ -76,6 +62,42 @@ describe('Prison Service', () => {
       const actualResult = await prisonService.searchPrisonInmates(searchQuery, user)
       expect(actualResult).toEqual(expectedResult)
       expect(prisonerSearchApiClient.searchPrisonInmates).toHaveBeenCalledWith(searchQuery, 'MDI', user)
+    })
+  })
+
+  describe('searchInmatesByPrisonerNumbers', () => {
+    it('should search inmates using prisoner search API', async () => {
+      const expectedResult = [{ content: 'response' }] as unknown as Prisoner[]
+      when(prisonerSearchApiClient.searchByPrisonerNumbers)
+        .calledWith({ prisonerNumbers: ['ABC123'] }, user)
+        .mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.searchInmatesByPrisonerNumbers(['ABC123'], user)
+      expect(actualResult).toEqual(expectedResult)
+    })
+
+    it('should batch up large requests', async () => {
+      prisonerSearchApiClient.searchByPrisonerNumbers = jest.fn()
+      const requestedPrisonerNumbers = Array(1500)
+        .fill(0)
+        .map((v, i) => String(i))
+
+      const expectedResult = [{ content: 'response' }] as unknown as Prisoner[]
+      when(prisonerSearchApiClient.searchByPrisonerNumbers).mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.searchInmatesByPrisonerNumbers(requestedPrisonerNumbers, user)
+      expect(actualResult).toEqual([expectedResult, expectedResult].flat())
+      expect(prisonerSearchApiClient.searchByPrisonerNumbers).toBeCalledTimes(2)
+    })
+
+    it('should not request duplicates multiple times', async () => {
+      const expectedResult = [{ content: 'response' }] as unknown as Prisoner[]
+      when(prisonerSearchApiClient.searchByPrisonerNumbers)
+        .calledWith({ prisonerNumbers: ['ABC123'] }, user)
+        .mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.searchInmatesByPrisonerNumbers(['ABC123', 'ABC123'], user)
+      expect(actualResult).toEqual(expectedResult)
     })
   })
 
