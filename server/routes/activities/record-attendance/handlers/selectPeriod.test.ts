@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
-import { format, subDays } from 'date-fns'
+import { addDays, format, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import SelectPeriodRoutes, { TimePeriod } from './selectPeriod'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
 
 describe('Route Handlers - Select period', () => {
   const handler = new SelectPeriodRoutes()
@@ -56,11 +56,7 @@ describe('Route Handlers - Select period', () => {
     it('redirect with the expected query params for when a custom date is selected', async () => {
       req.body = {
         datePresetOption: 'other',
-        date: plainToInstance(SimpleDate, {
-          day: 1,
-          month: 12,
-          year: 2022,
-        }),
+        date: new Date('2022/12/01'),
       }
 
       await handler.POST(req, res)
@@ -117,30 +113,22 @@ describe('Route Handlers - Select period', () => {
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
     })
 
-    it('validation fails if preset option is other and a date after today is provided', async () => {
+    it('validation fails if preset option is other and a date more than 60 days in the future is provided', async () => {
       const body = {
         datePresetOption: 'other',
-        date: {
-          day: 22,
-          month: 2,
-          year: new Date().getFullYear() + 1,
-        },
+        date: formatDatePickerDate(addDays(new Date(), 61)),
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'date', error: 'Enter a date up to 60 days in the future.' }])
+      expect(errors).toEqual([{ property: 'date', error: 'Enter a date up to 60 days in the future' }])
     })
 
     it('passes validation', async () => {
       const body = {
         datePresetOption: 'other',
-        date: {
-          day: 27,
-          month: 2,
-          year: 2022,
-        },
+        date: '27/2/2022',
       }
 
       const requestObject = plainToInstance(TimePeriod, body)

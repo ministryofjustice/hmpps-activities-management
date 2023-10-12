@@ -5,11 +5,9 @@ export default class SelectPeriodPage extends Page {
     super('select-period-page')
   }
 
-  enterDate = (date: string) => {
+  enterDate = (date: Date) => {
     cy.get('#datePresetOption-3').click()
-    cy.get('#date-day').type(date.split('-')[2])
-    cy.get('#date-month').type(date.split('-')[1])
-    cy.get('#date-year').type(date.split('-')[0])
+    this.selectDatePickerDate(date)
   }
 
   submit = () => cy.get('button').contains('Submit').click()

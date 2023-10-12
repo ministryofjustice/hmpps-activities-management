@@ -1,10 +1,9 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import { IsIn, ValidateIf, ValidateNested } from 'class-validator'
-import { addDays, format, subDays } from 'date-fns'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import IsValidDate from '../../../../validators/isValidDate'
-import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
+import { Expose, Transform } from 'class-transformer'
+import { IsDate, IsIn, ValidateIf } from 'class-validator'
+import { addDays, startOfToday, subDays } from 'date-fns'
+import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import DateValidator from '../../../../validators/DateValidator'
 
 enum PresetDateOptions {
   TODAY = 'today',
@@ -19,11 +18,12 @@ export class TimePeriod {
 
   @Expose()
   @ValidateIf(o => o.datePresetOption === PresetDateOptions.OTHER)
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @IsValidDate({ message: 'Enter a valid date' })
-  @DateIsSameOrBefore(() => addDays(new Date(), 60), { message: 'Enter a date up to 60 days in the future.' })
-  date: SimpleDate
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsDate({ message: 'Enter a valid date' })
+  @DateValidator(thisDate => thisDate <= addDays(startOfToday(), 60), {
+    message: 'Enter a date up to 60 days in the future',
+  })
+  date: Date
 }
 
 export default class SelectPeriodRoutes {
@@ -31,15 +31,13 @@ export default class SelectPeriodRoutes {
     res.render('pages/activities/record-attendance/select-period')
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    let selectedDate: Date
-    if (req.body.datePresetOption === PresetDateOptions.TODAY) {
-      selectedDate = new Date()
-    } else if (req.body.datePresetOption === PresetDateOptions.YESTERDAY) {
-      selectedDate = subDays(new Date(), 1)
-    } else {
-      selectedDate = req.body.date.toRichDate()
-    }
+    const selectedDate = this.selectedDate(req.body)
+    res.redirect(`activities?date=${formatIsoDate(selectedDate)}`)
+  }
 
-    res.redirect(`activities?date=${format(selectedDate, 'yyyy-MM-dd')}`)
+  private selectedDate(form: TimePeriod) {
+    if (form.datePresetOption === PresetDateOptions.TODAY) return new Date()
+    if (form.datePresetOption === PresetDateOptions.YESTERDAY) return subDays(new Date(), 1)
+    return form.date
   }
 }

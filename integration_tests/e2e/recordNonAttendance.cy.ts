@@ -1,4 +1,3 @@
-import { format } from 'date-fns'
 import IndexPage from '../pages/index'
 import Page from '../pages/page'
 import SelectPeriodPage from '../pages/recordAttendance/selectPeriod'
@@ -47,7 +46,7 @@ context('Record non attendance', () => {
     recordAttendancePage.recordAttendanceCard().click()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
-    selectPeriodPage.enterDate(format(new Date(2023, 1, 2), 'yyyy-MM-dd'))
+    selectPeriodPage.enterDate(new Date(2023, 1, 2))
     selectPeriodPage.submit()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)

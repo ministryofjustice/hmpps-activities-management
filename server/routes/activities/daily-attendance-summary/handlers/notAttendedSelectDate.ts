@@ -1,11 +1,9 @@
-import { IsEnum, ValidateIf, ValidateNested } from 'class-validator'
+import { IsDate, IsEnum, ValidateIf } from 'class-validator'
 import { Request, Response } from 'express'
-import { Type } from 'class-transformer'
-import { addDays, subDays } from 'date-fns'
-import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
-import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
-import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
-import IsValidDate from '../../../../validators/isValidDate'
+import { Transform } from 'class-transformer'
+import { addDays, startOfToday, subDays } from 'date-fns'
+import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import DateValidator from '../../../../validators/DateValidator'
 
 export enum DateOptions {
   TODAY = 'today',
@@ -18,12 +16,15 @@ export class NotAttendedDate {
   datePresetOption: DateOptions
 
   @ValidateIf(o => o.datePresetOption === DateOptions.OTHER)
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @IsValidDate({ message: 'Enter a valid date' })
-  @DateIsSameOrAfter(() => subDays(new Date(), 14), { message: 'Enter a date within the last 14 days' })
-  @DateIsSameOrBefore(() => addDays(new Date(), 60), { message: 'Enter a date up to 60 days in the future' })
-  date?: SimpleDate
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsDate({ message: 'Enter a valid date' })
+  @DateValidator(thisDate => thisDate >= subDays(startOfToday(), 14), {
+    message: 'Enter a date within the last 14 days',
+  })
+  @DateValidator(thisDate => thisDate <= addDays(startOfToday(), 60), {
+    message: 'Enter a date up to 60 days in the future',
+  })
+  date?: Date
 }
 
 export default class SelectDateRoutes {
@@ -34,17 +35,13 @@ export default class SelectDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { datePresetOption, date } = req.body
+    const selectedDate = this.selectedDate(req.body)
+    res.redirect(`attendance?date=${formatIsoDate(selectedDate)}&status=NotAttended&preserveHistory=true`)
+  }
 
-    let selectedDate
-    if (datePresetOption === DateOptions.OTHER) {
-      selectedDate = date
-    } else if (datePresetOption === DateOptions.YESTERDAY) {
-      selectedDate = simpleDateFromDate(addDays(new Date(), -1))
-    } else {
-      selectedDate = simpleDateFromDate(new Date())
-    }
-
-    res.redirect(`attendance?date=${selectedDate.toIsoString()}&status=NotAttended&preserveHistory=true`)
+  private selectedDate(form: NotAttendedDate) {
+    if (form.datePresetOption === DateOptions.TODAY) return new Date()
+    if (form.datePresetOption === DateOptions.YESTERDAY) return subDays(new Date(), 1)
+    return form.date
   }
 }
