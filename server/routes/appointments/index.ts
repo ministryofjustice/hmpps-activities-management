@@ -6,6 +6,7 @@ import appointmentSeriesDetailsRoutes from './appointment-series'
 import appointmentSetDetailsRoutes from './appointment-set'
 import appointmentDetailsRoutes from './appointment'
 import appointmentSearchRoutes from './search'
+import appointmentAttendanceRoutes from './attendance'
 import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
@@ -24,6 +25,7 @@ export default function routes(services: Services): Router {
   router.use('/', appointmentsHomeRoutes())
 
   // Search and view appointment routes
+  router.use('/attendance', appointmentAttendanceRoutes())
   router.use('/search', appointmentSearchRoutes(services))
   router.use('/series/:appointmentSeriesId(\\d+)', appointmentSeriesDetailsRoutes(services))
   router.use('/set/:appointmentSetId(\\d+)', appointmentSetDetailsRoutes(services))
