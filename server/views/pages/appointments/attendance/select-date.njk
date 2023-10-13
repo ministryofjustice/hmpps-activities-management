@@ -38,8 +38,8 @@
                             checked: formResponses.dateOption == DateOption.TODAY
                         },
                         {
-                            value: DateOption.TOMORROW,
-                            text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
+                            value: DateOption.YESTERDAY,
+                            text: "Yesterday - " + now | addDays(-1) | formatDate('d MMMM yyyy', false),
                             checked: formResponses.dateOption == DateOption.TOMORROW
                         },
                         {

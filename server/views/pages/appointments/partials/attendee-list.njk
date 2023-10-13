@@ -49,26 +49,6 @@
         ]), attendeeListRows) %}
     {% endfor %}
 
-    {% set attendeeActionItems = [{
-        href: appointmentLink + "/movement-slip",
-        text: "Print movement slip" + ("s" if appointment.attendees.length > 1 ),
-        classes: "govuk-link--no-visited-state",
-        attributes: {
-            'target': '_blank',
-            'data-qa': 'print-movement-slips'
-        }
-    }] if appointment.isExpired == false %}
-    {% if appointment.appointmentType == AppointmentType.GROUP and appointment.isExpired == false %}
-        {% set attendeeActionItems = (attendeeActionItems.push(
-            {
-                href: appointmentLink + "/edit/start/prisoners/add",
-                text: "Add attendees",
-                classes: "govuk-link--no-visited-state",
-                attributes: { 'data-qa': 'add-prisoners' }
-            }
-        ), attendeeActionItems) %}
-    {% endif %}
-
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper" data-qa="prisoner-list-title">
             <h2 class="govuk-summary-card__title">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
@@ -80,6 +60,9 @@
                         </a>
                     </li>
                 {% endif %}
+                <li class="govuk-summary-card__action{{ " govuk-!-margin-left-2" if appointment.isExpired == false }}">
+                    <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/attendance" }}" data-qa="add-prisoners">Record attendance</a>
+                </li>
                 {% if appointment.appointmentType == AppointmentType.GROUP and appointment.isExpired == false %}
                     <li class="govuk-summary-card__action">
                         <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/edit/start/prisoners/add" }}" data-qa="add-prisoners">Add attendees</a>

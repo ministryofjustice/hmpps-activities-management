@@ -1,4 +1,4 @@
-import { addDays, isValid, parse } from 'date-fns'
+import { addDays, isValid, parse, subDays } from 'date-fns'
 import { formatDate } from './utils'
 import DateOption from '../enum/dateOption'
 
@@ -56,6 +56,8 @@ export const isoDateToDatePickerDate = (isoDate: string): string => {
 
 export const dateFromDateOption = (dateOption: DateOption, isoDate?: string) => {
   switch (dateOption) {
+    case DateOption.YESTERDAY:
+      return subDays(new Date(), 1)
     case DateOption.TODAY:
       return new Date()
     case DateOption.TOMORROW:

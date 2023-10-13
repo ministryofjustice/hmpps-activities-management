@@ -51,6 +51,7 @@ import {
   InternalLocationEvents,
   AppointmentAttendanceRequest,
   Appointment,
+  AppointmentAttendanceSummary,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -605,7 +606,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     prisonCode: string,
     date: string,
     user: ServiceUser,
-  ): Promise<InternalLocationEventsSummary[]> {
+  ): Promise<AppointmentAttendanceSummary[]> {
     return this.get({
       path: `/appointments/${prisonCode}/attendance-summaries`,
       query: { date },

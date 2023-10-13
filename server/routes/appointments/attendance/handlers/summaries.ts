@@ -15,11 +15,9 @@ export default class SummariesRoutes {
       return res.redirect('select-date')
     }
 
-    const summaries = await this.activitiesService.getAppointmentAttendanceSummaries(
-      user.activeCaseLoadId,
-      dateOptionDate,
-      user,
-    )
+    const summaries = (
+      await this.activitiesService.getAppointmentAttendanceSummaries(user.activeCaseLoadId, dateOptionDate, user)
+    ).filter(s => !s.isCancelled)
 
     return res.render('pages/appointments/attendance/summaries', {
       dateOption,
