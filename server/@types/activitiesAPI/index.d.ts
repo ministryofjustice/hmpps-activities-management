@@ -1256,15 +1256,15 @@ export interface components {
       /**
        * Format: date-time
        * @description
-       *     The date and time the attendance record the specific appointment in an appointment series or set was marked.
-       *     A null value means that the prisoner's attendance has not been recorded yet.
+       *     The latest date and time attendance was recorded. Note that attendance records can be updated and this is the most
+       *     recent date and time it was recorded. A null value means that the prisoner's attendance has not been recorded yet.
        */
       attendanceRecordedTime?: string
       /**
        * @description
-       *     The username of the user authenticated via HMPPS auth that marked the attendance record the specific appointment in
-       *     an appointment series or set.
-       *     A null value means that the prisoner's attendance has not been recorded yet.
+       *     The username of the user authenticated via HMPPS auth that last recorded attendance. Note that attendance records
+       *     can be updated and this is the most recent user that marked attendance. A null value means that the prisoner's
+       *     attendance has not been recorded yet.
        *
        * @example AAA01U
        */
@@ -1436,7 +1436,7 @@ export interface components {
        */
       numberOfAppointments: number
     }
-    /** @description The update request with the new appointment details and how to apply the update */
+    /** @description The lists of prison numbers to mark as attended and non-attended */
     AppointmentAttendanceRequest: {
       /**
        * @description The prisoner or prisoners that attended the appointment
@@ -4923,9 +4923,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       first?: boolean
       last?: boolean
       empty?: boolean
@@ -5670,6 +5670,14 @@ export interface components {
        *     A null value means that the prisoner's attendance has not been recorded yet.
        */
       attended?: boolean
+      /**
+       * Format: date-time
+       * @description
+       *     The latest date and time attendance was recorded. Note that attendance records can be updated and this is the most
+       *     recent date and time it was recorded. A null value means that the prisoner's attendance has not been recorded yet.
+       */
+      attendanceRecordedTime?: string
+      attendanceRecordedBy?: components['schemas']['UserSummary']
     }
     /**
      * @description
@@ -8917,6 +8925,9 @@ export interface operations {
       query: {
         /** @description Date of appointments (required). Format YYYY-MM-DD */
         date: string
+      }
+      header?: {
+        'Caseload-Id'?: string
       }
       path: {
         /** @description The 3-digit prison code (required) */

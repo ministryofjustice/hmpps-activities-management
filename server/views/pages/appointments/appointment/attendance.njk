@@ -1,55 +1,133 @@
 {% extends "layout.njk" %}
 
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
-{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
-
-{% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
-{% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "components/sticky-select.njk" import stickySelect %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-attendance-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkText = "Choose a different appointment" %}
+{% set hardBackLinkHref = "/appointments/attendance/summaries?dateOption=other&date=" + appointment.startDate | toDate | formatDate('yyyy-MM-dd') %}
+
+{% macro attendanceTag(attended) %}
+    {% if attended === true %}
+        {{ govukTag({ text: 'Attended', classes: 'govuk-tag--green' }) }}
+    {% elseif attended === false %}
+        {{ govukTag({ text: 'Not attended', classes: 'govuk-tag--red' }) }}
+    {% else %}
+        Not recorded yet
+    {% endif %}
+{% endmacro %}
 
 {% block content %}
-    <div class="govuk-grid-row govuk-!-display-none-print">
+    <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa="caption">Record attendance</span>
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ appointment.appointmentName }}</h1>
-            <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }} ({{ appointment.startTime | getTimeSlotFromTime | upper }})</span>
-            <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ appointment.startDate | toDate | formatDate }}</span>
-        </div>
-    </div>
+            <h1 class="govuk-heading-l govuk-!-margin-0" data-qa='heading'>{{ appointment.appointmentName }}</h1>
+            <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }} ({{ appointment.startTime | getTimeSlotFromTime | upper }})</span>
+            <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startDate | toDate | formatDate }}</span>
+            <span class="govuk-caption-l govuk-!-margin-bottom-4">{{ appointment.internalLocation.description }}</span>
 
-    <div class="govuk-grid-row print-only">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointment.appointmentName }}</h1>
-            <span class="govuk-caption-l">{{ appointment.startDate | toDate | formatDate }}</span>
-            <span class="govuk-caption-l">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }}</span>
-            <span class="govuk-caption-l">{{ appointment.internalLocation.description }}</span>
-            <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
-        </div>
-    </div>
+            <p class="govuk-body">
+                <a href="/appointments/{{ appointment.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View appointment details</a>
+            </p>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
-            <div class="moj-action-bar govuk-!-display-none-print">
-                {{ mojButtonMenu({
-                    items: [{
-                        attributes: { id: 'print-movement-list' },
-                        text: "Print attendance list",
-                        classes: "govuk-button--blue js-print no-js-hidden",
-                        preventDoubleClick: true
-                    }]
+            <h2 class="govuk-heading-m">{{ attendanceSummary.attendeeCount }} attendee{{ "s" if attendanceSummary.attendeeCount != 1 }}</h2>
+
+            {% if attendanceSummary.attendeeCount > 1 %}
+                <ul class="govuk-list">
+                    <li>
+                        <span>Attended:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
+                    </li>
+                    <li>
+                        <span>Non attended:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                    </li>
+                    <li>
+                        <span>Not recorded yet:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
+                    </li>
+                </ul>
+            {% endif %}
+
+            {% if attendanceSummary.lastMarkedAttendee %}
+                {{ govukInsetText({
+                    html: 'Last updated by ' + attendanceSummary.lastMarkedAttendee.attendanceRecordedBy | fullName | toTitleCase | initialiseName + ' at ' + attendanceSummary.lastMarkedAttendee.attendanceRecordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate
                 }) }}
-            </div>
-
-            <h2 class="govuk-heading-m">{{ appointment.attendees | length }} total attendee{{ "s" if appointment.attendees | length != 1 }}d</h2>
-
-            {{ attendeeList(appointment) }}
+            {% endif %}
         </div>
     </div>
+
+    {% set attendeeListRows = [] %}
+    {% for attendee in appointment.attendees %}
+        {% set prisoner = attendee.prisoner %}
+        {% set attendeeListRows = (attendeeListRows.push({
+            visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase | prisonerName(false),
+            value: prisoner.prisonerNumber,
+            selectable: true,
+
+            items: [
+                {
+                    html: showProfileLink({
+                        name: prisoner | fullName,
+                        prisonerNumber: prisoner.prisonerNumber,
+                        link: true
+                    }),
+                    attributes: {
+                        'data-qa': 'prisoner-' + loop.index + '-name-and-number',
+                        "data-sort-value": prisoner | fullName | toTitleCase | prisonerName(false)
+                    }
+                }, {
+                    text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status),
+                    attributes: {
+                        'data-qa': 'prisoner-' + loop.index + '-location'
+                    }
+                }, {
+                    html: attendanceTag(attendee.attended),
+                    attributes: {
+                        'data-qa': 'prisoner-' + loop.index + '-attendance'
+                    }
+                }
+            ]
+        }), attendeeListRows) %}
+    {% endfor %}
+
+    <form method='POST'>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+        {{ stickySelect({
+            type: 'check',
+            id: "attendanceList",
+            caption: "Attendance list",
+            captionClasses: "govuk-visually-hidden",
+            name: 'selectedAttendances',
+            head: [
+                {
+                    text: "Name",
+                    attributes: { "aria-sort": "ascending" }
+                }, {
+                    text: "Cell location",
+                    attributes: { "aria-sort": "none" }
+                }, {
+                    text: "Attendance",
+                    attributes: { "aria-sort": "none" }
+                }
+            ],
+            rows: attendeeListRows,
+            actions: [
+                {
+                    text: 'Mark as attended',
+                    formAction: 'attended'
+                }, {
+                    text: 'Mark as not attended',
+                    formAction: 'not-attended'
+                }
+            ],
+            itemsDescription: 'person',
+            itemsDescriptionPlural: 'people'
+        }) }}
+    </form>
 {% endblock %}

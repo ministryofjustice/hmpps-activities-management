@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express'
 import logger from '../../../logger'
 import ActivitiesService from '../../services/activitiesService'
+import { compareStrings, convertToTitleCase, fullName, prisonerName } from '../../utils/utils'
 
 export default (activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
@@ -10,6 +11,12 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
     try {
       if (appointment?.id !== appointmentId) {
         req.appointment = await activitiesService.getAppointmentDetails(appointmentId, user)
+        req.appointment.attendees = req.appointment.attendees.sort((a, b) =>
+          compareStrings(
+            prisonerName(convertToTitleCase(fullName(a.prisoner)), false),
+            prisonerName(convertToTitleCase(fullName(b.prisoner)), false),
+          ),
+        )
       }
     } catch (error) {
       logger.error(error, `Failed to fetch appointment, id: ${appointmentId}`)
