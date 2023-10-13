@@ -11,7 +11,7 @@ import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityT
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
-jest.mock('../../helpers/incentiveLevelPayMappingUtil', () => {
+jest.mock('../../../../utils/helpers/incentiveLevelPayMappingUtil', () => {
   return function factory() {
     return {
       getPayGroupedByIncentiveLevel: () => [
@@ -52,7 +52,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             id: 1,
           },
           riskLevel: 'High',
-          pay: [{ incentiveLevel: 'Standard', bandId: 1, rate: 100 }],
+          pay: [{ incentiveLevel: 'Standard', prisonPayBand: { id: 1 }, rate: 100 }],
           minimumIncentiveLevel: 'Standard',
           incentiveLevels: ['Standard', 'Enhanced'],
           educationLevels: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],

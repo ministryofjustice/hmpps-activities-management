@@ -70,9 +70,9 @@
 {% endblock %}
 
 {% macro currentlyAllocated() %}
-    {% set overallocatedCount = session.createJourney.allocationCount - session.createJourney.capacity %}
+    {% set overallocatedCount = (session.createJourney.allocations | length) - session.createJourney.capacity %}
     <div class="govuk-!-margin-bottom-0">
-        <div>{{ session.createJourney.allocationCount }}</div>
-        <div>There will be {{ overallocatedCount }} {{ "person" if overallocatedCount == 1 else "people" }} more than the capacity of this activity.</div>
+        <div>{{ session.createJourney.allocations | length }}</div>
+        <div class='govuk-hint'>There will be {{ overallocatedCount }} {{ "person" if overallocatedCount == 1 else "people" }} more than the capacity of this activity.</div>
     </div>
 {% endmacro %}

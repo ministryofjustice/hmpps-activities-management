@@ -70,6 +70,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
         session: {
           createJourney: {
             activityId: '1',
+            allocations: [],
           },
         },
         params: {

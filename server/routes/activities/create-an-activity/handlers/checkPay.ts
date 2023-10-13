@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import PrisonService from '../../../../services/prisonService'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
-import IncentiveLevelPayMappingUtil from '../../helpers/incentiveLevelPayMappingUtil'
+import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 
 export default class CheckPayRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -14,11 +14,18 @@ export default class CheckPayRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { createJourney } = req.session
-    let incentiveLevelPays = []
-    incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(createJourney.pay, user)
+    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(
+      createJourney.pay,
+      createJourney.allocations,
+      user,
+    )
     const flatPay = req.session.createJourney.flat
 
-    res.render(`pages/activities/create-an-activity/check-pay`, { incentiveLevelPays, flatPay })
+    if (req.params.mode === 'edit') {
+      res.render(`pages/activities/create-an-activity/edit-pay`, { incentiveLevelPays, flatPay })
+    } else {
+      res.render(`pages/activities/create-an-activity/check-pay`, { incentiveLevelPays, flatPay })
+    }
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -43,7 +50,7 @@ export default class CheckPayRoutes {
         pay: req.session.createJourney.pay.map(p => ({
           incentiveNomisCode: p.incentiveNomisCode,
           incentiveLevel: p.incentiveLevel,
-          payBandId: p.bandId,
+          payBandId: p.prisonPayBand.id,
           rate: p.rate,
         })),
       } as ActivityUpdateRequest
@@ -56,7 +63,7 @@ export default class CheckPayRoutes {
             activity.pay.push({
               incentiveNomisCode: iep.levelCode,
               incentiveLevel: iep.levelName,
-              payBandId: flatRate.bandId,
+              payBandId: flatRate.prisonPayBand.id,
               rate: flatRate.rate,
             }),
           )
