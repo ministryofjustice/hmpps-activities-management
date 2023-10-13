@@ -200,7 +200,7 @@ export default class PayRoutes {
     } else if (!req.query.bandId && !req.query.iep) {
       successMessage = `You've added a pay rate for ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}`
     } else if (affectedAllocations > 0) {
-      successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. There are ${affectedAllocations} allocations 
+      successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. There are ${affectedAllocations} people 
           assigned to this pay rate. Your changes will take effect from tomorrow.`
     } else {
       successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}.`
