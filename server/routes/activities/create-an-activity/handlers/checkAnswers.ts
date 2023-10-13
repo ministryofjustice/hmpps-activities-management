@@ -18,7 +18,11 @@ export default class CheckAnswersRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { createJourney } = req.session
-    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(createJourney.pay, [], user)
+    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(
+      createJourney.pay,
+      createJourney.allocations,
+      user,
+    )
     const startDate = formatDate(plainToInstance(SimpleDate, createJourney.startDate).toRichDate(), 'do MMMM yyyy')
     const endDate = createJourney.endDate
       ? formatDate(plainToInstance(SimpleDate, createJourney.endDate).toRichDate(), 'do MMMM yyyy')

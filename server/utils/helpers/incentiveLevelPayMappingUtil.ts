@@ -20,7 +20,9 @@ export default class IncentiveLevelPayMappingUtil {
   ): Promise<IepPay[]> {
     if (pay.length === 0) return []
 
-    const allocatedPrisonerNumbers = allocations.map(a => a.prisonerNumber)
+    const allocationsMaybe = allocations || []
+
+    const allocatedPrisonerNumbers = allocationsMaybe.map(a => a.prisonerNumber)
     const [allocatedPrisoners, incentiveLevels]: [Prisoner[], IncentiveLevel[]] = await Promise.all([
       this.prisonService.searchInmatesByPrisonerNumbers(allocatedPrisonerNumbers, user),
       this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user),
@@ -40,7 +42,7 @@ export default class IncentiveLevelPayMappingUtil {
             incentiveLevel: iepPay.incentiveLevel,
             pays: iepPay.pays.map(p => ({
               ...p,
-              allocationCount: allocations.filter(
+              allocationCount: allocationsMaybe.filter(
                 a =>
                   a.prisonPayBand.id === p.prisonPayBand.id &&
                   allocatedPrisoners.find(ap => ap.prisonerNumber === a.prisonerNumber).currentIncentive?.level

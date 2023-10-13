@@ -16,7 +16,7 @@ export default class CheckPayRoutes {
     const { createJourney } = req.session
     const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(
       createJourney.pay,
-      createJourney.allocations || [],
+      createJourney.allocations,
       user,
     )
     const flatPay = req.session.createJourney.flat
