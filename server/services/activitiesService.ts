@@ -357,4 +357,17 @@ export default class ActivitiesService {
   async getAppointmentAttendanceSummaries(prisonCode: string, date: Date, user: ServiceUser) {
     return this.activitiesApiClient.getAppointmentAttendanceSummaries(prisonCode, format(date, 'yyyy-MM-dd'), user)
   }
+
+  async markAppointmentAttendance(
+    appointmentId: number,
+    attendedPrisonNumbers: string[],
+    nonAttendedPrisonNumbers: string[],
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.putAppointmentAttendance(
+      appointmentId,
+      { attendedPrisonNumbers, nonAttendedPrisonNumbers },
+      user,
+    )
+  }
 }

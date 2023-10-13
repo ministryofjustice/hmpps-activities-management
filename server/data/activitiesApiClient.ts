@@ -49,6 +49,8 @@ import {
   GetAllocationsParams,
   InternalLocationEventsSummary,
   InternalLocationEvents,
+  AppointmentAttendanceRequest,
+  Appointment,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -609,6 +611,19 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       query: { date },
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async putAppointmentAttendance(
+    appointmentId: number,
+    request: AppointmentAttendanceRequest,
+    user: ServiceUser,
+  ): Promise<Appointment> {
+    return this.put({
+      path: `/appointments/${appointmentId}/attendance`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: request,
     })
   }
 }
