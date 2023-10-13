@@ -17,8 +17,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
                 {% set otherDateHintHtml %}
-                  <div class="govuk-!-margin-bottom-2">Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
-                  <div>You can get movement lists for dates up to 60 days from today.</div>
+                  <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
                 {% endset %}
 
                 {{ govukRadios({
@@ -34,12 +33,12 @@
                     items: [
                         {
                             value: DateOption.TODAY,
-                            text: "Today - " + now | formatDate('d MMMM yyyy', false),
+                            text: "Today - " + now | formatDate,
                             checked: formResponses.dateOption == DateOption.TODAY
                         },
                         {
                             value: DateOption.YESTERDAY,
-                            text: "Yesterday - " + now | addDays(-1) | formatDate('d MMMM yyyy', false),
+                            text: "Yesterday - " + now | addDays(-1) | formatDate,
                             checked: formResponses.dateOption == DateOption.TOMORROW
                         },
                         {

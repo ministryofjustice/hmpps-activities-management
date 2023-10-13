@@ -48,7 +48,7 @@ export default class AppointmentAttendanceRoutes {
       prisonNumbers.length === 1 ? 'person' : 'people'
     }`
 
-    return res.redirectWithSuccess('attendance', 'Non attendance recorded', successMessage)
+    return res.redirectWithSuccess('attendance', 'Non-attendance recorded', successMessage)
   }
 
   private getAttendanceSummary = (appointment: AppointmentDetails) => {
@@ -60,16 +60,6 @@ export default class AppointmentAttendanceRoutes {
       attendedPercentage: 0,
       notAttendedPercentage: 0,
       notRecordedPercentage: 0,
-      lastMarkedAttendee: appointment.attendees
-        .filter(a => a.attended)
-        .sort((a, b) => {
-          const aDate = new Date(a.attendanceRecordedTime)
-          const bDate = new Date(b.attendanceRecordedTime)
-          if (aDate > bDate) return 1
-          if (aDate < bDate) return -1
-          return 0
-        })
-        .pop(),
     }
 
     if (attendanceSummary.attendeeCount > 0) {
