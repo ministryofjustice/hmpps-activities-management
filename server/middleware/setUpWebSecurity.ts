@@ -22,6 +22,7 @@ export default function setUpWebSecurity(): Router {
   // page by an attacker.
 
   const scriptSrc = ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`]
+  const connectSrc = ["'self' *.applicationinsights.azure.com"]
   const styleSrc = ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`]
   const imgSrc = ["'self'", 'data:']
   const fontSrc = ["'self'"]
@@ -37,6 +38,7 @@ export default function setUpWebSecurity(): Router {
         directives: {
           defaultSrc: ["'self'"],
           scriptSrc,
+          connectSrc,
           styleSrc,
           imgSrc,
           fontSrc,
