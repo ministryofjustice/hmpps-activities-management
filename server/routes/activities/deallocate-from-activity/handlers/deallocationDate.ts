@@ -1,49 +1,49 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import { ValidateNested, ValidationArguments } from 'class-validator'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import IsValidDate from '../../../../validators/isValidDate'
-import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
-import { formatDate } from '../../../../utils/utils'
-import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
+import { Expose, Transform } from 'class-transformer'
+import { IsDate } from 'class-validator'
+import { startOfToday } from 'date-fns'
 import { DeallocateFromActivityJourney } from '../journey'
+import {
+  formatIsoDate,
+  isoDateToDatePickerDate,
+  parseDatePickerDate,
+  parseIsoDate,
+} from '../../../../utils/datePickerUtils'
+import DateValidator from '../../../../validators/DateValidator'
 
 export class DeallocationDate {
   @Expose()
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @DateIsSameOrAfter(o => new Date(o.deallocateJourney.latestAllocationStartDate), {
-    message: (args: ValidationArguments) => {
-      const { deallocateJourney } = args.object as { deallocateJourney: DeallocateFromActivityJourney }
-      const allocationStartDate = formatDate(new Date(deallocateJourney.latestAllocationStartDate), 'd MMMM yyyy')
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsDate({ message: 'Enter a valid end date' })
+  @DateValidator(date => date > startOfToday(), { message: "Enter a date after today's date" })
+  @DateValidator((date, { deallocateJourney }) => date >= parseIsoDate(deallocateJourney.latestAllocationStartDate), {
+    message: ({ object }) => {
+      const { deallocateJourney } = object as { deallocateJourney: DeallocateFromActivityJourney }
+      const allocationStartDate = isoDateToDatePickerDate(deallocateJourney.latestAllocationStartDate)
       return `Enter a date on or after the allocation start date, ${allocationStartDate}`
     },
   })
-  @DateIsSameOrBefore(
-    o => (o.deallocateJourney.activity.endDate ? new Date(o.deallocateJourney.activity.endDate) : null),
+  @DateValidator(
+    (date, { deallocateJourney }) => {
+      return !deallocateJourney.activity?.endDate || date <= parseIsoDate(deallocateJourney.activity.endDate)
+    },
     {
-      message: (args: ValidationArguments) => {
-        const { deallocateJourney } = args.object as { deallocateJourney: DeallocateFromActivityJourney }
-        const activityEndDate = formatDate(new Date(deallocateJourney.activity.endDate), 'd MMMM yyyy')
+      message: ({ object }) => {
+        const { deallocateJourney } = object as { deallocateJourney: DeallocateFromActivityJourney }
+        const activityEndDate = isoDateToDatePickerDate(deallocateJourney.activity.endDate)
         return `Enter a date on or before the activity's scheduled end date, ${activityEndDate}`
       },
     },
   )
-  @IsValidDate({ message: 'Enter a valid end date' })
-  deallocationDate: SimpleDate
-
-  @Expose()
-  startDate: string
+  deallocationDate: Date
 }
 
 export default class DeallocationDateRoutes {
-  GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/activities/deallocate-from-activity/deallocation-date')
-  }
+  GET = async (req: Request, res: Response) => res.render('pages/activities/deallocate-from-activity/deallocation-date')
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { deallocationDate } = req.body
-    req.session.deallocateJourney.deallocationDate = deallocationDate
+    req.session.deallocateJourney.deallocationDate = formatIsoDate(deallocationDate)
     res.redirectOrReturn('reason')
   }
 }

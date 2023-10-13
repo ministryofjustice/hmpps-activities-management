@@ -82,9 +82,8 @@ context('Allocate to activity', () => {
     beforeYouAllocatePage.getButton('Continue').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
-    const startDatePicker = startDatePage.getDatePicker()
     const startDate = addMonths(new Date(), 1)
-    startDatePicker.enterDate(startDate)
+    startDatePage.selectDatePickerDate(startDate)
     startDatePage.continue()
 
     const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
@@ -92,9 +91,8 @@ context('Allocate to activity', () => {
     endDateOptionPage.continue()
 
     const endDatePage = Page.verifyOnPage(EndDatePage)
-    const endDatePicker = endDatePage.getDatePicker()
     const endDate = addMonths(new Date(), 8)
-    endDatePicker.enterDate(endDate)
+    endDatePage.selectDatePickerDate(endDate)
     endDatePage.continue()
 
     const payBandPage = Page.verifyOnPage(PayBandPage)

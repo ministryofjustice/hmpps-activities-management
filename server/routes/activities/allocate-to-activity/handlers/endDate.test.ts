@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays } from 'date-fns'
-import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
+import { startOfToday } from 'date-fns'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 import EndDateRoutes, { EndDate } from './endDate'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
 
 describe('Route Handlers - Edit allocation - End date', () => {
   const handler = new EndDateRoutes()
@@ -41,40 +42,27 @@ describe('Route Handlers - Edit allocation - End date', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/end-date', {
-        activityName: 'Maths Level 1',
-        prisonerName: 'John Smith',
-        startDate: formatDate(new Date(), 'yyyy-MM-dd'),
-      })
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/end-date')
     })
   })
 
   describe('POST', () => {
     it('should save entered end date in session and redirect to the check answers page', async () => {
-      const today = new Date()
-      const endDate = simpleDateFromDate(today)
+      const endDate = startOfToday()
 
-      req.body = {
-        endDate,
-      }
+      req.body = { endDate }
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('/activities/allocate/pay-band')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('/activities/allocate/pay-band')
     })
   })
 
   describe('type validation', () => {
     it('validation fails if a value is not entered', async () => {
-      const endDate = {
-        day: '',
-        month: '',
-        year: '',
-      }
+      const endDate = ''
 
-      const body = {
-        endDate,
-      }
+      const body = { endDate }
 
       const requestObject = plainToInstance(EndDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -83,14 +71,8 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     it('validation fails if a bad value is entered', async () => {
-      const endDate = {
-        day: 'a',
-        month: '1',
-        year: '2023',
-      }
-
       const body = {
-        endDate,
+        endDate: 'a/1/2023',
       }
 
       const requestObject = plainToInstance(EndDate, body)
@@ -100,16 +82,16 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     it('validation fails if end date is not after or same as start date', async () => {
-      const endDate = simpleDateFromDate(new Date('2023-08-24'))
+      const endDate = formatDatePickerDate(new Date('2023-08-24'))
 
       const request = {
         endDate,
-        startDate: formatDate(new Date('2023-08-25'), 'yyyy-MM-dd'),
+        startDate: '2023-08-25',
         allocationId: 1,
         scheduleId: 1,
         prisonerNumber: 'ABC123',
         allocateJourney: {
-          startDate: simpleDateFromDate(addDays(new Date('2023-08-26'), 1)),
+          startDate: '2023-08-27',
           inmate: {
             prisonerNumber: 'ABC123',
           },
@@ -125,7 +107,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       expect(errors).toEqual([
         {
           property: 'endDate',
-          error: `Enter a date on or after the allocation start date, 27 August 2023`,
+          error: `Enter a date on or after the allocation start date, 27/08/2023`,
         },
       ])
     })

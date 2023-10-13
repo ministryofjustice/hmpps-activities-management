@@ -1,9 +1,7 @@
 import { Request, Response } from 'express'
-import { Expose, plainToInstance } from 'class-transformer'
+import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import { formatDate } from '../../../../utils/utils'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 export class DeallocationReason {
@@ -31,14 +29,10 @@ export default class DeallocationReasonRoutes {
     const { prisonerNumber } = req.session.allocateJourney.inmate
     const { activityId } = req.session.allocateJourney.activity
     const { user } = res.locals
-    const prisonCode = user.activeCaseLoadId
-    const allocation = {
-      endDate: formatDate(plainToInstance(SimpleDate, endDate).toRichDate(), 'yyyy-MM-dd'),
-      reasonCode: deallocationReason,
-    } as AllocationUpdateRequest
-    await this.activitiesService.updateAllocation(prisonCode, +allocationId, allocation)
-    const successMessage = `We've updated the reason for ending this allocation`
+    const allocationUpdate = { endDate, reasonCode: deallocationReason } as AllocationUpdateRequest
+    await this.activitiesService.updateAllocation(user.activeCaseLoadId, +allocationId, allocationUpdate)
 
+    const successMessage = `We've updated the reason for ending this allocation`
     res.redirectWithSuccess(
       `/activities/allocation-dashboard/${activityId}/check-allocation/${prisonerNumber}`,
       'Allocation updated',

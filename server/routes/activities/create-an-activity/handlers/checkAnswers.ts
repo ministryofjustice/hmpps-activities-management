@@ -1,10 +1,8 @@
 import { Request, Response } from 'express'
-import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityCreateRequest } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import { formatDate, mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
+import { mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 
@@ -23,17 +21,9 @@ export default class CheckAnswersRoutes {
       createJourney.allocations,
       user,
     )
-    const startDate = formatDate(plainToInstance(SimpleDate, createJourney.startDate).toRichDate(), 'do MMMM yyyy')
-    const endDate = createJourney.endDate
-      ? formatDate(plainToInstance(SimpleDate, createJourney.endDate).toRichDate(), 'do MMMM yyyy')
-      : 'Not set'
-    const flatPay = req.session.createJourney.flat
     res.render(`pages/activities/create-an-activity/check-answers`, {
       incentiveLevelPays,
       dailySlots: activitySessionToDailyTimeSlots(createJourney.scheduleWeeks, createJourney.slots),
-      startDate,
-      endDate,
-      flatPay,
     })
   }
 
@@ -58,10 +48,8 @@ export default class CheckAnswersRoutes {
       })),
       minimumEducationLevel: createJourney.educationLevels,
       description: createJourney.name,
-      startDate: formatDate(plainToInstance(SimpleDate, createJourney.startDate).toRichDate(), 'yyyy-MM-dd'),
-      endDate: createJourney.endDate
-        ? formatDate(plainToInstance(SimpleDate, createJourney.endDate).toRichDate(), 'yyyy-MM-dd')
-        : undefined,
+      startDate: createJourney.startDate,
+      endDate: createJourney.endDate,
       inCell: createJourney.inCell,
       onWing: createJourney.onWing,
       offWing: createJourney.offWing,

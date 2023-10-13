@@ -1,26 +1,23 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import { ValidateNested } from 'class-validator'
-import SimpleDate from '../../../../../commonValidationTypes/simpleDate'
-import IsValidDate from '../../../../../validators/isValidDate'
-import DateIsSameOrBefore from '../../../../../validators/dateIsSameOrBefore'
+import { Expose, Transform } from 'class-transformer'
+import { startOfToday } from 'date-fns'
+import { IsDate } from 'class-validator'
+import { formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePickerUtils'
+import DateValidator from '../../../../../validators/DateValidator'
 
 export class RequestDate {
   @Expose()
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @DateIsSameOrBefore(() => new Date(), { message: 'The date cannot be in the future' })
-  @IsValidDate({ message: 'Enter a valid request date' })
-  requestDate: SimpleDate
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsDate({ message: 'Enter a valid request date' })
+  @DateValidator(date => date <= startOfToday(), { message: 'The request date cannot be in the future' })
+  requestDate: Date
 }
 
 export default class RequestDateRoutes {
-  GET = async (req: Request, res: Response): Promise<void> => {
-    return res.render(`pages/activities/waitlist-application/request-date`)
-  }
+  GET = async (req: Request, res: Response) => res.render('pages/activities/waitlist-application/request-date')
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.waitListApplicationJourney.requestDate = req.body.requestDate
-    return res.redirectOrReturn(`activity`)
+    req.session.waitListApplicationJourney.requestDate = formatIsoDate(req.body.requestDate)
+    res.redirectOrReturn('activity')
   }
 }

@@ -1,11 +1,9 @@
-import SimpleDate from '../../../commonValidationTypes/simpleDate'
-
 export type WaitListApplicationJourney = {
   prisoner?: {
     prisonerNumber: string
     name: string
   }
-  requestDate?: SimpleDate
+  requestDate?: string
   activity?: {
     activityId: number
     scheduleId: number

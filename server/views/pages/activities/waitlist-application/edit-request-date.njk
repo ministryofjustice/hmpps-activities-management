@@ -1,8 +1,8 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-
-{% from "components/datePicker.njk" import datePicker %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 
 {% set pageTitle = applicationName + " - Waitlist - Request date" %}
 {% set pageId = 'request-date-page' %}
@@ -10,30 +10,26 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <span class="govuk-caption-xl">{{ session.waitListApplicationJourney.activity.activityName }}</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ datePicker({
+
+                <span class="govuk-caption-xl">{{ session.waitListApplicationJourney.activity.activityName }}</span>
+                {{ hmppsDatePicker({
                     id: 'requestDate',
+                    name: 'requestDate',
                     label: {
                         text: "Change the date of " + session.waitListApplicationJourney.prisoner.name + "'s application",
-                        classes: "govuk-fieldset__legend--xl",
+                        classes: "govuk-label--xl",
                         isPageHeading: true
                     },
+                    classes: 'hmpps-datepicker--fixed-width',
                     hint: {
-                        html: '
-                            <p class="govuk-body">If the application has not been dated, use today\'s date.</p>
-                            <p class="govuk-hint">For example, ' + exampleDate() + '</p>
-                        '
+                        html: govukInsetText({ text: 'If the application has not been dated, use today\'s date.' }) +
+                            '<div>Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.</div>'
                     },
-                    renderedErrorMessage: validationErrors | findError('requestDate'),
-                    validationErrors: validationErrors,
-                    formResponses: formResponses.requestDate or session.waitListApplicationJourney.requestDate
+                    errorMessage: validationErrors | findError('requestDate'),
+                    value: formResponses.requestDate or session.waitListApplicationJourney.requestDate | isoDateToDatePickerDate
                 }) }}
 
                 <div class="govuk-button-group">

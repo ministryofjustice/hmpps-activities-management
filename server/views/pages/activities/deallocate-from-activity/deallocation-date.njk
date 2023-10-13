@@ -1,9 +1,9 @@
 {% extends "layout.njk" %}
 
-{% from "components/datePicker.njk" import datePicker %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 
 {% set pageTitle = applicationName + " - Deallocate from an activity - Deallocation date" %}
 {% set pageId = 'deallocation-date-page' %}
@@ -14,7 +14,6 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <input type="hidden" id="startDate" name="startDate" value="{{ session.deallocateJourney.latestAllocationStartDate }}">
                 
                 <span class="govuk-caption-xl">{{ session.deallocateJourney.activity.activityName }}</span>
 
@@ -25,25 +24,24 @@
                         When is the last day for {{ session.deallocateJourney.allocationsToRemove | length }} people on this activity?
                     {% endif %}
                 {% endset %}
-
-                {{ datePicker({
+            
+                {{ hmppsDatePicker({
                     id: 'deallocationDate',
+                    name: 'deallocationDate',
                     label: {
                         text: pageHeading,
-                        classes: "govuk-fieldset__legend--xl",
+                        classes: "govuk-label--l",
                         isPageHeading: true
                     },
+                    classes: 'hmpps-datepicker--fixed-width',
                     hint: {
-                        text: "For example, " + exampleDate()
+                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
                     },
-                    renderedErrorMessage: validationErrors | findError('deallocationDate'),
-                    validationErrors: validationErrors,
-                    formResponses: formResponses.deallocationDate or session.deallocateJourney.deallocationDate
+                    errorMessage: validationErrors | findError('deallocationDate'),
+                    value: formResponses.deallocationDate or session.deallocateJourney.deallocationDate | isoDateToDatePickerDate
                 }) }}
 
-                {{ govukButton({
-                    text: "Continue"
-                }) }}
+                {{ govukButton({ text: "Continue" }) }}
 
                 {% if session.deallocateJourney.allocationsToRemove | length > 1 %}
                     {% set rows = [] %}

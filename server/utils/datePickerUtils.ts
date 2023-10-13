@@ -1,4 +1,4 @@
-import { addDays, isValid, parse, subDays } from 'date-fns'
+import { addDays, isValid, parse, subDays, startOfToday } from 'date-fns'
 import { formatDate } from './utils'
 import DateOption from '../enum/dateOption'
 
@@ -12,14 +12,14 @@ export const parseDatePickerDate = (datePickerDate: string): Date => {
   const separator = dateMatches[2]
   const year = dateMatches[4]
 
-  const date = parse(datePickerDate, `dd${separator}MM${separator}${'y'.repeat(year.length)}`, new Date())
+  const date = parse(datePickerDate, `dd${separator}MM${separator}${'y'.repeat(year.length)}`, startOfToday())
   if (!isValid(date)) return null
 
   return date
 }
 
 export const parseIsoDate = (isoDate: string): Date => {
-  const date = parse(isoDate, 'yyyy-MM-dd', new Date())
+  const date = parse(isoDate, 'yyyy-MM-dd', startOfToday())
 
   if (!isValid(date)) return null
 

@@ -56,17 +56,9 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           minimumIncentiveLevel: 'Standard',
           incentiveLevels: ['Standard', 'Enhanced'],
           educationLevels: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
-          startDate: {
-            day: 17,
-            month: 1,
-            year: 2023,
-          },
+          startDate: '2023-01-17',
           endDateOption: 'yes',
-          endDate: {
-            day: 18,
-            month: 1,
-            year: 2023,
-          },
+          endDate: '2023-01-18',
           scheduleWeeks: 1,
           slots: {
             '1': {
@@ -99,8 +91,6 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             pays: [{ bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150' }],
           },
         ],
-        endDate: '18th January 2023',
-        startDate: '17th January 2023',
         dailySlots: activitySessionToDailyTimeSlots(
           req.session.createJourney.scheduleWeeks,
           req.session.createJourney.slots,

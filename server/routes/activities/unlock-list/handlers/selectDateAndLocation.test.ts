@@ -161,7 +161,7 @@ describe('Unlock list routes - select date and location', () => {
     it('validation fails if preset option is other and a bad date is provided', async () => {
       const body = {
         datePresetOption: 'other',
-        date: { day: 31, month: 2, year: 2022 },
+        date: '2022/2/31',
         activitySlot: 'am',
         location: 'here',
       }

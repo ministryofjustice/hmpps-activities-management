@@ -12,12 +12,9 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
-            <span class="govuk-heading-xl govuk-!-margin-bottom-6">Why are you taking {{ session.allocateJourney.inmate.prisonerName }} off this activity?</span>
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
+            <span class="govuk-heading-l govuk-!-margin-bottom-6">Why are you taking {{ session.allocateJourney.inmate.prisonerName }} off this activity?</span>
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 

@@ -1,25 +1,14 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays, subDays } from 'date-fns'
-import { when } from 'jest-when'
+import { addDays, startOfToday, subDays } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import EndDateRoutes, { EndDate } from './endDate'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
-import ActivitiesService from '../../../../services/activitiesService'
-import atLeast from '../../../../../jest.setup'
-import PrisonService from '../../../../services/prisonService'
-import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { Allocation } from '../../../../@types/activitiesAPI/types'
-
-jest.mock('../../../../services/prisonService')
-jest.mock('../../../../services/activitiesService')
-
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
 
 describe('Route Handlers - Edit allocation - End date', () => {
-  const handler = new EndDateRoutes(activitiesService, prisonService)
+  const handler = new EndDateRoutes()
   let req: Request
   let res: Response
 
@@ -54,55 +43,9 @@ describe('Route Handlers - Edit allocation - End date', () => {
   })
 
   describe('GET', () => {
-    const allocation = {
-      id: 1,
-      prisonerNumber: 'ABC123',
-      bookingId: 1,
-      activitySummary: 'Maths Level 1',
-      scheduleId: 1,
-      activityId: 1,
-      scheduleDescription: '',
-      isUnemployment: false,
-      startDate: '2023-01-01',
-      endDate: '2023-01-31',
-      prisonPayBand: {
-        id: 1,
-        displaySequence: 1,
-        alias: 'Low',
-        description: 'Low',
-        nomisPayBand: 1,
-        prisonCode: 'MDI',
-      },
-      status: 'ACTIVE',
-    } as Allocation
-
-    beforeEach(() => {
-      when(activitiesService.getAllocation).calledWith(atLeast(1)).mockResolvedValue(allocation)
-      const prisonerInfo = {
-        prisonerNumber: 'ABC123',
-        firstName: 'John',
-        lastName: 'Smith',
-        cellLocation: '1-1-1',
-      } as Prisoner
-
-      when(prisonService.getInmateByPrisonerNumber)
-        .calledWith('ABC123', res.locals.user)
-        .mockResolvedValue(prisonerInfo)
-    })
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/end-date', {
-        allocationId: 1,
-        prisonerName: 'John Smith',
-        prisonerNumber: 'ABC123',
-        activityId: 1,
-        endDate: expect.objectContaining({
-          day: 31,
-          month: 1,
-          year: 2023,
-        }),
-        allocation,
-      })
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/end-date')
     })
   })
 
@@ -127,15 +70,9 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
   describe('type validation', () => {
     it('validation fails if a value is not entered', async () => {
-      const endDate = {
-        day: '',
-        month: '',
-        year: '',
-      }
+      const endDate = ''
 
-      const body = {
-        endDate,
-      }
+      const body = { endDate }
 
       const requestObject = plainToInstance(EndDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -144,15 +81,9 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     it('validation fails if a bad value is entered', async () => {
-      const endDate = {
-        day: 'a',
-        month: '1',
-        year: '2023',
-      }
+      const endDate = 'a/1/2023'
 
-      const body = {
-        endDate,
-      }
+      const body = { endDate }
 
       const requestObject = plainToInstance(EndDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -161,20 +92,18 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     it('validation fails if end date is not after or same as start date', async () => {
-      const endDate = simpleDateFromDate(new Date('2023-08-25'))
+      const tomorrow = addDays(startOfToday(), 1)
+      const nextWeek = addDays(startOfToday(), 7)
+      const endDate = formatDatePickerDate(tomorrow)
 
       const request = {
         endDate,
-        startDate: formatDate(new Date('2023-08-25'), 'yyyy-MM-dd'),
-        allocationId: 1,
-        scheduleId: 1,
-        prisonerNumber: 'ABC123',
         allocateJourney: {
-          startDate: simpleDateFromDate(addDays(new Date('2023-08-26'), 1)),
           inmate: {
             prisonerNumber: 'ABC123',
           },
           activity: {
+            startDate: formatIsoDate(nextWeek),
             scheduleId: 1,
           },
         },
@@ -184,27 +113,26 @@ describe('Route Handlers - Edit allocation - End date', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'endDate', error: 'Enter a date on or after the allocation start date, 27 August 2023' },
+        {
+          property: 'endDate',
+          error: `Enter a date on or after the activity's start date, ${formatDatePickerDate(nextWeek)}`,
+        },
       ])
     })
 
     it('validation passes if end date is same as start date', async () => {
-      const today = new Date()
-      const endDate = simpleDateFromDate(today)
+      const tomorrow = addDays(new Date(), 1)
+      const endDate = formatDatePickerDate(tomorrow)
 
       const request = {
         endDate,
-        startDate: formatDate(today, 'yyyy-MM-dd'),
-        allocationId: 1,
-        scheduleId: 1,
-        prisonerNumber: 'ABC123',
         allocateJourney: {
-          startDate: simpleDateFromDate(today),
           inmate: {
             prisonerNumber: 'ABC123',
           },
           activity: {
             scheduleId: 1,
+            startDate: formatIsoDate(tomorrow),
           },
         },
       }
@@ -217,16 +145,12 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
     it('validation passes if end date is after start date', async () => {
       const today = new Date()
-      const endDate = simpleDateFromDate(addDays(today, 1))
+      const tomorrow = addDays(today, 1)
 
       const request = {
-        endDate,
-        startDate: formatDate(today, 'yyyy-MM-dd'),
-        allocationId: 1,
-        scheduleId: 1,
-        prisonerNumber: 'ABC123',
+        endDate: formatDatePickerDate(tomorrow),
         allocateJourney: {
-          startDate: simpleDateFromDate(today),
+          startDate: formatIsoDate(today),
           inmate: {
             prisonerNumber: 'ABC123',
           },

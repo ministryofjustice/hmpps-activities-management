@@ -30,11 +30,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
       name: 'Maths',
       location: 'Education room 1',
     },
-    startDate: {
-      day: 1,
-      month: 1,
-      year: 2023,
-    },
+    startDate: '01/01/2023',
   } as AllocateToActivityJourney
 
   beforeEach(() => {
