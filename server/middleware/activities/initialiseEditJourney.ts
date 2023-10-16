@@ -1,6 +1,4 @@
 import { RequestHandler } from 'express'
-import { parseISO } from 'date-fns'
-import { simpleDateFromDate } from '../../commonValidationTypes/simpleDate'
 import { mapActivityModelSlotsToJourney } from '../../utils/utils'
 import ActivitiesService from '../../services/activitiesService'
 
@@ -23,8 +21,8 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
       onWing: activity.onWing,
       offWing: activity.offWing,
       riskLevel: activity.riskLevel,
-      startDate: simpleDateFromDate(parseISO(activity.startDate)),
-      endDate: activity.endDate ? simpleDateFromDate(parseISO(activity.endDate)) : null,
+      startDate: activity.startDate,
+      endDate: activity.endDate,
       minimumIncentiveLevel: activity.minimumIncentiveLevel,
       scheduleWeeks: schedule.scheduleWeeks,
       slots: mapActivityModelSlotsToJourney(schedule.slots),

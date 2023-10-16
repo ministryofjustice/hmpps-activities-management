@@ -1,9 +1,6 @@
 import { Request, Response } from 'express'
-import { plainToInstance } from 'class-transformer'
-import SimpleDate from '../../../../../commonValidationTypes/simpleDate'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { WaitingListApplicationRequest } from '../../../../../@types/activitiesAPI/types'
-import { formatDate } from '../../../../../utils/utils'
 import MetricsEvent from '../../../../../data/metricsEvent'
 import MetricsService from '../../../../../services/metricsService'
 
@@ -15,7 +12,7 @@ export default class CheckAnswersRoutes {
 
     return res.render(`pages/activities/waitlist-application/check-answers`, {
       prisoner,
-      requestDate: plainToInstance(SimpleDate, requestDate).toRichDate(),
+      requestDate,
       activityName: activity.activityName,
       requester,
       comment,
@@ -30,10 +27,7 @@ export default class CheckAnswersRoutes {
     const waitlistApplication = {
       prisonerNumber: waitListApplicationJourney.prisoner.prisonerNumber,
       activityScheduleId: waitListApplicationJourney.activity.scheduleId,
-      applicationDate: formatDate(
-        plainToInstance(SimpleDate, waitListApplicationJourney.requestDate).toRichDate(),
-        'yyyy-MM-dd',
-      ),
+      applicationDate: waitListApplicationJourney.requestDate,
       requestedBy: waitListApplicationJourney.requester,
       comments: waitListApplicationJourney.comment,
       status: waitListApplicationJourney.status,

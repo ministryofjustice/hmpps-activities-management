@@ -4,6 +4,4 @@ export default class EndDatePage extends Page {
   constructor() {
     super('create-schedule-end-date-page')
   }
-
-  getDatePicker = () => this.getDatePickerById('endDate')
 }

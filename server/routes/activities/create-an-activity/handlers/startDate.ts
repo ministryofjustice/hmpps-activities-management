@@ -1,77 +1,57 @@
 import { Request, Response } from 'express'
-import { Expose, plainToInstance, Type } from 'class-transformer'
-import { IsNotEmpty, ValidateNested, ValidationArguments } from 'class-validator'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import IsValidDate from '../../../../validators/isValidDate'
-import DateIsBeforeOtherProperty from '../../../../validators/dateIsBeforeOtherProperty'
-import { formatDate } from '../../../../utils/utils'
-import { ActivityUpdateRequest, Allocation } from '../../../../@types/activitiesAPI/types'
+import { Expose, Transform } from 'class-transformer'
+import { IsDate } from 'class-validator'
+import { startOfToday } from 'date-fns'
+import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
-import DateIsAfter from '../../../../validators/dateIsAfter'
-import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
 import { CreateAnActivityJourney } from '../journey'
+import {
+  formatIsoDate,
+  isoDateToDatePickerDate,
+  parseDatePickerDate,
+  parseIsoDate,
+} from '../../../../utils/datePickerUtils'
+import DateValidator from '../../../../validators/DateValidator'
 
 export class StartDate {
   @Expose()
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @IsNotEmpty({ message: 'Enter a valid start date' })
-  @IsValidDate({ message: 'Enter a valid start date' })
-  @DateIsBeforeOtherProperty('endDate', { message: 'Enter a date before the end date' })
-  @DateIsAfter(new Date(), { message: 'Activity start date must be in the future' })
-  @DateIsSameOrBefore(o => o.createJourney?.earliestAllocationStartDate ?? null, {
-    message: (args: ValidationArguments) => {
-      const { createJourney } = args.object as { createJourney: CreateAnActivityJourney }
-      const allocationStartDate = formatDate(new Date(createJourney.earliestAllocationStartDate), 'dd-MM-yyyy')
-      return `Enter a date on or before the first allocation start date, ${allocationStartDate}`
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsDate({ message: 'Enter a valid start date' })
+  @DateValidator(thisDate => thisDate > startOfToday(), { message: 'Activity start date must be in the future' })
+  @DateValidator(
+    (date, { createJourney }) => {
+      const allocationDate = createJourney?.earliestAllocationStartDate
+      return !allocationDate || date <= parseIsoDate(allocationDate)
     },
+    {
+      message: ({ object }) => {
+        const { createJourney } = object as { createJourney: CreateAnActivityJourney }
+        const allocationStartDate = isoDateToDatePickerDate(createJourney?.earliestAllocationStartDate)
+        return `Enter a date on or before the first allocation start date, ${allocationStartDate}`
+      },
+    },
+  )
+  @DateValidator((date, { createJourney }) => !createJourney?.endDate || date < parseIsoDate(createJourney.endDate), {
+    message: 'Enter a date before the activity end date',
   })
-  startDate: SimpleDate
-
-  @Expose()
-  endDate: string
+  startDate: Date
 }
 
 export default class StartDateRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
-    const { session } = req
-    const { user } = res.locals
-    let allocations: Allocation[]
-    if (req.params.mode === 'edit') {
-      const { scheduleId } = req.session.createJourney
-      const schedule = await this.activitiesService.getActivitySchedule(scheduleId, user)
-      if (schedule.allocations.length > 0) {
-        allocations = schedule.allocations.sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
-        req.session.createJourney.earliestAllocationStartDate = new Date(allocations[0].startDate)
-      }
-    }
-    res.render('pages/activities/create-an-activity/start-date', {
-      endDate: session.createJourney.endDate
-        ? formatDate(plainToInstance(SimpleDate, session.createJourney.endDate).toRichDate(), 'yyyy-MM-dd')
-        : undefined,
-    })
-  }
+  GET = async (req: Request, res: Response) => res.render('pages/activities/create-an-activity/start-date')
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createJourney.startDate = req.body.startDate
+    req.session.createJourney.startDate = formatIsoDate(req.body.startDate)
     if (req.params.mode === 'edit') {
       const { user } = res.locals
-      const { activityId } = req.session.createJourney
-      const prisonCode = user.activeCaseLoadId
-      const activity = {
-        startDate: formatDate(
-          plainToInstance(SimpleDate, req.session.createJourney.startDate).toRichDate(),
-          'yyyy-MM-dd',
-        ),
-      } as ActivityUpdateRequest
-      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
-      const successMessage = `We've updated the start date for ${req.session.createJourney.name}`
+      const { activityId, name, startDate } = req.session.createJourney
+      const activity = { startDate } as ActivityUpdateRequest
+      await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
 
-      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
-      req.session.returnTo = returnTo
-      res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
+      const successMessage = `We've updated the start date for ${name}`
+      res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
     } else res.redirectOrReturn(`end-date-option`)
   }
 }

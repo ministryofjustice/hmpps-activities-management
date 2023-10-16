@@ -44,7 +44,6 @@ import appointmentDetails from './fixtures/appointment_details_1.json'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
 import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
-import SimpleDate from '../commonValidationTypes/simpleDate'
 import calcCurrentWeek from '../utils/helpers/currentWeekCalculator'
 import { formatIsoDate } from '../utils/datePickerUtils'
 
@@ -527,7 +526,7 @@ describe('Activities Service', () => {
           activityName: 'Maths',
         },
         prisoners: [{ name: 'Fred', prisonerNumber: '123456', cellLocation: 'cell 1' }],
-        deallocationDate: { day: 31, month: 5, year: 2023 } as SimpleDate,
+        deallocationDate: '2023-05-31',
         deallocationReason: 'PERSONAL',
       }
 

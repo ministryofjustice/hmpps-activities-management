@@ -1,8 +1,6 @@
 import { Request, Response } from 'express'
-import { parse } from 'date-fns'
 import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { formatDate } from '../../../../../utils/utils'
 import MetricsService from '../../../../../services/metricsService'
 import MetricsEvent from '../../../../../data/metricsEvent'
 
@@ -34,11 +32,7 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
             name: 'Alan Key',
             prisonerNumber: 'ABC123',
           },
-          requestDate: {
-            day: 31,
-            month: 7,
-            year: 2023,
-          },
+          requestDate: '2023-07-31',
           activity: {
             activityId: 1,
             scheduleId: 1,
@@ -60,7 +54,7 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
           name: 'Alan Key',
           prisonerNumber: 'ABC123',
         },
-        requestDate: parse('2023-07-31', 'yyyy-MM-dd', new Date()),
+        requestDate: '2023-07-31',
         activityName: 'Test activity',
         requester: 'Alan Key',
         comment: 'test comment',
@@ -76,7 +70,7 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
         {
           prisonerNumber: 'ABC123',
           activityScheduleId: 1,
-          applicationDate: formatDate('2023-07-31', 'yyyy-MM-dd'),
+          applicationDate: '2023-07-31',
           requestedBy: 'Alan Key',
           comments: 'test comment',
           status: 'PENDING',

@@ -41,7 +41,7 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
   describe('POST', () => {
     it('should patch the application with the new request date and redirect', async () => {
       req.body = {
-        requestDate: { day: '1', month: '12', year: '2022' },
+        requestDate: new Date('2022-12-01'),
       }
 
       await handler.POST(req, res)
@@ -60,14 +60,13 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
 
   describe('type validation', () => {
     it('validation passes', async () => {
-      const requestDate = {
-        day: '01',
-        month: '12',
-        year: '2022',
-      }
+      const requestDate = '01/12/2022'
 
       const body = {
         requestDate,
+        waitListApplicationJourney: {
+          createdTime: new Date('2022-12-01').toISOString(),
+        },
       }
 
       const requestObject = plainToInstance(EditRequestDate, { ...body, ...req.session })
@@ -77,15 +76,9 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
     })
 
     it('validation fails if a value is not entered', async () => {
-      const requestDate = {
-        day: '',
-        month: '',
-        year: '',
-      }
+      const requestDate = ''
 
-      const body = {
-        requestDate,
-      }
+      const body = { requestDate }
 
       const requestObject = plainToInstance(EditRequestDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -94,15 +87,9 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
     })
 
     it('validation fails if a bad value is entered', async () => {
-      const requestDate = {
-        day: 'a',
-        month: '1',
-        year: '2023',
-      }
+      const requestDate = 'a/1/2023'
 
-      const body = {
-        requestDate,
-      }
+      const body = { requestDate }
 
       const requestObject = plainToInstance(EditRequestDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -111,14 +98,11 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
     })
 
     it('validation fails if request date is after the original creation date', async () => {
-      const requestDate = {
-        day: '02',
-        month: '12',
-        year: '2022',
-      }
-
       const body = {
-        requestDate,
+        requestDate: '02/12/2022',
+        waitListApplicationJourney: {
+          createdTime: new Date('2022-12-01').toISOString(),
+        },
       }
 
       const requestObject = plainToInstance(EditRequestDate, { ...body, ...req.session })
@@ -127,7 +111,7 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
       expect(errors).toEqual([
         {
           property: 'requestDate',
-          error: 'The date cannot be after the date that the application was originally recorded',
+          error: 'The date cannot be after the date that the application was originally recorded, 01/12/2022',
         },
       ])
     })

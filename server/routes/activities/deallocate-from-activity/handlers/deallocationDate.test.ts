@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import { plainToInstance } from 'class-transformer'
+import { addDays, startOfToday } from 'date-fns'
 import DeallocationDateRoutes from './deallocationDate'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 describe('Route Handlers - Deallocation date', () => {
   const handler = new DeallocationDateRoutes()
@@ -34,18 +34,16 @@ describe('Route Handlers - Deallocation date', () => {
 
   describe('POST', () => {
     it('redirect with the expected params for when a deallocation date is entered', async () => {
+      const tomorrow = addDays(startOfToday(), 1)
       req.body = {
-        deallocationDate: plainToInstance(SimpleDate, {
-          day: 5,
-          month: 6,
-          year: 2023,
-        }),
+        deallocationDate: tomorrow,
         deallocateJourney: {
           deallocationDate: '2023-06-05',
         },
       }
 
       await handler.POST(req, res)
+      expect(req.session.deallocateJourney.deallocationDate).toEqual(formatIsoDate(tomorrow))
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`reason`)
     })
   })

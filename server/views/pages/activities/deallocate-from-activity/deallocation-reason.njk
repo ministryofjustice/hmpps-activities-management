@@ -12,16 +12,13 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.deallocateJourney.activity.activityName }}</span>
+            <span class="govuk-caption-l">{{ session.deallocateJourney.activity.activityName }}</span>
             {% if session.deallocateJourney.allocationsToRemove | length == 1 %}
-                <span class="govuk-heading-xl">Why are you taking {{ session.deallocateJourney.prisoners[0].name }} off this activity?</span>
+                <span class="govuk-heading-l">Why are you taking {{ session.deallocateJourney.prisoners[0].name }} off this activity?</span>
             {% else %}
-                <span class="govuk-heading-xl">Why are you taking {{ session.deallocateJourney.allocationsToRemove | length }} people off this activity?</span>
+                <span class="govuk-heading-l">Why are you taking {{ session.deallocateJourney.allocationsToRemove | length }} people off this activity?</span>
             {% endif %}
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
