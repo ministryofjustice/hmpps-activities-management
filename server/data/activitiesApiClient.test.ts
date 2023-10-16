@@ -28,10 +28,12 @@ import {
   WaitingListApplicationRequest,
   WaitingListApplicationUpdateRequest,
   AppointmentUpdateRequest,
+  AppointmentAttendanceRequest,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
+import { formatIsoDate } from '../utils/datePickerUtils'
 
 const user = { token: 'token', activeCaseLoadId: 'MDI' } as ServiceUser
 
@@ -836,6 +838,38 @@ describe('activitiesApiClient', () => {
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200)
       await activitiesApiClient.patchWaitlistApplication(1, request, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getAppointmentAttendanceSummaries', () => {
+    it('should call endpoint to get appointment attendance summaries', async () => {
+      const prisonCode = 'MDI'
+      const date = formatIsoDate(new Date())
+      fakeActivitiesApi
+        .get(`/appointments/${prisonCode}/attendance-summaries`)
+        .query({ date })
+        .matchHeader('authorization', 'Bearer token')
+        .matchHeader('Caseload-Id', prisonCode)
+        .reply(200)
+      await activitiesApiClient.getAppointmentAttendanceSummaries('MDI', date, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('putAppointmentAttendance', () => {
+    it('should call endpoint to put the appointment attendance', async () => {
+      const appointmentId = 1
+      const request = {
+        attendedPrisonNumbers: ['A1234BC'],
+        nonAttendedPrisonNumbers: ['B2345CD'],
+      } as AppointmentAttendanceRequest
+      fakeActivitiesApi
+        .put(`/appointments/${appointmentId}/attendance`)
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.putAppointmentAttendance(1, request, user)
       expect(nock.isDone()).toBe(true)
     })
   })

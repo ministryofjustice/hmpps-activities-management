@@ -50,14 +50,14 @@ describe('Appointment attendance routes - select date', () => {
       expect(res.redirect).toHaveBeenCalledWith(`summaries?dateOption=${DateOption.TODAY}`)
     })
 
-    it('redirects with tomorrow date option', async () => {
+    it('redirects with yesterday date option', async () => {
       req.body = {
-        dateOption: DateOption.TOMORROW,
+        dateOption: DateOption.YESTERDAY,
       }
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`summaries?dateOption=${DateOption.TOMORROW}`)
+      expect(res.redirect).toHaveBeenCalledWith(`summaries?dateOption=${DateOption.YESTERDAY}`)
     })
 
     it('redirects with other date option and entered date', async () => {
@@ -132,9 +132,9 @@ describe('Appointment attendance routes - select date', () => {
       expect(errors).toHaveLength(0)
     })
 
-    it('passes validation if date option is tomorrow', async () => {
+    it('passes validation if date option is yesterday', async () => {
       const body = {
-        dateOption: DateOption.TOMORROW,
+        dateOption: DateOption.YESTERDAY,
       }
 
       const requestObject = plainToInstance(SelectDate, body)

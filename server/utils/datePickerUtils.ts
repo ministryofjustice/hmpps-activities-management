@@ -55,13 +55,15 @@ export const isoDateToDatePickerDate = (isoDate: string): string => {
 }
 
 export const dateFromDateOption = (dateOption: DateOption, isoDate?: string) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
   switch (dateOption) {
     case DateOption.YESTERDAY:
-      return subDays(new Date(), 1)
+      return subDays(today, 1)
     case DateOption.TODAY:
-      return new Date()
+      return today
     case DateOption.TOMORROW:
-      return addDays(new Date(), 1)
+      return addDays(today, 1)
     default:
       return parseIsoDate(isoDate)
   }
