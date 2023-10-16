@@ -47,7 +47,7 @@ export default class AppointmentDetailsPage extends Page {
 
   assertCreatedBy = (createdBy: string) => this.assertAppointmentHistory('Created by', createdBy)
 
-  assertPrintMovementSlipLink = () => this.printMovementSlipLink().contains('Print movement slip')
+  assertPrintMovementSlipLink = () => this.printMovementSlipLink().contains('View and print movement slip')
 
   getChangeLink = (property: string) =>
     cy

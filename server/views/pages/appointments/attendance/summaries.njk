@@ -55,6 +55,23 @@
         <div class="govuk-grid-column-full">
             <h2 class="govuk-heading-s">Showing {{ summaries | length }} appointment{{ "s" if summaries | length != 1 }}</h2>
 
+            {% if attendanceSummary.attendeeCount > 1 %}
+                <ul class="govuk-list">
+                    <li>
+                        <span>Attended:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
+                    </li>
+                    <li>
+                        <span>Did not attend:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                    </li>
+                    <li>
+                        <span>Not recorded yet:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
+                    </li>
+                </ul>
+            {% endif %}
+
             {{ govukTable({
                 attributes: {
                     'data-module': 'moj-sortable-table',
