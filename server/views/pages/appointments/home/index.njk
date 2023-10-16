@@ -17,7 +17,7 @@
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
                         "id": "createGroupAppointmentCard",
-                        "href": "appointments/create/start-group",
+                        "href": "/appointments/create/start-group",
                         "clickable": "true",
                         "heading": "Schedule an appointment",
                         "description": "Set up a one-off or repeating appointment for one or more people.",
@@ -27,7 +27,7 @@
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
                         "id": "createAppointmentSetCard",
-                        "href": "appointments/create/start-set",
+                        "href": "/appointments/create/start-set",
                         "clickable": "true",
                         "heading": "Schedule a set of back-to-back appointments",
                         "description": "Set up appointments for a pre-prepared list of people to attend on the same day.",
@@ -37,11 +37,21 @@
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
                         "id": "searchAppointmentsCard",
-                        "href": "appointments/search/select-date",
+                        "href": "/appointments/search/select-date",
                         "clickable": "true",
                         "heading": "Manage existing appointments",
                         "description": "Edit the details of an appointment, including cancelling, adding and removing people, and printing movement slips.",
                         "data-qa": "search-appointments-card"
+                    }) }}
+                </div>
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "recordAppointmentAttendanceCard",
+                        "href": "/appointments/attendance/select-date",
+                        "clickable": "true",
+                        "heading": "Record appointment attendance",
+                        "description": "Record, view and change appointment attendance.",
+                        "data-qa": "record-appointment-attendance-card"
                     }) }}
                 </div>
             </div>

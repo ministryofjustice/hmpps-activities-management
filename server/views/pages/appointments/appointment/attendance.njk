@@ -1,0 +1,131 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "components/sticky-select.njk" import stickySelect %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+
+{% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
+{% set pageId = 'appointment-attendance-page' %}
+{% set jsBackLink = true %}
+
+{% macro attendanceTag(attendance) %}
+    {% if attendance.attended === null %}
+        Not recorded yet
+    {% else %}
+        {% if attendance.attended === true %}
+            {{ govukTag({ text: 'Attended', classes: 'govuk-tag--green' }) }}
+        {% elseif attendance.attended === false %}
+            {{ govukTag({ text: 'Did not attend', classes: 'govuk-tag--red' }) }}
+        {% endif %}
+        <div class='govuk-hint govuk-!-margin-0'>
+            {{ 'Recorded by ' + attendance.attendanceRecordedBy | fullName | toTitleCase | initialiseName + ' at ' + attendance.attendanceRecordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa="caption">Record attendance</span>
+            <h1 class="govuk-heading-l govuk-!-margin-0" data-qa='heading'>{{ appointment.appointmentName }}</h1>
+            <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }} ({{ appointment.startTime | getTimeSlotFromTime | upper }})</span>
+            <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startDate | toDate | formatDate }}</span>
+            <span class="govuk-caption-l govuk-!-margin-bottom-4">{{ appointment.internalLocation.description }}</span>
+
+            <p class="govuk-body">
+                <a href="/appointments/{{ appointment.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View this appointment</a>
+            </p>
+
+            <h2 class="govuk-heading-m">{{ attendanceSummary.attendeeCount }} attendee{{ "s" if attendanceSummary.attendeeCount != 1 }}</h2>
+
+            {% if attendanceSummary.attendeeCount > 1 %}
+                <ul class="govuk-list">
+                    <li>
+                        <span>Attended:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
+                    </li>
+                    <li>
+                        <span>Did not attend:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                    </li>
+                    <li>
+                        <span>Not recorded yet:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
+                    </li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+    {% set attendeeListRows = [] %}
+    {% for attendee in appointment.attendees %}
+        {% set prisoner = attendee.prisoner %}
+        {% set attendeeListRows = (attendeeListRows.push({
+            visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase | prisonerName(false),
+            value: prisoner.prisonerNumber,
+            selectable: true,
+
+            items: [
+                {
+                    html: showProfileLink({
+                        name: prisoner | fullName,
+                        prisonerNumber: prisoner.prisonerNumber,
+                        link: true
+                    }),
+                    attributes: {
+                        'data-qa': 'prisoner-' + loop.index + '-name-and-number',
+                        "data-sort-value": prisoner | fullName | toTitleCase | prisonerName(false)
+                    }
+                }, {
+                    text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status),
+                    attributes: {
+                        'data-qa': 'prisoner-' + loop.index + '-location'
+                    }
+                }, {
+                    html: attendanceTag(attendee),
+                    attributes: {
+                        'data-qa': 'prisoner-' + loop.index + '-attendance'
+                    }
+                }
+            ]
+        }), attendeeListRows) %}
+    {% endfor %}
+
+    <form method='POST'>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+        {{ stickySelect({
+            type: 'check',
+            id: "prisonNumbers",
+            caption: "Attendance list",
+            captionClasses: "govuk-visually-hidden",
+            name: 'prisonNumbers',
+            head: [
+                {
+                    text: "Name",
+                    attributes: { "aria-sort": "ascending" }
+                }, {
+                    text: "Cell location",
+                    attributes: { "aria-sort": "none" }
+                }, {
+                    text: "Attendance",
+                    attributes: { "aria-sort": "none" }
+                }
+            ],
+            rows: attendeeListRows,
+            actions: [
+                {
+                    text: 'Mark as attended',
+                    formAction: 'attend'
+                }, {
+                    text: 'Mark as not attended',
+                    formAction: 'non-attend'
+                }
+            ],
+            itemsDescription: 'person',
+            itemsDescriptionPlural: 'people'
+        }) }}
+    </form>
+{% endblock %}

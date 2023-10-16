@@ -82,6 +82,22 @@ export interface paths {
      */
     put: operations['cancelAppointment']
   }
+  '/appointments/{appointmentId}/attendance': {
+    /**
+     * Mark the attendance for an appointment
+     * @description
+     *     Mark or update the attendance records for the attendees of an appointment. This sets the current attendance record
+     *     for each supplied prison number, replacing any existing record. This supports both the initial recording of attendance
+     *     and changing that attendance record. There are no restrictions on when attendance can be recorded. It can be done
+     *     for past and future appointments.
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    put: operations['markAttendance']
+  }
   '/schedules/{scheduleId}/allocations': {
     /**
      * Get a list of activity schedule allocations
@@ -215,6 +231,25 @@ export interface paths {
      * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
     post: operations['triggerCreateScheduledInstancesJob']
+  }
+  '/job/appointments/manage-attendees': {
+    /**
+     * Starts a job to manage appointment attendees
+     * @description
+     *       Job will retrieve all appointments within the date range defined by the supplied days before now and days after now parameters.
+     *       It will retrieve the attendees for these appointments and retrieve the associated prisoner records. The status, location and
+     *       any other pertinent information for these prisoners will be used to determine whether the attendee records should be removed.
+     *
+     *       Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    post: operations['triggerManageAllocationsJob_1']
+  }
+  '/job/appointments-metrics': {
+    /**
+     * Trigger the job to generate appointments metrics
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    post: operations['triggerAppointmentsMetricsJob']
   }
   '/job/activities-metrics': {
     /**
@@ -368,6 +403,16 @@ export interface paths {
      * * ACTIVITY_ADMIN
      */
     patch: operations['update_1']
+  }
+  '/synchronisation/reconciliation/allocations/{prisonId}': {
+    /**
+     * Retrieves allocation details for the sync reconciliation
+     * @description Retrieves booking numbers and counts for allocations currently active in each prison
+     *
+     * Requires one of the following roles:
+     * * NOMIS_ACTIVITIES
+     */
+    get: operations['getAllocationReconciliation']
   }
   '/synchronisation/attendance/{attendanceId}': {
     /**
@@ -648,6 +693,23 @@ export interface paths {
      */
     get: operations['getAttendanceReasons']
   }
+  '/appointments/{prisonCode}/attendance-summaries': {
+    /**
+     * Get a list of appointments scheduled to take place on the specified date along with the summary of their attendance.
+     *
+     * @description
+     *     Returns appointments scheduled to take place on the specified date along with the summary of their attendance.
+     *     Will contain summary information about the appointments taking place on the date as well as counts of attendees,
+     *     counts of those marked attended and non attended and the count of attendees with no attendance marked.
+     *     This endpoint supports management level views of appointment attendance and statistics.
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    get: operations['getAppointmentAttendanceSummaries']
+  }
   '/appointments/{appointmentId}/details': {
     /**
      * Get the details of an appointment for display purposes by its id
@@ -830,6 +892,22 @@ export interface paths {
      */
     delete: operations['deleteActivity']
   }
+  '/migrate-appointment/{prisonCode}': {
+    /**
+     * Starts a job to delete migrated appointments taking place at the supplied prison code that start on or after the
+     *       supplied start date and are assigned the optional category code.
+     *
+     * @description
+     *       Migrated appointments matching the supplied criteria will be soft deleted in the database. An appointment instance
+     *       deleted domain event used for syncing will be published for each deleted appointment. This will cause the mapped
+     *       appointment in NOMIS to also be deleted.
+     *
+     *
+     * Requires one of the following roles:
+     * * NOMIS_APPOINTMENTS
+     */
+    delete: operations['deleteMigratedAppointments']
+  }
 }
 
 export type webhooks = Record<string, never>
@@ -862,32 +940,12 @@ export interface components {
       endDate: string
     }
     ErrorResponse: {
-      /**
-       * Format: int32
-       * @description Response status code (will typically mirror HTTP status code).
-       * @example 404
-       */
+      /** Format: int32 */
       status: number
-      /**
-       * @description Concise error reason for end-user consumption.
-       * @example Entity Not Found
-       */
-      userMessage: string
-      /**
-       * Format: int32
-       * @description An (optional) application-specific error code.
-       * @example 20002
-       */
+      /** Format: int32 */
       errorCode?: number
-      /**
-       * @description Detailed description of problem with remediation hints aimed at application developer.
-       * @example Serious error in the system
-       */
+      userMessage?: string
       developerMessage?: string
-      /**
-       * @description Provision for further information about the problem (e.g. a link to a FAQ or knowledge base article).
-       * @example Check out this FAQ for more information
-       */
       moreInfo?: string
     }
     /** @description The uncancel request with the user details */
@@ -923,7 +981,7 @@ export interface components {
     }
     DlqMessage: {
       body: {
-        [key: string]: Record<string, never> | undefined
+        [key: string]: Record<string, never>
       }
       messageId: string
     }
@@ -1198,15 +1256,15 @@ export interface components {
       /**
        * Format: date-time
        * @description
-       *     The date and time the attendance record the specific appointment in an appointment series or set was marked.
-       *     A null value means that the prisoner's attendance has not been recorded yet.
+       *     The latest date and time attendance was recorded. Note that attendance records can be updated and this is the most
+       *     recent date and time it was recorded. A null value means that the prisoner's attendance has not been recorded yet.
        */
       attendanceRecordedTime?: string
       /**
        * @description
-       *     The username of the user authenticated via HMPPS auth that marked the attendance record the specific appointment in
-       *     an appointment series or set.
-       *     A null value means that the prisoner's attendance has not been recorded yet.
+       *     The username of the user authenticated via HMPPS auth that last recorded attendance. Note that attendance records
+       *     can be updated and this is the most recent user that marked attendance. A null value means that the prisoner's
+       *     attendance has not been recorded yet.
        *
        * @example AAA01U
        */
@@ -1377,6 +1435,23 @@ export interface components {
        * @example 6
        */
       numberOfAppointments: number
+    }
+    /** @description The lists of prison numbers to mark as attended and non-attended */
+    AppointmentAttendanceRequest: {
+      /**
+       * @description The prisoner or prisoners that attended the appointment
+       * @example [
+       *   "A1234BC"
+       * ]
+       */
+      attendedPrisonNumbers: string[]
+      /**
+       * @description The prisoner or prisoners that did not attended the appointment
+       * @example [
+       *   "A1234BC"
+       * ]
+       */
+      nonAttendedPrisonNumbers: string[]
     }
     /** @description The prisoner allocation request details */
     PrisonerAllocationRequest: {
@@ -4338,6 +4413,37 @@ export interface components {
        */
       removeEndDate: boolean
     }
+    /** @description A list of allocation counts for each booking in the prison */
+    AllocationReconciliationResponse: {
+      /**
+       * @description The prison code
+       * @example BXI
+       */
+      prisonCode: string
+      /**
+       * @description A list of bookings and the number of active allocations for each
+       * @example { [ "bookingId": 12345, "count": 2 ] }
+       */
+      bookings: components['schemas']['BookingCount'][]
+    }
+    /**
+     * @description The count for a booking ID
+     * @example { [ "bookingId": 12345, "count": 2 ] }
+     */
+    BookingCount: {
+      /**
+       * Format: int64
+       * @description The booking ID
+       * @example 12345
+       */
+      bookingId: number
+      /**
+       * Format: int64
+       * @description The count for the booking ID
+       * @example 2
+       */
+      count: number
+    }
     /**
      * @description
      *   Represents the key data required to synchronise an attendance with Nomis
@@ -4811,17 +4917,17 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
-      first?: boolean
-      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
+      first?: boolean
+      last?: boolean
       empty?: boolean
     }
     PageableObject: {
@@ -4837,8 +4943,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -5472,6 +5578,77 @@ export interface components {
     }
     /**
      * @description
+     *   Contains the summary information of a limited set the appointment properties along with counts of appointment attendance
+     *   records. Supports management level views of appointment attendance and statistics.
+     */
+    AppointmentAttendanceSummary: {
+      /**
+       * Format: int64
+       * @description The internally generated identifier for this appointment
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS
+       * @example SKI
+       */
+      prisonCode: string
+      /**
+       * @description
+       *     The appointment's name combining the optional custom name with the category description. If custom name has been
+       *     specified, the name format will be "Custom name (Category description)"
+       */
+      appointmentName: string
+      internalLocation?: components['schemas']['AppointmentLocationSummary']
+      /**
+       * Format: date
+       * @description The date this appointment is taking place on
+       */
+      startDate: string
+      /**
+       * Format: partial-time
+       * @description The starting time of this appointment
+       * @example 13:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of this appointment
+       * @example 13:30
+       */
+      endTime?: string
+      /**
+       * @description Indicates that this appointment has been cancelled
+       * @example false
+       */
+      isCancelled: boolean
+      /**
+       * Format: int64
+       * @description The number of attendees for this appointment
+       * @example 6
+       */
+      attendeeCount: number
+      /**
+       * Format: int64
+       * @description The number of attendees recorded as having attended this appointment
+       * @example 2
+       */
+      attendedCount: number
+      /**
+       * Format: int64
+       * @description The number of attendees recorded as having not attended this appointment
+       * @example 1
+       */
+      nonAttendedCount: number
+      /**
+       * Format: int64
+       * @description The number of attendees whose attendance has not yet been recorded
+       * @example 3
+       */
+      notRecordedCount: number
+    }
+    /**
+     * @description
      *   Described on the UI as an "Attendee". A prisoner attending a specific appointment in an appointment series or set.
      *   Contains the limited summary information needed to display the prisoner information and whether they attended or not.
      */
@@ -5493,6 +5670,14 @@ export interface components {
        *     A null value means that the prisoner's attendance has not been recorded yet.
        */
       attended?: boolean
+      /**
+       * Format: date-time
+       * @description
+       *     The latest date and time attendance was recorded. Note that attendance records can be updated and this is the most
+       *     recent date and time it was recorded. A null value means that the prisoner's attendance has not been recorded yet.
+       */
+      attendanceRecordedTime?: string
+      attendanceRecordedBy?: components['schemas']['UserSummary']
     }
     /**
      * @description
@@ -6043,6 +6228,8 @@ export interface components {
   pathItems: never
 }
 
+export type $defs = Record<string, never>
+
 export type external = Record<string, never>
 
 export interface operations {
@@ -6070,7 +6257,9 @@ export interface operations {
     }
     responses: {
       /** @description One or more prisoners were deallocated from the schedule. */
-      204: never
+      204: {
+        content: never
+      }
       /** @description Bad request */
       400: {
         content: {
@@ -6118,7 +6307,9 @@ export interface operations {
     }
     responses: {
       /** @description The scheduled instance was successfully un cancelled. */
-      204: never
+      204: {
+        content: never
+      }
       /** @description The scheduled instance is not cancelled or it is in the past */
       400: {
         content: {
@@ -6310,6 +6501,60 @@ export interface operations {
     }
     responses: {
       /** @description The appointment or series of appointments was cancelled. */
+      202: {
+        content: {
+          'application/json': components['schemas']['AppointmentSeries']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The appointment for this id was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Mark the attendance for an appointment
+   * @description
+   *     Mark or update the attendance records for the attendees of an appointment. This sets the current attendance record
+   *     for each supplied prison number, replacing any existing record. This supports both the initial recording of attendance
+   *     and changing that attendance record. There are no restrictions on when attendance can be recorded. It can be done
+   *     for past and future appointments.
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  markAttendance: {
+    parameters: {
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        appointmentId: number
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppointmentAttendanceRequest']
+      }
+    }
+    responses: {
+      /** @description Attendance for the appointment was recorded. */
       202: {
         content: {
           'application/json': components['schemas']['AppointmentSeries']
@@ -6844,6 +7089,47 @@ export interface operations {
     responses: {
       /** @description Created */
       201: {
+        content: {
+          'text/plain': string
+        }
+      }
+    }
+  }
+  /**
+   * Starts a job to manage appointment attendees
+   * @description
+   *       Job will retrieve all appointments within the date range defined by the supplied days before now and days after now parameters.
+   *       It will retrieve the attendees for these appointments and retrieve the associated prisoner records. The status, location and
+   *       any other pertinent information for these prisoners will be used to determine whether the attendee records should be removed.
+   *
+   *       Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+   */
+  triggerManageAllocationsJob_1: {
+    parameters: {
+      query: {
+        /** @description The number of days prior to today to start the date range. The attendees for appointments starting after this will be managed. */
+        daysBeforeNow: number
+        /** @description The number of days after today to end the date range. The attendees for appointments starting before this will be managed. */
+        daysAfterNow: number
+      }
+    }
+    responses: {
+      /** @description Accepted */
+      202: {
+        content: {
+          'text/plain': string
+        }
+      }
+    }
+  }
+  /**
+   * Trigger the job to generate appointments metrics
+   * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+   */
+  triggerAppointmentsMetricsJob: {
+    responses: {
+      /** @description Accepted */
+      202: {
         content: {
           'text/plain': string
         }
@@ -7479,6 +7765,47 @@ export interface operations {
       }
       /** @description Activity ID not found */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Retrieves allocation details for the sync reconciliation
+   * @description Retrieves booking numbers and counts for allocations currently active in each prison
+   *
+   * Requires one of the following roles:
+   * * NOMIS_ACTIVITIES
+   */
+  getAllocationReconciliation: {
+    parameters: {
+      path: {
+        /** @description Prison id */
+        prisonId: string
+      }
+    }
+    responses: {
+      /** @description Reconciliation information retrieved */
+      200: {
+        content: {
+          'application/json': components['schemas']['AllocationReconciliationResponse']
+        }
+      }
+      /** @description There was an error with the request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
@@ -8580,6 +8907,67 @@ export interface operations {
     }
   }
   /**
+   * Get a list of appointments scheduled to take place on the specified date along with the summary of their attendance.
+   *
+   * @description
+   *     Returns appointments scheduled to take place on the specified date along with the summary of their attendance.
+   *     Will contain summary information about the appointments taking place on the date as well as counts of attendees,
+   *     counts of those marked attended and non attended and the count of attendees with no attendance marked.
+   *     This endpoint supports management level views of appointment attendance and statistics.
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  getAppointmentAttendanceSummaries: {
+    parameters: {
+      query: {
+        /** @description Date of appointments (required). Format YYYY-MM-DD */
+        date: string
+      }
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        /** @description The 3-digit prison code (required) */
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more scheduled appointments found */
+      200: {
+        content: {
+          'application/json': components['schemas']['AppointmentAttendanceSummary']
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Get the details of an appointment for display purposes by its id
    * @description Returns the displayable details of an appointment by its unique identifier.
    *
@@ -9160,7 +9548,9 @@ export interface operations {
     }
     responses: {
       /** @description The activity was deleted. */
-      200: never
+      200: {
+        content: never
+      }
       /** @description Bad request */
       400: {
         content: {
@@ -9175,6 +9565,53 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Starts a job to delete migrated appointments taking place at the supplied prison code that start on or after the
+   *       supplied start date and are assigned the optional category code.
+   *
+   * @description
+   *       Migrated appointments matching the supplied criteria will be soft deleted in the database. An appointment instance
+   *       deleted domain event used for syncing will be published for each deleted appointment. This will cause the mapped
+   *       appointment in NOMIS to also be deleted.
+   *
+   *
+   * Requires one of the following roles:
+   * * NOMIS_APPOINTMENTS
+   */
+  deleteMigratedAppointments: {
+    parameters: {
+      query: {
+        /** @description Inclusive start date of migrated appointments to be deleted. Must be today or in the future */
+        startDate: string
+        /** @description The category code assigned to migrated appointments to be deleted. */
+        categoryCode?: string
+      }
+      path: {
+        /** @description The 3-digit prison code. */
+        prisonCode: string
+      }
+    }
+    responses: {
+      /** @description Migrated appointments matching the supplied criteria are being deleted. */
+      202: {
+        content: {
+          'application/json': components['schemas']['AppointmentSearchResult'][]
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }
