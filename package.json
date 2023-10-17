@@ -76,6 +76,7 @@
   },
   "dependencies": {
     "@hmcts/uk-bank-holidays": "^1.0.2",
+    "@microsoft/applicationinsights-web": "^3.0.3",
     "@ministryofjustice/frontend": "^1.8.0",
     "@types/express-serve-static-core": "^4.17.37",
     "@types/lodash": "^4.14.199",
