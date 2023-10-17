@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsDate, ValidateIf } from 'class-validator'
+import { startOfToday } from 'date-fns'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import {
@@ -19,6 +20,7 @@ export class EndDate {
   @Transform(({ obj }) => parseDatePickerDate(obj.endDateString))
   @ValidateIf(o => o.endDateString !== '')
   @IsDate({ message: 'Enter a valid end date' })
+  @DateValidator(thisDate => thisDate > startOfToday(), { message: 'Activity end date must be in the future' })
   @DateValidator(
     (date, { createJourney }) => {
       const allocationDate = createJourney?.latestAllocationStartDate
@@ -55,7 +57,7 @@ export default class EndDateRoutes {
       const activity = { endDate, removeEndDate: !endDate } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
 
-      const successMessage = `We've updated the end date for, ${name}`
+      const successMessage = `We've updated the end date for ${name}`
       res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
     } else res.redirectOrReturn('schedule-frequency')
   }
