@@ -11,7 +11,7 @@
 {% set pageId = 'movement-list-location-events-page' %}
 {% set jsBackLink = true %}
 
-{% macro showEvents(events) %}
+{% macro showEvents(events, location) %}
     {% if events | length == 0 %}
         <span>None</span>
     {% else %}
@@ -53,7 +53,7 @@
                 {% if event.eventType != EventType.EXTERNAL_TRANSFER and event.eventType != EventType.COURT_HEARING %}
                     <div class="movement-list__location-events__secondary-information govuk-body-s govuk-!-margin-bottom-0">{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
 
-                    {% if event.internalLocationId != locations[0].id %}
+                    {% if event.internalLocationId != location.id %}
                         <div class="movement-list__location-events__secondary-information govuk-body-s govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
                     {% endif %}
                 {% endif %}
@@ -98,10 +98,10 @@
                     html: alertsList({ alerts: prisonerEvents.alerts, category: prisonerEvents.category }),
                     attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-alerts' }
                 }, {
-                    html: showEvents(prisonerEvents.events),
+                    html: showEvents(prisonerEvents.events, location),
                     attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events' }
                 }, {
-                    html: showEvents(prisonerEvents.clashingEvents),
+                    html: showEvents(prisonerEvents.clashingEvents, location),
                     attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-clashing-events' }
                 }
             ]), prisonerEventsTableRows) %}
