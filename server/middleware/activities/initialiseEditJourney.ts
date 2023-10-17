@@ -10,7 +10,9 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
 
     const activity = await activitiesService.getActivity(+activityId, res.locals.user)
     const schedule = activity.schedules[0]
-    const allocations = activity.schedules.flatMap(s => s.allocations.filter(a => a.status !== 'ENDED'))
+    const allocations = activity.schedules
+      .flatMap(s => s.allocations.filter(a => a.status !== 'ENDED'))
+      .sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
 
     req.session.createJourney = {
       activityId: activity.id,
@@ -39,6 +41,11 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
         id: schedule.internalLocation.id,
         name: schedule.internalLocation.description,
       }
+    }
+
+    if (allocations.length > 0) {
+      req.session.createJourney.latestAllocationStartDate = allocations[allocations.length - 1].startDate
+      req.session.createJourney.earliestAllocationStartDate = allocations[0].startDate
     }
 
     return next()
