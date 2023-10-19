@@ -1,0 +1,79 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "components/hmppsDatePicker.njk" import hmppsDatePicker %}
+
+{% set pageTitle = applicationName + " - Allocation - End date" %}
+{% set pageId = 'allocation-end-date-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {% set pageHeading %}
+                    {% if session.allocateJourney.inmates | length == 1 %}
+                        When do you want {{ session.allocateJourney.inmate.prisonerName }} to attend their last session of {{ session.allocateJourney.activity.name | safe }}?
+                    {% else %}
+                        When do you want {{ session.allocateJourney.inmates | length }} people to attend their last session of {{ session.allocateJourney.activity.name | safe }}?
+                    {% endif %}
+                {% endset %}
+
+                {{ hmppsDatePicker({
+                    id: 'endDate',
+                    name: 'endDate',
+                    label: {
+                        text: pageHeading,
+                        classes: "govuk-label--xl",
+                        isPageHeading: true
+                    },
+                    classes: 'hmpps-datepicker--fixed-width',
+                    hint: {
+                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
+                    },
+                    errorMessage: validationErrors | findError('endDate'),
+                    value: formResponses.endDate or session.allocateJourney.endDate | isoDateToDatePickerDate
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({ text: "Continue" }) }}
+                    {% if session.req.params.mode != 'edit' and not session.req.query.preserveHistory %}
+                        <a class="govuk-link" href="cancel">Cancel</a>
+                    {% endif %}
+                </div>
+
+                {% if session.req.params.mode == 'remove' and session.allocateJourney.inmates | length > 1 %}
+                    {% set rows = [] %}
+                    {% for inmate in session.allocateJourney.inmates %}
+                        {% set rows = (rows.push([
+                            {
+                                text: inmate.prisonerName
+                            },
+                            {
+                                text: inmate.prisonerNumber
+                            },
+                            {
+                                text: inmate.cellLocation
+                            }
+                        ]), rows) %}
+                    {% endfor %}
+
+                    {{ govukDetails({
+                        summaryText: "People you are taking off " + session.allocateJourney.activity.name,
+                        html: govukTable({
+                            caption: "People you are taking off " + session.allocateJourney.activity.name,
+                            captionClasses: "govuk-visually-hidden",
+                            classes: 'govuk-!-width-two-thirds',
+                            rows: rows
+                        })
+                    }) }}
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

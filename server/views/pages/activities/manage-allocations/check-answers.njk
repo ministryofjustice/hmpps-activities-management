@@ -1,0 +1,163 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - Check answers" %}
+{% set pageId = 'check-answers-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            {% if session.req.params.mode == 'create' %}
+                <h1 class="govuk-heading-xl">Check and confirm this allocation</h1>
+            {% elseif session.req.params.mode == 'remove' %}
+                <h1 class="govuk-heading-xl">Check and confirm who you're taking off the activity</h1>
+            {% endif %}
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% set prisonerDetailsHtml %}
+                {% if session.allocateJourney.inmates | length == 1 %}
+                    <ul class="govuk-list">
+                        <li>{{ session.allocateJourney.inmate.prisonerName }}</li>
+                        <li>{{ session.allocateJourney.inmate.prisonerNumber }}</li>
+                        <li>{{ session.allocateJourney.inmate.cellLocation }}</li>
+                    </ul>
+                {% else %}
+                    <ul class="govuk-list">
+                        {% for inmate in session.allocateJourney.inmates %}
+                            <li>{{ inmate.prisonerName + ' (' + inmate.prisonerNumber + ')'}}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endset %}
+
+            {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
+
+            {% if session.req.params.mode == 'create' %}
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: { text: "Prisoner details" },
+                            value: { html: prisonerDetailsHtml }
+                        },
+                        {
+                            key: { text: "Activity" },
+                            value: { text: session.allocateJourney.activity.name }
+                        },
+                        {
+                            key: { text: "Location" },
+                            value: {
+                                text: (
+                                    session.allocateJourney.activity.location or
+                                    ("In cell" if session.allocateJourney.activity.inCell) or
+                                    ("On wing" if session.allocateJourney.activity.onWing) or
+                                    ("Off wing" if session.allocateJourney.activity.offWing)
+                                )
+                            }
+                        },
+                        {
+                            key: { text: "Start of allocation" },
+                            value: { text: session.allocateJourney.startDate | formatDate },
+                            actions: {
+                                items: [{
+                                    href: "start-date?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change start date"
+                                }]
+                            }
+                        },
+                        {
+                            key: { text: "End of allocation" },
+                            value: {
+                                text: session.allocateJourney.endDate | formatDate if session.allocateJourney.endDate else "No date set"
+                            },
+                            actions: {
+                                items: [{
+                                    href: endDateOption,
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change end date"
+                                }]
+                            }
+                        },
+                        {
+                            key: { text: "Pay rate" },
+                            value: {
+                                html: '<div>' + session.allocateJourney.inmate.incentiveLevel + ' incentive level:</div>'
+                                + '<div>' + session.allocateJourney.inmate.payBand.alias + ' - ' + session.allocateJourney.inmate.payBand.rate | toMoney + '</div>'
+                            },
+                            actions: {
+                                items: [{
+                                    href: "pay-band?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change pay rate"
+                                }]
+                            }
+                        }
+                    ]
+                }) }}
+            {% endif %}
+
+            {% if session.req.params.mode == 'remove' %}
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: { text: "People you're taking off" },
+                            value: { html: prisonerDetailsHtml }
+                        },
+                        {
+                            key: { text: "Activity" },
+                            value: { text: session.allocateJourney.activity.name }
+                        },
+                        {
+                            key: { text: "End of allocation" },
+                            value: {
+                                text: session.allocateJourney.endDate | formatDate if session.allocateJourney.endDate
+                            },
+                            actions: {
+                                items: [{
+                                    href: 'end-date?preserveHistory=true',
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change end date"
+                                }]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Reason for allocation ending"
+                            },
+                            value: {
+                                text: deallocationReason
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "reason?preserveHistory=true",
+                                        classes: 'govuk-link--no-visited-state',
+                                        text: "Change",
+                                        visuallyHiddenText: "change deallocation reason"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }) }}
+            {% endif %}
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <div class="govuk-button-group">
+                    {{ govukButton({ text: "Confirm this allocation" if session.req.params.mode == 'create' else "Confirm and remove" }) }}
+                    <a href="cancel" class="govuk-link govuk-link--no-visited-state">Cancel and return to the list of candidates</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

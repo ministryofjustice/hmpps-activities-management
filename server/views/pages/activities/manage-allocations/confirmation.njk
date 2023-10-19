@@ -1,0 +1,46 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - Confirmation" %}
+{% set pageId = 'confirmation-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% if session.req.params.mode == 'create' %}
+                {{ govukPanel({
+                    titleText: "Allocation complete",
+                    text: prisonerName + ' (' + prisonerNumber + ') is now allocated to ' + activityName
+                }) }}
+                <h2 class="govuk-heading-m">What you can do next</h2>
+                <p class='govuk-body'>You can either:</p>
+                <ul class='govuk-list govuk-list--bullet'>
+                    <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
+                    <li><a href="/activities/allocation-dashboard" class='govuk-link'>find other activities with vacancies</a></li>
+                </ul>
+            {% endif %}
+
+            {% if session.req.params.mode == 'remove' %}
+                {% if session.allocateJourney.inmates | length > 1 %}
+                    {{ govukPanel({
+                        titleText: "Removal complete",
+                        text: session.allocateJourney.inmates | length + ' prisoners are now scheduled to be removed from ' + activityName + ' on ' + session.allocateJourney.endDate | formatDate
+                    }) }}
+                {% else %}
+                    {{ govukPanel({
+                        titleText: "Removal complete",
+                        text: prisonerName + ' (' + prisonerNumber + ') is now scheduled to be removed from ' + activityName + ' on ' + session.allocateJourney.endDate | formatDate
+                    }) }}
+                {% endif %}
+
+                <h2 class="govuk-heading-m">What you can do next</h2>
+                <p class='govuk-body'>You can either:</p>
+                <ul class='govuk-list govuk-list--bullet'>
+                    <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
+                    <li><a href="/activities/allocation-dashboard" class='govuk-link'>find other activities with vacancies</a></li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

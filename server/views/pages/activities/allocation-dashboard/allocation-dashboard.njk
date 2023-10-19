@@ -204,16 +204,14 @@
 
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + row.name | toTitleCase | prisonerName,
-            value: row.prisonerNumber,
+            value: row.allocationId,
             selectable: true,
             items: [
                 {
                     html: currentlyAllocatedHtml
                 },
                 {
-
                     html: suspendedTagHtml
-
                 },
                 {
                     html: otherAllocationsHtml

@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import { AppointmentDetails, AppointmentSetDetails } from '../@types/activitiesAPI/types'
 import { ServiceUser } from '../@types/express'
-import { AllocateToActivityJourney } from '../routes/activities/allocate-to-activity/journey'
+import { AllocateToActivityJourney } from '../routes/activities/manage-allocations/journey'
 import { WaitListApplicationJourney } from '../routes/activities/waitlist-application/journey'
 import { simpleDateFromDate } from '../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -80,7 +80,7 @@ export default class MetricsEvent {
   static CREATE_ALLOCATION_JOURNEY_COMPLETED(allocation: AllocateToActivityJourney, user: ServiceUser) {
     const event = new MetricsEvent(MetricsEventType.CREATE_ALLOCATION_JOURNEY_COMPLETED, user)
     return event.addProperties({
-      prisonerNumber: allocation.inmate?.prisonerNumber,
+      prisonerNumber: allocation.inmate.prisonerNumber,
       activityId: allocation.activity.activityId?.toString(),
       startDate: allocation.startDate,
     })

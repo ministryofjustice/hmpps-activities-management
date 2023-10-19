@@ -43,7 +43,6 @@ import appointmentSeriesDetails from './fixtures/appointment_series_details_1.js
 import appointmentDetails from './fixtures/appointment_details_1.json'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
-import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
 import calcCurrentWeek from '../utils/helpers/currentWeekCalculator'
 import { formatIsoDate } from '../utils/datePickerUtils'
 
@@ -516,27 +515,15 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('putDeallocateFromActivity', () => {
-    it('should deallocation prisoners', async () => {
-      const journey: DeallocateFromActivityJourney = {
-        allocationsToRemove: ['123456'],
-        scheduleId: 1,
-        activity: {
-          id: 1,
-          activityName: 'Maths',
-        },
-        prisoners: [{ name: 'Fred', prisonerNumber: '123456', cellLocation: 'cell 1' }],
-        deallocationDate: '2023-05-31',
-        deallocationReason: 'PERSONAL',
-      }
-
+  describe('deallocateFromActivity', () => {
+    it('should deallocate prisoners', async () => {
       const body: PrisonerDeallocationRequest = {
         prisonerNumbers: ['123456'],
         reasonCode: 'PERSONAL',
         endDate: '2023-05-31',
       }
 
-      await activitiesService.deallocateFromActivity(journey, user)
+      await activitiesService.deallocateFromActivity(1, ['123456'], 'PERSONAL', '2023-05-31', user)
       expect(activitiesApiClient.deallocateFromActivity).toHaveBeenCalledWith(1, body, user)
     })
   })
@@ -658,7 +645,7 @@ describe('Activities Service', () => {
       [subDays(today, 21), 2],
     ])(
       `should calculate current week correctly for multi-week schedule (start date: %s)`,
-      async (startDate, expectedCurrentWeek) => {
+      async (startDate: Date, expectedCurrentWeek: number) => {
         const currentWeeks = calcCurrentWeek(startDate, 2)
         expect(currentWeeks).toEqual(expectedCurrentWeek)
       },
@@ -671,7 +658,7 @@ describe('Activities Service', () => {
       [subDays(today, 21), 1],
     ])(
       `should always calculate current week as 1 for single-week schedule (start date: %s)`,
-      async (startDate, expectedCurrentWeek) => {
+      async (startDate: Date, expectedCurrentWeek: number) => {
         const currentWeeks = calcCurrentWeek(startDate, 1)
         expect(currentWeeks).toEqual(expectedCurrentWeek)
       },

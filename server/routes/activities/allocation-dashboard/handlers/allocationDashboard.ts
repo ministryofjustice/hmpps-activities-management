@@ -6,7 +6,7 @@ import ActivityService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { Activity, ActivityPay, Allocation, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
-import { convertToTitleCase, getScheduleIdFromActivity, getTimeSlotFromTime, parseDate } from '../../../../utils/utils'
+import { getScheduleIdFromActivity, getTimeSlotFromTime, parseDate } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
@@ -135,7 +135,7 @@ export default class AllocationDashboardRoutes {
       return res.validationFailed('selectedAllocation', 'No suitable pay rate exists for this candidate')
     }
 
-    let redirectUrl = `/activities/allocate/prisoner/${prisonerNumber}?scheduleId=${getScheduleIdFromActivity(
+    let redirectUrl = `/activities/allocations/create/prisoner/${prisonerNumber}?scheduleId=${getScheduleIdFromActivity(
       activity,
     )}`
     redirectUrl += source ? `&source=${source}` : ''
@@ -143,35 +143,15 @@ export default class AllocationDashboardRoutes {
   }
 
   DEALLOCATE = async (req: Request, res: Response): Promise<void> => {
-    const { selectedAllocations } = req.body
+    const { activityId } = req.params
     const { user } = res.locals
-
-    const [activity, prisoners]: [Activity, Prisoner[]] = await Promise.all([
-      this.activitiesService.getActivity(+req.params.activityId, user),
-      this.prisonService.searchInmatesByPrisonerNumbers(selectedAllocations, user),
-    ])
-
-    const allocations = activity.schedules[0].allocations
-      .filter(alloc => selectedAllocations.includes(alloc.prisonerNumber))
-      .sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
-
-    req.session.deallocateJourney = {
-      allocationsToRemove: selectedAllocations,
-      scheduleId: getScheduleIdFromActivity(activity),
-      latestAllocationStartDate: allocations[allocations.length - 1].startDate,
-      activity: {
-        id: activity.id,
-        activityName: activity.description,
-        endDate: activity.endDate,
-      },
-      prisoners: prisoners.map(i => ({
-        name: convertToTitleCase(`${i.firstName} ${i.lastName}`),
-        prisonerNumber: i.prisonerNumber,
-        cellLocation: i.cellLocation,
-      })),
-    }
-
-    res.redirect(`/activities/deallocate/date`)
+    const { selectedAllocations } = req.body
+    const activity = await this.activitiesService.getActivity(+activityId, user)
+    res.redirect(
+      `/activities/allocations/remove/end-date?allocationIds=${selectedAllocations}&scheduleId=${getScheduleIdFromActivity(
+        activity,
+      )}`,
+    )
   }
 
   VIEW_APPLICATION = async (req: Request, res: Response): Promise<void> => {
@@ -188,9 +168,7 @@ export default class AllocationDashboardRoutes {
     if (selectedAllocations.length > 1) {
       res.validationFailed('selectedAllocations', 'You can only select one allocation to edit')
     } else {
-      res.redirect(
-        `/activities/allocation-dashboard/${req.params.activityId}/check-allocation/${selectedAllocations[0]}`,
-      )
+      res.redirect(`/activities/allocations/view/${selectedAllocations[0]}`)
     }
   }
 
