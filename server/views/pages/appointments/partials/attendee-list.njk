@@ -53,9 +53,9 @@
         <div class="govuk-summary-card__title-wrapper" data-qa="prisoner-list-title">
             <h2 class="govuk-summary-card__title">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
             <ul class="govuk-summary-card__actions">
-                <li class="govuk-summary-card__action">
+                <!--<li class="govuk-summary-card__action">
                     <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/attendance" }}" data-qa="add-prisoners">Record attendance</a>
-                </li>
+                </li>-->
                 {% if appointment.appointmentType == AppointmentType.GROUP and appointment.isExpired == false %}
                     <li class="govuk-summary-card__action">
                         <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/edit/start/prisoners/add" }}" data-qa="add-prisoners">Add attendees</a>
