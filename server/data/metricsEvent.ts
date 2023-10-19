@@ -1,10 +1,9 @@
-import { plainToInstance } from 'class-transformer'
 import { Request } from 'express'
 import { AppointmentDetails, AppointmentSetDetails } from '../@types/activitiesAPI/types'
 import { ServiceUser } from '../@types/express'
 import { AllocateToActivityJourney } from '../routes/activities/allocate-to-activity/journey'
 import { WaitListApplicationJourney } from '../routes/activities/waitlist-application/journey'
-import SimpleDate, { simpleDateFromDate } from '../commonValidationTypes/simpleDate'
+import { simpleDateFromDate } from '../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { isApplyToQuestionRequired } from '../utils/editAppointmentUtils'
 import { AppointmentApplyTo, AppointmentCancellationReason } from '../@types/appointments'
@@ -79,13 +78,11 @@ export default class MetricsEvent {
   }
 
   static CREATE_ALLOCATION_JOURNEY_COMPLETED(allocation: AllocateToActivityJourney, user: ServiceUser) {
-    const startDate = plainToInstance(SimpleDate, allocation.startDate).toIsoString()
-
     const event = new MetricsEvent(MetricsEventType.CREATE_ALLOCATION_JOURNEY_COMPLETED, user)
     return event.addProperties({
       prisonerNumber: allocation.inmate?.prisonerNumber,
       activityId: allocation.activity.activityId?.toString(),
-      startDate,
+      startDate: allocation.startDate,
     })
   }
 
@@ -99,7 +96,7 @@ export default class MetricsEvent {
       prisonerNumber: waitlist.prisoner?.prisonerNumber.toString(),
       activityId: waitlist.activity?.activityId?.toString(),
       activityDescription: waitlist.activity?.activityName,
-      requestDate: plainToInstance(SimpleDate, waitlist.requestDate).toIsoString(),
+      requestDate: waitlist.requestDate,
       status: waitlist.status,
       requester: waitlist.requester,
     })

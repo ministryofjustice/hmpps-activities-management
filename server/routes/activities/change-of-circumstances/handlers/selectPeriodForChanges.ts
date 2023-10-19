@@ -1,10 +1,9 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import { IsIn, ValidateIf, ValidateNested } from 'class-validator'
-import { format, subDays } from 'date-fns'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
-import IsValidDate from '../../../../validators/isValidDate'
-import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
+import { Expose, Transform } from 'class-transformer'
+import { IsDate, IsIn, ValidateIf } from 'class-validator'
+import { startOfToday, subDays } from 'date-fns'
+import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import DateValidator from '../../../../validators/DateValidator'
 
 enum PresetDateOptions {
   TODAY = 'today',
@@ -19,28 +18,23 @@ export class TimePeriodForChanges {
 
   @Expose()
   @ValidateIf(o => o.datePresetOption === PresetDateOptions.OTHER)
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @IsValidDate({ message: 'Enter a valid date' })
-  @DateIsSameOrBefore(() => new Date(), { message: 'Enter a date on or before today' })
-  date: SimpleDate
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsDate({ message: 'Enter a valid date' })
+  @DateValidator(date => date <= startOfToday(), { message: 'Enter a date on or before today' })
+  date: Date
 }
 
 export default class SelectPeriodForChangesRoutes {
-  GET = async (req: Request, res: Response): Promise<void> =>
-    res.render('pages/activities/change-of-circumstances/select-period')
+  GET = async (req: Request, res: Response) => res.render('pages/activities/change-of-circumstances/select-period')
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    if (req.body.datePresetOption === PresetDateOptions.TODAY) {
-      return res.redirect(`view-changes?date=${this.formatDate(new Date())}`)
-    }
-
-    if (req.body.datePresetOption === PresetDateOptions.YESTERDAY) {
-      return res.redirect(`view-changes?date=${this.formatDate(subDays(new Date(), 1))}`)
-    }
-
-    return res.redirect(`view-changes?date=${req.body.date.toIsoString()}`)
+    const date = this.selectedDate(req.body)
+    res.redirect(`view-changes?date=${formatIsoDate(date)}`)
   }
 
-  private formatDate = (date: Date) => format(date, 'yyyy-MM-dd')
+  private selectedDate(form: TimePeriodForChanges) {
+    if (form.datePresetOption === PresetDateOptions.TODAY) return startOfToday()
+    if (form.datePresetOption === PresetDateOptions.YESTERDAY) return subDays(startOfToday(), 1)
+    return form.date
+  }
 }

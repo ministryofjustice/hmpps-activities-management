@@ -32,6 +32,7 @@ import {
   removeUndefined,
 } from '../utils/utils'
 import config from '../config'
+import applicationVersion from '../applicationVersion'
 import {
   filterActivitiesForDay,
   getCalendarConfig,
@@ -175,6 +176,8 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
+  njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
+  njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

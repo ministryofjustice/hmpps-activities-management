@@ -100,7 +100,7 @@
                             text: "Pay rates"
                         },
                         value: {
-                            html: paySummary(incentiveLevelPays, flatPay)
+                            html: paySummary(incentiveLevelPays, session.createJourney.flat)
                         },
                         actions: {
                             items: [
@@ -122,7 +122,7 @@
                         text: "Start date"
                     },
                     value: {
-                        text: startDate
+                        text: session.createJourney.startDate | parseIsoDate | formatDate('do MMMM yyyy')
                     },
                     actions: {
                         items: [
@@ -139,7 +139,7 @@
                         text: "End date"
                     },
                     value: {
-                        text: endDate
+                        text: session.createJourney.endDate | parseIsoDate | formatDate('do MMMM yyyy') if session.createJourney.endDate else 'Not set'
                     },
                     actions: {
                         items: [
@@ -264,14 +264,14 @@
         <div class="govuk-!-margin-bottom-2">
             <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
             {% for pay in incentiveLevelPay.pays %}
-                <div>{{ pay.bandAlias }}: {{ pay.rate | toMoney }}</div>
+                <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
             {% endfor %}
         </div>
     {% endfor %}
-    {% if flatPay | length %}
+    {% if session.createJourney.flat | length %}
         <div class="govuk-!-margin-bottom-2">
             <div class="govuk-!-font-weight-bold">Flat rate pay</div>
-            {% for flatRate in flatPay %}
+            {% for flatRate in session.createJourney.flat %}
                 <div>{{ flatRate.bandAlias }}: {{ flatRate.rate | toMoney }}</div>
             {% endfor %}
         </div>

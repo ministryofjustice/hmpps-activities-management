@@ -6,6 +6,8 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { convertToTitleCase } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { IepSummary } from '../../../../@types/incentivesApi/types'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 export class PayBand {
   @Expose()
@@ -23,7 +25,7 @@ export default class PayBandRoutes {
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
     const { activityId, prisonerNumber } = allocation
 
-    const [prisoner, iepSummary] = await Promise.all([
+    const [prisoner, iepSummary]: [Prisoner, IepSummary] = await Promise.all([
       this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user),
       this.prisonService.getPrisonerIepSummary(prisonerNumber, user),
     ])

@@ -30,7 +30,7 @@ describe('Route Handlers - Create an activity - Remove flat rate', () => {
             id: 1,
           },
           riskLevel: 'High',
-          flat: [{ bandId: 1, bandAlias: 'Low', rate: 100 }],
+          flat: [{ prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 }],
         },
       },
     } as unknown as Request
@@ -70,13 +70,13 @@ describe('Route Handlers - Create an activity - Remove flat rate', () => {
     it('should not remove pay rate if action not confirmed', async () => {
       req.body = { bandId: '1', choice: 'no' }
       await handler.POST(req, res)
-      expect(req.session.createJourney.flat).toEqual([{ bandId: 1, bandAlias: 'Low', rate: 100 }])
+      expect(req.session.createJourney.flat).toEqual([{ prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 }])
     })
 
     it("should not remove pay rate if pay rate isn't found", async () => {
       req.body = { bandId: '2', choice: 'yes' }
       await handler.POST(req, res)
-      expect(req.session.createJourney.flat).toEqual([{ bandId: 1, bandAlias: 'Low', rate: 100 }])
+      expect(req.session.createJourney.flat).toEqual([{ prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 }])
     })
   })
 })

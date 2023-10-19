@@ -4,23 +4,38 @@
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create an activity - Pay" %}
 {% set pageId = 'pay-page' %}
 {% set jsBackLink = true %}
 
+{% set editMode = session.req.params.mode == 'edit' and iep and band %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-l">Enter pay for {{ session.createJourney.name }}</h1>
+            {% if editMode %}
+                <h1 class="govuk-heading-l">Change {{ iep }} incentive level: {{ band.alias }}</h1>
+            {% else %}
+                <h1 class="govuk-heading-l">Enter pay for {{ session.createJourney.name }}</h1>
+            {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <p class="govuk-body">Add all the pay rates available for this activity.</p>
-                <p class="govuk-body">You can add up to {{ payBands | length }} rates for each incentive level. Each time you add one you'll have the option to add another.</p>
-                <p class="govuk-body">When you come to allocate someone to this activity, all the rates that can be paid will be displayed.</p>
+
+                {% if editMode %}
+                    {{ govukInsetText({
+                        text: 'Any changes you make to this pay rate will take effect from tomorrow.'
+                    }) }}
+                {% else %}
+                    <p class="govuk-body">Add all the pay rates available for this activity.</p>
+                    <p class="govuk-body">You can add up to {{ payBands | length }} rates for each incentive level. Each time you add one you'll have the option to add another.</p>
+                    <p class="govuk-body">When you come to allocate someone to this activity, all the rates that can be paid will be displayed.</p>
+                {% endif %}
 
                 {{ govukInput({
                     id: "rate",
@@ -51,7 +66,7 @@
                         {
                             value: payBand.id,
                             text: payBand.alias,
-                            selected: payBand.id == formResponses.bandId or (payBand.id == bandId and not formResponses)
+                            selected: payBand.id == formResponses.bandId or (payBand.id == band.id and not formResponses)
                         }
                     ), payBandOptions) %}
                 {% endfor %}
@@ -67,31 +82,45 @@
                     items: payBandOptions
                 }) }}
 
+                {{ govukDetails({
+                    summaryText: "What is a pay band?",
+                    html: '
+                            <p>A \'pay band\' is a label to help you easily tell the difference between the pay rates that someone can be paid for
+                            for this activity.</p>
+                            <p>Depending on which prison you work in, pay bands may be numbered, or named, for example \'Skilled\' or \'General\'</p>
+                          '
+                }) }}
+
+
                 {% if payRateType === "single" %}
-                    {% set incentiveLevelOptions = [] %}
-                    {% for incentiveLevel in incentiveLevels %}
-                        {% set incentiveLevelOptions = (incentiveLevelOptions.push(
-                            {
-                                value: incentiveLevel.levelName,
-                                text: incentiveLevel.levelName,
-                                checked: incentiveLevel.levelName == formResponses.incentiveLevel or (incentiveLevel.levelName == iep and not formResponses)
-                            }
-                        ), incentiveLevelOptions) %}
-                    {% endfor %}
-                    {{ govukRadios({
-                        name: "incentiveLevel",
-                        fieldset: {
-                            legend: {
-                                text: "3. Select the incentive level",
-                                classes: "govuk-fieldset__legend--s"
-                            }
-                        },
-                        hint: {
-                          text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
-                        },
-                        items: incentiveLevelOptions,
-                        errorMessage: validationErrors | findError('incentiveLevel')
-                    }) }}
+                    {% if session.req.params.mode == 'edit' and hasAllocations %}
+                        <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
+                    {% else %}
+                        {% set incentiveLevelOptions = [] %}
+                        {% for incentiveLevel in incentiveLevels %}
+                            {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                                {
+                                    value: incentiveLevel.levelName,
+                                    text: incentiveLevel.levelName,
+                                    checked: incentiveLevel.levelName == formResponses.incentiveLevel or (incentiveLevel.levelName == iep and not formResponses)
+                                }
+                            ), incentiveLevelOptions) %}
+                        {% endfor %}
+                        {{ govukRadios({
+                            name: "incentiveLevel",
+                            fieldset: {
+                                legend: {
+                                    text: "3. Select the incentive level",
+                                    classes: "govuk-fieldset__legend--s"
+                                }
+                            },
+                            hint: {
+                                text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
+                            },
+                            items: incentiveLevelOptions,
+                            errorMessage: validationErrors | findError('incentiveLevel')
+                        }) }}
+                    {% endif %}
                 {% endif %}
 
                 {{ govukButton({

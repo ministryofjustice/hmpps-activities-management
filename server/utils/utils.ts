@@ -410,17 +410,6 @@ export const mapActivityModelSlotsToJourney = (
   return slots
 }
 
-// Maybe we could update our session object to match the activity model so this conversion isn't needed?
-export const mapActivityModelPayToJourney = (pay: Activity['pay']): CreateAnActivityJourney['pay'] =>
-  pay.map(p => ({
-    incentiveNomisCode: p.incentiveNomisCode,
-    incentiveLevel: p.incentiveLevel,
-    rate: p.rate,
-    bandId: p.prisonPayBand.id,
-    bandAlias: p.prisonPayBand.alias,
-    displaySequence: p.prisonPayBand.displaySequence,
-  }))
-
 export const padNumber = (num: number, length = 2) => {
   return (new Array(length).fill('0').join('') + num).slice(-length)
 }

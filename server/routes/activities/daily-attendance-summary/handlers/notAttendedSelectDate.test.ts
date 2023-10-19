@@ -118,7 +118,7 @@ describe('Not attended routes - select date', () => {
     it('validation fails if preset option is other and a bad date is provided', async () => {
       const body = {
         datePresetOption: DateOptions.OTHER,
-        date: { day: 31, month: 2, year: 2022 },
+        date: '',
       }
 
       const requestObject = plainToInstance(NotAttendedDate, body)

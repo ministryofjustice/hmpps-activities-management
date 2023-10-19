@@ -88,7 +88,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
           name: 'Alan Key',
           prisonerNumber: 'ABC123',
         },
-        requestDate: expect.objectContaining({ day: 31, month: 7, year: 2023 }),
+        requestDate: '2023-07-31',
         activity: {
           activityId: 1,
           activityName: 'Test activity',

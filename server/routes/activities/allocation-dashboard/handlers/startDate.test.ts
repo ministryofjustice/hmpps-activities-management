@@ -1,25 +1,22 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays, subDays } from 'date-fns'
+import { addDays, startOfToday } from 'date-fns'
 import { when } from 'jest-when'
-import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 import StartDateRoutes, { StartDate } from './startDate'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
-import PrisonService from '../../../../services/prisonService'
-import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { Allocation } from '../../../../@types/activitiesAPI/types'
+import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
+import { AllocateToActivityJourney } from '../../allocate-to-activity/journey'
 
-jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
 
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Edit allocation - Start date', () => {
-  const handler = new StartDateRoutes(activitiesService, prisonService)
+  const handler = new StartDateRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -38,6 +35,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       params: {
         allocationId: 1,
       },
+      session: {},
     } as unknown as Request
   })
 
@@ -66,52 +64,33 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
     beforeEach(() => {
       when(activitiesService.getAllocation).calledWith(atLeast(1)).mockResolvedValue(allocation)
-      const prisonerInfo = {
-        prisonerNumber: 'ABC123',
-        firstName: 'John',
-        lastName: 'Smith',
-        cellLocation: '1-1-1',
-      } as Prisoner
-
-      when(prisonService.getInmateByPrisonerNumber)
-        .calledWith('ABC123', res.locals.user)
-        .mockResolvedValue(prisonerInfo)
     })
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/start-date', {
-        allocationId: 1,
-        endDate: '2023-01-31',
-        prisonerName: 'John Smith',
-        prisonerNumber: 'ABC123',
-        activityId: 1,
-        startDate: expect.objectContaining({
-          day: 1,
-          month: 1,
-          year: 2023,
-        }),
-        allocation,
-      })
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocation-dashboard/start-date')
     })
   })
 
   describe('POST', () => {
     it('should save entered start date in session and redirect to the allocation dashboard page', async () => {
-      const today = new Date()
-      const startDate = simpleDateFromDate(today)
+      const today = startOfToday()
+      const startDate = today
 
-      req.body = {
-        startDate,
-        endDate: formatDate(subDays(today, 1), 'yyyy-MM-dd'),
+      req.session.allocateJourney = {
         allocationId: 1,
-        activityId: 1,
-        prisonerNumber: 'ABC123',
-      }
+        activity: {
+          activityId: 2,
+        },
+        inmate: {
+          prisonerNumber: 'ABC123',
+        },
+      } as AllocateToActivityJourney
+      req.body = { startDate }
 
       await handler.POST(req, res)
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/activities/allocation-dashboard/1/check-allocation/ABC123',
+        '/activities/allocation-dashboard/2/check-allocation/ABC123',
         'Allocation updated',
         "We've updated the start date for this allocation",
       )
@@ -120,15 +99,9 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
   describe('type validation', () => {
     it('validation fails if a value is not entered', async () => {
-      const startDate = {
-        day: '',
-        month: '',
-        year: '',
-      }
+      const startDate = ''
 
-      const body = {
-        startDate,
-      }
+      const body = { startDate }
 
       const requestObject = plainToInstance(StartDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -137,15 +110,9 @@ describe('Route Handlers - Edit allocation - Start date', () => {
     })
 
     it('validation fails if a bad value is entered', async () => {
-      const startDate = {
-        day: 'a',
-        month: '1',
-        year: '2023',
-      }
+      const startDate = 'a/1/2023'
 
-      const body = {
-        startDate,
-      }
+      const body = { startDate }
 
       const requestObject = plainToInstance(StartDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -155,7 +122,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
     it('validation fails if start date is in past', async () => {
       const yesterday = addDays(new Date(), -1)
-      const startDate = simpleDateFromDate(yesterday)
+      const startDate = formatDatePickerDate(yesterday)
 
       const body = {
         startDate,
@@ -166,34 +133,33 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         },
       }
 
-      const formattedStartDate = formatDate(yesterday, 'd MMMM yyyy')
       const requestObject = plainToInstance(StartDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
         {
           property: 'startDate',
-          error: `Enter a date on or after the activity's scheduled start date , ${formattedStartDate}`,
+          error: "Enter a date after today's date",
         },
       ])
     })
 
     it('validation fails if start date is not before or same as end date', async () => {
-      const startDate = simpleDateFromDate(new Date('2023-08-26'))
+      const today = startOfToday()
+      const tomorrow = addDays(startOfToday(), 1)
+      const nextWeek = addDays(today, 7)
+      const startDate = formatDatePickerDate(nextWeek)
 
-      const body = {
-        startDate,
-        endDate: formatDate(addDays(new Date('2023-09-30'), 1), 'yyyy-MM-dd'),
-        allocationId: 1,
-        scheduleId: 1,
-        prisonerNumber: 'ABC123',
-      }
+      const body = { startDate }
 
       const requestObject = plainToInstance(StartDate, {
         ...body,
         allocateJourney: {
+          startDate: formatIsoDate(today),
+          endDate: formatIsoDate(tomorrow),
           activity: {
-            startDate: addDays(new Date('2023-08-31'), 1),
+            startDate: '2022-01-01',
+            endDate: formatIsoDate(nextWeek),
           },
         },
       })
@@ -202,7 +168,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       expect(errors).toEqual([
         {
           property: 'startDate',
-          error: "Enter a date on or after the activity's scheduled start date, 1 September 2023",
+          error: `Enter a date on or before the allocation end date, ${formatDatePickerDate(tomorrow)}`,
         },
       ])
     })
@@ -211,22 +177,22 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       const tomorrow = addDays(new Date(), 1)
 
       const body = {
-        startDate: simpleDateFromDate(addDays(tomorrow, 1)),
+        startDate: formatDatePickerDate(tomorrow),
       }
 
       const requestObject = plainToInstance(StartDate, {
         ...body,
         allocateJourney: {
           activity: {
-            startDate: new Date('2022-04-04'),
-            endDate: new Date('2022-04-04'),
+            startDate: '2022-04-04',
+            endDate: '2022-04-04',
           },
         },
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'startDate', error: "Enter a date on or before the activity's scheduled end date, 4 April 2022" },
+        { property: 'startDate', error: "Enter a date on or before the activity's end date, 04/04/2022" },
       ])
     })
   })

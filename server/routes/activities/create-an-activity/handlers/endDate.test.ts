@@ -2,14 +2,14 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
-import { addDays } from 'date-fns'
+import { addDays, startOfToday } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import EndDateRoutes, { EndDate } from './endDate'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
-import { Activity, ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import { Activity } from '../../../../@types/activitiesAPI/types'
+import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -29,15 +29,15 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
-      redirectOrReturnWithSuccess: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
       params: {},
       session: {
         createJourney: {
-          latestAllocationStartDate: formatDate(new Date(), 'yyyy-MM-dd'),
-          startDate: simpleDateFromDate(new Date()),
+          latestAllocationStartDate: formatIsoDate(new Date()),
+          startDate: formatIsoDate(new Date()),
         },
       },
     } as unknown as Request
@@ -46,54 +46,19 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/end-date', {
-        endDate: undefined,
-        startDate: formatDate(new Date(), 'yyyy-MM-dd'),
-      })
-    })
-
-    it('should render the expected view in edit mode', async () => {
-      when(activitiesService.getActivitySchedule)
-        .calledWith(atLeast(2))
-        .mockResolvedValueOnce({
-          id: 1,
-          activity: { id: 1 },
-          description: 'Maths',
-          internalLocation: { description: 'Education room 1' },
-          startDate: '2023-07-26',
-          allocations: [{ startDate: '2023-07-26' }],
-        } as unknown as ActivitySchedule)
-
-      req = {
-        params: {
-          mode: 'edit',
-        },
-        session: {
-          createJourney: { startDate: simpleDateFromDate(new Date()), activityId: 1, scheduleId: 2 },
-        },
-      } as unknown as Request
-
-      await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/end-date', {
-        endDate: undefined,
-        startDate: formatDate(new Date(), 'yyyy-MM-dd'),
-      })
-      expect(req.session.createJourney.latestAllocationStartDate).toEqual(new Date('2023-07-26'))
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/end-date')
     })
   })
 
   describe('POST', () => {
     it('should save entered end date in session and redirect to the days and times page', async () => {
       const today = new Date()
-      const endDate = simpleDateFromDate(today)
 
-      req.body = {
-        endDate,
-      }
+      req.body = { endDate: today }
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.endDate).toEqual(endDate)
+      expect(req.session.createJourney.endDate).toEqual(formatIsoDate(today))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule-frequency')
     })
 
@@ -107,7 +72,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         .mockResolvedValueOnce(activity as unknown as Activity)
 
       const today = new Date()
-      const endDate = simpleDateFromDate(today)
+      const endDate = today
 
       req.session.createJourney = {
         activityId: 1,
@@ -122,7 +87,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
         "We've updated the end date for Maths level 1",
@@ -132,21 +97,15 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
   describe('type validation', () => {
     it('validation passes if a value is not entered', async () => {
-      const endDate = {
-        day: '',
-        month: '',
-        year: '',
-      }
+      const endDateString = ''
 
-      const body = {
-        endDate,
-      }
+      const body = { endDateString }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
         createJourney: {
           activity: {
-            latestAllocationStartDate: new Date('2022-04-04'),
+            latestAllocationStartDate: '2022-04-04',
           },
         },
       })
@@ -156,21 +115,15 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
     })
 
     it('validation fails if a bad value is entered', async () => {
-      const endDate = {
-        day: 'a',
-        month: '1',
-        year: '2023',
-      }
+      const endDateString = 'a/1/2023'
 
-      const body = {
-        endDate,
-      }
+      const body = { endDateString }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
         createJourney: {
           activity: {
-            latestAllocationStartDate: new Date('2022-04-04'),
+            latestAllocationStartDate: '2022-04-04',
           },
         },
       })
@@ -179,19 +132,35 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
     })
 
-    it('validation passes if end date is same as start date', async () => {
-      const today = new Date()
-      const endDate = simpleDateFromDate(today)
+    it('validation fails if end date is not in the future', async () => {
+      const endDateString = formatDatePickerDate(startOfToday())
 
-      const body = {
-        endDate,
-        startDate: formatDate(today, 'yyyy-MM-dd'),
-      }
+      const body = { endDateString }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
         createJourney: {
-          latestAllocationStartDate: simpleDateFromDate(today),
+          activity: {
+            latestAllocationStartDate: '2022-04-04',
+          },
+        },
+      })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'endDate', error: 'Activity end date must be in the future' }])
+    })
+
+    it('validation passes if end date is same as start date', async () => {
+      const tomorrow = addDays(startOfToday(), 1)
+      const endDateString = formatDatePickerDate(tomorrow)
+
+      const body = { endDateString }
+
+      const requestObject = plainToInstance(EndDate, {
+        ...body,
+        createJourney: {
+          startDate: formatIsoDate(tomorrow),
+          latestAllocationStartDate: formatIsoDate(tomorrow),
         },
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -200,18 +169,16 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
     })
 
     it('validation fails if end date is before start date', async () => {
-      const today = new Date()
-      const endDate = simpleDateFromDate(addDays(today, -1))
+      const tomorrow = addDays(startOfToday(), 1)
+      const endDateString = formatDatePickerDate(tomorrow)
+      const nextWeek = addDays(startOfToday(), 7)
 
-      const body = {
-        endDate,
-        startDate: formatDate(today, 'yyyy-MM-dd'),
-      }
+      const body = { endDateString }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
         createJourney: {
-          latestAllocationStartDate: simpleDateFromDate(addDays(today, -1)),
+          startDate: formatIsoDate(nextWeek),
         },
       })
 
@@ -220,24 +187,22 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       expect(errors).toEqual([
         {
           property: 'endDate',
-          error: 'Enter a date on or after the activity start date and latest allocation start date',
+          error: `Enter a date on or after the activity start date, ${formatDatePickerDate(nextWeek)}`,
         },
       ])
     })
 
     it('validation fails if end date is before latest allocation start date', async () => {
-      const today = new Date()
-      const endDate = simpleDateFromDate(addDays(today, 1))
+      const tomorrow = addDays(startOfToday(), 1)
+      const newActivityEndDate = formatDatePickerDate(tomorrow)
+      const latestAllocationStartDate = addDays(tomorrow, 7)
 
-      const body = {
-        endDate,
-        latestAllocationStartDate: formatDate(addDays(today, 2), 'yyyy-MM-dd'),
-      }
+      const body = { endDateString: newActivityEndDate }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
         createJourney: {
-          latestAllocationStartDate: simpleDateFromDate(addDays(today, 2)),
+          latestAllocationStartDate: formatIsoDate(latestAllocationStartDate),
         },
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -245,17 +210,19 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       expect(errors).toEqual([
         {
           property: 'endDate',
-          error: 'Enter a date on or after the activity start date and latest allocation start date',
+          error: `Enter a date on or after latest allocation start date, ${formatDatePickerDate(
+            latestAllocationStartDate,
+          )}`,
         },
       ])
     })
 
     it('validation passes if end date is after start date', async () => {
       const today = new Date()
-      const endDate = simpleDateFromDate(addDays(today, 1))
+      const endDateString = formatDatePickerDate(addDays(today, 1))
 
       const body = {
-        endDate,
+        endDateString,
         startDate: formatDate(today, 'yyyy-MM-dd'),
       }
 

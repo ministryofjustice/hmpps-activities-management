@@ -37,7 +37,7 @@
                 }) }}
                 {% if session.req.params.mode == 'edit' %}
                     {{ govukInsetText({
-                      text: session.createJourney.allocationCount + " people are currently allocated to this activity."
+                      text: (session.createJourney.allocations | length) + " people are currently allocated to this activity."
                     }) }}
                     <div class="govuk-button-group">
                       {{ govukButton({

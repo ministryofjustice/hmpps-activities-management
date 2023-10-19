@@ -1,5 +1,6 @@
-import { isValid, parse } from 'date-fns'
+import { addDays, isValid, parse, subDays } from 'date-fns'
 import {
+  dateFromDateOption,
   datePickerDateToIsoDate,
   formatDatePickerDate,
   formatIsoDate,
@@ -9,6 +10,7 @@ import {
   parseDatePickerDate,
   parseIsoDate,
 } from './datePickerUtils'
+import DateOption from '../enum/dateOption'
 
 describe('Date Picker Utils', () => {
   describe('parseDatePickerDate', () => {
@@ -126,6 +128,27 @@ describe('Date Picker Utils', () => {
 
     it('converts iso date string to date picker date', () => {
       expect(isoDateToDatePickerDate('2023-03-02')).toEqual('02/03/2023')
+    })
+  })
+
+  describe('dateFromDateOption', () => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    it("uses yesterday's date when date option is yesterday", () => {
+      expect(dateFromDateOption(DateOption.YESTERDAY)).toEqual(subDays(today, 1))
+    })
+
+    it("uses today's date when date option is today", () => {
+      expect(dateFromDateOption(DateOption.TODAY)).toEqual(today)
+    })
+
+    it("uses tomorrow's date when date option is tomorrow", () => {
+      expect(dateFromDateOption(DateOption.TOMORROW)).toEqual(addDays(today, 1))
+    })
+
+    it('uses other date when date option is other', () => {
+      expect(dateFromDateOption(DateOption.OTHER, '2023-10-16')).toEqual(parseIsoDate('2023-10-16'))
     })
   })
 })

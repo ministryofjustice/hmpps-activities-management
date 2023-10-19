@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { simpleDateFromDate } from '../../../../../commonValidationTypes/simpleDate'
 import PrisonService from '../../../../../services/prisonService'
 import { convertToTitleCase, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
 import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
@@ -43,7 +42,7 @@ export default class ViewApplicationRoutes {
         prisonerNumber: prisoner.prisonerNumber,
         name: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
       },
-      requestDate: simpleDateFromDate(parseDate(application.requestedDate)),
+      requestDate: application.requestedDate,
       activity: {
         activityId: activity.id,
         scheduleId: getScheduleIdFromActivity(activity),

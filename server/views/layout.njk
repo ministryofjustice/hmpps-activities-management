@@ -43,6 +43,11 @@
 {% block bodyEnd %}
   {# Run JavaScript at end of the
   <body>, to avoid blocking the initial render. #}
+  <script nonce="{{ cspNonce }}">
+    window.applicationInsightsConnectionString = '{{ applicationInsightsConnectionString }}'
+    window.applicationInsightsRoleName = '{{ applicationInsightsRoleName }}'
+    window.authenticatedUser = '{{ user.username }}'
+  </script>
   <script src="/assets/javascript/activities.min.js"></script>
   {% for js in feComponents.jsIncludes %}
     <script src="{{ js }}" nonce="{{ cspNonce }}"></script>

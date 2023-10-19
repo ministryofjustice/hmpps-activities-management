@@ -59,6 +59,61 @@ describe('fetchAppointment', () => {
     expect(next).toBeCalledTimes(1)
   })
 
+  it('should order attendee list by lastname, firstname', async () => {
+    const appointmentDetails = {
+      attendees: [
+        {
+          prisoner: {
+            firstName: 'C',
+            lastName: 'C',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'C',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'A',
+          },
+        },
+      ],
+    } as unknown as AppointmentDetails
+
+    when(activitiesServiceMock.getAppointmentDetails)
+      .calledWith(123, res.locals.user)
+      .mockResolvedValue(appointmentDetails)
+
+    await middleware(req, res, next)
+
+    expect(req.appointment).toEqual({
+      attendees: [
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'A',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'C',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'C',
+            lastName: 'C',
+          },
+        },
+      ],
+    })
+    expect(next).toBeCalledTimes(1)
+  })
+
   it('should catch errors while retrieving appointment and pass to next', async () => {
     when(activitiesServiceMock.getAppointmentDetails)
       .calledWith(123, res.locals.user)

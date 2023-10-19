@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import { convertToTitleCase, getScheduleIdFromActivity } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import { IepSummary } from '../../../../@types/incentivesApi/types'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -30,6 +29,7 @@ export default class CheckAllocationRoutes {
     const isStarted = new Date(allocation.startDate) <= new Date()
 
     req.session.allocateJourney = {
+      allocationId: allocation.id,
       inmate: {
         prisonerNumber: req.params.prisonerNumber,
         prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
@@ -42,8 +42,8 @@ export default class CheckAllocationRoutes {
         startDate: activity.startDate,
         endDate: activity.endDate,
       },
-      startDate: simpleDateFromDate(new Date(allocation.startDate)),
-      endDate: allocation.endDate ? simpleDateFromDate(new Date(allocation.endDate)) : undefined,
+      startDate: allocation.startDate,
+      endDate: allocation.endDate,
       deallocationReason: allocation.plannedDeallocation?.plannedReason.code || undefined,
     }
 

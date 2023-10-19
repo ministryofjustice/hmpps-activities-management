@@ -1,46 +1,43 @@
 import { Request, Response } from 'express'
-import { Expose, plainToInstance, Type } from 'class-transformer'
-import { ValidateNested } from 'class-validator'
-import IsValidDate from '../../../../../validators/isValidDate'
-import DateIsSameOrBefore from '../../../../../validators/dateIsSameOrBefore'
+import { Expose, Transform } from 'class-transformer'
+import { IsDate } from 'class-validator'
+import { parseISO, startOfDay } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { formatDate } from '../../../../../utils/utils'
-import SimpleDate from '../../../../../commonValidationTypes/simpleDate'
+import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePickerUtils'
+import DateValidator from '../../../../../validators/DateValidator'
+import { WaitListApplicationJourney } from '../../journey'
 
 export class EditRequestDate {
   @Expose()
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @DateIsSameOrBefore(o => o.waitListApplicationJourney.createdTime, {
-    message: 'The date cannot be after the date that the application was originally recorded',
-  })
-  @IsValidDate({ message: 'Enter a valid request date' })
-  requestDate: SimpleDate
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsDate({ message: 'Enter a valid request date' })
+  @DateValidator(
+    (date, { waitListApplicationJourney }) => date <= startOfDay(parseISO(waitListApplicationJourney.createdTime)),
+    {
+      message: ({ object }) => {
+        const { waitListApplicationJourney } = object as { waitListApplicationJourney: WaitListApplicationJourney }
+        const createdTime = formatDatePickerDate(parseISO(waitListApplicationJourney?.createdTime))
+        return `The date cannot be after the date that the application was originally recorded, ${createdTime}`
+      },
+    },
+  )
+  requestDate: Date
 }
 
 export default class EditRequestDateRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
-    return res.render(`pages/activities/waitlist-application/edit-request-date`)
-  }
+  GET = async (req: Request, res: Response) => res.render('pages/activities/waitlist-application/edit-request-date')
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { applicationId } = req.params
     const { user } = res.locals
     const { requestDate } = req.body
+    const { prisoner } = req.session.waitListApplicationJourney
 
-    await this.activitiesService.patchWaitlistApplication(
-      +applicationId,
-      {
-        applicationDate: formatDate(plainToInstance(SimpleDate, requestDate as SimpleDate).toString(), 'yyyy-MM-dd'),
-      },
-      user,
-    )
+    const updatedApplication = { applicationDate: formatIsoDate(requestDate) }
+    await this.activitiesService.patchWaitlistApplication(+applicationId, updatedApplication, user)
 
-    return res.redirectWithSuccess(
-      `view`,
-      `You have updated the date of request of ${req.session.waitListApplicationJourney.prisoner.name}'s application`,
-    )
+    res.redirectWithSuccess('view', `You have updated the date of request of ${prisoner.name}'s application`)
   }
 }

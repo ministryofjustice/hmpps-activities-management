@@ -149,7 +149,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/edit/" + activity.id + "/schedule/check-pay?preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/check-pay?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change pay",
                                     classes: "govuk-link--no-visited-state"
@@ -286,7 +286,7 @@
         <div class="govuk-!-margin-bottom-2">
             <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
             {% for pay in incentiveLevelPay.pays %}
-                <div>{{ pay.bandAlias }}: {{ pay.rate | toMoney }}</div>
+                <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
             {% endfor %}
         </div>
     {% endfor %}

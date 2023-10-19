@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
-import { format, subDays } from 'date-fns'
+import { addDays, format, startOfToday, subDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import SelectPeriodForChangesRoutes, { TimePeriodForChanges } from './selectPeriodForChanges'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
 
 describe('Route Handlers - Select period for changes', () => {
   const handler = new SelectPeriodForChangesRoutes()
@@ -48,10 +48,10 @@ describe('Route Handlers - Select period for changes', () => {
     it('redirect with the expected query params for when a custom date is selected', async () => {
       req.body = {
         datePresetOption: 'other',
-        date: plainToInstance(SimpleDate, { day: 1, month: 12, year: 2022 }),
+        date: new Date('2022-01-12'),
       }
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`view-changes?date=2022-12-01`)
+      expect(res.redirect).toHaveBeenCalledWith(`view-changes?date=2022-01-12`)
     })
   })
 
@@ -77,17 +77,18 @@ describe('Route Handlers - Select period for changes', () => {
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
     })
 
-    it('validation fails if preset option is other and an invaliddate is provided', async () => {
-      const body = { datePresetOption: 'other', date: { day: 31, month: 2, year: 2022 } }
+    it('validation fails if preset option is other and an invalid date is provided', async () => {
+      const body = { datePresetOption: 'other', date: '' }
       const requestObject = plainToInstance(TimePeriodForChanges, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
     })
 
     it('validation fails for option other and a date after today is provided', async () => {
+      const tomorrow = addDays(startOfToday(), 1)
       const body = {
         datePresetOption: 'other',
-        date: { day: 22, month: 2, year: new Date().getFullYear() + 1 },
+        date: formatDatePickerDate(tomorrow),
       }
       const requestObject = plainToInstance(TimePeriodForChanges, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -97,7 +98,7 @@ describe('Route Handlers - Select period for changes', () => {
     it('passes validation', async () => {
       const body = {
         datePresetOption: 'other',
-        date: { day: 27, month: 2, year: 2022 },
+        date: '27/02/2022',
       }
       const requestObject = plainToInstance(TimePeriodForChanges, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))

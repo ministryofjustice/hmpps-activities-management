@@ -3,7 +3,6 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import CheckAnswersRoutes from './checkAnswers'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import atLeast from '../../../../../jest.setup'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 
@@ -43,7 +42,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
             name: 'Maths',
             location: 'Education room 1',
           },
-          startDate: simpleDateFromDate(new Date('2023-01-01')),
+          startDate: '2023-01-01',
           endDate: null,
         },
       },
@@ -61,21 +60,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
         .mockResolvedValue({ inCell: false, onWing: false, offWing: false } as Activity)
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/check-answers', {
-        prisonerName: 'Joe Bloggs',
-        prisonerNumber: 'ABC123',
-        cellLocation: '1-2-001',
-        payBand: 'A',
-        payRate: 150,
-        incentiveLevel: 'standard',
-        activityName: 'Maths',
-        activityLocation: 'Education room 1',
-        startDate: 'Sunday, 1 January 2023',
-        endDate: null,
-        inCell: false,
-        onWing: false,
-        offWing: false,
-      })
+      expect(res.render).toHaveBeenCalledWith('pages/activities/allocate-to-activity/check-answers')
     })
   })
 

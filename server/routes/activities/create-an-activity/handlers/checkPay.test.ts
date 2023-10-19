@@ -12,7 +12,7 @@ import { CreateAnActivityJourney } from '../journey'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
-jest.mock('../../helpers/incentiveLevelPayMappingUtil', () => {
+jest.mock('../../../../utils/helpers/incentiveLevelPayMappingUtil', () => {
   return function factory() {
     return {
       getPayGroupedByIncentiveLevel: () => [
@@ -84,6 +84,20 @@ describe('Route Handlers - Create an activity - Check pay', () => {
         ],
       })
     })
+
+    it('should render EDIT page correctly', async () => {
+      req.params.mode = 'edit'
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/edit-pay', {
+        flatPay: [],
+        incentiveLevelPays: [
+          {
+            incentiveLevel: 'Standard',
+            pays: [{ bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150' }],
+          },
+        ],
+      })
+    })
   })
 
   describe('POST', () => {
@@ -141,7 +155,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
           {
             incentiveNomisCode: 'BAS',
             incentiveLevel: 'Basic',
-            bandId: 1,
+            prisonPayBand: { id: 1 },
             rate: 1,
           },
         ],

@@ -7,7 +7,7 @@ import RiskLevelRoutes, { RiskLevel } from './riskLevel'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivityPay } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -60,7 +60,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       req.body = {
         riskLevel: 'high',
       }
-      req.session.createJourney.flat = [{ bandId: 1, bandAlias: 'low', displaySequence: 1, rate: 100 }]
+      req.session.createJourney.flat = [{ rate: 100 } as ActivityPay]
 
       await handler.POST(req, res)
 

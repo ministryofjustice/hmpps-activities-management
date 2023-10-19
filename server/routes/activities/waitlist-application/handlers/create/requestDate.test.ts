@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays } from 'date-fns'
+import { addDays, startOfToday } from 'date-fns'
 import RequestDateRoutes, { RequestDate } from './requestDate'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
-import { simpleDateFromDate } from '../../../../../commonValidationTypes/simpleDate'
+import { formatDatePickerDate, formatIsoDate } from '../../../../../utils/datePickerUtils'
 
 describe('Route Handlers - Waitlist application - Request date', () => {
   const handler = new RequestDateRoutes()
@@ -36,36 +36,23 @@ describe('Route Handlers - Waitlist application - Request date', () => {
 
   describe('POST', () => {
     it('should set the request date in session and redirect to the activity route', async () => {
+      const today = startOfToday()
       req.body = {
-        requestDate: {
-          day: '1',
-          month: '1',
-          year: '2023',
-        },
+        requestDate: today,
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.requestDate).toEqual({
-        day: '1',
-        month: '1',
-        year: '2023',
-      })
+      expect(req.session.waitListApplicationJourney.requestDate).toEqual(formatIsoDate(today))
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`activity`)
     })
   })
 
   describe('type validation', () => {
     it('validation fails if a value is not entered', async () => {
-      const requestDate = {
-        day: '',
-        month: '',
-        year: '',
-      }
+      const requestDate = ''
 
-      const body = {
-        requestDate,
-      }
+      const body = { requestDate }
 
       const requestObject = plainToInstance(RequestDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -74,15 +61,9 @@ describe('Route Handlers - Waitlist application - Request date', () => {
     })
 
     it('validation fails if a bad value is entered', async () => {
-      const requestDate = {
-        day: 'a',
-        month: '1',
-        year: '2023',
-      }
+      const requestDate = 'a/1/2023'
 
-      const body = {
-        requestDate,
-      }
+      const body = { requestDate }
 
       const requestObject = plainToInstance(RequestDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -92,16 +73,14 @@ describe('Route Handlers - Waitlist application - Request date', () => {
 
     it('validation fails if request date is in the future', async () => {
       const tomorrow = addDays(new Date(), 1)
-      const requestDate = simpleDateFromDate(tomorrow)
+      const requestDate = formatDatePickerDate(tomorrow)
 
-      const body = {
-        requestDate,
-      }
+      const body = { requestDate }
 
       const requestObject = plainToInstance(RequestDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'requestDate', error: 'The date cannot be in the future' }])
+      expect(errors).toEqual([{ property: 'requestDate', error: 'The request date cannot be in the future' }])
     })
   })
 })

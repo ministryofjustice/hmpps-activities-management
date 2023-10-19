@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import SimpleDate from '../../../commonValidationTypes/simpleDate'
+import { ActivityPay, Allocation } from '../../../@types/activitiesAPI/types'
 
 export enum ScheduleFrequency {
   WEEKLY = 1,
@@ -29,20 +29,8 @@ export type CreateAnActivityJourney = {
   riskLevel?: string
   minimumPayRate?: number
   maximumPayRate?: number
-  pay?: Array<{
-    incentiveNomisCode: string
-    incentiveLevel: string
-    bandId: number
-    bandAlias: string
-    displaySequence: number
-    rate: number
-  }>
-  flat?: Array<{
-    bandId: number
-    bandAlias: string
-    displaySequence: number
-    rate: number
-  }>
+  pay?: ActivityPay[]
+  flat?: ActivityPay[]
   minimumIncentiveNomisCode?: string
   minimumIncentiveLevel?: string
   qualificationOption?: string
@@ -52,11 +40,11 @@ export type CreateAnActivityJourney = {
     educationLevelCode: string
     educationLevelDescription: string
   }>
-  startDate?: SimpleDate
+  startDate?: string
   endDateOption?: string
-  endDate?: SimpleDate
-  latestAllocationStartDate?: Date
-  earliestAllocationStartDate?: Date
+  endDate?: string
+  latestAllocationStartDate?: string
+  earliestAllocationStartDate?: string
   scheduleWeeks?: number
   slots?: { [weekNumber: string]: Slots }
   inCell?: boolean
@@ -68,6 +56,6 @@ export type CreateAnActivityJourney = {
   }
   currentCapacity?: number
   capacity?: number
-  allocationCount?: number
+  allocations?: Allocation[]
   runsOnBankHoliday?: boolean
 }

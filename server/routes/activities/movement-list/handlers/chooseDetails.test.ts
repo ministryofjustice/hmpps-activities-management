@@ -127,7 +127,7 @@ describe('Movement list routes - choose details', () => {
     it('validation fails if date option is other and an invalid date is provided', async () => {
       const body = {
         dateOption: DateOption.OTHER,
-        date: { day: 31, month: 2, year: 2022 },
+        date: '2022/02/31',
         timeSlot: TimeSlot.PM,
       }
 

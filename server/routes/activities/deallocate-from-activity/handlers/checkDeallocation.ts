@@ -1,8 +1,5 @@
 import { Request, Response } from 'express'
-import { plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
-import { formatDate } from '../../../../utils/utils'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 
 export default class CheckDeallocationRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -14,7 +11,7 @@ export default class CheckDeallocationRoutes {
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
 
     res.render('pages/activities/deallocate-from-activity/check-answers', {
-      deallocationDate: formatDate(plainToInstance(SimpleDate, deallocationDate).toRichDate(), 'yyyy-MM-dd'),
+      deallocationDate,
       deallocationReason: deallocationReasons.find(r => r.code === deallocationReason).description,
     })
   }

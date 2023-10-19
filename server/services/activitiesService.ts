@@ -1,5 +1,4 @@
 import { format } from 'date-fns'
-import { plainToInstance } from 'class-transformer'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
 import {
@@ -46,8 +45,6 @@ import {
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
-import { formatDate } from '../utils/utils'
-import SimpleDate from '../commonValidationTypes/simpleDate'
 
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
@@ -300,7 +297,7 @@ export default class ActivitiesService {
     const request: PrisonerDeallocationRequest = {
       prisonerNumbers: deallocateJourney.prisoners.map(p => p.prisonerNumber),
       reasonCode: deallocateJourney.deallocationReason as DeallocationReasonCode,
-      endDate: formatDate(plainToInstance(SimpleDate, deallocateJourney.deallocationDate).toRichDate(), 'yyyy-MM-dd'),
+      endDate: deallocateJourney.deallocationDate,
     }
     return this.activitiesApiClient.deallocateFromActivity(deallocateJourney.scheduleId, request, user)
   }
@@ -351,6 +348,23 @@ export default class ActivitiesService {
       internalLocationIds,
       user,
       timeSlot,
+    )
+  }
+
+  async getAppointmentAttendanceSummaries(prisonCode: string, date: Date, user: ServiceUser) {
+    return this.activitiesApiClient.getAppointmentAttendanceSummaries(prisonCode, format(date, 'yyyy-MM-dd'), user)
+  }
+
+  async markAppointmentAttendance(
+    appointmentId: number,
+    attendedPrisonNumbers: string[],
+    nonAttendedPrisonNumbers: string[],
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.putAppointmentAttendance(
+      appointmentId,
+      { attendedPrisonNumbers, nonAttendedPrisonNumbers },
+      user,
     )
   }
 }

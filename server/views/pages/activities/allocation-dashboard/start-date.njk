@@ -1,8 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-
-{% from "components/datePicker.njk" import datePicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 
 {% set pageTitle = applicationName + " - Edit allocation - Start date" %}
 {% set pageId = 'edit-allocation-start-date-page' %}
@@ -11,34 +10,29 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l">{{ allocation.activitySummary }}</span>
+            <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ datePicker({
+                {{ hmppsDatePicker({
                     id: 'startDate',
+                    name: 'startDate',
                     label: {
-                        text: "Change when you want " + prisonerName + " to start attending this activity",
-                        classes: "govuk-fieldset__legend--xl",
+                        text: "When do you want " + session.allocateJourney.inmate.prisonerName + " to start attending this activity?",
+                        classes: "govuk-label--l",
                         isPageHeading: true
                     },
+                    classes: 'hmpps-datepicker--fixed-width',
                     hint: {
-                        text: "For example, " + exampleDate()
+                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
                     },
-                    renderedErrorMessage: validationErrors | findError('startDate'),
-                    validationErrors: validationErrors,
-                    formResponses: formResponses.startDate or startDate
+                    errorMessage: validationErrors | findError('startDate'),
+                    value: formResponses.startDate or session.allocateJourney.startDate | isoDateToDatePickerDate
                 }) }}
-                <input type="hidden" id="endDate" name="endDate" value="{{ endDate }}">
-                <input type="hidden" id="allocationId" name="allocationId" value="{{ allocationId }}">
-                <input type="hidden" id="activityId" name="activityId" value="{{ activityId }}">
-                <input type="hidden" id="prisonerNumber" name="prisonerNumber" value="{{ prisonerNumber }}">
                 <div class="govuk-button-group">
-                  {{ govukButton({
-                    text: "Update start date"
-                  }) }}
-                    <a class="govuk-link js-backlink" href="/activities/allocation-dashboard/{{activityId}}/check-allocation/{{prisonerNumber}}">Cancel</a>
+                    {{ govukButton({ text: "Update start date" }) }}
+                    <a class="govuk-link js-backlink" href="/activities/allocation-dashboard/{{session.allocateJourney.activity.activityId}}/check-allocation/{{session.allocateJourney.inmate.prisonerNumber}}">Cancel</a>
                 </div>
             </form>
         </div>

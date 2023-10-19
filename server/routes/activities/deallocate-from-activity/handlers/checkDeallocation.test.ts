@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import CheckDeallocationRoutes from './checkDeallocation'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -30,7 +29,7 @@ describe('Route Handlers - Check deallocation', () => {
     req = {
       session: {
         deallocateJourney: {
-          deallocationDate: { day: 5, month: 6, year: 2023 } as SimpleDate,
+          deallocationDate: '2023-06-05',
           deallocationReason: 'OTHER',
         },
       },
@@ -62,11 +61,7 @@ describe('Route Handlers - Check deallocation', () => {
 
       expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
         {
-          deallocationDate: {
-            day: 5,
-            month: 6,
-            year: 2023,
-          },
+          deallocationDate: '2023-06-05',
           deallocationReason: 'OTHER',
         },
         {},

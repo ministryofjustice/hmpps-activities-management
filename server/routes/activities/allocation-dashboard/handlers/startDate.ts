@@ -1,94 +1,69 @@
 import { Request, Response } from 'express'
-import { Expose, plainToInstance, Type } from 'class-transformer'
-import { IsNotEmpty, ValidateNested, ValidationArguments } from 'class-validator'
-import SimpleDate, { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
-import IsValidDate from '../../../../validators/isValidDate'
-import DateIsSameOrAfter from '../../../../validators/dateIsSameOrAfter'
-import { convertToTitleCase, formatDate } from '../../../../utils/utils'
-import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { Expose, Transform } from 'class-transformer'
+import { IsDate, ValidationArguments } from 'class-validator'
+import { startOfToday } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
-import PrisonService from '../../../../services/prisonService'
-import DateIsSameOrBefore from '../../../../validators/dateIsSameOrBefore'
 import { AllocateToActivityJourney } from '../../allocate-to-activity/journey'
+import {
+  formatIsoDate,
+  isoDateToDatePickerDate,
+  parseDatePickerDate,
+  parseIsoDate,
+} from '../../../../utils/datePickerUtils'
+import DateValidator from '../../../../validators/DateValidator'
 
 export class StartDate {
   @Expose()
-  @Type(() => SimpleDate)
-  @ValidateNested()
-  @DateIsSameOrAfter(o => o.allocateJourney.activity.startDate, {
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsDate({ message: 'Enter a valid start date' })
+  @DateValidator(date => date > startOfToday(), { message: "Enter a date after today's date" })
+  @DateValidator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.activity.startDate), {
     message: (args: ValidationArguments) => {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
-      const activityStartDate = formatDate(new Date(allocateJourney.activity.startDate), 'd MMMM yyyy')
-      return `Enter a date on or after the activity's scheduled start date, ${activityStartDate}`
+      const activityStartDate = isoDateToDatePickerDate(allocateJourney.activity.startDate)
+      return `Enter a date on or after the activity's start date, ${activityStartDate}`
     },
   })
-  @DateIsSameOrAfter(() => new Date(), {
-    message: (args: ValidationArguments) => {
-      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
-      const activityStartDate = formatDate(new Date(allocateJourney.activity.startDate), 'd MMMM yyyy')
-      return `Enter a date on or after the activity's scheduled start date , ${activityStartDate}`
+  @DateValidator(
+    (date, { allocateJourney }) => {
+      return !allocateJourney.activity.endDate || date <= parseIsoDate(allocateJourney.activity.endDate)
     },
-  })
-  @DateIsSameOrBefore(o => o.allocateJourney.activity.endDate, {
-    message: (args: ValidationArguments) => {
-      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
-      const activityEndDate = formatDate(new Date(allocateJourney.activity.endDate), 'd MMMM yyyy')
-      return `Enter a date on or before the activity's scheduled end date, ${activityEndDate}`
+    {
+      message: (args: ValidationArguments) => {
+        const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
+        const activityEndDate = isoDateToDatePickerDate(allocateJourney.activity.endDate)
+        return `Enter a date on or before the activity's end date, ${activityEndDate}`
+      },
     },
-  })
-  @DateIsSameOrBefore(o => plainToInstance(SimpleDate, o.allocateJourney.endDate)?.toRichDate(), {
-    message: (args: ValidationArguments) => {
-      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
-      const allocationEndDate = formatDate(
-        plainToInstance(SimpleDate, allocateJourney.endDate).toRichDate(),
-        'd MMMM yyyy',
-      )
-      return `Enter a date on or before the allocation end date, ${allocationEndDate}`
+  )
+  @DateValidator(
+    (date, { allocateJourney }) => !allocateJourney.endDate || date <= parseIsoDate(allocateJourney.endDate),
+    {
+      message: (args: ValidationArguments) => {
+        const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
+        const allocationEndDate = isoDateToDatePickerDate(allocateJourney.endDate)
+        return `Enter a date on or before the allocation end date, ${allocationEndDate}`
+      },
     },
-  })
-  @IsNotEmpty({ message: 'Enter a valid start date' })
-  @IsValidDate({ message: 'Enter a valid start date' })
-  startDate: SimpleDate
-
-  @Expose()
-  endDate: string
+  )
+  startDate: Date
 }
 
 export default class StartDateRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const { allocationId } = req.params
-    const allocation = await this.activitiesService.getAllocation(+allocationId, user)
-    const { activityId, prisonerNumber } = allocation
-    const startDate = simpleDateFromDate(new Date(allocation.startDate))
-    const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
-    const prisonerName = convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)
-
-    res.render(`pages/activities/allocation-dashboard/start-date`, {
-      startDate,
-      endDate: allocation.endDate ? allocation.endDate : undefined,
-      activityId,
-      allocationId,
-      prisonerNumber,
-      prisonerName,
-      allocation,
-    })
-  }
+  GET = async (req: Request, res: Response) => res.render('pages/activities/allocation-dashboard/start-date')
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { startDate, allocationId, prisonerNumber, activityId } = req.body
+    const { allocationId, activity, inmate } = req.session.allocateJourney
     const { user } = res.locals
-    const prisonCode = user.activeCaseLoadId
-    const allocation = {
-      startDate: formatDate(plainToInstance(SimpleDate, startDate).toRichDate(), 'yyyy-MM-dd'),
-    } as AllocationUpdateRequest
-    await this.activitiesService.updateAllocation(prisonCode, allocationId, allocation)
-    const successMessage = `We've updated the start date for this allocation`
 
+    const allocationUpdate = { startDate: formatIsoDate(req.body.startDate) }
+    await this.activitiesService.updateAllocation(user.activeCaseLoadId, allocationId, allocationUpdate)
+
+    const successMessage = `We've updated the start date for this allocation`
     res.redirectWithSuccess(
-      `/activities/allocation-dashboard/${activityId}/check-allocation/${prisonerNumber}`,
+      `/activities/allocation-dashboard/${activity.activityId}/check-allocation/${inmate.prisonerNumber}`,
       'Allocation updated',
       successMessage,
     )

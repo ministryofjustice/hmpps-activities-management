@@ -1,5 +1,6 @@
-import { isValid, parse } from 'date-fns'
+import { addDays, isValid, parse, subDays, startOfToday } from 'date-fns'
 import { formatDate } from './utils'
+import DateOption from '../enum/dateOption'
 
 export const parseDatePickerDate = (datePickerDate: string): Date => {
   const dateFormatPattern = /(\d{1,2})([-/,. ])(\d{1,2})[-/,. ](\d{2,4})/
@@ -11,14 +12,14 @@ export const parseDatePickerDate = (datePickerDate: string): Date => {
   const separator = dateMatches[2]
   const year = dateMatches[4]
 
-  const date = parse(datePickerDate, `dd${separator}MM${separator}${'y'.repeat(year.length)}`, new Date())
+  const date = parse(datePickerDate, `dd${separator}MM${separator}${'y'.repeat(year.length)}`, startOfToday())
   if (!isValid(date)) return null
 
   return date
 }
 
 export const parseIsoDate = (isoDate: string): Date => {
-  const date = parse(isoDate, 'yyyy-MM-dd', new Date())
+  const date = parse(isoDate, 'yyyy-MM-dd', startOfToday())
 
   if (!isValid(date)) return null
 
@@ -51,4 +52,19 @@ export const isoDateToDatePickerDate = (isoDate: string): string => {
   const date = parseIsoDate(isoDate)
 
   return formatDatePickerDate(date)
+}
+
+export const dateFromDateOption = (dateOption: DateOption, isoDate?: string) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  switch (dateOption) {
+    case DateOption.YESTERDAY:
+      return subDays(today, 1)
+    case DateOption.TODAY:
+      return today
+    case DateOption.TOMORROW:
+      return addDays(today, 1)
+    default:
+      return parseIsoDate(isoDate)
+  }
 }

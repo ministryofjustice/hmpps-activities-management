@@ -21,7 +21,7 @@ describe('bandNotDuplicatedForIep', () => {
       }
 
       const createJourney = {
-        pay: [{ bandId: 1, incentiveLevel: 'Basic' }],
+        pay: [{ prisonPayBand: { id: 1 }, incentiveLevel: 'Basic' }],
         flat: [],
       } as unknown
 
@@ -43,7 +43,7 @@ describe('bandNotDuplicatedForIep', () => {
       }
 
       const createJourney = {
-        pay: [{ bandId: 1, incentiveLevel: 'Basic' }],
+        pay: [{ prisonPayBand: { id: 1 }, incentiveLevel: 'Basic' }],
         flat: [],
       } as unknown
 
@@ -63,7 +63,7 @@ describe('bandNotDuplicatedForIep', () => {
       }
 
       const createJourney = {
-        pay: [{ bandId: 1, incentiveLevel: 'Enhanced' }],
+        pay: [{ prisonPayBand: { id: 1 }, incentiveLevel: 'Enhanced' }],
         flat: [],
       } as unknown
 
@@ -104,7 +104,7 @@ describe('bandNotDuplicatedForIep', () => {
 
       const createJourney = {
         pay: [],
-        flat: [{ bandId: 1 }],
+        flat: [{ prisonPayBand: { id: 1 } }],
       } as unknown
 
       const pathParams = { payRateType: 'single' }
@@ -125,7 +125,7 @@ describe('bandNotDuplicatedForIep', () => {
       }
 
       const createJourney = {
-        pay: [{ bandId: 1, incentiveLevel: 'Basic' }],
+        pay: [{ prisonPayBand: { id: 1 }, incentiveLevel: 'Basic' }],
         flat: [],
       } as unknown
 
@@ -147,7 +147,7 @@ describe('bandNotDuplicatedForIep', () => {
 
       const createJourney = {
         pay: [],
-        flat: [{ bandId: 1 }],
+        flat: [{ prisonPayBand: { id: 1 } }],
       } as unknown
 
       const pathParams = { payRateType: 'flat' }
@@ -168,7 +168,7 @@ describe('bandNotDuplicatedForIep', () => {
 
       const createJourney = {
         pay: [],
-        flat: [{ bandId: 1 }],
+        flat: [{ prisonPayBand: { id: 1 } }],
       } as unknown
 
       const pathParams = { payRateType: 'flat' }
@@ -205,7 +205,7 @@ describe('bandNotDuplicatedForIep', () => {
       }
 
       const createJourney = {
-        pay: [{ bandId: 1, incentiveLevel: 'Enhanced' }],
+        pay: [{ prisonPayBand: { id: 1 }, incentiveLevel: 'Enhanced' }],
         flat: [],
       } as unknown
 
@@ -227,7 +227,7 @@ describe('bandNotDuplicatedForIep', () => {
 
       const createJourney = {
         pay: [],
-        flat: [{ bandId: 1 }],
+        flat: [{ prisonPayBand: { id: 1 } }],
       } as unknown
 
       const pathParams = { payRateType: 'flat' }

@@ -106,7 +106,7 @@
                     </div>
                 {% else %}
                     {{ govukInsetText({
-                        text: 'The start date of activity is ' + session.createJourney.startDate | toDateFromSimpleDate | formatDate("EEEE d MMMM yyyy", false)
+                        text: 'The start date of this activity is ' + session.createJourney.startDate | parseIsoDate | formatDate("EEEE d MMMM yyyy", false)
                     }) }}
 
                     {{ govukButton({
@@ -119,7 +119,7 @@
 {% endblock %}
 
 {% macro startDayTag(slotDay, session) %}
-    {% set startDay = session.createJourney.startDate | toDateFromSimpleDate | formatDate("EEEE", false) | lower %}
+    {% set startDay = session.createJourney.startDate | parseIsoDate | formatDate("EEEE", false) | lower %}
     {% if not session.req.params.mode == 'edit' and slotDay == startDay and session.req.params.weekNumber == 1 %}
         {{ govukTag({ text: 'Start day', classes: "govuk-tag--grey" }) }}
     {% endif %}

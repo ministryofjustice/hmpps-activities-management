@@ -6,8 +6,8 @@ import { NextFunction } from 'express-serve-static-core'
 import { convertToArray, mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
-import { simpleDateFromPlain } from '../../../../commonValidationTypes/simpleDate'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
+import { parseIsoDate } from '../../../../utils/datePickerUtils'
 
 export class DaysAndTimes {
   @Expose()
@@ -58,7 +58,7 @@ export default class DaysAndTimesRoutes {
 
     if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
 
-    const currentWeek = calcCurrentWeek(simpleDateFromPlain(startDate).toRichDate(), scheduleWeeks)
+    const currentWeek = calcCurrentWeek(parseIsoDate(startDate), scheduleWeeks)
 
     return res.render('pages/activities/create-an-activity/days-and-times', { currentWeek })
   }

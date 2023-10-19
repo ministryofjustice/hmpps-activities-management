@@ -36,6 +36,7 @@ import {
   WaitingListApplicationUpdateRequest,
   AppointmentUpdateRequest,
   Allocation,
+  AppointmentAttendanceRequest,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import appointmentSeriesDetails from './fixtures/appointment_series_details_1.json'
@@ -43,8 +44,8 @@ import appointmentDetails from './fixtures/appointment_details_1.json'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
 import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
-import SimpleDate from '../commonValidationTypes/simpleDate'
 import calcCurrentWeek from '../utils/helpers/currentWeekCalculator'
+import { formatIsoDate } from '../utils/datePickerUtils'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -525,7 +526,7 @@ describe('Activities Service', () => {
           activityName: 'Maths',
         },
         prisoners: [{ name: 'Fred', prisonerNumber: '123456', cellLocation: 'cell 1' }],
-        deallocationDate: { day: 31, month: 5, year: 2023 } as SimpleDate,
+        deallocationDate: '2023-05-31',
         deallocationReason: 'PERSONAL',
       }
 
@@ -743,6 +744,38 @@ describe('Activities Service', () => {
 
       expect(activitiesApiClient.getAllocationsWithParams).toHaveBeenCalledWith(1, { date: '2023-01-01' }, user)
       expect(results).toEqual(allocations)
+    })
+  })
+
+  describe('getAppointmentAttendanceSummaries', () => {
+    it('should call the api client to get appointment attendance summaries', async () => {
+      const prisonCode = 'MDI'
+      const date = new Date()
+      await activitiesService.getAppointmentAttendanceSummaries(prisonCode, date, user)
+      expect(activitiesApiClient.getAppointmentAttendanceSummaries).toHaveBeenCalledWith(
+        prisonCode,
+        formatIsoDate(date),
+        user,
+      )
+    })
+  })
+
+  describe('markAppointmentAttendance', () => {
+    it('should call the api client to put the appointment attendance', async () => {
+      const appointmentId = 1
+      const request = {
+        attendedPrisonNumbers: ['A1234BC'],
+        nonAttendedPrisonNumbers: ['B2345CD'],
+      } as AppointmentAttendanceRequest
+
+      await activitiesService.markAppointmentAttendance(
+        appointmentId,
+        request.attendedPrisonNumbers,
+        request.nonAttendedPrisonNumbers,
+        user,
+      )
+
+      expect(activitiesApiClient.putAppointmentAttendance).toHaveBeenCalledWith(appointmentId, request, user)
     })
   })
 })

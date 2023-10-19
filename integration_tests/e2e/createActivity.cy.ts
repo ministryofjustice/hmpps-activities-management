@@ -112,9 +112,8 @@ context('Create activity', () => {
     checkEducationLevelPage.getButton('Confirm').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
-    const startDatePicker = startDatePage.getDatePicker()
     const startDate = addMonths(new Date(), 1)
-    startDatePicker.enterDate(startDate)
+    startDatePage.selectDatePickerDate(startDate)
     startDatePage.continue()
 
     const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
@@ -122,9 +121,8 @@ context('Create activity', () => {
     endDateOptionPage.continue()
 
     const endDatePage = Page.verifyOnPage(EndDatePage)
-    const endDatePicker = endDatePage.getDatePicker()
     const endDate = addMonths(new Date(), 8)
-    endDatePicker.enterDate(endDate)
+    endDatePage.selectDatePickerDate(endDate)
     endDatePage.continue()
 
     const scheduleFrequencyPage = Page.verifyOnPage(ScheduleFrequencyPage)

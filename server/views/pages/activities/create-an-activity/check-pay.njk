@@ -28,7 +28,7 @@
                     {% set rows = (rows.push(
                         {
                             key: {
-                                text: pay.bandAlias
+                                text: pay.prisonPayBand.alias
                             },
                             value: {
                                 text: pay.rate | toMoney
@@ -36,12 +36,12 @@
                             actions: {
                                 items: [
                                     {
-                                        href: "pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + (("&" + preserveHistoryText) if preserveHistoryText),
+                                        href: "pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + (("&" + preserveHistoryText) if preserveHistoryText),
                                         text: "Change",
                                         visuallyHiddenText: "change pay rate"
                                     },
                                     {
-                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.bandId + (("&" + preserveHistoryText) if preserveHistoryText),
+                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + (("&" + preserveHistoryText) if preserveHistoryText),
                                         text: "Remove",
                                         visuallyHiddenText: "remove pay rate"
                                     }
@@ -63,7 +63,7 @@
                 {% set rows = (rows.push(
                     {
                         key: {
-                            text: flatRate.bandAlias
+                            text: flatRate.prisonPayBand.alias
                         },
                         value: {
                             text: flatRate.rate | toMoney
@@ -71,12 +71,12 @@
                         actions: {
                             items: [
                                 {
-                                    href: "pay/flat?bandId=" + flatRate.bandId + (("&" + preserveHistoryText) if preserveHistoryText),
+                                    href: "pay/flat?bandId=" + flatRate.prisonPayBand.id + (("&" + preserveHistoryText) if preserveHistoryText),
                                     text: "Change",
                                     visuallyHiddenText: "change pay rate"
                                 },
                                 {
-                                    href: "remove-flat-rate?bandId=" + flatRate.bandId + (("&" + preserveHistoryText) if preserveHistoryText),
+                                    href: "remove-flat-rate?bandId=" + flatRate.prisonPayBand.id + (("&" + preserveHistoryText) if preserveHistoryText),
                                     text: "Remove",
                                     visuallyHiddenText: "remove flat rate"
                                 }

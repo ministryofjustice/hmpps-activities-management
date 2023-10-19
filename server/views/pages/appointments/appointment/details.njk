@@ -14,7 +14,7 @@
 {% set pageId = 'appointment-details-page' %}
 {% set jsBackLink = true %}
 
-{% set occurenceLink = '/appointments/' + appointment.id  %}
+{% set appointmentLink = '/appointments/' + appointment.id  %}
 
 {% block content %}
     <div class="govuk-grid-row govuk-!-display-none-print">
@@ -90,7 +90,7 @@
                     actions: {
                         items: [
                             {
-                                href: occurenceLink + "/edit/start/cancel",
+                                href: appointmentLink + "/edit/start/cancel",
                                 text: "Cancel appointment",
                                 classes: "govuk-link--no-visited-state",
                                 attributes: { 'data-qa': 'cancel-appointment' }
@@ -116,7 +116,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: occurenceLink + "/edit/start/location",
+                                    href: appointmentLink + "/edit/start/location",
                                     text: "Change",
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { 'data-qa': 'change-location' }
@@ -133,7 +133,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: occurenceLink + "/edit/start/date-and-time",
+                                    href: appointmentLink + "/edit/start/date-and-time",
                                     text: "Change",
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { 'data-qa': 'change-date' }
@@ -150,7 +150,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: occurenceLink + "/edit/start/date-and-time",
+                                    href: appointmentLink + "/edit/start/date-and-time",
                                     text: "Change",
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { 'data-qa': 'change-start-time' }
@@ -167,7 +167,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: occurenceLink + "/edit/start/date-and-time",
+                                    href: appointmentLink + "/edit/start/date-and-time",
                                     text: "Change",
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { 'data-qa': 'change-end-time' }
@@ -184,7 +184,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: occurenceLink + "/edit/start/extra-information",
+                                    href: appointmentLink + "/edit/start/extra-information",
                                     text: "Change",
                                     classes: "govuk-link--no-visited-state",
                                     attributes: { 'data-qa': 'change-extra-information' }
@@ -210,15 +210,19 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
-            <div class="moj-action-bar govuk-!-display-none-print">
-                {{ mojButtonMenu({
-                    items: [{
-                        attributes: { id: 'print-movement-list' },
-                        text: "Print attendance list",
-                        classes: "govuk-button--blue js-print no-js-hidden",
-                        preventDoubleClick: true
-                    }]
+            <div class="govuk-button-group govuk-!-margin-0 govuk-!-display-none-print">
+                {{ govukButton({
+                    attributes: { id: 'print-movement-list' },
+                    text: "Print attendance list",
+                    classes: "govuk-button--blue govuk-!-margin-bottom-2 js-print no-js-hidden",
+                    preventDoubleClick: true
                 }) }}
+
+                {% if appointment.isExpired == false %}
+                    <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/movement-slip" }}" target="_blank" data-qa="print-movement-slips">
+                        {{ "View and print movement slip" + ("s" if appointment.attendees.length > 1 ) }}
+                    </a>
+                {% endif %}
             </div>
 
             {{ attendeeList(appointment) }}
