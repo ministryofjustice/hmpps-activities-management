@@ -88,6 +88,14 @@ export default class LocationEventsRoutes {
                         .map(e => e.appointmentId)
                         .includes(ce.appointmentId),
                   )
+                  // Exclude any visits for the prisoner scheduled at the current location
+                  .filter(
+                    ce =>
+                      !events
+                        .filter(e => e.eventType === EventType.VISIT)
+                        .map(e => e.eventId)
+                        .includes(ce.eventId),
+                  )
                   // Exclude any event not considered a clash
                   .filter(ce => events.filter(e => eventClashes(ce, e)).length > 0),
               )
