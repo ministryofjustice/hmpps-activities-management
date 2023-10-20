@@ -75,5 +75,12 @@
     &__location {
       @include govuk-responsive-margin(3, "bottom");
     }
+
+    .print-checkbox {
+      $_checkbox-size: 24px;
+      width: $_checkbox-size;
+      height: $_checkbox-size;
+      margin: 2px 17px 0 2px;
+    }
   }
 }

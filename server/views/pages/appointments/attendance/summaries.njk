@@ -19,7 +19,10 @@
     {% set summariesTableRows = (summariesTableRows.push([
         {
             html: summaryLink(summary),
-            attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-name' }
+            attributes: {
+                'data-qa': 'appointment-attendance-summary-' + loop.index + '-name',
+                "data-sort-value": summary.appointmentName + " " + summary.startTime + (" to " + summary.endTime if summary.endTime)
+            }
         }, {
             text: summary.internalLocation.description,
             attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-location' }
