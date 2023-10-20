@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
@@ -22,7 +22,7 @@
                     name: "endDateOption",
                     fieldset: {
                         legend: {
-                            text: "Do you want to change or remove the end of allocation?",
+                            text: "Do you want to change or remove the end date for this allocation?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--xl"
                         }
