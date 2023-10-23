@@ -182,7 +182,7 @@
         {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
             {% set attendanceRows = (attendanceRows.push([
                 {
-                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name },
+                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name | prisonerName(false) },
                     html: showProfileLink({
                         name: attendee.name,
                         prisonerNumber: attendee.prisonerNumber,
@@ -197,7 +197,7 @@
                     classes: 'govuk-table_cell'
                 },
                 {
-                    attributes: { id: 'activity-' + loop.index },
+                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.attendance.activitySummary },
                     html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>',
                     classes: 'govuk-table__cell'
                 },
