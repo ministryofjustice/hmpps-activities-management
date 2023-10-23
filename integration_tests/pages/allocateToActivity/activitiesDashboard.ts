@@ -2,7 +2,7 @@ import Page from '../page'
 
 export default class ActivitiesDashboardPage extends Page {
   constructor() {
-    super('allocate-to-activity-activities-page')
+    super('manage-allocations-activities-page')
   }
 
   activityRows = (): Cypress.Chainable => cy.get('.govuk-table__body').find('tr')

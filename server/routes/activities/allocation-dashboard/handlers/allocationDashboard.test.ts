@@ -16,7 +16,7 @@ import {
   WaitingListApplication,
 } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { associateErrorsWithProperty, convertToTitleCase, toDateString } from '../../../../utils/utils'
+import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 
@@ -583,7 +583,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       await handler.ALLOCATE(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocate/prisoner/ABC123?scheduleId=1`)
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocations/create/prisoner/ABC123?scheduleId=1`)
     })
 
     it('should redirect to allocate when a waitlist application is selected', async () => {
@@ -610,7 +610,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       await handler.ALLOCATE(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocate/prisoner/ABC123?scheduleId=1`)
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocations/create/prisoner/ABC123?scheduleId=1`)
     })
 
     it('should throw validation error if a pay rate doesnt exist to match the inmates iep level', async () => {
@@ -668,23 +668,9 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       await handler.DEALLOCATE(req, res)
 
-      expect(req.session.deallocateJourney).toEqual({
-        allocationsToRemove: ['G4793VF', 'A9477DY'],
-        scheduleId: 1,
-        latestAllocationStartDate: '2022-10-10',
-        activity: {
-          id: 1,
-          activityName: 'A basic maths course suitable for introduction to the subject',
-          endDate: toDateString(nextWeek),
-        },
-        prisoners: prisoners.map(i => ({
-          name: convertToTitleCase(`${i.firstName} ${i.lastName}`),
-          prisonerNumber: i.prisonerNumber,
-          cellLocation: i.cellLocation,
-        })),
-      })
-
-      expect(res.redirect).toBeCalledWith('/activities/deallocate/date')
+      expect(res.redirect).toBeCalledWith(
+        '/activities/allocations/remove/end-date?allocationIds=G4793VF,A9477DY&scheduleId=1',
+      )
     })
   })
 
@@ -705,12 +691,12 @@ describe('Route Handlers - Allocation dashboard', () => {
 
   describe('UPDATE', () => {
     it('should redirect to update the selected allocation', async () => {
-      req.body = { selectedAllocations: ['ABC123'] }
+      req.body = { selectedAllocations: [45654] }
       req.params = { activityId: '1' }
 
       await handler.UPDATE(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocation-dashboard/1/check-allocation/ABC123`)
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocations/view/45654`)
     })
 
     it('validation fails if multiple allocations are selected', async () => {

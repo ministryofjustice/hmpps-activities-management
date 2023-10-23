@@ -3,7 +3,7 @@ import { Services } from '../../../services'
 import createAndEditRoutes from './createAndEditRoutes'
 import createRoutes from './createRoutes'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
-import initialiseEditJourney from '../../../middleware/activities/initialiseEditJourney'
+import initialiseEditJourney from './middlewares/initialiseEditJourney'
 
 export default function Index(services: Services): Router {
   const { activitiesService } = services

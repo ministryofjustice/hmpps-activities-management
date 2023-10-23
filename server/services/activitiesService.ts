@@ -44,7 +44,6 @@ import {
   GetAllocationsParams,
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
-import { DeallocateFromActivityJourney } from '../routes/activities/deallocate-from-activity/journey'
 
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
@@ -293,13 +292,15 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getDeallocationReasons(user)
   }
 
-  async deallocateFromActivity(deallocateJourney: DeallocateFromActivityJourney, user: ServiceUser) {
-    const request: PrisonerDeallocationRequest = {
-      prisonerNumbers: deallocateJourney.prisoners.map(p => p.prisonerNumber),
-      reasonCode: deallocateJourney.deallocationReason as DeallocationReasonCode,
-      endDate: deallocateJourney.deallocationDate,
-    }
-    return this.activitiesApiClient.deallocateFromActivity(deallocateJourney.scheduleId, request, user)
+  async deallocateFromActivity(
+    scheduleId: number,
+    prisonerNumbers: string[],
+    reasonCode: DeallocationReasonCode,
+    endDate: string,
+    user: ServiceUser,
+  ) {
+    const request: PrisonerDeallocationRequest = { prisonerNumbers, reasonCode, endDate }
+    return this.activitiesApiClient.deallocateFromActivity(scheduleId, request, user)
   }
 
   async allocationSuitability(scheduleId: number, prisonerNumber: string, user: ServiceUser) {

@@ -1,0 +1,30 @@
+[
+  {
+    "code": "COMPLETED",
+    "description": "Completed course or task"
+  },
+  {
+    "code": "TRANSFERRED",
+    "description": "Transferred to another activity"
+  },
+  {
+    "code": "WITHDRAWN_STAFF",
+    "description": "Withdrawn by staff"
+  },
+  {
+    "code": "WITHDRAWN_OWN",
+    "description": "Withdrawn at own request"
+  },
+  {
+    "code": "HEALTH",
+    "description": "Health"
+  },
+  {
+    "code": "SECURITY",
+    "description": "Security"
+  },
+  {
+    "code": "OTHER",
+    "description": "Other"
+  }
+]

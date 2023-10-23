@@ -1,0 +1,84 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Deallocate from an activity - Deallocation reason" %}
+{% set pageId = 'deallocation-reason-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            {% if session.allocateJourney.inmates | length == 1 %}
+                <h1 class="govuk-heading-xl">Why are you taking {{ session.allocateJourney.inmate.prisonerName }} off this activity?</h1>
+            {% else %}
+                <h1 class="govuk-heading-xl">Why are you taking {{ session.allocateJourney.inmates | length }} people off this activity?</h1>
+            {% endif %}
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {% set options = [] %}
+                {% for reason in deallocationReasons %}
+                    {% set options = (options.push(
+                        {
+                            value: reason.code,
+                            text: reason.description,
+                            checked: formResponses.deallocationReason == reason.code or session.allocateJourney.deallocationReason == reason.code
+                        }
+                    ), options) %}
+                {% endfor %}
+
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Select a deallocation reason",
+                            classes: "govuk-visually-hidden"
+                        }
+                    },
+                    name: "deallocationReason",
+                    errorMessage: validationErrors | findError('deallocationReason'),
+                    items: options
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({ text: "Continue" }) }}
+                    {% if session.req.params.mode != 'edit' and not session.req.query.preserveHistory %}
+                        <a class="govuk-link" href="cancel">Cancel</a>
+                    {% endif %}
+                </div>
+
+                {% if session.req.params.mode == 'remove' and session.allocateJourney.inmates | length > 1 %}
+                    {% set rows = [] %}
+                    {% for inmate in session.allocateJourney.inmates %}
+                        {% set rows = (rows.push([
+                            {
+                                text: inmate.prisonerName
+                            },
+                            {
+                                text: inmate.prisonerNumber
+                            },
+                            {
+                                text: inmate.cellLocation
+                            }
+                        ]), rows) %}
+                    {% endfor %}
+
+                    {{ govukDetails({
+                        summaryText: "People you are taking off " + session.allocateJourney.activity.name,
+                        html: govukTable({
+                            caption: "People you are taking off " + session.allocateJourney.activity.name,
+                            captionClasses: "govuk-visually-hidden",
+                            classes: 'govuk-!-width-two-thirds',
+                            rows: rows
+                        })
+                    }) }}
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

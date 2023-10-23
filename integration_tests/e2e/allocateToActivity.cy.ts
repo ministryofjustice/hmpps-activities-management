@@ -8,6 +8,7 @@ import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncen
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetails.json'
 import getPrisonerIepSummary from '../fixtures/incentivesApi/getPrisonerIepSummary.json'
 import getActivity from '../fixtures/activitiesApi/getActivity.json'
+import getDeallocationReasons from '../fixtures/activitiesApi/getDeallocationReasons.json'
 import getMdiPrisonPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import getCandidates from '../fixtures/activitiesApi/getCandidates.json'
 import getCandidateSuitability from '../fixtures/activitiesApi/getCandidateSuitability.json'
@@ -44,6 +45,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/api/offenders/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/iep/reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/activities/2', getActivity)
+    cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.signIn()

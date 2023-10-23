@@ -6,6 +6,7 @@ const journeys = [
   'appointmentSetJourney',
   'attendanceSummaryJourney',
   'createJourney',
+  'allocateJourney',
   'editAppointmentJourney',
   'journeyMetrics',
   'unlockListJourney',
