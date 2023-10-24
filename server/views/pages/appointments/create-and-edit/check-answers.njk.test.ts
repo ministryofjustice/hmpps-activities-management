@@ -134,8 +134,8 @@ describe('Views - Create Appointment - Check Answers', () => {
     })
 
     it('should display prisoners details', () => {
-      expect(getPrisonerListValueElement('prisoner-name', 0).text().trim()).toEqual('Jacobson, Lee')
-      expect(getPrisonerListValueElement('prisoner-name', 1).text().trim()).toEqual('Winchurch, David')
+      expect(getPrisonerListValueElement('prisoner-name', 0).text().trim()).toEqual('Jacobson,Lee')
+      expect(getPrisonerListValueElement('prisoner-name', 1).text().trim()).toEqual('Winchurch,David')
     })
   })
 })

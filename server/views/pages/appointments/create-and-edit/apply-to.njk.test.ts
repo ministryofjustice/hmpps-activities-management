@@ -118,14 +118,14 @@ describe('Views - Appointments Management - Apply to', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=prisoners-list-table]').length).toEqual(1)
-    expect($('[data-qa=prisoner-name-0]').text().trim()).toEqual('Prisoner1, Test')
+    expect($('[data-qa=prisoner-name-0]').text().trim()).toEqual('Prisoner1,Test')
     let prisonerDpsLink = $('[data-qa=prisoner-name-0] > a')
     expect(prisonerDpsLink.attr('href')).toEqual('https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC')
     expect(prisonerDpsLink.attr('target')).toEqual('_blank')
     expect($('[data-qa=prisoner-number-0]').text().trim()).toEqual('A1234BC')
     expect($('[data-qa=prisoner-cell-location-0]').text().trim()).toEqual('1-1-1')
 
-    expect($('[data-qa=prisoner-name-1]').text().trim()).toEqual('Prisoner2, Test')
+    expect($('[data-qa=prisoner-name-1]').text().trim()).toEqual('Prisoner2,Test')
     prisonerDpsLink = $('[data-qa=prisoner-name-1] > a')
     expect(prisonerDpsLink.attr('href')).toEqual('https://digital-dev.prison.service.justice.gov.uk/prisoner/B2345CD')
     expect(prisonerDpsLink.attr('target')).toEqual('_blank')

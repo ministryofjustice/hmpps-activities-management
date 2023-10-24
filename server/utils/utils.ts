@@ -88,7 +88,12 @@ export const prisonerName = (name: string, boldLastName = true) => {
 
   let formattedName = nameParts[nameParts.length - 1]
   if (boldLastName) formattedName = `<strong>${formattedName}</strong>`
-  formattedName += `, ${firstNames.join(' ')}`
+  if (firstNames[0].length === 0) {
+    formattedName = formattedName.replace(',', '')
+  } else {
+    formattedName += `,${firstNames.join(' ')}`
+  }
+
   return formattedName
 }
 

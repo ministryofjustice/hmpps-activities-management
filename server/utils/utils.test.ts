@@ -74,11 +74,12 @@ describe('utils', () => {
   describe('prisonerName', () => {
     it.each([
       [null, true, null, null],
-      ['First name, last name', true, 'Robert Smith', '<strong>Smith</strong>, Robert'],
-      ['First name, middle names, last name', true, 'Robert James Smith', '<strong>Smith</strong>, Robert James'],
+      ['First name, last name', true, 'Robert Smith', '<strong>Smith</strong>,Robert'],
+      ['First name, last name', false, ' ,Smith', 'Smith'],
+      ['First name, middle names, last name', true, 'Robert James Smith', '<strong>Smith</strong>,Robert James'],
       [null, false, null, null],
-      ['First name, last name', false, 'Robert Smith', 'Smith, Robert'],
-      ['First name, middle names, last name', false, 'Robert James Smith', 'Smith, Robert James'],
+      ['First name, last name', false, 'Robert Smith', 'Smith,Robert'],
+      ['First name, middle names, last name', false, 'Robert James Smith', 'Smith,Robert James'],
     ])('%s [bold=%s]', (_: string, bold, inputName, expected: string) => {
       expect(prisonerName(inputName, bold)).toEqual(expected)
     })
