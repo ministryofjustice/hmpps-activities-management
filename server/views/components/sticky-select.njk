@@ -108,7 +108,7 @@
             {% endif %}
         </nav>
 
-        <div class='sticky-select-action-bar' role='toolbar' aria-live='polite'
+        <div class='sticky-select-action-bar {{ "sticky-select-action-bar--fixed" if params.fixed }}' role='toolbar' aria-live='polite'
              aria-label='actions' aria-disabled='false'
              {% if params.itemsDescription %}
                  data-description-singular='{{ params.itemsDescription }}'

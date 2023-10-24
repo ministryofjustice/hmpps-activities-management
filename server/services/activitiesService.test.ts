@@ -765,4 +765,20 @@ describe('Activities Service', () => {
       expect(activitiesApiClient.putAppointmentAttendance).toHaveBeenCalledWith(appointmentId, request, user)
     })
   })
+
+  describe('searchWaitingListApplications', () => {
+    it('should call the api client and search for matching waiting list application', async () => {
+      const request = {
+        prisonerNumbers: ['A1234BC'],
+      }
+      const pageSearch = {
+        page: 1,
+        pageSize: 20,
+      }
+
+      await activitiesService.searchWaitingListApplications('MDI', request, pageSearch, user)
+
+      expect(activitiesApiClient.searchWaitingListApplications).toHaveBeenCalledWith('MDI', request, pageSearch, user)
+    })
+  })
 })

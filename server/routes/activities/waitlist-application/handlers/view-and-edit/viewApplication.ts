@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
-import createHttpError from 'http-errors'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
-import { convertToTitleCase, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
+import { asString, convertToTitleCase, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
 import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 
@@ -12,12 +11,10 @@ export default class ViewApplicationRoutes {
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { applicationId } = req.params
     const { user } = res.locals
+    let journeyEntry = req.query.journeyEntry ? asString(req.query.journeyEntry) : null
+    journeyEntry ??= req.session?.waitListApplicationJourney?.journeyEntry
 
     const application = await this.activitiesService.fetchWaitlistApplication(+applicationId, user)
-
-    if (!['APPROVED', 'DECLINED', 'PENDING'].includes(application.status)) {
-      return next(createHttpError.NotFound())
-    }
 
     const [prisoner, activity, allApplications]: [Prisoner, Activity, WaitingListApplication[]] = await Promise.all([
       this.prisonService.getInmateByPrisonerNumber(application.prisonerNumber, user),
@@ -52,6 +49,7 @@ export default class ViewApplicationRoutes {
       status: application.status,
       comment: application.comments,
       createdTime: application.creationTime,
+      journeyEntry,
     }
 
     return res.render(`pages/activities/waitlist-application/view-application`, {
@@ -65,6 +63,7 @@ export default class ViewApplicationRoutes {
       activityId: application.activityId,
       isMostRecent,
       isNotAlreadyAllocated,
+      journeyEntry,
     })
   }
 }

@@ -129,7 +129,7 @@
 
             {{ govukButton({
                 text: "Return to waitlist",
-                href: '/activities/allocation-dashboard/' + activityId + '#waitlist-tab',
+                href: journeyEntry or '/activities/allocation-dashboard/' + activityId + '#waitlist-tab',
                 classes: "govuk-button--secondary"
             }) }}
         </div>

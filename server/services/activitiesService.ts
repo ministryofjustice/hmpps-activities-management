@@ -42,6 +42,8 @@ import {
   WaitingListApplicationUpdateRequest,
   ActivitySummary,
   GetAllocationsParams,
+  WaitingListSearchRequest,
+  WaitingListSearchParams,
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 
@@ -367,5 +369,14 @@ export default class ActivitiesService {
       { attendedPrisonNumbers, nonAttendedPrisonNumbers },
       user,
     )
+  }
+
+  async searchWaitingListApplications(
+    prisonCode: string,
+    searchRequest: WaitingListSearchRequest,
+    pageOptions: WaitingListSearchParams,
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.searchWaitingListApplications(prisonCode, searchRequest, pageOptions, user)
   }
 }

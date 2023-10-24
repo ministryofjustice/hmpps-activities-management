@@ -64,3 +64,6 @@ export type ScheduledInstanceAttendanceSummary = components['schemas']['Schedule
 export type GetAllocationsParams = operations['getAllocationsBy']['parameters']['query']
 export type InternalLocationEvents = components['schemas']['InternalLocationEvents']
 export type InternalLocationEventsSummary = components['schemas']['InternalLocationEventsSummary']
+export type WaitingListSearchRequest = components['schemas']['WaitingListSearchRequest']
+export type WaitingListSearchParams = operations['searchWaitingLists']['parameters']['query']
+export type WaitingListApplicationPaged = components['schemas']['PagedWaitingListApplication']

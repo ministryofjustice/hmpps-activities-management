@@ -43,6 +43,13 @@
       display: block !important;
     }
 
+    &--fixed {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
     &__selected-summary {
       display: none;
     }
