@@ -100,8 +100,8 @@ context('Create group appointment', () => {
     uploadPrisonerListPage.uploadFile()
 
     let reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
-    reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
-    reviewPrisonersPage.assertPrisonerInList('Winchurch, David')
+    reviewPrisonersPage.assertPrisonerInList('Gregs,Stephen')
+    reviewPrisonersPage.assertPrisonerInList('Winchurch,David')
     reviewPrisonersPage.addAnotherPrisoner()
 
     howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
@@ -149,9 +149,9 @@ context('Create group appointment', () => {
     extraInformationPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
-    checkAnswersPage.assertPrisonerInList('Winchurch, David', 'A1350DZ')
-    checkAnswersPage.assertPrisonerInList('Gregs, Stephen', 'A8644DY')
-    checkAnswersPage.assertPrisonerInList('Jacobson, Lee', 'A1351DZ')
+    checkAnswersPage.assertPrisonerInList('Winchurch,David', 'A1350DZ')
+    checkAnswersPage.assertPrisonerInList('Gregs,Stephen', 'A8644DY')
+    checkAnswersPage.assertPrisonerInList('Jacobson,Lee', 'A1351DZ')
     checkAnswersPage.assertCategory('Chaplaincy')
     checkAnswersPage.assertLocation('Chapel')
     checkAnswersPage.assertStartDate(tomorrow)
@@ -174,9 +174,9 @@ context('Create group appointment', () => {
     confirmationPage.viewAppointmentLink().click()
 
     const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
-    appointmentDetailsPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
-    appointmentDetailsPage.assertPrisonerSummary('Winchurch, David', 'A1350DZ', '2-2-024')
-    appointmentDetailsPage.assertPrisonerSummary('Jacobson, Lee', 'A1351DZ', '1')
+    appointmentDetailsPage.assertPrisonerSummary('Gregs,Stephen', 'A8644DY', '1-3')
+    appointmentDetailsPage.assertPrisonerSummary('Winchurch,David', 'A1350DZ', '2-2-024')
+    appointmentDetailsPage.assertPrisonerSummary('Jacobson,Lee', 'A1351DZ', '1')
     appointmentDetailsPage.assertName('Chaplaincy')
     appointmentDetailsPage.assertLocation('Chapel')
     appointmentDetailsPage.assertStartDate(tomorrow)

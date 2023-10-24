@@ -165,9 +165,9 @@ context('Create group appointment', () => {
     appointmentDetailsPage.assertStartDate(tomorrow)
     appointmentDetailsPage.assertStartTime(14, 0)
     appointmentDetailsPage.assertEndTime(15, 30)
-    appointmentDetailsPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
-    appointmentDetailsPage.assertPrisonerSummary('Winchurch, David', 'A1350DZ', '2-2-024')
-    appointmentDetailsPage.assertPrisonerSummary('Jacobson, Lee', 'A1351DZ', '1')
+    appointmentDetailsPage.assertPrisonerSummary('Gregs, tephen', 'A8644DY', '1-3')
+    appointmentDetailsPage.assertPrisonerSummary('Winchurch,David', 'A1350DZ', '2-2-024')
+    appointmentDetailsPage.assertPrisonerSummary('Jacobson,Lee', 'A1351DZ', '1')
 
     appointmentDetailsPage.assertCreatedBy('J. Smith')
   })

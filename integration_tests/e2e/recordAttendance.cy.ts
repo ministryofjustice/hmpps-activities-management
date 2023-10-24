@@ -63,10 +63,10 @@ context('Record attendance', () => {
     activitiesPage.selectActivityWithName('English level 1')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Attended')
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Pay')
-    attendanceListPage.selectPrisoner('Aborah, Cudmastarie')
-    attendanceListPage.selectPrisoner('Arianniver, Eeteljan')
+    attendanceListPage.checkAttendanceStatus('Andy,Booking', 'Attended')
+    attendanceListPage.checkAttendanceStatus('Andy,Booking', 'Pay')
+    attendanceListPage.selectPrisoner('Aborah,Cudmastarie')
+    attendanceListPage.selectPrisoner('Arianniver,Eeteljan')
     attendanceListPage.markAsAttended()
     Page.verifyOnPage(AttendanceListPage)
 
@@ -83,10 +83,10 @@ context('Record attendance', () => {
     cancelSessionConfirmPage.continue()
 
     Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Cancelled')
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Pay')
-    attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Cancelled')
-    attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Pay')
+    attendanceListPage.checkAttendanceStatus('Andy,Booking', 'Cancelled')
+    attendanceListPage.checkAttendanceStatus('Andy,Booking', 'Pay')
+    attendanceListPage.checkAttendanceStatus('Aisho,Egurztof', 'Cancelled')
+    attendanceListPage.checkAttendanceStatus('Aisho,Egurztof', 'Pay')
     attendanceListPage.assertNotificationContents(
       'Session cancelled',
       'This activity session has been cancelled for the following reason:',
