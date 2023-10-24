@@ -4753,32 +4753,12 @@ export interface components {
        * @example Victim
        */
       reasonDescription: string
-      /**
-       * @description The non-association type code
-       * @example WING
-       */
-      typeCode: string
-      /**
-       * @description The non-association type description
-       * @example Do Not Locate on Same Wing
-       */
-      typeDescription: string
+      otherPrisonerDetails: components['schemas']['OtherPrisonerDetails']
       /**
        * Format: date-time
-       * @description Date and time the mom-association is effective from. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
+       * @description Date and time the non-association is effective from. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
        */
-      effectiveDate: string
-      /**
-       * Format: date-time
-       * @description Date and time the mom-association expires. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
-       */
-      expiryDate?: string
-      offenderNonAssociation: components['schemas']['OffenderNonAssociation']
-      /**
-       * @description The person who authorised the non-association (free text).
-       * @example null
-       */
-      authorisedBy?: string
+      whenCreated: string
       /**
        * @description Additional free text comments related to the non-association.
        * @example null
@@ -4795,52 +4775,28 @@ export interface components {
       /** @description The prisoner's non-associations */
       nonAssociations: components['schemas']['NonAssociationDetails'][]
     }
-    /**
-     * @description Offender non-association details
-     * @example null
-     */
-    OffenderNonAssociation: {
+    /** @description Non-association prisoner details */
+    OtherPrisonerDetails: {
       /**
-       * @description The offenders number
+       * @description The prisoners number
        * @example G0135GA
        */
-      offenderNo: string
+      prisonerNumber: string
       /**
-       * @description The offenders first name
+       * @description The prisoners first name
        * @example Joseph
        */
       firstName: string
       /**
-       * @description The offenders last name
+       * @description The prisoners last name
        * @example Bloggs
        */
       lastName: string
       /**
-       * @description The non-association reason code
-       * @example PER
-       */
-      reasonCode: string
-      /**
-       * @description The non-association reason description
-       * @example Perpetrator
-       */
-      reasonDescription: string
-      /**
-       * @description Description of the agency (e.g. prison) the offender is assigned to.
-       * @example Pentonville (PVI)
-       */
-      agencyDescription: string
-      /**
        * @description Description of living unit (e.g. cell) the offender is assigned to.
        * @example PVI-1-2-4
        */
-      assignedLivingUnitDescription: string
-      /**
-       * Format: int64
-       * @description Id of living unit (e.g. cell) the offender is assigned to.
-       * @example 123
-       */
-      assignedLivingUnitId: number
+      cellLocation: string
     }
     /** @description Prisoner release date suitability */
     ReleaseDateSuitability: {
@@ -4917,17 +4873,17 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
-      first?: boolean
-      last?: boolean
       empty?: boolean
     }
     PageableObject: {
@@ -4943,8 +4899,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
