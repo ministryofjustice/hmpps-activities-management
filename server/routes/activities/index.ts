@@ -10,6 +10,7 @@ import unlockListRoutes from './unlock-list'
 import movementListRoutes from './movement-list'
 import changeOfCircumstanceRoutes from './change-of-circumstances'
 import waitlistApplicationRoutes from './waitlist-application'
+import waitlistDashboardRoutes from './waitlist-dashboard'
 import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
@@ -34,6 +35,7 @@ export default function Index(services: Services): Router {
   router.use('/movement-list', movementListRoutes(services))
   router.use('/change-of-circumstances', changeOfCircumstanceRoutes(services))
   router.use('/waitlist', waitlistApplicationRoutes(services))
+  router.use('/waitlist-dashboard', waitlistDashboardRoutes(services))
 
   return router
 }

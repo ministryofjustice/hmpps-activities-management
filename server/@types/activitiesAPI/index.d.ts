@@ -98,6 +98,16 @@ export interface paths {
      */
     put: operations['markAttendance']
   }
+  '/waiting-list-applications/{prisonCode}/search': {
+    /**
+     * @description Search waiting list applications
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    post: operations['searchWaitingLists']
+  }
   '/schedules/{scheduleId}/allocations': {
     /**
      * Get a list of activity schedule allocations
@@ -236,7 +246,7 @@ export interface paths {
     /**
      * Starts a job to manage appointment attendees
      * @description
-     *       Job will retrieve all appointments within the date range defined by the supplied days before now and days after now parameters.
+     *       Job will retrieve all future appointments starting within the number of days defined by the days after now parameter.
      *       It will retrieve the attendees for these appointments and retrieve the associated prisoner records. The status, location and
      *       any other pertinent information for these prisoners will be used to determine whether the attendee records should be removed.
      *
@@ -1452,6 +1462,171 @@ export interface components {
        * ]
        */
       nonAttendedPrisonNumbers: string[]
+    }
+    /** @description Search filters */
+    WaitingListSearchRequest: {
+      /**
+       * Format: date
+       * @description Filter applications with a request date on or after provided date
+       * @example 2023-06-20
+       */
+      applicationDateFrom?: string
+      /**
+       * Format: date
+       * @description Filter applications with a request date on or before provided date
+       * @example 2023-06-20
+       */
+      applicationDateTo?: string
+      /**
+       * Format: int64
+       * @description The activity to return waiting list applications for.
+       * @example 3
+       */
+      activityId?: number
+      /**
+       * @description The prisoner or prisoners to retrieve waiting list applications for.
+       * @example [
+       *   "A1234BC"
+       * ]
+       */
+      prisonerNumbers?: string[]
+      /**
+       * @description Filter by the status of the application. PENDING, APPROVED or DECLINED.
+       * @example [
+       *   "DECLINED",
+       *   "PENDING"
+       * ]
+       */
+      status?: ('PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED')[]
+    }
+    PageableObject: {
+      /** Format: int64 */
+      offset?: number
+      sort?: components['schemas']['SortObject']
+      /** Format: int32 */
+      pageSize?: number
+      /** Format: int32 */
+      pageNumber?: number
+      paged?: boolean
+      unpaged?: boolean
+    }
+    PagedWaitingListApplication: {
+      /** Format: int64 */
+      totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
+      /** Format: int32 */
+      size?: number
+      content?: components['schemas']['WaitingListApplication'][]
+      /** Format: int32 */
+      number?: number
+      sort?: components['schemas']['SortObject']
+      first?: boolean
+      /** Format: int32 */
+      numberOfElements?: number
+      last?: boolean
+      pageable?: components['schemas']['PageableObject']
+      empty?: boolean
+    }
+    SortObject: {
+      empty?: boolean
+      sorted?: boolean
+      unsorted?: boolean
+    }
+    /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
+    WaitingListApplication: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this waiting list
+       * @example 111111
+       */
+      id: number
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the associated activity
+       * @example 1000
+       */
+      activityId: number
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the associated activity schedule
+       * @example 222222
+       */
+      scheduleId: number
+      /**
+       * Format: int64
+       * @description The internally-generated ID for the associated allocation
+       * @example 333333
+       */
+      allocationId?: number
+      /**
+       * @description The prison code for this waiting list
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description The prisoner number (NOMIS ID) for this waiting list
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The prisoner booking id (NOMIS ID) for this waiting list
+       * @example 10001
+       */
+      bookingId: number
+      /**
+       * @description The status of this waiting list
+       * @example PENDING
+       * @enum {string}
+       */
+      status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
+      /**
+       * Format: date-time
+       * @description The date and time the waiting list status was last updated
+       */
+      statusUpdatedTime?: string
+      /**
+       * Format: date
+       * @description The past or present date on which the waiting list was requested
+       * @example 2023-06-23
+       */
+      requestedDate: string
+      /**
+       * @description The person who made the request for this waiting list
+       * @example Fred Bloggs
+       */
+      requestedBy: string
+      /**
+       * @description Any particular comments related to this waiting list
+       * @example The prisoner has specifically requested to attend this activity
+       */
+      comments?: string
+      /**
+       * @description The reason for the waiting list request to be declined (null if status is not declined)
+       * @example The prisoner has specifically requested to attend this activity
+       */
+      declinedReason?: string
+      /**
+       * Format: date-time
+       * @description The date and time the waiting list was first created
+       */
+      creationTime: string
+      /**
+       * @description The person who created the waiting list i.e the user at the time
+       * @example Jon Doe
+       */
+      createdBy: string
+      /**
+       * Format: date-time
+       * @description The date and time the waiting list was last updated
+       */
+      updatedTime?: string
+      /**
+       * @description The person who last made changes to the waiting list
+       * @example Jane Doe
+       */
+      updatedBy?: string
     }
     /** @description The prisoner allocation request details */
     PrisonerAllocationRequest: {
@@ -4096,101 +4271,6 @@ export interface components {
        */
       status?: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
     }
-    /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
-    WaitingListApplication: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this waiting list
-       * @example 111111
-       */
-      id: number
-      /**
-       * Format: int64
-       * @description The internally-generated ID for the associated activity
-       * @example 1000
-       */
-      activityId: number
-      /**
-       * Format: int64
-       * @description The internally-generated ID for the associated activity schedule
-       * @example 222222
-       */
-      scheduleId: number
-      /**
-       * Format: int64
-       * @description The internally-generated ID for the associated allocation
-       * @example 333333
-       */
-      allocationId?: number
-      /**
-       * @description The prison code for this waiting list
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * @description The prisoner number (NOMIS ID) for this waiting list
-       * @example A1234AA
-       */
-      prisonerNumber: string
-      /**
-       * Format: int64
-       * @description The prisoner booking id (NOMIS ID) for this waiting list
-       * @example 10001
-       */
-      bookingId: number
-      /**
-       * @description The status of this waiting list
-       * @example PENDING
-       * @enum {string}
-       */
-      status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
-      /**
-       * Format: date-time
-       * @description The date and time the waiting list status was last updated
-       */
-      statusUpdatedTime?: string
-      /**
-       * Format: date
-       * @description The past or present date on which the waiting list was requested
-       * @example 2023-06-23
-       */
-      requestedDate: string
-      /**
-       * @description The person who made the request for this waiting list
-       * @example Fred Bloggs
-       */
-      requestedBy: string
-      /**
-       * @description Any particular comments related to this waiting list
-       * @example The prisoner has specifically requested to attend this activity
-       */
-      comments?: string
-      /**
-       * @description The reason for the waiting list request to be declined (null if status is not declined)
-       * @example The prisoner has specifically requested to attend this activity
-       */
-      declinedReason?: string
-      /**
-       * Format: date-time
-       * @description The date and time the waiting list was first created
-       */
-      creationTime: string
-      /**
-       * @description The person who created the waiting list i.e the user at the time
-       * @example Jon Doe
-       */
-      createdBy: string
-      /**
-       * Format: date-time
-       * @description The date and time the waiting list was last updated
-       */
-      updatedTime?: string
-      /**
-       * @description The person who last made changes to the waiting list
-       * @example Jane Doe
-       */
-      updatedBy?: string
-    }
     /** @description The update request with the new appointment details and how to apply the update */
     AppointmentUpdateRequest: {
       /**
@@ -4869,38 +4949,22 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
-      first?: boolean
-      last?: boolean
+      /** Format: int32 */
+      totalPages?: number
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
+      first?: boolean
       /** Format: int32 */
       numberOfElements?: number
+      last?: boolean
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
-    }
-    PageableObject: {
-      /** Format: int64 */
-      offset?: number
-      sort?: components['schemas']['SortObject']
-      /** Format: int32 */
-      pageNumber?: number
-      /** Format: int32 */
-      pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
-    }
-    SortObject: {
-      empty?: boolean
-      sorted?: boolean
-      unsorted?: boolean
     }
     /** @description Describes one instance of an activity schedule */
     ActivityScheduleInstance: {
@@ -6537,6 +6601,66 @@ export interface operations {
     }
   }
   /**
+   * @description Search waiting list applications
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  searchWaitingLists: {
+    parameters: {
+      query?: {
+        /** @description The page number of search results (default: 0) */
+        page?: number
+        /** @description The number of search results per page (default: 50) */
+        pageSize?: number
+      }
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaitingListSearchRequest']
+      }
+    }
+    responses: {
+      /** @description Waiting list application search results */
+      200: {
+        content: {
+          'application/json': components['schemas']['PagedWaitingListApplication']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Waiting list application not found */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Get a list of activity schedule allocations
    * @description Returns zero or more activity schedule allocations.
    *
@@ -7054,7 +7178,7 @@ export interface operations {
   /**
    * Starts a job to manage appointment attendees
    * @description
-   *       Job will retrieve all appointments within the date range defined by the supplied days before now and days after now parameters.
+   *       Job will retrieve all future appointments starting within the number of days defined by the days after now parameter.
    *       It will retrieve the attendees for these appointments and retrieve the associated prisoner records. The status, location and
    *       any other pertinent information for these prisoners will be used to determine whether the attendee records should be removed.
    *
@@ -7063,9 +7187,7 @@ export interface operations {
   triggerManageAllocationsJob_1: {
     parameters: {
       query: {
-        /** @description The number of days prior to today to start the date range. The attendees for appointments starting after this will be managed. */
-        daysBeforeNow: number
-        /** @description The number of days after today to end the date range. The attendees for appointments starting before this will be managed. */
+        /** @description The number of days into the future to manage appointments up to a maximum of 60. The attendees for future appointments starting on those days this will be managed. */
         daysAfterNow: number
       }
     }

@@ -2,24 +2,19 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../../services/activitiesService'
-
-enum StatusEnum {
-  APPROVED = 'APPROVED',
-  DECLINED = 'DECLINED',
-  PENDING = 'PENDING',
-}
+import { WaitingListStatusOptions } from '../../../../../enum/waitingListStatus'
 
 export class EditStatus {
   @Expose()
-  @IsIn(Object.values(StatusEnum), { message: 'Select a status for the application' })
-  status: StatusEnum
+  @IsIn(Object.values(WaitingListStatusOptions), { message: 'Select a status for the application' })
+  status: WaitingListStatusOptions
 }
 
 export default class EditStatusRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    return res.render(`pages/activities/waitlist-application/edit-status`, { StatusEnum })
+    return res.render(`pages/activities/waitlist-application/edit-status`, { WaitingListStatusOptions })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
