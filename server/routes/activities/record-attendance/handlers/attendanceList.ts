@@ -123,12 +123,12 @@ export default class AttendanceListRoutes {
     const selectedPrisoners: string[] = []
     selectedAttendances.forEach(selectAttendee => selectedPrisoners.push(selectAttendee.split('-')[1]))
 
-    req.session.notAttendedJourney = {}
-    if (!req.session.notAttendedJourney.selectedPrisoners) {
-      req.session.notAttendedJourney.selectedPrisoners = []
-    }
-
     const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
+
+    req.session.notAttendedJourney = {
+      activityInstance: instance,
+    }
+    req.session.notAttendedJourney.selectedPrisoners = []
 
     const otherScheduledEvents = await this.activitiesService
       .getScheduledEventsForPrisoners(toDate(instance.date), selectedPrisoners, user)
