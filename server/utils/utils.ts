@@ -83,13 +83,13 @@ export const firstNameLastName = (user?: { firstName: string; lastName: string }
  */
 export const prisonerName = (name: string, boldLastName = true) => {
   if (!name) return null
-  const nameParts = name.split(' ')
+  const nameParts = name.trim().split(' ')
   const firstNames = nameParts.slice(0, nameParts.length - 1)
 
   let formattedName = nameParts[nameParts.length - 1]
   if (boldLastName) formattedName = `<strong>${formattedName}</strong>`
   formattedName += `, ${firstNames.join(' ')}`
-  return formattedName
+  return formattedName.trim()
 }
 
 export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {
