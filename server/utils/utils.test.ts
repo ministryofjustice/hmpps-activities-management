@@ -75,7 +75,6 @@ describe('utils', () => {
     it.each([
       [null, true, null, null],
       ['First name, last name', true, 'Robert Smith', '<strong>Smith</strong>, Robert'],
-      ['First name, last name', true, 'Robert Smith', '<strong>Smith</strong>, Robert'],
       ['First name, middle names, last name', true, 'Robert James Smith', '<strong>Smith</strong>, Robert James'],
       [null, false, null, null],
       ['First name, last name', false, 'Robert Smith', 'Smith, Robert'],
