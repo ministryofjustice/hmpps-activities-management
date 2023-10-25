@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { parse } from 'date-fns'
 import { when } from 'jest-when'
-import createHttpError from 'http-errors'
 import ActivitiesService from '../../../../../services/activitiesService'
 import ViewApplicationRoutes from './viewApplication'
 import PrisonService from '../../../../../services/prisonService'
@@ -33,6 +32,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
 
     req = {
       params: { applicationId: 1 },
+      query: {},
       session: {},
     } as unknown as Request
 
@@ -113,25 +113,6 @@ describe('Route Handlers - Waitlist application - View application', () => {
         isMostRecent: true,
         isNotAlreadyAllocated: true,
       })
-    })
-
-    it('should return not found response if application is not in a viewable status', async () => {
-      activitiesService.fetchWaitlistApplication = jest.fn()
-      when(activitiesService.fetchWaitlistApplication)
-        .calledWith(atLeast(1))
-        .mockResolvedValue({
-          status: 'ALLOCATED',
-          scheduleId: 1,
-          prisonerNumber: 'ABC123',
-          creationTime: '2023-08-16',
-          requestedDate: '2023-07-31',
-          requestedBy: 'Self-requested',
-          comments: 'test comment',
-        } as WaitingListApplication)
-
-      await handler.GET(req, res, next)
-
-      expect(next).toHaveBeenCalledWith(createHttpError.NotFound())
     })
 
     it('should calculate if the application is the most recent for the prisoner', async () => {
@@ -223,6 +204,51 @@ describe('Route Handlers - Waitlist application - View application', () => {
         `pages/activities/waitlist-application/view-application`,
         expect.objectContaining({
           isNotAlreadyAllocated: false,
+        }),
+      )
+    })
+
+    it('should return the user to the journey entry URL', async () => {
+      req.query = {
+        journeyEntry: 'waitlist-dashboard',
+      }
+
+      when(activitiesService.fetchWaitlistApplication)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({
+          id: 1,
+          prisonerNumber: 'ABC123',
+          activityId: 1,
+        } as WaitingListApplication)
+
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue({
+          prisonerNumber: 'ABC123',
+          firstName: 'Alan',
+          lastName: 'Key',
+        } as Prisoner)
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({
+          id: 1,
+          description: 'Test activity',
+          schedules: [{ allocations: [] }],
+        } as Activity)
+
+      when(activitiesService.fetchActivityWaitlist)
+        .calledWith(atLeast(1))
+        .mockResolvedValue([{ prisonerNumber: 'ABC123', creationTime: '2023-08-17' } as WaitingListApplication])
+
+      await handler.GET(req, res, next)
+
+      expect(req.session.waitListApplicationJourney.journeyEntry).toEqual('waitlist-dashboard')
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/waitlist-application/view-application',
+        expect.objectContaining({
+          journeyEntry: 'waitlist-dashboard',
         }),
       )
     })

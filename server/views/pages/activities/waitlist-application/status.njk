@@ -38,22 +38,22 @@
                     errorMessage: validationErrors | findError('status'),
                     items: [
                         {
-                            value: StatusEnum.APPROVED,
-                            html: waitlistStatusBadgeWithHint(StatusEnum.APPROVED, 'Add the applicant to the waitlist. They’re ready to be allocated.'),
-                            checked: session.waitListApplicationJourney.status == StatusEnum.APPROVED
+                            value: WaitingListStatusOptions.APPROVED,
+                            html: waitlistStatusBadgeWithHint(WaitingListStatusOptions.APPROVED, 'Add the applicant to the waitlist. They’re ready to be allocated.'),
+                            checked: session.waitListApplicationJourney.status == WaitingListStatusOptions.APPROVED
                         },
                         {
-                            value: StatusEnum.DECLINED,
-                            html: waitlistStatusBadgeWithHint(StatusEnum.DECLINED, 'Reject the application and inform the person concerned.'),
-                            checked: session.waitListApplicationJourney.status == StatusEnum.DECLINED
+                            value: WaitingListStatusOptions.DECLINED,
+                            html: waitlistStatusBadgeWithHint(WaitingListStatusOptions.DECLINED, 'Reject the application and inform the person concerned.'),
+                            checked: session.waitListApplicationJourney.status == WaitingListStatusOptions.DECLINED
                         },
                         {
                             divider: "or"
                         },
                         {
-                            value: StatusEnum.PENDING,
-                            html: waitlistStatusBadgeWithHint(StatusEnum.PENDING, 'Add the applicant to the waitlist as ‘Pending’. Follow your usual procedure to check if they can be allocated.'),
-                            checked: session.waitListApplicationJourney.status == StatusEnum.PENDING
+                            value: WaitingListStatusOptions.PENDING,
+                            html: waitlistStatusBadgeWithHint(WaitingListStatusOptions.PENDING, 'Add the applicant to the waitlist as ‘Pending’. Follow your usual procedure to check if they can be allocated.'),
+                            checked: session.waitListApplicationJourney.status == WaitingListStatusOptions.PENDING
                         }
                     ]
                 }) }}

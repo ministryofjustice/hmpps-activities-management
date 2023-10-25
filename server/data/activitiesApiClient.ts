@@ -52,6 +52,9 @@ import {
   AppointmentAttendanceRequest,
   Appointment,
   AppointmentAttendanceSummary,
+  WaitingListSearchRequest,
+  WaitingListApplicationPaged,
+  WaitingListSearchParams,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -625,6 +628,21 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: request,
+    })
+  }
+
+  async searchWaitingListApplications(
+    prisonCode: string,
+    searchRequest: WaitingListSearchRequest,
+    pageOptions: WaitingListSearchParams,
+    user: ServiceUser,
+  ): Promise<WaitingListApplicationPaged> {
+    return this.post({
+      path: `/waiting-list-applications/${prisonCode}/search`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: searchRequest,
+      query: pageOptions,
     })
   }
 }
