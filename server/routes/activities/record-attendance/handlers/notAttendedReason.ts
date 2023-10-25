@@ -12,8 +12,9 @@ import {
 import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
-import { convertToTitleCase } from '../../../../utils/utils'
+import { convertToTitleCase, formatDate } from '../../../../utils/utils'
 import { YesNo } from '../../../../@types/activities'
+import { ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 
 const getPrisonerName = (args: ValidationArguments) => (args.object as NotAttendedData)?.prisonerName
 
@@ -52,7 +53,7 @@ export class NotAttendedData {
 
   @ValidateIf(o => AttendanceReason.REFUSED === o.notAttendedReason)
   @IsNotEmpty({ message: args => `Enter a case note for ${getPrisonerName(args)}` })
-  @MaxLength(4000, { message: 'Case note must be $constraint1 characters or less' })
+  @MaxLength(3800, { message: 'Case note must be $constraint1 characters or less' })
   caseNote?: string
 
   @ValidateIf(o => AttendanceReason.REFUSED === o.notAttendedReason)
@@ -62,7 +63,12 @@ export class NotAttendedData {
   })
   incentiveLevelWarningIssued?: YesNo
 
-  getCaseNote = () => (this.notAttendedReason === AttendanceReason.REFUSED ? this.caseNote : null)
+  getCaseNote = (activityInstance: ScheduledActivity) =>
+    this.notAttendedReason === AttendanceReason.REFUSED
+      ? `Failed to attend - ${activityInstance.activitySchedule.activity.summary} - ${
+          activityInstance.activitySchedule.internalLocation.description
+        } - ${formatDate(activityInstance.date)} - ${activityInstance.startTime} \n\n ${this.caseNote}`
+      : null
 
   getIssuePayment() {
     if (this.sickPay === YesNo.YES && this.notAttendedReason === AttendanceReason.SICK) return true
@@ -105,7 +111,7 @@ export default class NotAttendedReasonRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
-    const { selectedPrisoners } = req.session.notAttendedJourney
+    const { selectedPrisoners, activityInstance } = req.session.notAttendedJourney
 
     const attendanceUpdates = selectedPrisoners.map(selectedPrisoner => {
       const prisonerAttendance = notAttendedData.find(a => a.prisonerNumber === selectedPrisoner.prisonerNumber)
@@ -118,7 +124,7 @@ export default class NotAttendedReasonRoutes {
         attendanceReason: prisonerAttendance.notAttendedReason,
         comment: prisonerAttendance.getMoreDetails(),
         issuePayment: prisonerAttendance.getIssuePayment(),
-        caseNote: prisonerAttendance.getCaseNote(),
+        caseNote: prisonerAttendance.getCaseNote(activityInstance),
         incentiveLevelWarningIssued: prisonerAttendance.getIncentiveLevelWarning(),
         otherAbsenceReason: prisonerAttendance.getOtherAbsenceReason(),
       }

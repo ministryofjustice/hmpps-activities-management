@@ -36,6 +36,11 @@ describe('Route Handlers - Non Attendance', () => {
       params: { id: 1 },
       session: {
         notAttendedJourney: {
+          activityInstance: {
+            date: '2023-10-25',
+            startTime: '09:00',
+            activitySchedule: { activity: { summary: 'Test activity' }, internalLocation: { description: 'Room 1' } },
+          },
           selectedPrisoners: [{ attendanceId: 1, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' }],
         },
       },
@@ -381,7 +386,7 @@ describe('Route Handlers - Non Attendance', () => {
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
         property: 'caseNote',
-        error: 'Case note must be 4000 characters or less',
+        error: 'Case note must be 3800 characters or less',
       })
     })
 
@@ -420,7 +425,24 @@ describe('Route Handlers - Non Attendance', () => {
       } as NotAttendedForm
 
       const requestObject = plainToInstance(NotAttendedForm, request)
-      expect(requestObject.notAttendedData[0].getCaseNote()).toBeNull()
+      expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toBeNull()
+    })
+
+    it('should set case note when attendance reason is "REFUSED"', async () => {
+      const request = {
+        notAttendedData: [
+          {
+            ...attenance,
+            notAttendedReason: AttendanceReasons.REFUSED,
+            caseNote: 'case note',
+          },
+        ],
+      } as NotAttendedForm
+
+      const requestObject = plainToInstance(NotAttendedForm, request)
+      expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toEqual(
+        'Failed to attend - Test activity - Room 1 - Wednesday, 25 October 2023 - 09:00 \n\n case note',
+      )
     })
 
     it('should not issue payment if attendance reason is "REFUSED"', async () => {
