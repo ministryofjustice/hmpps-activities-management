@@ -873,4 +873,22 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('searchWaitingListApplications', () => {
+    it('should call endpoint to search waiting list applications', async () => {
+      fakeActivitiesApi
+        .post(`/waiting-list-applications/MDI/search`)
+        .query({ page: 1, pageSize: 50 })
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.searchWaitingListApplications(
+        'MDI',
+        { prisonerNumbers: ['ABC1234'] },
+        { page: 1, pageSize: 50 },
+        user,
+      )
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

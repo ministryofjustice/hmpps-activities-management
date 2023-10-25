@@ -35,7 +35,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
     it('should render the edit status template', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-status`, {
-        StatusEnum: {
+        WaitingListStatusOptions: {
           APPROVED: 'APPROVED',
           DECLINED: 'DECLINED',
           PENDING: 'PENDING',

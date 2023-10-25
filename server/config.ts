@@ -144,6 +144,10 @@ export default {
       roles: [Roles.ACTIVITY_HUB],
     },
     {
+      route: '/activities/waitlist-dashboard',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
       route: '/activities/change-of-circumstances',
       roles: [Roles.ACTIVITY_HUB],
     },
