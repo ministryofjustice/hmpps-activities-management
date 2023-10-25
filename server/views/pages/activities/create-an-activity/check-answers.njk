@@ -272,7 +272,7 @@
         <div class="govuk-!-margin-bottom-2">
             <div class="govuk-!-font-weight-bold">Flat rate pay</div>
             {% for flatRate in session.createJourney.flat %}
-                <div>{{ flatRate.bandAlias }}: {{ flatRate.rate | toMoney }}</div>
+                <div>{{ flatRate.prisonPayBand.alias }}: {{ flatRate.rate | toMoney }}</div>
             {% endfor %}
         </div>
     {% endif %}
