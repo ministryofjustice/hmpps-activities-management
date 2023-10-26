@@ -120,7 +120,28 @@
                 classes: "govuk-tag--green"
             })
         }}
-    {% elseif 'cell.move' in event.eventType %}
+    {% elseif 'activities-changed' in event.eventType %}
+        {{
+        govukTag({
+            text: "RELEASE",
+            classes: "govuk-tag--green"
+        })
+        }}
+    {% elseif 'appointments-changed' in event.eventType %}
+        {{
+        govukTag({
+            text: "RELEASE",
+            classes: "govuk-tag--green"
+        })
+        }}
+    {% elseif 'prisoner.released' in event.eventType %}
+        {{
+        govukTag({
+            text: "RELEASE",
+            classes: "govuk-tag--green"
+        })
+        }}
+    {% elseif '' in event.eventType %}
         {{
             govukTag({
                 text: "CELL-MOVE",
