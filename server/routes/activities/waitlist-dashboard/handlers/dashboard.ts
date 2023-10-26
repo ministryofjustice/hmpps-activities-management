@@ -113,7 +113,7 @@ export default class DashboardRoutes {
 
     const application = await this.activitiesService.fetchWaitlistApplication(+selectedWaitlistApplication, user)
     res.redirect(
-      `/activities/allocate/prisoner/${application.prisonerNumber}` +
+      `/activities/allocations/create/prisoner/${application.prisonerNumber}` +
         `?scheduleId=${application.scheduleId}` +
         `&source=waitlist-dashboard` +
         `&selectedWaitlistApplication=${application.id}`,

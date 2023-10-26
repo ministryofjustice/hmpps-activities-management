@@ -243,7 +243,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
       await handler.ALLOCATE(req, res)
 
       expect(res.redirect).toBeCalledWith(
-        `/activities/allocate/prisoner/ABC1234` +
+        `/activities/allocations/create/prisoner/ABC1234` +
           `?scheduleId=2` +
           `&source=waitlist-dashboard` +
           `&selectedWaitlistApplication=1`,
