@@ -13,14 +13,15 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
 
-{% set pageTitle = "Waiting list - Dashboard" %}
+{% set pageTitle = "Waitlist - Dashboard" %}
 {% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Waiting list dashboard</h1>
-            <p class="govuk-body">Find and manage prisoner waiting list applications. Select an application to view and edit it's details or proceed with allocation.</p>
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Waitlist dashboard</h1>
+            <p class="govuk-body">Select an application to view or edit it, and to change the status.</p>
+            <p class="govuk-body">Where an application is ‘Approved’, select it to allocate the prisoner to the activity.</p>
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -31,7 +32,7 @@
                     name: 'query',
                     value: query,
                     label: {
-                        text: "Prisoner Search",
+                        text: "Search by name or prison number",
                         classes: "govuk-label--s"
                     }
                 }) }}
@@ -123,7 +124,7 @@
 
                     <form method="POST">
                     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                    <h2 class="govuk-heading-s govuk-!-margin-0">Found {{ pageInfo.totalElements }} waiting list application{{ "s" if pageInfo.totalElements | length != 1 }}</h2>
+                    <h2 class="govuk-heading-s govuk-!-margin-0">{{ pageInfo.totalElements }} waitlist application{{ "s" if pageInfo.totalElements | length != 1 }}</h2>
                     {% set rows = [] %}
                     {% for application in applications %}
                         {% set rows = (rows.push({
@@ -144,7 +145,7 @@
                                     text: application.activity.activityName
                                 },
                                 {
-                                    text: application.requestedDate | formatDate
+                                    text: application.requestedDate | formatDate('d MMMM yyyy')
                                 },
                                 {
                                     text: application.requestedBy
@@ -158,7 +159,7 @@
 
                     {{ stickySelect({
                         idPrefix: 'waitlist',
-                        caption: "Waiting list applications",
+                        caption: "Waitlist applications",
                         captionClasses: "govuk-visually-hidden",
                         type: 'radio',
                         fixed: true,
