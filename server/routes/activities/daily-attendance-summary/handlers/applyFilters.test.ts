@@ -18,7 +18,6 @@ describe('Route Handlers - applyFilters', () => {
       session: {
         attendanceSummaryJourney: {
           categoryFilters: ['Original category'],
-          activityFilters: ['Original Activity'],
           searchTerm: 'Original search',
         },
       },
@@ -29,14 +28,12 @@ describe('Route Handlers - applyFilters', () => {
     it('should apply populated list of filter', async () => {
       req.body = {
         categoryFilters: ['Prison Jobs'],
-        activityFilters: ['Activity One'],
         searchTerm: 'search',
       }
       await handler.APPLY(req, res)
 
       expect(req.session.attendanceSummaryJourney).toStrictEqual({
         categoryFilters: ['Prison Jobs'],
-        activityFilters: ['Activity One'],
         searchTerm: 'search',
       })
     })
@@ -44,14 +41,12 @@ describe('Route Handlers - applyFilters', () => {
     it('should apply empty filters', async () => {
       req.body = {
         categoryFilters: [],
-        activityFilters: [],
         searchTerm: '',
       }
       await handler.APPLY(req, res)
 
       expect(req.session.attendanceSummaryJourney).toStrictEqual({
         categoryFilters: [],
-        activityFilters: [],
         searchTerm: '',
       })
     })

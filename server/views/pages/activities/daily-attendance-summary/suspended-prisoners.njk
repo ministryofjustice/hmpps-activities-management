@@ -4,14 +4,12 @@
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
-{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
-{% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "partials/searchInput.njk" import searchInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% set pageTitle = applicationName + " - Daily attendance list" %}
-{% set pageId = 'daily-attendance-detail-page' %}
+{% set pageTitle = applicationName + " - Suspended Prisoners" %}
+{% set pageId = 'suspended-prisoners-detail-page' %}
 {% set jsBackLink = true %}
 
 {% block content %}
@@ -51,12 +49,9 @@
     <div class="moj-filter-layout" data-module="activities-list-filter">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">{{
-                    ("All not attended yet" if status == 'NotAttended') +
-                    ("All absences" if status == 'Absences') +
-                    ("All attended" if status == 'Attended')
-                }}
-                <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
+                    Suspended from activities
+                    <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
                 </h1>
 
                 {{ searchInput({
@@ -116,29 +111,29 @@
                             label: "Daily summary",
                             id: "day-tab",
                             panel: {
-                                html: summaryHtml("DAY", "daily", activityDate)
-                            }
+                            html: summaryHtml("DAY", "daily", activityDate)
+                        }
                         },
                         {
                             label: "AM session",
                             id: "am-tab",
                             panel: {
-                                html: summaryHtml("AM", "morning", activityDate)
-                            }
+                            html: summaryHtml("AM", "morning", activityDate)
+                        }
                         },
                         {
                             label: "PM session",
                             id: "pm-tab",
                             panel: {
-                                html: summaryHtml("PM", "afternoon", activityDate)
-                            }
+                            html: summaryHtml("PM", "afternoon", activityDate)
+                        }
                         },
                         {
                             label: "ED session",
                             id: "ed-tab",
                             panel: {
-                                html: summaryHtml("ED", "evening", activityDate)
-                            }
+                            html: summaryHtml("ED", "evening", activityDate)
+                        }
                         }
                     ]
                 }) }}
@@ -146,61 +141,54 @@
         </form>
     </div>
 {% endblock %}
-
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
-    {% set attendanceRows = [] %}
-    {% for attendee in attendees %}
-        {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
-            {% set attendanceRows = (attendanceRows.push([
+    {% set suspendedPrisonersRows = [] %}
+    {% for suspendedPrisoner in suspendedAttendancesByPrisoner %}
+        {% if timeSlot === 'DAY' or timeSlot in suspendedPrisoner.timeSlots %}
+            {% set sessions %}
+                {% for session in (suspendedPrisoner.sessions if timeSlot === 'DAY' else suspendedPrisoner.sessions | filter('sessionSlot', timeSlot)) %}
+                    <div class="govuk-body-s govuk-!-margin-0">
+                        <div class="govuk-!-margin-right-2">
+                            <div class="govuk-!-font-weight-bold">
+                                <a href="/activities/attendance/activities/{{ session.sessionId }}/attendance-list"
+                                   class="govuk-link govuk-link--no-visited-state" target='_blank'>{{ session.sessionSummary }}</a>
+                            </div>
+                            <div>{{ session.sessionStartTime }} - {{ session.sessionEndTime }}</div>
+                            <div>{{ session.sessionLocation }}</div>
+                        </div>
+                    </div>
+                    {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
+                {% endfor %}
+            {% endset %}
+            {% set suspendedPrisonersRows = (suspendedPrisonersRows.push([
                 {
-                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name | prisonerName(false) },
+                    attributes: { id: 'prisoner-' + loop.index, "data-sort-value": suspendedPrisoner.prisonerName },
                     html: showProfileLink({
-                        name: attendee.name,
-                        prisonerNumber: attendee.prisonerNumber,
-                        link: false if attendee.status == 'INACTIVE OUT' else true,
+                        name: suspendedPrisoner.prisonerName,
+                        prisonerNumber: suspendedPrisoner.prisonerNumber,
+                        link: false if suspendedPrisoner.status == 'INACTIVE OUT' else true,
                         classes: 'hmpps-inline-block'
                     }),
                     classes: 'govuk-table_cell'
                 },
                 {
-                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": attendee.location },
-                    html: renderLocation(attendee.location, attendee.status),
+                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": suspendedPrisoner.cellLocation },
+                    text: suspendedPrisoner.cellLocation or '--',
                     classes: 'govuk-table_cell'
                 },
                 {
-                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.attendance.activitySummary },
-                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>',
-                    classes: 'govuk-table__cell'
-                },
-                {
-                    attributes: { id: 'recorded-time-' + loop.index, "data-sort-value": attendee.location },
-                    text: attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('HH:mm:ss') + ' on ' + attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMM yyyy'),
+                    attributes: { id: 'activities-' + loop.index },
+                    html: sessions,
                     classes: 'govuk-table_cell'
-                } if status != "NotAttended",
-                {
-                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + renderPayStatus(attendee.attendance),
-                    attributes: {
-                        "data-qa": "attendance"
-                    }
-                },
-                {
-                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + 'View or edit</a>'
-                } if status != "NotAttended"
-            ] | removeUndefined), attendanceRows) %}
+                }
+            ]), suspendedPrisonersRows) %}
         {% endif %}
     {% endfor %}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            {% if status == 'Attended' %}
-                <h2 class="govuk-heading-m">{{ attendanceRows | length }} attended</h2>
-            {% elseif status == 'NotAttended' %}
-                <h2 class="govuk-heading-m">{{ attendanceRows | length }} not attended yet</h2>
-            {% elseif status == 'Absences' %}
-                <h2 class="govuk-heading-m">{{ attendanceRows | length }} absence{% if attendanceRows | length != 1 %}s{% endif %}</h2>
-            {% endif %}
-        </div>
-    </div>
+    <h2 class="govuk-heading-m">
+        {{ suspendedPrisonersRows | length }}
+        prisoner{% if suspendedPrisonersRows | length != 1 %}s{% endif %} suspended
+    </h2>
 
     {{ govukTable({
         attributes: {
@@ -211,51 +199,24 @@
         captionClasses: "govuk-visually-hidden",
         head: [
             {
-                text: "Attendee",
-                attributes: { "aria-sort": "none" }
+                text: "Name",
+                attributes: { "aria-sort": "ascending" },
+                classes: 'govuk-table__header'
             },
             {
                 text: "Cell location",
-                attributes: { "aria-sort": "none" }
+                attributes: { "aria-sort": "none" },
+                classes: 'govuk-table__header'
             },
             {
-                html: "Session",
-                attributes: { "aria-sort": "ascending" }
-            },
-            {
-                html: "Time recorded",
-                attributes: { "aria-sort": "none" }
-            }  if status != "NotAttended",
-            {
-                text: "Attendance details",
-                attributes: { "aria-sort": "none" }
-            },
-            {
-                text: ""
-            } if status != "NotAttended"
-        ] | removeUndefined,
-        rows: attendanceRows
+                html: "Activity",
+                classes: 'govuk-table__header'
+            }
+        ],
+        rows: suspendedPrisonersRows if suspendedPrisonersRows | length > 0 else [[{
+            text: "No suspended prisoners",
+            attributes: { "colspan": "3" },
+            classes: 'govuk-table_cell govuk-!-text-align-centre'
+        }]]
     }) }}
 {% endmacro %}
-
-{% macro renderPayStatus(attendance) %}
-    {% if attendance.issuePayment %}
-        {{ govukTag({
-            text: "Pay",
-            classes: "govuk-tag--green"
-        }) }}
-    {% elseif attendance.status !=  'WAITING' %}
-        {{ govukTag({
-            text: "No pay",
-            classes: "govuk-tag--red"
-        }) }}
-    {% endif %}
-{% endmacro %}
-
-  {% macro renderLocation(location, status) %}
-     {% if (location == 'CSWAP' and status == 'ACTIVE OUT') or status == 'INACTIVE OUT' %}
-          --
-     {% else %}
-         {{ location }}
-     {% endif %}
-  {% endmacro %}

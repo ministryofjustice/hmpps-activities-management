@@ -441,7 +441,7 @@ describe('Route Handlers - Non Attendance', () => {
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toEqual(
-        'Failed to attend - Test activity - Room 1 - Wednesday, 25 October 2023 - 09:00 \n\n case note',
+        'Refused to attend - Test activity - Room 1 - Wednesday, 25 October 2023 - 09:00 \n\ncase note',
       )
     })
 

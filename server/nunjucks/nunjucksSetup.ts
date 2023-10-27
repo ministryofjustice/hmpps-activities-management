@@ -30,6 +30,7 @@ import {
   firstNameLastName,
   setAttribute,
   removeUndefined,
+  filterObjects,
 } from '../utils/utils'
 import config from '../config'
 import applicationVersion from '../applicationVersion'
@@ -155,6 +156,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('setAttribute', setAttribute)
   njkEnv.addFilter('removeUndefined', removeUndefined)
   njkEnv.addFilter('startOfDay', startOfDay)
+  njkEnv.addFilter('filter', filterObjects)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

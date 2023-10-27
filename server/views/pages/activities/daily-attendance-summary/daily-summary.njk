@@ -290,7 +290,11 @@
             heading: 'Suspended',
             number: suspendedPrisonerCount[timeSlot],
             visuallyHiddenText: 'prisoners',
-            forceDisplay: true
+            forceDisplay: true,
+            link: {
+                href: "suspended-prisoners?date=" + activityDate | formatDate('yyyy-MM-dd'),
+                text: 'All suspensions'
+            } if suspendedPrisonerCount[timeSlot] > 0
         }) }}
     </div>
 {% endmacro %}
