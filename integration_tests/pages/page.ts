@@ -138,6 +138,7 @@ export default abstract class Page {
     // Select day
     cy.get('.hmpps-datepicker__dialog__table')
       .find('button')
+      .filter(':visible')
       .contains(new RegExp(`^${getDate(date).toString()}$`))
       .click()
 
