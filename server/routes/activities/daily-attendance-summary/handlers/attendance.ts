@@ -28,18 +28,14 @@ export default class DailyAttendanceRoutes {
     })
 
     const uniqueCategories = _.uniq(attendancesForStatus.map(c => c.categoryName))
-    const uniqueActivities = _.uniq(attendancesForStatus.map(c => c.activitySummary))
 
     // Set the default filter values if they are not set
     req.session.attendanceSummaryJourney ??= {}
     req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
-    req.session.attendanceSummaryJourney.activityFilters ??= uniqueActivities
 
-    const { categoryFilters, activityFilters, searchTerm } = req.session.attendanceSummaryJourney
+    const { categoryFilters, searchTerm } = req.session.attendanceSummaryJourney
 
-    const attendancesMatchingFilter = attendancesForStatus.filter(
-      a => categoryFilters.includes(a.categoryName) && activityFilters.includes(a.activitySummary),
-    )
+    const attendancesMatchingFilter = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
     const prisonerNumbers = attendancesMatchingFilter.map(a => a.prisonerNumber)
 
     const inmates = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
@@ -67,7 +63,6 @@ export default class DailyAttendanceRoutes {
     return res.render('pages/activities/daily-attendance-summary/attendances', {
       activityDate,
       uniqueCategories,
-      uniqueActivities,
       status,
       attendees,
     })
