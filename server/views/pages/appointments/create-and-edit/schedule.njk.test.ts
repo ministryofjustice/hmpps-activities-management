@@ -493,10 +493,10 @@ describe('Views - Appointments Management - Schedule', () => {
       $ = cheerio.load(compiledTemplate.render(viewContext))
 
       expect($('form').length).toBe(0)
-      expect($('h1').text().trim()).toEqual('There are no attendees for this appointment')
+      expect($('h1').text().trim()).toEqual('There are no attendees to add')
       const paragraphs = $('p')
-      expect(paragraphs.text()).toContain('You’ve removed the last attendee for this appointment.')
-      expect(paragraphs.text()).toContain('You need to add someone to continue scheduling it.')
+      expect(paragraphs.text()).toContain('You’ve removed the last new attendee.')
+      expect(paragraphs.text()).toContain('return to the appointment details')
       const cta = $('.govuk-button')
       expect(cta.text().trim()).toBe('Add someone to the list')
       expect(cta.attr('href')).toBe('how-to-add-prisoners?preserveHistory=true')
