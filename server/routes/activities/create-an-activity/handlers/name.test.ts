@@ -57,7 +57,7 @@ describe('Route Handlers - Create an activity - Name', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
     })
 
-    it('should save entered name in session and redirect to risk level page', async () => {
+    it('should save entered name in session and redirect to risk level page if category "not in work"', async () => {
       req.body = {
         name: 'Maths level 1',
       }
