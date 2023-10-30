@@ -26,9 +26,9 @@
                     <p class="govuk-body">You’ve removed the last attendee for this set of appointments.</p>
                     <p class="govuk-body">You need to add a new list of prison numbers to continue scheduling the set of back-to-backs.</p>
                 {% else %}
-                    <h1 class="govuk-heading-l">There are no attendees for this appointment</h1>
-                    <p class="govuk-body">You’ve removed the last attendee for this appointment.</p>
-                    <p class="govuk-body">You need to add someone to continue scheduling it.</p>
+                    <h1 class="govuk-heading-l">There are no attendees to add</h1>
+                    <p class="govuk-body">You’ve removed the last new attendee.</p>
+                    <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}" class="govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
                 {% endif %}
 
                 {% set addPrisonersHref = ('prisoners/add/how-to-add-prisoners?preserveHistory=true' if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT) or
