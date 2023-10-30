@@ -39,9 +39,18 @@
                     items: activityTierOptions
                 }) }}
 
-                {{ govukButton({
-                    text: "Confirm"
-                }) }}
+                {% if session.req.params.mode == 'edit' %}
+                    <div class="govuk-button-group">
+                      {{ govukButton({
+                        text: "Update tier"
+                      }) }}
+                        <a class="govuk-link js-backlink" href="/activities/view/{{ session.createJourney.activityId }}">Cancel</a>
+                    </div>
+                {% else %}
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                {% endif %}
             </form>
         </div>
     </div>

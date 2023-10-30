@@ -29,6 +29,8 @@ import LocationPage from '../pages/createSchedule/location'
 import CapacityPage from '../pages/createSchedule/capacity'
 import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
 import ActivitiesIndexPage from '../pages/activities'
+import ActivityTierPage from '../pages/createActivity/tier'
+import ActivityOrganiserPage from '../pages/createActivity/organiser'
 
 context('Create activity', () => {
   beforeEach(() => {
@@ -65,6 +67,14 @@ context('Create activity', () => {
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
     activityNamePage.enterName('5-a-side Football')
     activityNamePage.continue()
+
+    const activitTierPage = Page.verifyOnPage(ActivityTierPage)
+    activitTierPage.selectActivityTier('Tier 2')
+    activityNamePage.continue()
+
+    const activitOrganiserPage = Page.verifyOnPage(ActivityOrganiserPage)
+    activitOrganiserPage.selectOrganiser('Prison staff')
+    activitOrganiserPage.continue()
 
     const riskLevelPage = Page.verifyOnPage(RiskLevelPage)
     riskLevelPage.selectRiskLevel('Only people with a low workplace risk assessment are suitable')
