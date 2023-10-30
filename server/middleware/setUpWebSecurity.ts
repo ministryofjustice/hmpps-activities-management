@@ -26,6 +26,7 @@ export default function setUpWebSecurity(): Router {
   const styleSrc = ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`]
   const imgSrc = ["'self'", 'data:']
   const fontSrc = ["'self'"]
+  const formAction = [`'self' ${config.dpsUrl}`]
 
   scriptSrc.push(config.apis.frontendComponents.url)
   styleSrc.push(config.apis.frontendComponents.url)
@@ -42,6 +43,7 @@ export default function setUpWebSecurity(): Router {
           styleSrc,
           imgSrc,
           fontSrc,
+          formAction,
         },
       },
       referrerPolicy: { policy: 'same-origin' },
