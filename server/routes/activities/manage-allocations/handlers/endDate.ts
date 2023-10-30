@@ -15,7 +15,7 @@ export class EndDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
   @IsDate({ message: 'Enter a valid end date' })
-  @DateValidator(date => date > startOfToday(), { message: "Enter a date after today's date" })
+  @DateValidator(date => date >= startOfToday(), { message: "Enter a date on or after today's date" })
   @DateValidator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.startDate), {
     message: args => {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
