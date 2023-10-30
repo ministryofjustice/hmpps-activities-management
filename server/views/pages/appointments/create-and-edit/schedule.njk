@@ -28,7 +28,7 @@
                 {% else %}
                     <h1 class="govuk-heading-l">There are no attendees to add</h1>
                     <p class="govuk-body">You’ve removed the last new attendee.</p>
-                    <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}" class="govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
+                    <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}" class="govuk-link govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
                 {% endif %}
 
                 {% set addPrisonersHref = ('prisoners/add/how-to-add-prisoners?preserveHistory=true' if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT) or
