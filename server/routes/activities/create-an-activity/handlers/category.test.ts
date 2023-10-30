@@ -8,6 +8,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { Activity, ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
+import ActivityTier from '../../../../enum/activityTiers'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -115,6 +116,31 @@ describe('Route Handlers - Create an activity - Category', () => {
         'Activity updated',
         "You've updated the category for undefined",
       )
+    })
+
+    it('should set tier to "FOUNDATION" if "not in work" selected', async () => {
+      req.body = {
+        category: 1,
+      }
+      req.session.createJourney = {
+        activityId: 1,
+      }
+
+      const updatedActivity = {
+        categoryId: 1,
+      }
+
+      when(activitiesService.getActivityCategories).mockResolvedValue([
+        { id: 1, code: 'SAA_NOT_IN_WORK', name: 'Not in work' },
+      ] as ActivityCategory[])
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.tierId).toEqual(ActivityTier.FOUNDATION)
     })
   })
 

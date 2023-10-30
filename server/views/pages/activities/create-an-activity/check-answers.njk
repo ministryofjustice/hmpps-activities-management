@@ -52,7 +52,41 @@
                                 }
                             ]
                         }
-                    }
+                    },
+                    {
+                        key: {
+                            text: "Tier"
+                        },
+                        value: {
+                            text: tier
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "tier?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change tier"
+                                }
+                            ] if session.createJourney.category.code != 'SAA_NOT_IN_WORK'
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Organiser"
+                        },
+                        value: {
+                            text: organiser
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "organiser?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change organiser"
+                                }
+                            ]
+                        }
+                    } if session.createJourney.organiserId
                 ]
             }) }}
 

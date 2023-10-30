@@ -80,6 +80,12 @@ describe('initialiseEditJourney', () => {
       id: 1,
       code: 'LEISURE_SOCIAL',
     },
+    tier: {
+      id: 1,
+    },
+    organiser: {
+      id: 1,
+    },
     inCell: false,
     onWing: false,
     offWing: false,
@@ -119,6 +125,8 @@ describe('initialiseEditJourney', () => {
       activityId: activity.id,
       scheduleId: schedule.id,
       category: activity.category,
+      tierId: activity.tier.id,
+      organiserId: activity.organiser.id,
       name: activity.summary,
       inCell: activity.inCell,
       onWing: activity.onWing,

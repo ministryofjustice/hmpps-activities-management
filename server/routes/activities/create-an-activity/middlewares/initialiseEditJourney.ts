@@ -18,6 +18,8 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
       activityId: activity.id,
       scheduleId: schedule.id,
       category: activity.category,
+      tierId: activity.tier?.id,
+      organiserId: activity.organiser?.id,
       name: activity.summary,
       inCell: activity.inCell,
       onWing: activity.onWing,

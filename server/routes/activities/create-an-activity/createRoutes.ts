@@ -15,8 +15,8 @@ export default function Index({ activitiesService, prisonService, metricsService
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const startHandler = new StartJourneyRoutes(metricsService)
-  const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, prisonService)
-  const confirmationHandler = new ConfirmationRoutes(metricsService)
+  const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, prisonService, metricsService)
+  const confirmationHandler = new ConfirmationRoutes()
 
   get('/start', startHandler.GET)
   get('/check-answers', checkAnswersHandler.GET, true)

@@ -10,6 +10,8 @@ import atLeast from '../../../../../jest.setup'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 import { Activity, ActivityScheduleLite } from '../../../../@types/activitiesAPI/types'
 import { toDateString } from '../../../../utils/utils'
+import { activityTierDescriptions } from '../../../../enum/activityTiers'
+import { organiserDescriptions } from '../../../../enum/organisers'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -45,7 +47,8 @@ describe('Route Handlers - View Activity', () => {
     schedules: [activitySchedule],
     startDate: toDateString(today),
     summary: 'Maths Level 1',
-    tier: { code: '', description: '', id: 0 },
+    tier: { code: '', description: '', id: 1 },
+    organiser: { id: 1 },
     waitingList: [],
     id: 1,
     minimumEducationLevel: [],
@@ -104,7 +107,8 @@ describe('Route Handlers - View Activity', () => {
           startDate: toDateString(today),
           endDate: toDateString(nextWeek),
           summary: 'Maths Level 1',
-          tier: { code: '', description: '', id: 0 },
+          tier: { code: '', description: '', id: 1 },
+          organiser: { id: 1 },
           waitingList: [],
           id: 1,
           minimumEducationLevel: [],
@@ -144,6 +148,8 @@ describe('Route Handlers - View Activity', () => {
           ],
         },
         currentWeek: 1,
+        tier: activityTierDescriptions[1],
+        organiser: organiserDescriptions[1],
       })
     })
   })

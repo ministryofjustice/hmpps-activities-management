@@ -19,6 +19,7 @@ export default class NameRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { category } = req.session.createJourney
     req.session.createJourney.name = req.body.name
     if (req.params.mode === 'edit') {
       const { user } = res.locals
@@ -34,7 +35,9 @@ export default class NameRoutes {
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     } else {
-      res.redirectOrReturn('risk-level')
+      // If not in work no need to ask for activity tier
+      const nextRoute = category?.code === 'SAA_NOT_IN_WORK' ? 'risk-level' : 'tier'
+      res.redirectOrReturn(nextRoute)
     }
   }
 }

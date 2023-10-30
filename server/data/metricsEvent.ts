@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { AppointmentDetails, AppointmentSetDetails } from '../@types/activitiesAPI/types'
+import { Activity, AppointmentDetails, AppointmentSetDetails } from '../@types/activitiesAPI/types'
 import { ServiceUser } from '../@types/express'
 import { AllocateToActivityJourney } from '../routes/activities/manage-allocations/journey'
 import { WaitListApplicationJourney } from '../routes/activities/waitlist-application/journey'
@@ -70,8 +70,12 @@ export default class MetricsEvent {
     return new MetricsEvent(MetricsEventType.CREATE_ACTIVITY_JOURNEY_STARTED, user)
   }
 
-  static CREATE_ACTIVITY_JOURNEY_COMPLETED = (user: ServiceUser) =>
-    new MetricsEvent(MetricsEventType.CREATE_ACTIVITY_JOURNEY_COMPLETED, user)
+  static CREATE_ACTIVITY_JOURNEY_COMPLETED(user: ServiceUser, activity: Activity) {
+    const event = new MetricsEvent(MetricsEventType.CREATE_ACTIVITY_JOURNEY_COMPLETED, user)
+    event.addProperty('tier', activity.tier?.description)
+    if (activity.organiser) event.addProperty('organiser', activity.organiser?.description)
+    return event
+  }
 
   static CREATE_ALLOCATION_JOURNEY_STARTED(user: ServiceUser) {
     return new MetricsEvent(MetricsEventType.CREATE_ALLOCATION_JOURNEY_STARTED, user)

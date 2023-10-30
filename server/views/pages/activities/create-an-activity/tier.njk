@@ -1,0 +1,48 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% set pageTitle = applicationName + " - Create an activity - Tier" %}
+{% set pageId = 'tier-page' %}
+{% set jsBackLink = true %}
+
+{% set activityTierOptions = [] %}
+{% for tierKey, tierText in activityTierDescriptions %}
+    {% set activityTierOptions = (activityTierOptions.push({
+        value: tierKey,
+        text: tierText,
+        checked: formResponses.tier == tierKey or session.createJourney.tierId == tierKey
+    }), activityTierOptions) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ activityJourneyCaption(session.createJourney) }}
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Which tier is this activity in?" if session.req.params.mode == 'edit' else "Select a tier for the new activity",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    hint: {
+                        text: 'Recording whether the activity is tier 1 (core curriculum, for example literacy), tier 2 (extra-curricular, for example library) or routine activities (for example showers or exercise) helps ensure there is a balanced regime.'
+                    },
+                    name: "tier",
+                    errorMessage: validationErrors | findError('tier'),
+                    items: activityTierOptions
+                }) }}
+
+                {{ govukButton({
+                    text: "Confirm"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

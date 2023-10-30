@@ -5,11 +5,19 @@ import PrisonService from '../../../../services/prisonService'
 import { mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
+import { activityTierDescriptions } from '../../../../enum/activityTiers'
+import { organiserDescriptions } from '../../../../enum/organisers'
+import MetricsEvent from '../../../../data/metricsEvent'
+import MetricsService from '../../../../services/metricsService'
 
 export default class CheckAnswersRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
 
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+    private readonly metricsService: MetricsService,
+  ) {
     this.helper = new IncentiveLevelPayMappingUtil(prisonService)
   }
 
@@ -24,6 +32,8 @@ export default class CheckAnswersRoutes {
     res.render(`pages/activities/create-an-activity/check-answers`, {
       incentiveLevelPays,
       dailySlots: activitySessionToDailyTimeSlots(createJourney.scheduleWeeks, createJourney.slots),
+      tier: activityTierDescriptions[createJourney.tierId],
+      organiser: organiserDescriptions[createJourney.organiserId],
     })
   }
 
@@ -37,6 +47,8 @@ export default class CheckAnswersRoutes {
       prisonCode: user.activeCaseLoadId,
       summary: createJourney.name,
       categoryId: createJourney.category.id,
+      tierId: createJourney.tierId,
+      organiserId: createJourney.organiserId,
       riskLevel: createJourney.riskLevel,
       minimumIncentiveNomisCode: createJourney.minimumIncentiveNomisCode,
       minimumIncentiveLevel: createJourney.minimumIncentiveLevel,
@@ -75,8 +87,14 @@ export default class CheckAnswersRoutes {
       })
     }
 
-    const response = await this.activitiesService.createActivity(activity, user)
+    const createdActivity = await this.activitiesService.createActivity(activity, user)
 
-    res.redirect(`confirmation/${response.id}`)
+    const metricEvent = MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(
+      res.locals.user,
+      createdActivity,
+    ).addJourneyCompletedMetrics(req)
+    this.metricsService.trackEvent(metricEvent)
+
+    res.redirect(`confirmation/${createdActivity.id}`)
   }
 }
