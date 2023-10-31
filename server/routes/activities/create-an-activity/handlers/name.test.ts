@@ -85,7 +85,7 @@ describe('Route Handlers - Create an activity - Name', () => {
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
-        "We've updated the activity name for updated activity name",
+        "You've updated the activity name for updated activity name",
       )
     })
   })

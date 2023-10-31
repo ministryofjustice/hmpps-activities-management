@@ -57,7 +57,7 @@ export default class EndDateRoutes {
       const activity = { endDate, removeEndDate: !endDate } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
 
-      const successMessage = `We've updated the end date for ${name}`
+      const successMessage = `You've updated the end date for ${name}`
       res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
     } else res.redirectOrReturn('schedule-frequency')
   }

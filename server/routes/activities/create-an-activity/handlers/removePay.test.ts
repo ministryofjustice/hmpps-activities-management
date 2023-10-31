@@ -141,7 +141,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       expect(res.redirectWithSuccess).toBeCalledWith(
         'check-pay?preserveHistory=true',
         'Activity updated',
-        `We've updated the pay for ${req.session.createJourney.name}`,
+        `You've updated the pay for ${req.session.createJourney.name}`,
       )
     })
   })

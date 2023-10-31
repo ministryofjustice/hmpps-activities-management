@@ -20,7 +20,7 @@ export default class CheckPayRoutes {
         minimumEducationLevel: req.session.createJourney.educationLevels,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
-      const successMessage = `We've updated the education levels for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the education levels for ${req.session.createJourney.name}`
 
       const returnTo = `/activities/view/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo

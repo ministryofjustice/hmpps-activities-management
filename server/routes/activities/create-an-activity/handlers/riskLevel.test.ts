@@ -96,7 +96,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
-        "We've updated the risk assessment level for undefined",
+        "You've updated the risk assessment level for undefined",
       )
     })
   })

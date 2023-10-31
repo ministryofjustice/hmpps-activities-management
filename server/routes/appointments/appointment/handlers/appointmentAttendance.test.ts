@@ -121,7 +121,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance',
         'Attendance recorded',
-        "We've saved attendance details for 1 person",
+        "You've saved attendance details for 1 person",
       )
     })
 
@@ -140,7 +140,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance',
         'Attendance recorded',
-        "We've saved attendance details for 2 people",
+        "You've saved attendance details for 2 people",
       )
     })
   })
@@ -161,7 +161,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance',
         'Non-attendance recorded',
-        "We've saved attendance details for 1 person",
+        "You've saved attendance details for 1 person",
       )
     })
 
@@ -180,7 +180,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance',
         'Non-attendance recorded',
-        "We've saved attendance details for 2 people",
+        "You've saved attendance details for 2 people",
       )
     })
   })
