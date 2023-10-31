@@ -30,7 +30,7 @@ export default class AppointmentAttendanceRoutes {
 
     await this.activitiesService.markAppointmentAttendance(+appointmentId, prisonNumbers, [], user)
 
-    const successMessage = `We've saved attendance details for ${prisonNumbers.length} ${
+    const successMessage = `You've saved attendance details for ${prisonNumbers.length} ${
       prisonNumbers.length === 1 ? 'person' : 'people'
     }`
 
@@ -44,7 +44,7 @@ export default class AppointmentAttendanceRoutes {
 
     await this.activitiesService.markAppointmentAttendance(+appointmentId, [], prisonNumbers, user)
 
-    const successMessage = `We've saved attendance details for ${prisonNumbers.length} ${
+    const successMessage = `You've saved attendance details for ${prisonNumbers.length} ${
       prisonNumbers.length === 1 ? 'person' : 'people'
     }`
 

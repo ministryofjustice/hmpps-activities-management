@@ -136,7 +136,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         `/activities/allocations/view/1`,
         'Allocation updated',
-        `We've updated the pay rate for this allocation`,
+        `You've updated the pay rate for this allocation`,
       )
     })
   })

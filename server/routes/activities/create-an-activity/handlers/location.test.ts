@@ -154,7 +154,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
-        "We've updated the location for undefined",
+        "You've updated the location for undefined",
       )
     })
   })

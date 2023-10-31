@@ -70,6 +70,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
         session: {
           createJourney: {
             activityId: '1',
+            name: 'Maths 1',
             allocations: [],
           },
         },
@@ -86,7 +87,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
-        "We've updated the capacity for undefined",
+        "You've updated the capacity for Maths 1",
       )
     })
   })

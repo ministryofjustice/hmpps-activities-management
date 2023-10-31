@@ -113,7 +113,7 @@ describe('Route Handlers - Create an activity - Category', () => {
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
-        "We've updated the category for undefined",
+        "You've updated the category for undefined",
       )
     })
   })

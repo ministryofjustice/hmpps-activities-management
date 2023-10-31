@@ -167,7 +167,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
-        "We've updated the pay for Maths Level 1",
+        "You've updated the pay for Maths Level 1",
       )
     })
   })

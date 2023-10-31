@@ -140,7 +140,7 @@ describe('Route Handlers - Non Attendance', () => {
       expect(res.redirectWithSuccess).toBeCalledWith(
         'attendance-list',
         'Attendance recorded',
-        "We've saved attendance details for Joe Bloggs",
+        "You've saved attendance details for Joe Bloggs",
       )
     })
   })

@@ -132,7 +132,7 @@ export default class NotAttendedReasonRoutes {
 
     await this.activitiesService.updateAttendances(attendanceUpdates, user)
 
-    const successMessage = `We've saved attendance details for ${
+    const successMessage = `You've saved attendance details for ${
       selectedPrisoners.length === 1
         ? convertToTitleCase(selectedPrisoners[0].prisonerName)
         : `${selectedPrisoners.length} people`

@@ -88,7 +88,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
-        "We've updated the start date for Maths level 1",
+        "You've updated the start date for Maths level 1",
       )
     })
   })

@@ -33,7 +33,7 @@ export default class RiskLevelRoutes {
         riskLevel: req.session.createJourney.riskLevel,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
-      const successMessage = `We've updated the risk assessment level for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the risk assessment level for ${req.session.createJourney.name}`
 
       const returnTo = `/activities/view/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo

@@ -85,7 +85,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
-        "We've updated the bank holiday option for Maths level 1",
+        "You've updated the bank holiday option for Maths level 1",
       )
     })
   })

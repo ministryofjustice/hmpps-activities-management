@@ -18,7 +18,7 @@ export default class ConfirmCapacityRoutes {
     res.redirectWithSuccess(
       `/activities/view/${req.session.createJourney.activityId}`,
       'Activity updated',
-      `We've updated the capacity for ${req.session.createJourney.name}`,
+      `You've updated the capacity for ${req.session.createJourney.name}`,
     )
   }
 }

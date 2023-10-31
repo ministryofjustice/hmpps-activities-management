@@ -136,7 +136,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
     expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
       '/activities/view/1',
       'Activity updated',
-      "We've updated the education levels for undefined",
+      "You've updated the education levels for undefined",
     )
   })
 })

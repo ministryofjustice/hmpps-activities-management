@@ -108,7 +108,7 @@ export default class AttendanceListRoutes {
 
     await this.activitiesService.updateAttendances(attendances, user)
 
-    const successMessage = `We've saved attendance details for ${selectedAttendances.length} ${
+    const successMessage = `You've saved attendance details for ${selectedAttendances.length} ${
       selectedAttendances.length === 1 ? 'person' : 'people'
     }`
 
