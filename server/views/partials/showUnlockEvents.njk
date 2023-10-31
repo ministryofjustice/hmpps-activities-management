@@ -16,16 +16,15 @@
                         class="govuk-link govuk-link--no-visited-state">
                             {{- event.summary | trim -}}
                         </a>
-                        {% if event.cancelled %}
-                            <div>{{ govukTag({ text: 'Cancelled Appointment', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
-                        {% else %}
-                            <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
-                        {% endif %}
+                        <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
                         {% if event.comments %}
-                            <div>{{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow' }) }}</div>
+                            <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow' }) }}</div>
                         {% endif %}
                     {% else %}
                         {{ event.summary | trim }}
+                    {% endif %}
+                    {% if event.cancelled %}
+                        <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
                     {% endif %}
                 </div>
 

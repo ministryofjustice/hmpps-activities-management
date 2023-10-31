@@ -42,6 +42,7 @@ export default class ScheduleRoutes {
         ...response.externalTransfers,
         ...response.adjudications,
       ])
+      .then(events => events.filter(e => !e.cancelled))
 
     let prisonerSchedules
     if (appointmentJourney.type === AppointmentType.SET) {

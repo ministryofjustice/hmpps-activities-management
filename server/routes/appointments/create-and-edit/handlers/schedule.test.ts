@@ -61,6 +61,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       activities: [
         { prisonerNumber: 'A1234BC', summary: 'Activity for A1234BC' },
         { prisonerNumber: 'B2345CD', summary: 'Activity for B2345CD' },
+        { prisonerNumber: 'B2345CD', summary: 'Second activity for B2345CD', cancelled: true },
       ],
       appointments: [
         { prisonerNumber: 'A1234BC', summary: 'Appointments for A1234BC' },
