@@ -140,7 +140,7 @@ describe('Route Handlers - Non Attendance', () => {
       expect(res.redirectWithSuccess).toBeCalledWith(
         'attendance-list',
         'Attendance recorded',
-        "We've saved attendance details for Joe Bloggs",
+        "You've saved attendance details for Joe Bloggs",
       )
     })
   })
@@ -441,7 +441,7 @@ describe('Route Handlers - Non Attendance', () => {
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toEqual(
-        'Failed to attend - Test activity - Room 1 - Wednesday, 25 October 2023 - 09:00 \n\n case note',
+        'Refused to attend - Test activity - Room 1 - Wednesday, 25 October 2023 - 09:00 \n\ncase note',
       )
     })
 

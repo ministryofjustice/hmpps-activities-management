@@ -70,6 +70,7 @@ export default class EditAttendanceRoutes {
           ...response.courtHearings,
           ...response.visits,
         ])
+        .then(events => events.filter(e => !e.cancelled))
         .then(events => events.filter(e => e.scheduledInstanceId !== +id))
         .then(events => events.filter(e => eventClashes(e, instance)))
 

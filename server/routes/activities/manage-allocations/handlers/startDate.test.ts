@@ -68,7 +68,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         `/activities/allocations/view/1`,
         'Allocation updated',
-        `We've updated the start date for this allocation`,
+        `You've updated the start date for this allocation`,
       )
     })
   })

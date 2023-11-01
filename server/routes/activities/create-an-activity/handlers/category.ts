@@ -44,7 +44,7 @@ export default class CategoryRoutes {
       } as ActivityUpdateRequest
 
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
-      const successMessage = `We've updated the category for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the category for ${req.session.createJourney.name}`
 
       const returnTo = `/activities/view/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo

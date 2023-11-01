@@ -24,9 +24,8 @@ export class Filters {
 
 export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
-    const { categoryFilters, activityFilters, searchTerm } = req.body
-    req.session.attendanceSummaryJourney.categoryFilters = categoryFilters ?? null
-    req.session.attendanceSummaryJourney.activityFilters = activityFilters ?? null
+    const { categoryFilters, searchTerm } = req.body
+    req.session.attendanceSummaryJourney.categoryFilters = categoryFilters ?? []
     req.session.attendanceSummaryJourney.searchTerm = searchTerm ?? null
 
     res.redirect('back')

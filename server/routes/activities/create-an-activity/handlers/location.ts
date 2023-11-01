@@ -70,7 +70,7 @@ export default class LocationRoutes {
         locationId: req.session.createJourney.location?.id,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)
-      const successMessage = `We've updated the location for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the location for ${req.session.createJourney.name}`
 
       const returnTo = `/activities/view/${activityId}`
       req.session.returnTo = returnTo

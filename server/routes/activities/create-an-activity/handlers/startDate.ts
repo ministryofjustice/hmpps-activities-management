@@ -50,7 +50,7 @@ export default class StartDateRoutes {
       const activity = { startDate } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
 
-      const successMessage = `We've updated the start date for ${name}`
+      const successMessage = `You've updated the start date for ${name}`
       res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
     } else res.redirectOrReturn(`end-date-option`)
   }

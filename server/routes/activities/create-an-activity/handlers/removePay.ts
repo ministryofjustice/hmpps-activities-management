@@ -79,7 +79,7 @@ export default class RemovePayRoutes {
       minimumIncentiveLevel: req.session.createJourney.minimumIncentiveLevel,
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, updatedActivity)
-    const successMessage = `We've updated the pay for ${req.session.createJourney.name}`
+    const successMessage = `You've updated the pay for ${req.session.createJourney.name}`
 
     return res.redirectWithSuccess('check-pay?preserveHistory=true', 'Activity updated', successMessage)
   }

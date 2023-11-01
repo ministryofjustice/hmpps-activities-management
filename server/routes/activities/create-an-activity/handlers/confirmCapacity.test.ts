@@ -61,7 +61,7 @@ describe('Route Handlers - Edit an activity - Confirm capacity', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
-        "We've updated the capacity for Test activity",
+        "You've updated the capacity for Test activity",
       )
     })
   })

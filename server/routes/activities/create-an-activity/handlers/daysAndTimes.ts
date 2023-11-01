@@ -137,7 +137,7 @@ export default class DaysAndTimesRoutes {
       scheduleWeeks,
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
-    const successMessage = `We've updated the daily schedule for ${req.session.createJourney.name}`
+    const successMessage = `You've updated the daily schedule for ${req.session.createJourney.name}`
 
     const returnTo = `/activities/view/${req.session.createJourney.activityId}`
     req.session.returnTo = returnTo

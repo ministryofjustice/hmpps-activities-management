@@ -128,7 +128,6 @@ describe('Route Handlers - Daily Attendance List', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
         activityDate: date,
         status: 'NotAttended',
-        uniqueActivities: ['Maths Level 1', 'Woodworking'],
         uniqueCategories: ['Education', 'Prison Jobs'],
         attendees: [
           {
@@ -223,7 +222,6 @@ describe('Route Handlers - Daily Attendance List', () => {
             },
           },
         ],
-        uniqueActivities: ['Woodworking'],
         uniqueCategories: ['Prison Jobs'],
       })
     })
@@ -275,59 +273,6 @@ describe('Route Handlers - Daily Attendance List', () => {
             },
           },
         ],
-        uniqueActivities: ['Maths Level 1', 'Woodworking'],
-        uniqueCategories: ['Education', 'Prison Jobs'],
-      })
-    })
-
-    it('should filter the activities based on the category', async () => {
-      const dateString = '2022-10-10'
-      const date = parse(dateString, 'yyyy-MM-dd', new Date())
-
-      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
-
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['ABC321'], res.locals.user)
-        .mockResolvedValue(mockPrisonApiResponse)
-
-      req = {
-        query: {
-          date: dateString,
-          status: 'NotAttended',
-        },
-        session: {
-          attendanceSummaryJourney: {
-            activityFilters: ['Woodworking'],
-          },
-        },
-      } as unknown as Request
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
-        activityDate: date,
-        status: 'NotAttended',
-        attendees: [
-          {
-            name: 'Alan Key',
-            prisonerNumber: 'ABC321',
-            location: 'MDI-1-002',
-            attendance: {
-              activityId: 2,
-              activitySummary: 'Woodworking',
-              attendanceId: 2,
-              attendanceReasonCode: null,
-              categoryName: 'Prison Jobs',
-              issuePayment: null,
-              prisonCode: 'MDI',
-              prisonerNumber: 'ABC321',
-              sessionDate: '2022-10-10',
-              status: 'WAITING',
-              timeSlot: 'AM',
-            },
-          },
-        ],
-        uniqueActivities: ['Maths Level 1', 'Woodworking'],
         uniqueCategories: ['Education', 'Prison Jobs'],
       })
     })

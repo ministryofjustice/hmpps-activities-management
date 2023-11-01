@@ -108,7 +108,7 @@ export default class AttendanceListRoutes {
 
     await this.activitiesService.updateAttendances(attendances, user)
 
-    const successMessage = `We've saved attendance details for ${selectedAttendances.length} ${
+    const successMessage = `You've saved attendance details for ${selectedAttendances.length} ${
       selectedAttendances.length === 1 ? 'person' : 'people'
     }`
 
@@ -138,6 +138,7 @@ export default class AttendanceListRoutes {
         ...response.courtHearings,
         ...response.visits,
       ])
+      .then(events => events.filter(e => !e.cancelled))
       .then(events => events.filter(e => e.scheduledInstanceId !== +instanceId))
       .then(events => events.filter(e => eventClashes(e, instance)))
 

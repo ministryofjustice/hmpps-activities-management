@@ -243,7 +243,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
           '/activities/view/1',
           'Activity updated',
-          "We've updated the daily schedule for Maths level 1",
+          "You've updated the daily schedule for Maths level 1",
         )
       })
 
