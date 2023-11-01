@@ -67,6 +67,7 @@ export default class ScheduleRoutes {
     res.render('pages/appointments/create-and-edit/schedule', {
       preserveHistory,
       prisonerSchedules,
+      appointmentId,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.session.editAppointmentJourney),

@@ -100,6 +100,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         isCtaAcceptAndSave: false,
         prisonerSchedules: [],
+        appointmentId: req.params.appointmentId,
       })
     })
 
