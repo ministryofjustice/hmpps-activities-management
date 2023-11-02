@@ -1,0 +1,4 @@
+{
+  "watch": ["server", "integration_tests", ".env"],
+  "ext": "ts,json"
+}
