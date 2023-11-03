@@ -204,7 +204,6 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
             startDate: formatIsoDate(today),
             timeSlot: null,
             internalLocationId: null,
-            prisonerNumbers: null,
             createdBy: null,
           },
           user,
@@ -240,7 +239,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         timeSlot: TimeSlot.PM,
         appointmentName: 'Medical - Doctor',
         locationId: '26151',
-        prisonerNumber: 'A1234BC',
+        prisonerNumber: 'A1111AA',
         createdBy: user.username,
       }
 
@@ -251,7 +250,6 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
             startDate: formatIsoDate(today),
             timeSlot: TimeSlot.PM as unknown as 'AM' | 'PM' | 'ED',
             internalLocationId: 26151,
-            prisonerNumbers: ['A1234BC'],
             createdBy: user.username,
           },
           user,
@@ -267,7 +265,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         appointmentName: 'Medical - Doctor',
         locations,
         locationId: '26151',
-        prisonerNumber: 'A1234BC',
+        prisonerNumber: 'A1111AA',
         createdBy: user.username,
         results: [appointment2, appointment3],
         prisonersDetails: {
@@ -294,7 +292,6 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
             startDate: formatIsoDate(today),
             timeSlot: null,
             internalLocationId: null,
-            prisonerNumbers: null,
             createdBy: null,
           },
           user,
@@ -307,6 +304,35 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         'pages/appointments/search/results',
         expect.objectContaining({
           results: [appointment3],
+        }),
+      )
+    })
+
+    it('should filter results by partial prisoner number match', async () => {
+      req.query = {
+        startDate: formatIsoDate(today),
+        prisonerNumber: 'b222',
+      }
+
+      when(activitiesService.searchAppointments)
+        .calledWith(
+          'MDI',
+          {
+            startDate: formatIsoDate(today),
+            timeSlot: null,
+            internalLocationId: null,
+            createdBy: null,
+          },
+          user,
+        )
+        .mockResolvedValue(results)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/search/results',
+        expect.objectContaining({
+          results: [appointment2],
         }),
       )
     })
