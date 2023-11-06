@@ -8,7 +8,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { Activity, ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
-import ActivityTier from '../../../../enum/activityTiers'
+import EventTier from '../../../../enum/eventTiers'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -140,7 +140,7 @@ describe('Route Handlers - Create an activity - Category', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.tierId).toEqual(ActivityTier.FOUNDATION)
+      expect(req.session.createJourney.tierCode).toEqual(EventTier.FOUNDATION)
     })
   })
 

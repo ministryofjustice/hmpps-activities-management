@@ -8,8 +8,8 @@ import atLeast from '../../../../../jest.setup'
 import PrisonService from '../../../../services/prisonService'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
-import ActivityTier, { activityTierDescriptions } from '../../../../enum/activityTiers'
-import Organiser, { organiserDescriptions } from '../../../../enum/organisers'
+import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
+import Organiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 
@@ -57,8 +57,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           category: {
             id: 1,
           },
-          tierId: ActivityTier.TIER_1,
-          organiserId: Organiser.PRISONER,
+          tierCode: EventTier.TIER_1,
+          organiserCode: Organiser.PRISONER,
           riskLevel: 'High',
           pay: [{ incentiveLevel: 'Standard', prisonPayBand: { id: 1 }, rate: 100 }],
           minimumIncentiveLevel: 'Standard',
@@ -103,8 +103,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           req.session.createJourney.scheduleWeeks,
           req.session.createJourney.slots,
         ),
-        organiser: organiserDescriptions[req.session.createJourney.organiserId],
-        tier: activityTierDescriptions[req.session.createJourney.tierId],
+        organiser: organiserDescriptions[req.session.createJourney.organiserCode],
+        tier: eventTierDescriptions[req.session.createJourney.tierCode],
       })
     })
   })
@@ -115,8 +115,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         prisonCode: 'MDI',
         summary: 'Maths level 1',
         categoryId: 1,
-        tierId: ActivityTier.TIER_1,
-        organiserId: Organiser.PRISONER,
+        tierCode: EventTier.TIER_1,
+        organiserCode: Organiser.PRISONER,
         riskLevel: 'High',
         minimumIncentiveLevel: 'Standard',
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
@@ -148,8 +148,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         prisonCode: 'MDI',
         summary: 'Maths level 1',
         categoryId: 1,
-        tierId: ActivityTier.TIER_1,
-        organiserId: Organiser.PRISONER,
+        tierCode: EventTier.TIER_1,
+        organiserCode: Organiser.PRISONER,
         riskLevel: 'High',
         minimumIncentiveLevel: 'Standard',
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
@@ -175,10 +175,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       await handler.POST(req, res)
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(
-          res.locals.user,
-          activity as unknown as Activity,
-        ).addJourneyCompletedMetrics(req),
+        MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).addJourneyCompletedMetrics(req),
       )
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/1')

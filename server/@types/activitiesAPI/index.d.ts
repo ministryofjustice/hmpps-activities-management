@@ -1534,17 +1534,17 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
-      /** Format: int32 */
-      number?: number
-      sort?: components['schemas']['SortObject']
       first?: boolean
       last?: boolean
       /** Format: int32 */
+      number?: number
+      sort?: components['schemas']['SortObject']
+      /** Format: int32 */
       size?: number
       content?: components['schemas']['WaitingListApplication'][]
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -3320,17 +3320,15 @@ export interface components {
        */
       categoryId: number
       /**
-       * Format: int64
-       * @description The tier id for this activity, as defined by the Future Prison Regime team
-       * @example 1
+       * @description The tier code for this activity, as defined by the Future Prison Regime team
+       * @example TIER_1
        */
-      tierId?: number
+      tierCode?: string
       /**
-       * Format: int64
-       * @description The organiser id for the organiser of this activity
-       * @example 2
+       * @description The organiser code for the organiser of this activity
+       * @example PRISON_STAFF
        */
-      organiserId?: number
+      organiserCode?: string
       /**
        * @description A list of eligibility rules ids which apply to this activity.
        * @example [
@@ -3544,8 +3542,8 @@ export interface components {
        */
       description?: string
       category: components['schemas']['ActivityCategory']
-      tier?: components['schemas']['ActivityTier']
-      organiser?: components['schemas']['ActivityOrganiser']
+      tier?: components['schemas']['EventTier']
+      organiser?: components['schemas']['EventOrganiser']
       /**
        * @description A list of eligibility rules which apply to this activity. These can be positive (include) and negative (exclude)
        * @example [FEMALE_ONLY,AGED_18-25]
@@ -3776,25 +3774,6 @@ export interface components {
        */
       studyAreaDescription: string
     }
-    /** @description An activity organiser */
-    ActivityOrganiser: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity organiser
-       * @example 1
-       */
-      id: number
-      /**
-       * @description The code for this activity organiser
-       * @example PRISON_STAFF
-       */
-      code: string
-      /**
-       * @description The detailed description for this activity organiser
-       * @example Prison staff
-       */
-      description: string
-    }
     /** @description Describes the pay rates and bands which apply to an activity */
     ActivityPay: {
       /**
@@ -3973,25 +3952,6 @@ export interface components {
        * @example false
        */
       sundayFlag: boolean
-    }
-    /** @description An activity tier */
-    ActivityTier: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity tier
-       * @example 1
-       */
-      id: number
-      /**
-       * @description The code for this activity tier
-       * @example TIER_1
-       */
-      code: string
-      /**
-       * @description The detailed description for this activity tier
-       * @example Work, education and maintenance
-       */
-      description: string
     }
     /** @description An attendance record for a prisoner, can be marked or unmarked */
     Attendance: {
@@ -4200,6 +4160,44 @@ export interface components {
       /**
        * @description The description for this eligibility rule
        * @example The prisoner must be over 21 to attend
+       */
+      description: string
+    }
+    /** @description An event organiser */
+    EventOrganiser: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this event organiser
+       * @example 1
+       */
+      id: number
+      /**
+       * @description The code for this event organiser
+       * @example PRISON_STAFF
+       */
+      code: string
+      /**
+       * @description The detailed description for this event organiser
+       * @example Prison staff
+       */
+      description: string
+    }
+    /** @description An event tier */
+    EventTier: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this event tier
+       * @example 1
+       */
+      id: number
+      /**
+       * @description The code for this event tier
+       * @example TIER_1
+       */
+      code: string
+      /**
+       * @description The detailed description for this event tier
+       * @example Work, education and maintenance
        */
       description: string
     }
@@ -4442,17 +4440,15 @@ export interface components {
        */
       categoryId?: number
       /**
-       * Format: int64
-       * @description The tier id for this activity, as defined by the Future Prison Regime team
-       * @example 1
+       * @description The tier code for this activity, as defined by the Future Prison Regime team
+       * @example TIER_1
        */
-      tierId?: number
+      tierCode?: string
       /**
-       * Format: int64
-       * @description The organiser id for this activity
-       * @example 1
+       * @description The organiser code for this activity
+       * @example PRISON_STAFF
        */
-      organiserId?: number
+      organiserCode?: string
       /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
@@ -5020,17 +5016,17 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
-      /** Format: int32 */
-      number?: number
-      sort?: components['schemas']['SortObject']
       first?: boolean
       last?: boolean
       /** Format: int32 */
+      number?: number
+      sort?: components['schemas']['SortObject']
+      /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */

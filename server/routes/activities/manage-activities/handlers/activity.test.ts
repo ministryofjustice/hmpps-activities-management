@@ -10,8 +10,8 @@ import atLeast from '../../../../../jest.setup'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 import { Activity, ActivityScheduleLite } from '../../../../@types/activitiesAPI/types'
 import { toDateString } from '../../../../utils/utils'
-import { activityTierDescriptions } from '../../../../enum/activityTiers'
-import { organiserDescriptions } from '../../../../enum/organisers'
+import { eventTierDescriptions } from '../../../../enum/eventTiers'
+import { organiserDescriptions } from '../../../../enum/eventOrganisers'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -148,7 +148,7 @@ describe('Route Handlers - View Activity', () => {
           ],
         },
         currentWeek: 1,
-        tier: activityTierDescriptions[1],
+        tier: eventTierDescriptions[1],
         organiser: organiserDescriptions[1],
       })
     })

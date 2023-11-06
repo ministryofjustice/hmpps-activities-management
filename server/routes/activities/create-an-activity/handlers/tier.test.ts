@@ -4,7 +4,8 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import TierRoutes, { TierForm } from './tier'
 import ActivitiesService from '../../../../services/activitiesService'
-import ActivityTier, { activityTierDescriptions } from '../../../../enum/activityTiers'
+import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
+import Organiser from '../../../../enum/eventOrganisers'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -49,7 +50,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/tier', {
-        activityTierDescriptions,
+        eventTierDescriptions,
       })
     })
   })
@@ -57,42 +58,42 @@ describe('Route Handlers - Create an activity - Tier', () => {
   describe('POST', () => {
     it('should save selected tier in session and redirect to risk level page', async () => {
       req.body = {
-        tier: ActivityTier.TIER_1,
+        tier: EventTier.TIER_1,
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.tierId).toEqual(ActivityTier.TIER_1)
+      expect(req.session.createJourney.tierCode).toEqual(EventTier.TIER_1)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('risk-level')
     })
 
     it('should save selected tier in session and redirect organiser page if tier 2 selected', async () => {
       req.body = {
-        tier: ActivityTier.TIER_2,
+        tier: EventTier.TIER_2,
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.tierId).toEqual(ActivityTier.TIER_2)
+      expect(req.session.createJourney.tierCode).toEqual(EventTier.TIER_2)
       expect(res.redirect).toHaveBeenCalledWith('organiser')
     })
 
     it('should remove organiser if tier 2 not selected', async () => {
       req.body = {
-        tier: ActivityTier.TIER_1,
+        tier: EventTier.TIER_1,
       }
       req.session.createJourney = {
-        organiserId: 1,
+        organiserCode: Organiser.PRISON_STAFF,
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.organiserId).toBeNull()
+      expect(req.session.createJourney.organiserCode).toBeNull()
     })
 
     it('should update activity with selected activity tier', async () => {
       req.body = {
-        tier: ActivityTier.TIER_1,
+        tier: EventTier.TIER_1,
       }
       req.session.createJourney = {
         activityId: 1,
@@ -105,7 +106,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
       await handler.POST(req, res)
 
       expect(activitiesService.updateActivity).toBeCalledWith(user.activeCaseLoadId, 1, {
-        tierId: ActivityTier.TIER_1,
+        tierCode: EventTier.TIER_1,
       })
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -139,7 +140,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
 
     it('passes validation', async () => {
       const body = {
-        tier: '1',
+        tier: EventTier.TIER_1,
       }
 
       const requestObject = plainToInstance(TierForm, body)

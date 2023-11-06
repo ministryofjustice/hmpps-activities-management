@@ -5,8 +5,8 @@ import PrisonService from '../../../../services/prisonService'
 import { mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
-import { activityTierDescriptions } from '../../../../enum/activityTiers'
-import { organiserDescriptions } from '../../../../enum/organisers'
+import { eventTierDescriptions } from '../../../../enum/eventTiers'
+import { organiserDescriptions } from '../../../../enum/eventOrganisers'
 import MetricsEvent from '../../../../data/metricsEvent'
 import MetricsService from '../../../../services/metricsService'
 
@@ -32,8 +32,8 @@ export default class CheckAnswersRoutes {
     res.render(`pages/activities/create-an-activity/check-answers`, {
       incentiveLevelPays,
       dailySlots: activitySessionToDailyTimeSlots(createJourney.scheduleWeeks, createJourney.slots),
-      tier: activityTierDescriptions[createJourney.tierId],
-      organiser: organiserDescriptions[createJourney.organiserId],
+      tier: eventTierDescriptions[createJourney.tierCode],
+      organiser: organiserDescriptions[createJourney.organiserCode],
     })
   }
 
@@ -47,8 +47,8 @@ export default class CheckAnswersRoutes {
       prisonCode: user.activeCaseLoadId,
       summary: createJourney.name,
       categoryId: createJourney.category.id,
-      tierId: createJourney.tierId,
-      organiserId: createJourney.organiserId,
+      tierCode: createJourney.tierCode,
+      organiserCode: createJourney.organiserCode,
       riskLevel: createJourney.riskLevel,
       minimumIncentiveNomisCode: createJourney.minimumIncentiveNomisCode,
       minimumIncentiveLevel: createJourney.minimumIncentiveLevel,
@@ -89,10 +89,7 @@ export default class CheckAnswersRoutes {
 
     const createdActivity = await this.activitiesService.createActivity(activity, user)
 
-    const metricEvent = MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(
-      res.locals.user,
-      createdActivity,
-    ).addJourneyCompletedMetrics(req)
+    const metricEvent = MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).addJourneyCompletedMetrics(req)
     this.metricsService.trackEvent(metricEvent)
 
     res.redirect(`confirmation/${createdActivity.id}`)

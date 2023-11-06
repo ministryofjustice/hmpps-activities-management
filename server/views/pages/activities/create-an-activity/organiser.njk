@@ -13,7 +13,7 @@
     {% set organiserOptions = (organiserOptions.push({
         value: organiserKey,
         text: organiserText,
-        checked: formResponses.organiser == organiserKey or session.createJourney.organiserId == organiserKey
+        checked: formResponses.organiser == organiserKey or session.createJourney.organiserCode == organiserKey
     }), organiserOptions) %}
 {% endfor %}
 

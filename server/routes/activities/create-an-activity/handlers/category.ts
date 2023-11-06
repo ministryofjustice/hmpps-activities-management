@@ -3,7 +3,7 @@ import { Expose, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
-import ActivityTier from '../../../../enum/activityTiers'
+import EventTier from '../../../../enum/eventTiers'
 
 export class Category {
   @Expose()
@@ -37,7 +37,7 @@ export default class CategoryRoutes {
       name: category.name,
     }
     if (category.code === 'SAA_NOT_IN_WORK') {
-      req.session.createJourney.tierId = ActivityTier.FOUNDATION
+      req.session.createJourney.tierCode = EventTier.FOUNDATION
     }
 
     if (req.params.mode === 'edit') {
@@ -45,7 +45,7 @@ export default class CategoryRoutes {
       const prisonCode = user.activeCaseLoadId
       const activity = {
         categoryId: req.session.createJourney.category.id,
-        tierId: req.session.createJourney.tierId,
+        tierCode: req.session.createJourney.tierCode,
       } as ActivityUpdateRequest
 
       await this.activitiesService.updateActivity(prisonCode, activityId, activity)

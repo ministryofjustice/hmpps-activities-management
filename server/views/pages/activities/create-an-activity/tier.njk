@@ -9,11 +9,11 @@
 {% set jsBackLink = true %}
 
 {% set activityTierOptions = [] %}
-{% for tierKey, tierText in activityTierDescriptions %}
+{% for tierKey, tierText in eventTierDescriptions %}
     {% set activityTierOptions = (activityTierOptions.push({
         value: tierKey,
         text: tierText,
-        checked: formResponses.tier == tierKey or session.createJourney.tierId == tierKey
+        checked: formResponses.tier == tierKey or session.createJourney.tierCode == tierKey
     }), activityTierOptions) %}
 {% endfor %}
 

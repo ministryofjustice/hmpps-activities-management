@@ -1,39 +1,38 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
+import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import ActivityTier, { activityTierDescriptions } from '../../../../enum/activityTiers'
+import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 export class TierForm {
   @Expose()
-  @Type(() => Number)
-  @IsEnum(ActivityTier, { message: 'Select an activity tier' })
-  tier: number
+  @IsEnum(EventTier, { message: 'Select an activity tier' })
+  tier: string
 }
 
 export default class TierRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> =>
-    res.render(`pages/activities/create-an-activity/tier`, { activityTierDescriptions })
+    res.render(`pages/activities/create-an-activity/tier`, { eventTierDescriptions })
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { tier }: TierForm = req.body
     const { preserveHistory } = req.query
 
-    req.session.createJourney.tierId = +tier
+    req.session.createJourney.tierCode = tier
 
-    if (ActivityTier.TIER_2 === tier) {
+    if (EventTier.TIER_2 === tier) {
       return res.redirect(`organiser${preserveHistory ? '?preserveHistory=true' : ''}`)
     }
-    req.session.createJourney.organiserId = null
+    req.session.createJourney.organiserCode = null
 
     if (req.params.mode === 'edit') {
       const { user } = res.locals
       const { activityId } = req.session.createJourney
       const activity = {
-        tierId: req.session.createJourney.tierId,
+        tierCode: req.session.createJourney.tierCode,
       } as ActivityUpdateRequest
 
       await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)

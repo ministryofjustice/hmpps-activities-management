@@ -4,8 +4,8 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import OrganiserRoutes, { OrganiserForm } from './organiser'
 import ActivitiesService from '../../../../services/activitiesService'
-import Organiser, { organiserDescriptions } from '../../../../enum/organisers'
-import ActivityTier from '../../../../enum/activityTiers'
+import Organiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
+import EventTier from '../../../../enum/eventTiers'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -61,7 +61,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.organiserId).toEqual(Organiser.PRISONER)
+      expect(req.session.createJourney.organiserCode).toEqual(Organiser.PRISONER)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('risk-level')
     })
 
@@ -72,7 +72,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
       req.session.createJourney = {
         activityId: 1,
         name: 'English 1',
-        tierId: ActivityTier.FOUNDATION,
+        tierCode: EventTier.FOUNDATION,
       }
       req.params = {
         mode: 'edit',
@@ -81,8 +81,8 @@ describe('Route Handlers - Create an activity - Organiser', () => {
       await handler.POST(req, res)
 
       expect(activitiesService.updateActivity).toBeCalledWith(user.activeCaseLoadId, 1, {
-        organiserId: Organiser.PRISONER,
-        tierId: ActivityTier.FOUNDATION,
+        organiserCode: Organiser.PRISONER,
+        tierCode: EventTier.FOUNDATION,
       })
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -116,7 +116,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
 
     it('passes validation', async () => {
       const body = {
-        organiser: '1',
+        organiser: Organiser.EXTERNAL_PROVIDER,
       }
 
       const requestObject = plainToInstance(OrganiserForm, body)
