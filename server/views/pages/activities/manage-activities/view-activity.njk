@@ -58,6 +58,46 @@
                     },
                     {
                         key: {
+                            text: "Tier"
+                        },
+                        value: {
+                            text: tier or "Not set"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/edit/" + activity.id + "/tier?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change tier"
+                                }
+                            ] if activity.category.code != 'SAA_NOT_IN_WORK'
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Organiser"
+                        },
+                        value: {
+                            text: organiser
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "/activities/edit/" + activity.id + "/organiser?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change organiser"
+                                }
+                            ]
+                        }
+                    } if organiser
+                ]
+            }) }}
+
+            <h2 class="govuk-heading-m">Location and capacity</h2>
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
                             text: "Location"
                         },
                         value: {

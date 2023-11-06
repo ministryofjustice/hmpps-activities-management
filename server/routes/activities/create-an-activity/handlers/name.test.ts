@@ -46,9 +46,25 @@ describe('Route Handlers - Create an activity - Name', () => {
   })
 
   describe('POST', () => {
-    it('should save entered name in session and redirect to risk level page', async () => {
+    it('should save entered name in session and redirect to tier page', async () => {
       req.body = {
         name: 'Maths level 1',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.name).toEqual('Maths level 1')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
+    })
+
+    it('should save entered name in session and redirect to risk level page if category "not in work"', async () => {
+      req.body = {
+        name: 'Maths level 1',
+      }
+      req.session.createJourney.category = {
+        id: 1,
+        code: 'SAA_NOT_IN_WORK',
+        name: 'Not in work',
       }
 
       await handler.POST(req, res)

@@ -8,9 +8,14 @@ import atLeast from '../../../../../jest.setup'
 import PrisonService from '../../../../services/prisonService'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
+import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
+import Organiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/metricsService')
 jest.mock('../../../../utils/helpers/incentiveLevelPayMappingUtil', () => {
   return function factory() {
     return {
@@ -26,9 +31,10 @@ jest.mock('../../../../utils/helpers/incentiveLevelPayMappingUtil', () => {
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Route Handlers - Create an activity - Check answers', () => {
-  const handler = new CheckAnswersRoutes(activitiesService, prisonService)
+  const handler = new CheckAnswersRoutes(activitiesService, prisonService, metricsService)
   let req: Request
   let res: Response
 
@@ -51,6 +57,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           category: {
             id: 1,
           },
+          tierCode: EventTier.TIER_1,
+          organiserCode: Organiser.PRISONER,
           riskLevel: 'High',
           pay: [{ incentiveLevel: 'Standard', prisonPayBand: { id: 1 }, rate: 100 }],
           minimumIncentiveLevel: 'Standard',
@@ -95,6 +103,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           req.session.createJourney.scheduleWeeks,
           req.session.createJourney.slots,
         ),
+        organiser: organiserDescriptions[req.session.createJourney.organiserCode],
+        tier: eventTierDescriptions[req.session.createJourney.tierCode],
       })
     })
   })
@@ -105,6 +115,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         prisonCode: 'MDI',
         summary: 'Maths level 1',
         categoryId: 1,
+        tierCode: EventTier.TIER_1,
+        organiserCode: Organiser.PRISONER,
         riskLevel: 'High',
         minimumIncentiveLevel: 'Standard',
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
@@ -136,6 +148,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         prisonCode: 'MDI',
         summary: 'Maths level 1',
         categoryId: 1,
+        tierCode: EventTier.TIER_1,
+        organiserCode: Organiser.PRISONER,
         riskLevel: 'High',
         minimumIncentiveLevel: 'Standard',
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
@@ -160,6 +174,9 @@ describe('Route Handlers - Create an activity - Check answers', () => {
 
       await handler.POST(req, res)
 
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).addJourneyCompletedMetrics(req),
+      )
       expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
     })

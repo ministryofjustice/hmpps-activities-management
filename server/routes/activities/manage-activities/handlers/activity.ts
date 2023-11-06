@@ -7,6 +7,8 @@ import { mapActivityModelSlotsToJourney } from '../../../../utils/utils'
 import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import ActivitiesService from '../../../../services/activitiesService'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
+import { eventTierDescriptions } from '../../../../enum/eventTiers'
+import { organiserDescriptions } from '../../../../enum/eventOrganisers'
 
 export default class ActivityRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -34,6 +36,8 @@ export default class ActivityRoutes {
       dailySlots,
       incentiveLevelPays,
       currentWeek,
+      tier: eventTierDescriptions[activity.tier?.code],
+      organiser: organiserDescriptions[activity.organiser?.code],
     })
   }
 }
