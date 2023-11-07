@@ -1519,9 +1519,9 @@ export interface components {
       status?: ('PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED')[]
     }
     PageableObject: {
-      sort?: components['schemas']['SortObject']
       /** Format: int64 */
       offset?: number
+      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
@@ -1534,23 +1534,23 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
-      first?: boolean
-      last?: boolean
-      /** Format: int32 */
-      number?: number
-      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       size?: number
       content?: components['schemas']['WaitingListApplication'][]
       /** Format: int32 */
-      numberOfElements?: number
+      number?: number
+      sort?: components['schemas']['SortObject']
+      first?: boolean
+      last?: boolean
       pageable?: components['schemas']['PageableObject']
+      /** Format: int32 */
+      numberOfElements?: number
       empty?: boolean
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -1777,12 +1777,17 @@ export interface components {
       internalLocationId?: number
       /**
        * @description The NOMIS location code for this event
-       * @example MDI-HB1-EDUCATION-RM1
+       * @example 5-A-SIDE COM
        */
       internalLocationCode?: string
       /**
+       * @description The NOMIS location user description for this event
+       * @example GYM ORDERLY
+       */
+      internalLocationUserDescription?: string
+      /**
        * @description The NOMIS location description for this event
-       * @example Education Room One
+       * @example MDI-GYM-5-A-SIDE COM
        */
       internalLocationDescription?: string
       /**
@@ -5016,17 +5021,17 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
-      first?: boolean
-      last?: boolean
-      /** Format: int32 */
-      number?: number
-      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
-      numberOfElements?: number
+      number?: number
+      sort?: components['schemas']['SortObject']
+      first?: boolean
+      last?: boolean
       pageable?: components['schemas']['PageableObject']
+      /** Format: int32 */
+      numberOfElements?: number
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */
