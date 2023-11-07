@@ -56,7 +56,9 @@
         On wing
     {% elseif event.offWing %}
         Off wing
+    {% elseif event.internalLocationUserDescription %}
+        {{ event.internalLocationUserDescription | trim | capitalize }}
     {% else %}
-        {{ event.internalLocationDescription | trim | capitalize }}
+        {{ event.internalLocationDescription | trim }}
     {% endif %}
 {% endmacro %}
