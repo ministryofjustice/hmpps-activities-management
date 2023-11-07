@@ -239,7 +239,7 @@
                 {{ event.summary }}
             {% endif %}
             {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
-                <div class="govuk-hint govuk-!-margin-0">{{ event.internalLocationDescription | capitalize }}</div>
+                <div class="govuk-hint govuk-!-margin-0">{{ (event.internalLocationUserDescription or event.internalLocationDescription) | capitalize }}</div>
             {% endif %}
         </div>
     {% endfor %}

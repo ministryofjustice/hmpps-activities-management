@@ -317,8 +317,8 @@
             On wing
         {% elseif scheduledEvent.offWing %}
             Off wing
-        {% elseif scheduledEvent.internalLocationDescription %}
-            {{ scheduledEvent.internalLocationDescription | trim }}
+        {% else %}
+            {{ (scheduledEvent.internalLocationUserDescription or scheduledEvent.internalLocationDescription) | trim }}
         {% endif %}
     {% endif %}
 {% endmacro %}
