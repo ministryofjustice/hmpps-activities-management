@@ -67,3 +67,4 @@ export type InternalLocationEventsSummary = components['schemas']['InternalLocat
 export type WaitingListSearchRequest = components['schemas']['WaitingListSearchRequest']
 export type WaitingListSearchParams = operations['searchWaitingLists']['parameters']['query']
 export type WaitingListApplicationPaged = components['schemas']['PagedWaitingListApplication']
+export type ScheduledAttendee = components['schemas']['ScheduledAttendee']
