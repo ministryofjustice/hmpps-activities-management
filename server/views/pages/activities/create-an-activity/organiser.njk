@@ -1,0 +1,54 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% set pageTitle = applicationName + " - Create an activity - Organiser" %}
+{% set pageId = 'organiser-page' %}
+{% set jsBackLink = true %}
+
+{% set organiserOptions = [] %}
+{% for organiserKey, organiserText in organiserDescriptions %}
+    {% set organiserOptions = (organiserOptions.push({
+        value: organiserKey,
+        text: organiserText,
+        checked: formResponses.organiser == organiserKey or session.createJourney.organiserCode == organiserKey
+    }), organiserOptions) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ activityJourneyCaption(session.createJourney) }}
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Who leads or organises this activity?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    name: "organiser",
+                    errorMessage: validationErrors | findError('organiser'),
+                    items: organiserOptions
+                }) }}
+
+                {% if session.req.params.mode == 'edit' %}
+                    <div class="govuk-button-group">
+                      {{ govukButton({
+                        text: "Update organiser"
+                      }) }}
+                        <a class="govuk-link js-backlink" href="/activities/view/{{ session.createJourney.activityId }}">Cancel</a>
+                    </div>
+                {% else %}
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -7,6 +7,7 @@ import { AppointmentSearchRequest } from '../../../../@types/activitiesAPI/types
 import PrisonService from '../../../../services/prisonService'
 import { datePickerDateToIsoDate, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
 import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
+import { asString } from '../../../../utils/utils'
 
 export class Search {
   @Expose()
@@ -30,7 +31,6 @@ export default class SearchRoutes {
       startDate,
       timeSlot: timeSlot || null,
       internalLocationId: locationId ? +locationId : null,
-      prisonerNumbers: prisonerNumber ? [prisonerNumber] : null,
       createdBy: createdBy && createdBy !== 'all' ? createdBy : null,
     } as AppointmentSearchRequest
 
@@ -45,9 +45,16 @@ export default class SearchRoutes {
       ...new Set(appointments.filter(a => a.customName).map(a => a.appointmentName)),
     ].sort()
 
-    const results = appointmentName
-      ? appointments.filter(a => a.appointmentName === appointmentName || a.category.description === appointmentName)
-      : appointments
+    let results = appointments
+    if (appointmentName) {
+      results = results.filter(a => a.appointmentName === appointmentName || a.category.description === appointmentName)
+    }
+    if (prisonerNumber) {
+      const prisonerNumberFilterText = asString(prisonerNumber).toLowerCase()
+      results = results.filter(app =>
+        app.attendees.find(a => a.prisonerNumber.toLowerCase().includes(prisonerNumberFilterText)),
+      )
+    }
 
     // Get prisoner details for appointments with a single attendee
     const prisonerNumbers = results.flatMap(r => (r.attendees.length === 1 ? r.attendees[0].prisonerNumber : []))

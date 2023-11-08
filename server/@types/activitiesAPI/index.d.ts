@@ -414,6 +414,16 @@ export interface paths {
      */
     patch: operations['update_1']
   }
+  '/synchronisation/reconciliation/attendances/{prisonId}': {
+    /**
+     * Retrieves attendance details for the sync reconciliation
+     * @description Retrieves booking numbers and counts for paid attendances in the prison on the date
+     *
+     * Requires one of the following roles:
+     * * NOMIS_ACTIVITIES
+     */
+    get: operations['getAttendanceReconciliation']
+  }
   '/synchronisation/reconciliation/allocations/{prisonId}': {
     /**
      * Retrieves allocation details for the sync reconciliation
@@ -1287,6 +1297,15 @@ export interface components {
        */
       removedTime?: string
       /**
+       * Format: int64
+       * @description
+       *     The id of the reason why this attendee was removed from the appointment.
+       *     Will be null if this attendee has not been removed from the appointment
+       *
+       * @example 12345
+       */
+      removalReasonId?: number
+      /**
        * @description
        *     The username of the user authenticated via HMPPS auth that removed this attendee from the appointment.
        *     Will be null if this attendee has not been removed from the appointment
@@ -1504,17 +1523,17 @@ export interface components {
       offset?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
-      pageSize?: number
-      /** Format: int32 */
       pageNumber?: number
+      /** Format: int32 */
+      pageSize?: number
       paged?: boolean
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       /** Format: int32 */
       size?: number
       content?: components['schemas']['WaitingListApplication'][]
@@ -1522,10 +1541,10 @@ export interface components {
       number?: number
       sort?: components['schemas']['SortObject']
       first?: boolean
-      /** Format: int32 */
-      numberOfElements?: number
       last?: boolean
       pageable?: components['schemas']['PageableObject']
+      /** Format: int32 */
+      numberOfElements?: number
       empty?: boolean
     }
     SortObject: {
@@ -1758,12 +1777,17 @@ export interface components {
       internalLocationId?: number
       /**
        * @description The NOMIS location code for this event
-       * @example MDI-HB1-EDUCATION-RM1
+       * @example 5-A-SIDE COM
        */
       internalLocationCode?: string
       /**
+       * @description The NOMIS location user description for this event
+       * @example GYM ORDERLY
+       */
+      internalLocationUserDescription?: string
+      /**
        * @description The NOMIS location description for this event
-       * @example Education Room One
+       * @example MDI-GYM-5-A-SIDE COM
        */
       internalLocationDescription?: string
       /**
@@ -3301,11 +3325,15 @@ export interface components {
        */
       categoryId: number
       /**
-       * Format: int64
-       * @description The tier id for this activity, as defined by the Future Prison Regime team
-       * @example 1
+       * @description The tier code for this activity, as defined by the Future Prison Regime team
+       * @example TIER_1
        */
-      tierId?: number
+      tierCode?: string
+      /**
+       * @description The organiser code for the organiser of this activity
+       * @example PRISON_STAFF
+       */
+      organiserCode?: string
       /**
        * @description A list of eligibility rules ids which apply to this activity.
        * @example [
@@ -3519,7 +3547,8 @@ export interface components {
        */
       description?: string
       category: components['schemas']['ActivityCategory']
-      tier?: components['schemas']['ActivityTier']
+      tier?: components['schemas']['EventTier']
+      organiser?: components['schemas']['EventOrganiser']
       /**
        * @description A list of eligibility rules which apply to this activity. These can be positive (include) and negative (exclude)
        * @example [FEMALE_ONLY,AGED_18-25]
@@ -3929,28 +3958,6 @@ export interface components {
        */
       sundayFlag: boolean
     }
-    /**
-     * @description An activity tier
-     * @example Tier 1, Tier 2, Foundation
-     */
-    ActivityTier: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity tier
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The code for this activity tier
-       * @example Tier1
-       */
-      code: string
-      /**
-       * @description The detailed description for this activity tier
-       * @example Work, education and maintenance
-       */
-      description: string
-    }
     /** @description An attendance record for a prisoner, can be marked or unmarked */
     Attendance: {
       /**
@@ -4158,6 +4165,44 @@ export interface components {
       /**
        * @description The description for this eligibility rule
        * @example The prisoner must be over 21 to attend
+       */
+      description: string
+    }
+    /** @description An event organiser */
+    EventOrganiser: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this event organiser
+       * @example 1
+       */
+      id: number
+      /**
+       * @description The code for this event organiser
+       * @example PRISON_STAFF
+       */
+      code: string
+      /**
+       * @description The detailed description for this event organiser
+       * @example Prison staff
+       */
+      description: string
+    }
+    /** @description An event tier */
+    EventTier: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this event tier
+       * @example 1
+       */
+      id: number
+      /**
+       * @description The code for this event tier
+       * @example TIER_1
+       */
+      code: string
+      /**
+       * @description The detailed description for this event tier
+       * @example Work, education and maintenance
        */
       description: string
     }
@@ -4400,11 +4445,15 @@ export interface components {
        */
       categoryId?: number
       /**
-       * Format: int64
-       * @description The tier id for this activity, as defined by the Future Prison Regime team
-       * @example 1
+       * @description The tier code for this activity, as defined by the Future Prison Regime team
+       * @example TIER_1
        */
-      tierId?: number
+      tierCode?: string
+      /**
+       * @description The organiser code for this activity
+       * @example PRISON_STAFF
+       */
+      organiserCode?: string
       /**
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
@@ -4493,15 +4542,21 @@ export interface components {
        */
       removeEndDate: boolean
     }
-    /** @description A list of allocation counts for each booking in the prison */
-    AllocationReconciliationResponse: {
+    /** @description A list of paid attendance counts for each booking in the prison on the date */
+    AttendanceReconciliationResponse: {
       /**
        * @description The prison code
        * @example BXI
        */
       prisonCode: string
       /**
-       * @description A list of bookings and the number of active allocations for each
+       * Format: date
+       * @description The date to check
+       * @example 2023-10-25
+       */
+      date: string
+      /**
+       * @description A list of bookings and the number of paid attendances for each
        * @example { [ "bookingId": 12345, "count": 2 ] }
        */
       bookings: components['schemas']['BookingCount'][]
@@ -4523,6 +4578,19 @@ export interface components {
        * @example 2
        */
       count: number
+    }
+    /** @description A list of allocation counts for each booking in the prison */
+    AllocationReconciliationResponse: {
+      /**
+       * @description The prison code
+       * @example BXI
+       */
+      prisonCode: string
+      /**
+       * @description A list of bookings and the number of active allocations for each
+       * @example { [ "bookingId": 12345, "count": 2 ] }
+       */
+      bookings: components['schemas']['BookingCount'][]
     }
     /**
      * @description
@@ -4949,10 +5017,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
@@ -4960,10 +5028,10 @@ export interface components {
       number?: number
       sort?: components['schemas']['SortObject']
       first?: boolean
-      /** Format: int32 */
-      numberOfElements?: number
       last?: boolean
       pageable?: components['schemas']['PageableObject']
+      /** Format: int32 */
+      numberOfElements?: number
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */
@@ -7843,6 +7911,51 @@ export interface operations {
       }
       /** @description Activity ID not found */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Retrieves attendance details for the sync reconciliation
+   * @description Retrieves booking numbers and counts for paid attendances in the prison on the date
+   *
+   * Requires one of the following roles:
+   * * NOMIS_ACTIVITIES
+   */
+  getAttendanceReconciliation: {
+    parameters: {
+      query: {
+        /** @description Attendance date */
+        date: string
+      }
+      path: {
+        /** @description Prison id */
+        prisonId: string
+      }
+    }
+    responses: {
+      /** @description Reconciliation information retrieved */
+      200: {
+        content: {
+          'application/json': components['schemas']['AttendanceReconciliationResponse']
+        }
+      }
+      /** @description There was an error with the request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorized to access this endpoint */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden */
+      403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }

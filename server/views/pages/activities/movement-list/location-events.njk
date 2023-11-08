@@ -53,7 +53,7 @@
                     <div class="movement-list__location-events__secondary-information govuk-body-s govuk-!-margin-bottom-0">{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
 
                     {% if event.internalLocationId != location.id %}
-                        <div class="movement-list__location-events__secondary-information govuk-body-s govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
+                        <div class="movement-list__location-events__secondary-information govuk-body-s govuk-!-margin-0">{{ event.internalLocationUserDescription or event.internalLocationDescription }}</div>
                     {% endif %}
                 {% endif %}
             {% endfor %}

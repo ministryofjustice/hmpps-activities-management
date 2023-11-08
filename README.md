@@ -1,5 +1,7 @@
 # hmpps-activities-management
-Managing activities in prisons.
+This application is the frontend client for the activities management service. It is used to manage activities and appointments in prisons.
+
+The client is backed by, [hmpps-activities-management-api](https://github.com/ministryofjustice/hmpps-activities-management-api).
 
 ## Dependencies
 
@@ -11,21 +13,34 @@ This service requires the following dependent services:
 * `prisoner-offender-search` - prisoner search API
 * `prison-api` - prisoner detail API
 
-## Building
+## Running the application
 
 Ensure you have the appropriate tools locally:
 
 Note: Using `nvm` (or [fnm](https://github.com/Schniz/fnm)), run `nvm install --latest-npm` within the repository folder to use the correct version of node, and the latest version of npm. This matches the `engines` config in `package.json` and the CircleCI build config.
 
-`node - v18.x`
+`node - v20.x`
 
-`npm - v8.x`
+`npm - v10.x`
 
-Then:
+Then install dependencies:
 
 `$ npm install` - to pull and install dependent node modules.
 
-`$ npm run build` - to compile SCSS files & populate the /dist folder.
+### Starting the application
+
+Once dependencies are installed to build and start the app for local development:
+
+`npm run start:dev` – builds and starts application with nodemon
+
+Or for production:
+
+`$ npm run build` - to compile SCSS files & populate the /dist folder
+
+`$ npm run start` - starts application from /dist
+
+
+## Run linter
 
 `$ npm run lint` - to run the linter over the code
 
@@ -73,7 +88,6 @@ TOKEN_VERIFICATION_API_URL=https://token-verification-api-dev.prison.service.jus
 ACTIVITIES_API_URL=https://activities-api-dev.prison.service.justice.gov.uk
 PRISON_API_URL=https://prison-api-dev.prison.service.justice.gov.uk
 PRISONER_SEARCH_API_URL=https://prisoner-search-dev.prison.service.justice.gov.uk
-WHEREABOUTS_API_URL=https://whereabouts-api-dev.service.justice.gov.uk
 INCENTIVES_API_URL=https://incentives-api-dev.hmpps.service.justice.gov.uk
 FRONTEND_COMPONENT_API_URL=https://frontend-components-dev.hmpps.service.justice.gov.uk
 API_CLIENT_ID=<ask the team>
@@ -95,10 +109,6 @@ This will setup essential environment variables - local DB credentials, API URLs
 
 Start a local `hmpps-activities-management` service with `$ npm run start`, which will use you `.env` file to set
 up its environment to reference the DEV APIs, local activities API and local containers.
-
-## Run linter
-
-`npm run lint`
 
 ## Ensuring slack notifications are raised correctly
 

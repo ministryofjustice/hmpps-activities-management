@@ -26,6 +26,8 @@ export type CreateAnActivityJourney = {
     name: string
   }
   name?: string
+  tierCode?: string
+  organiserCode?: string
   riskLevel?: string
   minimumPayRate?: number
   maximumPayRate?: number
