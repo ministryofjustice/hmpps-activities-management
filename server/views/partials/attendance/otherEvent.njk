@@ -16,7 +16,7 @@
       </div>
       {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
         <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }}{{ " to " + event.endTime if event.endTime }}</div>
-        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.internalLocationDescription }}</div>
+        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.internalLocationUserDescription or event.internalLocationDescription }}</div>
       {% endif %}
   </div>
 {% endmacro %}
