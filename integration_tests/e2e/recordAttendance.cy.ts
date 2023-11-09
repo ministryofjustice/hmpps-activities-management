@@ -31,7 +31,7 @@ context('Record attendance', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,
-      getAttendanceSummary
+      getAttendanceSummary,
     )
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
     cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
@@ -91,7 +91,7 @@ context('Record attendance', () => {
     attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Pay')
     attendanceListPage.assertNotificationContents(
       'Session cancelled',
-      'This activity session has been cancelled for the following reason:'
+      'This activity session has been cancelled for the following reason:',
     )
 
     attendanceListPage.getLinkByText('Uncancel this session').click()

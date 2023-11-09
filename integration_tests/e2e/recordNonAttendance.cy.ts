@@ -23,7 +23,7 @@ context('Record non attendance', () => {
     cy.stubEndpoint(
       'GET',
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=2023-02-02`,
-      getAttendanceSummary
+      getAttendanceSummary,
     )
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
     cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
