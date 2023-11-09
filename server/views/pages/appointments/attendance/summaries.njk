@@ -47,7 +47,9 @@
             attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-time' }
         }, {
             text: attendees(summary.attendees, prisonersDetails),
-            attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-attendee-count' }
+            attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-attendee-count',
+                "data-sort-value": summary.attendees
+            }
         },
          {
             text: summary.attendedCount,

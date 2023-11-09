@@ -8,8 +8,10 @@ import DateOption from '../../../../enum/dateOption'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import atLeast from '../../../../../jest.setup'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
@@ -209,6 +211,104 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           notRecordedPercentage: 29,
         },
         prisonersDetails,
+      })
+    })
+
+    it('should provide prisoner details for 1 attendee', async () => {
+      const dateOption = DateOption.OTHER
+      req.query = {
+        dateOption,
+        date: '2023-10-17',
+      }
+
+      const summaries = [
+        {
+          attendeeCount: 1,
+          attendedCount: 0,
+          nonAttendedCount: 0,
+          notRecordedCount: 1,
+          attendees: [
+            {
+              prisonerNumber: 'A0013DZ',
+            },
+          ],
+        },
+        {
+          attendeeCount: 3,
+          attendedCount: 2,
+          nonAttendedCount: 1,
+          notRecordedCount: 0,
+          attendees: [],
+        },
+      ] as AppointmentAttendanceSummary[]
+
+      // Mock the response of activitiesService.getAppointmentAttendanceSummaries
+      when(activitiesService.getAppointmentAttendanceSummaries)
+        .calledWith(prisonCode, parseIsoDate('2023-10-17'), res.locals.user)
+        .mockResolvedValue(summaries)
+
+      // Mock the response of prisonService.searchInmatesByPrisonerNumbers
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(atLeast(['A0013DZ']))
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'A0013DZ',
+            firstName: 'RODNEY',
+            lastName: 'REINDEER',
+            cellLocation: 'MDI-4-2-009',
+          },
+        ] as Prisoner[])
+
+      // Call the GET method
+      await handler.GET(req, res)
+
+      // Define the expected summaries without cancelled appointments
+      const expectedSummaries = [
+        {
+          attendeeCount: 1,
+          attendedCount: 0,
+          nonAttendedCount: 0,
+          notRecordedCount: 1,
+          attendees: [
+            {
+              prisonerNumber: 'A0013DZ',
+            },
+          ],
+        },
+        {
+          attendeeCount: 3,
+          attendedCount: 2,
+          nonAttendedCount: 1,
+          notRecordedCount: 0,
+          attendees: [],
+        },
+      ] as AppointmentAttendanceSummary[]
+
+      // Define the expected prisoners details
+      const expectedPrisonersDetails = {
+        A0013DZ: {
+          prisonerNumber: 'A0013DZ',
+          firstName: 'RODNEY',
+          lastName: 'REINDEER',
+          cellLocation: 'MDI-4-2-009',
+        },
+      }
+
+      // Assert that res.render was called with the expected data
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries', {
+        dateOption,
+        date: parseIsoDate('2023-10-17'),
+        summaries: expectedSummaries,
+        attendanceSummary: {
+          attended: 2,
+          attendedPercentage: 50,
+          attendeeCount: 4,
+          notAttended: 1,
+          notAttendedPercentage: 25,
+          notRecorded: 1,
+          notRecordedPercentage: 25,
+        },
+        prisonersDetails: expectedPrisonersDetails,
       })
     })
   })

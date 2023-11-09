@@ -23,10 +23,10 @@ export default class SummariesRoutes {
     ).filter(s => !s.isCancelled)
 
     // Get prisoner details for appointments with a single attendee
-    const prisonerNumbers = summaries.flatMap(r => (r.attendees.length === 1 ? r.attendees[0].prisonerNumber : []))
+    const prisonerNumber = summaries.flatMap(r => (r.attendees.length === 1 ? r.attendees[0].prisonerNumber : []))
     let prisonersDetails = {}
-    if (prisonerNumbers.length > 0) {
-      prisonersDetails = (await this.prisonService.searchInmatesByPrisonerNumbers(uniq(prisonerNumbers), user)).reduce(
+    if (prisonerNumber.length > 0) {
+      prisonersDetails = (await this.prisonService.searchInmatesByPrisonerNumbers(uniq(prisonerNumber), user)).reduce(
         (prisonerMap, prisoner) => ({
           ...prisonerMap,
           [prisoner.prisonerNumber]: prisoner,
