@@ -5734,6 +5734,12 @@ export interface components {
        * @example 3
        */
       notRecordedCount: number
+      /**
+       * @description
+       *     Summary of the prisoner or prisoners attending this appointment and their attendance record if any.
+       *     Attendees are at the appointment level to allow for per appointment attendee changes.
+       */
+      attendees: components['schemas']['AppointmentAttendeeSearchResult'][]
     }
     /**
      * @description
