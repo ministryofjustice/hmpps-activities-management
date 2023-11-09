@@ -1,0 +1,30 @@
+[
+  {
+    "scheduledInstanceId": 93,
+    "allocationId": 1,
+    "prisonerNumber": "A7789DY",
+    "bookingId": 100001,
+    "suspended": false
+  },
+  {
+    "scheduledInstanceId": 93,
+    "allocationId": 2,
+    "prisonerNumber": "G4572UO",
+    "bookingId": 200002,
+    "suspended": false
+  },
+  {
+    "scheduledInstanceId": 93,
+    "allocationId": 3,
+    "prisonerNumber": "G5897GP",
+    "bookingId": 300003,
+    "suspended": false
+  },
+  {
+    "scheduledInstanceId": 93,
+    "allocationId": 4,
+    "prisonerNumber": "G7218GI",
+    "bookingId": 400004,
+    "suspended": false
+  }
+]
