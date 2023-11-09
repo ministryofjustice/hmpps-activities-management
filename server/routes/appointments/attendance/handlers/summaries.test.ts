@@ -6,13 +6,16 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentAttendanceSummary } from '../../../../@types/activitiesAPI/types'
 import DateOption from '../../../../enum/dateOption'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
+import PrisonService from '../../../../services/prisonService'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Appointment Attendance Summaries', () => {
-  const handler = new SummariesRoutes(activitiesService)
+  const handler = new SummariesRoutes(activitiesService, prisonService)
   let req: Request
   let res: Response
 
@@ -59,6 +62,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
       }
 
       const summaries = [] as AppointmentAttendanceSummary[]
+      const prisonersDetails = {} as Prisoner
 
       when(activitiesService.getAppointmentAttendanceSummaries)
         .calledWith(prisonCode, today, res.locals.user)
@@ -79,6 +83,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           notAttendedPercentage: 0,
           notRecordedPercentage: 0,
         },
+        prisonersDetails,
       })
     })
 
@@ -87,6 +92,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
       req.query = {
         dateOption,
       }
+      const prisonersDetails = {} as Prisoner
 
       const summaries = [
         {
@@ -94,18 +100,21 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           attendedCount: 0,
           nonAttendedCount: 0,
           notRecordedCount: 1,
+          attendees: [],
         },
         {
           attendeeCount: 3,
           attendedCount: 2,
           nonAttendedCount: 1,
           notRecordedCount: 0,
+          attendees: [],
         },
         {
           attendeeCount: 6,
           attendedCount: 3,
           nonAttendedCount: 2,
           notRecordedCount: 1,
+          attendees: [],
         },
       ] as AppointmentAttendanceSummary[]
 
@@ -128,6 +137,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           notAttendedPercentage: 30,
           notRecordedPercentage: 20,
         },
+        prisonersDetails,
       })
     })
 
@@ -137,6 +147,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
         dateOption,
         date: '2023-10-16',
       }
+      const prisonersDetails = {} as Prisoner
 
       const summaries = [
         {
@@ -144,6 +155,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           attendedCount: 0,
           nonAttendedCount: 0,
           notRecordedCount: 1,
+          attendees: [],
         },
         {
           isCancelled: true,
@@ -151,12 +163,14 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           attendedCount: 2,
           nonAttendedCount: 1,
           notRecordedCount: 0,
+          attendees: [],
         },
         {
           attendeeCount: 6,
           attendedCount: 3,
           nonAttendedCount: 2,
           notRecordedCount: 1,
+          attendees: [],
         },
       ] as AppointmentAttendanceSummary[]
 
@@ -175,12 +189,14 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
             attendedCount: 0,
             nonAttendedCount: 0,
             notRecordedCount: 1,
+            attendees: [],
           },
           {
             attendeeCount: 6,
             attendedCount: 3,
             nonAttendedCount: 2,
             notRecordedCount: 1,
+            attendees: [],
           },
         ] as AppointmentAttendanceSummary[],
         attendanceSummary: {
@@ -192,6 +208,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           notAttendedPercentage: 29,
           notRecordedPercentage: 29,
         },
+        prisonersDetails,
       })
     })
   })
