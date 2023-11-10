@@ -501,6 +501,17 @@ export interface paths {
      */
     get: operations['getScheduledInstanceById']
   }
+  '/scheduled-instances/{instanceId}/scheduled-attendees': {
+    /**
+     * Get a list of scheduled attendees for a scheduled instance
+     * @description Returns a list of prisoners who are scheduled to attend a given scheduled instance.
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    get: operations['getScheduledAttendeesByScheduledInstance']
+  }
   '/scheduled-instances/{instanceId}/attendances': {
     /**
      * Get a list of attendances for a scheduled instance
@@ -1534,14 +1545,14 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['WaitingListApplication'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      first?: boolean
-      last?: boolean
       pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
@@ -5021,14 +5032,14 @@ export interface components {
       totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      first?: boolean
-      last?: boolean
       pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
@@ -5161,6 +5172,37 @@ export interface components {
        * @example 2022-10-21
        */
       endDate?: string
+    }
+    /** @description Describes a prisoner scheduled to attend to an activity */
+    ScheduledAttendee: {
+      /**
+       * Format: int64
+       * @description The internal ID of the scheduled instance
+       * @example 1
+       */
+      scheduledInstanceId: number
+      /**
+       * Format: int64
+       * @description The internal ID of the allocation
+       * @example 1
+       */
+      allocationId: number
+      /**
+       * @description The candidate's prisoner number
+       * @example GF10101
+       */
+      prisonerNumber: string
+      /**
+       * Format: int64
+       * @description The booking id of the prisoner
+       * @example 10001
+       */
+      bookingId?: number
+      /**
+       * @description Set to true if this prisoner is suspended from the scheduled event
+       * @example false
+       */
+      suspended: boolean
     }
     /** @description Attendance summary details */
     AttendanceSummaryDetails: {
@@ -8281,6 +8323,47 @@ export interface operations {
       200: {
         content: {
           'application/json': components['schemas']['ActivityScheduleInstance']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The scheduled instance was not found. */
+      404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Get a list of scheduled attendees for a scheduled instance
+   * @description Returns a list of prisoners who are scheduled to attend a given scheduled instance.
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  getScheduledAttendeesByScheduledInstance: {
+    parameters: {
+      path: {
+        instanceId: number
+      }
+    }
+    responses: {
+      /** @description Scheduled instance found */
+      200: {
+        content: {
+          'application/json': components['schemas']['ScheduledAttendee'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */

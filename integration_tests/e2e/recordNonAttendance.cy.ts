@@ -5,6 +5,7 @@ import ActivitiesPage from '../pages/recordAttendance/activitiesPage'
 import AttendanceListPage from '../pages/recordAttendance/attendanceList'
 import getAttendanceReasons from '../fixtures/activitiesApi/getAttendanceReasons.json'
 import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance93.json'
+import getAttendeesForScheduledInstance from '../fixtures/activitiesApi/getAttendeesScheduledInstance93.json'
 import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForNonAttendance.json'
 import NotAttendedReasonPage from '../pages/recordAttendance/notAttendedReason'
@@ -25,6 +26,7 @@ context('Record non attendance', () => {
       getAttendanceSummary,
     )
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
+    cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
     cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2023-02-02', getScheduledEvents)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('PUT', '/attendances')

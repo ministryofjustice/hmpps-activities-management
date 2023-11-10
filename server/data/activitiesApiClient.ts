@@ -55,6 +55,7 @@ import {
   WaitingListSearchRequest,
   WaitingListApplicationPaged,
   WaitingListSearchParams,
+  ScheduledAttendee,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -222,9 +223,9 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getAttendances(id: number, user: ServiceUser): Promise<Attendance[]> {
+  async getAttendees(id: number, user: ServiceUser): Promise<ScheduledAttendee[]> {
     return this.get({
-      path: `/scheduled-instances/${id}/attendances`,
+      path: `/scheduled-instances/${id}/scheduled-attendees`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
