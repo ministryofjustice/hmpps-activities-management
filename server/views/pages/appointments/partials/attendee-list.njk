@@ -17,21 +17,18 @@
     {% for attendee in appointment.attendees %}
         {% set prisoner = attendee.prisoner %}
         {% set attendeeListRows = (attendeeListRows.push([
-            {
-                html: '<span class="print-checkbox"></span>',
-                classes: "print-only"
-            }, {
-                text: "Name of attendee",
-                classes: "govuk-table__cell--vertical-align-top govuk-!-font-weight-bold govuk-!-display-none-print"
-            }, {
+             {
                 html: showProfileLink({
                     name: prisoner | fullName,
                     prisonerNumber: prisoner.prisonerNumber,
-                    cellLocation: prisoner.cellLocation,
                     link: true
                 }),
                 classes: 'govuk-!-display-none-print',
-                attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | fullName | toTitleCase | prisonerName(false) }
+                attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | fullName | prisonerName(false) }
+            },
+              {
+                text: prisoner.cellLocation,
+                attributes: { id: 'prisoner-cell-location',"data-sort-value": prisoner.cellLocation }
             }, {
                 text: prisoner | fullName | toTitleCase | prisonerName(false),
                 classes: 'print-only'
@@ -67,24 +64,14 @@
             {{ govukTable({
                 head: [
                     {
-                        text: "Attended",
-                        classes: "print-only"
-                    }, {
-                        html: '<span class="govuk-visually-hidden">Name of attendee</span>',
-                        classes: "govuk-!-display-none-print"
-                    }, {
                         text: "Attendee",
                         classes: "govuk-!-display-none-print",
                         attributes: { "aria-sort": "ascending" }
-                    }, {
-                        text: "Name",
-                        classes: "print-only"
-                    }, {
-                        text: "Prison number",
-                        classes: "print-only"
-                    }, {
+                    },
+                    {
                         text: "Cell location",
-                        classes: "print-only"
+                        classes: "govuk-!-display-none-print",
+                        attributes: { "aria-sort": "none" }
                     }, {
                         html: '<span class="govuk-visually-hidden">Actions</span>',
                         classes: "govuk-!-display-none-print"
