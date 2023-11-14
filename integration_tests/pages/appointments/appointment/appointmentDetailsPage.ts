@@ -20,8 +20,9 @@ export default class AppointmentDetailsPage extends Page {
       .parents('[data-qa=prisoner-summary]')
       .find('[data-qa=prisoner-number]')
       .contains(number)
-
-    cy.get('[data-qa=prisoner-cell-location]').contains(cellLocation)
+      .parents('[class=govuk-table__row]')
+      .find('[data-qa=prisoner-cell-location]')
+      .contains(cellLocation)
   }
 
   assertName = (category: string) => this.assertAppointmentDetail('Appointment name', category)
