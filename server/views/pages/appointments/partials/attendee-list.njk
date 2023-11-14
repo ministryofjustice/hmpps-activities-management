@@ -17,6 +17,10 @@
     {% for attendee in appointment.attendees %}
         {% set prisoner = attendee.prisoner %}
         {% set attendeeListRows = (attendeeListRows.push([
+           {
+                html: '<span class="print-checkbox"></span>',
+                classes: "print-only"
+           },
              {
                 html: showProfileLink({
                     name: prisoner | fullName,
@@ -26,10 +30,11 @@
                 classes: 'govuk-!-display-none-print',
                 attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | fullName | prisonerName(false) }
             },
-              {
+            {
                 text: prisoner.cellLocation,
-                attributes: { id: 'prisoner-cell-location',"data-sort-value": prisoner.cellLocation }
-            }, {
+                attributes: { id: 'prisoner-cell-location',"data-sort-value": prisoner.cellLocation, "data-qa": 'prisoner-cell-location' }
+            },
+            {
                 text: prisoner | fullName | toTitleCase | prisonerName(false),
                 classes: 'print-only'
             }, {
@@ -63,16 +68,31 @@
         <div class="govuk-summary-card__content">
             {{ govukTable({
                 head: [
+                 {
+                        text: "Attended",
+                        classes: "print-only"
+                 },
                     {
                         text: "Attendee",
                         classes: "govuk-!-display-none-print",
-                        attributes: { "aria-sort": "ascending" }
+                        attributes: { "aria-sort": "ascending", "data-qa": "prisoner-summary" }
                     },
                     {
                         text: "Cell location",
                         classes: "govuk-!-display-none-print",
-                        attributes: { "aria-sort": "none" }
+                        attributes: { "aria-sort": "none", "data-qa": "prisoner-cell-location"}
+                    },
+                    {
+                        text: "Name",
+                        classes: "print-only"
                     }, {
+                        text: "Prison number",
+                        classes: "print-only"
+                    }, {
+                        text: "Cell location",
+                        classes: "print-only"
+                    },
+                    {
                         html: '<span class="govuk-visually-hidden">Actions</span>',
                         classes: "govuk-!-display-none-print"
                     }
