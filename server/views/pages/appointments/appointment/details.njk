@@ -219,9 +219,13 @@
                 }) }}
 
                 {% if appointment.isExpired == false %}
-                    <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/movement-slip" }}" target="_blank" data-qa="print-movement-slips">
-                        {{ "View and print movement slip" + ("s" if appointment.attendees.length > 1 ) }}
-                    </a>
+                    {{ govukButton({
+                        attributes: { id: 'print-movement-slips', target: "_blank", 'data-qa': 'print-movement-slips' },
+                        text: "Print movement slip" + ("s" if appointment.attendees.length > 1 ) ,
+                        classes: "govuk-button--blue govuk-link govuk-link--no-visited-state",
+                        preventDoubleClick: true,
+                        href: appointmentLink + '/movement-slip'
+                    }) }}
                 {% endif %}
             </div>
 

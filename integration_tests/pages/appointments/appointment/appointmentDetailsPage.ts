@@ -20,7 +20,7 @@ export default class AppointmentDetailsPage extends Page {
       .parents('[data-qa=prisoner-summary]')
       .find('[data-qa=prisoner-number]')
       .contains(number)
-      .parents('[data-qa=prisoner-summary]')
+      .parents('[class=govuk-table__row]')
       .find('[data-qa=prisoner-cell-location]')
       .contains(cellLocation)
   }
@@ -47,7 +47,7 @@ export default class AppointmentDetailsPage extends Page {
 
   assertCreatedBy = (createdBy: string) => this.assertAppointmentHistory('Created by', createdBy)
 
-  assertPrintMovementSlipLink = () => this.printMovementSlipLink().contains('View and print movement slip')
+  assertPrintMovementSlipLink = () => this.printMovementSlipLink().contains('Print movement slip')
 
   getChangeLink = (property: string) =>
     cy

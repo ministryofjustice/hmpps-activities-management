@@ -1,11 +1,3 @@
-.appointment-details {
-  &__attendee-list {
-    .govuk-table__head {
-      display: none;
-    }
-  }
-}
-
 @include govuk-media-query($media-type: print) {
   .appointment-details {
     &__attendee-list {
