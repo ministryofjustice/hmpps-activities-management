@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { addDays, format, startOfYesterday } from 'date-fns'
+import { format, startOfYesterday } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
-import { Allocation, PrisonerScheduledEvents, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
+import { PrisonerScheduledEvents, ScheduledActivity, ScheduledAttendee } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import AttendanceListRoutes, { ScheduledInstanceAttendance } from './attendanceList'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -138,6 +138,14 @@ describe('Route Handlers - Attendance List', () => {
 
     when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(instance)
 
+    when(activitiesService.getAttendees)
+      .calledWith(1, res.locals.user)
+      .mockResolvedValue([
+        { prisonerNumber: 'ABC123' },
+        { prisonerNumber: 'ABC321' },
+        { prisonerNumber: 'ZXY123' },
+      ] as ScheduledAttendee[])
+
     when(activitiesService.getScheduledEventsForPrisoners)
       .calledWith(expect.any(Date), ['ABC123', 'ABC321', 'ZXY123'], res.locals.user)
       .mockResolvedValue(scheduledEvents)
@@ -206,67 +214,6 @@ describe('Route Handlers - Attendance List', () => {
         },
         attendance,
         attendanceSummary: getAttendanceSummary(instance.attendances),
-      })
-    })
-
-    it('should pull a list of allocations for the session if session is in the future', async () => {
-      const instanceWithoutAttendance = {
-        ...instance,
-        date: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
-        attendances: [],
-      } as ScheduledActivity
-
-      when(activitiesService.getScheduledActivity)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue(instanceWithoutAttendance)
-
-      when(activitiesService.getAllocationsWithParams)
-        .calledWith(2, { date: instanceWithoutAttendance.date }, res.locals.user)
-        .mockResolvedValue([
-          {
-            id: 9,
-            prisonerNumber: 'ABC123',
-          },
-          {
-            id: 10,
-            prisonerNumber: 'ABC321',
-          },
-          {
-            id: 11,
-            prisonerNumber: 'ZXY123',
-          },
-        ] as Allocation[])
-
-      await handler.GET(req, res)
-
-      const attendanceList = [
-        {
-          prisoner: {
-            ...prisoners[0],
-            alerts: [{ alertCode: 'HA' }],
-          },
-          attendance: undefined,
-          otherEvents: [event4],
-        },
-        {
-          prisoner: prisoners[1],
-          attendance: undefined,
-          otherEvents: [event3],
-        },
-        {
-          prisoner: prisoners[2],
-          attendance: undefined,
-          otherEvents: [],
-        },
-      ] as unknown as ScheduledInstanceAttendance[]
-
-      expect(res.render).toBeCalledWith('pages/activities/record-attendance/attendance-list', {
-        instance: {
-          ...instanceWithoutAttendance,
-          isAmendable: true,
-        },
-        attendance: attendanceList,
-        attendanceSummary: getAttendanceSummary(instanceWithoutAttendance.attendances),
       })
     })
   })

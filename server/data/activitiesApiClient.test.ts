@@ -213,17 +213,17 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('getAttendances', () => {
+  describe('getAttendees', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
 
       fakeActivitiesApi
-        .get('/scheduled-instances/123/attendances')
+        .get('/scheduled-instances/123/scheduled-attendees')
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
-      const output = await activitiesApiClient.getAttendances(123, user)
+      const output = await activitiesApiClient.getAttendees(123, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })

@@ -14,6 +14,6 @@ export default class IncentivesApiClient extends AbstractHmppsRestClient {
   }
 
   getPrisonerIepSummary(prisonerNumber: string, user: ServiceUser): Promise<IepSummary> {
-    return this.get({ path: `/iep/reviews/prisoner/${prisonerNumber}` }, user)
+    return this.get({ path: `/incentive-reviews/prisoner/${prisonerNumber}` }, user)
   }
 }

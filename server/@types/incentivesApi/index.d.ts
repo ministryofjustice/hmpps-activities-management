@@ -108,7 +108,7 @@ export interface paths {
      */
     post: operations['createIncentiveLevel']
   }
-  '/iep/reviews/prisoner/{prisonerNumber}': {
+  '/incentive-reviews/prisoner/{prisonerNumber}': {
     /**
      * Returns a history of IEP reviews for a prisoner
      * @description Prisoner Number is an unique reference for a prisoner in NOMIS
@@ -120,11 +120,11 @@ export interface paths {
      */
     post: operations['addIepReview']
   }
-  '/iep/reviews/bookings': {
+  '/incentive-reviews/bookings': {
     /** Returns a history of IEP reviews for a list of prisoners */
     post: operations['getCurrentIEPLevelForPrisoner']
   }
-  '/iep/reviews/booking/{bookingId}': {
+  '/incentive-reviews/booking/{bookingId}': {
     /**
      * Returns a history of IEP reviews for a prisoner
      * @description Booking ID is an internal ID for a prisoner in NOMIS
@@ -173,7 +173,7 @@ export interface paths {
      */
     delete: operations['deactivateAllPrisonIncentiveLevels']
   }
-  '/iep/reviews/id/{id}': {
+  '/incentive-reviews/id/{id}': {
     /** Returns a specified IEP Review */
     get: operations['getReviewById']
   }

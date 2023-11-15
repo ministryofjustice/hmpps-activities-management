@@ -39,18 +39,7 @@ export default class AttendanceListRoutes {
       isAmendable: startOfDay(toDate(i.date)) >= startOfToday(),
     }))
 
-    let prisonerNumbers: string[] = []
-
-    if (startOfDay(toDate(instance.date)) > startOfToday()) {
-      const allocations = await this.activitiesService.getAllocationsWithParams(
-        instance.activitySchedule.id,
-        { date: instance.date },
-        user,
-      )
-      prisonerNumbers = allocations.map(a => a.prisonerNumber)
-    } else {
-      prisonerNumbers = instance.attendances.map(a => a.prisonerNumber)
-    }
+    const prisonerNumbers = (await this.activitiesService.getAttendees(instanceId, user)).map(a => a.prisonerNumber)
 
     if (prisonerNumbers.length > 0) {
       const [attendees, otherEvents] = await Promise.all([
