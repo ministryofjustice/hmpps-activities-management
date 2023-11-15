@@ -31,6 +31,10 @@
                 attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | fullName | prisonerName(false) }
             },
             {
+                text: prisoner.cellLocation,
+                attributes: { id: 'prisoner-cell-location',"data-sort-value": prisoner.cellLocation, "data-qa": "prisoner-cell-location" }
+            },
+            {
               text: prisoner | fullName | toTitleCase | prisonerName(false),
               classes: 'print-only'
             },
