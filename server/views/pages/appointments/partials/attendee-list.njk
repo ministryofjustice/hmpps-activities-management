@@ -31,19 +31,17 @@
                 attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | fullName | prisonerName(false) }
             },
             {
-                text: prisoner.cellLocation,
-                attributes: { id: 'prisoner-cell-location',"data-sort-value": prisoner.cellLocation, "data-qa": "prisoner-cell-location" }
+              text: prisoner | fullName | toTitleCase | prisonerName(false),
+              classes: 'print-only'
             },
             {
-                text: prisoner | fullName | toTitleCase | prisonerName(false),
-                classes: 'print-only'
-            }, {
                 text: prisoner.prisonerNumber,
                 classes: 'print-only'
-            }, {
-                text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status),
-                classes: 'print-only'
-            }, {
+            },
+            {
+                text: prisoner.cellLocation,
+                attributes: { id: 'prisoner-cell-location',"data-sort-value": prisoner.cellLocation, "data-qa": "prisoner-cell-location" }
+            },{
                 html: attendeeActions(appointment, attendee),
                 classes: 'govuk-!-text-align-right govuk-!-display-none-print',
                 attributes: { 'data-qa': 'remove-prisoner-' + loop.index }
