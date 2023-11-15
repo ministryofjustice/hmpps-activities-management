@@ -39,9 +39,10 @@
                 classes: 'print-only'
             },
             {
-                text: prisoner.cellLocation,
-                attributes: { id: 'prisoner-cell-location',"data-sort-value": prisoner.cellLocation, "data-qa": "prisoner-cell-location" }
-            },{
+                text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status),
+                classes: 'print-only'
+            },
+            {
                 html: attendeeActions(appointment, attendee),
                 classes: 'govuk-!-text-align-right govuk-!-display-none-print',
                 attributes: { 'data-qa': 'remove-prisoner-' + loop.index }
