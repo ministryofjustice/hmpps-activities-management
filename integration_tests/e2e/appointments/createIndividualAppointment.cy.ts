@@ -22,6 +22,8 @@ import { formatDate } from '../../../server/utils/utils'
 import AppointmentDetailsPage from '../../pages/appointments/appointment/appointmentDetailsPage'
 import ExtraInformationPage from '../../pages/appointments/create-and-edit/extraInformationPage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
+import TierPage from '../../pages/appointments/create-and-edit/tierPage'
+import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 
 context('Create individual appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -72,6 +74,14 @@ context('Create individual appointment', () => {
     namePage.selectCategory('Chaplaincy')
     namePage.continue()
 
+    const tierPage = Page.verifyOnPage(TierPage)
+    tierPage.selectTier('Tier 2')
+    tierPage.continue()
+
+    const hostPage = Page.verifyOnPage(HostPage)
+    hostPage.selectHost('Prison staff')
+    hostPage.continue()
+
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')
     locationPage.continue()
@@ -96,6 +106,8 @@ context('Create individual appointment', () => {
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
     checkAnswersPage.assertCategory('Chaplaincy')
+    checkAnswersPage.assertTier('Tier 2')
+    checkAnswersPage.assertHost('Prison staff')
     checkAnswersPage.assertLocation('Chapel')
     checkAnswersPage.assertStartDate(tomorrow)
     checkAnswersPage.assertStartTime(14, 0)

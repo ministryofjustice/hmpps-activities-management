@@ -8,13 +8,11 @@
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     {% set pageTitle = appointmentJourneyTitle("Change appointment tier", session.appointmentJourney) %}
-    {% set pageHeading = "Enter the new appointment tier" %}
 {% else %}
     {% set pageTitle = appointmentJourneyTitle("Appointment tier", session.appointmentJourney) %}
-    {% set pageHeading = "What is the appointment tier?" %}
 {% endif %}
 
-{% set pageId = 'appointment-tier' %}
+{% set pageId = 'appointment-tier-page' %}
 {% set jsBackLink = true %}
 
 {% set activityTierOptions = [] %}
@@ -35,14 +33,15 @@
                 {{ govukRadios({
                     fieldset: {
                         legend: {
-                            text: "Which tier is the appointment in?" if session.req.params.mode == 'edit' else "Select a tier for the new appointment",
+                            text: "Which tier are the appointments in?" if session.appointmentJourney.type == AppointmentType.SET else "Which tier is the appointment in?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
                     },
                     hint: {
-                        text: 'Recording whether the appointment is tier 1 (core curriculum, for example literacy), tier 2 (extra-curricular, for example library) or routine activities (for example showers or exercise) helps ensure there is a balanced regime.'
+                        text: 'Recording whether the appointments are tier 1 (core curriculum, for example a health clinic or induction assessment), tier 2 (extra-curricular, for example an Alcohol Awareness Day event or Storybook Mums and Dads) or not purposeful (also called foundational) helps ensure there is a balanced regime.'
                     },
+                    id: "tier",
                     name: "tier",
                     errorMessage: validationErrors | findError('tier'),
                     items: activityTierOptions

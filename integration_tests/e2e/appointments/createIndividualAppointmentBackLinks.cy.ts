@@ -21,6 +21,8 @@ import ExtraInformationPage from '../../pages/appointments/create-and-edit/extra
 import RepeatFrequencyAndCountPage from '../../pages/appointments/create-and-edit/repeatFrequencyAndCountPage'
 import { formatDate } from '../../../server/utils/utils'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
+import TierPage from '../../pages/appointments/create-and-edit/tierPage'
+import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 
 context('Create individual appointment - back links', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -67,6 +69,14 @@ context('Create individual appointment - back links', () => {
     namePage.selectCategory('Chaplaincy')
     namePage.continue()
 
+    const tierPage = Page.verifyOnPage(TierPage)
+    tierPage.selectTier('Tier 2')
+    tierPage.continue()
+
+    const hostPage = Page.verifyOnPage(HostPage)
+    hostPage.selectHost('Prison staff')
+    hostPage.continue()
+
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')
     locationPage.continue()
@@ -105,6 +115,14 @@ context('Create individual appointment - back links', () => {
     locationPage.assertSelectedLocation('Chapel')
 
     locationPage.back()
+    Page.verifyOnPage(HostPage)
+    hostPage.assertHost('Prison staff')
+
+    hostPage.back()
+    Page.verifyOnPage(TierPage)
+    tierPage.assertTier('Tier 2')
+
+    tierPage.back()
     Page.verifyOnPage(NamePage)
     namePage.assertSelectedCategory('Chaplaincy')
 
@@ -115,6 +133,8 @@ context('Create individual appointment - back links', () => {
     // Continue to extra information page
     selectPrisonerPage.continue()
     namePage.continue()
+    tierPage.continue()
+    hostPage.continue()
     locationPage.continue()
     dateAndTimePage.continue()
     repeatPage.continue()
@@ -135,6 +155,16 @@ context('Create individual appointment - back links', () => {
     checkAnswersPage.changeName()
     Page.verifyOnPage(NamePage)
     namePage.back()
+    Page.verifyOnPage(CheckAnswersPage)
+
+    checkAnswersPage.changeTier()
+    Page.verifyOnPage(TierPage)
+    tierPage.back()
+    Page.verifyOnPage(CheckAnswersPage)
+
+    checkAnswersPage.changeHost()
+    Page.verifyOnPage(HostPage)
+    hostPage.back()
     Page.verifyOnPage(CheckAnswersPage)
 
     checkAnswersPage.changeLocation()

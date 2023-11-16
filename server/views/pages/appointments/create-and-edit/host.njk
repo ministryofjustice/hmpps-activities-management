@@ -8,13 +8,11 @@
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     {% set pageTitle = appointmentJourneyTitle("Change appointment host", session.appointmentJourney) %}
-    {% set pageHeading = "Enter the new appointment tier" %}
 {% else %}
     {% set pageTitle = appointmentJourneyTitle("Appointment host", session.appointmentJourney) %}
-    {% set pageHeading = "What is the appointment host?" %}
 {% endif %}
 
-{% set pageId = 'host-page' %}
+{% set pageId = 'appointment-host-page' %}
 {% set jsBackLink = true %}
 
 {% set organiserOptions = [] %}
@@ -35,11 +33,12 @@
                 {{ govukRadios({
                     fieldset: {
                         legend: {
-                            text: "Who hosts this appointment?",
+                            text: "Who hosts these appointments?" if session.appointmentJourney.type == AppointmentType.SET else "Who hosts this appointment?",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
                     },
+                    id: "host",
                     name: "host",
                     errorMessage: validationErrors | findError('host'),
                     items: organiserOptions
