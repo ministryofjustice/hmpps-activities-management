@@ -11,11 +11,11 @@
 {% set pageTitle = appointmentJourneyTitle("Check and confirm set" if session.appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details", session.appointmentJourney) %}
 {% set pageId = 'appointment-check-answers-page' %}
 
-{% set summaryListRows = [] %}
+{% set appointmentDetailsRows = [] %}
 
 {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
     {% set prisoner = session.appointmentJourney.prisoners[0] %}
-    {% set summaryListRows = (summaryListRows.push(
+    {% set appointmentDetailsRows = (appointmentDetailsRows.push(
         {
             key: {
                 text: "Attendee"
@@ -40,10 +40,10 @@
                 ]
             }
         }
-    ), summaryListRows) %}
+    ), appointmentDetailsRows) %}
 {% endif %}
 
-{% set summaryListRows = (summaryListRows.push(
+{% set appointmentDetailsRows = (appointmentDetailsRows.push(
     {
         key: {
             text: "Appointment name"
@@ -62,10 +62,47 @@
                 }
             ]
         }
-    }
-), summaryListRows) %}
+    }, {
+        key: {
+            text: "Tier"
+        },
+        value: {
+            text: tier
+        },
+        actions: {
+            items: [
+                {
+                    href: "tier?preserveHistory=true",
+                    text: "Change",
+                    visuallyHiddenText: "change appointment tier",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-tier' }
+                }
+            ]
+        }
+    }, {
+        key: {
+            text: "Host"
+        },
+        value: {
+            text: organiser
+        },
+        actions: {
+            items: [
+                {
+                    href: "host?preserveHistory=true",
+                    text: "Change",
+                    visuallyHiddenText: "change appointment host",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'change-host' }
+                }
+            ]
+        }
+    } if session.appointmentJourney.organiserCode
+), appointmentDetailsRows) %}
 
-{% set summaryListRows = (summaryListRows.push(
+{% set schedulingInformationRows = [] %}
+{% set schedulingInformationRows = (schedulingInformationRows.push(
     {
         key: {
             text: "Location"
@@ -162,9 +199,9 @@
             ]
         }
     } if session.appointmentJourney.repeat
-), summaryListRows) %}
+), schedulingInformationRows) %}
 {% if session.appointmentJourney.repeat == YesNo.YES %}
-  {% set summaryListRows = (summaryListRows.push({
+  {% set schedulingInformationRows = (schedulingInformationRows.push({
       key: {
           text: "Frequency"
       },
@@ -186,8 +223,8 @@
               }
           ]
       }
-  }), summaryListRows) %}
-  {% set summaryListRows = (summaryListRows.push({
+  }), schedulingInformationRows) %}
+  {% set schedulingInformationRows = (schedulingInformationRows.push({
       key: {
           text: "Number of appointments"
       },
@@ -205,10 +242,12 @@
               }
           ]
       }
-  }), summaryListRows) %}
+  }), schedulingInformationRows) %}
 {% endif %}
+
+{% set extraInfoRows = [] %}
 {% if session.appointmentJourney.type !== AppointmentType.SET %}
-    {% set summaryListRows = (summaryListRows.push(
+    {% set extraInfoRows = (extraInfoRows.push(
         {
             key: {
                 text: "Extra information"
@@ -228,10 +267,10 @@
                 ]
             }
         }
-    ), summaryListRows) %}
+    ), extraInfoRows) %}
 {% endif %}
 {% if session.appointmentJourney.type == AppointmentType.SET %}
-    {% set summaryListRows = (summaryListRows.push(
+    {% set schedulingInformationRows = (schedulingInformationRows.push(
         {
             key: {
                 text: "Appointments created"
@@ -240,22 +279,36 @@
                 text: session.appointmentSetJourney.appointments | length
             }
         }
-    ), summaryListRows) %}
+    ), schedulingInformationRows) %}
 {% endif %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">Check and confirm the appointment details</h1>
-            <h2 class="govuk-heading-m">Appointment details</h2>
 
             <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
+                <h2 class="govuk-heading-m">Appointment details</h2>
                 {{ govukSummaryList({
-                    rows: summaryListRows,
+                    rows: appointmentDetailsRows,
                     attributes: { 'data-qa': 'appointment-details' }
                 }) }}
+
+                <h2 class="govuk-heading-m">Scheduling information</h2>
+                {{ govukSummaryList({
+                    rows: schedulingInformationRows,
+                    attributes: { 'data-qa': 'scheduling-information' }
+                }) }}
+
+                {% if extraInfoRows | length %}
+                    <h2 class="govuk-heading-m">Extra information</h2>
+                    {{ govukSummaryList({
+                        rows: extraInfoRows,
+                        attributes: { 'data-qa': 'extra-information' }
+                    }) }}
+                {% endif %}
 
                 {{ prisonersList() if session.appointmentJourney.type == AppointmentType.GROUP }}
 

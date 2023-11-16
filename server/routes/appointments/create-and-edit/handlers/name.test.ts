@@ -119,7 +119,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
   })
 
   describe('POST', () => {
-    it('should save selected category in session, use category description as appointment name and redirect to location page', async () => {
+    it('should save selected category in session, use category description as appointment name and redirect to tier page', async () => {
       req.body = {
         categoryCode: 'MEDO',
         description: '',
@@ -135,7 +135,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
         description: 'Medical - Doctor',
       })
       expect(req.session.appointmentJourney.customName).toBeNull()
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
     })
 
     it('should save selected category and custom name in session, use custom name and category description as appointment name and redirect to location page', async () => {
@@ -154,7 +154,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
         description: 'Chaplaincy',
       })
       expect(req.session.appointmentJourney.customName).toEqual('Bible studies')
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
     })
 
     it('should trim custom name', async () => {

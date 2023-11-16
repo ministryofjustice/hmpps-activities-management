@@ -1,0 +1,57 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("Change appointment tier", session.appointmentJourney) %}
+    {% set pageHeading = "Enter the new appointment tier" %}
+{% else %}
+    {% set pageTitle = appointmentJourneyTitle("Appointment tier", session.appointmentJourney) %}
+    {% set pageHeading = "What is the appointment tier?" %}
+{% endif %}
+
+{% set pageId = 'appointment-tier' %}
+{% set jsBackLink = true %}
+
+{% set activityTierOptions = [] %}
+{% for tierKey, tierText in eventTierDescriptions %}
+    {% set activityTierOptions = (activityTierOptions.push({
+        value: tierKey,
+        text: tierText,
+        checked: formResponses.tier == tierKey or session.appointmentJourney.tierCode == tierKey
+    }), activityTierOptions) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ appointmentTypeCaption(session) }}
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Which tier is the appointment in?" if session.req.params.mode == 'edit' else "Select a tier for the new appointment",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    hint: {
+                        text: 'Recording whether the appointment is tier 1 (core curriculum, for example literacy), tier 2 (extra-curricular, for example library) or routine activities (for example showers or exercise) helps ensure there is a balanced regime.'
+                    },
+                    name: "tier",
+                    errorMessage: validationErrors | findError('tier'),
+                    items: activityTierOptions
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
