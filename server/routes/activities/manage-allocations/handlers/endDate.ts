@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsDate } from 'class-validator'
 import { startOfToday } from 'date-fns'
 import { AllocateToActivityJourney } from '../journey'
 import {
@@ -10,11 +9,11 @@ import {
   parseIsoDate,
 } from '../../../../utils/datePickerUtils'
 import DateValidator from '../../../../validators/DateValidator'
+import IsValidDate from '../../../../validators/isValidDate'
 
 export class EndDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @IsDate({ message: 'Enter a valid end date' })
   @DateValidator(date => date >= startOfToday(), { message: "Enter a date on or after today's date" })
   @DateValidator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.startDate), {
     message: args => {
@@ -47,6 +46,7 @@ export class EndDate {
       },
     },
   )
+  @IsValidDate({ message: 'Enter a valid end date' })
   endDate: Date
 }
 

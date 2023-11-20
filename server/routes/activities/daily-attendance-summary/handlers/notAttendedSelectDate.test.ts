@@ -4,7 +4,6 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import SelectDateRoutes, { DateOptions, NotAttendedDate } from './notAttendedSelectDate'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
 
 describe('Not attended routes - select date', () => {
@@ -39,7 +38,7 @@ describe('Not attended routes - select date', () => {
 
   describe('POST', () => {
     it("redirects to not attended list with today's date", async () => {
-      const today = simpleDateFromDate(new Date())
+      const today = new Date()
 
       req.body = {
         datePresetOption: DateOptions.TODAY,
@@ -48,12 +47,12 @@ describe('Not attended routes - select date', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `attendance?date=${today.toIsoString()}&status=NotAttended&preserveHistory=true`,
+        `attendance?date=${formatIsoDate(today)}&status=NotAttended&preserveHistory=true`,
       )
     })
 
     it("redirects to not attended list with yesterdays's date", async () => {
-      const yesterday = simpleDateFromDate(addDays(new Date(), -1))
+      const yesterday = addDays(new Date(), -1)
 
       req.body = {
         datePresetOption: DateOptions.YESTERDAY,
@@ -62,7 +61,7 @@ describe('Not attended routes - select date', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `attendance?date=${yesterday.toIsoString()}&status=NotAttended&preserveHistory=true`,
+        `attendance?date=${formatIsoDate(yesterday)}&status=NotAttended&preserveHistory=true`,
       )
     })
 

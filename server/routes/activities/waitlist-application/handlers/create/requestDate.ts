@@ -1,15 +1,15 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { startOfToday } from 'date-fns'
-import { IsDate } from 'class-validator'
 import { formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePickerUtils'
 import DateValidator from '../../../../../validators/DateValidator'
+import IsValidDate from '../../../../../validators/isValidDate'
 
 export class RequestDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @IsDate({ message: 'Enter a valid request date' })
   @DateValidator(date => date <= startOfToday(), { message: 'The request date cannot be in the future' })
+  @IsValidDate({ message: 'Enter a valid request date' })
   requestDate: Date
 }
 

@@ -18,7 +18,7 @@
                 {{ activityJourneyCaption(session.createJourney) }}
                 {{ hmppsDatePicker({
                     id: 'endDate',
-                    name: 'endDateString',
+                    name: 'endDate',
                     label: {
                         text: "Change the end date for this activity" if session.req.params.mode == 'edit' else "Enter the end date for this activity",
                         classes: "govuk-label--l",
@@ -29,7 +29,7 @@
                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
                     },
                     errorMessage: validationErrors | findError('endDate'),
-                    value: formResponses.endDateString or session.createJourney.endDate | isoDateToDatePickerDate
+                    value: formResponses.endDate or session.createJourney.endDate | isoDateToDatePickerDate
                 }) }}
                 {% if session.req.params.mode == 'edit' %}
                     {{ govukInsetText({

@@ -1,15 +1,15 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { addDays } from 'date-fns'
+import { addDays, startOfToday } from 'date-fns'
 import ScheduleRoutes from './schedule'
 import { YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/editAppointmentService')
@@ -24,7 +24,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
   let req: Request
   let res: Response
 
-  const tomorrow = addDays(new Date(), 1)
+  const tomorrow = addDays(startOfToday(), 1)
 
   beforeEach(() => {
     res = {
@@ -44,7 +44,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     req = {
       session: {
         appointmentJourney: {
-          startDate: simpleDateFromDate(tomorrow),
+          startDate: formatIsoDate(tomorrow),
           prisoners: [],
         },
         appointmentSetJourney: {
@@ -164,7 +164,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       await handler.GET(req, res)
 
       expect(activitiesService.getScheduledEventsForPrisoners).toHaveBeenCalledWith(
-        simpleDateFromDate(tomorrow).toRichDate(),
+        tomorrow,
         ['A1234BC'],
         res.locals.user,
       )
@@ -204,7 +204,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       await handler.GET(req, res)
 
       expect(activitiesService.getScheduledEventsForPrisoners).toHaveBeenCalledWith(
-        simpleDateFromDate(tomorrow).toRichDate(),
+        tomorrow,
         ['A1234BC'],
         res.locals.user,
       )
@@ -254,7 +254,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       await handler.GET(req, res)
 
       expect(activitiesService.getScheduledEventsForPrisoners).toHaveBeenCalledWith(
-        simpleDateFromDate(tomorrow).toRichDate(),
+        tomorrow,
         ['B2345CD'],
         res.locals.user,
       )

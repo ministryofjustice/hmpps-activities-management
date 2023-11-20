@@ -1,23 +1,20 @@
-import { Expose, plainToInstance } from 'class-transformer'
+import { Expose, Transform, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import IsValidDate from './isValidDate'
-import SimpleDate from '../commonValidationTypes/simpleDate'
 import { associateErrorsWithProperty } from '../utils/utils'
+import { parseDatePickerDate } from '../utils/datePickerUtils'
 
 describe('isValidDate', () => {
   class DummyForm {
     @Expose()
+    @Transform(({ value }) => parseDatePickerDate(value))
     @IsValidDate({ message: 'Enter a valid date' })
-    date: SimpleDate
+    date: Date
   }
 
   it('should fail validation for a bad date', async () => {
     const body = {
-      date: plainToInstance(SimpleDate, {
-        day: 32,
-        month: 2,
-        year: 2022,
-      }),
+      date: '32/2/2022',
     }
 
     const requestObject = plainToInstance(DummyForm, body)
@@ -37,11 +34,7 @@ describe('isValidDate', () => {
 
   it('should pass validation for a good date', async () => {
     const body = {
-      date: plainToInstance(SimpleDate, {
-        day: 28,
-        month: 2,
-        year: 2022,
-      }),
+      date: '28/2/2022',
     }
 
     const requestObject = plainToInstance(DummyForm, body)

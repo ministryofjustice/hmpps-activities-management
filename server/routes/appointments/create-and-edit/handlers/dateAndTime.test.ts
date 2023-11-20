@@ -54,7 +54,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   describe('CREATE', () => {
     it('should save start date, start time and end time in session and redirect to repeat page', async () => {
       req.body = {
-        startDate: formatDatePickerDate(tomorrow),
+        startDate: tomorrow,
         startTime: plainToInstance(SimpleTime, {
           hour: 11,
           minute: 30,
@@ -134,7 +134,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
     it('should update the appointment date and redirect to schedule', async () => {
       const nextWeek = addDays(new Date(), 7)
-      req.body.startDate = formatDatePickerDate(nextWeek)
+      req.body.startDate = nextWeek
 
       await handler.EDIT(req, res)
 
@@ -152,6 +152,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         minute: 0,
       })
 
+      req.body.startDate = tomorrow
       req.body.startTime = startTime
       req.body.endTime = endTime
 
@@ -181,7 +182,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         minute: 0,
       })
 
-      req.body.startDate = formatDatePickerDate(nextWeek)
+      req.body.startDate = nextWeek
       req.body.startTime = startTime
       req.body.endTime = endTime
 
@@ -294,6 +295,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     }
 
     const requestObject = plainToInstance(DateAndTime, body)
+
     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
     expect(errors).toEqual(
@@ -302,9 +304,8 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   })
 
   it('validation fails when end time is not after the start time', async () => {
-    const today = new Date()
     const body = {
-      startDate: formatDatePickerDate(today),
+      startDate: formatDatePickerDate(tomorrow),
       startTime: plainToInstance(SimpleTime, {
         hour: 11,
         minute: 30,

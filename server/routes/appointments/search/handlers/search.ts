@@ -1,19 +1,20 @@
 import { Request, Response } from 'express'
-import { Expose } from 'class-transformer'
+import { Expose, Transform } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import { uniq } from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentSearchRequest } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
-import { datePickerDateToIsoDate, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
-import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
+import { formatIsoDate, isValidIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import { asString } from '../../../../utils/utils'
+import IsValidDate from '../../../../validators/isValidDate'
 
 export class Search {
   @Expose()
+  @Transform(({ value }) => parseDatePickerDate(value))
   @IsNotEmpty({ message: 'Enter a date' })
-  @IsValidDatePickerDate({ message: 'Enter a valid date' })
-  startDate: string
+  @IsValidDate({ message: 'Enter a valid date' })
+  startDate: Date
 }
 
 export default class SearchRoutes {
@@ -87,7 +88,7 @@ export default class SearchRoutes {
     const { startDate, timeSlot, appointmentName, locationId, prisonerNumber, createdBy } = req.body
 
     return res.redirect(
-      `?startDate=${datePickerDateToIsoDate(startDate)}&timeSlot=${timeSlot ?? ''}&appointmentName=${
+      `?startDate=${formatIsoDate(startDate)}&timeSlot=${timeSlot ?? ''}&appointmentName=${
         appointmentName ?? ''
       }&locationId=${locationId ?? ''}&prisonerNumber=${prisonerNumber ?? ''}&createdBy=${createdBy ?? ''}`,
     )

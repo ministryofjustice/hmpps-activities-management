@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { startOfToday, subMonths } from 'date-fns'
-import { IsDate } from 'class-validator'
 import { Transform } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
@@ -8,14 +7,15 @@ import { asString } from '../../../../utils/utils'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import { Prisoner } from '../../../../@types/activities'
 import { WaitingListStatus } from '../../../../enum/waitingListStatus'
+import IsValidDate from '../../../../validators/isValidDate'
 
 export class DashboardFrom {
   @Transform(({ value }) => parseDatePickerDate(value))
-  @IsDate({ message: 'Enter a valid date from' })
+  @IsValidDate({ message: 'Enter a valid date from' })
   dateFrom: Date
 
   @Transform(({ value }) => parseDatePickerDate(value))
-  @IsDate({ message: 'Enter a valid date to' })
+  @IsValidDate({ message: 'Enter a valid date to' })
   dateTo: Date
 }
 

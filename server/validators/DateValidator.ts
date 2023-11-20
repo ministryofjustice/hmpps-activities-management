@@ -1,4 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator'
+import { isValid } from 'date-fns'
 import { CreateAnActivityJourney } from '../routes/activities/create-an-activity/journey'
 import { AllocateToActivityJourney } from '../routes/activities/manage-allocations/journey'
 import { WaitListApplicationJourney } from '../routes/activities/waitlist-application/journey'
@@ -21,7 +22,7 @@ export default function DateValidator(
       propertyName,
       options: validationOptions,
       validator: {
-        validate: (date, args) => !date || evaluationMethod(date, args.object as ValidationObject),
+        validate: (date, args) => !date || !isValid(date) || evaluationMethod(date, args.object as ValidationObject),
       },
     })
   }

@@ -49,7 +49,7 @@ describe('Route Handlers - Create Appointment Set - Date', () => {
   describe('POST', () => {
     it('should save start date, start time and end time in session and redirect to repeat page', async () => {
       req.body = {
-        startDate: formatDatePickerDate(tomorrow),
+        startDate: tomorrow,
       }
 
       await handler.POST(req, res)
@@ -61,7 +61,7 @@ describe('Route Handlers - Create Appointment Set - Date', () => {
     it('should populate return to with schedule', async () => {
       req.query = { preserveHistory: 'true' }
       req.body = {
-        startDate: formatDatePickerDate(tomorrow),
+        startDate: tomorrow,
       }
       await handler.POST(req, res)
       expect(req.session.returnTo).toEqual('schedule?preserveHistory=true')
@@ -77,6 +77,19 @@ describe('Route Handlers - Create Appointment Set - Date', () => {
 
       expect(errors).toEqual(
         expect.arrayContaining([{ error: 'Enter a date for the appointment', property: 'startDate' }]),
+      )
+    })
+
+    it('validation fails when invalid date entered', async () => {
+      const body = {
+        startDate: 'invalid',
+      }
+
+      const requestObject = plainToInstance(AppointmentSetDate, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([{ error: 'Enter a valid date for the appointment', property: 'startDate' }]),
       )
     })
 
