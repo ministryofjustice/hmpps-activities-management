@@ -20,6 +20,8 @@ import {
   getLastAppointment,
   getFirstAppointment,
   applyToAppointmentCount,
+  hasAppointmentTierChanged,
+  hasAppointmentOrganiserChanged,
 } from '../utils/editAppointmentUtils'
 import config from '../config'
 import MetricsService from './metricsService'
@@ -116,6 +118,14 @@ export default class EditAppointmentService {
     }
 
     const request = { applyTo } as AppointmentUpdateRequest
+
+    if (hasAppointmentTierChanged(appointmentJourney, editAppointmentJourney)) {
+      request.tierCode = editAppointmentJourney.tierCode
+    }
+
+    if (hasAppointmentOrganiserChanged(appointmentJourney, editAppointmentJourney)) {
+      request.organiserCode = editAppointmentJourney.organiserCode
+    }
 
     if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
       request.internalLocationId = editAppointmentJourney.location.id

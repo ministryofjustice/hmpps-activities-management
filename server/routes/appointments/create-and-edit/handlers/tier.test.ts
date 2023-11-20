@@ -5,9 +5,15 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import TierRoutes, { TierForm } from './tier'
 import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
 import Organiser from '../../../../enum/eventOrganisers'
+import EditAppointmentService from '../../../../services/editAppointmentService'
+import { AppointmentJourney, AppointmentJourneyMode } from '../appointmentJourney'
+
+jest.mock('../../../../services/editAppointmentService')
+
+const editAppointmentService = new EditAppointmentService(null, null) as jest.Mocked<EditAppointmentService>
 
 describe('Route Handlers - Create Appointment - Tier', () => {
-  const handler = new TierRoutes()
+  const handler = new TierRoutes(editAppointmentService)
   let req: Request
   let res: Response
 
@@ -24,7 +30,6 @@ describe('Route Handlers - Create Appointment - Tier', () => {
       render: jest.fn(),
       redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
-      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -32,6 +37,7 @@ describe('Route Handlers - Create Appointment - Tier', () => {
       query: {},
       session: {
         appointmentJourney: {},
+        editAppointmentJourney: {},
       },
     } as unknown as Request
   })
@@ -46,6 +52,21 @@ describe('Route Handlers - Create Appointment - Tier', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/tier', {
         eventTierDescriptions,
+        isCtaAcceptAndSave: false,
+      })
+    })
+
+    it('should render the expected view with accept and save', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.params = {
+        appointmentId: '2',
+      }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/tier', {
+        eventTierDescriptions,
+        isCtaAcceptAndSave: true,
       })
     })
   })
@@ -82,6 +103,38 @@ describe('Route Handlers - Create Appointment - Tier', () => {
       await handler.CREATE(req, res)
 
       expect(req.session.appointmentJourney.organiserCode).toBeNull()
+    })
+  })
+
+  describe('EDIT', () => {
+    it('should update tier and call redirect or edit', async () => {
+      req.body = {
+        tier: EventTier.TIER_1,
+      }
+
+      req.session.appointmentJourney = {
+        tierCode: EventTier.FOUNDATION,
+      } as unknown as AppointmentJourney
+
+      await handler.EDIT(req, res)
+
+      expect(req.session.editAppointmentJourney.tierCode).toEqual(EventTier.TIER_1)
+      expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'tier')
+    })
+
+    it('should update tier and redirect to host page if tier 2 selected', async () => {
+      req.body = {
+        tier: EventTier.TIER_2,
+      }
+
+      req.session.appointmentJourney = {
+        tierCode: EventTier.FOUNDATION,
+      } as unknown as AppointmentJourney
+
+      await handler.EDIT(req, res)
+
+      expect(req.session.editAppointmentJourney.tierCode).toEqual(EventTier.TIER_2)
+      expect(res.redirect).toHaveBeenCalledWith('host')
     })
   })
 

@@ -9,6 +9,8 @@ import PrisonService from '../../../../services/prisonService'
 import { initJourneyMetrics } from '../../../../utils/metricsUtils'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
+import EventOrganiser from '../../../../enum/eventOrganisers'
+import EventTier from '../../../../enum/eventTiers'
 
 export default class StartJourneyRoutes {
   constructor(private readonly prisonService: PrisonService, private readonly metricsService: MetricsService) {}
@@ -159,6 +161,8 @@ export default class StartJourneyRoutes {
         cellLocation: attendee.prisoner.cellLocation,
       })),
       category: appointment.category,
+      tierCode: EventTier[appointment.tier?.code] ?? null,
+      organiserCode: EventOrganiser[appointment.organiser?.code] ?? null,
       location: appointment.internalLocation,
       startDate: appointment.startDate,
       startTime: {
