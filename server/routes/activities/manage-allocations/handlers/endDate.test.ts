@@ -4,7 +4,6 @@ import { validate } from 'class-validator'
 import { addDays, startOfToday } from 'date-fns'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import EndDateRoutes, { EndDate } from './endDate'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
 import { formatDatePickerDate, formatIsoDate, isoDateToDatePickerDate } from '../../../../utils/datePickerUtils'
 
 describe('Route Handlers - Edit allocation - End date', () => {
@@ -28,7 +27,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       params: { mode: 'create' },
       session: {
         allocateJourney: {
-          startDate: simpleDateFromDate(new Date()),
+          startDate: formatIsoDate(new Date()),
           activity: {
             name: 'Maths Level 1',
           },

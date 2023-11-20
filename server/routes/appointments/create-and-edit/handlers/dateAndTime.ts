@@ -1,24 +1,23 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import { IsNotEmpty, ValidateNested, ValidationArguments } from 'class-validator'
+import { Expose, Transform, Type } from 'class-transformer'
+import { IsNotEmpty, ValidateNested } from 'class-validator'
+import { startOfToday } from 'date-fns'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import IsValidTime from '../../../../validators/isValidTime'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import { hasAnyAppointmentPropertyChanged } from '../../../../utils/editAppointmentUtils'
-import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
-import DatePickerDateIsSameOrAfter from '../../../../validators/datePickerDateIsSameOrAfter'
-import { datePickerDateToIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import IsValidDate from '../../../../validators/isValidDate'
+import DateValidator from '../../../../validators/DateValidator'
 
 export class DateAndTime {
   @Expose()
-  @IsValidDatePickerDate({
-    message: (args: ValidationArguments) => {
-      return args.value ? 'Enter a valid date for the appointment' : 'Enter a date for the appointment'
-    },
-  })
-  @DatePickerDateIsSameOrAfter(() => new Date(), { message: "Enter a date on or after today's date" })
-  startDate: string
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @DateValidator(date => date >= startOfToday(), { message: "Enter a date on or after today's date" })
+  @IsValidDate({ message: 'Enter a valid date for the appointment' })
+  @IsNotEmpty({ message: 'Enter a date for the appointment' })
+  startDate: Date
 
   @Expose()
   @Type(() => SimpleTime)
@@ -71,18 +70,18 @@ export default class DateAndTimeRoutes {
     const appointmentJourney = req.session[journeyName]
     const { startDate, startTime, endTime } = req.body
 
-    appointmentJourney.startDate = datePickerDateToIsoDate(startDate)
+    appointmentJourney.startDate = formatIsoDate(startDate)
 
     appointmentJourney.startTime = {
       hour: startTime.hour,
       minute: startTime.minute,
-      date: startTime.toDate(parseDatePickerDate(startDate)),
+      date: startTime.toDate(startDate),
     }
 
     appointmentJourney.endTime = {
       hour: endTime.hour,
       minute: endTime.minute,
-      date: endTime.toDate(parseDatePickerDate(startDate)),
+      date: endTime.toDate(startDate),
     }
   }
 }

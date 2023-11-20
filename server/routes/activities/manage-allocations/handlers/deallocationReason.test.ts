@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import DeallocationReasonRoutes from './deallocationReason'
 import ActivitiesService from '../../../../services/activitiesService'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -32,7 +32,7 @@ describe('Route Handlers - Deallocation reason', () => {
       params: { allocationId: 1 },
       session: {
         allocateJourney: {
-          endDate: simpleDateFromDate(new Date()),
+          endDate: formatIsoDate(new Date()),
           inmate: {
             prisonerNumber: 'ABC123',
           },

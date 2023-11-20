@@ -14,7 +14,7 @@ import {
 import TimeSlot from '../../../../enum/timeSlot'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -341,7 +341,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
   describe('POST', () => {
     it('should redirect to default get', async () => {
       req.body = {
-        startDate: formatDatePickerDate(today),
+        startDate: today,
       }
 
       await handler.POST(req, res)
@@ -353,7 +353,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
 
     it('should redirect to fully filtered get', async () => {
       req.body = {
-        startDate: formatDatePickerDate(today),
+        startDate: today,
         timeSlot: TimeSlot.PM,
         appointmentName: 'Medical - Doctor',
         locationId: '26151',

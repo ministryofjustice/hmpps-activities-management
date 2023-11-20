@@ -3,11 +3,11 @@ import { AppointmentDetails, AppointmentSetDetails } from '../@types/activitiesA
 import { ServiceUser } from '../@types/express'
 import { AllocateToActivityJourney } from '../routes/activities/manage-allocations/journey'
 import { WaitListApplicationJourney } from '../routes/activities/waitlist-application/journey'
-import { simpleDateFromDate } from '../commonValidationTypes/simpleDate'
 import { AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { isApplyToQuestionRequired } from '../utils/editAppointmentUtils'
 import { AppointmentApplyTo, AppointmentCancellationReason } from '../@types/appointments'
 import { MetricsEventType } from '../@types/metricsEvents'
+import { formatIsoDate } from '../utils/datePickerUtils'
 
 export default class MetricsEvent {
   properties: Record<string, string | number>
@@ -105,7 +105,7 @@ export default class MetricsEvent {
 
   static CREATE_UNLOCK_LIST(date: Date, timeslot: string, location: string, user: ServiceUser) {
     return new MetricsEvent(MetricsEventType.CREATE_UNLOCK_LIST, user).addProperties({
-      unlockDate: simpleDateFromDate(date).toIsoString(),
+      unlockDate: formatIsoDate(date),
       timePeriod: timeslot,
       location,
     })

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { uniq } from 'lodash'
+import { isValid } from 'date-fns'
 import DateOption from '../../../../enum/dateOption'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
@@ -14,7 +15,7 @@ export default class SummariesRoutes {
     const { dateOption, date } = req.query
 
     const dateOptionDate = dateFromDateOption(dateOption as DateOption, date as string)
-    if (!dateOptionDate) {
+    if (!isValid(dateOptionDate)) {
       return res.redirect('select-date')
     }
 

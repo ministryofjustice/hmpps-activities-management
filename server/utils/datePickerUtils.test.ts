@@ -5,7 +5,6 @@ import {
   formatDatePickerDate,
   formatIsoDate,
   isoDateToDatePickerDate,
-  isValidDatePickerDate,
   isValidIsoDate,
   parseDatePickerDate,
   parseIsoDate,
@@ -59,26 +58,6 @@ describe('Date Picker Utils', () => {
     })
   })
 
-  describe('isValidDatePickerDate', () => {
-    it('returns false for falsy date string', () => {
-      expect(isValidDatePickerDate(undefined)).toBe(false)
-      expect(isValidDatePickerDate(null)).toBe(false)
-      expect(isValidDatePickerDate('')).toBe(false)
-    })
-
-    it('returns false for non date string', () => {
-      expect(isValidDatePickerDate('Not a date')).toBe(false)
-    })
-
-    it('returns false for iso date string', () => {
-      expect(isValidDatePickerDate('2023-09-29')).toBe(false)
-    })
-
-    it('returns true for date picker date string', () => {
-      expect(isValidDatePickerDate('23/10/2023')).toBe(true)
-    })
-  })
-
   describe('isValidIsoDate', () => {
     it('returns false for falsy date string', () => {
       expect(isValidIsoDate(undefined)).toBe(false)
@@ -113,7 +92,7 @@ describe('Date Picker Utils', () => {
 
   describe('datePickerDateToIsoDate', () => {
     it('returns undefined for non date string', () => {
-      expect(datePickerDateToIsoDate('Not a date')).toBeUndefined()
+      expect(datePickerDateToIsoDate('Not a date')).toBeNull()
     })
 
     it('converts date picker date to iso date string', () => {
@@ -123,7 +102,7 @@ describe('Date Picker Utils', () => {
 
   describe('isoDateToDatePickerDate', () => {
     it('returns undefined for non date string', () => {
-      expect(isoDateToDatePickerDate('Not a date')).toBeUndefined()
+      expect(isoDateToDatePickerDate('Not a date')).toBeNull()
     })
 
     it('converts iso date string to date picker date', () => {

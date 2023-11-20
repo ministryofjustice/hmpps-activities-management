@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { simpleDateFromDateOption } from '../../../../commonValidationTypes/simpleDate'
+import { isValid } from 'date-fns'
 import DateOption from '../../../../enum/dateOption'
 import { EventType, MovementListLocation, MovementListPrisonerEvents } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -7,6 +7,7 @@ import PrisonService from '../../../../services/prisonService'
 import { eventClashes, scheduledEventSort } from '../../../../utils/utils'
 import { ScheduledEvent } from '../../../../@types/activitiesAPI/types'
 import { PrisonerStatus } from '../../../../@types/prisonApiImportCustom'
+import { dateFromDateOption, formatIsoDate } from '../../../../utils/datePickerUtils'
 
 export default class LocationEventsRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
@@ -17,21 +18,21 @@ export default class LocationEventsRoutes {
     const { user } = res.locals
     const { locationIds, dateOption, date, timeSlot } = req.query
 
-    const simpleDate = simpleDateFromDateOption(dateOption as DateOption, date as string)
-    if (!simpleDate || !(locationIds as string)) {
+    const richDate = dateFromDateOption(dateOption as DateOption, date as string)
+    if (!richDate || !isValid(richDate) || !(locationIds as string)) {
       return res.redirect(`choose-details`)
     }
 
     const internalLocationEvents = await this.activitiesService.getInternalLocationEvents(
       user.activeCaseLoadId,
-      simpleDate.toRichDate(),
+      richDate,
       (locationIds as string).split(',').map(id => +id),
       user,
       timeSlot as string,
     )
 
     if (internalLocationEvents.length === 0) {
-      const dateQuery = dateOption === DateOption.OTHER ? `&date=${simpleDate.toIsoString()}` : ''
+      const dateQuery = dateOption === DateOption.OTHER ? `&date=${formatIsoDate(richDate)}` : ''
       return res.redirect(`locations?dateOption=${dateOption}${dateQuery}&timeSlot=${timeSlot}`)
     }
 
@@ -43,7 +44,7 @@ export default class LocationEventsRoutes {
       )
     ).filter(p => p.prisonId === user.activeCaseLoadId && p.status !== PrisonerStatus.INACTIVE_OUT)
     const otherEvents = await this.activitiesService.getScheduledEventsForPrisoners(
-      simpleDate.toRichDate(),
+      richDate,
       prisoners.map(p => p.prisonerNumber),
       user,
     )
@@ -113,7 +114,7 @@ export default class LocationEventsRoutes {
 
     return res.render('pages/activities/movement-list/location-events', {
       dateOption,
-      date: simpleDate.toIsoString(),
+      date: formatIsoDate(richDate),
       timeSlot,
       locations,
     })

@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsDate, IsIn, ValidateIf } from 'class-validator'
+import { IsIn, ValidateIf } from 'class-validator'
 import DateOption from '../../../../enum/dateOption'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import IsValidDate from '../../../../validators/isValidDate'
 
 export class SelectDate {
   @Expose()
@@ -12,7 +13,7 @@ export class SelectDate {
   @Expose()
   @ValidateIf(o => o.dateOption === DateOption.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
-  @IsDate({ message: 'Enter a valid date' })
+  @IsValidDate({ message: 'Enter a valid date' })
   date: Date
 }
 

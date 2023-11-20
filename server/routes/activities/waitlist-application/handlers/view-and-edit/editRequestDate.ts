@@ -1,16 +1,15 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsDate } from 'class-validator'
 import { parseISO, startOfDay } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePickerUtils'
 import DateValidator from '../../../../../validators/DateValidator'
 import { WaitListApplicationJourney } from '../../journey'
+import IsValidDate from '../../../../../validators/isValidDate'
 
 export class EditRequestDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @IsDate({ message: 'Enter a valid request date' })
   @DateValidator(
     (date, { waitListApplicationJourney }) => date <= startOfDay(parseISO(waitListApplicationJourney.createdTime)),
     {
@@ -21,6 +20,7 @@ export class EditRequestDate {
       },
     },
   )
+  @IsValidDate({ message: 'Enter a valid request date' })
   requestDate: Date
 }
 
