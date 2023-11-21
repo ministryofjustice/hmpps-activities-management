@@ -59,6 +59,6 @@ export default class NameRoutes {
       req.session.appointmentJourney.appointmentName = category.description
     }
 
-    return res.redirectOrReturn('location')
+    return res.redirectOrReturn('tier')
   }
 }

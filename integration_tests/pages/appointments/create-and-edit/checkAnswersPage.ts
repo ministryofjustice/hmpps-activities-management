@@ -9,6 +9,11 @@ export default class CheckAnswersPage extends Page {
   assertAppointmentDetail = (header: string, value: string) =>
     this.assertSummaryListValue('appointment-details', header, value)
 
+  assertScheduleDetail = (header: string, value: string) =>
+    this.assertSummaryListValue('scheduling-information', header, value)
+
+  assertExtraDetail = (header: string, value: string) => this.assertSummaryListValue('extra-information', header, value)
+
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {
     cy.get('[data-qa=prisoner-name]').contains(name)
     cy.get('[data-qa=prisoner-number]').contains(number)
@@ -26,27 +31,35 @@ export default class CheckAnswersPage extends Page {
 
   assertCategory = (category: string) => this.assertAppointmentDetail('Appointment name', category)
 
-  assertLocation = (location: string) => this.assertAppointmentDetail('Location', location)
+  assertTier = (tier: string) => this.assertAppointmentDetail('Tier', tier)
 
-  assertStartDate = (startDate: Date) => this.assertAppointmentDetail('Date', format(startDate, 'EEEE, d MMMM yyyy'))
+  assertHost = (host: string) => this.assertAppointmentDetail('Host', host)
+
+  assertLocation = (location: string) => this.assertScheduleDetail('Location', location)
+
+  assertStartDate = (startDate: Date) => this.assertScheduleDetail('Date', format(startDate, 'EEEE, d MMMM yyyy'))
 
   assertStartTime = (hour: number, minute: number) =>
-    this.assertAppointmentDetail('Start time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
+    this.assertScheduleDetail('Start time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
   assertEndTime = (hour: number, minute: number) =>
-    this.assertAppointmentDetail('End time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
+    this.assertScheduleDetail('End time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
-  assertRepeat = (option: string) => this.assertAppointmentDetail('Repeats', option)
+  assertRepeat = (option: string) => this.assertScheduleDetail('Repeats', option)
 
-  assertFrequency = (option: string) => this.assertAppointmentDetail('Frequency', option)
+  assertFrequency = (option: string) => this.assertScheduleDetail('Frequency', option)
 
-  assertNumberOfAppointments = (option: string) => this.assertAppointmentDetail('Number of appointments', option)
+  assertNumberOfAppointments = (option: string) => this.assertScheduleDetail('Number of appointments', option)
 
-  assertExtraInformation = (comment: string) => this.assertAppointmentDetail('Extra information', comment)
+  assertExtraInformation = (comment: string) => this.assertExtraDetail('Extra information', comment)
 
   changePrisoner = () => cy.get('[data-qa=change-prisoner]').click()
 
   changeName = () => cy.get('[data-qa=change-name]').click()
+
+  changeTier = () => cy.get('[data-qa=change-tier]').click()
+
+  changeHost = () => cy.get('[data-qa=change-host]').click()
 
   changeLocation = () => cy.get('[data-qa=change-location]').click()
 
