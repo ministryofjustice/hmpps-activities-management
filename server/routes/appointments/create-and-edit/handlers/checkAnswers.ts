@@ -5,13 +5,21 @@ import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import { AppointmentSeriesCreateRequest, AppointmentSetCreateRequest } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentType } from '../appointmentJourney'
+import { eventTierDescriptions } from '../../../../enum/eventTiers'
+import { organiserDescriptions } from '../../../../enum/eventOrganisers'
 
 export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentJourney } = req.session
+
     req.session.appointmentJourney.createJourneyComplete = true
-    res.render('pages/appointments/create-and-edit/check-answers')
+
+    res.render('pages/appointments/create-and-edit/check-answers', {
+      tier: eventTierDescriptions[appointmentJourney.tierCode],
+      organiser: organiserDescriptions[appointmentJourney.organiserCode],
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -39,6 +47,8 @@ export default class CheckAnswersRoutes {
       prisonCode: user.activeCaseLoadId,
       prisonerNumbers: appointmentJourney.prisoners.map(p => p.number),
       categoryCode: appointmentJourney.category.code,
+      tierCode: appointmentJourney.tierCode,
+      organiserCode: appointmentJourney.organiserCode,
       customName: appointmentJourney.customName,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,
@@ -65,6 +75,8 @@ export default class CheckAnswersRoutes {
     return {
       prisonCode: user.activeCaseLoadId,
       categoryCode: appointmentJourney.category.code,
+      tierCode: appointmentJourney.tierCode,
+      organiserCode: appointmentJourney.organiserCode,
       customName: appointmentJourney.customName,
       internalLocationId: appointmentJourney.location.id,
       inCell: false,

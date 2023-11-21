@@ -26,6 +26,8 @@ export type AppointmentJourney = {
     code: string
     description: string
   }
+  tierCode?: string
+  organiserCode?: string
   customName?: string
   location?: {
     id: number

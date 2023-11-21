@@ -23,6 +23,8 @@ import { formatDate } from '../../../server/utils/utils'
 import ExtraInformationPage from '../../pages/appointments/create-and-edit/extraInformationPage'
 import RepeatFrequencyAndCountPage from '../../pages/appointments/create-and-edit/repeatFrequencyAndCountPage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
+import TierPage from '../../pages/appointments/create-and-edit/tierPage'
+import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 
 context('Create individual appointment - check answers change links', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -80,6 +82,14 @@ context('Create individual appointment - check answers change links', () => {
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Chaplaincy')
     namePage.continue()
+
+    const tierPage = Page.verifyOnPage(TierPage)
+    tierPage.selectTier('Tier 2')
+    tierPage.continue()
+
+    const hostPage = Page.verifyOnPage(HostPage)
+    hostPage.selectHost('Prison staff')
+    hostPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')

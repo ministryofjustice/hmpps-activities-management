@@ -29,6 +29,8 @@ import AppointmentSetDateRoutes, { AppointmentSetDate } from './handlers/appoint
 import AppointmentSetTimesRoutes, { AppointmentTimes } from './handlers/appointment-set/appointmentSetTimes'
 import fetchAppointmentSet from '../../../middleware/appointments/fetchAppointmentSet'
 import ScheduleRoutes from './handlers/schedule'
+import TierRoutes, { TierForm } from './handlers/tier'
+import HostRoutes, { HostForm } from './handlers/host'
 
 export default function Create({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -43,6 +45,8 @@ export default function Create({ prisonService, activitiesService, metricsServic
   const selectPrisonerRoutes = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const nameRoutes = new NameRoutes(activitiesService)
+  const tierRoutes = new TierRoutes()
+  const hostRoutes = new HostRoutes()
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeRoutes = new DateAndTimeRoutes()
   const repeatRoutes = new RepeatRoutes()
@@ -82,6 +86,10 @@ export default function Create({ prisonService, activitiesService, metricsServic
   )
   get('/name', nameRoutes.GET, true)
   post('/name', nameRoutes.POST, Name)
+  get('/tier', tierRoutes.GET, true)
+  post('/tier', tierRoutes.CREATE, TierForm)
+  get('/host', hostRoutes.GET, true)
+  post('/host', hostRoutes.CREATE, HostForm)
   get('/location', locationRoutes.GET, true)
   post('/location', locationRoutes.CREATE, Location)
   get('/date-and-time', dateAndTimeRoutes.GET, true)
