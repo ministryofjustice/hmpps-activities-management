@@ -58,5 +58,17 @@
                 "description": "Review requests to be allocated to an activity or put on a waitlist. Approve or decline applications, and allocate people."
             }) }}
         </div>
+
+        {% if exclusionsFeatureToggleEnabled %}
+            <div class="govuk-grid-column-one-third card-group__item">
+                {{ card({
+                    "href": "/activities/exclusions/select-prisoner",
+                    "clickable": "true",
+                    "heading": "Change someone's activity schedule",
+                    "description": "Modify a prisoner’s schedule. Exclude people from sessions so they are not due to attend more than one activity at a time.",
+                    "data-qa": "exclusions"
+                }) }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
