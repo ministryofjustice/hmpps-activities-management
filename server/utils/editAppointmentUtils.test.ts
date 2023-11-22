@@ -22,6 +22,8 @@ import {
   getAppointmentEditApplyToCta,
 } from './editAppointmentUtils'
 import { formatIsoDate } from './datePickerUtils'
+import EventTier from '../enum/eventTiers'
+import EventOrganiser from '../enum/eventOrganisers'
 
 describe('Edit Appointment Utils', () => {
   const weekTomorrow = addDays(new Date(), 8)
@@ -39,6 +41,7 @@ describe('Edit Appointment Utils', () => {
             code: 'TEST',
             description: 'Category',
           },
+          tierCode: EventTier.TIER_1,
           location: {
             id: 1,
             description: 'Location',
@@ -176,6 +179,49 @@ describe('Edit Appointment Utils', () => {
       )
       expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
         'Confirm',
+      )
+    })
+
+    it('when changing the tier', () => {
+      req.session.editAppointmentJourney.tierCode = EventTier.FOUNDATION
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the tier for',
+      )
+      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'Update tier',
+      )
+      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'Update tier',
+      )
+    })
+
+    it('when changing the host', () => {
+      req.session.editAppointmentJourney.organiserCode = EventOrganiser.PRISONER
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the host for',
+      )
+      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'Update host',
+      )
+      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'Update host',
+      )
+    })
+
+    it('when changing the tier and host', () => {
+      req.session.editAppointmentJourney.tierCode = EventTier.TIER_2
+      req.session.editAppointmentJourney.organiserCode = EventOrganiser.PRISONER
+
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'change the tier and host for',
+      )
+      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'Update tier and host',
+      )
+      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'Update tier and host',
       )
     })
 

@@ -4,9 +4,15 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import OrganiserRoutes, { HostForm } from './host'
 import Organiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
+import EditAppointmentService from '../../../../services/editAppointmentService'
+import { AppointmentJourney, AppointmentJourneyMode } from '../appointmentJourney'
+
+jest.mock('../../../../services/editAppointmentService')
+
+const editAppointmentService = new EditAppointmentService(null, null) as jest.Mocked<EditAppointmentService>
 
 describe('Route Handlers - Create Appointment - Host', () => {
-  const handler = new OrganiserRoutes()
+  const handler = new OrganiserRoutes(editAppointmentService)
   let req: Request
   let res: Response
 
@@ -22,13 +28,13 @@ describe('Route Handlers - Create Appointment - Host', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
-      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
       params: {},
       session: {
         appointmentJourney: {},
+        editAppointmentJourney: {},
       },
     } as unknown as Request
   })
@@ -43,6 +49,21 @@ describe('Route Handlers - Create Appointment - Host', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/host', {
         organiserDescriptions,
+        isCtaAcceptAndSave: false,
+      })
+    })
+
+    it('should render the expected view with accept and save', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.params = {
+        appointmentId: '2',
+      }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/host', {
+        organiserDescriptions,
+        isCtaAcceptAndSave: true,
       })
     })
   })
@@ -57,6 +78,23 @@ describe('Route Handlers - Create Appointment - Host', () => {
 
       expect(req.session.appointmentJourney.organiserCode).toEqual(Organiser.PRISONER)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+    })
+  })
+
+  describe('EDIT', () => {
+    it('should update host and call redirect or edit', async () => {
+      req.body = {
+        host: Organiser.PRISONER,
+      }
+
+      req.session.appointmentJourney = {
+        organiserCode: Organiser.PRISON_STAFF,
+      } as unknown as AppointmentJourney
+
+      await handler.EDIT(req, res)
+
+      expect(req.session.editAppointmentJourney.organiserCode).toEqual(Organiser.PRISONER)
+      expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'host')
     })
   })
 

@@ -1,5 +1,7 @@
 import { AppointmentSeriesSummary, AppointmentSetSummary, PrisonerSummary } from '../../../@types/activitiesAPI/types'
 import { AppointmentCancellationReason } from '../../../@types/appointments'
+import EventOrganiser from '../../../enum/eventOrganisers'
+import EventTier from '../../../enum/eventTiers'
 
 export type EditAppointmentJourney = {
   numberOfAppointments: number
@@ -11,6 +13,8 @@ export type EditAppointmentJourney = {
   appointmentSeries?: AppointmentSeriesSummary
   appointmentSet?: AppointmentSetSummary
   property?: string
+  tierCode?: EventTier
+  organiserCode?: EventOrganiser
   location?: {
     id: number
     description: string

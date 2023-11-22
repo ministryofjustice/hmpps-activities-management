@@ -1576,17 +1576,17 @@ export interface components {
       offset?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
-      pageNumber?: number
-      /** Format: int32 */
       pageSize?: number
-      paged?: boolean
       unpaged?: boolean
+      /** Format: int32 */
+      pageNumber?: number
+      paged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -3138,13 +3138,15 @@ export interface components {
       /**
        * @description The tier code for this appointment
        * @example TIER_1
+       * @enum {string}
        */
-      tierCode: string
+      tierCode: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
       /**
        * @description The organiser code for this appointment
        * @example PRISON_STAFF
+       * @enum {string}
        */
-      organiserCode?: string
+      organiserCode?: 'PRISON_STAFF' | 'PRISONER' | 'EXTERNAL_PROVIDER' | 'OTHER'
       /**
        * @description
        *     Free text name further describing the appointment series. Will be used to create the appointment name using the
@@ -3280,13 +3282,15 @@ export interface components {
       /**
        * @description The tier code for this appointment
        * @example TIER_1
+       * @enum {string}
        */
-      tierCode: string
+      tierCode: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
       /**
        * @description The organiser code for this appointment
        * @example PRISON_STAFF
+       * @enum {string}
        */
-      organiserCode?: string
+      organiserCode?: 'PRISON_STAFF' | 'PRISONER' | 'EXTERNAL_PROVIDER' | 'OTHER'
       /**
        * @description
        *     Free text name further describing the appointment series. Will be used to create the appointment name using the
@@ -4373,13 +4377,15 @@ export interface components {
       /**
        * @description The tier code for this appointment
        * @example TIER_1
+       * @enum {string}
        */
-      tierCode?: string
+      tierCode?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
       /**
        * @description The organiser code for this appointment
        * @example PRISON_STAFF
+       * @enum {string}
        */
-      organiserCode?: string
+      organiserCode?: 'PRISON_STAFF' | 'PRISONER' | 'EXTERNAL_PROVIDER' | 'OTHER'
       /**
        * Format: int64
        * @description
@@ -5074,10 +5080,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -7290,6 +7296,10 @@ export interface operations {
   triggerManageAttendanceRecordsJob: {
     parameters: {
       query?: {
+        /** @description If supplied will create attendance records for the given rolled out prison. */
+        prisonCode?: string
+        /** @description If supplied will create attendance records for the given date. Default to the current date. */
+        date?: string
         /** @description If true will run the attendance expiry process in addition to other features. Defaults to false. */
         withExpiry?: boolean
       }

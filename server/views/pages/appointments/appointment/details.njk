@@ -108,6 +108,41 @@
                         }
                     }, {
                         key: {
+                            text: "Tier"
+                        },
+                        value: {
+                            text: appointment.tier.description or "Not set"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: appointmentLink + "/edit/start/tier",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-tier' }
+                                }
+                            ]
+                        }
+                    }, {
+                        key: {
+                            text: "Host"
+                        },
+                        value: {
+                            text: appointment.organiser.description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: appointmentLink + "/edit/start/host",
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-host' }
+                                }
+                            ]
+                        }
+                    } if appointment.organiser,
+                    {
+                        key: {
                             text: "Location"
                         },
                         value: {
