@@ -7,7 +7,7 @@ import createHttpError from 'http-errors'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import DaysAndTimesRoutes, { DaysAndTimes } from './daysAndTimes'
 import ActivitiesService from '../../../../services/activitiesService'
-import { simpleDateFromDate } from '../../../../commonValidationTypes/simpleDate'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -36,7 +36,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
     req = {
       session: {
         createJourney: {
-          startDate: simpleDateFromDate(addDays(new Date(), 1)),
+          startDate: formatIsoDate(addDays(new Date(), 1)),
         },
       },
       body: {},

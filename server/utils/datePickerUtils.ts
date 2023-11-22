@@ -3,9 +3,11 @@ import { formatDate } from './utils'
 import DateOption from '../enum/dateOption'
 
 export const parseDatePickerDate = (datePickerDate: string): Date => {
+  if (!datePickerDate) return null
+
   const dateFormatPattern = /(\d{1,2})([-/,. ])(\d{1,2})[-/,. ](\d{2,4})/
 
-  if (!dateFormatPattern.test(datePickerDate)) return null
+  if (!dateFormatPattern.test(datePickerDate)) return new Date(NaN)
 
   const dateMatches = datePickerDate.match(dateFormatPattern)
 
@@ -13,7 +15,7 @@ export const parseDatePickerDate = (datePickerDate: string): Date => {
   const year = dateMatches[4]
 
   const date = parse(datePickerDate, `dd${separator}MM${separator}${'y'.repeat(year.length)}`, startOfToday())
-  if (!isValid(date)) return null
+  if (!isValid(date)) return new Date(NaN)
 
   return date
 }
@@ -21,23 +23,21 @@ export const parseDatePickerDate = (datePickerDate: string): Date => {
 export const parseIsoDate = (isoDate: string): Date => {
   const date = parse(isoDate, 'yyyy-MM-dd', startOfToday())
 
-  if (!isValid(date)) return null
+  if (!isValid(date)) return new Date(NaN)
 
   return date
 }
 
-export const isValidDatePickerDate = (datePickerDate: string) => isValid(parseDatePickerDate(datePickerDate))
-
 export const isValidIsoDate = (isoDate: string) => isValid(parseIsoDate(isoDate))
 
 export const formatDatePickerDate = (date: Date): string => {
-  if (!isValid(date)) return undefined
+  if (!isValid(date)) return null
 
   return formatDate(date, 'dd/MM/yyyy')
 }
 
 export const formatIsoDate = (date: Date): string => {
-  if (!isValid(date)) return undefined
+  if (!isValid(date)) return null
 
   return formatDate(date, 'yyyy-MM-dd')
 }

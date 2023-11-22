@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsDate, ValidateIf } from 'class-validator'
 import { startOfToday } from 'date-fns'
+import { ValidateIf } from 'class-validator'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import {
@@ -12,14 +12,12 @@ import {
 } from '../../../../utils/datePickerUtils'
 import DateValidator from '../../../../validators/DateValidator'
 import { CreateAnActivityJourney } from '../journey'
+import IsValidDate from '../../../../validators/isValidDate'
 
 export class EndDate {
-  endDateString: string
-
   @Expose()
-  @Transform(({ obj }) => parseDatePickerDate(obj.endDateString))
-  @ValidateIf(o => o.endDateString !== '')
-  @IsDate({ message: 'Enter a valid end date' })
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @ValidateIf((_, v) => v)
   @DateValidator(thisDate => thisDate > startOfToday(), { message: 'Activity end date must be in the future' })
   @DateValidator(
     (date, { createJourney }) => {
@@ -40,6 +38,7 @@ export class EndDate {
       return `Enter a date on or after the activity start date, ${isoDateToDatePickerDate(createJourney?.startDate)}`
     },
   })
+  @IsValidDate({ message: 'Enter a valid end date' })
   endDate: Date
 }
 

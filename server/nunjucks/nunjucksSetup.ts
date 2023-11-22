@@ -52,7 +52,6 @@ import {
   getConfirmAppointmentEditCta,
 } from '../utils/editAppointmentUtils'
 import ServiceName from '../enum/serviceName'
-import SimpleDate, { simpleDateFromPlain } from '../commonValidationTypes/simpleDate'
 import DateOption from '../enum/dateOption'
 import { PrisonerStatus } from '../@types/prisonApiImportCustom'
 import { isoDateToDatePickerDate, parseIsoDate } from '../utils/datePickerUtils'
@@ -144,7 +143,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toMoney', toMoney)
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('toDate', toDate)
-  njkEnv.addFilter('toDateFromSimpleDate', (simpleDate: SimpleDate) => simpleDateFromPlain(simpleDate).toRichDate())
   njkEnv.addFilter('parseDate', parseDate)
   njkEnv.addFilter('parseISODate', parseISODate)
   njkEnv.addFilter('toDateString', toDateString)

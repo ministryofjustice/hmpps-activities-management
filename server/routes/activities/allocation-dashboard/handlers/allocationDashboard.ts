@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Expose, plainToInstance, Transform, Type } from 'class-transformer'
+import { Expose, Transform, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivityService from '../../../../services/activitiesService'
@@ -12,7 +12,6 @@ import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
-import SimpleDate from '../../../../commonValidationTypes/simpleDate'
 
 type Filters = {
   candidateQuery: string
@@ -90,13 +89,8 @@ export default class AllocationDashboardRoutes {
       })
     })
 
-    const startDate = {
-      day: Number(activity.schedules[0].startDate.substring(8, 10)),
-      month: Number(activity.schedules[0].startDate.substring(5, 7)),
-      year: Number(activity.schedules[0].startDate.substring(0, 4)),
-    } as unknown as SimpleDate
+    const richStartDate = parseDate(activity.schedules[0].startDate)
 
-    const richStartDate = plainToInstance(SimpleDate, startDate).toRichDate()
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       activity,
       schedule: activity.schedules[0],
