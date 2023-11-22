@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsDate, IsIn, ValidateIf } from 'class-validator'
+import { IsIn, ValidateIf } from 'class-validator'
 import { addDays, startOfToday } from 'date-fns'
 import DateOption from '../../../../enum/dateOption'
 import TimeSlot from '../../../../enum/timeSlot'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import DateValidator from '../../../../validators/DateValidator'
+import IsValidDate from '../../../../validators/isValidDate'
 
 export class DateAndTimeSlot {
   @Expose()
@@ -15,10 +16,10 @@ export class DateAndTimeSlot {
   @Expose()
   @ValidateIf(o => o.dateOption === DateOption.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
-  @IsDate({ message: 'Enter a valid date' })
   @DateValidator(thisDate => thisDate <= addDays(startOfToday(), 60), {
     message: 'Enter a date up to 60 days in the future',
   })
+  @IsValidDate({ message: 'Enter a valid date' })
   date: Date
 
   @Expose()

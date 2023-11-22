@@ -97,9 +97,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
   describe('type validation', () => {
     it('validation passes if a value is not entered', async () => {
-      const endDateString = ''
+      const endDate = ''
 
-      const body = { endDateString }
+      const body = { endDate }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
@@ -115,9 +115,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
     })
 
     it('validation fails if a bad value is entered', async () => {
-      const endDateString = 'a/1/2023'
+      const endDate = 'a/1/2023'
 
-      const body = { endDateString }
+      const body = { endDate }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
@@ -133,9 +133,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
     })
 
     it('validation fails if end date is not in the future', async () => {
-      const endDateString = formatDatePickerDate(startOfToday())
+      const endDate = formatDatePickerDate(startOfToday())
 
-      const body = { endDateString }
+      const body = { endDate }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
@@ -152,9 +152,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
     it('validation passes if end date is same as start date', async () => {
       const tomorrow = addDays(startOfToday(), 1)
-      const endDateString = formatDatePickerDate(tomorrow)
+      const endDate = formatDatePickerDate(tomorrow)
 
-      const body = { endDateString }
+      const body = { endDate }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
@@ -170,10 +170,10 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
     it('validation fails if end date is before start date', async () => {
       const tomorrow = addDays(startOfToday(), 1)
-      const endDateString = formatDatePickerDate(tomorrow)
+      const endDate = formatDatePickerDate(tomorrow)
       const nextWeek = addDays(startOfToday(), 7)
 
-      const body = { endDateString }
+      const body = { endDate }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
@@ -197,7 +197,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       const newActivityEndDate = formatDatePickerDate(tomorrow)
       const latestAllocationStartDate = addDays(tomorrow, 7)
 
-      const body = { endDateString: newActivityEndDate }
+      const body = { endDate: newActivityEndDate }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
@@ -219,17 +219,17 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
     it('validation passes if end date is after start date', async () => {
       const today = new Date()
-      const endDateString = formatDatePickerDate(addDays(today, 1))
+      const endDate = formatDatePickerDate(addDays(today, 1))
 
       const body = {
-        endDateString,
-        startDate: formatDate(today, 'yyyy-MM-dd'),
+        endDate,
       }
 
       const requestObject = plainToInstance(EndDate, {
         ...body,
         createJourney: {
-          latestAllocationStartDate: new Date('2022-04-04'),
+          startDate: formatDate(today, 'yyyy-MM-dd'),
+          latestAllocationStartDate: '2022-04-04',
         },
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
