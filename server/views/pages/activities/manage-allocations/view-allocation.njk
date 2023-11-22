@@ -4,6 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
 
 {% set pageTitle = applicationName + " - Update allocation - Check answers" %}
 {% set pageId = 'check-allocation-page' %}
@@ -96,6 +97,32 @@
                         {% endif %}
                     </dd>
                 </div>
+                {% if exclusionsFeatureToggleEnabled %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Schedule
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% for week, slots in dailySlots %}
+                                {% if dailySlots | length > 1 %}
+                                    <div class='govuk-heading-s govuk-!-margin-bottom-1'>
+                                        Week {{ week }}
+                                        {{ govukTag({
+                                            text: "Current week", classes: 'govuk-tag--green'
+                                        }) if currentWeek == week }}
+                                    </div>
+                                {% endif %}
+                                {{ daysAndTimes(slots, false, false) }}
+                            {% endfor %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="../edit/{{ allocation.id }}/exclusions"
+                               class="govuk-link govuk-link--no-visited-state">
+                                Change
+                            </a>
+                        </dd>
+                    </div>
+                {% endif %}
             </dl>
             <div class="govuk-button-group">
                 {{ govukButton({

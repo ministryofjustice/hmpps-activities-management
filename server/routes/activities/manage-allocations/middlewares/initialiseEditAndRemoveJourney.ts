@@ -69,6 +69,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       req.session.allocateJourney.startDate = allocations[0].startDate
       req.session.allocateJourney.endDate = allocations[0].endDate
       req.session.allocateJourney.deallocationReason = allocations[0].plannedDeallocation?.plannedReason?.code
+      req.session.allocateJourney.exclusions = allocations[0].exclusions
     }
 
     return next()

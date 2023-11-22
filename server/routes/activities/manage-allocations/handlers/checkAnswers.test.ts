@@ -4,7 +4,8 @@ import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import CheckAnswersRoutes from './checkAnswers'
 import atLeast from '../../../../../jest.setup'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
+import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -45,10 +46,12 @@ describe('Route Handlers - Allocate - Check answers', () => {
             scheduleId: 1,
             name: 'Maths',
             location: 'Education room 1',
+            startDate: '2022-01-01',
           },
           startDate: '2023-01-01',
           deallocationReason: 'COMPLETED',
           endDate: '2023-02-01',
+          updatedExclusions: [],
         },
       },
     } as unknown as Request
@@ -60,9 +63,9 @@ describe('Route Handlers - Allocate - Check answers', () => {
 
   describe('GET', () => {
     it('should render page with data from session', async () => {
-      when(activitiesService.getActivity)
+      when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ inCell: false, onWing: false, offWing: false } as Activity)
+        .mockResolvedValue(activitySchedule as unknown as ActivitySchedule)
 
       when(activitiesService.getDeallocationReasons).mockResolvedValue([
         { code: 'COMPLETED', description: 'Completed' },
@@ -71,6 +74,39 @@ describe('Route Handlers - Allocate - Check answers', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/check-answers', {
         deallocationReason: 'Completed',
+        currentWeek: 1,
+        dailySlots: {
+          '1': [
+            {
+              day: 'Monday',
+              slots: ['am'],
+            },
+            {
+              day: 'Tuesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Wednesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Thursday',
+              slots: ['am'],
+            },
+            {
+              day: 'Friday',
+              slots: ['am'],
+            },
+            {
+              day: 'Saturday',
+              slots: ['am'],
+            },
+            {
+              day: 'Sunday',
+              slots: ['am'],
+            },
+          ],
+        },
       })
     })
   })
@@ -86,6 +122,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
         { username: 'joebloggs' },
         '2023-01-01',
         '2023-02-01',
+        [],
       )
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })

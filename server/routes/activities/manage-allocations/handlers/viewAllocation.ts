@@ -1,9 +1,13 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
-import { convertToTitleCase } from '../../../../utils/utils'
+import { convertToTitleCase, mapActivityModelSlotsToJourney, parseDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import activitySessionToDailyTimeSlots, {
+  activitySlotsMinusExclusions,
+} from '../../../../utils/helpers/activityTimeSlotMappers'
+import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 
 export default class ViewAllocationRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
@@ -29,6 +33,13 @@ export default class ViewAllocationRoutes {
         a.incentiveLevel === prisoner.currentIncentive?.level?.description,
     )
 
+    const schedule = activity.schedules[0]
+    const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
+    const journeySlots = mapActivityModelSlotsToJourney(allocationSlots)
+    const dailySlots = activitySessionToDailyTimeSlots(schedule.scheduleWeeks, journeySlots)
+
+    const currentWeek = calcCurrentWeek(parseDate(activity.startDate), schedule.scheduleWeeks)
+
     const isStarted = new Date(allocation.startDate) <= new Date()
 
     res.render('pages/activities/manage-allocations/view-allocation', {
@@ -37,6 +48,8 @@ export default class ViewAllocationRoutes {
       pay,
       isStarted,
       isOnlyPay,
+      dailySlots,
+      currentWeek,
     })
   }
 }

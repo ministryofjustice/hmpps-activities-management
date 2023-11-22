@@ -1,3 +1,5 @@
+import { Slot } from '../../../@types/activitiesAPI/types'
+
 type Inmate = {
   prisonerName: string
   prisonerNumber: string
@@ -28,4 +30,6 @@ export type AllocateToActivityJourney = {
   endDate?: string
   deallocationReason?: string
   latestAllocationStartDate?: string
+  exclusions?: Array<Slot>
+  updatedExclusions?: Array<Slot>
 }

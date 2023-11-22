@@ -118,6 +118,10 @@ body {
   }
 }
 
+.govuk-summary-list__key--normal-key-weight {
+  font-weight: normal;
+}
+
 .govuk-hint {
   a {
     color: $govuk-link-colour;

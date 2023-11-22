@@ -44,6 +44,7 @@ import {
   GetAllocationsParams,
   WaitingListSearchRequest,
   WaitingListSearchParams,
+  Slot,
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 
@@ -93,8 +94,17 @@ export default class ActivitiesService {
     user: ServiceUser,
     startDate: string,
     endDate: string,
+    exclusions: Slot[],
   ): Promise<void> {
-    return this.activitiesApiClient.postAllocation(scheduleId, prisonerNumber, payBandId, user, startDate, endDate)
+    return this.activitiesApiClient.postAllocation(
+      scheduleId,
+      prisonerNumber,
+      payBandId,
+      user,
+      startDate,
+      endDate,
+      exclusions,
+    )
   }
 
   getPayBandsForPrison(user: ServiceUser): Promise<PrisonPayBand[]> {
