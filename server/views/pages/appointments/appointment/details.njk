@@ -122,7 +122,7 @@
                                     attributes: { 'data-qa': 'change-tier' }
                                 }
                             ]
-                        }
+                        } if appointment.isCancelled == false and appointment.isExpired == false
                     }, {
                         key: {
                             text: "Host"
@@ -139,7 +139,7 @@
                                     attributes: { 'data-qa': 'change-host' }
                                 }
                             ]
-                        }
+                        } if appointment.isCancelled == false and appointment.isExpired == false
                     } if appointment.organiser,
                     {
                         key: {
