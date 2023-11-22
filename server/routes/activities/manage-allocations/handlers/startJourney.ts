@@ -50,6 +50,7 @@ export default class StartJourneyRoutes {
         startDate: schedule.startDate,
         endDate: schedule.endDate,
       },
+      exclusions: [],
     }
 
     initJourneyMetrics(req, asString(source))

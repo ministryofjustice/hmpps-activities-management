@@ -56,6 +56,7 @@ import {
   WaitingListApplicationPaged,
   WaitingListSearchParams,
   ScheduledAttendee,
+  Slot,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -161,12 +162,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     user: ServiceUser,
     startDate: string,
     endDate: string,
+    exclusions: Slot[],
   ): Promise<void> {
     return this.post({
       path: `/schedules/${scheduleId}/allocations`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
-      data: { prisonerNumber, payBandId, startDate, endDate },
+      data: { prisonerNumber, payBandId, startDate, endDate, exclusions },
     })
   }
 

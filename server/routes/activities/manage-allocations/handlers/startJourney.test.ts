@@ -71,6 +71,7 @@ describe('Route Handlers - Allocate - Start', () => {
       await handler.GET(req, res)
 
       expect(req.session.allocateJourney).toEqual({
+        exclusions: [],
         inmates: [
           {
             prisonerNumber: 'ABC123',

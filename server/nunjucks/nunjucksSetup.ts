@@ -31,6 +31,7 @@ import {
   setAttribute,
   removeUndefined,
   filterObjects,
+  flatMap,
 } from '../utils/utils'
 import config from '../config'
 import applicationVersion from '../applicationVersion'
@@ -157,6 +158,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('removeUndefined', removeUndefined)
   njkEnv.addFilter('startOfDay', startOfDay)
   njkEnv.addFilter('filter', filterObjects)
+  njkEnv.addFilter('flatMap', flatMap)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
@@ -180,6 +182,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
+  njkEnv.addGlobal('exclusionsFeatureToggleEnabled', config.exclusionsFeatureToggleEnabled)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)
