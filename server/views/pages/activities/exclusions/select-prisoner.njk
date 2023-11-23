@@ -1,0 +1,177 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "partials/searchInput.njk" import searchInput %}
+
+{% set pageId = 'exclusions-select-prisoner-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Change someone's activity schedule</span>
+            <h1 class="govuk-heading-xl">Find a prisoner</h1>
+        </div>
+    </div>
+
+    {% if prisoners %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="POST" action="search-prisoner">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                    {{ searchInput({
+                        classes: "search-input--inline-search",
+                        formInputs: {
+                            classes: "govuk-input--width-30"
+                        },
+                        input: {
+                            id: "query",
+                            name: "query",
+                            type: "search",
+                            value: query,
+                            hint: {
+                                text: 'Search by name or prison number'
+                            },
+                            errorMessage: validationErrors | findError("query")
+                        },
+                        button: {
+                            text: "Search",
+                            classes: "govuk-button--secondary"
+                        }
+                    }) }}
+
+                    {% if prisoners | length > 0 %}
+                        <h2 class="govuk-heading-m" id="prisoner-results-text">
+                            {{ ("There is 1 matching result" if prisoners.length == 1 else "Select the correct result from the list (maximum 50 results shown)") }}
+                        </h2>
+                    {% else %}
+                        {{ govukWarningText({
+                            text: "There are no matching search results.",
+                            iconFallbackText: "Warning"
+                        }) }}
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        {% if prisoners | length >= 1 %}
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <form method="POST">
+                        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                        {% set prisonerRows = [] %}
+                        {% for prisoner in prisoners %}
+                            {% if prisoners | length > 1 %}
+                                {% set prisonerName = '<div class="govuk-radios govuk-radios--small" data-module="govuk-radios">' +
+                                                          '<div class="govuk-radios__item">' +
+                                                              '<input type="radio" id="selected-prisoner-' + prisoner.prisonerNumber + '" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '" class="govuk-radios__input"/>' +
+                                                              '<label for="selected-prisoner-' + prisoner.prisonerNumber + '" class="govuk-label govuk-radios__label">' + prisoner | firstNameLastName | toTitleCase | prisonerName + '<label>' +
+                                                          '</div>' +
+                                                      '</div>'
+                                %}
+                            {% else %}
+                                {% set prisonerName = '<input type="hidden" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '"> ' + prisoner | firstNameLastName | toTitleCase | prisonerName %}
+                            {% endif %}
+
+                            {% set prisonerRows = (prisonerRows.push([
+                                {
+                                    attributes: {
+                                        id: 'prisoner-name',
+                                        "data-sort-value": prisoner | firstNameLastName | toTitleCase | prisonerName
+                                    },
+                                    html: prisonerName
+                                }, {
+                                    attributes: {
+                                        id: 'prisoner-number',
+                                        "data-sort-value": prisoner.prisonerNumber
+                                    },
+                                    text: prisoner.prisonerNumber
+                                }, {
+                                    attributes: {
+                                        id: 'prisoner-cell-location',
+                                        "data-sort-value": prisoner.cellLocation
+                                    },
+                                    text: prisoner.cellLocation
+                                }, {
+                                    attributes: {
+                                        id: 'prisoner-actions'
+                                    },
+                                    html: '<a href="' + dpsUrl + '/prisoner/' + prisoner.prisonerNumber + '" class="govuk-link govuk-link--no-visited-state" target="_blank">View <span class="govuk-visually-hidden">' + prisoner | firstNameLastName | toTitleCase + '\'s</span> prisoner profile<span class="govuk-visually-hidden"> (opens in new tab)</span></a>'
+                                }
+                            ]), prisonerRows) %}
+                        {% endfor %}
+
+                        {% if prisoners | length > 10 %}
+                            {{ govukButton({
+                                text: "Select and continue",
+                                id: "continue-button-above-results"
+                            }) }}
+                        {% endif %}
+
+                        {{ govukTable({
+                            attributes: {
+                                'data-module': 'moj-sortable-table',
+                                id: 'prisoner-search-list'
+                            },
+                            caption: "Prisoner search list",
+                            classes: "fixed-layout-table",
+                            captionClasses: "govuk-visually-hidden",
+                            head: [{
+                                text: "Name",
+                                attributes: {
+                                    "aria-sort": "ascending"
+                                }
+                            }, {
+                                text: "Prison number",
+                                attributes: {
+                                    "aria-sort": "none"
+                                }
+                            }, {
+                                text: "Cell location",
+                                attributes: {
+                                    "aria-sort": "none"
+                                }
+                            }, {
+                                html: '<span class="govuk-visually-hidden">Actions</span>'
+                            }],
+                            rows: prisonerRows
+                        }) }}
+
+                        {{ govukButton({
+                            text: "Select and continue" if prisoners | length > 1 else "Continue",
+                            id: "continue-button"
+                        }) }}
+                    </form>
+                </div>
+            <div>
+        {% endif %}
+    {% else %}
+        <form method="POST" action="search-prisoner">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    {{ searchInput({
+                        input: {
+                            id: "query",
+                            name: "query",
+                            hint: {
+                                text: 'Search by name or prison number'
+                            },
+                            type: "search",
+                            value: defaultPrisonerNumber,
+                            errorMessage: validationErrors | findError("query")
+                        },
+                        button: {
+                            text: "Search"
+                        },
+                        formInputs: {
+                            classes: "govuk-input--width-30"
+                        }
+                    }) }}
+                </div>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}

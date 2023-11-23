@@ -80,7 +80,7 @@ export default class ExclusionRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { mode, allocationId } = req.params
-    const { activity } = req.session.allocateJourney
+    const { activity, inmate } = req.session.allocateJourney
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
@@ -101,8 +101,20 @@ export default class ExclusionRoutes {
 
     await this.activitiesService.updateAllocation(user.activeCaseLoadId, +allocationId, allocation)
 
-    const successMessage = `You've updated the exclusions for this allocation`
-    return res.redirectWithSuccess(`/activities/allocations/view/${allocationId}`, 'Allocation updated', successMessage)
+    if (mode === 'edit') {
+      const successMessage = `You've updated the exclusions for this allocation`
+      return res.redirectWithSuccess(
+        `/activities/allocations/view/${allocationId}`,
+        'Allocation updated',
+        successMessage,
+      )
+    }
+
+    // mode === 'exclude'
+    return res.redirectWithSuccess(
+      `/activities/exclusions/prisoner/${inmate.prisonerNumber}`,
+      `You have updated when ${inmate.prisonerName} should attend ${activity.name}`,
+    )
   }
 
   private mapSlotsToDailyTimeSlots(slots: Slot[]): DailyTimeSlots[] {

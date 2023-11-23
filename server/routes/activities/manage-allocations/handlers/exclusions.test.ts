@@ -34,9 +34,11 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         allocateJourney: {
           inmate: {
             prisonerName: 'John Smith',
+            prisonerNumber: 'ABC123',
           },
           activity: {
             scheduleId: 1,
+            name: 'Test Activity',
           },
           exclusions: [],
         },
@@ -239,6 +241,40 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         '/activities/allocations/view/1',
         'Allocation updated',
         "You've updated the exclusions for this allocation",
+      )
+    })
+
+    it('should update the exclusions on the allocation and redirect when in exclude mode', async () => {
+      req.params.mode = 'exclude'
+      req.params.allocationId = '1'
+
+      req.body = {
+        week2: {
+          monday: ['am'],
+        },
+      }
+
+      await handler.POST(req, res)
+
+      expect(activitiesService.updateAllocation).toHaveBeenCalledWith('LEI', 1, {
+        exclusions: [
+          {
+            weekNumber: 2,
+            timeSlot: 'AM',
+            monday: false,
+            tuesday: true,
+            wednesday: true,
+            thursday: true,
+            friday: true,
+            saturday: true,
+            sunday: true,
+            daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+          },
+        ],
+      })
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '/activities/exclusions/prisoner/ABC123',
+        'You have updated when John Smith should attend Test Activity',
       )
     })
   })
