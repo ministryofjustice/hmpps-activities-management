@@ -153,6 +153,7 @@ export default abstract class Page {
     // Verify day is selected
     cy.get('.hmpps-datepicker__dialog__table')
       .find('button')
+      .filter(':visible')
       .contains(new RegExp(`^${getDate(date).toString()}$`))
       .should('have.class', 'hmpps-datepicker-selected')
     this.closeDatePicker()
