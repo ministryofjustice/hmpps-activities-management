@@ -40,7 +40,7 @@ describe('Prison Service', () => {
   })
 
   describe('getIncentiveLevels', () => {
-    it("should get the prison's minimum incentive level when there is no pay", async () => {
+    it('should get the prisons incentive levels from incentives API', async () => {
       const apiResponse = [{ id: 1, active: false }] as unknown as IncentiveLevel[]
 
       when(incentivesApiClient.getIncentiveLevels).calledWith(atLeast('MDI')).mockResolvedValue(apiResponse)
