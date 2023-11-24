@@ -90,7 +90,7 @@ export default class ActivitiesService {
   allocateToSchedule(
     scheduleId: number,
     prisonerNumber: string,
-    payBandId: number,
+    payBandId: number | null,
     user: ServiceUser,
     startDate: string,
     endDate: string,

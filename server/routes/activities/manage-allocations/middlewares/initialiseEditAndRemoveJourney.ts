@@ -40,11 +40,13 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         prisonerNumber: p.prisonerNumber,
         cellLocation: p.cellLocation,
         incentiveLevel: p.currentIncentive?.level?.description,
-        payBand: {
-          id: payBand.id,
-          alias: payBand.alias,
-          rate: activityPay?.find(pay => pay.prisonPayBand.id === payBand.id)?.rate,
-        },
+        payBand: payBand
+          ? {
+              id: payBand.id,
+              alias: payBand.alias,
+              rate: activityPay?.find(pay => pay.prisonPayBand.id === payBand.id)?.rate,
+            }
+          : null,
       }
     })
 
