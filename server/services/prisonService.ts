@@ -34,7 +34,7 @@ export default class PrisonService {
     return this.incentivesApiClient.getIncentiveLevels(prisonId, user)
   }
 
-  async getMiniamumIncentiveLevel(
+  async getMinimumIncentiveLevel(
     prisonId: string,
     user: ServiceUser,
     pay: ActivityPay[],

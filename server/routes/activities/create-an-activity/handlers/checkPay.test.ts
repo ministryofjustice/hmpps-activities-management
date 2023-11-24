@@ -111,7 +111,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
     })
 
     it('should add the minimum incentive level to the session and redirect', async () => {
-      when(prisonService.getMiniamumIncentiveLevel)
+      when(prisonService.getMinimumIncentiveLevel)
         .calledWith(atLeast('MDI', res.locals.user, req.session.createJourney.pay))
         .mockResolvedValueOnce({ levelCode: 'STD', levelName: 'Standard' } as IncentiveLevel)
 
@@ -143,7 +143,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
         },
       ]
 
-      when(prisonService.getMiniamumIncentiveLevel)
+      when(prisonService.getMinimumIncentiveLevel)
         .calledWith(atLeast('MDI', res.locals.user, updatedPay))
         .mockResolvedValueOnce({ levelCode: 'BAS', levelName: 'Basic' } as IncentiveLevel)
 

@@ -36,7 +36,7 @@ export default class CheckPayRoutes {
       return res.validationFailed('', `Add at least one pay rate`)
     }
 
-    const minimumIncentiveLevel = await this.prisonService.getMiniamumIncentiveLevel(
+    const minimumIncentiveLevel = await this.prisonService.getMinimumIncentiveLevel(
       user.activeCaseLoadId,
       user,
       pay,

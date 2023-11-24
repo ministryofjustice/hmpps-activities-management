@@ -27,7 +27,7 @@ export default class PayOption {
       req.session.createJourney.pay = []
       req.session.createJourney.flat = []
 
-      const minimumIncentiveLevel = await this.prisonService.getMiniamumIncentiveLevel(
+      const minimumIncentiveLevel = await this.prisonService.getMinimumIncentiveLevel(
         user.activeCaseLoadId,
         user,
         [],

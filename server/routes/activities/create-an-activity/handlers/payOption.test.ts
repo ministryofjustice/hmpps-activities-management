@@ -72,7 +72,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
         },
       ] as ActivityPay[]
 
-      when(prisonService.getMiniamumIncentiveLevel)
+      when(prisonService.getMinimumIncentiveLevel)
         .calledWith('MDI', res.locals.user, [], [])
         .mockResolvedValueOnce({ levelCode: 'BAS', levelName: 'Basic' } as IncentiveLevel)
 

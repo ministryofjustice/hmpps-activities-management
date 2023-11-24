@@ -52,7 +52,7 @@ describe('Prison Service', () => {
     })
   })
 
-  describe('getMiniamumIncentiveLevel', () => {
+  describe('getMinimumIncentiveLevel', () => {
     const pay = [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1 } }] as ActivityPay[]
     const flatPay = [{ incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 2 } }] as ActivityPay[]
 
@@ -68,17 +68,17 @@ describe('Prison Service', () => {
     })
 
     it("should get prison's minimum incentive level if no pay rates provided", async () => {
-      const actualResult = await prisonService.getMiniamumIncentiveLevel('MDI', user, [], [])
+      const actualResult = await prisonService.getMinimumIncentiveLevel('MDI', user, [], [])
       expect(actualResult).toEqual({ levelCode: 'BAS', levelName: 'Basic' })
     })
 
     it("should get prison's minimum incentive level if pay rate provided", async () => {
-      const actualResult = await prisonService.getMiniamumIncentiveLevel('MDI', user, pay, [])
+      const actualResult = await prisonService.getMinimumIncentiveLevel('MDI', user, pay, [])
       expect(actualResult).toEqual({ levelCode: 'STD', levelName: 'Standard' })
     })
 
     it("should get prison's minimum incentive level if pay and flat rate provided", async () => {
-      const actualResult = await prisonService.getMiniamumIncentiveLevel('MDI', user, pay, flatPay)
+      const actualResult = await prisonService.getMinimumIncentiveLevel('MDI', user, pay, flatPay)
       expect(actualResult).toEqual({ levelCode: 'BAS', levelName: 'Basic' })
     })
   })
