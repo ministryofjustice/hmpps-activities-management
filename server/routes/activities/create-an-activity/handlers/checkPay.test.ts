@@ -111,13 +111,9 @@ describe('Route Handlers - Create an activity - Check pay', () => {
     })
 
     it('should add the minimum incentive level to the session and redirect', async () => {
-      when(prisonService.getIncentiveLevels)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValueOnce([
-          { levelCode: 'BAS', levelName: 'Basic' },
-          { levelCode: 'STD', levelName: 'Standard' },
-          { levelCode: 'ENH', levelName: 'Enhanced' },
-        ] as IncentiveLevel[])
+      when(prisonService.getMiniamumIncentiveLevel)
+        .calledWith(atLeast('MDI', res.locals.user, req.session.createJourney.pay))
+        .mockResolvedValueOnce({ levelCode: 'STD', levelName: 'Standard' } as IncentiveLevel)
 
       await handler.POST(req, res)
       expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Standard')
@@ -134,15 +130,22 @@ describe('Route Handlers - Create an activity - Check pay', () => {
             rate: 1,
           },
         ],
+        minimumIncentiveLevel: 'Basic',
+        minimumIncentiveNomisCode: 'BAS',
       }
 
-      when(prisonService.getIncentiveLevels)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValueOnce([
-          { levelCode: 'BAS', levelName: 'Basic' },
-          { levelCode: 'STD', levelName: 'Standard' },
-          { levelCode: 'ENH', levelName: 'Enhanced' },
-        ] as IncentiveLevel[])
+      const updatedPay = [
+        {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          prisonPayBand: { id: 1 },
+          rate: 1,
+        },
+      ]
+
+      when(prisonService.getMiniamumIncentiveLevel)
+        .calledWith(atLeast('MDI', res.locals.user, updatedPay))
+        .mockResolvedValueOnce({ levelCode: 'BAS', levelName: 'Basic' } as IncentiveLevel)
 
       when(activitiesService.updateActivity)
         .calledWith(atLeast(updatedActivity))
@@ -151,18 +154,16 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       req.session.createJourney = {
         activityId: 1,
         name: 'Maths Level 1',
-        pay: [
-          {
-            incentiveNomisCode: 'BAS',
-            incentiveLevel: 'Basic',
-            prisonPayBand: { id: 1 },
-            rate: 1,
-          },
-        ],
+        pay: updatedPay,
+        minimumIncentiveLevel: 'Standard',
+        minimumIncentiveNomisCode: 'STD',
       } as CreateAnActivityJourney
       req.params.mode = 'edit'
 
       await handler.POST(req, res)
+
+      expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Basic')
+      expect(req.session.createJourney.minimumIncentiveNomisCode).toEqual('BAS')
 
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',

@@ -3418,6 +3418,11 @@ export interface components {
        */
       outsideWork: boolean
       /**
+       * @description Flag to indicate if the activity is a paid activity. It true then pay rates are required, if false then no pay rates should be provided
+       * @example true
+       */
+      paid: boolean
+      /**
        * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
        * @example H
        * @enum {string}
@@ -3694,6 +3699,11 @@ export interface components {
       updatedBy?: string
       /** @description The list of minimum education levels that can apply to this activity */
       minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevel'][]
+      /**
+       * @description Whether the activity is a paid activity
+       * @example true
+       */
+      paid: boolean
     }
     /** @description Describes a top-level activity category */
     ActivityCategory: {
@@ -3836,6 +3846,11 @@ export interface components {
        * @enum {string}
        */
       activityState: 'ARCHIVED' | 'LIVE'
+      /**
+       * @description Whether the activity is a paid activity
+       * @example true
+       */
+      paid: boolean
     }
     /** @description Describes the minimum education levels which apply to an activity */
     ActivityMinimumEducationLevel: {
@@ -4588,7 +4603,7 @@ export interface components {
       attendanceRequired?: boolean
       /** @description The list of minimum education levels that apply to this activity */
       minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
-      /** @description The list of pay rates that can apply to this activity */
+      /** @description The list of pay rates that can apply to this activity. Must be null or empty if the activity is unpaid */
       pay?: components['schemas']['ActivityPayCreateRequest'][]
       /**
        * Format: int32

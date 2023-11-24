@@ -1,0 +1,49 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% set pageTitle = applicationName + " - Create a schedule - Activity pay status" %}
+{% set pageId = 'create-activity-is-paid-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ activityJourneyCaption(session.createJourney) }}
+                {{ govukRadios({
+                    classes: "govuk-radios--inline",
+                    name: "paid",
+                    fieldset: {
+                        legend: {
+                            text: "Will people be paid for this activity?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "YES",
+                            text: "Yes",
+                            checked: formResponses.paid == 'YES' or session.createJourney.paid
+                        },
+                        {
+                            value: "NO",
+                            text: "No",
+                            checked: formResponses.paid == 'NO' or session.createJourney.paid == false
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('paid')
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

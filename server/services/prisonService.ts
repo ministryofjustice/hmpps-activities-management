@@ -13,6 +13,7 @@ import { ServiceUser } from '../@types/express'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
 import IncentivesApiClient from '../data/incentivesApiClient'
 import { IepSummary, IncentiveLevel } from '../@types/incentivesApi/types'
+import { ActivityPay } from '../@types/activitiesAPI/types'
 
 export default class PrisonService {
   constructor(
@@ -31,6 +32,17 @@ export default class PrisonService {
 
   getIncentiveLevels(prisonId: string, user: ServiceUser): Promise<IncentiveLevel[]> {
     return this.incentivesApiClient.getIncentiveLevels(prisonId, user)
+  }
+
+  async getMiniamumIncentiveLevel(
+    prisonId: string,
+    user: ServiceUser,
+    pay: ActivityPay[],
+    flatPay: ActivityPay[],
+  ): Promise<IncentiveLevel> {
+    const incentiveLevels = await this.getIncentiveLevels(prisonId, user)
+    if (flatPay.length > 0 || pay.length === 0) return incentiveLevels[0]
+    return incentiveLevels.find(iep => pay.find(p => p.incentiveNomisCode === iep.levelCode)) ?? incentiveLevels[0]
   }
 
   getPrisonerIepSummary(prisonerNumber: string, user: ServiceUser): Promise<IepSummary> {
