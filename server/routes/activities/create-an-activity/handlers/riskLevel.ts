@@ -39,9 +39,7 @@ export default class RiskLevelRoutes {
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     } else {
-      const { pay, flat } = req.session.createJourney
-      if (pay?.length > 0 || flat?.length > 0) res.redirectOrReturn('check-pay')
-      else res.redirectOrReturn('pay-rate-type')
+      res.redirectOrReturn('pay-option')
     }
   }
 }

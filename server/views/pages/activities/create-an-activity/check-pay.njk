@@ -91,7 +91,8 @@
             }) if rows | length }}
 
             {% if flatPay | length == 0 and incentiveLevelPays | length == 0 %}
-                <p class="govuk-body">No pay rates have been set for this activity. You must set at least one pay rate.</p>
+                <p class="govuk-body">No pay rates have been set for this activity.</p>
+                <p class="govuk-body">You must set at least one pay rate or <a href="pay-option{{ "?" + preserveHistoryText if preserveHistoryText }}" class="govuk-link">change the activity to unpaid</a>.</p>
             {% endif %}
 
             <form method="POST">

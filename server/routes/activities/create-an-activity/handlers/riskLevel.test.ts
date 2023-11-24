@@ -7,7 +7,7 @@ import RiskLevelRoutes, { RiskLevel } from './riskLevel'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
-import { Activity, ActivityPay } from '../../../../@types/activitiesAPI/types'
+import { Activity } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -45,7 +45,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
   })
 
   describe('POST', () => {
-    it('should save the selected risk level in session and redirect to minimum incentive page', async () => {
+    it('should save the selected risk level in session and redirect to pay option pay', async () => {
       req.body = {
         riskLevel: 'high',
       }
@@ -53,19 +53,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.riskLevel).toEqual('high')
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-rate-type')
-    })
-
-    it('should save the selected risk level in session and redirect to check pay page if pay exists', async () => {
-      req.body = {
-        riskLevel: 'high',
-      }
-      req.session.createJourney.flat = [{ rate: 100 } as ActivityPay]
-
-      await handler.POST(req, res)
-
-      expect(req.session.createJourney.riskLevel).toEqual('high')
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-pay')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-option')
     })
 
     it('should save entered risk level in database', async () => {
