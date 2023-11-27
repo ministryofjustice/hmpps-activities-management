@@ -60,6 +60,7 @@ export default class StartDateRoutes {
     const { allocationId } = req.params
 
     req.session.allocateJourney.startDate = formatIsoDate(req.body.startDate)
+    req.session.allocateJourney.latestAllocationStartDate = formatIsoDate(req.body.startDate)
 
     if (req.params.mode === 'edit') {
       const allocationUpdate = { startDate: formatIsoDate(req.body.startDate) }

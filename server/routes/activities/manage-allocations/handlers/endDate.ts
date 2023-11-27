@@ -15,11 +15,11 @@ export class EndDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
   @DateValidator(date => date >= startOfToday(), { message: "Enter a date on or after today's date" })
-  @DateValidator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.startDate), {
+  @DateValidator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.latestAllocationStartDate), {
     message: args => {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
-      const { startDate } = allocateJourney
-      return `Enter a date on or after the allocation start date, ${isoDateToDatePickerDate(startDate)}`
+      const { latestAllocationStartDate } = allocateJourney
+      return `Enter a date on or after the allocation start date, ${isoDateToDatePickerDate(latestAllocationStartDate)}`
     },
   })
   @DateValidator(

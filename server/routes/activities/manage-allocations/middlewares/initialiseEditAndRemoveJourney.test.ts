@@ -99,7 +99,7 @@ describe('initialiseEditAndRemoveJourney', () => {
     expect(activitiesService.getAllocation).not.toHaveBeenCalled()
     expect(activitiesService.getAllocations).not.toHaveBeenCalled()
 
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it('it should skip initialisation if session object already set', async () => {
@@ -110,7 +110,7 @@ describe('initialiseEditAndRemoveJourney', () => {
     expect(activitiesService.getAllocation).not.toHaveBeenCalled()
     expect(activitiesService.getAllocations).not.toHaveBeenCalled()
 
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it.each(['route param', 'query param'])('should populate session using allocation ID from %s', async routeOrQuery => {
@@ -167,8 +167,10 @@ describe('initialiseEditAndRemoveJourney', () => {
         offWing: activity.offWing,
       },
       latestAllocationStartDate: allocation.startDate,
+      exclusions: [],
+      updatedExclusions: [],
     })
 
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 })

@@ -63,6 +63,8 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         offWing: activity.offWing,
       },
       latestAllocationStartDate: allocations[allocations.length - 1].startDate,
+      exclusions: [],
+      updatedExclusions: [],
     }
 
     if (req.params.mode === 'edit' || req.params.mode === 'exclude') {
