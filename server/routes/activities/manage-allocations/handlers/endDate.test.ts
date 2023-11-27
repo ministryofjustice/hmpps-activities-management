@@ -107,7 +107,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
     })
 
-    it('validation fails if end date is not after or same as start date', async () => {
+    it('validation fails if end date is not same or after latest allocation start date', async () => {
       const endDate = formatDatePickerDate(addDays(new Date(), 1))
 
       const request = {
@@ -124,6 +124,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
           activity: {
             scheduleId: 1,
           },
+          latestAllocationStartDate: formatIsoDate(addDays(new Date(), 2)),
         },
       }
 
@@ -134,7 +135,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
         {
           property: 'endDate',
           error: `Enter a date on or after the allocation start date, ${isoDateToDatePickerDate(
-            request.allocateJourney.startDate,
+            request.allocateJourney.latestAllocationStartDate,
           )}`,
         },
       ])
