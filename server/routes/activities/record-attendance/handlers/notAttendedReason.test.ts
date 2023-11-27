@@ -445,6 +445,24 @@ describe('Route Handlers - Non Attendance', () => {
       )
     })
 
+    it('should set case note when attendance reason is "REFUSED" and location is undefined', async () => {
+      req.session.notAttendedJourney.activityInstance.activitySchedule.internalLocation = undefined
+      const request = {
+        notAttendedData: [
+          {
+            ...attenance,
+            notAttendedReason: AttendanceReasons.REFUSED,
+            caseNote: 'case note',
+          },
+        ],
+      } as NotAttendedForm
+
+      const requestObject = plainToInstance(NotAttendedForm, request)
+      expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toEqual(
+        'Refused to attend - Test activity - Wednesday, 25 October 2023 - 09:00 \n\ncase note',
+      )
+    })
+
     it('should not issue payment if attendance reason is "REFUSED"', async () => {
       const request = {
         notAttendedData: [

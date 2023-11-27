@@ -65,9 +65,15 @@ export class NotAttendedData {
 
   getCaseNote = (activityInstance: ScheduledActivity) =>
     this.notAttendedReason === AttendanceReason.REFUSED
-      ? `Refused to attend - ${activityInstance.activitySchedule.activity.summary} - ${
-          activityInstance.activitySchedule.internalLocation.description
-        } - ${formatDate(activityInstance.date)} - ${activityInstance.startTime} \n\n${this.caseNote}`
+      ? [
+          'Refused to attend',
+          activityInstance.activitySchedule.activity.summary,
+          activityInstance.activitySchedule.internalLocation?.description,
+          formatDate(activityInstance.date),
+          `${activityInstance.startTime} \n\n${this.caseNote}`,
+        ]
+          .filter(Boolean)
+          .join(' - ')
       : null
 
   getIssuePayment() {
