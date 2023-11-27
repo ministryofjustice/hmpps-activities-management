@@ -4,6 +4,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import ExclusionRoutes from './exclusions'
 import atLeast from '../../../../../jest.setup'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -75,7 +76,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/exclusions', {
-        currentWeek: 2,
+        currentWeek: calcCurrentWeek(new Date('2022-01-01'), 2),
         dailySlots: [
           {
             day: 'MONDAY',
