@@ -146,7 +146,7 @@ describe('Route Handlers - Non Attendance', () => {
   })
 
   describe('Validation', () => {
-    const attenance = {
+    const attendance = {
       prisonerNumber: 'ABC123',
       prisonerName: 'Joe Bloggs',
       notAttendedReason: AttendanceReasons.SICK,
@@ -154,9 +154,9 @@ describe('Route Handlers - Non Attendance', () => {
     } as NotAttendedData
     const requestData = {
       notAttendedData: [
-        attenance,
+        attendance,
         {
-          ...attenance,
+          ...attendance,
           prisonerNumber: 'ABC234',
           prisonerName: 'John Smith',
         },
@@ -173,7 +173,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: undefined,
           },
         ],
@@ -194,7 +194,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: 'INVALID',
           },
         ],
@@ -215,7 +215,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             sickPay: undefined,
           },
         ],
@@ -236,7 +236,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.REST,
             restPay: undefined,
           },
@@ -258,7 +258,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.OTHER,
             otherAbsenceReason: 'absence reason',
             otherAbsencePay: undefined,
@@ -281,7 +281,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.OTHER,
             otherAbsenceReason: '',
             otherAbsencePay: YesNo.YES,
@@ -304,7 +304,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.OTHER,
             otherAbsenceReason: 'a'.repeat(101),
             otherAbsencePay: YesNo.YES,
@@ -327,7 +327,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             moreDetail: 'a'.repeat(101),
           },
         ],
@@ -348,7 +348,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.REFUSED,
             incentiveLevelWarningIssued: YesNo.YES,
             caseNote: '',
@@ -371,7 +371,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.REFUSED,
             incentiveLevelWarningIssued: YesNo.YES,
             caseNote: 'a'.repeat(4001),
@@ -394,7 +394,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.REFUSED,
             incentiveLevelWarningIssued: undefined,
             caseNote: 'case note',
@@ -417,7 +417,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.SICK,
             caseNote: 'case note',
           },
@@ -432,7 +432,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.REFUSED,
             caseNote: 'case note',
           },
@@ -450,7 +450,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.REFUSED,
             caseNote: 'case note',
           },
@@ -467,7 +467,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.REFUSED,
             sickPay: YesNo.YES,
             restPay: YesNo.YES,
@@ -483,7 +483,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.CLASH,
             sickPay: YesNo.NO,
             restPay: YesNo.NO,
@@ -499,7 +499,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.NOT_REQUIRED,
             sickPay: YesNo.NO,
             restPay: YesNo.NO,
@@ -515,7 +515,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.SICK,
             sickPay: YesNo.NO,
           },
@@ -530,7 +530,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.OTHER,
             otherAbsencePay: YesNo.NO,
           },
@@ -545,7 +545,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.OTHER,
             otherAbsencePay: YesNo.YES,
           },
@@ -560,7 +560,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.REST,
             restPay: YesNo.NO,
           },
@@ -575,7 +575,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attenance,
+            ...attendance,
             notAttendedReason: AttendanceReasons.SICK,
             incentiveLevelWarningIssued: YesNo.YES,
           },
