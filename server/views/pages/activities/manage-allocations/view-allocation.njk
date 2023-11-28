@@ -82,18 +82,17 @@
                         Pay rate
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        <div>{{ pay.incentiveLevel }} incentive level:</div>
-                        <div>{{ (pay.prisonPayBand.alias + ' - ' + pay.rate | toMoney) if pay else '£0' }}</div>
+                        {{ payRate(pay) }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         {% if isOnlyPay %}
                             <div>No alternative</div>
                             <div>pay rates</div>
-                        {% else %}
+                        {% elseif pay.prisonPayBand %}
                             <a href="../edit/{{ allocation.id }}/pay-band"
                                class="govuk-link govuk-link--no-visited-state">
                                 Change
-                            </a>
+                            </a>                            
                         {% endif %}
                     </dd>
                 </div>
@@ -133,3 +132,12 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro payRate(payBand) %}
+    {% if pay.prisonPayBand %}
+        <div>{{ pay.incentiveLevel }} incentive level:</div>
+        <div>{{ (pay.prisonPayBand.alias + ' - ' + pay.rate | toMoney) if pay else '£0' }}</div>
+    {% else %}
+        No pay rate for this activity
+    {% endif %}
+{% endmacro %}

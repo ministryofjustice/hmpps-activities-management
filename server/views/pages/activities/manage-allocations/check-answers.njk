@@ -104,8 +104,7 @@
                         {
                             key: { text: "Pay rate" },
                             value: {
-                                html: '<div>' + session.allocateJourney.inmate.incentiveLevel + ' incentive level:</div>'
-                                + '<div>' + session.allocateJourney.inmate.payBand.alias + ' - ' + session.allocateJourney.inmate.payBand.rate | toMoney + '</div>'
+                                html: payRate(session.allocateJourney.inmate.payBand, session.allocateJourney.inmate.incentiveLevel)
                             },
                             actions: {
                                 items: [{
@@ -114,7 +113,7 @@
                                     text: "Change",
                                     visuallyHiddenText: "change pay rate"
                                 }]
-                            }
+                            } if session.allocateJourney.inmate.payBand
                         },
                         {
                             key: { text: "Schedule" },
@@ -191,3 +190,12 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro payRate(payBand, incentiveLevel) %}
+    {% if payBand %}
+        <div>{{ incentiveLevel }} incentive level:</div>
+        <div>{{ payBand.alias }} - {{ payBand.rate | toMoney }}</div>
+    {% else %}
+        No pay rate for this activity
+    {% endif %}
+{% endmacro %}

@@ -104,6 +104,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
         .mockResolvedValue({
+          paid: true,
           pay: [{ incentiveNomisCode: 'BAS' }, { incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
           schedules: [activitySchedule],
         } as unknown as Activity)
@@ -347,6 +348,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
         .mockResolvedValue({
+          paid: true,
           pay: [{ incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
           schedules: [activitySchedule],
         } as unknown as Activity)
@@ -617,7 +619,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
+        .mockResolvedValue({ paid: true, pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
 
       prisonService.getPrisonerIepSummary = jest.fn()
       when(prisonService.getPrisonerIepSummary)
