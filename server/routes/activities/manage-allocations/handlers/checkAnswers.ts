@@ -37,7 +37,7 @@ export default class CheckAnswersRoutes {
       await this.activitiesService.allocateToSchedule(
         activity.scheduleId,
         inmate.prisonerNumber,
-        inmate.payBand.id,
+        inmate.payBand?.id,
         user,
         startDate,
         endDate,

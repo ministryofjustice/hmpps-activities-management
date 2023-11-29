@@ -22,11 +22,13 @@ describe('Route Handlers - Allocation - End Date option', () => {
     } as unknown as Response
 
     req = {
+      body: {},
       session: {
         allocateJourney: {
           inmate: {
             prisonerName: 'John Smith',
           },
+          activity: {},
         },
       },
     } as unknown as Request
@@ -42,27 +44,30 @@ describe('Route Handlers - Allocation - End Date option', () => {
   })
 
   describe('POST', () => {
-    it('should save selected option in session and redirect to change date page', async () => {
-      req.body = {
-        endDateOption: 'change',
-      }
+    it('should redirect to end date page when selecting yes', async () => {
+      req.body.endDateOption = 'yes'
+
+      await handler.POST(req, res)
+
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date')
+    })
+
+    it('should redirect to pay band page when selecting no and activity is paid', async () => {
+      req.body.endDateOption = 'no'
+      req.session.allocateJourney.activity.paid = true
 
       await handler.POST(req, res)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-band')
     })
 
-    it('should save entered end date in database', async () => {
-      req = {
-        session: {},
-        body: {
-          endDateOption: 'yes',
-        },
-      } as unknown as Request
+    it('should redirect to check answers page when selecting no and activity is unpaid', async () => {
+      req.body.endDateOption = 'no'
+      req.session.allocateJourney.activity.paid = false
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
   })
 

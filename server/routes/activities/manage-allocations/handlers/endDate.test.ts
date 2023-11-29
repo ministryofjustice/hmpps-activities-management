@@ -47,8 +47,10 @@ describe('Route Handlers - Edit allocation - End date', () => {
   })
 
   describe('POST', () => {
-    it('should redirect to the pay band page if in create mode', async () => {
+    it('should redirect to the pay band page if in create mode and activity is paid', async () => {
       req.params.mode = 'create'
+
+      req.session.allocateJourney.activity.paid = true
 
       const endDate = startOfToday()
       req.body = { endDate }
@@ -57,6 +59,20 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
       expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-band')
+    })
+
+    it('should redirect to the check answers page if in create mode and activity is unpaid', async () => {
+      req.params.mode = 'create'
+
+      req.session.allocateJourney.activity.paid = false
+
+      const endDate = startOfToday()
+      req.body = { endDate }
+
+      await handler.POST(req, res)
+
+      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
 
     it('should redirect to the deallocate reason page in edit mode', async () => {
@@ -117,14 +133,13 @@ describe('Route Handlers - Edit allocation - End date', () => {
         scheduleId: 1,
         prisonerNumber: 'ABC123',
         allocateJourney: {
-          startDate: formatIsoDate(addDays(new Date(), 2)),
+          latestAllocationStartDate: formatIsoDate(addDays(new Date(), 2)),
           inmate: {
             prisonerNumber: 'ABC123',
           },
           activity: {
             scheduleId: 1,
           },
-          latestAllocationStartDate: formatIsoDate(addDays(new Date(), 2)),
         },
       }
 

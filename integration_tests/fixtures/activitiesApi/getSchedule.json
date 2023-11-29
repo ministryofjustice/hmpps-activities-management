@@ -165,6 +165,7 @@
     "inCell": false,
     "pieceWork": false,
     "outsideWork": false,
+    "paid": true,
     "payPerSession": "H",
     "summary": "English level 1",
     "description": "A basic english course suitable for introduction to the subject",

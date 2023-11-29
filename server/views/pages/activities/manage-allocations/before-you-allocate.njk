@@ -115,7 +115,7 @@
                                     text: prisonerAllocation.allocation.endDate | formatDate('dd MMMM yyyy') if prisonerAllocation.allocation.endDate else "None set"
                                 },
                                 {
-                                    text: prisonerAllocation.payRate.rate | toMoney + " (" + prisonerAllocation.allocation.prisonPayBand.alias + ")"
+                                    text: prisonerAllocation.payRate.rate | toMoney + " (" + prisonerAllocation.allocation.prisonPayBand.alias + ")" if prisonerAllocation.payRate else "No pay"
                                 }
                             ]), currentAllocations) %}
                         {% endif %}
