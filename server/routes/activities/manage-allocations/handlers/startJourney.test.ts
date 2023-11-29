@@ -71,6 +71,7 @@ describe('Route Handlers - Allocate - Start', () => {
       await handler.GET(req, res)
 
       expect(req.session.allocateJourney).toEqual({
+        exclusions: [],
         inmates: [
           {
             prisonerNumber: 'ABC123',
@@ -92,6 +93,7 @@ describe('Route Handlers - Allocate - Start', () => {
           location: 'Education room 1',
           startDate: '2023-07-26',
         },
+        updatedExclusions: [],
       })
       expect(metricsService.trackEvent).toBeCalledWith(
         MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),

@@ -1,19 +1,17 @@
 import { Request, Response } from 'express'
-import { Expose } from 'class-transformer'
-import { ValidationArguments } from 'class-validator'
-import IsValidDatePickerDate from '../../../../../validators/isValidDatePickerDate'
-import DatePickerDateIsSameOrAfter from '../../../../../validators/datePickerDateIsSameOrAfter'
-import { datePickerDateToIsoDate } from '../../../../../utils/datePickerUtils'
+import { Expose, Transform } from 'class-transformer'
+import { IsNotEmpty, MinDate } from 'class-validator'
+import { startOfToday } from 'date-fns'
+import { formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePickerUtils'
+import IsValidDate from '../../../../../validators/isValidDate'
 
 export class AppointmentSetDate {
   @Expose()
-  @IsValidDatePickerDate({
-    message: (args: ValidationArguments) => {
-      return args.value ? 'Enter a valid date for the appointment' : 'Enter a date for the appointment'
-    },
-  })
-  @DatePickerDateIsSameOrAfter(() => new Date(), { message: "Enter a date on or after today's date" })
-  startDate: string
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @MinDate(() => startOfToday(), { message: "Enter a date on or after today's date" })
+  @IsValidDate({ message: 'Enter a valid date for the appointment' })
+  @IsNotEmpty({ message: 'Enter a date for the appointment' })
+  startDate: Date
 }
 
 export default class AppointmentSetDateRoutes {
@@ -26,7 +24,7 @@ export default class AppointmentSetDateRoutes {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
 
-    req.session.appointmentJourney.startDate = datePickerDateToIsoDate(req.body.startDate)
+    req.session.appointmentJourney.startDate = formatIsoDate(req.body.startDate)
 
     res.redirectOrReturn(`appointment-set-times`)
   }

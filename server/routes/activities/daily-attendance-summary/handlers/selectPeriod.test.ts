@@ -113,7 +113,7 @@ describe('Route Handlers - Select period', () => {
     it('validation fails if preset option is other and a bad date is provided', async () => {
       const body = {
         datePresetOption: 'other',
-        date: '31/2/2022',
+        date: 'a/2/2022',
       }
 
       const requestObject = plainToInstance(TimePeriod, body)

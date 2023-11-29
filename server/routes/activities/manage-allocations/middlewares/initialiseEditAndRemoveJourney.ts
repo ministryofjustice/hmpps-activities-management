@@ -12,7 +12,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
     const { scheduleId } = req.query
     const { user } = res.locals
 
-    if ((mode !== 'remove' && mode !== 'edit') || req.session.allocateJourney) return next()
+    if ((mode !== 'remove' && mode !== 'edit' && mode !== 'exclude') || req.session.allocateJourney) return next()
 
     if (!scheduleId && !allocationId) return res.redirect('back')
 
@@ -63,12 +63,15 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         offWing: activity.offWing,
       },
       latestAllocationStartDate: allocations[allocations.length - 1].startDate,
+      exclusions: [],
+      updatedExclusions: [],
     }
 
-    if (req.params.mode === 'edit') {
+    if (req.params.mode === 'edit' || req.params.mode === 'exclude') {
       req.session.allocateJourney.startDate = allocations[0].startDate
       req.session.allocateJourney.endDate = allocations[0].endDate
       req.session.allocateJourney.deallocationReason = allocations[0].plannedDeallocation?.plannedReason?.code
+      req.session.allocateJourney.exclusions = allocations[0].exclusions
     }
 
     return next()

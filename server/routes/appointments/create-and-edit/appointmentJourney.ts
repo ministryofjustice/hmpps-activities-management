@@ -1,5 +1,7 @@
 import { YesNo } from '../../../@types/activities'
 import { AppointmentFrequency } from '../../../@types/appointments'
+import EventOrganiser from '../../../enum/eventOrganisers'
+import EventTier from '../../../enum/eventTiers'
 
 export enum AppointmentType {
   INDIVIDUAL = 'INDIVIDUAL',
@@ -26,6 +28,8 @@ export type AppointmentJourney = {
     code: string
     description: string
   }
+  tierCode?: EventTier
+  organiserCode?: EventOrganiser
   customName?: string
   location?: {
     id: number

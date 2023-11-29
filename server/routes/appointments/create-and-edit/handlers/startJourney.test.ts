@@ -11,6 +11,8 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import { MetricsEventType } from '../../../../@types/metricsEvents'
+import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
+import EventOrganiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/metricsService')
@@ -52,6 +54,16 @@ describe('Route Handlers - Create Appointment - Start', () => {
       id: 26152,
       prisonCode: 'CHAP',
       description: 'Chapel',
+    },
+    tier: {
+      id: 1,
+      code: EventTier.TIER_2,
+      description: eventTierDescriptions[EventTier.TIER_2],
+    },
+    organiser: {
+      id: 1,
+      code: EventOrganiser.EXTERNAL_PROVIDER,
+      description: organiserDescriptions[EventOrganiser.EXTERNAL_PROVIDER],
     },
     startDate: '2023-04-13',
     startTime: '09:00',
@@ -312,6 +324,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
           code: 'CHAP',
           description: 'Chaplaincy',
         },
+        tierCode: EventTier.TIER_2,
+        organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
         location: {
           id: 26152,
           prisonCode: 'CHAP',

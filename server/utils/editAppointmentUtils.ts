@@ -26,6 +26,14 @@ export const getAppointmentEditMessage = (
   }
 
   const updateProperties = []
+  if (hasAppointmentTierChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('tier')
+  }
+
+  if (hasAppointmentOrganiserChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('host')
+  }
+
   if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
     updateProperties.push('location')
   }
@@ -77,6 +85,14 @@ export const getConfirmAppointmentEditCta = (
   }
 
   const updateProperties = []
+  if (hasAppointmentTierChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('tier')
+  }
+
+  if (hasAppointmentOrganiserChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('host')
+  }
+
   if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
     updateProperties.push('location')
   }
@@ -128,6 +144,14 @@ export const getAppointmentEditApplyToCta = (
   }
 
   const updateProperties = []
+  if (hasAppointmentTierChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('tier')
+  }
+
+  if (hasAppointmentOrganiserChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('host')
+  }
+
   if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
     updateProperties.push('location')
   }
@@ -316,12 +340,24 @@ export const hasAnyAppointmentPropertyChanged = (
   appointmentJourney: AppointmentJourney,
   editAppointmentJourney: EditAppointmentJourney,
 ) =>
+  hasAppointmentTierChanged(appointmentJourney, editAppointmentJourney) ||
+  hasAppointmentOrganiserChanged(appointmentJourney, editAppointmentJourney) ||
   hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney) ||
   hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney) ||
   hasAppointmentStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
   hasAppointmentEndTimeChanged(appointmentJourney, editAppointmentJourney) ||
   hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney) ||
   hasAppointmentAttendeesChanged(editAppointmentJourney)
+
+export const hasAppointmentTierChanged = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => editAppointmentJourney.tierCode && appointmentJourney.tierCode !== editAppointmentJourney.tierCode
+
+export const hasAppointmentOrganiserChanged = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => editAppointmentJourney.organiserCode && appointmentJourney.organiserCode !== editAppointmentJourney.organiserCode
 
 export const hasAppointmentLocationChanged = (
   appointmentJourney: AppointmentJourney,

@@ -1,0 +1,74 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
+
+{% set pageTitle = applicationName + " - Exclusions - View allocations" %}
+{% set pageId = 'view-allocations-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Change someone's activity schedule</span>
+            <h1 class="govuk-heading-xl">{{ prisonerName }}'s activities</h1>
+
+            {% if activities | length == 0 %}
+                {{ govukInsetText({
+                    text: prisonerName + " does not have any active allocations."
+                }) }}
+            {% else %}
+                {{ govukInsetText({
+                    text: "You're seeing only sessions when each activity is scheduled to run."
+                }) }}
+
+                {% set rows = [] %}
+                {% for activity in activities %}
+                    {% set slotsHtml %}
+                        {% for week, slots in activity.scheduledSlots %}
+                            {% if activity.scheduledSlots | length > 1 %}
+                                <div class='govuk-heading-s govuk-!-margin-bottom-1'>
+                                    Week {{ week }}
+                                    {{ govukTag({
+                                        text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
+                                    }) if activity.currentWeek == week }}
+                                </div>
+                            {% endif %}
+                            {{ daysAndTimes(slots, false, false) }}
+                        {% endfor %}
+                    {% endset %}
+
+                    {% set rows = (rows.push(
+                        {
+                            key: {
+                                text: activity.activityName
+                            },
+                            value: {
+                                html: slotsHtml
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: '/activities/allocations/exclude/' + activity.allocationId + '/exclusions',
+                                        text: "Change",
+                                        visuallyHiddenText: "Change schedule for " + activity.activityName
+                                    }
+                                ]
+                            }
+                        }
+                    ), rows) %}
+                {% endfor %}
+
+                {{ govukSummaryList({
+                    rows: rows
+                }) }}
+
+            {% endif %}
+
+            <div class="govuk-button-group">
+                <a class="govuk-link govuk-link--no-visited-state" href="../select-prisoner">Find another prisoner to change their activity schedule</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1125,6 +1125,8 @@ export interface components {
        * @example CHAP
        */
       categoryCode: string
+      tier?: components['schemas']['EventTier']
+      organiser?: components['schemas']['EventOrganiser']
       /**
        * @description
        *     Free text name further describing the appointment. Used as part of the appointment name with the
@@ -1360,6 +1362,8 @@ export interface components {
        * @example CHAP
        */
       categoryCode: string
+      tier?: components['schemas']['EventTier']
+      organiser?: components['schemas']['EventOrganiser']
       /**
        * @description
        *     Free text name further describing the appointment series. Used as part of the appointment name with the
@@ -1476,6 +1480,44 @@ export interface components {
        */
       numberOfAppointments: number
     }
+    /** @description An event organiser */
+    EventOrganiser: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this event organiser
+       * @example 1
+       */
+      id: number
+      /**
+       * @description The code for this event organiser
+       * @example PRISON_STAFF
+       */
+      code: string
+      /**
+       * @description The detailed description for this event organiser
+       * @example Prison staff
+       */
+      description: string
+    }
+    /** @description An event tier */
+    EventTier: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this event tier
+       * @example 1
+       */
+      id: number
+      /**
+       * @description The code for this event tier
+       * @example TIER_1
+       */
+      code: string
+      /**
+       * @description The detailed description for this event tier
+       * @example Work, education and maintenance
+       */
+      description: string
+    }
     /** @description The lists of prison numbers to mark as attended and non-attended */
     AppointmentAttendanceRequest: {
       /**
@@ -1534,11 +1576,11 @@ export interface components {
       offset?: number
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
-      pageNumber?: number
-      /** Format: int32 */
       pageSize?: number
-      paged?: boolean
       unpaged?: boolean
+      /** Format: int32 */
+      pageNumber?: number
+      paged?: boolean
     }
     PagedWaitingListApplication: {
       /** Format: int32 */
@@ -1553,9 +1595,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -1683,6 +1725,35 @@ export interface components {
        * @example 2023-09-10
        */
       endDate?: string
+      /** @description The days and times that the prisoner is excluded from this activity's schedule */
+      exclusions?: components['schemas']['Slot'][]
+    }
+    /**
+     * @description
+     *     Describes time slot and day (or days) the scheduled activity would run. At least one day must be specified.
+     *
+     *     e.g. 'AM, Monday, Wednesday and Friday' or 'PM Tuesday, Thursday, Sunday'
+     */
+    Slot: {
+      /**
+       * Format: int32
+       * @description The week of the schedule this slot relates to
+       * @example 1
+       */
+      weekNumber: number
+      /**
+       * @description The time slot of the activity schedule, morning afternoon or evening e.g. AM, PM or ED
+       * @example AM
+       */
+      timeSlot: string
+      monday: boolean
+      tuesday: boolean
+      wednesday: boolean
+      thursday: boolean
+      friday: boolean
+      saturday: boolean
+      sunday: boolean
+      daysOfWeek: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[]
     }
     /** @description Describes a prisons scheduled events */
     PrisonerScheduledEvents: {
@@ -1998,6 +2069,8 @@ export interface components {
        */
       status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
       plannedDeallocation?: components['schemas']['PlannedDeallocation']
+      /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
+      exclusions?: components['schemas']['Slot'][]
       /** @description The name of the prisoner. Included only if includePrisonerSummary = true */
       prisonerName?: string
       /** @description The cell location of the prisoner. Included only if includePrisonerSummary = true */
@@ -2173,6 +2246,8 @@ export interface components {
        * @example true
        */
       suspendedFlag: boolean
+      /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
+      exclusions?: components['schemas']['Slot'][]
     }
     /** @description Response for a successful migration of one allocation to an activity */
     AllocationMigrateResponse: {
@@ -2637,6 +2712,7 @@ export interface components {
         | 'PRISONER_DECLINED_FROM_WAITING_LIST'
         | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
+        | 'PRISONER_MERGE'
       /**
        * Format: date-time
        * @description The date and time on or after which to search for events
@@ -2702,6 +2778,7 @@ export interface components {
         | 'PRISONER_DECLINED_FROM_WAITING_LIST'
         | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
+        | 'PRISONER_MERGE'
       /**
        * Format: date-time
        * @description The date and time at which this event occurred
@@ -3059,6 +3136,18 @@ export interface components {
        */
       categoryCode: string
       /**
+       * @description The tier code for this appointment
+       * @example TIER_1
+       * @enum {string}
+       */
+      tierCode: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
+      /**
+       * @description The organiser code for this appointment
+       * @example PRISON_STAFF
+       * @enum {string}
+       */
+      organiserCode?: 'PRISON_STAFF' | 'PRISONER' | 'EXTERNAL_PROVIDER' | 'OTHER'
+      /**
        * @description
        *     Free text name further describing the appointment series. Will be used to create the appointment name using the
        *     format "Custom name (Category description) if specified.
@@ -3117,6 +3206,8 @@ export interface components {
        * @example CHAP
        */
       categoryCode: string
+      tier?: components['schemas']['EventTier']
+      organiser?: components['schemas']['EventOrganiser']
       /**
        * @description
        *     Free text name further describing the appointment set. Used as part of the appointment name with the
@@ -3188,6 +3279,18 @@ export interface components {
        * @example CHAP
        */
       categoryCode: string
+      /**
+       * @description The tier code for this appointment
+       * @example TIER_1
+       * @enum {string}
+       */
+      tierCode: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
+      /**
+       * @description The organiser code for this appointment
+       * @example PRISON_STAFF
+       * @enum {string}
+       */
+      organiserCode?: 'PRISON_STAFF' | 'PRISONER' | 'EXTERNAL_PROVIDER' | 'OTHER'
       /**
        * @description
        *     Free text name further describing the appointment series. Will be used to create the appointment name using the
@@ -3470,33 +3573,6 @@ export interface components {
        * @example 10
        */
       pieceRateItems?: number
-    }
-    /**
-     * @description
-     *     Describes time slot and day (or days) the scheduled activity would run. At least one day must be specified.
-     *
-     *     e.g. 'AM, Monday, Wednesday and Friday' or 'PM Tuesday, Thursday, Sunday'
-     */
-    Slot: {
-      /**
-       * Format: int32
-       * @description The week of the schedule this slot relates to
-       * @example 1
-       */
-      weekNumber: number
-      /**
-       * @description The time slot of the activity schedule, morning afternoon or evening e.g. AM, PM or ED
-       * @example AM
-       */
-      timeSlot: string
-      monday: boolean
-      tuesday: boolean
-      wednesday: boolean
-      thursday: boolean
-      friday: boolean
-      saturday: boolean
-      sunday: boolean
-      daysOfWeek: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[]
     }
     /** @description Describes a top-level activity */
     Activity: {
@@ -4179,44 +4255,6 @@ export interface components {
        */
       description: string
     }
-    /** @description An event organiser */
-    EventOrganiser: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this event organiser
-       * @example 1
-       */
-      id: number
-      /**
-       * @description The code for this event organiser
-       * @example PRISON_STAFF
-       */
-      code: string
-      /**
-       * @description The detailed description for this event organiser
-       * @example Prison staff
-       */
-      description: string
-    }
-    /** @description An event tier */
-    EventTier: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this event tier
-       * @example 1
-       */
-      id: number
-      /**
-       * @description The code for this event tier
-       * @example TIER_1
-       */
-      code: string
-      /**
-       * @description The detailed description for this event tier
-       * @example Work, education and maintenance
-       */
-      description: string
-    }
     /**
      * @description An internal NOMIS location for an activity to take place
      * @example 98877667
@@ -4337,6 +4375,18 @@ export interface components {
        */
       categoryCode?: string
       /**
+       * @description The tier code for this appointment
+       * @example TIER_1
+       * @enum {string}
+       */
+      tierCode?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
+      /**
+       * @description The organiser code for this appointment
+       * @example PRISON_STAFF
+       * @enum {string}
+       */
+      organiserCode?: 'PRISON_STAFF' | 'PRISONER' | 'EXTERNAL_PROVIDER' | 'OTHER'
+      /**
        * Format: int64
        * @description
        *     The updated NOMIS internal location id within the specified prison. This must be supplied if inCell is false.
@@ -4447,6 +4497,8 @@ export interface components {
        * @description Where a prison uses pay bands to differentiate earnings, this is the pay band given to this prisoner
        */
       payBandId?: number
+      /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
+      exclusions?: components['schemas']['Slot'][]
     }
     /** @description The update request with the new activity details */
     ActivityUpdateRequest: {
@@ -5040,9 +5092,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */
@@ -5778,8 +5830,9 @@ export interface components {
       notRecordedCount: number
       /**
        * @description
-       *     Summary of the prisoner or prisoners attending this appointment and their attendance record if any.
-       *     Attendees are at the appointment level to allow for per appointment attendee changes.
+       *     The prisoner or prisoners attending this appointment. Appointments of type INDIVIDUAL will have one
+       *     prisoner attending each appointment. Appointments of type GROUP can have more than one prisoner
+       *     attending each appointment
        */
       attendees: components['schemas']['AppointmentAttendeeSearchResult'][]
     }
@@ -5862,6 +5915,8 @@ export interface components {
        */
       attendees: components['schemas']['AppointmentAttendeeSummary'][]
       category: components['schemas']['AppointmentCategorySummary']
+      tier?: components['schemas']['EventTier']
+      organiser?: components['schemas']['EventOrganiser']
       /**
        * @description
        *     Free text name further describing the appointment. Used as part of the appointment name with the
@@ -6179,6 +6234,8 @@ export interface components {
        */
       appointmentName: string
       category: components['schemas']['AppointmentCategorySummary']
+      tier?: components['schemas']['EventTier']
+      organiser?: components['schemas']['EventOrganiser']
       /**
        * @description
        *     Free text name further describing the appointment series. Used as part of the appointment name with the
@@ -7239,6 +7296,10 @@ export interface operations {
   triggerManageAttendanceRecordsJob: {
     parameters: {
       query?: {
+        /** @description If supplied will create attendance records for the given rolled out prison. */
+        prisonCode?: string
+        /** @description If supplied will create attendance records for the given date. Default to the current date. */
+        date?: string
         /** @description If true will run the attendance expiry process in addition to other features. Defaults to false. */
         withExpiry?: boolean
       }
@@ -8355,12 +8416,15 @@ export interface operations {
    */
   getScheduledAttendeesByScheduledInstance: {
     parameters: {
+      header?: {
+        'Caseload-Id'?: string
+      }
       path: {
         instanceId: number
       }
     }
     responses: {
-      /** @description Scheduled instance found */
+      /** @description Scheduled attendees found */
       200: {
         content: {
           'application/json': components['schemas']['ScheduledAttendee'][]

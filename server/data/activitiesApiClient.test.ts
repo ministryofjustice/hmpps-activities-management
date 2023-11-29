@@ -178,12 +178,13 @@ describe('activitiesApiClient', () => {
           payBandId: 1,
           startDate: '2023-01-01',
           endDate: null,
+          exclusions: [],
         })
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(204)
 
-      await activitiesApiClient.postAllocation(1, 'ABC123', 1, user, '2023-01-01', null)
+      await activitiesApiClient.postAllocation(1, 'ABC123', 1, user, '2023-01-01', null, [])
 
       expect(nock.isDone()).toBe(true)
     })

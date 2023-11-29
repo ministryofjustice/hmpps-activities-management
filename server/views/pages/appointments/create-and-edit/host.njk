@@ -1,0 +1,53 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("Change appointment host", session.appointmentJourney) %}
+{% else %}
+    {% set pageTitle = appointmentJourneyTitle("Appointment host", session.appointmentJourney) %}
+{% endif %}
+
+{% set pageId = 'appointment-host-page' %}
+{% set jsBackLink = true %}
+
+{% set organiserOptions = [] %}
+{% for organiserKey, organiserText in organiserDescriptions %}
+    {% set organiserOptions = (organiserOptions.push({
+        value: organiserKey,
+        text: organiserText,
+        checked: formResponses.organiser == organiserKey or session.appointmentJourney.organiserCode == organiserKey
+    }), organiserOptions) %}
+{% endfor %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ appointmentTypeCaption(session) }}
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Who hosts these appointments?" if session.appointmentJourney.type == AppointmentType.SET else "Who hosts this appointment?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    id: "host",
+                    name: "host",
+                    errorMessage: validationErrors | findError('host'),
+                    items: organiserOptions
+                }) }}
+
+                {{ govukButton({
+                    text: "Update host" if isCtaAcceptAndSave else "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

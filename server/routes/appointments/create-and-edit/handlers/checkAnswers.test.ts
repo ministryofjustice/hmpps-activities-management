@@ -15,6 +15,8 @@ import { YesNo } from '../../../../@types/activities'
 import { AppointmentFrequency } from '../../../../@types/appointments'
 import { AppointmentType } from '../appointmentJourney'
 import { AppointmentSetJourney } from '../appointmentSetJourney'
+import { organiserDescriptions } from '../../../../enum/eventOrganisers'
+import { eventTierDescriptions } from '../../../../enum/eventTiers'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -67,6 +69,8 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             minute: 0,
             date: '2023-04-23T13:00:00.000+0100',
           },
+          tierCode: 'TIER_2',
+          organiserCode: 'PRISON_STAFF',
           repeat: YesNo.NO,
         },
         appointmentSetJourney: {},
@@ -81,7 +85,10 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
   describe('GET', () => {
     it('should render the check answers page with data from session', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/check-answers')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/check-answers', {
+        tier: eventTierDescriptions.TIER_2,
+        organiser: organiserDescriptions.PRISON_STAFF,
+      })
     })
   })
 
@@ -100,6 +107,8 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         startTime: '09:30',
         endTime: '13:00',
         prisonerNumbers: ['A1234BC'],
+        tierCode: 'TIER_2',
+        organiserCode: 'PRISON_STAFF',
       } as AppointmentSeriesCreateRequest
 
       expectedResponse = {
@@ -221,6 +230,8 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             extraInformation: 'Extra information for B2345CD',
           } as AppointmentSetAppointment,
         ],
+        tierCode: 'TIER_2',
+        organiserCode: 'PRISON_STAFF',
       } as AppointmentSetCreateRequest
 
       expectedResponse = {

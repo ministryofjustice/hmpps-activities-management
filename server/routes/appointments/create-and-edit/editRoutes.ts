@@ -20,6 +20,8 @@ import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppoin
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import CancellationReasonRoutes, { CancellationReason } from './handlers/cancellationReason'
+import TierRoutes, { TierForm } from './handlers/tier'
+import HostRoutes, { HostForm } from './handlers/host'
 
 export default function Edit({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -31,6 +33,8 @@ export default function Edit({ prisonService, activitiesService, metricsService 
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService)
+  const tierRoutes = new TierRoutes(editAppointmentService)
+  const hostRoutes = new HostRoutes(editAppointmentService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
   const dateAndTimeRoutes = new DateAndTimeRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
@@ -61,6 +65,10 @@ export default function Edit({ prisonService, activitiesService, metricsService 
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.EDIT,
   )
+  get('/tier', tierRoutes.GET, true)
+  post('/tier', tierRoutes.EDIT, TierForm)
+  get('/host', hostRoutes.GET, true)
+  post('/host', hostRoutes.EDIT, HostForm)
   get('/location', locationRoutes.GET, true)
   post('/location', locationRoutes.EDIT, Location)
   get('/date-and-time', dateAndTimeRoutes.GET, true)

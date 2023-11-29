@@ -4,7 +4,6 @@ import { addDays, addMinutes, getHours, getMinutes, subMinutes } from 'date-fns'
 import { associateErrorsWithProperty } from '../utils/utils'
 import TimeAndDateIsAfterNow from './timeAndDateIsAfterNow'
 import SimpleTime, { simpleTimeFromDate } from '../commonValidationTypes/simpleTime'
-import { formatDatePickerDate } from '../utils/datePickerUtils'
 
 describe('timeAndDateIsAfter', () => {
   class DummyForm {
@@ -25,7 +24,7 @@ describe('timeAndDateIsAfter', () => {
 
     const todayOneMinuteInThePast = subMinutes(now, 1)
     const body = {
-      date: formatDatePickerDate(todayOneMinuteInThePast),
+      date: todayOneMinuteInThePast,
       time: simpleTimeFromDate(todayOneMinuteInThePast),
     }
 
@@ -38,7 +37,7 @@ describe('timeAndDateIsAfter', () => {
   it('should fail validation for a time equal to now', async () => {
     const now = new Date()
     const body = {
-      date: formatDatePickerDate(now),
+      date: now,
       time: simpleTimeFromDate(now),
     }
 
@@ -51,7 +50,7 @@ describe('timeAndDateIsAfter', () => {
   it('should pass validation for a time after now', async () => {
     const todayOneMinuteInTheFuture = addMinutes(new Date(), 1)
     const body = {
-      date: formatDatePickerDate(todayOneMinuteInTheFuture),
+      date: todayOneMinuteInTheFuture,
       time: simpleTimeFromDate(todayOneMinuteInTheFuture),
     }
 
@@ -64,7 +63,7 @@ describe('timeAndDateIsAfter', () => {
   it('should pass validation for a earlier than now but a day later', async () => {
     const tomorrowOneMinuteInThePast = subMinutes(addDays(new Date(), 1), 1)
     const body = {
-      date: formatDatePickerDate(tomorrowOneMinuteInThePast),
+      date: tomorrowOneMinuteInThePast,
       time: simpleTimeFromDate(tomorrowOneMinuteInThePast),
     }
 

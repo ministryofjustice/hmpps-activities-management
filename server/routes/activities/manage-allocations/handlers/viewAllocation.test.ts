@@ -67,6 +67,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           prisonerNumber: 'G4793VF',
           startDate: '2022-05-19',
           prisonPayBand: { id: 1 },
+          exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
         } as Allocation)
 
       when(prisonService.getInmateByPrisonerNumber)
@@ -112,11 +113,45 @@ describe('Route Handlers - Allocation dashboard', () => {
           prisonerNumber: 'G4793VF',
           startDate: '2022-05-19',
           prisonPayBand: { id: 1 },
+          exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
         },
         isOnlyPay: true,
         isStarted: true,
         pay: { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         prisonerName: 'John Smith',
+        currentWeek: 1,
+        dailySlots: {
+          '1': [
+            {
+              day: 'Monday',
+              slots: [],
+            },
+            {
+              day: 'Tuesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Wednesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Thursday',
+              slots: ['am'],
+            },
+            {
+              day: 'Friday',
+              slots: ['am'],
+            },
+            {
+              day: 'Saturday',
+              slots: ['am'],
+            },
+            {
+              day: 'Sunday',
+              slots: ['am'],
+            },
+          ],
+        },
       })
     })
   })

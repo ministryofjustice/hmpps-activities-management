@@ -4,6 +4,7 @@ import { Min } from 'class-validator'
 import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import config from '../../../../config'
 
 export class PayBand {
   @Expose()
@@ -56,6 +57,12 @@ export default class PayBandRoutes {
       rate: payBandDetails.rate,
     }
 
+    if (config.exclusionsFeatureToggleEnabled) {
+      return res.redirectOrReturn('exclusions')
+    }
+
+    // Default value if the feature toggle is off
+    req.session.allocateJourney.updatedExclusions = []
     return res.redirect('check-answers')
   }
 

@@ -31,6 +31,7 @@ import {
   setAttribute,
   removeUndefined,
   filterObjects,
+  flatMap,
 } from '../utils/utils'
 import config from '../config'
 import applicationVersion from '../applicationVersion'
@@ -51,7 +52,6 @@ import {
   getConfirmAppointmentEditCta,
 } from '../utils/editAppointmentUtils'
 import ServiceName from '../enum/serviceName'
-import SimpleDate, { simpleDateFromPlain } from '../commonValidationTypes/simpleDate'
 import DateOption from '../enum/dateOption'
 import { PrisonerStatus } from '../@types/prisonApiImportCustom'
 import { isoDateToDatePickerDate, parseIsoDate } from '../utils/datePickerUtils'
@@ -143,7 +143,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('toMoney', toMoney)
   njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('toDate', toDate)
-  njkEnv.addFilter('toDateFromSimpleDate', (simpleDate: SimpleDate) => simpleDateFromPlain(simpleDate).toRichDate())
   njkEnv.addFilter('parseDate', parseDate)
   njkEnv.addFilter('parseISODate', parseISODate)
   njkEnv.addFilter('toDateString', toDateString)
@@ -157,6 +156,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('removeUndefined', removeUndefined)
   njkEnv.addFilter('startOfDay', startOfDay)
   njkEnv.addFilter('filter', filterObjects)
+  njkEnv.addFilter('flatMap', flatMap)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
@@ -180,6 +180,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
+  njkEnv.addGlobal('exclusionsFeatureToggleEnabled', config.exclusionsFeatureToggleEnabled)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

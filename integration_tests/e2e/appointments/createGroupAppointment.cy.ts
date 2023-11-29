@@ -25,6 +25,8 @@ import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/upl
 import AppointmentDetailsPage from '../../pages/appointments/appointment/appointmentDetailsPage'
 import ExtraInformationPage from '../../pages/appointments/create-and-edit/extraInformationPage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
+import TierPage from '../../pages/appointments/create-and-edit/tierPage'
+import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -115,6 +117,14 @@ context('Create group appointment', () => {
     namePage.selectCategory('Chaplaincy')
     namePage.continue()
 
+    const tierPage = Page.verifyOnPage(TierPage)
+    tierPage.selectTier('Tier 2')
+    tierPage.continue()
+
+    const hostPage = Page.verifyOnPage(HostPage)
+    hostPage.selectHost('Prison staff')
+    hostPage.continue()
+
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectLocation('Chapel')
     locationPage.continue()
@@ -140,6 +150,8 @@ context('Create group appointment', () => {
     checkAnswersPage.assertPrisonerInList('Gregs, Stephen', 'A8644DY')
     checkAnswersPage.assertPrisonerInList('Jacobson, Lee', 'A1351DZ')
     checkAnswersPage.assertCategory('Chaplaincy')
+    checkAnswersPage.assertTier('Tier 2')
+    checkAnswersPage.assertHost('Prison staff')
     checkAnswersPage.assertLocation('Chapel')
     checkAnswersPage.assertStartDate(tomorrow)
     checkAnswersPage.assertStartTime(14, 0)

@@ -1,0 +1,124 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - Exclusions" %}
+{% set pageId = 'exclusions-page' %}
+{% set jsBackLink = true %}
+
+{# Find common slots between multiple weeks which should be disabled #}
+{% set disabledSlots = [] %}
+{% if scheduleWeeks > 1 %}
+    {% for day in dailySlots %}
+        {% for week in day.weeks %}
+            {% if week.weekNumber > 1 %}
+                {% for previousWeek in day.weeks.slice(0, week.weekNumber - 1) %}
+                    {% for slot in week.slots %}
+                        {% if slot in previousWeek.slots %}
+                            {% set disabledSlots = (disabledSlots.push(day.day + slot), disabledSlots) %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name | safe }}</span>
+            <h1 class="govuk-heading-xl">Change when {{ prisonerName | safe }} should attend {{ session.allocateJourney.activity.name | safe }}</h1>
+
+            {% if session.req.params.mode == 'create' %}
+                <p class='govuk-body'>Unselect a session to exclude {{ prisonerName | safe }}. They will not be scheduled to attend that session.</p>
+            {% else %}
+                <p class='govuk-body'>Unselect a session to exclude {{ prisonerName | safe }}. They will no longer be scheduled to attend that session.</p>
+                <p class='govuk-body'>Select a session to add it to their schedule.</p>
+            {% endif %}
+
+            {% if disabledSlots | length %}
+                {{ govukInsetText({
+                    text: "You cannot change if " + prisonerName | safe + " should attend a session where the activity runs in the same session in both weeks."
+                }) }}
+            {% endif %}
+        </div>
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <div class="govuk-grid-row govuk-!-margin-top-6">
+                    {% if scheduleWeeks > 1 %}
+                        {% for week in range(1, scheduleWeeks + 1) %}
+                            <div class="govuk-grid-column-one-half">
+                                <span class="govuk-heading-l govuk-!-margin-bottom-6">
+                                    Week {{ week }}
+                                    {{ govukTag({
+                                        text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
+                                    }) if currentWeek == week }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+
+                {% for day in dailySlots %}
+                    <div class="govuk-grid-row">
+                        {% for week in day.weeks %}
+                            <div class="govuk-grid-column-one-half">
+                                {% if week.slots | length %}
+                                    {% set exclusionsForDay = exclusions | filter('weekNumber', loop.index) | filter(day.day | lower, true) %}
+
+                                    {{ govukCheckboxes({
+                                        name: "week" + loop.index + "[" + day.day | lower + "]",
+                                        fieldset: {
+                                            legend: {
+                                                text: day.day | toTitleCase,
+                                                classes: "govuk-fieldset__legend--m"
+                                            }
+                                        },
+                                        items: [
+                                            {
+                                                value: "am",
+                                                text: "AM session",
+                                                checked: not exclusionsForDay | filter('timeSlot', 'AM') | length,
+                                                disabled: (day.day + 'am') in disabledSlots
+                                            } if 'AM' in week.slots,
+                                            {
+                                                value: "pm",
+                                                text: "PM session",
+                                                checked: not exclusionsForDay | filter('timeSlot', 'PM') | length,
+                                                disabled: (day.day + 'pm') in disabledSlots
+                                            } if 'PM' in week.slots,
+                                            {
+                                                value: "ed",
+                                                text: "ED session",
+                                                checked: not exclusionsForDay | filter('timeSlot', 'ED') | length,
+                                                disabled: (day.day + 'ed') in disabledSlots
+                                            } if 'ED' in week.slots
+                                        ]
+                                    }) }}
+                                {% else %}
+                                    <span class='govuk-heading-m'>{{ day.day | toTitleCase }}</span>
+                                    <p class='govuk-body'>Not scheduled to run</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <div class="govuk-button-group govuk-!-margin-top-6">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                    {% if session.req.params.mode != 'edit' and not session.req.query.preserveHistory %}
+                        <a class="govuk-link" href="cancel">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

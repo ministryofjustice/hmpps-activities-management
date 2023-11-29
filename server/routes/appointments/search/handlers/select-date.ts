@@ -1,17 +1,15 @@
 import { Request, Response } from 'express'
-import { Expose } from 'class-transformer'
-import { ValidationArguments } from 'class-validator'
-import { datePickerDateToIsoDate } from '../../../../utils/datePickerUtils'
-import IsValidDatePickerDate from '../../../../validators/isValidDatePickerDate'
+import { Expose, Transform } from 'class-transformer'
+import { IsNotEmpty } from 'class-validator'
+import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import IsValidDate from '../../../../validators/isValidDate'
 
 export class SelectDate {
   @Expose()
-  @IsValidDatePickerDate({
-    message: (args: ValidationArguments) => {
-      return args.value ? 'Enter a valid date' : 'Enter a date'
-    },
-  })
-  startDate: string
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @IsValidDate({ message: 'Enter a valid date' })
+  @IsNotEmpty({ message: 'Enter a date' })
+  startDate: Date
 }
 
 export default class SelectDateRoutes {
@@ -19,6 +17,6 @@ export default class SelectDateRoutes {
 
   POST = async (req: Request, res: Response) => {
     const { startDate } = req.body
-    res.redirect(`/appointments/search?startDate=${datePickerDateToIsoDate(startDate)}`)
+    res.redirect(`/appointments/search?startDate=${formatIsoDate(startDate)}`)
   }
 }

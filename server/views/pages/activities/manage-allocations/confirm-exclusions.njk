@@ -1,0 +1,29 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - Confirm Exclusions" %}
+{% set pageId = 'confirm-exclusions-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name | safe }}</span>
+            <h1 class="govuk-heading-xl">Confirm exclusions</h1>
+        </div>
+        <div class="govuk-grid-column-full">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <div class="govuk-button-group govuk-!-margin-top-6">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                    {% if session.req.params.mode != 'edit' and not session.req.query.preserveHistory %}
+                        <a class="govuk-link" href="cancel">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

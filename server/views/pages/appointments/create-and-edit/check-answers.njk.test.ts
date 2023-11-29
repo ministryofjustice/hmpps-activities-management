@@ -12,6 +12,8 @@ import {
 } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentFrequency } from '../../../../@types/appointments'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
+import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
+import EventOrganiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
 
 let $: CheerioAPI
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/check-answers.njk')
@@ -21,13 +23,18 @@ const getAppointmentDetailsValueElement = (heading: string) =>
     .parent()
     .find('.govuk-summary-list__value')
 
+const getSchedulingInformationValueElement = (heading: string) =>
+  $(`[data-qa=scheduling-information] > .govuk-summary-list__row > .govuk-summary-list__key:contains("${heading}")`)
+    .parent()
+    .find('.govuk-summary-list__value')
+
 const getPrisonerDetailsValueElement = (heading: string) =>
   $(`[data-qa=prisoner-details] > .govuk-summary-list__row > .govuk-summary-list__key:contains("${heading}")`)
     .parent()
     .find('.govuk-summary-list__value')
 
-const getFrequencyValueElement = () => getAppointmentDetailsValueElement('Frequency')
-const getNumberOfAppointmentsValueElement = () => getAppointmentDetailsValueElement('Number of appointments')
+const getFrequencyValueElement = () => getSchedulingInformationValueElement('Frequency')
+const getNumberOfAppointmentsValueElement = () => getSchedulingInformationValueElement('Number of appointments')
 const getIndividualPrisonerValueElement = (qaAttr: string) =>
   getAppointmentDetailsValueElement('Attendee').find(`[data-qa="${qaAttr}"]`)
 const getPrisonerListValueElement = (qaAttr: string, index: number) =>
@@ -44,6 +51,8 @@ describe('Views - Create Appointment - Check Answers', () => {
   beforeEach(() => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
+      tier: eventTierDescriptions[EventTier.TIER_2],
+      organiser: organiserDescriptions[EventOrganiser.EXTERNAL_PROVIDER],
       session: {
         appointmentJourney: {
           mode: AppointmentJourneyMode.CREATE,
@@ -64,6 +73,8 @@ describe('Views - Create Appointment - Check Answers', () => {
             hour: 10,
             minute: 0,
           },
+          tierCode: EventTier.TIER_2,
+          organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
         } as AppointmentJourney,
       },
     }
@@ -77,6 +88,13 @@ describe('Views - Create Appointment - Check Answers', () => {
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(getAppointmentDetailsValueElement('Appointment name').text().trim()).toBe('Bible studies (Chaplaincy)')
+  })
+
+  it('should display appointment tier & organiser information', () => {
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getAppointmentDetailsValueElement('Tier').text().trim()).toBe('Tier 2')
+    expect(getAppointmentDetailsValueElement('Host').text().trim()).toBe('An external provider')
   })
 
   it('should not display repeat frequency or number of appointments when repeat = NO', () => {

@@ -1,7 +1,9 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Check answers" %}
 {% set pageId = 'check-answers-page' %}
@@ -33,6 +35,20 @@
                         {% endfor %}
                     </ul>
                 {% endif %}
+            {% endset %}
+
+            {% set scheduleHtml %}
+                {% for week, slots in dailySlots %}
+                    {% if dailySlots | length > 1 %}
+                        <div class='govuk-heading-s govuk-!-margin-bottom-1'>
+                            Week {{ week }}
+                            {{ govukTag({
+                                text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
+                            }) if currentWeek == week }}
+                        </div>
+                    {% endif %}
+                    {{ daysAndTimes(slots, false, false) }}
+                {% endfor %}
             {% endset %}
 
             {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
@@ -99,7 +115,21 @@
                                     visuallyHiddenText: "change pay rate"
                                 }]
                             }
-                        }
+                        },
+                        {
+                            key: { text: "Schedule" },
+                            value: {
+                                html: scheduleHtml
+                            },
+                            actions: {
+                                items: [{
+                                    href: "exclusions?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change schedule"
+                                }]
+                            }
+                        } if exclusionsFeatureToggleEnabled
                     ]
                 }) }}
             {% endif %}

@@ -1,4 +1,5 @@
 import { RequestHandler, Router } from 'express'
+import createHttpError from 'http-errors'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import { Services } from '../../../services'
 import BeforeYouAllocateRoutes, { ConfirmOptions } from './handlers/beforeYouAllocate'
@@ -13,6 +14,8 @@ import StartDateRoutes, { StartDate } from './handlers/startDate'
 import EndDateRoutes, { EndDate } from './handlers/endDate'
 import RemoveDateOptionRoutes, { RemoveDateOption } from './handlers/removeDateOption'
 import PayBandRoutes, { PayBand } from './handlers/payBand'
+import ExclusionRoutes, { Schedule } from './handlers/exclusions'
+import config from '../../../config'
 
 export default function Index({ activitiesService, prisonService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -28,6 +31,7 @@ export default function Index({ activitiesService, prisonService, metricsService
   const removeDateOptionHandler = new RemoveDateOptionRoutes(activitiesService)
   const payBandHandler = new PayBandRoutes(activitiesService)
   const endDateOptionHandler = new EndDateOptionRoutes()
+  const exclusionsHandler = new ExclusionRoutes(activitiesService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const cancelHandler = new CancelRoutes()
   const confirmationHandler = new ConfirmationRoutes(metricsService)
@@ -50,6 +54,12 @@ export default function Index({ activitiesService, prisonService, metricsService
   get('/cancel', cancelHandler.GET, true)
   post('/cancel', cancelHandler.POST, ConfirmCancelOptions)
   get('/confirmation', confirmationHandler.GET, true)
+
+  // Exclusion routes are only accessible when running locally or when feature toggle is provided
+  router.use((req, res, next) => (!config.exclusionsFeatureToggleEnabled ? next(createHttpError.NotFound()) : next()))
+
+  get('/exclusions', exclusionsHandler.GET, true)
+  post('/exclusions', exclusionsHandler.POST, Schedule)
 
   return router
 }

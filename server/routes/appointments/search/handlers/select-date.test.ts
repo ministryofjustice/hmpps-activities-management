@@ -37,7 +37,7 @@ describe('Route Handlers - Appointments Management - Search Select date', () => 
   describe('POST', () => {
     it('should redirect with correct date', async () => {
       req.body = {
-        startDate: '05/10/2021',
+        startDate: new Date('2021-10-05'),
       }
 
       await handler.POST(req, res)

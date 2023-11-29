@@ -293,9 +293,9 @@ Datepicker.prototype.updateCalendar = function () {
   const day = this.currentDate
 
   const firstOfMonth = new Date(day.getFullYear(), day.getMonth(), 1)
-  const dayOfWeek = firstOfMonth.getDay()
+  const dayOfWeek = firstOfMonth.getDay() === 0 ? 6 : firstOfMonth.getDay() - 1 // Change logic to make Monday first day of week, i.e. 0
 
-  firstOfMonth.setDate(firstOfMonth.getDate() - dayOfWeek + 1)
+  firstOfMonth.setDate(firstOfMonth.getDate() - dayOfWeek)
 
   const thisDay = new Date(firstOfMonth)
 
@@ -474,20 +474,14 @@ Datepicker.prototype.focusLastDayOfWeek = function () {
 Datepicker.prototype.focusNextMonth = function (event, focus = true) {
   event.preventDefault()
   const date = new Date(this.currentDate)
-  const oldMonth = date.getMonth()
-  date.setMonth(date.getMonth() + 1)
-  const newMonth = date.getMonth()
-  if (newMonth - oldMonth > 1) date.setDate(0) // e.g. 31st Oct + 1 month == 1st december (no 31st Nov), so set date to last day of previous month which is 30th Nov
+  date.setMonth(date.getMonth() + 1, 1)
   this.goToDate(date, focus)
 }
 
 Datepicker.prototype.focusPreviousMonth = function (event, focus = true) {
   event.preventDefault()
   const date = new Date(this.currentDate)
-  const oldMonth = date.getMonth()
-  date.setMonth(date.getMonth() - 1)
-  const newMonth = date.getMonth()
-  if (newMonth - oldMonth === 0) date.setDate(0) // e.g. 30th March - 1 month == 1st March (no 30th Feb), so set date to last day of previous month which is 28th February
+  date.setMonth(date.getMonth() - 1, 1)
   this.goToDate(date, focus)
 }
 
@@ -495,14 +489,14 @@ Datepicker.prototype.focusPreviousMonth = function (event, focus = true) {
 Datepicker.prototype.focusNextYear = function (event, focus = true) {
   event.preventDefault()
   const date = new Date(this.currentDate)
-  date.setFullYear(date.getFullYear() + 1)
+  date.setFullYear(date.getFullYear() + 1, date.getMonth(), 1)
   this.goToDate(date, focus)
 }
 
 Datepicker.prototype.focusPreviousYear = function (event, focus = true) {
   event.preventDefault()
   const date = new Date(this.currentDate)
-  date.setFullYear(date.getFullYear() - 1)
+  date.setFullYear(date.getFullYear() - 1, date.getMonth(), 1)
   this.goToDate(date, focus)
 }
 
