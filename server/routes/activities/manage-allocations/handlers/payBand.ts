@@ -61,8 +61,6 @@ export default class PayBandRoutes {
       return res.redirectOrReturn('exclusions')
     }
 
-    // Default value if the feature toggle is off
-    req.session.allocateJourney.updatedExclusions = []
     return res.redirect('check-answers')
   }
 

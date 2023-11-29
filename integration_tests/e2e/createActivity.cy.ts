@@ -80,6 +80,14 @@ context('Create activity', () => {
     riskLevelPage.selectRiskLevel('Only people with a low workplace risk assessment are suitable')
     riskLevelPage.continue()
 
+    /*
+    TODO: Remove comment once feature flag removed
+
+    const payOptionPage = Page.verifyOnPage(PayOptionPage)
+    payOptionPage.selectPayOption('Yes')
+    payOptionPage.continue()
+    */
+
     const payRateTypePage = Page.verifyOnPage(PayRateTypePage)
     payRateTypePage.payRateType('A single pay rate for one incentive level')
     payRateTypePage.continue()

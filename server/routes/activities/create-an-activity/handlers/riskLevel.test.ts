@@ -7,7 +7,8 @@ import RiskLevelRoutes, { RiskLevel } from './riskLevel'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
-import { Activity, ActivityPay } from '../../../../@types/activitiesAPI/types'
+import { Activity } from '../../../../@types/activitiesAPI/types'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -25,6 +26,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
         },
       },
       render: jest.fn(),
+      redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
@@ -33,6 +35,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       session: {
         createJourney: {},
       },
+      query: {},
       params: {},
     } as unknown as Request
   })
@@ -45,27 +48,20 @@ describe('Route Handlers - Create an activity - Risk level', () => {
   })
 
   describe('POST', () => {
-    it('should save the selected risk level in session and redirect to minimum incentive page', async () => {
-      req.body = {
-        riskLevel: 'high',
-      }
-
-      await handler.POST(req, res)
-
-      expect(req.session.createJourney.riskLevel).toEqual('high')
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-rate-type')
+    beforeEach(() => {
+      // Enable feeature flag for tests
+      config.zeroPayFeatureToggleEnabled = true
     })
 
-    it('should save the selected risk level in session and redirect to check pay page if pay exists', async () => {
+    it('should save the selected risk level in session and redirect to pay option pay', async () => {
       req.body = {
         riskLevel: 'high',
       }
-      req.session.createJourney.flat = [{ rate: 100 } as ActivityPay]
 
       await handler.POST(req, res)
 
       expect(req.session.createJourney.riskLevel).toEqual('high')
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-pay')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-option')
     })
 
     it('should save entered risk level in database', async () => {
