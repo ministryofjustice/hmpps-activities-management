@@ -30,6 +30,14 @@ export default class AllocationDashboard extends Page {
     cy.get('#candidates-tab').find('button').contains('Allocate').click()
   }
 
+  selectAllocatedPrisonerByName = (name: string): void => {
+    this.getInputByLabel(name).click()
+  }
+
+  deallocateSelectedPrisoners = (): void => {
+    cy.get('#currently-allocated-tab').find('button').contains('Remove from activity').click()
+  }
+
   activeTimeSlots = () => cy.get('.govuk-table__cell > .govuk-tag').contains('Yes')
 
   selectRiskLevelOption = (option: string) => cy.get('#riskLevelFilter').select(option)
