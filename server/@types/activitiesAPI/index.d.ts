@@ -1055,7 +1055,7 @@ export interface components {
        */
       comment?: string
       /**
-       * @description Should payment be issued for SICK, REST or OTHER
+       * @description Should payment be issued for SICK, REST or OTHER. Will be ignored if the activity is unpaid.
        * @example true
        */
       issuePayment?: boolean
@@ -1709,10 +1709,10 @@ export interface components {
       prisonerNumber: string
       /**
        * Format: int64
-       * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner
+       * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner. Can be null for unpaid activities.
        * @example 1
        */
-      payBandId: number
+      payBandId?: number
       /**
        * Format: date
        * @description The future date when the prisoner will start the activity
@@ -2013,7 +2013,7 @@ export interface components {
       scheduleDescription: string
       /** @description Indicates whether this allocation is to an activity within the 'Not in work' category */
       isUnemployment: boolean
-      prisonPayBand: components['schemas']['PrisonPayBand']
+      prisonPayBand?: components['schemas']['PrisonPayBand']
       /**
        * Format: date
        * @description The date when the prisoner will start the activity
@@ -4141,6 +4141,11 @@ export interface components {
        * @example true
        */
       editable: boolean
+      /**
+       * @description Flag to indicate if the attendance is payable
+       * @example true
+       */
+      payable: boolean
     }
     /** @description An attendance record for a prisoner, can be marked or unmarked */
     AttendanceHistory: {
@@ -4619,6 +4624,11 @@ export interface components {
        * @example true
        */
       removeEndDate: boolean
+      /**
+       * @description Flag to indicate if the activity is a paid activity or not. If true then pay rates are required, if false then no pay rates should be provided. Cannot be updated if already allocated.
+       * @example true
+       */
+      paid?: boolean
     }
     /** @description A list of paid attendance counts for each booking in the prison on the date */
     AttendanceReconciliationResponse: {

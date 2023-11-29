@@ -178,6 +178,7 @@ export default class PayRoutes {
     req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.levelName
 
     const updatedActivity = {
+      paid: true,
       pay: updatedPayRates,
       minimumIncentiveNomisCode: req.session.createJourney.minimumIncentiveNomisCode,
       minimumIncentiveLevel: req.session.createJourney.minimumIncentiveLevel,

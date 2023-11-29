@@ -25,7 +25,7 @@ export default class PayOption {
 
     req.session.createJourney.paid = req.body.paid === YesNo.YES
 
-    if (req.body.paid !== YesNo.YES) {
+    if (req.body.paid === YesNo.NO) {
       req.session.createJourney.pay = []
       req.session.createJourney.flat = []
 
@@ -42,7 +42,7 @@ export default class PayOption {
         const { activityId } = req.session.createJourney
 
         const activity = {
-          paid: true,
+          paid: req.session.createJourney.paid,
           minimumIncentiveLevel: req.session.createJourney.minimumIncentiveLevel,
           minimumIncentiveNomisCode: req.session.createJourney.minimumIncentiveNomisCode,
           pay: [],
@@ -53,7 +53,7 @@ export default class PayOption {
 
         const returnTo = `/activities/view/${req.session.createJourney.activityId}`
         req.session.returnTo = returnTo
-        return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
+        return res.redirectWithSuccess(returnTo, 'Activity updated', successMessage)
       }
 
       return res.redirectOrReturn('qualification')

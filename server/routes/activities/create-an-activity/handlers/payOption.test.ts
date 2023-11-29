@@ -7,15 +7,18 @@ import PrisonService from '../../../../services/prisonService'
 import PayOption, { PayOptionForm } from './payOption'
 import { YesNo } from '../../../../@types/activities'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
-import { ActivityPay } from '../../../../@types/activitiesAPI/types'
+import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import ActivitiesService from '../../../../services/activitiesService'
 
+jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create an activity - Pay option', () => {
-  const handler = new PayOption(prisonService)
+  const handler = new PayOption(activitiesService, prisonService)
   let req: Request
   let res: Response
 
@@ -30,12 +33,14 @@ describe('Route Handlers - Create an activity - Pay option', () => {
       render: jest.fn(),
       redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
       session: {
         createJourney: {},
       },
+      params: {},
       query: {},
       body: {},
     } as unknown as Request
@@ -108,6 +113,39 @@ describe('Route Handlers - Create an activity - Pay option', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('pay-rate-type')
+    })
+
+    describe('Edit', () => {
+      beforeEach(() => {
+        req.params.mode = 'edit'
+        req.session.createJourney.activityId = 2
+        req.session.createJourney.name = 'Activity name'
+      })
+
+      it('should update activity to unpaid and show success message if no pay selected', async () => {
+        req.body.paid = YesNo.NO
+
+        when(prisonService.getMinimumIncentiveLevel)
+          .calledWith('MDI', res.locals.user, [], [])
+          .mockResolvedValueOnce({ levelCode: 'BAS', levelName: 'Basic' } as IncentiveLevel)
+
+        await handler.POST(req, res)
+
+        const activityUpdateRequest = {
+          paid: false,
+          minimumIncentiveLevel: 'Basic',
+          minimumIncentiveNomisCode: 'BAS',
+          pay: [],
+        } as ActivityUpdateRequest
+
+        expect(activitiesService.updateActivity).toHaveBeenCalledWith('MDI', 2, activityUpdateRequest)
+
+        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+          '/activities/view/2',
+          'Activity updated',
+          `You've updated pay status to unpaid for Activity name`,
+        )
+      })
     })
   })
 
