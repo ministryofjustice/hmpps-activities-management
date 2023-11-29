@@ -100,7 +100,8 @@
         "description": "Such as classes in English, maths, construction and computer skills"
       },
       "riskLevel": null,
-      "minimumIncentiveLevel": null
+      "minimumIncentiveLevel": null,
+      "paid": true
     },
     "slots": [
       {

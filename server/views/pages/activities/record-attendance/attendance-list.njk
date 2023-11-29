@@ -154,7 +154,7 @@
                     }
                 },
                 {
-                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code) + ' ' + renderPayStatus(attendee.attendance),
+                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code) + ' ' + renderPayStatus(attendee.attendance, isPayable),
                     classes: 'govuk-!-display-none-print',
                     attributes: {
                         "data-qa": "attendance"
@@ -245,20 +245,23 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro renderPayStatus(attendance) %}
-    {% if attendance %}
+{% macro renderPayStatus(attendance, payable) %}
+    {% if attendance and attendance.status != 'WAITING' %}
         {% if attendance.issuePayment %}
             {{ govukTag({
                 text: "Pay",
                 classes: "govuk-tag--green"
-            })
-            }}
-        {% elseif attendance.status !=  'WAITING' %}
+            }) }}
+        {% elseif payable %}
             {{ govukTag({
                 text: "No pay",
                 classes: "govuk-tag--red"
-            })
-            }}
+            }) }}
+        {% else %}
+            {{ govukTag({
+                text: "Unpaid",
+                classes: "govuk-tag--green"
+            }) }}
         {% endif %}
     {% endif %}
 {% endmacro %}
@@ -270,9 +273,9 @@
 {% endmacro %}
 
   {% macro locationHtml(location, status) %}
-             {% if location == 'CSWAP' and status == 'ACTIVE OUT'%}
-                  -
-             {% else %}
-                 {{ location or '-' }}
-             {% endif %}
+    {% if location == 'CSWAP' and status == 'ACTIVE OUT'%}
+        -
+    {% else %}
+        {{ location or '-' }}
+    {% endif %}
   {% endmacro %}

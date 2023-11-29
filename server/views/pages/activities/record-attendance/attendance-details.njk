@@ -7,6 +7,16 @@
 {% set pageId = 'attendance-view-details-page' %}
 {% set jsBackLink = true %}
 
+{% macro renderPay(attendance, payable) %}
+    {% if attendance.issuePayment %}
+        {{ '£' + (attendance.payAmount / 100) | toFixed }}
+    {% elseif payable %}
+        None
+    {% else %}
+        Unpaid
+    {% endif %}
+{% endmacro %}
+
 {% set summaryListRows = [] %}
 {% set summaryListRows = (summaryListRows.push(
      {
@@ -55,7 +65,9 @@
         key: {
             text: "Pay"
         },
-        value: { text: ('£' + (attendance.payAmount / 100) | toFixed) if attendance.issuePayment else 'None' }
+        value: {
+            text: renderPay(attendance, activity.paid)
+        }
     }
 ), summaryListRows) %}
 

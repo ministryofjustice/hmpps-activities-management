@@ -106,6 +106,7 @@ describe('Route Handlers - Attendance List', () => {
       activity: {
         summary: 'Maths level 1',
         inCell: false,
+        paid: true,
       },
       internalLocation: { description: 'Houseblock 1' },
     },
@@ -121,6 +122,7 @@ describe('Route Handlers - Attendance List', () => {
       locals: {
         user: {
           username: 'joebloggs',
+          activeCaseLoadId: 'LEI',
         },
       },
       render: jest.fn(),
@@ -191,6 +193,7 @@ describe('Route Handlers - Attendance List', () => {
         },
         attendance,
         attendanceSummary: getAttendanceSummary(instance.attendances),
+        isPayable: true,
       })
     })
 
@@ -214,6 +217,7 @@ describe('Route Handlers - Attendance List', () => {
         },
         attendance,
         attendanceSummary: getAttendanceSummary(instance.attendances),
+        isPayable: true,
       })
     })
   })
@@ -226,31 +230,74 @@ describe('Route Handlers - Attendance List', () => {
 
       await handler.ATTENDED(req, res)
 
-      expect(activitiesService.updateAttendances).toBeCalledWith(
+      expect(activitiesService.updateAttendances).toHaveBeenCalledWith(
         [
           {
             id: 1,
             status: 'COMPLETED',
             attendanceReason: 'ATTENDED',
             issuePayment: true,
+            prisonCode: 'LEI',
           },
           {
             id: 2,
             status: 'COMPLETED',
             attendanceReason: 'ATTENDED',
             issuePayment: true,
+            prisonCode: 'LEI',
           },
         ],
-        { username: 'joebloggs' },
+        res.locals.user,
       )
 
-      expect(res.redirectWithSuccess).toBeCalledWith(
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance-list',
         'Attendance recorded',
         "You've saved attendance details for 2 people",
       )
     })
 
+    it('should not issue payment on unpaid activity', async () => {
+      const noPayInstance = {
+        ...instance,
+        activitySchedule: {
+          ...instance.activitySchedule,
+          activity: {
+            ...instance.activitySchedule.activity,
+            paid: false,
+          },
+        },
+      }
+      when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(noPayInstance)
+
+      req.body = {
+        selectedAttendances: ['1'],
+      }
+
+      await handler.ATTENDED(req, res)
+
+      expect(activitiesService.updateAttendances).toHaveBeenCalledWith(
+        [
+          {
+            id: 1,
+            status: 'COMPLETED',
+            attendanceReason: 'ATTENDED',
+            issuePayment: false,
+            prisonCode: 'LEI',
+          },
+        ],
+        res.locals.user,
+      )
+
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        'attendance-list',
+        'Attendance recorded',
+        "You've saved attendance details for 1 person",
+      )
+    })
+  })
+
+  describe('NOT_ATTENDED', () => {
     it('non attendance should be redirected to the non attendance page', async () => {
       req = {
         params: { id: 1 },
@@ -286,7 +333,7 @@ describe('Route Handlers - Attendance List', () => {
 
       await handler.NOT_ATTENDED(req, res)
 
-      expect(res.redirect).toBeCalledWith('/activities/attendance/activities/1/not-attended-reason')
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/1/not-attended-reason')
     })
   })
 })

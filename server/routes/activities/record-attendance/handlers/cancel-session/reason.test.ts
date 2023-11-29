@@ -1,12 +1,19 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import CancelReasonRoutes, { CancelReasonForm } from './reason'
 import cancellationReasons from '../../cancellationReasons'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
+import ActivitiesService from '../../../../../services/activitiesService'
+import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
+
+jest.mock('../../../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Cancel Session Reason', () => {
-  const handler = new CancelReasonRoutes()
+  const handler = new CancelReasonRoutes(activitiesService)
 
   let req: Request
   let res: Response
@@ -32,10 +39,26 @@ describe('Route Handlers - Cancel Session Reason', () => {
   afterEach(() => jest.resetAllMocks())
 
   describe('GET', () => {
+    beforeEach(() => {
+      when(activitiesService.getScheduledActivity)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({
+          id: 1,
+          activitySchedule: {
+            id: 2,
+            activity: {
+              id: 2,
+              paid: true,
+            },
+          },
+        } as ScheduledActivity)
+    })
+
     it('should render cancel session reasons page', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-session/cancel-reason', {
         cancellationReasons,
+        isPayable: true,
       })
     })
   })

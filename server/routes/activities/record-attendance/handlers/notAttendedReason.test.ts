@@ -4,7 +4,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import NotAttendedReasonRoutes, { NotAttendedData, NotAttendedForm } from './notAttendedReason'
-import { AttendanceReason, AttendanceUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { AttendanceReason, AttendanceUpdateRequest, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import AttendanceReasons from '../../../../enum/attendanceReason'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
@@ -66,6 +66,19 @@ describe('Route Handlers - Non Attendance', () => {
 
   describe('GET', () => {
     it('should render with the expected view', async () => {
+      when(activitiesService.getScheduledActivity)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({
+          id: 1,
+          activitySchedule: {
+            id: 2,
+            activity: {
+              id: 2,
+              paid: true,
+            },
+          },
+        } as ScheduledActivity)
+
       when(activitiesService.getAttendanceReasons)
         .calledWith(res.locals.user)
         .mockResolvedValue([
@@ -116,6 +129,7 @@ describe('Route Handlers - Non Attendance', () => {
           },
         ],
         selectedPrisoners: [{ attendanceId: 1, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' }],
+        isPayable: true,
       })
     })
   })
@@ -134,10 +148,52 @@ describe('Route Handlers - Non Attendance', () => {
     } as AttendanceUpdateRequest
 
     it('non attendance should be redirected to the non attendance page', async () => {
+      when(activitiesService.getScheduledActivity)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({
+          id: 1,
+          activitySchedule: {
+            id: 2,
+            activity: {
+              id: 2,
+              paid: true,
+            },
+          },
+        } as ScheduledActivity)
+
       await handler.POST(req, res)
 
-      expect(activitiesService.updateAttendances).toBeCalledWith([expectedAttendance], res.locals.user)
-      expect(res.redirectWithSuccess).toBeCalledWith(
+      expect(activitiesService.updateAttendances).toHaveBeenCalledWith([expectedAttendance], res.locals.user)
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        'attendance-list',
+        'Attendance recorded',
+        "You've saved attendance details for Joe Bloggs",
+      )
+    })
+
+    it('should not issue payment if activity is unpaid', async () => {
+      when(activitiesService.getScheduledActivity)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({
+          id: 1,
+          activitySchedule: {
+            id: 2,
+            activity: {
+              id: 2,
+              paid: false,
+            },
+          },
+        } as ScheduledActivity)
+
+      await handler.POST(req, res)
+
+      const unpaidAttendance = {
+        ...expectedAttendance,
+        issuePayment: false,
+      }
+
+      expect(activitiesService.updateAttendances).toHaveBeenCalledWith([unpaidAttendance], res.locals.user)
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance-list',
         'Attendance recorded',
         "You've saved attendance details for Joe Bloggs",
