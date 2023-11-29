@@ -102,22 +102,35 @@ export default class NotAttendedReasonRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const instanceId = req.params.id
     const { selectedPrisoners } = req.session.notAttendedJourney
 
-    const notAttendedReasons = (await this.activitiesService.getAttendanceReasons(user))
+    const [attendanceReasons, instance] = await Promise.all([
+      this.activitiesService.getAttendanceReasons(user),
+      this.activitiesService.getScheduledActivity(+instanceId, user),
+    ])
+
+    const notAttendedReasons = attendanceReasons
       .filter(r => r.displayInAbsence)
       .sort((r1, r2) => r1.displaySequence - r2.displaySequence)
+
+    const isPayable = instance.activitySchedule.activity.paid
 
     res.render('pages/activities/record-attendance/not-attended-reason', {
       notAttendedReasons,
       selectedPrisoners,
+      isPayable,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const instanceId = req.params.id
     const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
     const { selectedPrisoners, activityInstance } = req.session.notAttendedJourney
+
+    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
+    const isPaid = instance.activitySchedule.activity.paid
 
     const attendanceUpdates = selectedPrisoners.map(selectedPrisoner => {
       const prisonerAttendance = notAttendedData.find(a => a.prisonerNumber === selectedPrisoner.prisonerNumber)
@@ -129,7 +142,7 @@ export default class NotAttendedReasonRoutes {
         status: AttendanceStatus.COMPLETED,
         attendanceReason: prisonerAttendance.notAttendedReason,
         comment: prisonerAttendance.getMoreDetails(),
-        issuePayment: prisonerAttendance.getIssuePayment(),
+        issuePayment: prisonerAttendance.getIssuePayment() && isPaid,
         caseNote: prisonerAttendance.getCaseNote(activityInstance),
         incentiveLevelWarningIssued: prisonerAttendance.getIncentiveLevelWarning(),
         otherAbsenceReason: prisonerAttendance.getOtherAbsenceReason(),
