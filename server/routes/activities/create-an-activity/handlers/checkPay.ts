@@ -49,6 +49,7 @@ export default class CheckPayRoutes {
       const { activityId } = req.session.createJourney
       const prisonCode = user.activeCaseLoadId
       const activity = {
+        paid: true,
         minimumIncentiveLevel: req.session.createJourney.minimumIncentiveLevel,
         minimumIncentiveNomisCode: req.session.createJourney.minimumIncentiveNomisCode,
         pay: req.session.createJourney.pay.map(p => ({

@@ -40,7 +40,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const tierHandler = new TierRoutes(activitiesService)
   const organiserHandler = new OrganiserRoutes(activitiesService)
   const riskLevelHandler = new RiskLevelRoutes(activitiesService)
-  const payOption = new PayOption(prisonService)
+  const payOption = new PayOption(activitiesService, prisonService)
   const payRateTypeHandler = new PayRateTypeRoutes()
   const payHandler = new PayRoutes(prisonService, activitiesService)
   const checkPayHandler = new CheckPayRoutes(activitiesService, prisonService)
