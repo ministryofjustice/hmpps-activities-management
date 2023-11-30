@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import {
   ValidateNested,
   ValidateIf,
@@ -23,14 +23,17 @@ export class NotAttendedData {
 
   prisonerName: string
 
+  @Transform(({ value }) => value !== 'false')
+  isPayable: boolean
+
   @IsEnum(AttendanceReason, { message: args => `Select an absence reason for ${getPrisonerName(args)}` })
   notAttendedReason: AttendanceReason
 
-  @ValidateIf(o => AttendanceReason.SICK === o.notAttendedReason)
+  @ValidateIf(o => AttendanceReason.SICK === o.notAttendedReason && o.isPayable)
   @IsEnum(YesNo, { message: (args: ValidationArguments) => `Select if ${getPrisonerName(args)} should be paid` })
   sickPay?: YesNo
 
-  @ValidateIf(o => AttendanceReason.REST === o.notAttendedReason)
+  @ValidateIf(o => AttendanceReason.REST === o.notAttendedReason && o.isPayable)
   @IsEnum(YesNo, { message: (args: ValidationArguments) => `Select if ${getPrisonerName(args)} should be paid` })
   restPay?: YesNo
 
@@ -39,7 +42,7 @@ export class NotAttendedData {
   @MaxLength(100, { message: 'Absence reason must be $constraint1 characters or less' })
   otherAbsenceReason?: string
 
-  @ValidateIf(o => AttendanceReason.OTHER === o.notAttendedReason)
+  @ValidateIf(o => AttendanceReason.OTHER === o.notAttendedReason && o.isPayable)
   @IsEnum(YesNo, {
     message: (args: ValidationArguments) =>
       `Select if this is an acceptable absence for ${getPrisonerName(args)} and they should be paid`,

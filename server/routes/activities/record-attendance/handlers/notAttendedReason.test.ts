@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import NotAttendedReasonRoutes, { NotAttendedData, NotAttendedForm } from './notAttendedReason'
+import NotAttendedReasonRoutes, { NotAttendedForm } from './notAttendedReason'
 import { AttendanceReason, AttendanceUpdateRequest, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import AttendanceReasons from '../../../../enum/attendanceReason'
@@ -54,6 +54,7 @@ describe('Route Handlers - Non Attendance', () => {
             caseNote: null,
             otherAbsenceReason: null,
             sickPay: YesNo.YES,
+            isPayable: true,
           },
         ],
       }),
@@ -202,24 +203,26 @@ describe('Route Handlers - Non Attendance', () => {
   })
 
   describe('Validation', () => {
-    const attendance = {
-      prisonerNumber: 'ABC123',
-      prisonerName: 'Joe Bloggs',
-      notAttendedReason: AttendanceReasons.SICK,
-      sickPay: YesNo.YES,
-    } as NotAttendedData
-    const requestData = {
-      notAttendedData: [
-        attendance,
-        {
-          ...attendance,
-          prisonerNumber: 'ABC234',
-          prisonerName: 'John Smith',
-        },
-      ],
-    } as NotAttendedForm
-
     it('should pass validation', async () => {
+      const requestData = {
+        notAttendedData: [
+          {
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
+            notAttendedReason: AttendanceReasons.SICK,
+            sickPay: YesNo.YES,
+          },
+          {
+            prisonerNumber: 'ABC234',
+            prisonerName: 'John Smith',
+            isPayable: true,
+            notAttendedReason: AttendanceReasons.SICK,
+            sickPay: YesNo.NO,
+          },
+        ],
+      }
+
       const requestObject = plainToInstance(NotAttendedForm, requestData)
       const errors = await validate(requestObject)
       expect(errors.length).toEqual(0)
@@ -229,11 +232,11 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
-            notAttendedReason: undefined,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -250,11 +253,12 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
             notAttendedReason: 'INVALID',
           },
         ],
-      } as unknown as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -271,11 +275,13 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
-            sickPay: undefined,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
+            notAttendedReason: AttendanceReasons.SICK,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -292,12 +298,13 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.REST,
-            restPay: undefined,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -314,13 +321,14 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.OTHER,
             otherAbsenceReason: 'absence reason',
-            otherAbsencePay: undefined,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -333,17 +341,70 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
+    it('should pass validation and not require pay selection if attendence reason is "SICK" and activity is unpaid', async () => {
+      const badRequest = {
+        notAttendedData: [
+          {
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'false',
+            notAttendedReason: AttendanceReasons.SICK,
+          },
+        ],
+      }
+
+      const requestObject = plainToInstance(NotAttendedForm, badRequest)
+      const errors = await validate(requestObject)
+      expect(errors.length).toEqual(0)
+    })
+
+    it('should pass validation and not require pay selection if attendence reason is "REST" and activity is unpaid', async () => {
+      const badRequest = {
+        notAttendedData: [
+          {
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'false',
+            notAttendedReason: AttendanceReasons.REST,
+          },
+        ],
+      }
+
+      const requestObject = plainToInstance(NotAttendedForm, badRequest)
+      const errors = await validate(requestObject)
+      expect(errors.length).toEqual(0)
+    })
+
+    it('should pass validation and not require pay selection if attendence reason is "OTHER" and activity is unpaid', async () => {
+      const badRequest = {
+        notAttendedData: [
+          {
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'false',
+            notAttendedReason: AttendanceReasons.SICK,
+          },
+        ],
+      }
+
+      const requestObject = plainToInstance(NotAttendedForm, badRequest)
+      const errors = await validate(requestObject)
+      expect(errors.length).toEqual(0)
+    })
+
     it('should fail validation if attendence reason is "OTHER" and other absence reason not entered', async () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.OTHER,
             otherAbsenceReason: '',
             otherAbsencePay: YesNo.YES,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -360,13 +421,15 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.OTHER,
             otherAbsenceReason: 'a'.repeat(101),
             otherAbsencePay: YesNo.YES,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -383,11 +446,15 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
+            notAttendedReason: AttendanceReasons.SICK,
+            sickPay: YesNo.YES,
             moreDetail: 'a'.repeat(101),
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -404,13 +471,15 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.REFUSED,
             incentiveLevelWarningIssued: YesNo.YES,
             caseNote: '',
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -427,13 +496,15 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.REFUSED,
             incentiveLevelWarningIssued: YesNo.YES,
             caseNote: 'a'.repeat(4001),
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -450,13 +521,14 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.REFUSED,
-            incentiveLevelWarningIssued: undefined,
             caseNote: 'case note',
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
       const errors = await validate(requestObject).then(errs =>
@@ -473,12 +545,14 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.SICK,
             caseNote: 'case note',
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toBeNull()
@@ -488,12 +562,14 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.REFUSED,
             caseNote: 'case note',
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toEqual(
@@ -506,12 +582,14 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.REFUSED,
             caseNote: 'case note',
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toEqual(
@@ -523,13 +601,15 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.REFUSED,
             sickPay: YesNo.YES,
             restPay: YesNo.YES,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(false)
@@ -539,13 +619,15 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.CLASH,
             sickPay: YesNo.NO,
             restPay: YesNo.NO,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(true)
@@ -555,13 +637,15 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.NOT_REQUIRED,
             sickPay: YesNo.NO,
             restPay: YesNo.NO,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(true)
@@ -571,12 +655,14 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.SICK,
             sickPay: YesNo.NO,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(false)
@@ -586,12 +672,14 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.OTHER,
             otherAbsencePay: YesNo.NO,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(false)
@@ -601,12 +689,14 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.OTHER,
             otherAbsencePay: YesNo.YES,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(true)
@@ -616,12 +706,14 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.REST,
             restPay: YesNo.NO,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getIssuePayment()).toEqual(false)
@@ -631,12 +723,14 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
-            ...attendance,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'Joe Bloggs',
+            isPayable: 'true',
             notAttendedReason: AttendanceReasons.SICK,
             incentiveLevelWarningIssued: YesNo.YES,
           },
         ],
-      } as NotAttendedForm
+      }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
       expect(requestObject.notAttendedData[0].getIncentiveLevelWarning()).toEqual(false)
