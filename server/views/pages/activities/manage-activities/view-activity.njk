@@ -335,11 +335,13 @@
                 </div>
             {% endfor %}
         {% else %}
-            None added
+            None added yet
         {% endif %}
     {% else %}
-        <div class="govuk-!-font-weight-bold">No pay</div>
-        <div>Allocations: {{ allocations | length }}</div>
+        <p class="govuk-body govuk-!-margin-0">People are not paid for this activity</p>
+        {% if allocations | length > 0 %}
+            <div class="govuk-hint">You cannot change this while people are allocated to the activity.</div>
+        {% endif %}
     {% endif %}
 {% endmacro %}
 

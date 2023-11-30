@@ -143,7 +143,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           '/activities/view/2',
           'Activity updated',
-          `You've updated pay status to unpaid for Activity name`,
+          `You've updated pay for Activity name. People will now not be paid for attending.`,
         )
       })
     })

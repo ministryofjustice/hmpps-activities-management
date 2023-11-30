@@ -295,25 +295,29 @@
 
 {% macro paySummary(incentiveLevelPays) %}
     {% if session.createJourney.paid %}
-        {% for incentiveLevelPay in incentiveLevelPays %}
-            <div class="govuk-!-margin-bottom-2">
-                <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
-                {% for pay in incentiveLevelPay.pays %}
-                    <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
-                {% endfor %}
-            </div>
-        {% endfor %}
-        {% if session.createJourney.flat | length %}
-            <div class="govuk-!-margin-bottom-2">
-                <div class="govuk-!-font-weight-bold">Flat rate pay</div>
-                {% for flatRate in session.createJourney.flat %}
-                    <div>{{ flatRate.prisonPayBand.alias }}: {{ flatRate.rate | toMoney }}</div>
-                {% endfor %}
-            </div>
+        {% if incentiveLevelPays | length or session.createJourney.flat | length %}
+            {% for incentiveLevelPay in incentiveLevelPays %}
+                <div class="govuk-!-margin-bottom-2">
+                    <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
+                    {% for pay in incentiveLevelPay.pays %}
+                        <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            {% if session.createJourney.flat | length %}
+                <div class="govuk-!-margin-bottom-2">
+                    <div class="govuk-!-font-weight-bold">Flat rate pay</div>
+                    {% for flatRate in session.createJourney.flat %}
+                        <div>{{ flatRate.prisonPayBand.alias }}: {{ flatRate.rate | toMoney }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% else %}
+            None added yet
         {% endif %}
     {% else %}
-        No pay
-    {% endif %}    
+        People are not paid for this activity
+    {% endif %}
 {% endmacro %}
 
 {% macro educationLevelSummary(educationLevels) %}
