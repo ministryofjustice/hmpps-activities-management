@@ -49,7 +49,7 @@ export default class PayOption {
         } as ActivityUpdateRequest
 
         await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
-        const successMessage = `You've updated pay status to unpaid for ${req.session.createJourney.name}`
+        const successMessage = `You've updated pay for ${req.session.createJourney.name}. People will now not be paid for attending.`
 
         const returnTo = `/activities/view/${req.session.createJourney.activityId}`
         req.session.returnTo = returnTo
