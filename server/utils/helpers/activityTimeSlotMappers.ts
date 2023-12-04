@@ -32,9 +32,10 @@ export default function activitySessionToDailyTimeSlots(
 
     dailySlots[weekNumber] = daysOfWeek.map(day => ({
       day,
-      slots: (slots[`timeSlots${day}`] as string[])
-        ?.map(timeslot => toTimeSlot(timeslot))
-        ?.sort((a, b) => timeSlotOrder[a] - timeSlotOrder[b]),
+      slots:
+        (slots[`timeSlots${day}`] as string[])
+          ?.map(timeslot => toTimeSlot(timeslot))
+          ?.sort((a, b) => timeSlotOrder[a] - timeSlotOrder[b]) || [],
     }))
   }
   return dailySlots

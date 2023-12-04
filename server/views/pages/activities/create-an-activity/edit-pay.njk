@@ -27,6 +27,11 @@
                 text: 'You can add pay rates or edit them. You can only delete pay rates if no one is allocated to them.'
             }) }}
 
+            {% if incentiveLevelPays | length == 0 %}
+                <p class="govuk-body">No pay rates have been set for this activity.</p>
+                <p class="govuk-body">You must set at least one pay rate or <a href="pay-option?preserveHistoryText=true" class="govuk-link">change the activity to unpaid</a>.</p>
+            {% endif %}
+
             {% for incentiveLevelPay in incentiveLevelPays %}
                 <h2 class="govuk-heading-m">{{ incentiveLevelPay.incentiveLevel }} incentive level pay rates</h2>
                 {% for pay in incentiveLevelPay.pays %}
@@ -84,8 +89,14 @@
                 {% endfor %}
             {% endfor %}
 
-            <div class="govuk-!-margin-bottom-6 govuk-body">
-                <a href="/activities/view/{{ session.createJourney.activityId }}" class="govuk-link govuk-link--no-visited-state gov-!-margin-bottom-6">Return to edit activity page</a>
+            <div class="govuk-!-margin-top-6">
+                {{ 
+                    govukButton({
+                        text: "Return to edit activity page",
+                        href: '/activities/view/' + session.createJourney.activityId,
+                        classes: "govuk-button--secondary"
+                    })
+                }}
             </div>
         </div>
     </div>

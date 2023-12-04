@@ -54,7 +54,7 @@ export default class AllocationDashboardRoutes {
       this.prisonService.getIncentiveLevels(user.activeCaseLoad.caseLoadId, user),
     ])
 
-    const suitableForIep = this.getSuitableForIep(activity.pay, incentiveLevels)
+    const suitableForIep = this.getSuitableForIep(activity.pay, activity.paid, incentiveLevels)
     const suitableForWra = this.getSuitableForWra(activity.riskLevel)
 
     if (
@@ -125,7 +125,7 @@ export default class AllocationDashboardRoutes {
       this.activitiesService.getActivity(+req.params.activityId, user),
     ])
 
-    if (!activity.pay.map(p => p.incentiveLevel).includes(iepSummary.iepLevel)) {
+    if (!activity.pay.map(p => p.incentiveLevel).includes(iepSummary.iepLevel) && activity.paid) {
       return res.validationFailed('selectedAllocation', 'No suitable pay rate exists for this candidate')
     }
 
@@ -166,8 +166,10 @@ export default class AllocationDashboardRoutes {
     }
   }
 
-  private getSuitableForIep = (pay: ActivityPay[], iepLevels: IncentiveLevel[]) => {
-    const suitableIepLevels = iepLevels.filter(i => pay.map(p => p.incentiveNomisCode).includes(i.levelCode))
+  private getSuitableForIep = (pay: ActivityPay[], paidActivity: boolean, iepLevels: IncentiveLevel[]) => {
+    const suitableIepLevels = iepLevels.filter(
+      i => pay.map(p => p.incentiveNomisCode).includes(i.levelCode) || !paidActivity,
+    )
     if (suitableIepLevels.length === iepLevels.length) return 'All Incentive Levels'
     return suitableIepLevels.map(i => i.levelName).join(', ')
   }

@@ -36,10 +36,12 @@ export default class CheckPayRoutes {
       return res.validationFailed('', `Add at least one pay rate`)
     }
 
-    const minimumIncentiveLevel = await this.prisonService
-      .getIncentiveLevels(user.activeCaseLoadId, user)
-      .then(levels => levels.find(l => pay.find(p => p.incentiveLevel === l.levelName) || flat.length))
-
+    const minimumIncentiveLevel = await this.prisonService.getMinimumIncentiveLevel(
+      user.activeCaseLoadId,
+      user,
+      pay,
+      flat,
+    )
     req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.levelCode
     req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.levelName
 
@@ -47,6 +49,9 @@ export default class CheckPayRoutes {
       const { activityId } = req.session.createJourney
       const prisonCode = user.activeCaseLoadId
       const activity = {
+        paid: true,
+        minimumIncentiveLevel: req.session.createJourney.minimumIncentiveLevel,
+        minimumIncentiveNomisCode: req.session.createJourney.minimumIncentiveNomisCode,
         pay: req.session.createJourney.pay.map(p => ({
           incentiveNomisCode: p.incentiveNomisCode,
           incentiveLevel: p.incentiveLevel,

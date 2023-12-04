@@ -49,6 +49,7 @@ export default class StartJourneyRoutes {
         offWing: schedule.activity.offWing,
         startDate: schedule.startDate,
         endDate: schedule.endDate,
+        paid: schedule.activity.paid,
       },
       exclusions: [],
       updatedExclusions: [],

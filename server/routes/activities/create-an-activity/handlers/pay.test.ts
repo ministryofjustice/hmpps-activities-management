@@ -293,6 +293,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
       await handler.POST(req, res)
 
       const updatedActivity = {
+        paid: true,
         pay: [
           { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 150 },
           { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', payBandId: 1, rate: 100 },
@@ -303,8 +304,8 @@ describe('Route Handlers - Create an activity - Pay', () => {
         minimumIncentiveLevel: 'Basic',
       } as unknown as ActivityUpdateRequest
 
-      expect(activitiesService.updateActivity).toBeCalledWith('MDI', 1, updatedActivity)
-      expect(res.redirectWithSuccess).toBeCalledWith(
+      expect(activitiesService.updateActivity).toHaveBeenCalledWith('MDI', 1, updatedActivity)
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../check-pay?preserveHistory=true',
         'Activity updated',
         `You've added a flat rate for High 2`,

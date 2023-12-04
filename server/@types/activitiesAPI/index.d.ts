@@ -1055,7 +1055,7 @@ export interface components {
        */
       comment?: string
       /**
-       * @description Should payment be issued for SICK, REST or OTHER
+       * @description Should payment be issued for SICK, REST or OTHER. Will be ignored if the activity is unpaid.
        * @example true
        */
       issuePayment?: boolean
@@ -1709,10 +1709,10 @@ export interface components {
       prisonerNumber: string
       /**
        * Format: int64
-       * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner
+       * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner. Can be null for unpaid activities.
        * @example 1
        */
-      payBandId: number
+      payBandId?: number
       /**
        * Format: date
        * @description The future date when the prisoner will start the activity
@@ -2013,7 +2013,7 @@ export interface components {
       scheduleDescription: string
       /** @description Indicates whether this allocation is to an activity within the 'Not in work' category */
       isUnemployment: boolean
-      prisonPayBand: components['schemas']['PrisonPayBand']
+      prisonPayBand?: components['schemas']['PrisonPayBand']
       /**
        * Format: date
        * @description The date when the prisoner will start the activity
@@ -3418,6 +3418,11 @@ export interface components {
        */
       outsideWork: boolean
       /**
+       * @description Flag to indicate if the activity is a paid activity. It true then pay rates are required, if false then no pay rates should be provided
+       * @example true
+       */
+      paid: boolean
+      /**
        * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
        * @example H
        * @enum {string}
@@ -3694,6 +3699,11 @@ export interface components {
       updatedBy?: string
       /** @description The list of minimum education levels that can apply to this activity */
       minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevel'][]
+      /**
+       * @description Whether the activity is a paid activity
+       * @example true
+       */
+      paid: boolean
     }
     /** @description Describes a top-level activity category */
     ActivityCategory: {
@@ -3836,6 +3846,11 @@ export interface components {
        * @enum {string}
        */
       activityState: 'ARCHIVED' | 'LIVE'
+      /**
+       * @description Whether the activity is a paid activity
+       * @example true
+       */
+      paid: boolean
     }
     /** @description Describes the minimum education levels which apply to an activity */
     ActivityMinimumEducationLevel: {
@@ -4126,6 +4141,11 @@ export interface components {
        * @example true
        */
       editable: boolean
+      /**
+       * @description Flag to indicate if the attendance is payable
+       * @example true
+       */
+      payable: boolean
     }
     /** @description An attendance record for a prisoner, can be marked or unmarked */
     AttendanceHistory: {
@@ -4588,7 +4608,7 @@ export interface components {
       attendanceRequired?: boolean
       /** @description The list of minimum education levels that apply to this activity */
       minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
-      /** @description The list of pay rates that can apply to this activity */
+      /** @description The list of pay rates that can apply to this activity. Must be null or empty if the activity is unpaid */
       pay?: components['schemas']['ActivityPayCreateRequest'][]
       /**
        * Format: int32
@@ -4604,6 +4624,11 @@ export interface components {
        * @example true
        */
       removeEndDate: boolean
+      /**
+       * @description Flag to indicate if the activity is a paid activity or not. If true then pay rates are required, if false then no pay rates should be provided. Cannot be updated if already allocated.
+       * @example true
+       */
+      paid?: boolean
     }
     /** @description A list of paid attendance counts for each booking in the prison on the date */
     AttendanceReconciliationResponse: {

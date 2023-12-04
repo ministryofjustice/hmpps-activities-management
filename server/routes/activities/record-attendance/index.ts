@@ -27,7 +27,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const activitiesHandler = new ActivitiesRoutes(activitiesService)
   const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService)
   const notAttendedReasonHandler = new NotAttendedReasonRoutes(activitiesService)
-  const cancelSessionReasonRoutes = new CancelSessionReasonRoutes()
+  const cancelSessionReasonRoutes = new CancelSessionReasonRoutes(activitiesService)
   const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService)
   const uncancelSessionConfirmationRoutes = new UncancelSessionConfirmationRoutes(activitiesService)
   const attendanceDetailsHandler = new AttendanceDetailsRoutes(activitiesService, prisonService)

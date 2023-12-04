@@ -2,6 +2,7 @@ import { Expose } from 'class-transformer'
 import { IsIn, IsNotEmpty, MaxLength } from 'class-validator'
 import { Request, Response } from 'express'
 import cancellationReasons from '../../cancellationReasons'
+import ActivitiesService from '../../../../../services/activitiesService'
 
 export class CancelReasonForm {
   @Expose()
@@ -15,8 +16,20 @@ export class CancelReasonForm {
 }
 
 export default class CancelSessionRoutes {
-  GET = async (req: Request, res: Response) =>
-    res.render('pages/activities/record-attendance/cancel-session/cancel-reason', { cancellationReasons })
+  constructor(private readonly activitiesService: ActivitiesService) {}
+
+  GET = async (req: Request, res: Response) => {
+    const { user } = res.locals
+    const instanceId = req.params.id
+
+    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
+    const isPayable = instance.activitySchedule.activity.paid
+
+    res.render('pages/activities/record-attendance/cancel-session/cancel-reason', {
+      cancellationReasons,
+      isPayable,
+    })
+  }
 
   POST = async (req: Request, res: Response) => {
     const { reason, comment }: CancelReasonForm = req.body

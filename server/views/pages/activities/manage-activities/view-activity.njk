@@ -12,6 +12,8 @@
 {% set hardBackLinkText = 'Back to activities dashboard' %}
 {% set hardBackLinkHref = '/activities/dashboard' %}
 
+{% set activityEnded = schedule.endDate and schedule.endDate < now | toDateString %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -36,7 +38,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                        } if not activityEnded
                     },
                     {
                         key: {
@@ -54,7 +56,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                        } if not activityEnded
                     },
                     {
                         key: {
@@ -112,7 +114,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                        } if not activityEnded
                     },
                     {
                         key: {
@@ -130,7 +132,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                        } if not activityEnded
                     }
                 ]
             }) }}
@@ -154,7 +156,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                        } if not activityEnded
                     },
                     {
                         key: {
@@ -172,7 +174,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                        } if not activityEnded
                     }
                 ]
             }) }}
@@ -184,18 +186,18 @@
                             text: "Pay rates"
                         },
                         value: {
-                            html: paySummary(incentiveLevelPays)
+                            html: paySummary(schedule.activity.paid, incentiveLevelPays, schedule.allocations)
                         },
                         actions: {
                             items: [
                                 {
-                                    href: "/activities/edit/" + activity.id + "/check-pay?preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/" + ("check-pay" if schedule.activity.paid else "pay-option") + "?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change pay",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                        } if not activityEnded and (schedule.activity.paid or schedule.allocations | length == 0)
                     }
                 ]
             }) }}
@@ -204,7 +206,7 @@
             {{ govukInsetText({ 
                 text: 'The current week is: Week ' + currentWeek,
                 classes: 'govuk-!-margin-top-0 govuk-!-margin-bottom-0'
-            }) if session.createJourney.scheduleWeeks > 1 and currentWeek }}
+            }) if schedule.scheduleWeeks > 1 and currentWeek }}
             {% set dateAndScheduleRows = [{
                 key: {
                     text: "Start date"
@@ -243,7 +245,7 @@
                             classes: "govuk-link--no-visited-state"
                         }
                     ]
-                } if (not schedule.endDate) or (schedule.endDate >= now | toDateString)
+                } if not activityEnded
             }), dateAndScheduleRows) %}
 
             {% set dateAndScheduleRows = (dateAndScheduleRows.push({
@@ -271,7 +273,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                        } if not activityEnded
                     }
                 ), dateAndScheduleRows) %}
             {% endfor %}
@@ -293,7 +295,7 @@
                                 classes: "govuk-link--no-visited-state"
                             }
                         ]
-                    } if (schedule.endDate >= now | toDateString) or (not schedule.endDate)
+                    } if not activityEnded
                 }
             ), dateAndScheduleRows) %}
 
@@ -321,15 +323,26 @@
     {% endif %}
 {% endmacro %}
 
-{% macro paySummary(incentiveLevelPays) %}
-    {% for incentiveLevelPay in incentiveLevelPays %}
-        <div class="govuk-!-margin-bottom-2">
-            <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
-            {% for pay in incentiveLevelPay.pays %}
-                <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
+{% macro paySummary(activityPaid, incentiveLevelPays, allocations) %}
+    {% if activityPaid %}
+        {% if incentiveLevelPays | length > 0 %}
+            {% for incentiveLevelPay in incentiveLevelPays %}
+                <div class="govuk-!-margin-bottom-2">
+                    <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
+                    {% for pay in incentiveLevelPay.pays %}
+                        <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
+                    {% endfor %}
+                </div>
             {% endfor %}
-        </div>
-    {% endfor %}
+        {% else %}
+            None added yet
+        {% endif %}
+    {% else %}
+        <p class="govuk-body govuk-!-margin-0">People are not paid for this activity</p>
+        {% if allocations | length > 0 %}
+            <div class="govuk-hint">You cannot change this while people are allocated to the activity.</div>
+        {% endif %}
+    {% endif %}
 {% endmacro %}
 
 {% macro locationText(schedule) %}

@@ -88,8 +88,12 @@
                 {% endset %}
 
                 {% set suitableForIepHtml %}
-                    <p>{{ suitableForIep }}</p>
-                    <p class='govuk-hint'>You can control which incentive levels are suitable by <a class='govuk-link govuk-link--no-visited-state' href='/activities/view/{{ activity.id }}' target='_blank'>adding or removing corresponding pay rates.</a></p>
+                    <div>{{ suitableForIep }}</div>
+                    {% if schedule.activity.paid %}
+                        <div class="govuk-!-margin-top-2">
+                            <p class='govuk-hint'>You can control which incentive levels are suitable by <a class='govuk-link govuk-link--no-visited-state' href='/activities/view/{{ activity.id }}' target='_blank'>adding or removing corresponding pay rates.</a></p>
+                        </div>
+                    {% endif %}
                 {% endset %}
 
                 {{ govukTable({

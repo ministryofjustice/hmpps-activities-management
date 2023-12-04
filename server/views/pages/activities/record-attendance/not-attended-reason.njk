@@ -35,7 +35,7 @@
                     checked: formResponses.notAttendedData[index].sickPay == YesNo.NO
                 }
             ]
-        }) }}
+        }) if isPayable }}
         {{ govukCharacterCount({
             label: {
                 text: "Can you provide more detail? (optional)"
@@ -47,11 +47,12 @@
             errorMessage: validationErrors | findError("notAttendedData-" + index + "-moreDetail"),
             value: formResponses.notAttendedData[index].moreDetail
         }) }}
-    {% endif %}
-    {% if reason.captureCaseNote %}
+    {% elseif reason.captureCaseNote %}
         {{ govukWarningText({
-          text: prisoner.prisonerName | toTitleCase + " won't be paid because this is an unacceptable absence.",
-          iconFallbackText: "Warning"
+          text: (
+            prisoner.prisonerName | toTitleCase + (" won't be paid because this is" if isPayable else "'s attendance will be recorded as") + " an unacceptable absence."
+            ),
+            iconFallbackText: "Warning"
         }) }}
         {{ govukCharacterCount({
             label: {
@@ -86,13 +87,11 @@
                 }
             ]
         }) }}
-    {% endif %}
-    {% if reason.code === 'NOT_REQUIRED' %}
+    {% elseif reason.code === 'NOT_REQUIRED' %}
         <span class="govuk-label">
-            {{ prisoner.prisonerName | toTitleCase }} will be paid and their attendance will be recorded as an acceptable absence.
+            {{ prisoner.prisonerName | toTitleCase + ("will be paid and their" if isPayable else "'s") + ' attendance will be recorded as an acceptable absence.' }}
         </span>
-    {% endif %}
-    {% if reason.code === "REST" %}
+    {% elseif reason.code === "REST" %}
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
@@ -113,13 +112,11 @@
                     checked: formResponses.notAttendedData[index].restPay == YesNo.NO
                 }
             ]
-        }) }}
-    {% endif %}
-    {% if reason.code === 'CLASH' %}
+        }) if isPayable }}
+    {% elseif reason.code === 'CLASH' %}
         <div class="govuk-!-margin-bottom-4">{{ renderOtherEvents(prisoner.otherEvents) }}</div>
-        <p class="govuk-body">{{ prisoner.prisonerName | toTitleCase }} will be paid and their attendance will be recorded as an acceptable absence.</p>
-    {% endif %}
-    {% if reason.captureOtherText %}
+        <p class="govuk-body">{{ prisoner.prisonerName | toTitleCase + (" will be paid and their" if isPayable else "'s") }} attendance will be recorded as an acceptable absence.</p>
+    {% elseif reason.captureOtherText %}
         {{ govukCharacterCount({
             label: {
                 text: "Add an absence reason"
@@ -131,7 +128,7 @@
             errorMessage: validationErrors | findError("notAttendedData-"  + index + "-otherAbsenceReason"),
             value: formResponses.notAttendedData[index].otherAbsenceReason
         }) }}
-       {{ govukRadios({
+        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
                 text: "Was the absence acceptable? If it was, they will be paid."
@@ -152,7 +149,7 @@
 
                 }
             ]
-        }) }}
+        }) if isPayable }}
     {% endif %}
 {% endmacro %}
 
@@ -177,16 +174,18 @@
 
                     <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerNumber]" }}" value="{{ prisoner.prisonerNumber }}" />
                     <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerName]" }}" value="{{ prisoner.prisonerName | toTitleCase }}" />
+                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][isPayable]" }}" value="{{ isPayable }}" />
 
                     {% set notAttendedReasonOptions = [] %}
                      {% for notAttendedReason in notAttendedReasons %}
                         {% if (notAttendedReason.code != "CLASH") or (prisoner.otherEvents|length and not hasActivityClash) %}
+                            {% set conditionalOptionsHtml = nestedReasonData(prisonerIndex, notAttendedReason, prisoner, validationErrors, formResponses) | trim %}
                             {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
                                  {
                                     value: notAttendedReason.code,
                                     text: notAttendedReason.description,
                                     conditional: {
-                                        html: nestedReasonData(prisonerIndex, notAttendedReason, prisoner, validationErrors, formResponses)
+                                        html: conditionalOptionsHtml if conditionalOptionsHtml | length
                                     },
                                     checked: formResponses.notAttendedData[prisonerIndex].notAttendedReason == notAttendedReason.code
                                  }
