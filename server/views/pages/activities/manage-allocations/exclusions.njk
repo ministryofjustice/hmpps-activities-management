@@ -68,12 +68,17 @@
                 {% for day in dailySlots %}
                     <div class="govuk-grid-row">
                         {% for week in day.weeks %}
+                            {% set weekNumber = loop.index %}
                             <div class="govuk-grid-column-one-half">
                                 {% if week.slots | length %}
-                                    {% set exclusionsForDay = exclusions | filter('weekNumber', loop.index) | filter(day.day | lower, true) %}
-
+                                    {% set exclusionsForDay = exclusions | filter('weekNumber', weekNumber) | filter(day.day | lower, true) %}
+                                    {% for timeSlot in ['AM', 'PM', 'ED'] %}
+                                        {% if (day.day + timeSlot) in disabledSlots %}
+                                            <input type='hidden' name='week{{ weekNumber }}[{{ day.day | lower }}]' value='{{ timeSlot | lower }}'/>
+                                        {% endif %}
+                                    {% endfor %}
                                     {{ govukCheckboxes({
-                                        name: "week" + loop.index + "[" + day.day | lower + "]",
+                                        name: "week" + weekNumber + "[" + day.day | lower + "]",
                                         fieldset: {
                                             legend: {
                                                 text: day.day | toTitleCase,
@@ -85,19 +90,19 @@
                                                 value: "am",
                                                 text: "AM session",
                                                 checked: not exclusionsForDay | filter('timeSlot', 'AM') | length,
-                                                disabled: (day.day + 'am') in disabledSlots
+                                                disabled: (day.day + 'AM') in disabledSlots
                                             } if 'AM' in week.slots,
                                             {
                                                 value: "pm",
                                                 text: "PM session",
                                                 checked: not exclusionsForDay | filter('timeSlot', 'PM') | length,
-                                                disabled: (day.day + 'pm') in disabledSlots
+                                                disabled: (day.day + 'PM') in disabledSlots
                                             } if 'PM' in week.slots,
                                             {
                                                 value: "ed",
                                                 text: "ED session",
                                                 checked: not exclusionsForDay | filter('timeSlot', 'ED') | length,
-                                                disabled: (day.day + 'ed') in disabledSlots
+                                                disabled: (day.day + 'ED') in disabledSlots
                                             } if 'ED' in week.slots
                                         ]
                                     }) }}
