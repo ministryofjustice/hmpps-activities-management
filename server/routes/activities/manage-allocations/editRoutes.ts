@@ -11,6 +11,7 @@ import RemoveDateOptionRoutes, { RemoveDateOption } from './handlers/removeDateO
 import DeallocationReasonRoutes, { DeallocationReason } from './handlers/deallocationReason'
 import ExclusionRoutes, { Schedule } from './handlers/exclusions'
 import config from '../../../config'
+import ConfirmExclusionsRoutes from './handlers/confirmExclusions'
 
 export default function Index({ activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -25,6 +26,7 @@ export default function Index({ activitiesService }: Services): Router {
   const removeDateOptionHandler = new RemoveDateOptionRoutes(activitiesService)
   const payBandHandler = new PayBandRoutes(activitiesService)
   const exclusionsHandler = new ExclusionRoutes(activitiesService)
+  const confirmExclusionsHandler = new ConfirmExclusionsRoutes(activitiesService)
 
   get('/start-date', startDateHandler.GET, true)
   post('/start-date', startDateHandler.POST, StartDate)
@@ -42,6 +44,8 @@ export default function Index({ activitiesService }: Services): Router {
 
   get('/exclusions', exclusionsHandler.GET, true)
   post('/exclusions', exclusionsHandler.POST, Schedule)
+  get('/confirm-exclusions', confirmExclusionsHandler.GET, true)
+  post('/confirm-exclusions', confirmExclusionsHandler.POST)
 
   return router
 }
