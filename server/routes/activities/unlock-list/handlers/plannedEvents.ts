@@ -46,7 +46,9 @@ export default class PlannedEventsRoutes {
       stayingOnWing: unlockListItems.length - leavingWingCount,
     }
 
-    this.metricsService.trackEvent(MetricsEvent.CREATE_UNLOCK_LIST(unlockDate, timeSlot, location, res.locals.user))
+    this.metricsService.trackEvent(
+      MetricsEvent.CREATE_UNLOCK_LIST(unlockDate, timeSlot, location, unlockListItems.length, res.locals.user),
+    )
 
     res.render('pages/activities/unlock-list/planned-events', {
       date,

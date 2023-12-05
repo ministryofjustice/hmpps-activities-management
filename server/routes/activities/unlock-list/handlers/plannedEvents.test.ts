@@ -162,7 +162,7 @@ describe('Unlock list routes - planned events', () => {
       )
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.CREATE_UNLOCK_LIST(new Date('2022-01-01'), 'am', 'Houseblock 1', res.locals.user),
+        MetricsEvent.CREATE_UNLOCK_LIST(new Date('2022-01-01'), 'am', 'Houseblock 1', 2, res.locals.user),
       )
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
