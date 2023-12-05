@@ -1,16 +1,17 @@
+import { uniq } from 'lodash'
 import TimeSlot from '../../enum/timeSlot'
 import { Slots } from '../../routes/activities/create-an-activity/journey'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
 import { getTimeSlotFromTime } from '../utils'
 
-interface DailyTimeSlots {
-  [weekNumber: string]: {
+interface WeeklyTimeSlots {
+  [weekNumber: number]: {
     day: string
     slots: TimeSlot[]
   }[]
 }
 
-type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -26,7 +27,7 @@ export default function activitySessionToDailyTimeSlots(
   scheduleWeeks: number,
   scheduleSlots: { [weekNumber: string]: Slots },
 ) {
-  const dailySlots: DailyTimeSlots = {}
+  const dailySlots: WeeklyTimeSlots = {}
   for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
     const slots = scheduleSlots[weekNumber] ?? {}
 
@@ -95,4 +96,89 @@ const getFullDayFromAbbreviation = (abbrDay: string): DayOfWeek => {
   }
 
   return daysMap[abbrDay] as DayOfWeek
+}
+
+interface DailyTimeSlots {
+  day: string
+  weeks: {
+    weekNumber: number
+    slots: TimeSlot[]
+  }[]
+}
+
+export function mapSlotsToDailyTimeSlots(slots: Slot[]): DailyTimeSlots[] {
+  // Group slots by day
+  const slotsByDay: { [key: string]: Slot[] } = {}
+  daysOfWeek
+    .map(d => d.toUpperCase())
+    .forEach(day => {
+      slotsByDay[day] = slots.filter(slot => slot[day.toLowerCase()])
+    })
+
+  // Find the maximum number of weeks among all days
+  const maxWeeks = Math.max(...Object.values(slotsByDay).flatMap(s => s.map(slot => slot.weekNumber)), 0)
+
+  // Create DailyTimeSlots for each day
+  return daysOfWeek
+    .map(d => d.toUpperCase())
+    .map(day => ({
+      day,
+      weeks: Array.from({ length: maxWeeks }, (_, index) => {
+        const weekNumber = index + 1
+        const timeSlots = (slotsByDay[day] || [])
+          .filter(slot => slot.weekNumber === weekNumber)
+          .map(slot => slot.timeSlot)
+
+        return {
+          weekNumber,
+          slots: (timeSlots || []) as TimeSlot[], // Ensure slots is an empty array if no slots are found
+        }
+      }),
+    }))
+    .filter(dts => dts.weeks.some(w => w.slots.length > 0))
+}
+
+export function mapSlotsToWeeklyTimeSlots(slots: Slot[]): WeeklyTimeSlots {
+  return uniq(slots.map(s => s.weekNumber)).reduce(
+    (acc, weekNumber) => ({
+      ...acc,
+      [weekNumber]: daysOfWeek
+        .map(d => d.toUpperCase())
+        .map(day => {
+          const timeSlots = slots
+            .filter(slot => slot.weekNumber === weekNumber)
+            .filter(s => (s.daysOfWeek as string[]).includes(day))
+            .map(slot => slot.timeSlot as TimeSlot)
+
+          if (timeSlots.length === 0) return null
+          return {
+            day,
+            slots: timeSlots,
+          }
+        })
+        .filter(a => a),
+    }),
+    {},
+  )
+}
+
+export function calculateUniqueSlots(slotsA: Slot[], slotsB: Slot[]): Slot[] {
+  return slotsA
+    .map(slot => {
+      const updatedSlot = slotsB.find(us => us.weekNumber === slot.weekNumber && us.timeSlot === slot.timeSlot)
+      return updatedSlot
+        ? {
+            ...slot,
+            monday: slot.monday && !updatedSlot.monday,
+            tuesday: slot.tuesday && !updatedSlot.tuesday,
+            wednesday: slot.wednesday && !updatedSlot.wednesday,
+            thursday: slot.thursday && !updatedSlot.thursday,
+            friday: slot.friday && !updatedSlot.friday,
+            saturday: slot.saturday && !updatedSlot.saturday,
+            sunday: slot.sunday && !updatedSlot.sunday,
+            daysOfWeek: slot.daysOfWeek.filter(d => !updatedSlot.daysOfWeek.includes(d)),
+          }
+        : slot
+    })
+    .filter(s => s.daysOfWeek.length > 0)
 }

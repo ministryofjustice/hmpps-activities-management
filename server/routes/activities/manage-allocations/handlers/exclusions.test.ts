@@ -42,6 +42,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
             name: 'Test Activity',
           },
           exclusions: [],
+          updatedExclusions: [],
         },
       },
     } as unknown as Request
@@ -210,7 +211,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
 
-    it('should update the exclusions on the allocation and redirect when in edit mode', async () => {
+    it('should update the exclusions in session and redirect when in create mode', async () => {
       req.params.mode = 'edit'
       req.params.allocationId = '1'
 
@@ -220,63 +221,26 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         },
       }
 
+      expect(req.session.allocateJourney.updatedExclusions).toHaveLength(0)
+
       await handler.POST(req, res)
 
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith('LEI', 1, {
-        exclusions: [
-          {
-            weekNumber: 2,
-            timeSlot: 'AM',
-            monday: false,
-            tuesday: true,
-            wednesday: true,
-            thursday: true,
-            friday: true,
-            saturday: true,
-            sunday: true,
-            daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
-          },
-        ],
-      })
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/activities/allocations/view/1',
-        'Allocation updated',
-        "You've updated the exclusions for this allocation",
-      )
-    })
-
-    it('should update the exclusions on the allocation and redirect when in exclude mode', async () => {
-      req.params.mode = 'exclude'
-      req.params.allocationId = '1'
-
-      req.body = {
-        week2: {
-          monday: ['am'],
+      expect(req.session.allocateJourney.updatedExclusions).toEqual([
+        {
+          weekNumber: 2,
+          timeSlot: 'AM',
+          monday: false,
+          tuesday: true,
+          wednesday: true,
+          thursday: true,
+          friday: true,
+          saturday: true,
+          sunday: true,
+          daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
         },
-      }
+      ])
 
-      await handler.POST(req, res)
-
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith('LEI', 1, {
-        exclusions: [
-          {
-            weekNumber: 2,
-            timeSlot: 'AM',
-            monday: false,
-            tuesday: true,
-            wednesday: true,
-            thursday: true,
-            friday: true,
-            saturday: true,
-            sunday: true,
-            daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
-          },
-        ],
-      })
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/activities/exclusions/prisoner/ABC123',
-        'You have updated when John Smith should attend Test Activity',
-      )
+      expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
     })
   })
 })

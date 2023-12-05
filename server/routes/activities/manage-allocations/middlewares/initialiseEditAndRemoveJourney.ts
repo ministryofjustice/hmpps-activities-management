@@ -59,6 +59,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         name: activity.summary,
         startDate: activity.startDate,
         endDate: activity.endDate,
+        scheduleWeeks: activity.schedules[0].scheduleWeeks,
         location: activity.schedules[0].internalLocation?.description,
         inCell: activity.inCell,
         onWing: activity.onWing,

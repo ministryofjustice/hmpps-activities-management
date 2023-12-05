@@ -1,7 +1,10 @@
 import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
 import activitySessionToDailyTimeSlots, {
   activitySlotsMinusExclusions,
+  calculateUniqueSlots,
   mapActivityScheduleSlotsToSlots,
+  mapSlotsToDailyTimeSlots,
+  mapSlotsToWeeklyTimeSlots,
 } from './activityTimeSlotMappers'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
 
@@ -137,6 +140,265 @@ describe('Activity session slots to daily time slots mapper', () => {
         saturdayFlag: true,
         sundayFlag: false,
         daysOfWeek: ['Tue', 'Thu', 'Sat'],
+      },
+    ])
+  })
+})
+
+describe('mapSlotsToWeeklyTimeSlots', () => {
+  it('should map slots to daily time slots', () => {
+    const slots = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['THURSDAY', 'FRIDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: false,
+        wednesday: true,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'WEDNESDAY'],
+      },
+    ] as Slot[]
+
+    const dailyTimeSlots = mapSlotsToDailyTimeSlots(slots)
+
+    expect(dailyTimeSlots).toEqual([
+      {
+        day: 'MONDAY',
+        weeks: [
+          {
+            weekNumber: 1,
+            slots: ['AM'],
+          },
+          {
+            weekNumber: 2,
+            slots: ['PM'],
+          },
+        ],
+      },
+      {
+        day: 'WEDNESDAY',
+        weeks: [
+          {
+            weekNumber: 1,
+            slots: [],
+          },
+          {
+            weekNumber: 2,
+            slots: ['PM'],
+          },
+        ],
+      },
+      {
+        day: 'THURSDAY',
+        weeks: [
+          {
+            weekNumber: 1,
+            slots: ['PM'],
+          },
+          {
+            weekNumber: 2,
+            slots: [],
+          },
+        ],
+      },
+      {
+        day: 'FRIDAY',
+        weeks: [
+          {
+            weekNumber: 1,
+            slots: ['PM'],
+          },
+          {
+            weekNumber: 2,
+            slots: [],
+          },
+        ],
+      },
+    ])
+  })
+})
+
+describe('mapSlotsToDailyTimeSlots', () => {
+  it('should map activity slots to daily time slots', () => {
+    const slots = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['THURSDAY', 'FRIDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: false,
+        wednesday: true,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'WEDNESDAY'],
+      },
+    ] as Slot[]
+
+    const weeklyTimeSlots = mapSlotsToWeeklyTimeSlots(slots)
+
+    expect(weeklyTimeSlots).toEqual({
+      1: [
+        {
+          day: 'MONDAY',
+          slots: ['AM'],
+        },
+        {
+          day: 'THURSDAY',
+          slots: ['PM'],
+        },
+        {
+          day: 'FRIDAY',
+          slots: ['PM'],
+        },
+      ],
+      2: [
+        {
+          day: 'MONDAY',
+          slots: ['PM'],
+        },
+        {
+          day: 'WEDNESDAY',
+          slots: ['PM'],
+        },
+      ],
+    })
+  })
+})
+
+describe('calculateUniqueSlots', () => {
+  it('should find slots unique to the first slot array', () => {
+    const slotsA = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['THURSDAY', 'FRIDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: false,
+        wednesday: true,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'WEDNESDAY'],
+      },
+    ] as Slot[]
+
+    const slotsB = [
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['THURSDAY', 'FRIDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: false,
+        wednesday: true,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'WEDNESDAY'],
+      },
+    ] as Slot[]
+
+    const uniqueSlots = calculateUniqueSlots(slotsA, slotsB)
+
+    expect(uniqueSlots).toEqual([
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
       },
     ])
   })
