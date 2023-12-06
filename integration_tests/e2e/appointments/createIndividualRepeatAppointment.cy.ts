@@ -140,8 +140,8 @@ context('Individual repeat appointment', () => {
       appointmentSeriesDetailsPage.assertNumberOfAppointments('2')
       appointmentSeriesDetailsPage.assertAppointments(
         new Map([
-          [1, formatDate(tomorrow, 'd MMM yyyy')],
-          [2, formatDate(weekTomorrow, 'd MMM yyyy')],
+          [1, formatDate(tomorrow, 'd MMMM yyyy')],
+          [2, formatDate(weekTomorrow, 'd MMMM yyyy')],
         ]),
       )
       appointmentSeriesDetailsPage.assertCreatedBy('J. Smith')

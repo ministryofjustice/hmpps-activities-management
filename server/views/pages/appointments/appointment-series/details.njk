@@ -20,7 +20,7 @@
             classes: "govuk-!-font-weight-regular govuk-!-text-align-right",
             attributes: { 'data-qa': 'appointment-sequence-no-' + appointment.sequenceNumber }
         }, {
-            text: appointmentDate | formatDate('d MMM yyyy'),
+            text: appointmentDate | formatDate,
             attributes: { 'data-qa': 'appointment-date-' + appointment.sequenceNumber }
         }, {
             html: (govukTag({ text: "Edited" }) if appointment.isEdited) +
