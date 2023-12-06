@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
-import { plainToInstance } from 'class-transformer'
+import { Expose, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import ExtraInformationRoutes, { ExtraInformation } from './extraInformation'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { YesNo } from '../../../../@types/activities'
+import ExtraInformationValidator from '../../../../validators/extraInformation'
 
 jest.mock('../../../../services/editAppointmentService')
 
@@ -87,29 +88,80 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
       expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'extra-information')
     })
   })
+})
+describe('extraInformation', () => {
+  class ExtraInfoForm {
+    @Expose()
+    @ExtraInformationValidator({ message: 'Enter the court name and any extra information' })
+    extraInformation: string
+  }
 
-  describe('Validation', () => {
-    it.each([
-      { extraInformation: Array(4001).fill('a').join(''), isValid: false },
-      { extraInformation: Array(4000).fill('a').join(''), isValid: true },
-      { extraInformation: Array(3999).fill('a').join(''), isValid: true },
-    ])('should validate extra information character length', async ({ extraInformation, isValid }) => {
-      const body = {
-        extraInformation,
-      }
+  it('should fail validation when extraInformation is empty and category code is VLB', async () => {
+    const body = {
+      extraInformation: '',
+      appointmentJourney: {
+        category: {
+          code: 'VLB',
+        },
+      },
+    }
 
-      const requestObject = plainToInstance(ExtraInformation, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-      if (isValid) {
-        expect(errors).toHaveLength(0)
-      } else {
-        expect(errors).toEqual([
-          {
-            property: 'extraInformation',
-            error: 'You must enter extra information which has no more than 4,000 characters',
-          },
-        ])
-      }
-    })
+    const requestObject = plainToInstance(ExtraInfoForm, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    // Expecting a specific validation error related to extraInformation
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        {
+          property: 'extraInformation',
+          error: 'Enter the court name and any extra information',
+        },
+      ]),
+    )
+  })
+
+  it('should pass validation when extraInformation is empty and category code is not VLB', async () => {
+    const body = {
+      extraInformation: '',
+      appointmentJourney: {
+        category: {
+          code: 'ABC',
+        },
+      },
+    }
+
+    const requestObject = plainToInstance(ExtraInfoForm, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    // Expecting a specific validation error related to extraInformation
+    expect(errors).toHaveLength(0)
+  })
+
+  it.each([
+    { extraInformation: Array(4001).fill('a').join(''), isValid: false },
+    { extraInformation: Array(4000).fill('a').join(''), isValid: true },
+    { extraInformation: Array(3999).fill('a').join(''), isValid: true },
+  ])('should validate extra information character length', async ({ extraInformation, isValid }) => {
+    const body = {
+      extraInformation,
+      appointmentJourney: {
+        category: {
+          code: 'VLB',
+        },
+      },
+    }
+
+    const requestObject = plainToInstance(ExtraInformation, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+    if (isValid) {
+      expect(errors).toHaveLength(0)
+    } else {
+      expect(errors).toEqual([
+        {
+          property: 'extraInformation',
+          error: 'You must enter extra information which has no more than 4,000 characters',
+        },
+      ])
+    }
   })
 })
