@@ -39,7 +39,7 @@
                                 Add or edit any important information for who’s attending about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.
                         </p>
                     {% endif %}
-            
+
         </p>
       {% else %}
         <h1 class="govuk-heading-l">
@@ -76,7 +76,7 @@
                 id: "extraInformation",
                 name: "extraInformation",
                 errorMessage: validationErrors | findError("extraInformation"),
-                value: formResponses.extraInformation or extraInformation,
+                value: formResponses.extraInformation or session.appointmentJourney.extraInformation,
                 maxlength: "4000"
             }) }}
           </div>
