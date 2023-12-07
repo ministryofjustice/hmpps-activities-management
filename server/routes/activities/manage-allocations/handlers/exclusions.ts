@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
+import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { parseDate } from '../../../../utils/utils'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
@@ -8,7 +9,7 @@ import {
   DayOfWeek,
   calculateUniqueSlots,
   mapActivityScheduleSlotsToSlots,
-  mapSlotsToDailyTimeSlots,
+  mapSlotsToCompleteWeeklyTimeSlots,
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { Slot } from '../../../../@types/activitiesAPI/types'
 
@@ -61,14 +62,23 @@ export default class ExclusionRoutes {
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
-    const dailySlots = mapSlotsToDailyTimeSlots(slots, schedule.scheduleWeeks)
+
+    const weeklySlots = mapSlotsToCompleteWeeklyTimeSlots(slots, schedule.scheduleWeeks)
+
+    // Add all slots to an array
+    const daySlotsList = Object.values(weeklySlots).flatMap(dailySlots =>
+      dailySlots.flatMap(daySlots => daySlots.slots.map(slot => `${daySlots.day}${slot}`)),
+    )
+    // Find day slots with more than one occurance
+    const disabledSlots = _.uniq(daySlotsList.filter(s => daySlotsList.filter(s2 => s2 === s).length > 1))
 
     res.render('pages/activities/manage-allocations/exclusions', {
       prisonerName: inmate.prisonerName,
       scheduleWeeks: schedule.scheduleWeeks,
       currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
-      dailySlots,
+      weeklySlots,
       exclusions,
+      disabledSlots,
     })
   }
 

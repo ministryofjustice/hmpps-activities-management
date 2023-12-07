@@ -30,8 +30,9 @@ export default class ConfirmExclusionsRoutes {
       const allocation = { exclusions: updatedExclusions } as AllocationUpdateRequest
       await this.activitiesService.updateAllocation(user.activeCaseLoadId, +allocationId, allocation)
 
+      const successMessage = `You have changed when ${inmate.prisonerName} should attend ${activity.name}`
+
       if (mode === 'edit') {
-        const successMessage = `You've updated the exclusions for this allocation`
         return res.redirectWithSuccess(
           `/activities/allocations/view/${allocationId}`,
           'Allocation updated',
@@ -40,10 +41,7 @@ export default class ConfirmExclusionsRoutes {
       }
 
       // mode === 'exclude'
-      return res.redirectWithSuccess(
-        `/activities/exclusions/prisoner/${inmate.prisonerNumber}`,
-        `You have updated when ${inmate.prisonerName} should attend ${activity.name}`,
-      )
+      return res.redirectWithSuccess(`/activities/exclusions/prisoner/${inmate.prisonerNumber}`, successMessage)
     }
 
     if (mode === 'edit') {
