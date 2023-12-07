@@ -145,7 +145,7 @@ describe('Activity session slots to daily time slots mapper', () => {
   })
 })
 
-describe('mapSlotsToWeeklyTimeSlots', () => {
+describe('mapSlotsToDailyTimeSlots', () => {
   it('should map slots to daily time slots', () => {
     const slots = [
       {
@@ -186,7 +186,7 @@ describe('mapSlotsToWeeklyTimeSlots', () => {
       },
     ] as Slot[]
 
-    const dailyTimeSlots = mapSlotsToDailyTimeSlots(slots)
+    const dailyTimeSlots = mapSlotsToDailyTimeSlots(slots, 2)
 
     expect(dailyTimeSlots).toEqual([
       {
@@ -243,9 +243,44 @@ describe('mapSlotsToWeeklyTimeSlots', () => {
       },
     ])
   })
+
+  it('should map slots to daily time slots with an empty week in a multi-week schedule', () => {
+    const slots = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
+      },
+    ] as Slot[]
+
+    const dailyTimeSlots = mapSlotsToDailyTimeSlots(slots, 2)
+
+    expect(dailyTimeSlots).toEqual([
+      {
+        day: 'MONDAY',
+        weeks: [
+          {
+            weekNumber: 1,
+            slots: ['AM'],
+          },
+          {
+            weekNumber: 2,
+            slots: [],
+          },
+        ],
+      },
+    ])
+  })
 })
 
-describe('mapSlotsToDailyTimeSlots', () => {
+describe('mapSlotsToWeeklyTimeSlots', () => {
   it('should map activity slots to daily time slots', () => {
     const slots = [
       {
