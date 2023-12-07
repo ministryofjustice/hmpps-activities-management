@@ -89,7 +89,7 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
     })
   })
 })
-describe('extraInformation', () => {
+describe('Validation', () => {
   class ExtraInfoForm {
     @Expose()
     @ExtraInformationValidator({ message: 'Enter the court name and any extra information' })
