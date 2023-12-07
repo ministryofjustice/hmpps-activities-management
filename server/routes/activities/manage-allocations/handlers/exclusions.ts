@@ -61,7 +61,7 @@ export default class ExclusionRoutes {
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
-    const dailySlots = mapSlotsToDailyTimeSlots(slots)
+    const dailySlots = mapSlotsToDailyTimeSlots(slots, schedule.scheduleWeeks)
 
     res.render('pages/activities/manage-allocations/exclusions', {
       prisonerName: inmate.prisonerName,

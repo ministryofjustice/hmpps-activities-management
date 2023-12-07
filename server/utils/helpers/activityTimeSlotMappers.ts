@@ -106,7 +106,7 @@ interface DailyTimeSlots {
   }[]
 }
 
-export function mapSlotsToDailyTimeSlots(slots: Slot[]): DailyTimeSlots[] {
+export function mapSlotsToDailyTimeSlots(slots: Slot[], scheduleWeeks: number): DailyTimeSlots[] {
   // Group slots by day
   const slotsByDay: { [key: string]: Slot[] } = {}
   daysOfWeek
@@ -115,15 +115,12 @@ export function mapSlotsToDailyTimeSlots(slots: Slot[]): DailyTimeSlots[] {
       slotsByDay[day] = slots.filter(slot => slot[day.toLowerCase()])
     })
 
-  // Find the maximum number of weeks among all days
-  const maxWeeks = Math.max(...Object.values(slotsByDay).flatMap(s => s.map(slot => slot.weekNumber)), 0)
-
   // Create DailyTimeSlots for each day
   return daysOfWeek
     .map(d => d.toUpperCase())
     .map(day => ({
       day,
-      weeks: Array.from({ length: maxWeeks }, (_, index) => {
+      weeks: Array.from({ length: scheduleWeeks }, (_, index) => {
         const weekNumber = index + 1
         const timeSlots = (slotsByDay[day] || [])
           .filter(slot => slot.weekNumber === weekNumber)
