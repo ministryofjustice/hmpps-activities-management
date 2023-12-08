@@ -10,7 +10,6 @@ import {
 } from '../../../../utils/datePickerUtils'
 import DateValidator from '../../../../validators/DateValidator'
 import IsValidDate from '../../../../validators/isValidDate'
-import config from '../../../../config'
 
 export class EndDate {
   @Expose()
@@ -62,9 +61,6 @@ export default class EndDateRoutes {
     if (req.session.allocateJourney.activity.paid) {
       return res.redirectOrReturn('pay-band')
     }
-    if (config.exclusionsFeatureToggleEnabled) {
-      return res.redirectOrReturn('exclusions')
-    }
-    return res.redirectOrReturn('check-answers')
+    return res.redirectOrReturn('exclusions')
   }
 }

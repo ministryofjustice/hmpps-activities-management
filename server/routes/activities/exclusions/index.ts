@@ -1,8 +1,6 @@
 import { RequestHandler, Router } from 'express'
-import createHttpError from 'http-errors'
 import { Services } from '../../../services'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
-import config from '../../../config'
 import ViewAllocationsRoutes from './handlers/viewAllocations'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './handlers/selectPrisoner'
@@ -15,9 +13,6 @@ export default function Index(services: Services): Router {
 
   const viewAllocationsHandler = new ViewAllocationsRoutes(services.activitiesService, services.prisonService)
   const selectPrisonerRoutes = new SelectPrisonerRoutes(services.prisonService)
-
-  // Exclusion routes are only accessible when running locally or when feature toggle is provided
-  router.use((req, res, next) => (!config.exclusionsFeatureToggleEnabled ? next(createHttpError.NotFound()) : next()))
 
   get('/prisoner/:prisonerNumber', viewAllocationsHandler.GET)
   get('/select-prisoner', selectPrisonerRoutes.GET)

@@ -72,7 +72,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       await handler.POST(req, res)
 
       expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('exclusions')
     })
 
     it('should redirect to the deallocate reason page in edit mode', async () => {

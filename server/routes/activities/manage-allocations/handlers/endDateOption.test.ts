@@ -67,7 +67,7 @@ describe('Route Handlers - Allocation - End Date option', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('exclusions')
     })
   })
 
