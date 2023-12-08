@@ -154,7 +154,6 @@ export default {
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: Boolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', false)),
   exclusionsFeatureToggleEnabled: Boolean(get('EXCLUSIONS_FEATURE_TOGGLE_ENABLED', false)),
-  zeroPayFeatureToggleEnabled: Boolean(get('ZERO_PAY_FEATURE_TOGGLE_ENABLED', false)),
   frontendComponentsApiToggleEnabled: Boolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
   ),
