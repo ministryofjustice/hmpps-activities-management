@@ -21,20 +21,20 @@ describe('Unlock list routes - planned events', () => {
 
   const locationsAtPrison = [
     {
-      name: 'Houseblock 1',
-      key: 'Houseblock 1',
+      name: 'A-Wing',
+      key: 'A',
       children: [
-        { name: 'A-Wing', key: 'A-Wing', children: [] },
-        { name: 'B-Wing', key: 'B-Wing', children: [] },
-        { name: 'C-Wing', key: 'C-Wing', children: [] },
+        { name: 'A-Wing', key: 'A', children: [] },
+        { name: 'B-Wing', key: 'B', children: [] },
+        { name: 'C-Wing', key: 'C', children: [] },
       ],
     },
     {
-      name: 'Houseblock 2',
-      key: 'Houseblock 2',
+      name: 'B-Wing',
+      key: 'B',
       children: [
-        { name: 'A-Wing', key: 'A-Wing', children: [] },
-        { name: 'B-Wing', key: 'B-Wing', children: [] },
+        { name: 'A-Wing', key: 'A', children: [] },
+        { name: 'B-Wing', key: 'B', children: [] },
       ],
     },
   ] as unknown as LocationGroup[]
@@ -63,11 +63,11 @@ describe('Unlock list routes - planned events', () => {
         query: {
           date: '2022-01-01',
           slot: 'am',
-          location: 'Houseblock 1',
+          location: 'A',
         },
         session: {
           unlockListJourney: {
-            location: 'Houseblock 1',
+            location: 'A',
             timeSlot: 'am',
             // No filters supplied in session
           },
@@ -97,7 +97,7 @@ describe('Unlock list routes - planned events', () => {
       expect(unlockListService.getFilteredUnlockList).toHaveBeenCalledWith(
         new Date('2022-01-01'),
         'am',
-        'Houseblock 1',
+        'A',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
         'Both',
@@ -106,7 +106,7 @@ describe('Unlock list routes - planned events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         date: '2022-01-01',
-        location: 'Houseblock 1',
+        location: 'A',
         subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
         timeSlot: 'am',
         unlockListItems,
@@ -122,11 +122,11 @@ describe('Unlock list routes - planned events', () => {
         query: {
           date: '2022-01-01',
           slot: 'am',
-          location: 'Houseblock 1',
+          location: 'A',
         },
         session: {
           unlockListJourney: {
-            location: 'Houseblock 1',
+            location: 'A',
             timeSlot: 'am',
             stayingOrLeavingFilter: 'Leaving',
             activityFilter: 'With',
@@ -154,7 +154,7 @@ describe('Unlock list routes - planned events', () => {
       expect(unlockListService.getFilteredUnlockList).toHaveBeenCalledWith(
         new Date('2022-01-01'),
         'am',
-        'Houseblock 1',
+        'A',
         ['A-Wing'],
         'With',
         'Leaving',
@@ -162,12 +162,12 @@ describe('Unlock list routes - planned events', () => {
       )
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.CREATE_UNLOCK_LIST(new Date('2022-01-01'), 'am', 'Houseblock 1', 2, res.locals.user),
+        MetricsEvent.CREATE_UNLOCK_LIST(new Date('2022-01-01'), 'am', 'A', 2, res.locals.user),
       )
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         date: '2022-01-01',
-        location: 'Houseblock 1',
+        location: 'A',
         subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
         timeSlot: 'am',
         unlockListItems,
