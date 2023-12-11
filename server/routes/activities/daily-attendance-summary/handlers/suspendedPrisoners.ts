@@ -4,6 +4,7 @@ import { convertToTitleCase, toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import PrisonService from '../../../../services/prisonService'
+import activityLocationDescription from '../../../../utils/activityLocationDescription'
 
 export default class SuspendedPrisonersRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
@@ -57,7 +58,7 @@ export default class SuspendedPrisonersRoutes {
                 sessionStartTime: activity.startTime,
                 sessionEndTime: activity.endTime,
                 sessionSlot: a.timeSlot,
-                sessionLocation: activity.activitySchedule.internalLocation.description,
+                sessionLocation: activityLocationDescription(activity.activitySchedule),
               }
             }),
             'sessionStartTime',
