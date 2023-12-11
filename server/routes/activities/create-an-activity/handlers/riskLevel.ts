@@ -3,7 +3,6 @@ import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
-import config from '../../../../config'
 
 enum RiskLevelOptions {
   HIGH = 'high',
@@ -41,16 +40,6 @@ export default class RiskLevelRoutes {
       return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }
 
-    if (config.zeroPayFeatureToggleEnabled) {
-      return res.redirectOrReturn('pay-option')
-    }
-
-    req.session.createJourney.paid = true
-
-    const { preserveHistory } = req.query
-    const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
-    const { pay, flat } = req.session.createJourney
-    if (pay?.length > 0 || flat?.length > 0) return res.redirect(`check-pay${preserveHistoryString}`)
-    return res.redirect(`pay-rate-type${preserveHistoryString}`)
+    return res.redirectOrReturn('pay-option')
   }
 }
