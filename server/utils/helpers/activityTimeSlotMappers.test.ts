@@ -3,7 +3,7 @@ import activitySessionToDailyTimeSlots, {
   activitySlotsMinusExclusions,
   calculateUniqueSlots,
   mapActivityScheduleSlotsToSlots,
-  mapSlotsToDailyTimeSlots,
+  mapSlotsToCompleteWeeklyTimeSlots,
   mapSlotsToWeeklyTimeSlots,
 } from './activityTimeSlotMappers'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
@@ -145,143 +145,8 @@ describe('Activity session slots to daily time slots mapper', () => {
   })
 })
 
-describe('mapSlotsToDailyTimeSlots', () => {
-  it('should map slots to daily time slots', () => {
-    const slots = [
-      {
-        weekNumber: 1,
-        timeSlot: 'AM',
-        monday: true,
-        tuesday: false,
-        wednesday: false,
-        thursday: false,
-        friday: false,
-        saturday: false,
-        sunday: false,
-        daysOfWeek: ['MONDAY'],
-      },
-      {
-        weekNumber: 1,
-        timeSlot: 'PM',
-        monday: false,
-        tuesday: false,
-        wednesday: false,
-        thursday: true,
-        friday: true,
-        saturday: false,
-        sunday: false,
-        daysOfWeek: ['THURSDAY', 'FRIDAY'],
-      },
-      {
-        weekNumber: 2,
-        timeSlot: 'PM',
-        monday: true,
-        tuesday: false,
-        wednesday: true,
-        thursday: false,
-        friday: false,
-        saturday: false,
-        sunday: false,
-        daysOfWeek: ['MONDAY', 'WEDNESDAY'],
-      },
-    ] as Slot[]
-
-    const dailyTimeSlots = mapSlotsToDailyTimeSlots(slots, 2)
-
-    expect(dailyTimeSlots).toEqual([
-      {
-        day: 'MONDAY',
-        weeks: [
-          {
-            weekNumber: 1,
-            slots: ['AM'],
-          },
-          {
-            weekNumber: 2,
-            slots: ['PM'],
-          },
-        ],
-      },
-      {
-        day: 'WEDNESDAY',
-        weeks: [
-          {
-            weekNumber: 1,
-            slots: [],
-          },
-          {
-            weekNumber: 2,
-            slots: ['PM'],
-          },
-        ],
-      },
-      {
-        day: 'THURSDAY',
-        weeks: [
-          {
-            weekNumber: 1,
-            slots: ['PM'],
-          },
-          {
-            weekNumber: 2,
-            slots: [],
-          },
-        ],
-      },
-      {
-        day: 'FRIDAY',
-        weeks: [
-          {
-            weekNumber: 1,
-            slots: ['PM'],
-          },
-          {
-            weekNumber: 2,
-            slots: [],
-          },
-        ],
-      },
-    ])
-  })
-
-  it('should map slots to daily time slots with an empty week in a multi-week schedule', () => {
-    const slots = [
-      {
-        weekNumber: 1,
-        timeSlot: 'AM',
-        monday: true,
-        tuesday: false,
-        wednesday: false,
-        thursday: false,
-        friday: false,
-        saturday: false,
-        sunday: false,
-        daysOfWeek: ['MONDAY'],
-      },
-    ] as Slot[]
-
-    const dailyTimeSlots = mapSlotsToDailyTimeSlots(slots, 2)
-
-    expect(dailyTimeSlots).toEqual([
-      {
-        day: 'MONDAY',
-        weeks: [
-          {
-            weekNumber: 1,
-            slots: ['AM'],
-          },
-          {
-            weekNumber: 2,
-            slots: [],
-          },
-        ],
-      },
-    ])
-  })
-})
-
 describe('mapSlotsToWeeklyTimeSlots', () => {
-  it('should map activity slots to daily time slots', () => {
+  it('should map activity slots to weekly time slots', () => {
     const slots = [
       {
         weekNumber: 1,
@@ -346,6 +211,70 @@ describe('mapSlotsToWeeklyTimeSlots', () => {
         {
           day: 'WEDNESDAY',
           slots: ['PM'],
+        },
+      ],
+    })
+  })
+})
+
+describe('mapSlotsToCompleteWeeklyTimeSlots', () => {
+  it('should map activity slots to weekly time slots', () => {
+    const slots = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['THURSDAY', 'FRIDAY'],
+      },
+    ] as Slot[]
+
+    const weeklyTimeSlots = mapSlotsToCompleteWeeklyTimeSlots(slots, 2)
+
+    expect(weeklyTimeSlots).toEqual({
+      1: [
+        {
+          day: 'MONDAY',
+          slots: ['AM'],
+        },
+        {
+          day: 'THURSDAY',
+          slots: ['PM'],
+        },
+        {
+          day: 'FRIDAY',
+          slots: ['PM'],
+        },
+      ],
+      2: [
+        {
+          day: 'MONDAY',
+          slots: [],
+        },
+        {
+          day: 'THURSDAY',
+          slots: [],
+        },
+        {
+          day: 'FRIDAY',
+          slots: [],
         },
       ],
     })

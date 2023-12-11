@@ -4,8 +4,8 @@ import { Slots } from '../../routes/activities/create-an-activity/journey'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
 import { getTimeSlotFromTime } from '../utils'
 
-interface WeeklyTimeSlots {
-  [weekNumber: number]: {
+export interface WeeklyTimeSlots {
+  [weekNumber: string]: {
     day: string
     slots: TimeSlot[]
   }[]
@@ -98,43 +98,6 @@ const getFullDayFromAbbreviation = (abbrDay: string): DayOfWeek => {
   return daysMap[abbrDay] as DayOfWeek
 }
 
-interface DailyTimeSlots {
-  day: string
-  weeks: {
-    weekNumber: number
-    slots: TimeSlot[]
-  }[]
-}
-
-export function mapSlotsToDailyTimeSlots(slots: Slot[], scheduleWeeks: number): DailyTimeSlots[] {
-  // Group slots by day
-  const slotsByDay: { [key: string]: Slot[] } = {}
-  daysOfWeek
-    .map(d => d.toUpperCase())
-    .forEach(day => {
-      slotsByDay[day] = slots.filter(slot => slot[day.toLowerCase()])
-    })
-
-  // Create DailyTimeSlots for each day
-  return daysOfWeek
-    .map(d => d.toUpperCase())
-    .map(day => ({
-      day,
-      weeks: Array.from({ length: scheduleWeeks }, (_, index) => {
-        const weekNumber = index + 1
-        const timeSlots = (slotsByDay[day] || [])
-          .filter(slot => slot.weekNumber === weekNumber)
-          .map(slot => slot.timeSlot)
-
-        return {
-          weekNumber,
-          slots: (timeSlots || []) as TimeSlot[], // Ensure slots is an empty array if no slots are found
-        }
-      }),
-    }))
-    .filter(dts => dts.weeks.some(w => w.slots.length > 0))
-}
-
 export function mapSlotsToWeeklyTimeSlots(slots: Slot[]): WeeklyTimeSlots {
   return uniq(slots.map(s => s.weekNumber)).reduce(
     (acc, weekNumber) => ({
@@ -157,6 +120,34 @@ export function mapSlotsToWeeklyTimeSlots(slots: Slot[]): WeeklyTimeSlots {
     }),
     {},
   )
+}
+
+// Similar to mapSlotsToWeeklyTimeSlots, but includes empty weeks and days only excluding days without any slots
+// across schedule
+export function mapSlotsToCompleteWeeklyTimeSlots(slots: Slot[], scheduledWeeks: number): WeeklyTimeSlots {
+  return [...Array(scheduledWeeks).keys()]
+    .map(v => v + 1)
+    .reduce(
+      (acc, weekNumber) => ({
+        ...acc,
+        [weekNumber]: daysOfWeek
+          .map(d => d.toUpperCase())
+          .map(day => {
+            const timeSlots = slots
+              .filter(slot => slot.weekNumber === weekNumber)
+              .filter(s => (s.daysOfWeek as string[]).includes(day))
+              .map(slot => slot.timeSlot as TimeSlot)
+
+            if (timeSlots.length === 0 && !slots.find(s => s.daysOfWeek.includes(day as DayOfWeek))) return null
+            return {
+              day,
+              slots: timeSlots,
+            }
+          })
+          .filter(a => a),
+      }),
+      {},
+    )
 }
 
 export function calculateUniqueSlots(slotsA: Slot[], slotsB: Slot[]): Slot[] {

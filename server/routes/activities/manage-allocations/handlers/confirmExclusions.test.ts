@@ -128,7 +128,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/allocations/view/1',
         'Allocation updated',
-        "You've updated the exclusions for this allocation",
+        'You have changed when John Smith should attend Test Activity',
       )
     })
 
@@ -156,7 +156,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
       })
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/exclusions/prisoner/ABC123',
-        'You have updated when John Smith should attend Test Activity',
+        'You have changed when John Smith should attend Test Activity',
       )
     })
 
