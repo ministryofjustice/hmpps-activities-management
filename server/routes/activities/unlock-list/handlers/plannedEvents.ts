@@ -19,7 +19,7 @@ export default class PlannedEventsRoutes {
 
     const subLocations = await this.activitiesService
       .getLocationGroups(user)
-      .then(locations => locations.find(loc => loc.key === location).children.map(loc => loc.name))
+      .then(locations => locations.find(loc => loc.key === location).children.map(loc => loc.key))
 
     // Set the default filter values if they are not set
     req.session.unlockListJourney.stayingOrLeavingFilter ??= 'Both'

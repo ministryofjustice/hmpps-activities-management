@@ -98,7 +98,7 @@ describe('Unlock list routes - planned events', () => {
         new Date('2022-01-01'),
         'am',
         'A',
-        ['A-Wing', 'B-Wing', 'C-Wing'],
+        ['A', 'B', 'C'],
         'With',
         'Both',
         res.locals.user,
@@ -107,7 +107,7 @@ describe('Unlock list routes - planned events', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         date: '2022-01-01',
         location: 'A',
-        subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
+        subLocations: ['A', 'B', 'C'],
         timeSlot: 'am',
         unlockListItems,
         movementCounts: {
@@ -130,7 +130,7 @@ describe('Unlock list routes - planned events', () => {
             timeSlot: 'am',
             stayingOrLeavingFilter: 'Leaving',
             activityFilter: 'With',
-            subLocationFilters: ['A-Wing'],
+            subLocationFilters: ['A'],
           },
         },
       } as unknown as Request
@@ -155,7 +155,7 @@ describe('Unlock list routes - planned events', () => {
         new Date('2022-01-01'),
         'am',
         'A',
-        ['A-Wing'],
+        ['A'],
         'With',
         'Leaving',
         res.locals.user,
@@ -168,7 +168,7 @@ describe('Unlock list routes - planned events', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         date: '2022-01-01',
         location: 'A',
-        subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
+        subLocations: ['A', 'B', 'C'],
         timeSlot: 'am',
         unlockListItems,
         movementCounts: {
