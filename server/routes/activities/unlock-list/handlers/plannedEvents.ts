@@ -15,16 +15,16 @@ export default class PlannedEventsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { date } = req.query
-    const { location, timeSlot } = req.session.unlockListJourney
+    const { locationKey, timeSlot } = req.session.unlockListJourney
 
-    const subLocations = await this.activitiesService
+    const location = await this.activitiesService
       .getLocationGroups(user)
-      .then(locations => locations.find(loc => loc.key === location).children.map(loc => loc.key))
+      .then(locations => locations.find(loc => loc.key === locationKey))
 
     // Set the default filter values if they are not set
     req.session.unlockListJourney.stayingOrLeavingFilter ??= 'Both'
     req.session.unlockListJourney.activityFilter ??= 'With'
-    req.session.unlockListJourney.subLocationFilters ??= subLocations
+    req.session.unlockListJourney.subLocationFilters ??= location.children.map(c => c.key)
 
     const unlockDate = date ? toDate(asString(date)) : new Date()
 
@@ -33,7 +33,7 @@ export default class PlannedEventsRoutes {
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(
       unlockDate,
       timeSlot,
-      location,
+      locationKey,
       subLocationFilters,
       activityFilter,
       stayingOrLeavingFilter,
@@ -46,13 +46,12 @@ export default class PlannedEventsRoutes {
       stayingOnWing: unlockListItems.length - leavingWingCount,
     }
 
-    this.metricsService.trackEvent(MetricsEvent.CREATE_UNLOCK_LIST(unlockDate, timeSlot, location, res.locals.user))
+    this.metricsService.trackEvent(MetricsEvent.CREATE_UNLOCK_LIST(unlockDate, timeSlot, locationKey, res.locals.user))
 
     res.render('pages/activities/unlock-list/planned-events', {
       date,
       timeSlot,
       location,
-      subLocations,
       unlockListItems,
       movementCounts,
     })
