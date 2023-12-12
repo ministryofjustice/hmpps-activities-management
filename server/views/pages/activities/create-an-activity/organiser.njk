@@ -38,9 +38,10 @@
 
                 {% if session.req.params.mode == 'edit' %}
                     <div class="govuk-button-group">
-                      {{ govukButton({
-                        text: "Update organiser"
-                      }) }}
+                        {{ govukButton({
+                            text: "Update organiser",
+                            preventDoubleClick: true
+                        }) }}
                         <a class="govuk-link js-backlink" href="/activities/view/{{ session.createJourney.activityId }}">Cancel</a>
                     </div>
                 {% else %}

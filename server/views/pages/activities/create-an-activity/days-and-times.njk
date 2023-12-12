@@ -99,9 +99,10 @@
                 }) }}
                 {% if session.req.params.mode == 'edit' %}
                     <div class="govuk-button-group">
-                      {{ govukButton({
-                        text: "Update days and times"
-                      }) }}
+                        {{ govukButton({
+                            text: "Update days and times",
+                            preventDoubleClick: true
+                        }) }}
                         <a class="govuk-link js-backlink" href="/">Cancel</a>
                     </div>
                 {% else %}

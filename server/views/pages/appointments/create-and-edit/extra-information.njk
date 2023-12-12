@@ -75,7 +75,8 @@
           </div>
         </div>
         {{ govukButton({
-          text: "Update extra information" if isCtaAcceptAndSave else "Continue"
+          text: "Update extra information" if isCtaAcceptAndSave else "Continue",
+          preventDoubleClick: true
         }) }}
       </form>
     </div>

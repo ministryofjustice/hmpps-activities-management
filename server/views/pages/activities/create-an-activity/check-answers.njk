@@ -280,12 +280,13 @@
                 ]
             }) }}
 
-            <form method="POST">
+            <form method="POST" data-module="form-spinner" data-loading-text="Creating activity">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Create activity"
+                        text: "Create activity",
+                        preventDoubleClick: true
                     }) }}
                 </div>
             </form>
