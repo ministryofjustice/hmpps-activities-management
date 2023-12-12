@@ -27,6 +27,7 @@ import AllocationDashboard from '../pages/allocateToActivity/allocationDashboard
 import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
 import BeforeYouAllocate from '../pages/allocateToActivity/beforeYouAllocate'
 import ActivitiesIndexPage from '../pages/activities'
+import ExclusionsPage from '../pages/allocateToActivity/exclusions'
 
 context('Allocate to activity', () => {
   beforeEach(() => {
@@ -100,6 +101,9 @@ context('Allocate to activity', () => {
     const payBandPage = Page.verifyOnPage(PayBandPage)
     payBandPage.selectPayBand('Medium - £1.75')
     payBandPage.confirmPay()
+
+    const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
+    exclusionsPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.cancel()

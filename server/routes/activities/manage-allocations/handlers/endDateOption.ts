@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
-import config from '../../../../config'
 
 export class EndDateOption {
   @Expose()
@@ -26,9 +25,6 @@ export default class EndDateOptionRoutes {
       return res.redirectOrReturn(`pay-band`)
     }
 
-    if (config.exclusionsFeatureToggleEnabled) {
-      return res.redirectOrReturn('exclusions')
-    }
-    return res.redirectOrReturn('check-answers')
+    return res.redirectOrReturn('exclusions')
   }
 }
